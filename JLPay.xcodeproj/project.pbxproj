@@ -1,0 +1,429 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
+		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
+		5EB6F9881AC8DD1C00E47AB5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9871AC8DD1C00E47AB5 /* ViewController.m */; };
+		5EB6F98B1AC8DD1C00E47AB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */; };
+		5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */; };
+		5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */; };
+		5EB6F99C1AC8DD1C00E47AB5 /* JLPayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F99B1AC8DD1C00E47AB5 /* JLPayTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5EB6F9961AC8DD1C00E47AB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5EB6F9741AC8DD1C00E47AB5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5EB6F97B1AC8DD1C00E47AB5;
+			remoteInfo = JLPay;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EB6F9801AC8DD1C00E47AB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5EB6F9811AC8DD1C00E47AB5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5EB6F9831AC8DD1C00E47AB5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		5EB6F9861AC8DD1C00E47AB5 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		5EB6F9871AC8DD1C00E47AB5 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		5EB6F98A1AC8DD1C00E47AB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		5EB6F98F1AC8DD1C00E47AB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		5EB6F9951AC8DD1C00E47AB5 /* JLPayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JLPayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EB6F99A1AC8DD1C00E47AB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5EB6F99B1AC8DD1C00E47AB5 /* JLPayTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLPayTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5EB6F9791AC8DD1C00E47AB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5EB6F9921AC8DD1C00E47AB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5EB6F9731AC8DD1C00E47AB5 = {
+			isa = PBXGroup;
+			children = (
+				5EB6F97E1AC8DD1C00E47AB5 /* JLPay */,
+				5EB6F9981AC8DD1C00E47AB5 /* JLPayTests */,
+				5EB6F97D1AC8DD1C00E47AB5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5EB6F97D1AC8DD1C00E47AB5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */,
+				5EB6F9951AC8DD1C00E47AB5 /* JLPayTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5EB6F97E1AC8DD1C00E47AB5 /* JLPay */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F9831AC8DD1C00E47AB5 /* AppDelegate.h */,
+				5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */,
+				5EB6F9861AC8DD1C00E47AB5 /* ViewController.h */,
+				5EB6F9871AC8DD1C00E47AB5 /* ViewController.m */,
+				5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */,
+				5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */,
+				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
+				5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */,
+			);
+			path = JLPay;
+			sourceTree = "<group>";
+		};
+		5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F9801AC8DD1C00E47AB5 /* Info.plist */,
+				5EB6F9811AC8DD1C00E47AB5 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5EB6F9981AC8DD1C00E47AB5 /* JLPayTests */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F99B1AC8DD1C00E47AB5 /* JLPayTests.m */,
+				5EB6F9991AC8DD1C00E47AB5 /* Supporting Files */,
+			);
+			path = JLPayTests;
+			sourceTree = "<group>";
+		};
+		5EB6F9991AC8DD1C00E47AB5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F99A1AC8DD1C00E47AB5 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5EB6F97B1AC8DD1C00E47AB5 /* JLPay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EB6F99F1AC8DD1C00E47AB5 /* Build configuration list for PBXNativeTarget "JLPay" */;
+			buildPhases = (
+				5EB6F9781AC8DD1C00E47AB5 /* Sources */,
+				5EB6F9791AC8DD1C00E47AB5 /* Frameworks */,
+				5EB6F97A1AC8DD1C00E47AB5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JLPay;
+			productName = JLPay;
+			productReference = 5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5EB6F9941AC8DD1C00E47AB5 /* JLPayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EB6F9A21AC8DD1C00E47AB5 /* Build configuration list for PBXNativeTarget "JLPayTests" */;
+			buildPhases = (
+				5EB6F9911AC8DD1C00E47AB5 /* Sources */,
+				5EB6F9921AC8DD1C00E47AB5 /* Frameworks */,
+				5EB6F9931AC8DD1C00E47AB5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5EB6F9971AC8DD1C00E47AB5 /* PBXTargetDependency */,
+			);
+			name = JLPayTests;
+			productName = JLPayTests;
+			productReference = 5EB6F9951AC8DD1C00E47AB5 /* JLPayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5EB6F9741AC8DD1C00E47AB5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = ShenzhenJielian;
+				TargetAttributes = {
+					5EB6F97B1AC8DD1C00E47AB5 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					5EB6F9941AC8DD1C00E47AB5 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 5EB6F97B1AC8DD1C00E47AB5;
+					};
+				};
+			};
+			buildConfigurationList = 5EB6F9771AC8DD1C00E47AB5 /* Build configuration list for PBXProject "JLPay" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5EB6F9731AC8DD1C00E47AB5;
+			productRefGroup = 5EB6F97D1AC8DD1C00E47AB5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5EB6F97B1AC8DD1C00E47AB5 /* JLPay */,
+				5EB6F9941AC8DD1C00E47AB5 /* JLPayTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5EB6F97A1AC8DD1C00E47AB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EB6F98B1AC8DD1C00E47AB5 /* Main.storyboard in Resources */,
+				5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */,
+				5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5EB6F9931AC8DD1C00E47AB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5EB6F9781AC8DD1C00E47AB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EB6F9881AC8DD1C00E47AB5 /* ViewController.m in Sources */,
+				5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */,
+				5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5EB6F9911AC8DD1C00E47AB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EB6F99C1AC8DD1C00E47AB5 /* JLPayTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5EB6F9971AC8DD1C00E47AB5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5EB6F97B1AC8DD1C00E47AB5 /* JLPay */;
+			targetProxy = 5EB6F9961AC8DD1C00E47AB5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5EB6F98A1AC8DD1C00E47AB5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5EB6F98F1AC8DD1C00E47AB5 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5EB6F99D1AC8DD1C00E47AB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5EB6F99E1AC8DD1C00E47AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5EB6F9A01AC8DD1C00E47AB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = JLPay/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5EB6F9A11AC8DD1C00E47AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = JLPay/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5EB6F9A31AC8DD1C00E47AB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = JLPayTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JLPay.app/JLPay";
+			};
+			name = Debug;
+		};
+		5EB6F9A41AC8DD1C00E47AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = JLPayTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JLPay.app/JLPay";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5EB6F9771AC8DD1C00E47AB5 /* Build configuration list for PBXProject "JLPay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EB6F99D1AC8DD1C00E47AB5 /* Debug */,
+				5EB6F99E1AC8DD1C00E47AB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5EB6F99F1AC8DD1C00E47AB5 /* Build configuration list for PBXNativeTarget "JLPay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EB6F9A01AC8DD1C00E47AB5 /* Debug */,
+				5EB6F9A11AC8DD1C00E47AB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5EB6F9A21AC8DD1C00E47AB5 /* Build configuration list for PBXNativeTarget "JLPayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EB6F9A31AC8DD1C00E47AB5 /* Debug */,
+				5EB6F9A41AC8DD1C00E47AB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5EB6F9741AC8DD1C00E47AB5 /* Project object */;
+}
