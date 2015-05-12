@@ -15,6 +15,17 @@
 @implementation AppDelegate
 
 
+/*
+ *登陆成功后进入Tabbar
+ */
+-(void)signInSuccessToLogin:(int)select{
+    self.window.userInteractionEnabled=YES;
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    
+    self.window.rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
+    
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     return YES;
