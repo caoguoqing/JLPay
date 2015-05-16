@@ -20,9 +20,10 @@
 
 @implementation NumPayViewController
 
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
 
 }
@@ -32,8 +33,11 @@
         self.JHNCON = [JHNconnect shareView];
 
 }
+
+
 /*
  *   自动补齐金额数值
+ *   ----------------------即将被删去或修改为 补充新版本功能；
  */
 - (void)change
 {
@@ -58,6 +62,7 @@
 
 /*
  *   按钮点击，改变金额数值
+ *   ----------------------即将被删去或修改为 补充新版本功能；
  */
 - (IBAction)buttonClick:(UIButton *)sender {
     
@@ -215,14 +220,12 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+/*************************************
+ * 功  能 : 设置 tableView 的 section 个数;
+ * 参  数 :
+ *          (UITableView *)tableView  当前表视图
+ * 返  回 :
+ *          NSInteger                 section 的个数
+ *************************************/
 
 @end
