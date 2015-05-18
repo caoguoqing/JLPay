@@ -49,21 +49,21 @@ static FieldTrackData TransData;
 - (void)viewDidLoad {
     [super viewDidLoad];
     UIImageView *bgImageView        = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    bgImageView.image              = [UIImage imageNamed:@"bg"];
+    bgImageView.image               = [UIImage imageNamed:@"bg"];
     [self.view addSubview:bgImageView];
 
-    _loadButton = [[UIButton alloc] initWithFrame:CGRectZero];
-    _pinChangeButton = [[UIButton alloc] initWithFrame:CGRectZero];
-    _signInButton = [[UIButton alloc] initWithFrame:CGRectZero];
-    _userNumberTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-    _userPasswordTextField = [[UITextField alloc] initWithFrame:CGRectZero];
+    _loadButton                     = [[UIButton alloc] initWithFrame:CGRectZero];
+    _pinChangeButton                = [[UIButton alloc] initWithFrame:CGRectZero];
+    _signInButton                   = [[UIButton alloc] initWithFrame:CGRectZero];
+    _userNumberTextField            = [[UITextField alloc] initWithFrame:CGRectZero];
+    _userPasswordTextField          = [[UITextField alloc] initWithFrame:CGRectZero];
     
     [self addSubViews];
     
     [self openDevice];
     [self EndEdit];
     
-    self.view.backgroundColor = [UIColor colorWithWhite:1 alpha:0.9];
+    self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
     
 }
 
@@ -72,7 +72,7 @@ static FieldTrackData TransData;
 
 -(void)EndEdit
 {
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(End) ];
+    UITapGestureRecognizer *tap     = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(End) ];
     [self.view addGestureRecognizer:tap];
 }
 
@@ -137,7 +137,7 @@ static FieldTrackData TransData;
 -(void)openDevice{
     
     
-    NSThread* DeviceThread =[[NSThread alloc] initWithTarget:self selector:@selector(CheckDevceThread1)
+    NSThread* DeviceThread          = [[NSThread alloc] initWithTarget:self selector:@selector(CheckDevceThread1)
                                                       object:nil];
     [DeviceThread start];
 }
@@ -146,7 +146,7 @@ static FieldTrackData TransData;
 {
     while (true) {
         
-        int result =[self openJhlDevice];
+        int result                  =[self openJhlDevice];
         [self StatusChange:result];
         if (result ==0)
         {
@@ -160,13 +160,12 @@ static FieldTrackData TransData;
 {
     memset(&TransData, 0x00, sizeof(FieldTrackData));
     if (osmanager ==NULL)
-        osmanager = [CommunicationManager sharedInstance];
+        osmanager                   = [CommunicationManager sharedInstance];
     
-    
-    NSString *astring  =[CommunicationManager getLibVersion];
+    NSString *astring               =[CommunicationManager getLibVersion];
     
     NSLog(@"%@",astring);
-    int result = [osmanager openDevice];
+    int result                      = [osmanager openDevice];
     NSLog(@"%s,result:%d",__func__,result);
     return result;
     

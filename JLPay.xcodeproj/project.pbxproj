@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */; };
+		5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE721B09949200B8C198 /* DynamicScrollView.m */; };
+		5E08AE761B09BDAA00B8C198 /* FunctionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE751B09BDAA00B8C198 /* FunctionButton.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AFA1AD36429004F206F /* ASICloudFilesContainer.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -117,6 +120,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E08AE6D1B0989B100B8C198 /* AdditionalServicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalServicesViewController.h; sourceTree = "<group>"; };
+		5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalServicesViewController.m; sourceTree = "<group>"; };
+		5E08AE711B09949200B8C198 /* DynamicScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicScrollView.h; sourceTree = "<group>"; };
+		5E08AE721B09949200B8C198 /* DynamicScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicScrollView.m; sourceTree = "<group>"; };
+		5E08AE741B09BDAA00B8C198 /* FunctionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionButton.h; sourceTree = "<group>"; };
+		5E08AE751B09BDAA00B8C198 /* FunctionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FunctionButton.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		5E397AF61AD36429004F206F /* ASICacheDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASICacheDelegate.h; sourceTree = "<group>"; };
@@ -332,6 +341,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E08AE701B0991A400B8C198 /* AdditionalServices */ = {
+			isa = PBXGroup;
+			children = (
+				5E08AE6D1B0989B100B8C198 /* AdditionalServicesViewController.h */,
+				5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */,
+				5E08AE711B09949200B8C198 /* DynamicScrollView.h */,
+				5E08AE721B09949200B8C198 /* DynamicScrollView.m */,
+				5E08AE741B09BDAA00B8C198 /* FunctionButton.h */,
+				5E08AE751B09BDAA00B8C198 /* FunctionButton.m */,
+			);
+			name = AdditionalServices;
+			sourceTree = "<group>";
+		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
 			isa = PBXGroup;
 			children = (
@@ -460,6 +482,7 @@
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
 				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
 				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
+				5E08AE701B0991A400B8C198 /* AdditionalServices */,
 				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
 				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
 				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
@@ -832,6 +855,7 @@
 				5EBE376B1ADF582C00901980 /* PasswordViewController.m in Sources */,
 				5E397B311AD36429004F206F /* ASIDownloadCache.m in Sources */,
 				5E397B381AD36429004F206F /* ASIS3BucketRequest.m in Sources */,
+				5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */,
 				5EBAA8EA1ACD2FA800E2ABDD /* HeaderString.m in Sources */,
 				5E397B3C1AD36429004F206F /* ASIWebPageRequest.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
@@ -874,7 +898,9 @@
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,
 				5E397B2A1AD36429004F206F /* ASICloudFilesContainerRequest.m in Sources */,
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
+				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
+				5E08AE761B09BDAA00B8C198 /* FunctionButton.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,

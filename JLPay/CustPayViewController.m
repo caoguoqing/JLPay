@@ -8,7 +8,7 @@
 
 #import "CustPayViewController.h"
 
-#define ImageForBrand   @"logo"                                   // 商标图片
+#define ImageForBrand   @"logo"                                     // 商标图片
 #define NameForBrand    @"捷联通"                                    // 商标名字
 
 
@@ -152,6 +152,21 @@
     UIButton *alipayButton  = [[UIButton alloc] initWithFrame:frame];
     // 添加 action ..........................
     alipayButton.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.5];
+    // 设置 支付宝 图标
+    [alipayButton setImage:[UIImage imageNamed:@"zfb"] forState:UIControlStateNormal];
+    CGFloat  heightOfImage = frame.size.height * 3.0 / 4.0;
+    CGFloat  widthOfLabel  = heightOfImage * 1.3;
+    alipayButton.imageEdgeInsets = UIEdgeInsetsMake((frame.size.height - heightOfImage)/2.0,
+                                                    (frame.size.width - widthOfLabel - heightOfImage)/2.0,
+                                                    (frame.size.height - heightOfImage)/2.0,
+                                                    (frame.size.width - widthOfLabel - heightOfImage)/2.0 + widthOfLabel);
+    // 支付宝 标签
+    [alipayButton setTitle:@"支付宝支付" forState:UIControlStateNormal];
+    [alipayButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    alipayButton.titleEdgeInsets = UIEdgeInsetsMake(0,
+                                                    (frame.size.width - widthOfLabel - heightOfImage)/2.0 + heightOfImage,
+                                                    0,
+                                                    (frame.size.width - widthOfLabel - heightOfImage)/2.0);
     [self.view addSubview:alipayButton];
     
     // 微信按钮
@@ -174,14 +189,26 @@
     [brushButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     brushButton.titleLabel.font     = [UIFont boldSystemFontOfSize:32];
     // 添加 action ..........................
+    [brushButton addTarget:self action:@selector(beginBrush:) forControlEvents:UIControlEventTouchDown];
     [brushButton addTarget:self action:@selector(toBrush:) forControlEvents:UIControlEventTouchUpInside];
+    [brushButton setSelected:YES];
     [self.view addSubview:brushButton];
 
     
 }
 
-- (IBAction) toBrush:(id)sender {
+/*************************************
+ * 功  能 : 刷卡按钮的点击动画效果;
+ * 参  数 :
+ *          (id)sender                发起转场动作的按钮：放大、缩小
+ * 返  回 : 无
+ *************************************/
+- (IBAction) toBrush:(UIButton*)sender {
+    sender.transform = CGAffineTransformMakeScale(1.0/0.99, 1.0/0.99);
     self.money += 1;
+}
+- (IBAction)beginBrush:(UIButton*)sender {
+    sender.transform = CGAffineTransformMakeScale(0.99, 0.99);
 }
 
 
