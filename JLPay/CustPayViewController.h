@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "OtherPayButton.h"
+#import "DeleteButton.h"
 
 @interface CustPayViewController : UIViewController
 

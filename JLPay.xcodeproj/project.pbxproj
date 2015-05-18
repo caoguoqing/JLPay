@@ -10,6 +10,8 @@
 		5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */; };
 		5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE721B09949200B8C198 /* DynamicScrollView.m */; };
 		5E08AE761B09BDAA00B8C198 /* FunctionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE751B09BDAA00B8C198 /* FunctionButton.m */; };
+		5E0D186B1B09DA710092F4AB /* OtherPayButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186A1B09DA710092F4AB /* OtherPayButton.m */; };
+		5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AFA1AD36429004F206F /* ASICloudFilesContainer.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -126,6 +128,10 @@
 		5E08AE721B09949200B8C198 /* DynamicScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicScrollView.m; sourceTree = "<group>"; };
 		5E08AE741B09BDAA00B8C198 /* FunctionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionButton.h; sourceTree = "<group>"; };
 		5E08AE751B09BDAA00B8C198 /* FunctionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FunctionButton.m; sourceTree = "<group>"; };
+		5E0D18691B09DA710092F4AB /* OtherPayButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherPayButton.h; sourceTree = "<group>"; };
+		5E0D186A1B09DA710092F4AB /* OtherPayButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherPayButton.m; sourceTree = "<group>"; };
+		5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButton.h; sourceTree = "<group>"; };
+		5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteButton.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		5E397AF61AD36429004F206F /* ASICacheDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASICacheDelegate.h; sourceTree = "<group>"; };
@@ -354,6 +360,40 @@
 			name = AdditionalServices;
 			sourceTree = "<group>";
 		};
+		5E0D18661B09D9240092F4AB /* ToBrush */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F9B61AC9501100E47AB5 /* NumPayViewController.h */,
+				5EB6F9B71AC9501100E47AB5 /* NumPayViewController.m */,
+				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
+				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
+				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
+				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
+				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
+				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
+				5E0D18691B09DA710092F4AB /* OtherPayButton.h */,
+				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
+				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
+				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
+			);
+			name = ToBrush;
+			sourceTree = "<group>";
+		};
+		5E0D18681B09D9BB0092F4AB /* CustManager */ = {
+			isa = PBXGroup;
+			children = (
+				5EBE92821ACB95BC0096BD72 /* DeviceSettingViewController.h */,
+				5EBE92831ACB95BC0096BD72 /* DeviceSettingViewController.m */,
+				5EB9B1B31AD7D6D900A73190 /* settingViewController.h */,
+				5EB9B1B41AD7D6D900A73190 /* settingViewController.m */,
+				5EBE927C1ACB7FE70096BD72 /* IPSetViewController.h */,
+				5EBE927D1ACB7FE70096BD72 /* IPSetViewController.m */,
+				5EBE927F1ACB80FD0096BD72 /* TerminalParamSetViewController.h */,
+				5EBE92801ACB80FD0096BD72 /* TerminalParamSetViewController.m */,
+			);
+			name = CustManager;
+			sourceTree = "<group>";
+		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
 			isa = PBXGroup;
 			children = (
@@ -476,21 +516,14 @@
 				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
 				5EB6F9861AC8DD1C00E47AB5 /* logViewController.h */,
 				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
-				5EB6F9B61AC9501100E47AB5 /* NumPayViewController.h */,
-				5EB6F9B71AC9501100E47AB5 /* NumPayViewController.m */,
-				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
-				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
-				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
-				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
+				5E0D18661B09D9240092F4AB /* ToBrush */,
+				5E0D18681B09D9BB0092F4AB /* CustManager */,
 				5E08AE701B0991A400B8C198 /* AdditionalServices */,
-				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
-				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
 				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
 				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
 				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
 				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
-				5EC14E621ADCE44200CCD764 /* 设备设置 */,
 				5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */,
 				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
 				5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */,
@@ -697,21 +730,6 @@
 			path = JHL;
 			sourceTree = "<group>";
 		};
-		5EC14E621ADCE44200CCD764 /* 设备设置 */ = {
-			isa = PBXGroup;
-			children = (
-				5EBE92821ACB95BC0096BD72 /* DeviceSettingViewController.h */,
-				5EBE92831ACB95BC0096BD72 /* DeviceSettingViewController.m */,
-				5EB9B1B31AD7D6D900A73190 /* settingViewController.h */,
-				5EB9B1B41AD7D6D900A73190 /* settingViewController.m */,
-				5EBE927C1ACB7FE70096BD72 /* IPSetViewController.h */,
-				5EBE927D1ACB7FE70096BD72 /* IPSetViewController.m */,
-				5EBE927F1ACB80FD0096BD72 /* TerminalParamSetViewController.h */,
-				5EBE92801ACB80FD0096BD72 /* TerminalParamSetViewController.m */,
-			);
-			name = "设备设置";
-			sourceTree = "<group>";
-		};
 		5ED344251AD8C1DB0005C890 /* ProgressHUD */ = {
 			isa = PBXGroup;
 			children = (
@@ -868,6 +886,7 @@
 				5EBA40F61AEA366000F270C0 /* PosInformationViewController.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
 				5EB6F9B81AC9501100E47AB5 /* NumPayViewController.m in Sources */,
+				5E0D186B1B09DA710092F4AB /* OtherPayButton.m in Sources */,
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
 				5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */,
 				5E397B361AD36429004F206F /* ASIS3Bucket.m in Sources */,
@@ -902,6 +921,7 @@
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
 				5E08AE761B09BDAA00B8C198 /* FunctionButton.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
+				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,

@@ -31,8 +31,6 @@ static FieldTrackData TransData;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-//    [self.navigationController setNavigationBarHidden:YES animated:NO];
 
     if ([self isConnected]) {
         [self MagnCard:2000 :0 :0];
@@ -644,7 +642,6 @@ static FieldTrackData TransData;
                         strPan = [strPan stringByAppendingString:newHexStr];
                         
                     }
-//                    strPan =[self stringFromHexString:strPan];
                    
                     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
                     UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"password"];
