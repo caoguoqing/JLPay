@@ -425,7 +425,6 @@ static FieldTrackData TransData;
  *************************************/
 - (void) addSubViews {
     UIImageView *iconImageView;     // 商标
-//    UILabel     *appNameLable;      // 产品名
     UIView      *userNumberView;    // 账号视图控件
     UIView      *userPasswordView;  // 密码视图控件
     
@@ -435,23 +434,7 @@ static FieldTrackData TransData;
     
     CGFloat      x                      = 0 + (self.view.bounds.size.width - iconViewHeight - appNameLable_width)/2;
     CGFloat      y                      = 2 * iconViewHeight + iconViewHeight;
-//    iconImageView                       = [[UIImageView alloc] initWithFrame:CGRectMake(x, y, iconViewHeight, iconViewHeight)];
-//    iconImageView.layer.cornerRadius    = iconImageView.bounds.size.width/2.0;
-//    [iconImageView.layer masksToBounds];
-//    iconImageView.image                 = [UIImage imageNamed:ImageForBrand];
-//
-//    // 图片视图添加阴影效果
-////    iconImageView.layer.shadowOffset    = CGSizeMake(3, 3);
-////    iconImageView.layer.shadowOpacity   = 0.8;
-//    [self.view addSubview:iconImageView];
-//
-//    
-//    /* 产品名：标签 */
-//    appNameLable                        = [[UILabel alloc] initWithFrame:CGRectMake(x + iconViewHeight, y, appNameLable_width, iconViewHeight)];
-//    appNameLable.text                   = @"捷联通";
-//    appNameLable.font                   = [UIFont systemFontOfSize:24];         // 字体大小
-//    appNameLable.textAlignment          = NSTextAlignmentCenter;
-//    [self.view addSubview:appNameLable];
+
     iconImageView                       = [[UIImageView alloc] initWithFrame:CGRectMake(x, y, iconViewHeight + appNameLable_width, iconViewHeight)];
     iconImageView.image                 = [UIImage imageNamed:@"logo"];
     [self.view addSubview:iconImageView];

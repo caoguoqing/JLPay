@@ -32,9 +32,9 @@
     return self;
 }
 
-
-
-
-
+//- (void)layoutSubviews {
+////    self.titleLabel.font                   = [UIFont f];
+////    self.titleLabel.textColor                = [UIColor clearColor];
+//}
 
 @end

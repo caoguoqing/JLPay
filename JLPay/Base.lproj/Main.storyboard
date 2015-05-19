@@ -26,10 +26,10 @@
             </objects>
             <point key="canvasLocation" x="-2131" y="1881"/>
         </scene>
-        <!--Tabbar View Controller-->
+        <!--Tab Bar Controller-->
         <scene sceneID="mqF-op-VjK">
             <objects>
-                <tabBarController storyboardIdentifier="tabbar" id="daQ-XL-BoM" customClass="tabbarViewController" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="tabbar" id="daQ-XL-BoM" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="Ic0-e9-gIv">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>

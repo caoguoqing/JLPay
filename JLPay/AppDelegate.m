@@ -21,13 +21,29 @@
 -(void)signInSuccessToLogin:(int)select{
     self.window.userInteractionEnabled=YES;
     
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     
-    self.window.rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
+    self.window.rootViewController      = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
     
 }
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+
+    NSArray* imageArray                 = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
+    NSArray* imageSelectedArray         = [NSArray arrayWithObjects:@"icona_", @"iconb_", @"iconc_", nil];
+    
+    
+    
+    UIStoryboard *storyBoard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UITabBarController *tabBarCtr       = [storyBoard instantiateViewControllerWithIdentifier:@"tabbar"];
+//    UITabBarController *tabBarCtr       = self.window.rootViewController;
+    // 自定义 tabBarItem 的图片
+    for (int i = 0; i<tabBarCtr.tabBar.items.count; i++) {
+        UITabBarItem* item              = [tabBarCtr.tabBar.items objectAtIndex:i];
+        item.selectedImage              = [[UIImage imageNamed:[imageSelectedArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        item.image                      = [[UIImage imageNamed:[imageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    
+    
     return YES;
 }
 
