@@ -857,7 +857,7 @@
         <scene sceneID="fq6-ud-Js9">
             <objects>
                 <navigationController id="UH2-IW-g8J" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="商户管理" image="success-white.png" id="Dri-BS-5xs"/>
+                    <tabBarItem key="tabBarItem" title="商户管理" id="Dri-BS-5xs"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="nqW-vE-DmR">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -905,12 +905,9 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="46S-Jv-gi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-616" y="2933"/>
+            <point key="canvasLocation" x="-614" y="2922"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="success-white.png" width="28" height="28"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

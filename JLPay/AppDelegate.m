@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "logViewController.h"
 
 @interface AppDelegate ()
 
@@ -27,21 +28,31 @@
     
 }
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    NSArray* imageArray                 = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
-    NSArray* imageSelectedArray         = [NSArray arrayWithObjects:@"icona_", @"iconb_", @"iconc_", nil];
-    
-    
-    
-    UIStoryboard *storyBoard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    UITabBarController *tabBarCtr       = [storyBoard instantiateViewControllerWithIdentifier:@"tabbar"];
-//    UITabBarController *tabBarCtr       = self.window.rootViewController;
-    // 自定义 tabBarItem 的图片
-    for (int i = 0; i<tabBarCtr.tabBar.items.count; i++) {
-        UITabBarItem* item              = [tabBarCtr.tabBar.items objectAtIndex:i];
-        item.selectedImage              = [[UIImage imageNamed:[imageSelectedArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-        item.image                      = [[UIImage imageNamed:[imageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    }
+//
+//    NSArray* imageArray                 = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
+//    NSArray* imageSelectedArray         = [NSArray arrayWithObjects:@"icona_", @"iconb_", @"iconc_", nil];
+//    
+//    
+//    ///////////////////
+//    self.window                         = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+//    self.window.backgroundColor         = [UIColor whiteColor];
+//    [self.window makeKeyAndVisible];
+//    
+//    logViewController* logVC            = [[logViewController alloc] init];
+//    self.window.rootViewController      = logVC;
+//    /////////////////
+//    
+//    
+//    UIStoryboard *storyBoard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+//    UITabBarController *tabBarCtr       = [storyBoard instantiateViewControllerWithIdentifier:@"tabbar"];
+////    UITabBarController *tabBarCtr       = self.window.rootViewController;
+//    // 自定义 tabBarItem 的图片
+//    for (int i = 0; i<tabBarCtr.tabBar.items.count; i++) {
+//        UITabBarItem* item              = [tabBarCtr.tabBar.items objectAtIndex:i];
+//        item.selectedImage              = [[UIImage imageNamed:[imageSelectedArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+//        item.image                      = [[UIImage imageNamed:[imageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+////        UITabBarItem* selectecItem      = [tabBarCtr.tabBar.selectedItem];
+//    }
     
     
     return YES;
