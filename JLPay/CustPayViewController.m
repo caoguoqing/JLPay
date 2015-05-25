@@ -123,7 +123,6 @@
                 button                                          = [[DeleteButton alloc] initWithFrame:frame];
                 ((DeleteButton*)button).layer.borderWidth       = 0.3;
                 ((DeleteButton*)button).layer.borderColor       = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
-//                [(DeleteButton*)button  setTitle:@"delete" forState:UIControlStateNormal];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];

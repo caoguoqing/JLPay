@@ -36,7 +36,7 @@
 
 
 - (void) initContentScrollView {
-    CGFloat visibalHeight           = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height /*- self.navigationController.navigationBar.bounds.size.height*/;                    // 可视区域的高度
+    CGFloat visibalHeight           = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height;   // 可视区域的高度
     CGFloat cellHeight              = visibalHeight / 4.3;                      // 按钮组的单元格高度
     CGFloat cellWidth               = self.view.bounds.size.width / 3.0;        // 按钮组的单元格宽度
     CGFloat y_subViews              = 0;                                        // subViews 的起始y左边点
@@ -63,7 +63,7 @@
     // 功能用 userDefault 保存,实现动态的维护,包括删除、添加
     
     
-    /////////////////////////////////////   ---- 临时添加 按钮组的  方法，后续要扩展为动态添加
+    /////////////////////////////////////   1---- 临时添加 按钮组的  方法，后续要扩展为动态添加
     NSArray * imageNames            = [NSArray arrayWithObjects:@"03_07", @"03_12", @"03_09", @"03_18", @"03_20", @"03_23", @"03_28", @"03_29", nil];
     NSArray * buttonNames           = [NSArray arrayWithObjects:@"信用卡还款",
                                                                 @"余额查询",
@@ -91,6 +91,10 @@
         
         
     }
+    ///////                                  2 -- 添加完了功能按钮后要添加 "+" 按钮
+
+    AdditionalButton* addButton         = [[AdditionalButton alloc] initWithFrame:CGRectMake(x_subViews, y_subViews, cellWidth, cellHeight)];
+    [self.contentScrollView addSubview:addButton];
     /////////////////////////////////////
     
     

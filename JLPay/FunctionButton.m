@@ -55,10 +55,10 @@
  * 返  回 : 无
  *************************************/
 - (void)layoutSubviews {
-    CGFloat  imageViewWidth         = self.bounds.size.width / 3.0;
-    CGFloat  imageViewHeight        = self.bounds.size.height / 2.0 / 6.0 * 5.0;
+    CGFloat  imageViewWidth         = self.bounds.size.width / 2.0;
+    CGFloat  imageViewHeight        = self.bounds.size.height / 3.0 * 2.0 / 6.0 * 5.0;              // height * 2/3 * 5/6 ;
     CGFloat  labelWidth             = self.bounds.size.width;
-    CGFloat  labelHeight            = self.bounds.size.height / 12.0;
+    CGFloat  labelHeight            = self.bounds.size.height / 10.0;
     
     CGFloat  x_imageView            = (self.bounds.size.width - imageViewWidth)/2.0;
     CGFloat  y_imageView            = (self.bounds.size.height - imageViewHeight - labelHeight) / 5.0 * 3.0;
