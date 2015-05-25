@@ -33,6 +33,7 @@ static FieldTrackData TransData;
     [super viewDidLoad];
 
     if ([self isConnected]) {
+        // 刷卡
         [self MagnCard:2000 :0 :0];
     }
     
@@ -643,6 +644,7 @@ static FieldTrackData TransData;
                         
                     }
                    
+                    // 刷卡成功要跳转到 输入密码界面
                     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
                     UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"password"];
                     
