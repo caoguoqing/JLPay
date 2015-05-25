@@ -10,7 +10,7 @@
 #import "PublicInformation.h"
 
 
-
+// --- 对类 NSString 进行扩展
 @interface NSString (NSStringHexToBytes)
 -(NSData*) hexToBytes ;
 
@@ -31,36 +31,6 @@
     }
     return data;
 }
-
-/*
-- (NSString*) stringWithHexBytes1 {
-    NSMutableString *stringBuffer = [NSMutableString stringWithCapacity:([self length] * 2)];
-    const unsigned char *dataBuffer = [self bytes];
-    int i;
-    for (i = 0; i < [self length]; ++i) {
-        [stringBuffer appendFormat:@"%02X", (unsigned long)dataBuffer[i]];
-    }
-    return [stringBuffer copy];
-}
-- (NSString*)stringWithHexBytes2 {
-    static const char hexdigits[] = "0123456789ABCDEF";
-    const size_t numBytes = [self length];
-    const unsigned char* bytes = [self bytes];
-    char *strbuf = (char *)malloc(numBytes * 2 + 1);
-    char *hex = strbuf;
-    NSString *hexBytes = nil;
-    for (int i = 0; i<numBytes; ++i) {
-        const unsigned char c = *bytes++;
-        *hex++ = hexdigits[(c >> 4) & 0xF];
-        *hex++ = hexdigits[(c ) & 0xF];
-    }
-    *hex = 0;
-    hexBytes = [NSString stringWithUTF8String:strbuf];
-    free(strbuf);
-    return hexBytes;
-}
-*/
-
 
 @end
 
@@ -122,6 +92,7 @@ static TcpClientService *sharedObj = nil;
 {
     //NSLog(@"err=====%@",[err localizedDescription]);
     
+    // 错误处理方法:
     if ([delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
         [sock disconnect];
         [sock setDelegate:nil];
@@ -158,6 +129,7 @@ static TcpClientService *sharedObj = nil;
     NSError *err = nil;
     
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
+        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         [asyncSocket connectToHost:ip onPort:port error:&err];
         
     }

@@ -62,7 +62,7 @@
     CGFloat numFontSize                 = 30.0;
     CGFloat statusBarHeight             = [[UIApplication sharedApplication] statusBarFrame].size.height;
     CGFloat visibleHeight               = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
-    CGFloat  bornerWith                 = 1.0;
+    CGFloat  bornerWith                 = 0.5;
 
     
     // 图标          3/8/3.3

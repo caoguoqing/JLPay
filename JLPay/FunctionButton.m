@@ -37,6 +37,13 @@
         // 边界线
         self.layer.borderColor      = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         self.layer.borderWidth      = 0.3;
+        
+        // 添加按钮的点击事件: 开始点击、点击完成
+        [self addTarget:self action:@selector(clickButtonDown:) forControlEvents:UIControlEventTouchDown];
+        [self addTarget:self action:@selector(clickButtonUp:) forControlEvents:UIControlEventTouchUpInside];
+        [self addTarget:self action:@selector(clickButtonOutUp:) forControlEvents:UIControlEventTouchUpOutside];
+
+
     }
     return self;
 }
@@ -77,5 +84,32 @@
     self.nameLabel.textAlignment    = NSTextAlignmentCenter;
     [self addSubview:self.nameLabel];
 }
+
+/*************************************
+ * 功  能 : clickButtonDown: 功能按钮的点击开始;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (IBAction) clickButtonDown:(FunctionButton*)sender {
+    self.backgroundColor            = [UIColor colorWithWhite:0.5 alpha:0.5];
+}
+
+/*************************************
+ * 功  能 : clickButtonUp: 功能按钮的点击结束;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (IBAction) clickButtonUp:(FunctionButton*)sender {
+    self.backgroundColor            = [UIColor clearColor];
+}
+/*************************************
+ * 功  能 : clickButtonOutUp: 功能按钮的点击结束;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (IBAction) clickButtonOutUp:(FunctionButton*)sender {
+    self.backgroundColor            = [UIColor clearColor];
+}
+
 
 @end

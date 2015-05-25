@@ -51,7 +51,7 @@
     CGFloat x_imageView             = width_imageView / 2.0;
     CGFloat y_imageView             = (self.bounds.size.height - width_imageView) / 2.0;
     
-    CGFloat inset                   = 6.0;
+    CGFloat inset                   = 5.0;
     CGFloat width_label             = self.bounds.size.width - width_imageView * 2 - inset;
     CGFloat height_label            = self.bounds.size.height;
     CGFloat x_label                 = x_imageView + width_imageView + inset;

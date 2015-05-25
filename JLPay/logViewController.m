@@ -145,7 +145,7 @@ static FieldTrackData TransData;
 -(void)CheckDevceThread1
 {
     while (true) {
-        
+//        NSLog(@"- - - - - - - - - -\n - - - - -- - - - 轮询检测 设备是否开启\n - - - - - - ");
         int result                  =[self openJhlDevice];
         [self StatusChange:result];
         if (result ==0)
@@ -164,8 +164,11 @@ static FieldTrackData TransData;
     
     NSString *astring               =[CommunicationManager getLibVersion];
     
+    
+    // --- 打印设备的版本
     NSLog(@"%@",astring);
     int result                      = [osmanager openDevice];
+    // --- 打印打开设备的结果: result
     NSLog(@"%s,result:%d",__func__,result);
     return result;
     
@@ -463,7 +466,10 @@ static FieldTrackData TransData;
     [self.loadButton setTitle:@"登陆" forState:UIControlStateNormal];
     [self.view addSubview:self.loadButton];
     /* 给“登陆”按钮绑定一个登陆的 action */
+    [self.loadButton addTarget:self action:@selector(touchDownLoad:) forControlEvents:UIControlEventTouchDown];
     [self.loadButton addTarget:self action:@selector(loadToMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.loadButton addTarget:self action:@selector(touchOutLoad:) forControlEvents:UIControlEventTouchUpOutside];
+
     
     
     /* 注册按钮：UIButton */
@@ -520,7 +526,7 @@ static FieldTrackData TransData;
         [view addSubview:self.userNumberTextField];
 
         /* 然后设置该 view 的标签图片...... */
-        imageView.image                = [UIImage imageNamed:@"zhm"];
+        imageView.image                         = [UIImage imageNamed:@"zhm"];
         /*/..............................*/
         
     } else if ([viewName isEqualToString:@"密码" ]) {
@@ -531,26 +537,43 @@ static FieldTrackData TransData;
         [view addSubview:self.userPasswordTextField];
         
         /* 然后设置该 view 的标签图片...... */
-        imageView.image                 = [UIImage imageNamed:@"mm"];
+        imageView.image                         = [UIImage imageNamed:@"mm"];
         /*/..............................*/
 
     }
     [view addSubview:imageView];
 
-    view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.5];
+    view.backgroundColor                        = [UIColor colorWithWhite:0.9 alpha:0.5];
     
     return view;
 }
 
 
+
 /*************************************
  * 功  能 : 登陆按钮的登陆功能实现;
  * 参  数 :
- *          (id) sender
+ *          (UIButton*) sender
  * 返  回 : 无
  *************************************/
-- (IBAction)loadToMainView: (id)sender {
+- (IBAction)touchDownLoad: (UIButton*)sender {
+    // 添加动画效果: 缩小
+    sender.transform                      = CGAffineTransformMakeScale(0.98, 0.98);
+}
+- (IBAction)touchOutLoad: (UIButton*)sender {
+    // 添加动画效果: 恢复原大小
+    sender.transform                      = CGAffineTransformIdentity;
+}
+/*************************************
+ * 功  能 : 登陆按钮的登陆功能实现;
+ * 参  数 :
+ *          (UIButton*) sender
+ * 返  回 : 无
+ *************************************/
+- (IBAction)loadToMainView: (UIButton*)sender {
     NSLog(@"登陆按钮的功能实现。。。。。。。");
+    // 添加动画效果
+    sender.transform                      = CGAffineTransformIdentity;
     [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
 }
 
