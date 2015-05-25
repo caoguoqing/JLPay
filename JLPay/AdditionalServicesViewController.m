@@ -39,8 +39,8 @@
     CGFloat visibalHeight           = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height /*- self.navigationController.navigationBar.bounds.size.height*/;                    // 可视区域的高度
     CGFloat cellHeight              = visibalHeight / 4.3;                      // 按钮组的单元格高度
     CGFloat cellWidth               = self.view.bounds.size.width / 3.0;        // 按钮组的单元格宽度
-    CGFloat y_subViews              = 0;                                        // subViews 的其实y左边点
-    CGFloat x_subViews              = 0;                                        //
+    CGFloat y_subViews              = 0;                                        // subViews 的起始y左边点
+    CGFloat x_subViews              = 0;                                        // subViews 的起始x左边点
     
     CGRect frame                    = CGRectMake(0, 0, self.view.bounds.size.width, visibalHeight);
     self.contentScrollView          = [[UIScrollView alloc] initWithFrame:frame];
@@ -75,18 +75,18 @@
                                                                 @"交通罚款", nil];
     self.contentScrollView.contentSize  = CGSizeMake(self.contentScrollView.contentSize.width, self.contentScrollView.contentSize.height + cellHeight);
     for (int i = 0; i<imageNames.count; i++) {
-        FunctionButton *button = [[FunctionButton alloc] initWithFrame:CGRectMake(x_subViews, y_subViews, cellWidth, cellHeight)];
+        FunctionButton *button          = [[FunctionButton alloc] initWithFrame:CGRectMake(x_subViews, y_subViews, cellWidth, cellHeight)];
         [button setImageViewWith:[imageNames objectAtIndex:i]];
         [button setLabelNameWith:[buttonNames objectAtIndex:i]];
         [self.contentScrollView addSubview:button];
         
         
         if (x_subViews >= cellWidth * 2.0) {
-            x_subViews = 0;
-            y_subViews += cellHeight;
+            x_subViews                  = 0;
+            y_subViews                  += cellHeight;
             self.contentScrollView.contentSize  = CGSizeMake(self.contentScrollView.contentSize.width, self.contentScrollView.contentSize.height + cellHeight);
         } else {
-            x_subViews += cellWidth;
+            x_subViews                  += cellWidth;
         }
         
         

@@ -6,6 +6,12 @@
 //  Copyright (c) 2015年 ShenzhenJielian. All rights reserved.
 //
 
+
+/*************************************
+ * 模  块 : 增值服务界面的功能按钮类;
+ *          包含一个 imageView 和一个 label
+ *************************************/
+
 #import "FunctionButton.h"
 
 @interface FunctionButton()
@@ -61,10 +67,11 @@
     CGFloat  y_label                = y_imageView + imageViewHeight;
     
     
-    
+    // 重定义自定义的 image 的 frame
     self.imageView.frame            = CGRectMake(x_imageView, y_imageView, imageViewWidth, imageViewWidth);
     [self addSubview:self.imageView];
     
+    // 重定义自定义的 label 的 frame
     self.nameLabel.frame            = CGRectMake(x_label, y_label, labelWidth, labelHeight);
     self.nameLabel.font             = [UIFont systemFontOfSize:12];
     self.nameLabel.textAlignment    = NSTextAlignmentCenter;
