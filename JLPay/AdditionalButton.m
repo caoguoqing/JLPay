@@ -20,10 +20,17 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self setTitle:@"+" forState:UIControlStateNormal];
-        [self setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        self.titleLabel.font        = [UIFont boldSystemFontOfSize:30.0];
-//        self.layer.borderWidth      = 2.0;
-//        self.layer.borderColor      = [UIColor blackColor].CGColor;
+        [self setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+//        self.titleLabel.font        = [UIFont boldSystemFontOfSize:30.0];
+        // 宽度的 1/5 为加号图片的边长
+        CGFloat widthOfPlus         = self.bounds.size.width / 5.0;
+        UIImageView* imageView      = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - widthOfPlus)/2.0,
+                                                                                    (self.bounds.size.height - widthOfPlus)/2.0,
+                                                                                    widthOfPlus,
+                                                                                    widthOfPlus)];
+        imageView.image             = [UIImage imageNamed:@"jia"];
+        [self addSubview:imageView];
+        
         
         self.layer.borderColor      = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         self.layer.borderWidth      = 0.3;

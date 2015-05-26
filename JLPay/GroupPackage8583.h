@@ -31,9 +31,6 @@
 
 
 
-
-
-
 //签到
 +(NSString *)signIn;
 

@@ -1078,6 +1078,7 @@
 					"$(PROJECT_DIR)/JLPay/JHN",
 					"$(PROJECT_DIR)/JLPay/JHL",
 				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "29fcea91-49b2-4d4c-ab0c-94da6bcd0a95";
 			};
@@ -1103,6 +1104,7 @@
 					"$(PROJECT_DIR)/JLPay/JHN",
 					"$(PROJECT_DIR)/JLPay/JHL",
 				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "29fcea91-49b2-4d4c-ab0c-94da6bcd0a95";
 			};

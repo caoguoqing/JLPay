@@ -211,7 +211,6 @@
         [self saveConsumerMoney];
         [self.navigationController pushViewController:viewcon animated:YES];
         
-        
     }
 }
 

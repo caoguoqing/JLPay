@@ -58,10 +58,12 @@ static FieldTrackData TransData;
     _userNumberTextField            = [[UITextField alloc] initWithFrame:CGRectZero];
     _userPasswordTextField          = [[UITextField alloc] initWithFrame:CGRectZero];
     
+    // 登陆按钮
     [self addSubViews];
-    
-    [self openDevice];
     [self EndEdit];
+    
+    // 打开设备..循环中。。这里需要读取设备么????????????????????????
+    [self openDevice];
     
     self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
     
@@ -136,7 +138,7 @@ static FieldTrackData TransData;
 
 -(void)openDevice{
     
-    
+    // 这个后台任务到底用什么队列去处理/??????
     NSThread* DeviceThread          = [[NSThread alloc] initWithTarget:self selector:@selector(CheckDevceThread1)
                                                       object:nil];
     [DeviceThread start];
@@ -145,7 +147,6 @@ static FieldTrackData TransData;
 -(void)CheckDevceThread1
 {
     while (true) {
-//        NSLog(@"- - - - - - - - - -\n - - - - -- - - - 轮询检测 设备是否开启\n - - - - - - ");
         int result                  =[self openJhlDevice];
         [self StatusChange:result];
         if (result ==0)
@@ -460,7 +461,8 @@ static FieldTrackData TransData;
     /* 登陆按钮：UIButton */
     y += (iconViewHeight + 20);
     self.loadButton.frame               = CGRectMake(0 + leftLeave, y, self.view.bounds.size.width - leftLeave * 2, iconViewHeight);
-    self.loadButton.backgroundColor     = [UIColor colorWithRed:1 green:0.1 blue:0 alpha:1];
+    self.loadButton.backgroundColor     = [UIColor colorWithRed:234.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
+
     self.loadButton.layer.cornerRadius  = ViewCornerRadius;
     self.loadButton.titleLabel.font     = [UIFont fontWithName:@"Helvetica-Bold" size:22];// 设置字体大小
     [self.loadButton setTitle:@"登陆" forState:UIControlStateNormal];

@@ -225,12 +225,10 @@
 
 
 
-
+/************************
+ *  签到报文
+ *************************/
 +(NSString *)signIn{
-   // NSLog(@"终端号===%@",[EncodeString encodeASC:@"99999999"]);
-    //NSLog(@"商户号===%@",[EncodeString encodeASC:@"999999999999999"]);
-    //NSLog(@"批次号===%@",@"000001");
-    //NSLog(@"操作员号===%@",[EncodeString encodeASC:@"001"]);
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   @"000001",//11 流水号,bcd,定长6
@@ -251,19 +249,28 @@
     return binaryDataStr;
 }
 
-//金额转换
+
+/************************
+ *  金额转换
+ *************************/
 +(NSString *)themoney{
     int money=[[PublicInformation returnMoney] floatValue]*100;
     NSLog(@"*****money****%d*******",money);
     return [NSString stringWithFormat:@"%012d",money];
 }
-//mac校验证
+
+
+
+
+/************************
+ *  mac校验证
+ *************************/
 +(NSArray *)getNewPinAndMac:(NSArray *)arr exchange:(NSString *)typestr bitmap:(NSString *)bitstr{
     //NSLog(@"原始数据====%@",arr);
     //mac校验数据
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@",typestr,bitstr,[arr componentsJoinedByString:@""]];
-    NSLog(@"allStr====%@,=====%d",allStr,[allStr length]);
-    int len = allStr.length;
+    NSLog(@"allStr====%@,=====%d",allStr,(int)[allStr length]);
+    int len = (int)allStr.length;
     int other = len % 16;
     
     NSMutableArray *numArr=[[NSMutableArray alloc] init];
@@ -273,7 +280,7 @@
         }
     }
     NSString *newAllStr=[NSString stringWithFormat:@"%@%@",allStr,[numArr componentsJoinedByString:@""]];
-    NSLog(@"newAllStr=====%@=====%d",newAllStr,[newAllStr length]);
+    NSLog(@"newAllStr=====%@=====%d",newAllStr,(int)[newAllStr length]);
     
     NSData *btData=[PublicInformation NewhexStrToNSData:newAllStr];
     NSLog(@"btData====%@",btData);
@@ -342,7 +349,10 @@
     return newArr;
 }
 
-//公钥下发
+
+/************************
+ *  公钥下发
+ *************************/
 +(NSString *)downloadPublicKey{
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
@@ -399,7 +409,10 @@
     return binaryDataStr;
 }
 
-//消费
+
+/************************
+ *  消费
+ *************************/
 +(NSString *)consume:(NSString *)pin{
     //流水号
     NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];//[PublicInformation exchangeNumber];
@@ -416,7 +429,7 @@
                   @"12",//26
                   //@"",//14 卡有效期,bcd,(pos获取时存在)
                   //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
-                  [NSString stringWithFormat:@"%d%@",[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
+                  [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
 //                  @"",//36，三磁道数据，asc，不定长104，(pos获取时存在)
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],//41,终端号，asc，定长8
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],//42，商户号，asc，定长15
@@ -448,7 +461,7 @@
     //61域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@",[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:liushuiStr]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%d%@",(int)[ascStr length]/2,ascStr];
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
                  [PublicInformation returnCard:[PublicInformation returnposCard]],//2 卡号 bcd（不定长19）

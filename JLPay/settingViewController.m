@@ -170,11 +170,9 @@
     CGFloat   y;
     if (cell.bounds.size.height >= cell.bounds.size.width * ImageViewWidthInCellCent) {
         imageFrameHeight        = cell.bounds.size.width * ImageViewWidthInCellCent;
-//        y                       = (cell.bounds.size.height - imageFrameHeight)/2;
         y                       = (self.tableView.rowHeight - imageFrameHeight)/2;
 
     } else {
-//        imageFrameHeight        = cell.bounds.size.height;
         imageFrameHeight        = self.tableView.rowHeight;
 
         y                       = 0;
@@ -190,7 +188,6 @@
                                              0,
                                              cell.bounds.size.width * LabelViewWidthInCellCent,
                                              self.tableView.rowHeight);
-//                                             cell.bounds.size.height);
     UILabel     *nameLabel      = [[UILabel alloc] initWithFrame:labelFrame];
     nameLabel.text              = labelName;
     [cell addSubview:nameLabel];
@@ -217,7 +214,7 @@
  * 返  回 : 无
  *************************************/
 - (void) loadFirstCell: (UITableViewCell *)cell inTabelView: (UITableView *)tableView {
-    cell.backgroundColor            = [UIColor redColor];
+    cell.backgroundColor            = [UIColor colorWithRed:246.0/255.0 green:64.0/255.0 blue:59.0/255.0 alpha:1.0];
     
     CGFloat imageTopInset           = 6.0;
     CGFloat imageWidth              = tableView.rowHeight * FirstCellLargerCent - imageTopInset * 2.0;
@@ -274,7 +271,7 @@
     frame.origin.x                  += width;
     frame.size.width                = littleHeight;
     UIImageView *panImageView       = [[UIImageView alloc] initWithFrame:frame];
-    panImageView.backgroundColor    = [UIColor greenColor];
+    panImageView.image              = [UIImage imageNamed:@"bianji"];
     // image
     [cell addSubview:panImageView];
 }

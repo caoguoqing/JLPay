@@ -7,9 +7,13 @@
 //
 
 #import "CustPayViewController.h"
+#import "JHNconnect.h"
+#import "Define_Header.h"
 
-#define ImageForBrand   @"logo"                                     // 商标图片
-#define NameForBrand    @"捷联通"                                    // 商标名字
+
+
+#define ImageForBrand   @"logo"                                             // 商标图片
+#define NameForBrand    @"捷联通"                                            // 商标名字
 
 
 
@@ -18,6 +22,8 @@
 @property (nonatomic)         double            money;                      // 金额
 @property (nonatomic, strong) NSMutableArray    *moneyArray;                // 模拟金额栈：保存历史金额
 @property (assign)            BOOL              dotFlag;                    // 小数点标记
+@property (strong,nonatomic)  JHNconnect        *JHNCON;                    // 通讯入口
+
 @end
 
 @implementation CustPayViewController
@@ -35,10 +41,15 @@
     _money                              = 0.0;
     _dotFlag                            = NO;
     _moneyArray                         = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithFloat:0.0], nil];
-    
    
     [self addSubViews];
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    if (self.JHNCON ==NULL)
+        self.JHNCON = [JHNconnect shareView];
+}
+
 
 /* 金额值的 setter 方法 */
 - (void)setMoney:(double)money {
@@ -85,7 +96,8 @@
     frame.size.width                    = self.view.bounds.size.width - bornerWith*2;
     frame.size.height                   = bigHeight - bornerWith * 2;
     UIView  *moneyView                  = [[UIView alloc] initWithFrame:frame];
-    moneyView.backgroundColor           = [UIColor colorWithWhite:0.7 alpha:0.5];
+//    moneyView.backgroundColor           = [UIColor colorWithWhite:0.7 alpha:0.5];
+    moneyView.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0];
     [self.view addSubview:moneyView];
     
     // moneyLabel
@@ -189,13 +201,13 @@
     frame.size.height                   = littleHeight * 1.3 - newBornerWith*2;
     UIButton *brushButton               = [[UIButton alloc] initWithFrame:frame];
     brushButton.layer.cornerRadius      = 8.0;
-    brushButton.backgroundColor         = [UIColor redColor];
+    brushButton.backgroundColor         = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
     [brushButton setTitle:@"开始刷卡" forState:UIControlStateNormal];
     [brushButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     brushButton.titleLabel.font         = [UIFont boldSystemFontOfSize:32];
-    // 添加 action ..........................
+    // 添加 action
     [brushButton addTarget:self action:@selector(beginBrush:) forControlEvents:UIControlEventTouchDown];
-    [brushButton addTarget:self action:@selector(toBrush:) forControlEvents:UIControlEventTouchUpInside];
+    [brushButton addTarget:self action:@selector(toBrushClick:) forControlEvents:UIControlEventTouchUpInside];
     [brushButton addTarget:self action:@selector(outBrush:) forControlEvents:UIControlEventTouchUpOutside];
 
     [brushButton setSelected:YES];
@@ -211,42 +223,42 @@
  * 返  回 : 无
  *************************************/
 - (IBAction) toBrush:(UIButton*)sender {
-    sender.transform = CGAffineTransformIdentity;
-    self.money += 1;
+    sender.transform                    = CGAffineTransformIdentity;
+    self.money                          += 1;
 }
 - (IBAction) outBrush:(UIButton*)sender {
-    sender.transform = CGAffineTransformIdentity;
+    sender.transform                    = CGAffineTransformIdentity;
 }
 - (IBAction) beginBrush:(UIButton*)sender {
-    sender.transform = CGAffineTransformMakeScale(0.99, 0.99);
+    sender.transform                    = CGAffineTransformMakeScale(0.98, 0.98);
 }
 
 - (IBAction) touchDown:(UIButton*)sender {
-    sender.transform = CGAffineTransformMakeScale(0.99, 0.99);
+    sender.transform                    = CGAffineTransformMakeScale(0.99, 0.99);
     sender.backgroundColor              = [UIColor colorWithWhite:0.7 alpha:0.5];
 }
 - (IBAction) touchUp:(UIButton*)sender {
-    sender.transform = CGAffineTransformIdentity;
+    sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 要计算属性值：金额：money
     [self caculateMoney:sender];
 }
 - (IBAction) touchUpDelete:(DeleteButton*)sender {
-    sender.transform = CGAffineTransformIdentity;
+    sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 要计算属性值：金额：money
-    self.money                      = [self pullMoneyStack];
+    self.money                          = [self pullMoneyStack];
     // 撤销后要注意小数位标志更新
     if ( [self moneyHasDot:self.money] && (self.dotFlag == NO) ) {
-        self.dotFlag                = YES;
+        self.dotFlag                    = YES;
     } else if ( ([self moneyHasDot:self.money] == NO) && (self.dotFlag == YES) ) {
-        self.dotFlag                = NO;
+        self.dotFlag                    = NO;
     }
 }
 
 
 - (IBAction) touchUpOut:(UIButton*)sender {
-    sender.transform = CGAffineTransformIdentity;
+    sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
 }
 
@@ -258,6 +270,44 @@
 }
 - (IBAction) touchOutSimple:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
+}
+
+#pragma mark   -----保存金额数据
+/*************************************
+ * 功  能 : 将确认的金额保存到本地配置文件;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+-(void)saveConsumerMoney {
+    // 保存的是字符串型的金额
+    NSString *moneyStr=[NSString stringWithFormat:@"%0.2f",[[_acountOfMoney.text substringFromIndex:1] floatValue]];
+    [[NSUserDefaults standardUserDefaults] setValue:moneyStr forKey:Consumer_Money];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+#pragma mark  ------跳转刷卡界面
+/*************************************
+ * 功  能 : 刷卡按钮的点击事件:跳转到刷卡界面;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (IBAction)toBrushClick:(UIButton *)sender {
+    sender.transform                    = CGAffineTransformIdentity;
+
+    UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UIViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+    
+    if (![self.JHNCON isConnected])
+    {
+        UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alter show];
+        
+    }else
+    {
+        [self saveConsumerMoney];
+        [self.navigationController pushViewController:viewcon animated:YES];
+        
+    }
 }
 
 
@@ -347,7 +397,6 @@
     // 计算当前按键值前要保存旧的金额值到栈里面: pushMoneyStack
     // 撤销按钮
     if ([numberStr isEqualToString:@"delete"]) {
-//    if ([button.imageView.image]) {
         self.money                      = [self pullMoneyStack];
         // 撤销后要注意小数位标志更新
         if ( [self moneyHasDot:self.money] && (self.dotFlag == NO) ) {
@@ -404,8 +453,6 @@
         }
     }
 }
-
-
 
 
 

@@ -34,8 +34,8 @@
     
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];
-    NSLog(@"%@  %@ %@ %@ %@ %@ %@",[self ToBHex:[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
-    return [NSString stringWithFormat:@"%@%@",[self ToBHex:[allStr length]/2],allStr];
+    NSLog(@"%@  %@ %@ %@ %@ %@ %@",[self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
+    return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)[allStr length]/2],allStr];
 }
 
 
@@ -46,7 +46,7 @@
     
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];
-    return [NSString stringWithFormat:@"0%d%@",[allStr length]/2,allStr];
+    return [NSString stringWithFormat:@"0%d%@",(int)[allStr length]/2,allStr];
 }
 
 
