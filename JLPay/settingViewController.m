@@ -7,6 +7,8 @@
 //
 
 #import "settingViewController.h"
+#import "DeviceSettingViewController.h"
+#import <UIKit/UIKitDefines.h>
 
 
 #define LeftInsetOfCellCent             0.1f                    // 单元格元素的左边界距离
@@ -148,7 +150,48 @@
     if (indexPath.section == 0 ) {
         // 不要用 switch 分支,改到指定的方法模块中去实现
         // 在模块中，根据索引 indexPath.row 来匹配 dataSource 跟对应方法，以减少
+        switch (indexPath.row) {
+            case 0:
+                // 账号名称
+                break;
+            case 1:
+                // 商户管理
+                break;
+            case 2:
+                // 交易管理
+                break;
+            case 3:
+                // 绑定机具
+                break;
+            case 4:
+                // 连接机具
+                break;
+            case 5:
+                // 额度查询
+                break;
+            case 6:
+                // 修改密码
+                break;
+            case 7:
+                // 意见反馈
+                break;
+            case 8:
+                // 参数设置
+            {
+                UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
+                [self.navigationController pushViewController:viewContr animated:YES];
+            }
+                break;
+            case 9:
+                // 帮助与关于
+                break;
+            // 如新版本新增功能，在后面添加 case...
+            default:
+                break;
+        }
     }
+
     
 }
 

@@ -36,7 +36,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationController.navigationBarHidden = YES;
+//    self.navigationController.navigationBarHidden = YES;
     _acountOfMoney                      = [[UILabel alloc] initWithFrame:CGRectZero];
     _money                              = 0.0;
     _dotFlag                            = NO;
@@ -48,6 +48,9 @@
 {
     if (self.JHNCON ==NULL)
         self.JHNCON = [JHNconnect shareView];
+    
+    self.navigationController.navigationBarHidden = YES;
+
 }
 
 
@@ -173,7 +176,7 @@
     frame.size.height                   = littleHeight - bornerWith*2;
     OtherPayButton *alipayButton        = [[OtherPayButton alloc] initWithFrame:frame];
     // 添加 action ..........................
-    [alipayButton addTarget:self action:@selector(touchUpSimple:) forControlEvents:UIControlEventTouchUpInside];
+    [alipayButton addTarget:self action:@selector(clickToWeAlipay:) forControlEvents:UIControlEventTouchUpInside];
     [alipayButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
     [alipayButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
 
@@ -187,7 +190,7 @@
     // 添加 action ..........................
     [weChatButton setImageViewWithName:@"wx"];
     [weChatButton setLabelNameWithName:@"微信支付"];
-    [weChatButton addTarget:self action:@selector(touchUpSimple:) forControlEvents:UIControlEventTouchUpInside];
+    [weChatButton addTarget:self action:@selector(clickToWeChat:) forControlEvents:UIControlEventTouchUpInside];
     [weChatButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
     [weChatButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
 
@@ -271,6 +274,29 @@
 - (IBAction) touchOutSimple:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
 }
+
+
+#pragma mark   -----微信支付的跳转
+- (IBAction) clickToWeChat:(UIButton*)sender {
+    sender.transform                    = CGAffineTransformIdentity;
+    UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
+    viewController.title                = @"微信支付";
+    [self.navigationController pushViewController:viewController animated:YES];
+    
+}
+
+
+#pragma mark   -----支付宝支付跳转
+- (IBAction) clickToWeAlipay:(UIButton*)sender {
+    sender.transform                    = CGAffineTransformIdentity;
+    UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"alipayPay"];
+    viewController.title                = @"支付宝支付";
+    [self.navigationController pushViewController:viewController animated:YES];
+}
+
+
 
 #pragma mark   -----保存金额数据
 /*************************************

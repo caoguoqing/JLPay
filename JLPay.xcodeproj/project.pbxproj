@@ -110,6 +110,8 @@
 		5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344361AD8EF910005C890 /* AVFoundation.framework */; };
 		5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */; };
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
+		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
+		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -320,6 +322,10 @@
 		5ED344361AD8EF910005C890 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatPayViewController.h; sourceTree = "<group>"; };
+		5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatPayViewController.m; sourceTree = "<group>"; };
+		5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayViewController.h; sourceTree = "<group>"; };
+		5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlipayViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,6 +382,10 @@
 				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
 				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
+				5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */,
+				5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */,
+				5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */,
+				5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */,
 				5E0D18691B09DA710092F4AB /* OtherPayButton.h */,
 				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
@@ -529,9 +539,9 @@
 				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
 				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
 				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
-				5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */,
 				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
 				5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */,
+				5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */,
 				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
 				5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */,
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
@@ -920,6 +930,7 @@
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
 				5EBAA8EE1ACD2FA800E2ABDD /* GroupPackage8583.m in Sources */,
+				5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */,
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,
 				5E397B2A1AD36429004F206F /* ASICloudFilesContainerRequest.m in Sources */,
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
@@ -929,6 +940,7 @@
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
 				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
+				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,

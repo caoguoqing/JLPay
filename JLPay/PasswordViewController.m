@@ -80,7 +80,7 @@ static FieldTrackData TransData;
     return money;
 }
 /**
- *      确定按钮
+ *      确定按钮的点击事件
  */
 - (IBAction)click:(UIButton *)sender {
     

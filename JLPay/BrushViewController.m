@@ -49,7 +49,10 @@ static FieldTrackData TransData;
     
     if ([self isConnected]) {
         // 刷卡
+        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"请刷卡..."];
+
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
             // 刷卡
             [self MagnCard:2000 :0 :0];
             // 刷卡完成要停止转圈
@@ -59,6 +62,8 @@ static FieldTrackData TransData;
         
     } else {
         // 连接设备....循环中
+        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"设备未连接"];
+
     }
     
 }
@@ -79,9 +84,11 @@ static FieldTrackData TransData;
     
     NSString *astring  =[CommunicationManager getLibVersion];
     
-    NSLog(@"%@",astring);
+    if (Print_log)
+        NSLog(@"。。。。。。。。。。。。。。。。。。%@",astring);
     int result = [osmanager openDevice];
-    NSLog(@"%s,result:%d",__func__,result);
+    if (Print_log)
+        NSLog(@"%s,result:%d",__func__,result);
     return result;
     
     
@@ -142,7 +149,8 @@ static FieldTrackData TransData;
         return  result;
     
     Datakey = [@"340110" stringByAppendingString:Datakey];
-    NSLog(@"datakey ==================%@",Datakey);
+    if (Print_log)
+        NSLog(@"datakey ==================%@",Datakey);
     NSData* bytesDate =[self StrHexToByte:Datakey];
     result =[osmanager exchangeData:bytesDate timeout:WAIT_TIMEOUT cb:self];
     if (Print_log)
@@ -405,11 +413,11 @@ static FieldTrackData TransData;
     // 打包报文
     NSData *SendArryByte = [[NSData alloc] initWithBytes:SendData length:1+12 +3+1];
     int result =[osmanager exchangeData:SendArryByte timeout:timeout cb:self];
+
     
     if (Print_log)
     {
         dispatch_async(dispatch_get_main_queue(), ^{
-//            NSLog(@"### %s ###", strerror(errno));
             NSLog(@"%s %@",__func__,SendArryByte);
             NSLog(@"%s,result:%d",__func__,result);
         });
@@ -671,6 +679,11 @@ static FieldTrackData TransData;
                         strPan = [strPan stringByAppendingString:newHexStr];
                     }
                    
+                    /////// -- test
+                    [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"刷卡成功"];
+
+                    ///////
+                    
                     // 刷卡成功要跳转到 输入密码界面:进行密码验证以及交易报文上送
                     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
                     UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"password"];

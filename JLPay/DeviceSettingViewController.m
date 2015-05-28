@@ -33,7 +33,7 @@ typedef enum {
     USE_IC,             // 使用IC卡
 } EU_POS_CARDTYPE;
 
-@interface DeviceSettingViewController ()<MBProgressHUDDelegate, wallDelegate,managerToCard>
+@interface DeviceSettingViewController ()<MBProgressHUDDelegate, wallDelegate,managerToCard,UIAlertViewDelegate>
 {
     NSMutableArray *m_arrayName;
     NSMutableArray *m_arrayUUID;
@@ -110,53 +110,86 @@ typedef enum {
 
 
 #pragma mark------------------------------------------------------tableviewDelegate
+/*************************************
+ * 功  能 : cell的点击事件；
+ * 参  数 :
+ * 返  回 :
+ *************************************/
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+//    UITableViewCell* cell       = [tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.row > 1 ) {
-        /*
-        if (PosLib_DeviceState() != 0) {
-            PosLib_Scan();
-            HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-            [self.navigationController.view addSubview:HUD];
-//            HUD.mode = MBProgressHUDModeDeterminate;
 
-            HUD.delegate = self;
-            HUD.labelText = @"正在扫描...";
-            [HUD show:YES];
-        }
-      */
          if ([self.JHNCON isConnected] ) {
-         UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message: @"设备已经连接，确认要断开吗？" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: @"取消", nil];
-         alter.tag = 100;
-         //            [alter show];
-         
-         
-         switch (indexPath.row) {
-         case 2:
-         [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey] IP:Current_IP PORT:Current_Port Delegate:self method:@"downloadMainKey"];
-         
-         break;
-         
-         default:
-         break;
-         }
+             switch (indexPath.row) {
+                 case 0:
+                     break;
+                 case 1:
+                     // 商户设置
+                     break;
+                 case 2:
+                     // 主密钥下载
+                 {
+                     // 这个提示窗口是否要自定义????
+                     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NULL message:@"是否下载密钥到手机?" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
+                     [alert show];
+                 }
+                     break;
+                 case 3:
+                     // 参数下载
+                     break;
+                 case 4:
+                     // IC卡公钥下载
+                     break;
+                 case 5:
+                     // EMV参数下载
+                     break;
+                 default:
+                     break;
+             }
          } else {
-         if (![self.JHNCON isConnected]) {
-         //            PosLib_Scan();
-         //            [ProgressHUD show:@"正在扫描设备"];
-         
-         UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-         [alter show];
-         
-         
-         }
+                 UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                 [alter show];
          }
          
     }
-    
-    
-    
 }
+
+
+
+/*************************************
+ * 功  能 : cell的点击事件的提示窗口；
+ * 参  数 :
+ * 返  回 :
+ *************************************/
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if ([alertView.message isEqualToString: @"是否下载密钥到手机?"]) {
+        // 被点击的 Cell 恢复未点击状态
+        for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {
+            NSIndexPath* index      = [NSIndexPath indexPathForRow:i inSection:0];
+            UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:index];
+            if (cell.selected == YES) {
+                cell.selected = NO;
+                break;
+            }
+        }
+        // 下载主密钥
+        if (buttonIndex == 1) {  // 点击了 "是"
+            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey] IP:Current_IP PORT:Current_Port Delegate:self method:@"downloadMainKey"];
+        }
+
+    } else if ([alertView.message isEqualToString: @"请连接设备！"]) {
+        for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {
+            NSIndexPath* index      = [NSIndexPath indexPathForRow:i inSection:0];
+            UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:index];
+            if (cell.selected == YES) {
+                cell.selected = NO;
+                break;
+            }
+        }
+    }
+}
+
 
 
 #pragma mark==========================================managerToCard

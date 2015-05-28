@@ -63,7 +63,10 @@ static FieldTrackData TransData;
     [self EndEdit];
     
     // 打开设备..循环中。。这里需要读取设备么????????????????????????
-    [self openDevice];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        [self openDevice];
+        [self CheckDevceThread1];
+    });
     
     self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
     
@@ -167,7 +170,7 @@ static FieldTrackData TransData;
     
     
     // --- 打印设备的版本
-    NSLog(@"%@",astring);
+    NSLog(@"，，，，，，，，，，，，，，，，，，，，，%@",astring);
     int result                      = [osmanager openDevice];
     // --- 打印打开设备的结果: result
     NSLog(@"%s,result:%d",__func__,result);
@@ -182,7 +185,7 @@ static FieldTrackData TransData;
         case KNOWED_DEVICE_ING://刷卡器已识别
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<刷卡器已识别,获取版本号>>>>>>>>>>>>>>>>>>>");
                 [self GetSnVersion];
             });
         }
@@ -190,28 +193,28 @@ static FieldTrackData TransData;
         case UNKNOW_DEVICE_ING://设备接入但不能识别为刷卡器
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<设备接入但不能识别为刷卡器>>>>>>>>>>>>>>>>>>>");
             });
         }
             break;
         case NO_DEVICE_INSERT://没有设备介入 （设备拔出）
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<没有设备介入 （设备拔出）>>>>>>>>>>>>>>>>>>>");
             });
         }
             break;
         case KNOWING_DEVICE_ING://设备正在识别
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-
+                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<设备正在识别>>>>>>>>>>>>>>>>>>>");
             });
         }
             break;
         case DEVICE_NEED_UPDATE_ING://刷卡器已识别，但需要升级
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<刷卡器已识别，但需要升级>>>>>>>>>>>>>>>>>>>");
 
             });
         }
@@ -573,9 +576,9 @@ static FieldTrackData TransData;
  * 返  回 : 无
  *************************************/
 - (IBAction)loadToMainView: (UIButton*)sender {
-    NSLog(@"登陆按钮的功能实现。。。。。。。");
     // 添加动画效果
     sender.transform                      = CGAffineTransformIdentity;
+    // 发送签到报文
     [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
 }
 

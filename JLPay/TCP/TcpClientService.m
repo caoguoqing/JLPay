@@ -88,6 +88,10 @@ static TcpClientService *sharedObj = nil;
 {
     NSLog(@"onSocket:%p didSecure:YES", sock);
 }
+
+/*
+ * 错误处理的方法
+ **/
 - (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err
 {
     //NSLog(@"err=====%@",[err localizedDescription]);

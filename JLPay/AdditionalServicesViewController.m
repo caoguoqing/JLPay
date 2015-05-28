@@ -28,6 +28,11 @@
     [super viewDidLoad];
     // 加载主界面视图的 scrollView
     [self initContentScrollView];
+    
+    
+    // 标题颜色设置为红色
+    self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor redColor] forKey:UITextAttributeTextColor];
+    
 }
 
 - (void)didReceiveMemoryWarning {
