@@ -8,11 +8,12 @@
 
 #import "DisplayMoneyText.h"
 
-#define Print_flag              0
+#define Print_flag              1
 
 @interface DisplayMoneyText()
-@property (nonatomic) NSString* moneyString;
-@property (nonatomic) BOOL      dotFlag;
+@property (nonatomic)           NSString* moneyString;
+@property (nonatomic)           BOOL      dotFlag;
+@property (nonatomic,assign)    NSInteger dotIndex;
 @property (nonatomic,strong)    NSString* leftNumbersAtDot;
 @property (nonatomic,strong)    NSString* rightNumbersAtDot;
 
@@ -25,6 +26,7 @@
 @synthesize dotFlag             = _dotFlag;
 @synthesize leftNumbersAtDot    = _leftNumbersAtDot;
 @synthesize rightNumbersAtDot   = _rightNumbersAtDot;
+@synthesize dotIndex            = _dotIndex;
 
 
 - (instancetype)init
@@ -35,11 +37,10 @@
         _leftNumbersAtDot       = @"0";
         _rightNumbersAtDot      = @"00";
         _moneyString            = [[_leftNumbersAtDot stringByAppendingString:@"."] stringByAppendingString:_rightNumbersAtDot];
+        _dotIndex               = 0;
     }
     return self;
 }
-
-
 
 // 设置小数点标记
 - (void) setDot{
@@ -50,30 +51,28 @@
 
 // 追加数字
 - (void) addNumber: (NSString*)number{
+    
     if (!self.dotFlag) {            // 无小数位
         if ([self.leftNumbersAtDot isEqualToString:@"0"]) {
             self.leftNumbersAtDot   = [number copy];
         } else {
-            self.leftNumbersAtDot       = [self.leftNumbersAtDot stringByAppendingString:number];
+            self.leftNumbersAtDot   = [self.leftNumbersAtDot stringByAppendingString:number];
         }
     }
     else {                          // 有小数位
-        NSString* dotNum1           = [self.rightNumbersAtDot substringToIndex:1];
-        NSString* dotNum2           = [self.rightNumbersAtDot substringFromIndex:1];
-        if (Print_flag) {
-            NSLog(@"dotNum1 = [%@], dotNum2 = [%@]", dotNum1, dotNum2);
-        }
-        if ([dotNum2 isEqualToString:@"0"]) {
-            if ([dotNum1 isEqualToString:@"0"]) {
-                dotNum1             = number;
-            } else {
-                dotNum2             = number;
-            }
-            self.rightNumbersAtDot  = [dotNum1 stringByAppendingString:dotNum2];
+        if (self.dotIndex == 0) {
+            self.rightNumbersAtDot  = [number stringByAppendingString:@"0"];
+            self.dotIndex ++;
+        } else if (self.dotIndex == 1) {
+            NSString* dotNum1       = [self.rightNumbersAtDot substringToIndex:1];
+            self.rightNumbersAtDot  = [dotNum1 stringByAppendingString:number];
+            self.dotIndex ++;
         }
     }
     self.moneyString                = [[self.leftNumbersAtDot stringByAppendingString:@"."] stringByAppendingString:self.rightNumbersAtDot];
-
+    if (Print_flag) {
+        NSLog(@";;;;;;;;;;;;;;;;; dotIndex = [%d]", self.dotIndex);
+    }
 }
 
 
@@ -96,12 +95,25 @@
     
     
     // 如果小数点后都是0且 dotFlag == yes，则置为 no
-    if (![self moneyHasDotNumber] && self.dotFlag) {
-        self.dotFlag                = NO;
+    if (![self moneyHasDotNumber] ) {
+        if (self.dotFlag)
+            self.dotFlag                = NO;
+        self.dotIndex               = 0;
     }
     // 如果小数点后有非0且 dotFlag == no ，则置为 yes
-    if ([self moneyHasDotNumber] && !self.dotFlag) {
-        self.dotFlag                = YES;
+    else if ([self moneyHasDotNumber] ) {
+        if (!self.dotFlag)
+            self.dotFlag                = YES;
+        NSString* dotNum2           = [self.rightNumbersAtDot substringFromIndex:1];
+        if (![dotNum2 isEqualToString:@"0"]) {
+            self.dotIndex           = 2;
+        } else {
+            self.dotIndex           = 1;
+        }
+    }
+    if (Print_flag) {
+        NSLog(@";;;;;;;;;;;;;;;;; dotIndex = [%d], money = [%@], right = [%@]", self.dotIndex, self.moneyString, self.rightNumbersAtDot);
+        
     }
 }
 
@@ -118,7 +130,9 @@
         NSLog(@"number2 = [%@]", number2);
 
     }
-    if (![number1 isEqualToString:@"0"] || ![number2 isEqualToString:@"0"])
+    if ([number1 isEqualToString:@"0"] && [number2 isEqualToString:@"0"])
+        flag                        = NO;
+    else
         flag                        = YES;
     
     return flag;

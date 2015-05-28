@@ -113,6 +113,7 @@
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0DC1B16E08100CE3E3F /* DisplayMoneyText.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DB1B16E08100CE3E3F /* DisplayMoneyText.m */; };
+		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -329,6 +330,8 @@
 		5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlipayViewController.m; sourceTree = "<group>"; };
 		5EF4C0DA1B16E08100CE3E3F /* DisplayMoneyText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayMoneyText.h; sourceTree = "<group>"; };
 		5EF4C0DB1B16E08100CE3E3F /* DisplayMoneyText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayMoneyText.m; sourceTree = "<group>"; };
+		5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSignButton.h; sourceTree = "<group>"; };
+		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -359,7 +362,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5E08AE701B0991A400B8C198 /* AdditionalServices */ = {
+		5E08AE701B0991A400B8C198 /* 增值服务界面 */ = {
 			isa = PBXGroup;
 			children = (
 				5E08AE6D1B0989B100B8C198 /* AdditionalServicesViewController.h */,
@@ -371,10 +374,10 @@
 				5E5E5FB91B12CB3D002F421D /* AdditionalButton.h */,
 				5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */,
 			);
-			name = AdditionalServices;
+			name = "增值服务界面";
 			sourceTree = "<group>";
 		};
-		5E0D18661B09D9240092F4AB /* ToBrush */ = {
+		5E0D18661B09D9240092F4AB /* 刷卡界面 */ = {
 			isa = PBXGroup;
 			children = (
 				5EB6F9B61AC9501100E47AB5 /* NumPayViewController.h */,
@@ -396,10 +399,10 @@
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
 			);
-			name = ToBrush;
+			name = "刷卡界面";
 			sourceTree = "<group>";
 		};
-		5E0D18681B09D9BB0092F4AB /* CustManager */ = {
+		5E0D18681B09D9BB0092F4AB /* 商户设置界面 */ = {
 			isa = PBXGroup;
 			children = (
 				5EBE92821ACB95BC0096BD72 /* DeviceSettingViewController.h */,
@@ -411,7 +414,7 @@
 				5EBE927F1ACB80FD0096BD72 /* TerminalParamSetViewController.h */,
 				5EBE92801ACB80FD0096BD72 /* TerminalParamSetViewController.m */,
 			);
-			name = CustManager;
+			name = "商户设置界面";
 			sourceTree = "<group>";
 		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
@@ -534,11 +537,10 @@
 				5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */,
 				5ED3442E1AD8EB130005C890 /* JHNconnect.h */,
 				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
-				5EB6F9861AC8DD1C00E47AB5 /* logViewController.h */,
-				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
-				5E0D18661B09D9240092F4AB /* ToBrush */,
-				5E0D18681B09D9BB0092F4AB /* CustManager */,
-				5E08AE701B0991A400B8C198 /* AdditionalServices */,
+				5EF4C0DD1B1706A300CE3E3F /* 登陆界面 */,
+				5E0D18661B09D9240092F4AB /* 刷卡界面 */,
+				5E0D18681B09D9BB0092F4AB /* 商户设置界面 */,
+				5E08AE701B0991A400B8C198 /* 增值服务界面 */,
 				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
 				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
@@ -760,6 +762,17 @@
 			path = ProgressHUD;
 			sourceTree = "<group>";
 		};
+		5EF4C0DD1B1706A300CE3E3F /* 登陆界面 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F9861AC8DD1C00E47AB5 /* logViewController.h */,
+				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
+				5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */,
+				5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */,
+			);
+			name = "登陆界面";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -944,6 +957,7 @@
 				5E08AE761B09BDAA00B8C198 /* FunctionButton.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
 				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,
+				5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,

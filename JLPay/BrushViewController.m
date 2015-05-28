@@ -51,13 +51,13 @@ static FieldTrackData TransData;
         // 刷卡
         [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"请刷卡..."];
 
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
             // 刷卡
             [self MagnCard:2000 :0 :0];
             // 刷卡完成要停止转圈
             // 切换到密码输入界面
-//        });
+        });
         
     } else {
         // 连接设备....循环中
@@ -409,8 +409,10 @@ static FieldTrackData TransData;
         timeout =60*1000;
     long ntimeout =timeout/1000;
     SendData[16] =ntimeout;
-    // 打包报文
+    // 发送刷卡报文给读卡器
     NSData *SendArryByte = [[NSData alloc] initWithBytes:SendData length:1+12 +3+1];
+    
+    
     int result =[osmanager exchangeData:SendArryByte timeout:timeout cb:self];
 
     

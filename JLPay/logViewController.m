@@ -14,6 +14,7 @@
 #import "Toast+UIView.h"
 #import "CommunicationCallBack.h"
 #import "CommunicationManager.h"
+#import "OtherSignButton.h"
 
 
 
@@ -28,8 +29,12 @@
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
 @property (nonatomic, strong) UIButton    *loadButton;              // 登陆按钮
+
 @property (nonatomic, strong) UIButton    *signInButton;            // 注册按钮
 @property (nonatomic, strong) UIButton    *pinChangeButton;         // 密码修改按钮
+//@property (nonatomic, strong) OtherSignButton    *signInButton;            // 注册按钮
+//@property (nonatomic, strong) OtherSignButton    *pinChangeButton;         // 密码修改按钮
+
 
 @end
 
@@ -63,10 +68,10 @@ static FieldTrackData TransData;
     [self EndEdit];
     
     // 打开设备..循环中。。这里需要读取设备么????????????????????????
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        [self openDevice];
-        [self CheckDevceThread1];
-    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [self openDevice];
+//        [self CheckDevceThread1];
+//    });
     
     self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
     
@@ -480,23 +485,42 @@ static FieldTrackData TransData;
     /* 注册按钮：UIButton */
     y += (iconViewHeight + 30);
     CGFloat midViewLeave                = 6.0;
-    CGFloat signInViewWidth             = (self.view.bounds.size.width - leftLeave * 2)/2 - midViewLeave;
-    CGFloat signInViewHeight            = iconViewHeight/2;
-    CGRect signInFrame                  = CGRectMake(leftLeave, y, signInViewWidth, signInViewHeight);
+    CGFloat signInViewHeight            = iconViewHeight / 5.0 * 2.0;
+//    CGFloat signInViewWidth             = (self.view.bounds.size.width - leftLeave * 2)/2 - midViewLeave;
+    CGFloat signInViewWidth             = signInViewHeight * 4.0;
+
+    CGFloat midInset                    = (self.view.bounds.size.width - leftLeave * 2 - midViewLeave - signInViewWidth * 2)/4.0;
+    CGRect signInFrame                  = CGRectMake(leftLeave + midInset + signInViewWidth * 0.1, y, signInViewWidth * 0.9, signInViewHeight);
+    /*
+     *   注册按钮修改:
+     *      1.新建一个自定义 OtherSignButton : UIButton
+     *      2.
+     */
     self.signInButton.frame             = signInFrame;
-    [self.signInButton setTitle:@"立即注册" forState:UIControlStateNormal];
+//    [self.signInButton setTitle:@"立即注册" forState:UIControlStateNormal];
+//    self.signInButton.text              = @"立即注册";
+    [self.signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
     /* 给注册按钮添加 action */
     [self.signInButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.signInButton];
     
     /* 间隔图标 */
-    UIImageView *midLeaveView           = [[UIImageView alloc] initWithFrame:CGRectMake(leftLeave + signInViewWidth, y, midViewLeave, signInViewHeight)];
+    signInFrame.origin.x                       += signInViewWidth * 0.9 + midInset;
+    signInFrame.size.width              = midViewLeave;
+//    UIImageView *midLeaveView           = [[UIImageView alloc] initWithFrame:CGRectMake(leftLeave + midInset * 2.0 + signInViewWidth, y, midViewLeave, signInViewHeight)];
+    UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
     midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
     [self.view addSubview:midLeaveView];
     
     /* 修改密码按钮：UIButton */
-    self.pinChangeButton.frame          = CGRectMake(leftLeave + midViewLeave + signInViewWidth, y, signInViewWidth, signInViewHeight);
-    [self.pinChangeButton setTitle:@"忘记密码?" forState:UIControlStateNormal];
+    signInFrame.origin.x                += midViewLeave + midInset;
+    signInFrame.size.width              = signInViewWidth;
+//    self.pinChangeButton.frame          = CGRectMake(leftLeave + midInset * + midViewLeave + signInViewWidth, y, signInViewWidth, signInViewHeight);
+    self.pinChangeButton.frame          = signInFrame;
+//    [self.pinChangeButton setTitle:@"忘记密码?" forState:UIControlStateNormal];
+//    self.pinChangeButton.text           = @"忘记密码?";
+    [self.pinChangeButton setImage:[UIImage imageNamed:@"wmm"] forState:UIControlStateNormal];
+
     [self.view addSubview:self.pinChangeButton];
 
 
@@ -516,14 +540,13 @@ static FieldTrackData TransData;
     UIView *view                        = [[UIView alloc] initWithFrame:frame];
     view.layer.cornerRadius             = ViewCornerRadius;      // 圆角半径;
     
-    CGFloat x                           = 0 + frame.size.width/3;
+    CGFloat x                           = 0 + frame.size.width/4;
     CGRect  textFieldFrame              = CGRectMake(x, 0, frame.size.width - x, frame.size.height);
 
-    UIImageView *imageView              = [[UIImageView alloc] initWithFrame:CGRectMake(x/2.0, frame.size.height * 1.0 / 4.0, x/2.0, frame.size.height * 3.0 / 4.0)];
+    UIImageView *imageView              = [[UIImageView alloc] initWithFrame:CGRectMake(x/2.0, frame.size.height * 1.0 / 4.0, x / 5.0 * 4.0, frame.size.height )];
     
     if ([viewName isEqualToString:@"账号"]) {
         /* 先设置 textField，并添加到自定义 view 上 */
-        
         self.userNumberTextField.frame          = textFieldFrame;
         self.userNumberTextField.placeholder    = @"请输入您的账号";
         self.userNumberTextField.textColor      = [UIColor whiteColor];
@@ -531,7 +554,7 @@ static FieldTrackData TransData;
 
         [view addSubview:self.userNumberTextField];
 
-        /* 然后设置该 view 的标签图片...... */
+        /* 然后设置该 view 的标签图片 */
         imageView.image                         = [UIImage imageNamed:@"zhm"];
         
     } else if ([viewName isEqualToString:@"密码" ]) {
@@ -540,12 +563,10 @@ static FieldTrackData TransData;
         self.userPasswordTextField.textColor    = [UIColor whiteColor];
         [self.userPasswordTextField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
 
-
         [view addSubview:self.userPasswordTextField];
         
-        /* 然后设置该 view 的标签图片...... */
+        /* 然后设置该 view 的标签图片 */
         imageView.image                         = [UIImage imageNamed:@"mm"];
-        /*/..............................*/
 
     }
     [view addSubview:imageView];
