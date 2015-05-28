@@ -150,7 +150,7 @@ static FieldTrackData TransData;
 -(void)CheckDevceThread1
 {
     while (true) {
-        int result                  =[self openJhlDevice];
+        int result                  = [self openJhlDevice];
         [self StatusChange:result];
         if (result ==0)
         {
@@ -166,7 +166,7 @@ static FieldTrackData TransData;
     if (osmanager ==NULL)
         osmanager                   = [CommunicationManager sharedInstance];
     
-    NSString *astring               =[CommunicationManager getLibVersion];
+    NSString *astring               = [CommunicationManager getLibVersion];
     
     
     // --- 打印设备的版本
@@ -527,17 +527,19 @@ static FieldTrackData TransData;
         self.userNumberTextField.frame          = textFieldFrame;
         self.userNumberTextField.placeholder    = @"请输入您的账号";
         self.userNumberTextField.textColor      = [UIColor whiteColor];
+        [self.userNumberTextField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
 
         [view addSubview:self.userNumberTextField];
 
         /* 然后设置该 view 的标签图片...... */
         imageView.image                         = [UIImage imageNamed:@"zhm"];
-        /*/..............................*/
         
     } else if ([viewName isEqualToString:@"密码" ]) {
         self.userPasswordTextField.frame        = textFieldFrame;
         self.userPasswordTextField.placeholder  = @"请输入您的密码";
         self.userPasswordTextField.textColor    = [UIColor whiteColor];
+        [self.userPasswordTextField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
+
 
         [view addSubview:self.userPasswordTextField];
         

@@ -9,6 +9,7 @@
 #import "CustPayViewController.h"
 #import "JHNconnect.h"
 #import "Define_Header.h"
+#import "DisplayMoneyText.h"
 
 
 
@@ -19,18 +20,20 @@
 
 @interface CustPayViewController ()
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
-@property (nonatomic)         double            money;                      // 金额
+@property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) NSMutableArray    *moneyArray;                // 模拟金额栈：保存历史金额
-@property (assign)            BOOL              dotFlag;                    // 小数点标记
+//@property (assign)            BOOL              dotFlag;                    // 小数点标记
 @property (strong,nonatomic)  JHNconnect        *JHNCON;                    // 通讯入口
+@property (nonatomic, strong) DisplayMoneyText* moneyStr;                   // 用来收集数字按钮点击的金额计算的类
 
 @end
 
 @implementation CustPayViewController
 @synthesize acountOfMoney               = _acountOfMoney;
 @synthesize money                       = _money;
-@synthesize dotFlag                     = _dotFlag;
+//@synthesize dotFlag                     = _dotFlag;
 @synthesize moneyArray                  = _moneyArray;
+@synthesize moneyStr                    = _moneyStr;
 
 
 
@@ -38,9 +41,13 @@
     [super viewDidLoad];
 //    self.navigationController.navigationBarHidden = YES;
     _acountOfMoney                      = [[UILabel alloc] initWithFrame:CGRectZero];
-    _money                              = 0.0;
-    _dotFlag                            = NO;
-    _moneyArray                         = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithFloat:0.0], nil];
+//    _dotFlag                            = NO;
+//    _moneyArray                         = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithFloat:0.0], nil];
+//    _moneyArray                         = [[NSMutableArray alloc] initWithObjects:@"0.00", nil];
+    _moneyArray                         = [[NSMutableArray alloc] init];
+    _moneyStr                           = [[DisplayMoneyText alloc] init];
+    _money                              = [_moneyStr money];
+
    
     [self addSubViews];
 }
@@ -55,10 +62,11 @@
 
 
 /* 金额值的 setter 方法 */
-- (void)setMoney:(double)money {
-    if (_money != money) {
+- (void)setMoney:(NSString*)money {
+    if (![_money isEqualToString: money]) {
         _money                          = money;
-        _acountOfMoney.text             = [NSString stringWithFormat:@"%.02lf", _money];
+        _acountOfMoney.text             = _money;
+//        [_moneyArray addObject:_money];
     }
 }
 
@@ -106,7 +114,8 @@
     // moneyLabel
     CGRect innerFrame                   = CGRectMake(0, 0, frame.size.width - 40, frame.size.height);
     self.acountOfMoney.frame            = innerFrame;
-    self.acountOfMoney.text             = [NSString stringWithFormat:@"%.02lf", self.money];
+//    self.acountOfMoney.text             = [NSString stringWithFormat:@"%.02lf", self.money];
+    self.acountOfMoney.text             = @"0.00";
     self.acountOfMoney.textAlignment    = NSTextAlignmentRight;
     self.acountOfMoney.font             = [UIFont boldSystemFontOfSize:37];
     [moneyView addSubview:self.acountOfMoney];
@@ -119,7 +128,7 @@
     [moneyView addSubview:moneySymbolLabel];
     
     // 数字按键组     4/8
-    NSArray * numbers                   = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"-",nil];
+    NSArray * numbers                   = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"delete",nil];
     frame.origin.y                      += bigHeight - bornerWith;
     frame.size.width                    = self.view.bounds.size.width/3.0;
     frame.size.height                   = bigHeight;
@@ -225,10 +234,10 @@
  *          (id)sender                发起转场动作的按钮：放大、缩小
  * 返  回 : 无
  *************************************/
-- (IBAction) toBrush:(UIButton*)sender {
-    sender.transform                    = CGAffineTransformIdentity;
-    self.money                          += 1;
-}
+//- (IBAction) toBrush:(UIButton*)sender {
+//    sender.transform                    = CGAffineTransformIdentity;
+////    self.money                          += 1;
+//}
 - (IBAction) outBrush:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
 }
@@ -240,23 +249,37 @@
     sender.transform                    = CGAffineTransformMakeScale(0.99, 0.99);
     sender.backgroundColor              = [UIColor colorWithWhite:0.7 alpha:0.5];
 }
+
 - (IBAction) touchUp:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 要计算属性值：金额：money
-    [self caculateMoney:sender];
+//    [self caculateMoney:sender];
+    [self plusNumberIntoMoney: sender];
+    // 更新金额
+    self.money                          = [[self.moneyStr money] copy];
+    // 新的金额追加到栈中
+    if (![self.money isEqualToString:[self.moneyArray lastObject]]) {
+        [self.moneyArray addObject:self.money];
+    }
 }
+
+
+#pragma mask    --- 撤销按钮的点击事件
 - (IBAction) touchUpDelete:(DeleteButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
-    // 要计算属性值：金额：money
+    // 将栈顶金额弹出丢弃，并取新的栈顶金额
     self.money                          = [self pullMoneyStack];
+    
+    // 更新金额到计算金额中
+    [self.moneyStr setNewMoneyString:self.money];
     // 撤销后要注意小数位标志更新
-    if ( [self moneyHasDot:self.money] && (self.dotFlag == NO) ) {
-        self.dotFlag                    = YES;
-    } else if ( ([self moneyHasDot:self.money] == NO) && (self.dotFlag == YES) ) {
-        self.dotFlag                    = NO;
-    }
+//    if ( [self moneyHasDot:self.money] && (self.dotFlag == NO) ) {
+//        self.dotFlag                    = YES;
+//    } else if ( ([self moneyHasDot:self.money] == NO) && (self.dotFlag == YES) ) {
+//        self.dotFlag                    = NO;
+//    }
 }
 
 
@@ -306,8 +329,10 @@
  *************************************/
 -(void)saveConsumerMoney {
     // 保存的是字符串型的金额
-    NSString *moneyStr=[NSString stringWithFormat:@"%0.2f",[[_acountOfMoney.text substringFromIndex:1] floatValue]];
-    [[NSUserDefaults standardUserDefaults] setValue:moneyStr forKey:Consumer_Money];
+//    NSString *moneyStr=[NSString stringWithFormat:@"%0.2f",[[_acountOfMoney.text substringFromIndex:1] floatValue]];
+//    [[NSUserDefaults standardUserDefaults] setValue:moneyStr forKey:Consumer_Money];
+    [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
+
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -340,35 +365,41 @@
 /*************************************
  * 功  能 : 将当前金额值推入金额栈;
  *************************************/
-- (void) pushMoneyStack {
-    NSInteger index                     = 0;
-    if (self.moneyArray.count != 0){
-        index                           = self.moneyArray.count -  1;
-        NSNumber *numMoney = [self.moneyArray objectAtIndex:index];
-        if (self.money != numMoney.doubleValue){
-            [self.moneyArray addObject:[NSNumber numberWithDouble:self.money]];
-        }
-    }
-    else {
-        [self.moneyArray addObject:[NSNumber numberWithDouble:self.money]];
-    }
-}
+//- (void) pushMoneyStack {
+//    NSInteger index                     = 0;
+//    if (self.moneyArray.count != 0){
+//        index                           = self.moneyArray.count -  1;
+//        NSNumber *numMoney = [self.moneyArray objectAtIndex:index];
+//        if (self.money != numMoney.doubleValue){
+//            [self.moneyArray addObject:[NSNumber numberWithDouble:self.money]];
+//        }
+//    }
+//    else {
+//        [self.moneyArray addObject:[NSNumber numberWithDouble:self.money]];
+//    }
+//}
 /*************************************
  * 功  能 : 将金额栈的最上面的金额弹出;
  *************************************/
-- (CGFloat) pullMoneyStack {
-    double money = 0.0;
-    NSInteger index                     = 0;
-    if (self.moneyArray.count != 0)
-        index                           = self.moneyArray.count -  1;
-    else
-        return money;
-    
-    NSNumber *numMoney = [self.moneyArray objectAtIndex:index];
-    if (numMoney != nil) {
-        money                           = numMoney.doubleValue;
-        [self.moneyArray  removeObject:numMoney];
+- (NSString*) pullMoneyStack {
+    NSString* money;
+//    if (self.moneyArray.count != 0)
+//        index                           = self.moneyArray.count -  1;
+//    else
+//        return money;
+//    
+//    NSNumber *numMoney = [self.moneyArray objectAtIndex:index];
+//    if (numMoney != nil) {
+//        money                           = numMoney.doubleValue;
+//        [self.moneyArray  removeObject:numMoney];
+//    }
+    if (self.moneyArray.count > 1) {
+        [self.moneyArray removeLastObject];
+    } else {
+        [self.moneyArray removeLastObject];
+        [self.moneyArray addObject:@"0.00"];
     }
+    money                   = [[self.moneyArray lastObject] copy];
     return  money;
 }
 
@@ -379,9 +410,11 @@
  * 返  回 :
  *************************************/
 - (IBAction)longPressButtonOfDelete:(UILongPressGestureRecognizer*)sender {
-    self.money                          = 0.0;
-    self.dotFlag                        = NO;
+//    self.money                          = 0.0;
+//    self.dotFlag                        = NO;
     [self.moneyArray removeAllObjects];
+    self.money                              = @"0.00";
+    [self.moneyStr setNewMoneyString:self.money];
     
     if (sender.state == UIGestureRecognizerStateEnded) {
         sender.view.transform               = CGAffineTransformIdentity;
@@ -397,16 +430,34 @@
  * 返  回 : 
  *          BOOL
  *************************************/
-- (BOOL) moneyHasDot: (CGFloat)money {
-    BOOL flag                           = NO;
-    
-    if (   (NSInteger)(money * 100.0) % 10 != 0 ||
-           (NSInteger)(money * 100.0) % 100 != 0
-       ) {
-        flag                            = YES;
+//- (BOOL) moneyHasDot: (CGFloat)money {
+//    BOOL flag                           = NO;
+//    
+//    if (   (NSInteger)(money * 100.0) % 10 != 0 ||
+//           (NSInteger)(money * 100.0) % 100 != 0
+//       ) {
+//        flag                            = YES;
+//    }
+//    
+//    return flag;
+//}
+
+/*************************************
+ * 功  能 : 将按钮的对应的数字或小数点计算到money属性中;
+ * 参  数 :
+ *          (UIButton*)sender         被点击的按钮
+ * 返  回 : 无
+ *************************************/
+- (void) plusNumberIntoMoney: (UIButton*)button {
+    // 小数点
+    if ([button.titleLabel.text isEqualToString:@"."]) {
+        [self.moneyStr setDot];
+    }
+    // 纯数字
+    else {
+        [self.moneyStr addNumber:button.titleLabel.text];
     }
     
-    return flag;
 }
 
 
@@ -416,69 +467,70 @@
  *          (UIButton*)sender         被点击的按钮
  * 返  回 : 无
  *************************************/
-- (void) caculateMoney: (UIButton*)button {
-    NSString *numberStr                 = button.titleLabel.text;
-    double   temp                      = 0.0;
-    
-    // 计算当前按键值前要保存旧的金额值到栈里面: pushMoneyStack
-    // 撤销按钮
-    if ([numberStr isEqualToString:@"delete"]) {
-        self.money                      = [self pullMoneyStack];
-        // 撤销后要注意小数位标志更新
-        if ( [self moneyHasDot:self.money] && (self.dotFlag == NO) ) {
-            self.dotFlag                = YES;
-        } else if ( ([self moneyHasDot:self.money] == NO) && (self.dotFlag == YES) ) {
-            self.dotFlag                = NO;
-        }
-    }
-    // 小数点按钮
-    else if ([numberStr isEqualToString:@"."]) {
-        [self pushMoneyStack];
-        
-        // 如果小数点标志不为yes，则置为yes
-        if (!self.dotFlag)
-            self.dotFlag                = YES;
-    }
-    // 纯数字按钮
-    else if ( ([numberStr intValue] >= 0) && ([numberStr intValue] <= 9) ){
-        [self pushMoneyStack];
-
-        // 如果有小数位,判断是否到了最后一位
-        if (self.dotFlag) {
-            // 如果*100后除10还有余数说明到了第二位小数了
-            if ( (NSInteger)(self.money * 100)%10 != 0  ) {
-                // 当前的点击数不要添加了
-                NSLog(@"小数位已满，不能再被添加了。。。。。。。。。\n。。。。。。。");
-                NSLog(@"\n<<<<<<<<< money=[%lf], \n money*100 =[%d], \n money * 100.00/10 =[%d] >",
-                      self.money,
-                      (NSInteger)(self.money * 100.00),
-                      (NSInteger)(self.money * 100.00)%10 );
-                
-            }
-            // 只有一位小数
-            else if ((NSInteger)(self.money * 100.00)%100 != 0) {
-                temp                    = (double)[numberStr doubleValue]/100.0;
-                NSLog(@"-==========-temp num [%lf], money [%lf]-===========-", temp, self.money);
-                self.money              += temp;
-                NSLog(@"-==========-temp num [%lf], money [%lf]-===========-", temp, self.money);
-
-            }
-            // 小数点还没位数,添加到第一位小数
-            else {
-                temp                    = (double)[numberStr doubleValue]/10.0;
-                NSLog(@"--------temp num [%lf], money [%lf]--------", temp, self.money);
-                self.money              += temp;
-                NSLog(@"-==========-temp num [%lf], money [%lf]-===========-", temp, self.money);
-
-            }
-        }
-        // 如果没有小数位,直接追加
-        else {
-            temp                        = self.money * 10.0;
-            self.money                  = temp + [numberStr doubleValue];
-        }
-    }
-}
+//- (void) caculateMoney: (UIButton*)button {
+//    NSString *numberStr                 = button.titleLabel.text;
+//    double   temp                      = 0.0;
+//    
+//    // 计算当前按键值前要保存旧的金额值到栈里面: pushMoneyStack
+//    // 撤销按钮
+////    if ([numberStr isEqualToString:@"delete"]) {
+////        self.money                      = [self pullMoneyStack];
+////        // 撤销后要注意小数位标志更新
+////        if ( [self moneyHasDot:self.money] && (self.dotFlag == NO) ) {
+////            self.dotFlag                = YES;
+////        } else if ( ([self moneyHasDot:self.money] == NO) && (self.dotFlag == YES) ) {
+////            self.dotFlag                = NO;
+////        }
+////    }
+//    // 小数点按钮
+////    else
+//    if ([numberStr isEqualToString:@"."]) {
+//        [self pushMoneyStack];
+//        
+//        // 如果小数点标志不为yes，则置为yes
+//        if (!self.dotFlag)
+//            self.dotFlag                = YES;
+//    }
+//    // 纯数字按钮
+//    else if ( ([numberStr intValue] >= 0) && ([numberStr intValue] <= 9) ){
+//        [self pushMoneyStack];
+//
+//        // 如果有小数位,判断是否到了最后一位
+//        if (self.dotFlag) {
+//            // 如果*100后除10还有余数说明到了第二位小数了
+//            if ( (NSInteger)(self.money * 100)%10 != 0  ) {
+//                // 当前的点击数不要添加了
+//                NSLog(@"小数位已满，不能再被添加了。。。。。。。。。\n。。。。。。。");
+//                NSLog(@"\n<<<<<<<<< money=[%lf], \n money*100 =[%d], \n money * 100.00/10 =[%d] >",
+//                      self.money,
+//                      (NSInteger)(self.money * 100.00),
+//                      (NSInteger)(self.money * 100.00)%10 );
+//                
+//            }
+//            // 只有一位小数
+//            else if ((NSInteger)(self.money * 100.00)%100 != 0) {
+//                temp                    = (double)[numberStr doubleValue]/100.0;
+//                NSLog(@"-==========-temp num [%lf], money [%lf]-===========-", temp, self.money);
+//                self.money              += temp;
+//                NSLog(@"-==========-temp num [%lf], money [%lf]-===========-", temp, self.money);
+//
+//            }
+//            // 小数点还没位数,添加到第一位小数
+//            else {
+//                temp                    = (double)[numberStr doubleValue]/10.0;
+//                NSLog(@"--------temp num [%lf], money [%lf]--------", temp, self.money);
+//                self.money              += temp;
+//                NSLog(@"-==========-temp num [%lf], money [%lf]-===========-", temp, self.money);
+//
+//            }
+//        }
+//        // 如果没有小数位,直接追加
+//        else {
+//            temp                        = self.money * 10.0;
+//            self.money                  = temp + [numberStr doubleValue];
+//        }
+//    }
+//}
 
 
 
@@ -490,11 +542,11 @@
  *          (id)sender                  发起转场动作的控件
  * 返  回 :
  *          NSInteger                 section 的个数
- *************************************/
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
+// *************************************/
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    // Get the new view controller using [segue destinationViewController].
+//    // Pass the selected object to the new view controller.
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

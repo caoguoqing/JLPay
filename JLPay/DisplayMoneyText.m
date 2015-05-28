@@ -1,0 +1,128 @@
+//
+//  DisplayMoneyText.m
+//  DisplayMoney
+//
+//  Created by 冯金龙 on 15/5/27.
+//  Copyright (c) 2015年 冯金龙. All rights reserved.
+//
+
+#import "DisplayMoneyText.h"
+
+#define Print_flag              0
+
+@interface DisplayMoneyText()
+@property (nonatomic) NSString* moneyString;
+@property (nonatomic) BOOL      dotFlag;
+@property (nonatomic,strong)    NSString* leftNumbersAtDot;
+@property (nonatomic,strong)    NSString* rightNumbersAtDot;
+
+@end
+
+
+
+@implementation DisplayMoneyText
+@synthesize moneyString         = _moneyString;
+@synthesize dotFlag             = _dotFlag;
+@synthesize leftNumbersAtDot    = _leftNumbersAtDot;
+@synthesize rightNumbersAtDot   = _rightNumbersAtDot;
+
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _dotFlag                = NO;
+        _leftNumbersAtDot       = @"0";
+        _rightNumbersAtDot      = @"00";
+        _moneyString            = [[_leftNumbersAtDot stringByAppendingString:@"."] stringByAppendingString:_rightNumbersAtDot];
+    }
+    return self;
+}
+
+
+
+// 设置小数点标记
+- (void) setDot{
+    if (!self.dotFlag) {
+        self.dotFlag            = YES;
+    }
+}
+
+// 追加数字
+- (void) addNumber: (NSString*)number{
+    if (!self.dotFlag) {            // 无小数位
+        if ([self.leftNumbersAtDot isEqualToString:@"0"]) {
+            self.leftNumbersAtDot   = [number copy];
+        } else {
+            self.leftNumbersAtDot       = [self.leftNumbersAtDot stringByAppendingString:number];
+        }
+    }
+    else {                          // 有小数位
+        NSString* dotNum1           = [self.rightNumbersAtDot substringToIndex:1];
+        NSString* dotNum2           = [self.rightNumbersAtDot substringFromIndex:1];
+        if (Print_flag) {
+            NSLog(@"dotNum1 = [%@], dotNum2 = [%@]", dotNum1, dotNum2);
+        }
+        if ([dotNum2 isEqualToString:@"0"]) {
+            if ([dotNum1 isEqualToString:@"0"]) {
+                dotNum1             = number;
+            } else {
+                dotNum2             = number;
+            }
+            self.rightNumbersAtDot  = [dotNum1 stringByAppendingString:dotNum2];
+        }
+    }
+    self.moneyString                = [[self.leftNumbersAtDot stringByAppendingString:@"."] stringByAppendingString:self.rightNumbersAtDot];
+
+}
+
+
+// 返回保存的字符串金额: 两位小数点
+- (NSString*) money{
+    NSString* money                 = [self.moneyString copy];
+    return money;
+}
+// 设置金额
+- (void) setNewMoneyString: (NSString*)moneyStr{
+    
+    NSString* leftNumbers           = [moneyStr substringToIndex:[moneyStr rangeOfString:@"."].location];
+    NSString* rightNumbers          = [moneyStr substringFromIndex:[moneyStr rangeOfString:@"."].location + 1];
+    
+    self.leftNumbersAtDot           = [leftNumbers copy];
+    self.rightNumbersAtDot          = [rightNumbers copy];
+    
+    self.moneyString                = [moneyStr copy];
+
+    
+    
+    // 如果小数点后都是0且 dotFlag == yes，则置为 no
+    if (![self moneyHasDotNumber] && self.dotFlag) {
+        self.dotFlag                = NO;
+    }
+    // 如果小数点后有非0且 dotFlag == no ，则置为 yes
+    if ([self moneyHasDotNumber] && !self.dotFlag) {
+        self.dotFlag                = YES;
+    }
+}
+
+
+// 如果小数位全为0，返回 NO, 否则返回 YES
+- (BOOL) moneyHasDotNumber {
+    BOOL flag = NO;
+    
+    NSString* dotNumbers            = [self.moneyString substringFromIndex:[self.moneyString rangeOfString:@"."].location + 1];
+    NSString* number1               = [dotNumbers substringToIndex:1];
+    NSString* number2               = [dotNumbers substringFromIndex:1];
+    if (Print_flag) {
+        NSLog(@"number1 = [%@]", number1);
+        NSLog(@"number2 = [%@]", number2);
+
+    }
+    if (![number1 isEqualToString:@"0"] || ![number2 isEqualToString:@"0"])
+        flag                        = YES;
+    
+    return flag;
+}
+
+
+@end

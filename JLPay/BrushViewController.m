@@ -51,14 +51,13 @@ static FieldTrackData TransData;
         // 刷卡
         [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"请刷卡..."];
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
             // 刷卡
             [self MagnCard:2000 :0 :0];
             // 刷卡完成要停止转圈
-//            [self.activity stopAnimating];
             // 切换到密码输入界面
-        });
+//        });
         
     } else {
         // 连接设备....循环中

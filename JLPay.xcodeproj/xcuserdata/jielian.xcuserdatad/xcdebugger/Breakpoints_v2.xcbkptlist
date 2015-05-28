@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/BrushViewController.m"
-            timestampString = "454404984.035447"
+            timestampString = "454476000.43141"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "631"
-            endingLineNumber = "631"
+            startingLineNumber = "630"
+            endingLineNumber = "630"
             landmarkName = "-GetCard:"
             landmarkType = "5">
          </BreakpointContent>
