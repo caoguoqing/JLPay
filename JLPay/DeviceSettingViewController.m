@@ -148,7 +148,7 @@ typedef enum {
                      break;
              }
          } else {
-                 UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                 UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
                  [alter show];
          }
          
@@ -163,29 +163,22 @@ typedef enum {
  * 返  回 :
  *************************************/
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    // 下载主密钥
     if ([alertView.message isEqualToString: @"是否下载密钥到手机?"]) {
-        // 被点击的 Cell 恢复未点击状态
-        for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {
-            NSIndexPath* index      = [NSIndexPath indexPathForRow:i inSection:0];
-            UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:index];
-            if (cell.selected == YES) {
-                cell.selected = NO;
-                break;
-            }
-        }
-        // 下载主密钥
         if (buttonIndex == 1) {  // 点击了 "是"
             [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey] IP:Current_IP PORT:Current_Port Delegate:self method:@"downloadMainKey"];
         }
 
-    } else if ([alertView.message isEqualToString: @"请连接设备！"]) {
-        for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {
-            NSIndexPath* index      = [NSIndexPath indexPathForRow:i inSection:0];
-            UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:index];
-            if (cell.selected == YES) {
-                cell.selected = NO;
-                break;
-            }
+    } else if ([alertView.message isEqualToString: @"请连接设备!"]) {
+        
+    }
+    // 被点击的 Cell 恢复未点击状态
+    for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {
+        NSIndexPath* index      = [NSIndexPath indexPathForRow:i inSection:0];
+        UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:index];
+        if (cell.selected == YES) {
+            cell.selected = NO;
+            break;
         }
     }
 }

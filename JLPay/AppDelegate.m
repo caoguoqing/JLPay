@@ -26,33 +26,26 @@
     
     self.window.rootViewController      = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
     
+    
+    // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
+    NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
+    UITabBarController* tabBarController = (UITabBarController*)self.window.rootViewController;
+    for (int i = 0; i< tabBarController.tabBar.items.count; i++) {
+        UITabBarItem* item              = [tabBarController.tabBar.items objectAtIndex:i];
+        item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    
+    tabBarController.tabBar.tintColor    = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
+    // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
+    
+
+
+
+    
+    
 }
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//
-//    NSArray* imageArray                 = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
-//    NSArray* imageSelectedArray         = [NSArray arrayWithObjects:@"icona_", @"iconb_", @"iconc_", nil];
-//    
-//    
-//    ///////////////////
-//    self.window                         = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//    self.window.backgroundColor         = [UIColor whiteColor];
-//    [self.window makeKeyAndVisible];
-//    
-//    logViewController* logVC            = [[logViewController alloc] init];
-//    self.window.rootViewController      = logVC;
-//    /////////////////
-//    
-//    
-//    UIStoryboard *storyBoard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-//    UITabBarController *tabBarCtr       = [storyBoard instantiateViewControllerWithIdentifier:@"tabbar"];
-////    UITabBarController *tabBarCtr       = self.window.rootViewController;
-//    // 自定义 tabBarItem 的图片
-//    for (int i = 0; i<tabBarCtr.tabBar.items.count; i++) {
-//        UITabBarItem* item              = [tabBarCtr.tabBar.items objectAtIndex:i];
-//        item.selectedImage              = [[UIImage imageNamed:[imageSelectedArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-//        item.image                      = [[UIImage imageNamed:[imageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-////        UITabBarItem* selectecItem      = [tabBarCtr.tabBar.selectedItem];
-//    }
+
     
     
     return YES;

@@ -226,21 +226,20 @@
 
 
 /************************
- *  签到报文
+ *  签到报文: 会上送到后台
  *************************/
 +(NSString *)signIn{
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
-                  @"000001",//11 流水号,bcd,定长6
-                  [EncodeString encodeASC:[PublicInformation returnTerminal]],//41,终端号，asc，定长8
-                  [EncodeString encodeASC:[PublicInformation returnBusiness]],//42，商户号，asc，定长15
-                  
-
-                  @"0011000000040030",//60,
-                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]], nil];//操作员号asc，不定长999，三位数字
+                  @"000001",                                                        //11 流水号,bcd,定长6
+                  [EncodeString encodeASC:[PublicInformation returnTerminal]],      //41 终端号，asc，定长8
+                  [EncodeString encodeASC:[PublicInformation returnBusiness]],      //42 商户号，asc，定长15
+                  @"0011000000040030",                                              //60
+                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
+                  nil];                                                             //63 操作员号asc，不定长999，三位数字
     NSLog(@"签到数据====%@",arr);
     
-    //二进制报文数据
+    // 将准备好的签到数据打成报文: 二进制报文数据
     NSString *binaryDataStr=[HeaderString receiveArr:[NSArray arrayWithObjects:@"11",@"41",@"42",@"60",@"63", nil]
                                                 Tpdu:TPDU
                                               Header:HEADER

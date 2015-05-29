@@ -280,7 +280,6 @@
     sender.transform                    = CGAffineTransformIdentity;
     UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
-    viewController.title                = @"微信支付";
     [self.navigationController pushViewController:viewController animated:YES];
     
 }
@@ -291,7 +290,6 @@
     sender.transform                    = CGAffineTransformIdentity;
     UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"alipayPay"];
-    viewController.title                = @"支付宝支付";
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -326,7 +324,6 @@
     {
         UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alter show];
-        
     }else
     {
         [self saveConsumerMoney];
@@ -366,7 +363,6 @@
         sender.view.transform           = CGAffineTransformIdentity;
         sender.view.backgroundColor     = [UIColor clearColor];
     }
-
 }
 
 

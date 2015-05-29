@@ -18,13 +18,14 @@
 
 
 
-//  ---- 常量设置区
+#pragma mask    ---- 常量设置区 ----
 #define ViewCornerRadius 6.0                                        // 各个 view 的圆角半径值
 #define leftLeave        30.0                                       // view 的左边距
 #define ImageForBrand   @"01icon"                                   // 商标图片
 
 
-@interface logViewController ()<wallDelegate,managerToCard,CommunicationCallBack>
+@interface logViewController ()<wallDelegate,managerToCard,CommunicationCallBack, UITextFieldDelegate>
+
 @property (nonatomic, strong) CommunicationManager* osmanager;      // JHL的协议接口指针
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
@@ -32,8 +33,8 @@
 
 @property (nonatomic, strong) UIButton    *signInButton;            // 注册按钮
 @property (nonatomic, strong) UIButton    *pinChangeButton;         // 密码修改按钮
-//@property (nonatomic, strong) OtherSignButton    *signInButton;            // 注册按钮
-//@property (nonatomic, strong) OtherSignButton    *pinChangeButton;         // 密码修改按钮
+
+@property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
 
 
 @end
@@ -49,6 +50,7 @@ static FieldTrackData TransData;
 @synthesize loadButton              = _loadButton;
 @synthesize signInButton            = _signInButton;
 @synthesize pinChangeButton         = _pinChangeButton;
+@synthesize moveHeightByWindow      = _moveHeightByWindow;
 
 /*****************************/
 - (void)viewDidLoad {
@@ -62,19 +64,69 @@ static FieldTrackData TransData;
     _signInButton                   = [[UIButton alloc] initWithFrame:CGRectZero];
     _userNumberTextField            = [[UITextField alloc] initWithFrame:CGRectZero];
     _userPasswordTextField          = [[UITextField alloc] initWithFrame:CGRectZero];
+    _moveHeightByWindow             = 0.0;
+    
+    _userPasswordTextField.delegate = self;
     
     // 登陆按钮
     [self addSubViews];
     [self EndEdit];
     
     // 打开设备..循环中。。这里需要读取设备么????????????????????????
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [self openDevice];
-//        [self CheckDevceThread1];
-//    });
+    [self openDevice];
+
     
     self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
     
+    // 注册键盘的弹出跟隐藏事件
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
+}
+
+
+/*************************************
+ * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) keyboardWillShow: (NSNotification*)notification {
+    // get keyboard frame.Height
+    NSDictionary* userInfo          = [notification userInfo];
+    NSValue* value                  = [userInfo valueForKey:UIKeyboardFrameEndUserInfoKey];
+    CGFloat keyboardHeight          = [value CGRectValue].size.height;
+    if (Print_log) {
+        NSLog(@"键盘高度================[%f]", keyboardHeight);
+    }
+    
+    // checkout textField, and push up Window
+    if ([self.userNumberTextField isFirstResponder] || [self.userPasswordTextField isFirstResponder]) {
+        UIView* view                = [self.userPasswordTextField superview];
+        
+        // 高度差 = 键盘高度 - (屏幕高度 - (密码输入框.superview.y坐标 + view.高度))
+        //    大于0 : 表示键盘遮盖了输入框
+        CGFloat insetOfViewAndKeyboard = keyboardHeight - (self.view.bounds.size.height - (view.frame.origin.y + view.frame.size.height));
+
+        // 遮盖时才将 window 向上移动
+        if (insetOfViewAndKeyboard > 0) {
+            self.moveHeightByWindow = insetOfViewAndKeyboard;
+            [UIView animateWithDuration:0.3 animations:^{
+                CGRect frame        = self.view.frame;
+                frame.origin.y      -= self.moveHeightByWindow;
+                self.view.frame     = frame;
+            }];
+        }
+    }
+}
+- (void) keyboardWillHide: (NSNotification*)notification {
+    if (self.moveHeightByWindow > 0) {
+        [UIView animateWithDuration:0.3 animations:^{
+            CGRect frame            = self.view.frame;
+            frame.origin.y          += self.moveHeightByWindow;
+            self.view.frame         = frame;
+        }];
+        self.moveHeightByWindow     = 0;
+    }
 }
 
 
@@ -91,29 +143,17 @@ static FieldTrackData TransData;
     [self.view endEditing:YES];
 }
 
-/*
- *登陆点击按钮
- */
-- (IBAction)loginClick:(UIButton *)sender {
 
-
-    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
-
-
-}
 
 #pragma mark==========================================wallDelegate
 
 -(void)receiveGetData:(NSString *)data method:(NSString *)str
 {
-        NSLog(@"app---------------------------------%@",str);
         //签到成功
         if ([str  isEqualToString:@"tcpsignin"]) {
-            //        [app_delegate dismissWaitingView];
             if ([data length] > 0) {
                 
 #pragma mark------------------界面跳转
-                
                 [app_delegate signInSuccessToLogin:1];
                 
                 [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
@@ -127,16 +167,13 @@ static FieldTrackData TransData;
     if ([str  isEqualToString:@"tcpsignin"]) {
         [self.view makeToast:@"连接超时，请重新签到"];
     }
-
 }
 
 -(void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr
 {
     if ([metStr isEqualToString:@"tcpsignin"]) {
         if (state) {
-
             [[app_delegate window] makeToast:type];
-
         }else{
             [self.view makeToast:type];
         }
@@ -144,11 +181,11 @@ static FieldTrackData TransData;
 }
 
 
+#pragma mask  ----- 打开设备
 -(void)openDevice{
-    
-    // 这个后台任务到底用什么队列去处理/??????
-    NSThread* DeviceThread          = [[NSThread alloc] initWithTarget:self selector:@selector(CheckDevceThread1)
-                                                      object:nil];
+    NSThread* DeviceThread          = [[NSThread alloc] initWithTarget:self
+                                                              selector:@selector(CheckDevceThread1)
+                                                                object:nil];
     [DeviceThread start];
 }
 
@@ -173,12 +210,16 @@ static FieldTrackData TransData;
     
     NSString *astring               = [CommunicationManager getLibVersion];
     
-    
     // --- 打印设备的版本
-    NSLog(@"，，，，，，，，，，，，，，，，，，，，，%@",astring);
+    if (Print_log) {
+        NSLog(@"，，，，，，，，，，，，，，，，，，，，，%@",astring);
+    }
+    // 打开设备
     int result                      = [osmanager openDevice];
     // --- 打印打开设备的结果: result
-    NSLog(@"%s,result:%d",__func__,result);
+    if (Print_log) {
+        NSLog(@"%s,result:%d",__func__,result);
+    }
     return result;
     
     
@@ -243,6 +284,7 @@ static FieldTrackData TransData;
     return result;
     
 }
+
 -(NSString *)stringFromHexString:(NSString *)hexString { //
     
     char *myBuffer = (char *)malloc((int)[hexString length] / 2 + 1);
@@ -324,13 +366,11 @@ static FieldTrackData TransData;
                 for (int i=3; i <19; i++) {
                     NSString *newHexStr = [NSString stringWithFormat:@"%x",ByteDate[i]&0xff];///16进制数
                     strSN = [strSN stringByAppendingString:newHexStr];
-                    
                 }
                 strSN =[self stringFromHexString:strSN];
                 
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    //                 self.LabSn.text = strSN;
                     NSLog(@"SN获取成功  %@",strSN);
                     NSString * SN =@"SN:";
                     SN = [SN stringByAppendingString:strSN];
@@ -381,7 +421,6 @@ static FieldTrackData TransData;
         case GETTERNUMBER:
             if (!ByteDate[1])   // 终端号
             {
-                
                 NSString * strTerNumber =@"";
                 strTerNumber = [NSString stringWithFormat:@"%@",data];
                 
@@ -407,22 +446,10 @@ static FieldTrackData TransData;
     
     
 }
--(void)onSendOK{
-    NSLog(@"%s",__func__);
-}
--(void)onTimeout{
-    NSLog(@"%s",__func__);
-}
--(void)onError:(NSInteger)code message:(NSString*)msg{
-    NSLog(@"%s",__func__);
-}
--(void)onProgress:(NSData*)data{
-    NSLog(@"%s %@",__func__,data);
-}
+
 
 
 #pragma mark ======================================= 添加子控件
-
 /*************************************
  * 功  能 : 给当前 viewController 添加子视图控件;
  *         -商标图片
@@ -486,7 +513,6 @@ static FieldTrackData TransData;
     y += (iconViewHeight + 30);
     CGFloat midViewLeave                = 6.0;
     CGFloat signInViewHeight            = iconViewHeight / 5.0 * 2.0;
-//    CGFloat signInViewWidth             = (self.view.bounds.size.width - leftLeave * 2)/2 - midViewLeave;
     CGFloat signInViewWidth             = signInViewHeight * 4.0;
 
     CGFloat midInset                    = (self.view.bounds.size.width - leftLeave * 2 - midViewLeave - signInViewWidth * 2)/4.0;
@@ -497,8 +523,6 @@ static FieldTrackData TransData;
      *      2.
      */
     self.signInButton.frame             = signInFrame;
-//    [self.signInButton setTitle:@"立即注册" forState:UIControlStateNormal];
-//    self.signInButton.text              = @"立即注册";
     [self.signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
     /* 给注册按钮添加 action */
     [self.signInButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
@@ -507,7 +531,6 @@ static FieldTrackData TransData;
     /* 间隔图标 */
     signInFrame.origin.x                       += signInViewWidth * 0.9 + midInset;
     signInFrame.size.width              = midViewLeave;
-//    UIImageView *midLeaveView           = [[UIImageView alloc] initWithFrame:CGRectMake(leftLeave + midInset * 2.0 + signInViewWidth, y, midViewLeave, signInViewHeight)];
     UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
     midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
     [self.view addSubview:midLeaveView];
@@ -515,10 +538,7 @@ static FieldTrackData TransData;
     /* 修改密码按钮：UIButton */
     signInFrame.origin.x                += midViewLeave + midInset;
     signInFrame.size.width              = signInViewWidth;
-//    self.pinChangeButton.frame          = CGRectMake(leftLeave + midInset * + midViewLeave + signInViewWidth, y, signInViewWidth, signInViewHeight);
     self.pinChangeButton.frame          = signInFrame;
-//    [self.pinChangeButton setTitle:@"忘记密码?" forState:UIControlStateNormal];
-//    self.pinChangeButton.text           = @"忘记密码?";
     [self.pinChangeButton setImage:[UIImage imageNamed:@"wmm"] forState:UIControlStateNormal];
 
     [self.view addSubview:self.pinChangeButton];
@@ -626,9 +646,17 @@ static FieldTrackData TransData;
 }
 
 
+
+-(void)onTimeout{
+    NSLog(@"CommunicationCallBack protocol: onTimeout");
+}
+-(void)onError:(NSInteger)code message:(NSString*)msg{
+    NSLog(@"CommunicationCallBack protocol: onError");
+    
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end
