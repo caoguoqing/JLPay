@@ -46,26 +46,44 @@ static FieldTrackData TransData;
     // 加载子视图
     [self addSubViews];
     
+    NSString* money                     = [[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
     
-    if ([self isConnected]) {
+    
+    AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    
+//    if ([self isConnected]) {
+    if ([delegate.device isConnected]) {
         // 刷卡
-        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"请刷卡..."];
+//        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"请刷卡..."];
+        [[delegate window] makeToast:@"请刷卡..."];
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
             // 刷卡
-            [self MagnCard:2000 :0 :0];
+//            [self MagnCard:2000 :0 :0];
+//            [delegate.device cardSwipe:[money doubleValue]];
+            [delegate.device cardSwipe];
             // 刷卡完成要停止转圈
             // 切换到密码输入界面
         });
         
     } else {
+        [[delegate window] makeToast:@"设备未连接"];
         // 连接设备....循环中
-        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"设备未连接"];
+        [delegate.device open];
+//        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"设备未连接"];
+        
 
     }
     
 }
+
+
+
+
+
+#pragma mask ------------------------------------- 以下部分都无用了
+
 
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -428,6 +446,72 @@ static FieldTrackData TransData;
     
 }
 
+
+#pragma mask : 锦宏霖设备的读卡数据返回
+
+-(void)onReceive:(NSData*)data{
+    
+    NSLog(@"%s %@",__func__,data);
+    Byte * ByteDate = (Byte *)[data bytes];
+    switch (ByteDate[0]) {
+        case GETCARD_CMD:
+            if (!ByteDate[1])   // 刷卡成功
+            {
+                NSLog(@"%s,result:%@",__func__,@"刷卡成功");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSString *strPan=@"";
+                    int nlen =ByteDate[2]&0xff;
+                    for (int i=0; i <nlen; i++) {
+                        NSString *newHexStr = [NSString stringWithFormat:@"%x",ByteDate[i+3]&0xff];///16进制数
+                        strPan = [strPan stringByAppendingString:newHexStr];
+                    }
+                    
+                    /////// -- test
+                    [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"刷卡成功"];
+                    
+                    ///////
+                    
+                    // 刷卡成功要跳转到 输入密码界面:进行密码验证以及交易报文上送
+                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+                    UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"password"];
+                    [self.navigationController pushViewController:viewcon animated:YES];
+                });
+                
+            }
+            else
+            {
+                NSLog(@"%s,result:%@",__func__,@"刷卡失败");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [self.navigationController popViewControllerAnimated:YES];
+                    [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"刷卡失败"];
+                });
+            }
+            
+            break;
+        case GETTRACK_CMD:
+            if (!ByteDate[1])   // 获取卡号数据成功
+            {
+                NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self GetCard:data];
+                    
+                });
+            }
+            else
+            {
+                NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
+            }
+            
+            break;
+        default:
+            break;
+    }
+    
+    
+}
+
+
 /********************************************************************
 	函 数 名：TRANS_Sale
 	功能描述：消费,返回消费需要上送数据22域+35+36+IC磁道数据+PINBLOCK+磁道加密随机数
@@ -663,67 +747,6 @@ static FieldTrackData TransData;
 
 #pragma mark-------------------------------------CommunicationCallBack
 
--(void)onReceive:(NSData*)data{
-    
-    NSLog(@"%s %@",__func__,data);
-    Byte * ByteDate = (Byte *)[data bytes];
-    switch (ByteDate[0]) {
-        case GETCARD_CMD:
-            if (!ByteDate[1])   // 刷卡成功
-            {
-                NSLog(@"%s,result:%@",__func__,@"刷卡成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSString *strPan=@"";
-                    int nlen =ByteDate[2]&0xff;
-                    for (int i=0; i <nlen; i++) {
-                        NSString *newHexStr = [NSString stringWithFormat:@"%x",ByteDate[i+3]&0xff];///16进制数
-                        strPan = [strPan stringByAppendingString:newHexStr];
-                    }
-                   
-                    /////// -- test
-                    [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"刷卡成功"];
-
-                    ///////
-                    
-                    // 刷卡成功要跳转到 输入密码界面:进行密码验证以及交易报文上送
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-                    UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"password"];
-                    [self.navigationController pushViewController:viewcon animated:YES];
-                });
-                
-            }
-            else
-            {
-                NSLog(@"%s,result:%@",__func__,@"刷卡失败");
-                dispatch_async(dispatch_get_main_queue(), ^{
-
-                [self.navigationController popViewControllerAnimated:YES];
-                    [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"刷卡失败"];
-                });
-            }
-            
-            break;
-        case GETTRACK_CMD:
-            if (!ByteDate[1])   // 获取卡号数据成功
-            {
-                NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self GetCard:data];
-                    
-                });
-            }
-            else
-            {
-                NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
-            }
-            
-            break;
-        default:
-            break;
-    }
-    
-    
-}
 -(void)onSendOK{
     NSLog(@"%s",__func__);
 }

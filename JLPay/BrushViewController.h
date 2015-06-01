@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface BrushViewController : UIViewController
+//@property (nonatomic, assign) 
 
 @end

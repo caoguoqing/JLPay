@@ -10,6 +10,7 @@
 #import "JHNconnect.h"
 #import "Define_Header.h"
 #import "DisplayMoneyText.h"
+#import "Define_Header.h"
 
 
 
@@ -18,7 +19,7 @@
 
 
 
-@interface CustPayViewController ()
+@interface CustPayViewController ()<UIAlertViewDelegate>
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) NSMutableArray    *moneyArray;                // 模拟金额栈：保存历史金额
@@ -45,13 +46,19 @@
    
     [self addSubViews];
 }
+
 -(void)viewWillAppear:(BOOL)animated
 {
     if (self.JHNCON ==NULL)
         self.JHNCON = [JHNconnect shareView];
     
     self.navigationController.navigationBarHidden = YES;
+    
+    // 检测并打开设备
+    AppDelegate* delegate           = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    [delegate.device  open];
 
+    [super viewWillAppear:animated];
 }
 
 
@@ -320,9 +327,13 @@
     UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     UIViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
     
-    if (![self.JHNCON isConnected])
+    
+    AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//    if (![self.JHNCON isConnected])
+    if (![delegate.device isConnected])
     {
-        UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        alter.delegate                  = self;
         [alter show];
     }else
     {
@@ -331,6 +342,14 @@
         
     }
 }
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.message isEqualToString:@"请连接设备!"]) {
+        NSLog(@"点击了   alertView");
+        AppDelegate* delegate           = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        [delegate.device  open];
+    }
+}
+
 
 
 /*************************************

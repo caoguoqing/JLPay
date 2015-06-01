@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DeviceManager.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+
+@property(nonatomic, strong)    DeviceManager*  device;
 
 -(void)signInSuccessToLogin:(int)select;
 

@@ -13,7 +13,9 @@
 
 @end
 
+
 @implementation AppDelegate
+@synthesize device                      = _device;
 
 
 /*
@@ -26,7 +28,6 @@
     
     self.window.rootViewController      = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
     
-    
     // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
     NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
     UITabBarController* tabBarController = (UITabBarController*)self.window.rootViewController;
@@ -35,18 +36,15 @@
         item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     }
     
-    tabBarController.tabBar.tintColor    = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
     // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
-    
-
-
-
-    
+    tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
     
 }
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    
+    // 初始化设备管理器
+    self.device                         = [[DeviceManager alloc] init];
     
     return YES;
 }

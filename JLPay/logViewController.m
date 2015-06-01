@@ -13,8 +13,10 @@
 #import "Unpacking8583.h"
 #import "Toast+UIView.h"
 #import "CommunicationCallBack.h"
-#import "CommunicationManager.h"
 #import "OtherSignButton.h"
+
+#import "CommunicationManager.h"
+
 
 
 
@@ -27,6 +29,7 @@
 @interface logViewController ()<wallDelegate,managerToCard,CommunicationCallBack, UITextFieldDelegate>
 
 @property (nonatomic, strong) CommunicationManager* osmanager;      // JHL的协议接口指针
+
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
 @property (nonatomic, strong) UIButton    *loadButton;              // 登陆按钮
@@ -73,7 +76,7 @@ static FieldTrackData TransData;
     [self EndEdit];
     
     // 打开设备..循环中。。这里需要读取设备么????????????????????????
-    [self openDevice];
+//    [self openDevice];
 
     
     self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
@@ -297,6 +300,7 @@ static FieldTrackData TransData;
         myBuffer[i / 2] = (char)anInt;
     }
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
+    free(myBuffer);
     NSLog(@"------字符串=======%@",unicodeString);
     return unicodeString;
     
