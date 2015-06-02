@@ -29,7 +29,7 @@
 
 @implementation BrushViewController
 @synthesize osmanager;
-@synthesize activity;
+@synthesize activity                    = _activity;
 static FieldTrackData TransData;
 
 
@@ -46,22 +46,16 @@ static FieldTrackData TransData;
     // 加载子视图
     [self addSubViews];
     
-    NSString* money                     = [[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-    
-    
     AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     
 //    if ([self isConnected]) {
     if ([delegate.device isConnected]) {
         // 刷卡
-//        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"请刷卡..."];
         [[delegate window] makeToast:@"请刷卡..."];
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
             // 刷卡
-//            [self MagnCard:2000 :0 :0];
-//            [delegate.device cardSwipe:[money doubleValue]];
             [delegate.device cardSwipe];
             // 刷卡完成要停止转圈
             // 切换到密码输入界面
@@ -71,25 +65,110 @@ static FieldTrackData TransData;
         [[delegate window] makeToast:@"设备未连接"];
         // 连接设备....循环中
         [delegate.device open];
-//        [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"设备未连接"];
         
 
     }
     
 }
 
-
-
-
-
-#pragma mask ------------------------------------- 以下部分都无用了
-
-
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     if (osmanager ==NULL)
         osmanager = [CommunicationManager sharedInstance];
 }
+
+
+/*************************************
+ * 功  能 : 界面的subviews的加载;
+ *          - 金额标签              UILabel + UIImageView
+ *          - 刷卡动态提示           UILabel + UIActiveView
+ *          - 刷卡说明图片           UIImageView
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) addSubViews {
+    CGFloat topInset            = 15;                // 子视图公用变量: 上边界
+    CGFloat leftInset           = 15;                // 左边界
+    CGFloat rightInset          = 15;                // 右边界
+    CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
+    CGFloat uifont              = 20.0;              // 字体大小
+    
+    CGFloat xFrame              = 0 + leftInset;
+    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
+    CGFloat width               = 40;
+    CGFloat height              = 30;
+    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
+    
+    // 背景
+    UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    backImage.image             = [UIImage imageNamed:@"bg"];
+    [self.view addSubview:backImage];
+    // 金额
+    UILabel* jine               = [[UILabel alloc] initWithFrame:frame];
+    jine.text                   = @"金额";
+    jine.font                   = [UIFont boldSystemFontOfSize:uifont];
+    jine.textAlignment          = NSTextAlignmentCenter;
+    [self.view addSubview:jine];
+    // 符号图片
+    frame.origin.x              += width;
+    frame.size.width            = frame.size.height;
+    UIImageView* jineImage      = [[UIImageView alloc] initWithFrame:frame];
+    jineImage.image             = [UIImage imageNamed:@"jine"];
+    [self.view addSubview:jineImage];
+    // 金额数值
+    frame.origin.x              += frame.size.width;
+    frame.size.width            = width * 3.0;
+    UILabel* money              = [[UILabel alloc] initWithFrame:frame];
+    money.font                   = [UIFont boldSystemFontOfSize:uifont];
+    money.textAlignment         = NSTextAlignmentLeft;
+    money.text                  = [[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money] stringByAppendingString:@"元"];
+    [self.view addSubview:money];
+    // 请刷卡...
+    frame.size.width            = 80.0;
+    frame.origin.x              = self.view.bounds.size.width - rightInset - frame.size.width;
+    UILabel* shuaka             = [[UILabel alloc] initWithFrame:frame];
+    shuaka.textAlignment        = NSTextAlignmentLeft;
+    shuaka.font                   = [UIFont boldSystemFontOfSize:uifont];
+    shuaka.text                 = @"请刷卡...";
+    [self.view addSubview:shuaka];
+    // 动态滚动图
+    frame.origin.x              -= frame.size.height;
+    frame.size.width            = frame.size.height;
+    self.activity               = [[UIActivityIndicatorView alloc] initWithFrame:frame];
+    [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    [self.view addSubview:self.activity];
+    if (![self.activity isAnimating]) {
+        [self.activity startAnimating];
+    }
+    // 图片1
+    frame.origin.y              += frame.size.height + inset;
+    leftInset                   = self.view.bounds.size.width / 6.0;
+    rightInset                  *= 2;
+    frame.origin.x              = leftInset;
+    frame.size.width            = self.view.bounds.size.width - leftInset - rightInset;
+    frame.size.height           = frame.size.width * 0.8;
+    UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
+    shuakaImage.image           = [UIImage imageNamed:@"shuaka"];
+    [self.view addSubview:shuakaImage];
+    
+    // 图片2
+    frame.origin.x              = 0 + rightInset;
+    frame.origin.y              += frame.size.height;
+    UIImageView* shuakaImage1   = [[UIImageView alloc] initWithFrame:frame];
+    shuakaImage1.image          = [UIImage imageNamed:@"shuaka1"];
+    [self.view addSubview:shuakaImage1];
+    
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+#pragma mask ------------------------------------- 以下部分都无用了
+
+
 
 
 -(int)openJhlDevice
@@ -760,95 +839,12 @@ static FieldTrackData TransData;
     NSLog(@"%s %@",__func__,data);
 }
 
-/*************************************
- * 功  能 : 界面的subviews的加载;
- *          - 金额标签              UILabel + UIImageView
- *          - 刷卡动态提示           UILabel + UIActiveView
- *          - 刷卡说明图片           UIImageView
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) addSubViews {
-    CGFloat topInset            = 15;                // 子视图公用变量: 上边界
-    CGFloat leftInset           = 15;                // 左边界
-    CGFloat rightInset          = 15;                // 右边界
-    CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
-    CGFloat uifont              = 20.0;              // 字体大小
-    
-    CGFloat xFrame              = 0 + leftInset;
-    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
-    CGFloat width               = 40;
-    CGFloat height              = 30;
-    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
-    
-    // 背景
-    UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    backImage.image             = [UIImage imageNamed:@"bg"];
-    [self.view addSubview:backImage];
-    // 金额
-    UILabel* jine               = [[UILabel alloc] initWithFrame:frame];
-    jine.text                   = @"金额";
-    jine.font                   = [UIFont boldSystemFontOfSize:uifont];
-    jine.textAlignment          = NSTextAlignmentCenter;
-    [self.view addSubview:jine];
-    // 符号图片
-    frame.origin.x              += width;
-    frame.size.width            = frame.size.height;
-    UIImageView* jineImage      = [[UIImageView alloc] initWithFrame:frame];
-    jineImage.image             = [UIImage imageNamed:@"jine"];
-    [self.view addSubview:jineImage];
-    // 金额数值
-    frame.origin.x              += frame.size.width;
-    frame.size.width            = width * 3.0;
-    UILabel* money              = [[UILabel alloc] initWithFrame:frame];
-    money.font                   = [UIFont boldSystemFontOfSize:uifont];
-    money.textAlignment         = NSTextAlignmentLeft;
-    money.text                  = [[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money] stringByAppendingString:@"元"];
-    [self.view addSubview:money];
-    // 请刷卡...
-    frame.size.width            = 80.0;
-    frame.origin.x              = self.view.bounds.size.width - rightInset - frame.size.width;
-    UILabel* shuaka             = [[UILabel alloc] initWithFrame:frame];
-    shuaka.textAlignment        = NSTextAlignmentLeft;
-    shuaka.font                   = [UIFont boldSystemFontOfSize:uifont];
-    shuaka.text                 = @"请刷卡...";
-    [self.view addSubview:shuaka];
-    // 动态滚动图
-    frame.origin.x              -= frame.size.height;
-    frame.size.width            = frame.size.height;
-    self.activity   = [[UIActivityIndicatorView alloc] initWithFrame:frame];
-    [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
-    [self.view addSubview:self.activity];
-    if (![self.activity isAnimating]) {
-        [self.activity startAnimating];
-    }
-    // 图片1
-    frame.origin.y              += frame.size.height + inset;
-    leftInset                   = self.view.bounds.size.width / 6.0;
-    rightInset                  *= 2;
-    frame.origin.x              = leftInset;
-    frame.size.width            = self.view.bounds.size.width - leftInset - rightInset;
-    frame.size.height           = frame.size.width * 0.8;
-    UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage.image           = [UIImage imageNamed:@"shuaka"];
-    [self.view addSubview:shuakaImage];
-    
-    // 图片2
-    frame.origin.x              = 0 + rightInset;
-    frame.origin.y              += frame.size.height;
-    UIImageView* shuakaImage1   = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage1.image          = [UIImage imageNamed:@"shuaka1"];
-    [self.view addSubview:shuakaImage1];
-    
-}
 
 
 
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+
+
 
 
 @end

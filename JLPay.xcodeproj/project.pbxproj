@@ -549,8 +549,8 @@
 				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
 				5EB9B1371AD79EC600A73190 /* SDK */,
 				5E397B3E1AD364A9004F206F /* TCP */,
-				5E397AF31AD36429004F206F /* asi-http */,
 				5EBAA8F21ACD2FDC00E2ABDD /* 8583 */,
+				5E397AF31AD36429004F206F /* asi-http */,
 				5EBAA9001ACD3B0200E2ABDD /* des/3des */,
 				5EBAA9151ACD3F2400E2ABDD /* json */,
 				5EBF3C401AD3B5BB00091F83 /* Toast */,
@@ -1127,10 +1127,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/JLPay/SDK",
-					"$(PROJECT_DIR)/JLPay/JHN",
 					"$(PROJECT_DIR)/JLPay/JHL",
+					"$(PROJECT_DIR)/JLPay/JHN",
 				);
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-lstdc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "29fcea91-49b2-4d4c-ab0c-94da6bcd0a95";
 			};
@@ -1153,10 +1156,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/JLPay/SDK",
-					"$(PROJECT_DIR)/JLPay/JHN",
 					"$(PROJECT_DIR)/JLPay/JHL",
+					"$(PROJECT_DIR)/JLPay/JHN",
 				);
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-lstdc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "29fcea91-49b2-4d4c-ab0c-94da6bcd0a95";
 			};

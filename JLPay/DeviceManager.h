@@ -10,6 +10,8 @@
 
 @interface DeviceManager : NSObject
 
+#pragma mask : 打开设备探测;
+- (void) detecting;
 
 #pragma mask : 打开设备;
 - (void) open;

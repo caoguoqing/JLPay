@@ -26,6 +26,18 @@
 
 #pragma mask --------------------------[Public Interface]--------------------------
 
+#pragma mask : 打开设备探测;
+- (void) detecting{
+    switch (self.getManuefacturer) {
+        case 0:
+            [self.device detecting];
+            break;
+            
+        default:
+            break;
+    }
+}
+
 #pragma mask : 打开设备;
 - (void)open {
     // 判断是哪个厂商的设备
@@ -66,7 +78,7 @@
     switch (self.getManuefacturer) {
         case 0:
             // 锦宏霖设备
-            result                  = [self.device cardSwipeInTime:20000 mount:0 mode:0];
+            result                  = [self.device cardSwipeInTime:60000 mount:0 mode:0];
             break;
             
         default:

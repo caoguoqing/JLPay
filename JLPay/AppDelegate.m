@@ -8,6 +8,9 @@
 
 #import "AppDelegate.h"
 #import "logViewController.h"
+#import "Toast+UIView.h"
+
+#define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
 
 @interface AppDelegate ()
 
@@ -21,6 +24,7 @@
 /*
  *登陆成功后进入Tabbar
  */
+#pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 -(void)signInSuccessToLogin:(int)select{
     self.window.userInteractionEnabled=YES;
     
@@ -41,10 +45,29 @@
     
 }
 
+#pragma mask ::: 设备事件的实时监控
+- (void) deviceStateObserved : (NSNotification*)notification {
+    if ([notification.name isEqualToString:NotiName_DeviceState]) {
+        NSString* state                     = (NSString*)[notification object];
+        if ([state isEqualToString:@"1"]) {
+            [self.window makeToast:@"设备已插入"];
+        } else {
+            [self.window makeToast:@"设备已拔出"];
+        }
+    }
+}
+
+#pragma mask ::: app 的入口;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
+    // 注册设备事件实时监控通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStateObserved:) name:NotiName_DeviceState object:nil];
     // 初始化设备管理器
     self.device                         = [[DeviceManager alloc] init];
+    [self.device detecting];
+    
+    
+    
     
     return YES;
 }

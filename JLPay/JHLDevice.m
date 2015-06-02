@@ -29,6 +29,14 @@
 
 
 #pragma mask --------------------------[Public Interface]--------------------------
+#pragma mask : 打开设备探测;
+- (void) detecting{
+    if (self.osmanager == nil) {
+        self.osmanager              = [CommunicationManager sharedInstance];
+    }
+    [self.osmanager startDetecting];
+}
+
 
 #pragma mask : 打开设备-阻塞线程打开;
 - (void)open {
@@ -196,7 +204,7 @@
                 NSLog(@"%s,result:%@",__func__,@"刷卡成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    // 怎么让刷卡界面跳转功能：输入密码？？？？？？？？？？
+                    // 怎么让刷卡界面跳转功能：输入密码？？？？？？？？？？ f发通知??????
                     
                     [[(AppDelegate *)[UIApplication sharedApplication].delegate window] makeToast:@"刷卡成功"];
                     
