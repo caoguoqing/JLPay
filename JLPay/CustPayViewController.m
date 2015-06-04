@@ -23,7 +23,6 @@
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) NSMutableArray    *moneyArray;                // 模拟金额栈：保存历史金额
-@property (strong,nonatomic)  JHNconnect        *JHNCON;                    // 通讯入口
 @property (nonatomic, strong) DisplayMoneyText* moneyStr;                   // 用来收集数字按钮点击的金额计算的类
 
 @end
@@ -49,9 +48,6 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    if (self.JHNCON ==NULL)
-        self.JHNCON = [JHNconnect shareView];
-    
     self.navigationController.navigationBarHidden = YES;
     
     // 检测并打开设备

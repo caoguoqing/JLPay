@@ -53,7 +53,6 @@
 		5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */; };
 		5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */; };
 		5EB6F99C1AC8DD1C00E47AB5 /* JLPayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F99B1AC8DD1C00E47AB5 /* JLPayTests.m */; };
-		5EB6F9B81AC9501100E47AB5 /* NumPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9B71AC9501100E47AB5 /* NumPayViewController.m */; };
 		5EB9B13C1AD79EC600A73190 /* libMisPos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EB9B1381AD79EC600A73190 /* libMisPos.a */; };
 		5EB9B13E1AD79F6A00A73190 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EB9B13D1AD79F6A00A73190 /* CoreBluetooth.framework */; };
 		5EB9B1401AD79F7600A73190 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */; };
@@ -223,8 +222,6 @@
 		5EB6F99B1AC8DD1C00E47AB5 /* JLPayTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLPayTests.m; sourceTree = "<group>"; };
 		5EB6F9AC1AC8EAFF00E47AB5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5EB6F9B51AC9210900E47AB5 /* Define_Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Define_Header.h; sourceTree = "<group>"; };
-		5EB6F9B61AC9501100E47AB5 /* NumPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumPayViewController.h; sourceTree = "<group>"; };
-		5EB6F9B71AC9501100E47AB5 /* NumPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NumPayViewController.m; sourceTree = "<group>"; };
 		5EB9B1381AD79EC600A73190 /* libMisPos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libMisPos.a; sourceTree = "<group>"; };
 		5EB9B1391AD79EC600A73190 /* MsrParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsrParam.h; sourceTree = "<group>"; };
 		5EB9B13A1AD79EC600A73190 /* MsrResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsrResult.h; sourceTree = "<group>"; };
@@ -386,14 +383,14 @@
 		5E0D18661B09D9240092F4AB /* 刷卡界面 */ = {
 			isa = PBXGroup;
 			children = (
-				5EB6F9B61AC9501100E47AB5 /* NumPayViewController.h */,
-				5EB6F9B71AC9501100E47AB5 /* NumPayViewController.m */,
-				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
-				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
-				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
-				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
 				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
+				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
+				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
+				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
+				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
+				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
+				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 				5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */,
 				5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */,
 				5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */,
@@ -404,8 +401,6 @@
 				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
-				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
-				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 			);
 			name = "刷卡界面";
 			sourceTree = "<group>";
@@ -937,7 +932,6 @@
 				5EBAA9101ACD3F1B00E2ABDD /* NSString+SBJSON.m in Sources */,
 				5EBA40F61AEA366000F270C0 /* PosInformationViewController.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
-				5EB6F9B81AC9501100E47AB5 /* NumPayViewController.m in Sources */,
 				5E0D186B1B09DA710092F4AB /* OtherPayButton.m in Sources */,
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
 				5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */,
