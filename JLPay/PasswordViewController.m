@@ -11,6 +11,8 @@
 #import "Define_Header.h"
 #import "CommunicationManager.h"
 #import "WaitViewController.h"
+#import "CustPayViewController.h"
+#import "Toast+UIView.h"
 
 @interface PasswordViewController ()<UITextFieldDelegate, LVKeyboardDelegate,CommunicationCallBack>
 
@@ -53,12 +55,59 @@ static FieldTrackData TransData;
 {
     if (osmanager ==NULL)
         osmanager = [CommunicationManager sharedInstance];
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
 
 }
 
-/**
- *      刷卡金额
- */
+
+
+#pragma mask ::: 确定消费按钮的事件
+- (IBAction)click:(UIButton *)sender {
+    long money = [self themoney] ;
+    [self TRANS_Sale:20000 :money :6 :self.textField.text];
+//    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    [delegate_.device TRANS_Sale:20000 nAmount:money nPasswordlen:6 bPassKey:self.textField.text];
+}
+
+
+#pragma mask ::: 跳转到消费的联机阶段
+- (void) toCust: (NSNotification*)notification {
+    // 密码
+//    self.pinStr = (NSString*)[notification.object copy];
+    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [delegate_.window makeToast:@"刷磁成功,交易处理中..."];
+    
+     NSString *liushui=[PublicInformation exchangeNumber];
+     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
+     [[NSUserDefaults standardUserDefaults] synchronize];
+     
+     WaitViewController *viewcon = [[WaitViewController alloc]init];
+//     viewcon.pinstr = self.pinStr;
+    viewcon.pinstr  = [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
+     [self.navigationController pushViewController:viewcon animated:YES];
+    
+}
+
+#pragma mask ::: 跳转回金额输入界面
+- (void) backToCust: (NSNotification*)notification {
+    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [delegate_.window makeToast:@"交易失败!"];
+    
+    UIStoryboard* storyBoard    = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    CustPayViewController* viewController   = [storyBoard instantiateViewControllerWithIdentifier:@"CustPayViewController"];
+    [self.navigationController popToViewController:viewController animated:YES];
+}
+
+
+
+#pragma mask ::: 从本地配置获取金额
 -(NSString *)returnMoney{
     NSString *moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
     if (moneyStr && ![moneyStr isEqualToString:@"0.00"] && ![moneyStr isEqualToString:@"(null)"]) {
@@ -66,28 +115,65 @@ static FieldTrackData TransData;
     }else{
         moneyStr=@"1";
     }
-
     return moneyStr;
 }
 
-/**
- *      金额转换
- */
+#pragma mask ::: 将小数点金额转换为报文需要的无小数点格式
 -(int)themoney{
     int money=[[self returnMoney] floatValue]*100;
-
-
     return money;
 }
-/**
- *      确定按钮的点击事件
- */
-- (IBAction)click:(UIButton *)sender {
-    
-    long money = [self themoney] ;
 
-    [self TRANS_Sale:20000:money:6:self.textField.text];
+
+#pragma mask ::: Field 在编辑前的事件:生成并打开键盘
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    self.textField.text = nil;
+    self.passWord = nil;
+    
+    CGFloat x = 0;
+    CGFloat y = self.view.height - 216;
+    CGFloat w = self.view.width;
+    CGFloat h = 216;
+    self.keyboard = [[LVKeyboardView alloc] initWithFrame:CGRectMake(x, y, w, h)];
+    self.keyboard.delegate = self;
+    
+    self.textField.inputView = _keyboard;
+    
+    return YES;
 }
+
+#pragma mark - LVKeyboardDelegate
+- (void)keyboard:(LVKeyboardView *)keyboard didClickButton:(UIButton *)button {
+    
+    if (self.passWord.length > 5) return;
+    [self.passWord appendString:button.currentTitle];
+    
+    self.textField.text = self.passWord;
+    NSLog(@"%@", self.textField.text);
+}
+
+- (void)keyboard:(LVKeyboardView *)keyboard didClickDeleteBtn:(UIButton *)deleteBtn {
+    NSLog(@"删除");
+    NSUInteger loc = self.passWord.length;
+    if (loc == 0)   return;
+    NSRange range = NSMakeRange(loc - 1, 1);
+    [self.passWord deleteCharactersInRange:range];
+    self.textField.text = self.passWord;
+    NSLog(@"%@", self.textField.text);
+}
+
+#pragma mark - 密码的 getter
+- (NSMutableString *)passWord {
+    if (!_passWord) {
+        _passWord = [NSMutableString stringWithCapacity:6];
+    }
+    return _passWord;
+}
+
+
+
+
+#pragma mask --------------------------------------------------- 分界线
 
 
 
@@ -154,7 +240,7 @@ static FieldTrackData TransData;
     
     bPass[0]=nPasswordlen;
     NSData* bytesPass =[self StrHexToByte:bPassKey];
-    memcpy(bPass+1,[bytesPass bytes], nPasLen/2);
+    memcpy(bPass + 1,[bytesPass bytes], nPasLen/2);
     memcpy(SendData+14,bPass, 8);
     SendData[22] =PIN_KEY_ID;
     SendData[23] =MAIN_KEY_ID;
@@ -172,67 +258,10 @@ static FieldTrackData TransData;
 }
 
 
-/***************需要*************/
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    self.textField.text = nil;
-    self.passWord = nil;
-    
-    CGFloat x = 0;
-    CGFloat y = self.view.height - 216;
-    CGFloat w = self.view.width;
-    CGFloat h = 216;
-    self.keyboard = [[LVKeyboardView alloc] initWithFrame:CGRectMake(x, y, w, h)];
-    self.keyboard.delegate = self;
-    
-    self.textField.inputView = _keyboard;
-    
-    return YES;
-}
-
-#pragma mark ----------------------------------- LVKeyboardDelegate
-- (void)keyboard:(LVKeyboardView *)keyboard didClickButton:(UIButton *)button {
-    
-    if (self.passWord.length > 5) return;
-    [self.passWord appendString:button.currentTitle];
-    
-    self.textField.text = self.passWord;
-    NSLog(@"%@", self.textField.text);
-}
-
-- (void)keyboard:(LVKeyboardView *)keyboard didClickDeleteBtn:(UIButton *)deleteBtn {
-    NSLog(@"删除");
-    NSUInteger loc = self.passWord.length;
-    if (loc == 0)   return;
-    NSRange range = NSMakeRange(loc - 1, 1);
-    [self.passWord deleteCharactersInRange:range];
-    self.textField.text = self.passWord;
-    NSLog(@"%@", self.textField.text);
-}
-
-#pragma mark - 需要
-- (NSMutableString *)passWord {
-    if (!_passWord) {
-        _passWord = [NSMutableString stringWithCapacity:6];
-    }
-    return _passWord;
-}
-
-#pragma mark - 如果不需要随机变换数字需要
-//- (LVKeyboardView *)keyboard {
-//    if (!_keyboard) {
-//        CGFloat x = 0;
-//        CGFloat y = self.view.height - 216;
-//        CGFloat w = self.view.width;
-//        CGFloat h = 216;
-//        _keyboard = [[LVKeyboardView alloc] initWithFrame:CGRectMake(x, y, w, h)];
-//        _keyboard.delegate = self;
-//    }
-//    return _keyboard;
-//}
-/***************结束*************/
 
 
--(void) BcdToAsc:(Byte *)Dest:(Byte *)Src:(int)Len
+
+-(void) BcdToAsc:(Byte *)Dest :(Byte *)Src :(int)Len
 {
     int i;
     for(i=0;i<Len;i++)
@@ -302,7 +331,7 @@ static FieldTrackData TransData;
     nIndex +=1;
     nIndex +=TransData.nTrack2Len;
     
-    [self BcdToAsc:str:TransData.szTrack2:TransData.nTrack2Len];
+    [self BcdToAsc:str :TransData.szTrack2 :TransData.nTrack2Len];
     
     NSLog(@"******************2磁道数据****************  %s   %d",str,TransData.nTrack2Len);
     //2磁道加密数据
@@ -439,23 +468,13 @@ static FieldTrackData TransData;
                         
                     }
 //                    strPan =[self stringFromHexString:strPan];
-                    
-                  
-                    
                 });
-                
-                
-                
                 
             }
             else
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡失败");
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-//                    [self.navigationController popViewControllerAnimated:YES];
-                    
-//                    [[(AppDelegate *)[UIApplication sharedApplication].delegate window]makeToast:@"刷卡失败"];
                     
                 });
             }
@@ -471,13 +490,7 @@ static FieldTrackData TransData;
                     NSString *liushui=[PublicInformation exchangeNumber];
                     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
                     [[NSUserDefaults standardUserDefaults] synchronize];
-
                     
-                    
-//                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-//                    UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"waitview"];
-//                    
-//                    [self.navigationController pushViewController:viewcon animated:YES];
                     WaitViewController *viewcon = [[WaitViewController alloc]init];
                     viewcon.pinstr = self.pinStr;
                     [self.navigationController pushViewController:viewcon animated:YES];
