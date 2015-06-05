@@ -45,6 +45,8 @@
 		5E5E5FBB1B12CB3D002F421D /* AdditionalButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
+		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
+		5E82B7E21B214B8F00A58751 /* passwordView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7E11B214B8F00A58751 /* passwordView.m */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -206,6 +208,10 @@
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
 		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHLDevice.h; sourceTree = "<group>"; };
 		5E82B78F1B1BFCC200A58751 /* JHLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHLDevice.m; sourceTree = "<group>"; };
+		5E82B7DD1B214B8200A58751 /* CustomIOSAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomIOSAlertView.h; sourceTree = "<group>"; };
+		5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomIOSAlertView.m; sourceTree = "<group>"; };
+		5E82B7E01B214B8F00A58751 /* passwordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = passwordView.h; sourceTree = "<group>"; };
+		5E82B7E11B214B8F00A58751 /* passwordView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = passwordView.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -387,10 +393,6 @@
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
 				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
 				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
-				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
-				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
-				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
-				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 				5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */,
 				5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */,
 				5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */,
@@ -401,6 +403,11 @@
 				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
+				5E82B7DC1B214B5300A58751 /* 密码输入框 */,
+				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
+				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
+				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
+				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 			);
 			name = "刷卡界面";
 			sourceTree = "<group>";
@@ -502,6 +509,17 @@
 				5E82B78F1B1BFCC200A58751 /* JHLDevice.m */,
 			);
 			name = "设备管理";
+			sourceTree = "<group>";
+		};
+		5E82B7DC1B214B5300A58751 /* 密码输入框 */ = {
+			isa = PBXGroup;
+			children = (
+				5E82B7DD1B214B8200A58751 /* CustomIOSAlertView.h */,
+				5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */,
+				5E82B7E01B214B8F00A58751 /* passwordView.h */,
+				5E82B7E11B214B8F00A58751 /* passwordView.m */,
+			);
+			name = "密码输入框";
 			sourceTree = "<group>";
 		};
 		5EB6F9731AC8DD1C00E47AB5 = {
@@ -914,6 +932,7 @@
 				5EBAA8E81ACD2FA800E2ABDD /* ASCIIString.m in Sources */,
 				5EBA40F71AEA366000F270C0 /* QianPiViewController.m in Sources */,
 				5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */,
+				5E82B7E21B214B8F00A58751 /* passwordView.m in Sources */,
 				5EB6F9881AC8DD1C00E47AB5 /* logViewController.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
 				5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */,
@@ -977,6 +996,7 @@
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
+				5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */,
 				5EF4C0DC1B16E08100CE3E3F /* DisplayMoneyText.m in Sources */,
 				5E397B371AD36429004F206F /* ASIS3BucketObject.m in Sources */,
 				5EBAA8F71ACD389D00E2ABDD /* JsonToString.m in Sources */,

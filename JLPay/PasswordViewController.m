@@ -27,17 +27,21 @@
 /**
  *   自定义密码键盘
  */
+
+
+
+
+
 @property (nonatomic, strong) LVKeyboardView *keyboard;
-
 @property (nonatomic, strong) NSMutableString *passWord;
-
-//@property(nonatomic,strong  )NSString *pinStr;
 
 @end
 
+
+
+
+
 @implementation PasswordViewController
-//@synthesize osmanager;
-//static FieldTrackData TransData;
 
 
 - (void)viewDidLoad {
@@ -56,6 +60,7 @@
     self.textField.inputAccessoryView = [[LVKeyboardAccessoryBtn alloc] init];
     self.textField.inputView = self.keyboard;
     self.textField.delegate = self;
+    self.textField.secureTextEntry = YES;
     [self.textField becomeFirstResponder];
 }
 
@@ -108,6 +113,8 @@
         [self.navigationController popToViewController:viewController animated:YES];
     });
 }
+
+
 
 #pragma mask ::: 从本地配置获取金额
 -(NSString *)returnMoney{
