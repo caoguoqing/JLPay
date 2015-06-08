@@ -12,11 +12,7 @@
 #import "GroupPackage8583.h"
 #import "Unpacking8583.h"
 #import "Toast+UIView.h"
-#import "CommunicationCallBack.h"
 #import "OtherSignButton.h"
-
-#import "CommunicationManager.h"
-
 
 
 
@@ -26,9 +22,8 @@
 #define ImageForBrand   @"01icon"                                   // 商标图片
 
 
-@interface logViewController ()<wallDelegate,managerToCard,CommunicationCallBack, UITextFieldDelegate>
+@interface logViewController ()<wallDelegate,managerToCard, UITextFieldDelegate>
 
-@property (nonatomic, strong) CommunicationManager* osmanager;      // JHL的协议接口指针
 
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
@@ -45,8 +40,6 @@
 
 
 @implementation logViewController
-@synthesize osmanager;
-static FieldTrackData TransData;
 
 @synthesize userNumberTextField     = _userNumberTextField;
 @synthesize userPasswordTextField   = _userPasswordTextField;
@@ -76,15 +69,9 @@ static FieldTrackData TransData;
     [self EndEdit];
     
     // 打开设备..循环中。。这里需要读取设备么????????????????????????
-    [self openDevice];
-//    AppDelegate* delegatte          = app_delegate;
-//    AppDelegate* delegate_          = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    
-//    [delegate_.device open];
-
+    AppDelegate* delegate_          = (AppDelegate*)[UIApplication sharedApplication].delegate;
     
-//    self.view.backgroundColor       = [UIColor colorWithWhite:1 alpha:0.9];
-    
+    [delegate_.device open];
 
 }
 
@@ -106,9 +93,7 @@ static FieldTrackData TransData;
     NSDictionary* userInfo          = [notification userInfo];
     NSValue* value                  = [userInfo valueForKey:UIKeyboardFrameEndUserInfoKey];
     CGFloat keyboardHeight          = [value CGRectValue].size.height;
-    if (Print_log) {
-        NSLog(@"键盘高度================[%f]", keyboardHeight);
-    }
+
     
     // checkout textField, and push up Window
     if ([self.userNumberTextField isFirstResponder] || [self.userPasswordTextField isFirstResponder]) {
@@ -390,296 +375,6 @@ static FieldTrackData TransData;
 
 
 
-
-#pragma mask ------------------------------------------------------------------------
-
-
-
-#pragma mask  ----- 打开设备
--(void)openDevice{
-    NSThread* DeviceThread          = [[NSThread alloc] initWithTarget:self
-                                                              selector:@selector(CheckDevceThread1)
-                                                                object:nil];
-    [DeviceThread start];
-}
-
--(void)CheckDevceThread1
-{
-    while (true) {
-        int result                  = [self openJhlDevice];
-        [self StatusChange:result];
-        if (result ==0)
-        {
-            break;
-        }
-        [NSThread sleepForTimeInterval:0.5];
-        
-    }
-}
--(int)openJhlDevice
-{
-    memset(&TransData, 0x00, sizeof(FieldTrackData));
-    if (osmanager ==NULL)
-        osmanager                   = [CommunicationManager sharedInstance];
-    
-    NSString *astring               = [CommunicationManager getLibVersion];
-    
-    // --- 打印设备的版本
-    if (Print_log) {
-        NSLog(@"，，，，，，，，，，，，，，，，，，，，，%@",astring);
-    }
-    // 打开设备
-    int result                      = [osmanager openDevice];
-    // --- 打印打开设备的结果: result
-    if (Print_log) {
-        NSLog(@"%s,result:%d",__func__,result);
-    }
-    return result;
-    
-    
-}
--(void )StatusChange:(int )Nstate
-{
-    NSLog(@"%s,result:%d",__func__,Nstate);
-    switch (Nstate) {
-        case KNOWED_DEVICE_ING://刷卡器已识别
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<刷卡器已识别,获取版本号>>>>>>>>>>>>>>>>>>>");
-                [self GetSnVersion];
-            });
-        }
-            break;
-        case UNKNOW_DEVICE_ING://设备接入但不能识别为刷卡器
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<设备接入但不能识别为刷卡器>>>>>>>>>>>>>>>>>>>");
-            });
-        }
-            break;
-        case NO_DEVICE_INSERT://没有设备介入 （设备拔出）
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<没有设备介入 （设备拔出）>>>>>>>>>>>>>>>>>>>");
-            });
-        }
-            break;
-        case KNOWING_DEVICE_ING://设备正在识别
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<设备正在识别>>>>>>>>>>>>>>>>>>>");
-            });
-        }
-            break;
-        case DEVICE_NEED_UPDATE_ING://刷卡器已识别，但需要升级
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"<<<<<<<<<<<<<<<<<<<<<<刷卡器已识别，但需要升级>>>>>>>>>>>>>>>>>>>");
-
-            });
-        }
-            break;
-        default:
-            break;
-    }
-}
--(int)GetSnVersion
-{
-    if (osmanager ==NULL)
-        osmanager = [CommunicationManager sharedInstance];
-    int result = [osmanager isConnected];
-    if (!result)
-        return  result;
-    
-    NSMutableData* data = [[NSMutableData alloc] init];
-    Byte array[1] = {GETSNVERSION};
-    [data appendBytes:array length:1];
-    result =[osmanager exchangeData:data timeout:WAIT_TIMEOUT cb:self];
-    return result;
-    
-}
-
--(NSString *)stringFromHexString:(NSString *)hexString { //
-    
-    char *myBuffer = (char *)malloc((int)[hexString length] / 2 + 1);
-    bzero(myBuffer, [hexString length] / 2 + 1);
-    for (int i = 0; i < [hexString length] - 1; i += 2) {
-        unsigned int anInt;
-        NSString * hexCharStr = [hexString substringWithRange:NSMakeRange(i, 2)];
-        NSScanner * scanner = [[NSScanner alloc] initWithString:hexCharStr];
-        [scanner scanHexInt:&anInt];
-        myBuffer[i / 2] = (char)anInt;
-    }
-    NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
-    free(myBuffer);
-    NSLog(@"------字符串=======%@",unicodeString);
-    return unicodeString;
-    
-    
-}
--(int)ReadTernumber
-{
-    if (osmanager ==NULL)
-        osmanager = [CommunicationManager sharedInstance];
-    int result = [osmanager isConnected];
-    if (!result)
-        return  result;
-    
-    NSMutableData* data = [[NSMutableData alloc] init];
-    Byte array[1] = {GETTERNUMBER};
-    [data appendBytes:array length:1];
-    result =[osmanager exchangeData:data timeout:WAIT_TIMEOUT cb:self];
-    return result;
-}
-
-
-#pragma mark       --------------------------------CommunicationCallBack
-
--(void)onReceive:(NSData*)data{
-    
-    NSLog(@"%s %@",__func__,data);
-    Byte * ByteDate = (Byte *)[data bytes];
-    switch (ByteDate[0]) {
-        case MAINKEY_CMD:
-            if (!ByteDate[1])   // 主密钥设置成功
-            {
-                NSLog(@"%s,result:%@",__func__,@"主密钥设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                });
-                
-            }else
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                  
-                });
-                
-            }
-            
-            
-            break;
-        case WORKKEY_CMD:
-            if (!ByteDate[1])   // 工作密钥设置成功
-            {
-                NSLog(@"%s,result:%@",__func__,@"工作密钥设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                });
-                
-            }else
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-               
-                });
-                
-            }
-            break;
-        case GETSNVERSION:
-            if (!ByteDate[1])   // SN号获取成功
-            {
-                NSString * strSN =@"";
-                for (int i=3; i <19; i++) {
-                    NSString *newHexStr = [NSString stringWithFormat:@"%x",ByteDate[i]&0xff];///16进制数
-                    strSN = [strSN stringByAppendingString:newHexStr];
-                }
-                strSN =[self stringFromHexString:strSN];
-                
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSLog(@"SN获取成功  %@",strSN);
-                    NSString * SN =@"SN:";
-                    SN = [SN stringByAppendingString:strSN];
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:SN delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    [alert show];
-                });
-                
-            }
-            break;
-        case GETMAC_CMD:
-            if (!ByteDate[1])   // MAC
-            {
-                NSLog(@"%s,result:%@",__func__,@"MAC 获取成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSString * strMAC =@"";
-                    strMAC = [NSString stringWithFormat:@"%@",data];
-                    strMAC = [strMAC stringByReplacingOccurrencesOfString:@" " withString:@""];
-                    strMAC =[strMAC substringFromIndex:5];
-                    strMAC = [strMAC substringToIndex:16];
-                    
-                });
-                
-            }else
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
-            }
-            break;
-        case WRITETERNUMBER:
-            if (!ByteDate[1])   // 工作密钥设置成功
-            {
-                NSLog(@"%s,result:%@",__func__,@"终端号商户号设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-
-                    [self ReadTernumber];  //读取终端号
-                });
-                
-            }else
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-         
-                });
-                
-            }
-            
-            break;
-        case GETTERNUMBER:
-            if (!ByteDate[1])   // 终端号
-            {
-                NSString * strTerNumber =@"";
-                strTerNumber = [NSString stringWithFormat:@"%@",data];
-                
-                strTerNumber = [strTerNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
-                strTerNumber =[strTerNumber substringFromIndex:5];
-                strTerNumber = [strTerNumber substringToIndex:23];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    //                    self.LabTerid.text = strTerNumber;
-                    NSString * strTer =@"";
-                    strTer = [@"终端商户号:" stringByAppendingString:strTerNumber];
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:strTer delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    [alert show];
-                    
-                });
-                
-            }
-            
-            break;
-        default:
-            break;
-    }
-    
-    
-}
-
-
-
-
-
-
--(void)onTimeout{
-    NSLog(@"CommunicationCallBack protocol: onTimeout");
-}
--(void)onError:(NSInteger)code message:(NSString*)msg{
-    NSLog(@"CommunicationCallBack protocol: onError");
-    
-}
-- (void)onSendOK {
-    
-}
-- (void)onProgress:(NSData *)data {
-    
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -9,6 +9,7 @@
 #import "settingViewController.h"
 #import "DeviceSettingViewController.h"
 #import <UIKit/UIKitDefines.h>
+#import "TransDetailsTableViewController.h"
 
 
 #define LeftInsetOfCellCent             0.1f                    // 单元格元素的左边界距离
@@ -109,18 +110,16 @@
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    
-    
-        // 下面是 cell 的装载
-        if (indexPath.row == 0) {
-            [self loadFirstCell:cell inTabelView:tableView];
-        
-        } else {
-            [self loadCell:cell atIndex:indexPath.row];
-        }
-    
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
+    // 下面是 cell 的装载
+    if (indexPath.row == 0) {
+        [self loadFirstCell:cell inTabelView:tableView];
+        
+    } else {
+        [self loadCell:cell atIndex:indexPath.row];
+    }
+    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     return cell;
 }
@@ -159,6 +158,11 @@
                 break;
             case 2:
                 // 交易管理
+            {
+                TransDetailsTableViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"TransDetails"];
+                transDetailsVC.title = @"交易管理";
+                [self.navigationController pushViewController:transDetailsVC animated:YES];
+            }
                 break;
             case 3:
                 // 绑定机具
@@ -173,15 +177,15 @@
                 // 修改密码
                 break;
             case 7:
-                // 意见反馈
-                break;
-            case 8:
                 // 参数设置
             {
                 UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
                 [self.navigationController pushViewController:viewContr animated:YES];
             }
+                break;
+            case 8:
+                // 意见反馈
                 break;
             case 9:
                 // 帮助与关于
@@ -336,8 +340,8 @@
                                @"连接机具":@"01_14",
                                @"额度查询":@"01_16",
                                @"修改密码":@"01_18",
-                               @"意见反馈":@"01_20",
                                @"参数设置":@"01_22",
+                               @"意见反馈":@"01_20",
                                @"帮助和关于":@"01_24"};
     // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
@@ -347,8 +351,8 @@
                                                 @"连接机具",
                                                 @"额度查询",
                                                 @"修改密码",
-                                                @"意见反馈",
                                                 @"参数设置",
+                                                @"意见反馈",
                                                 @"帮助和关于", nil];
 
 }
