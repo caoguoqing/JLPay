@@ -27,12 +27,23 @@
 
 #define CellTextColor    [UIColor whiteColor];  // 文字颜色
 #define BigNumberFont               40.0
-#define TextDesFont                 15.0
+#define TextDesFont                 12.0
 #define NumberFont                  25.0
 #define AmountFlagFont              20.0
-#define LittleFont                  12.0
+#define LittleFont                  10.0
 #define LeftInset                   10.0
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.flushRowsLabel.text = @"0";
+        self.totalAmountLabel.text = @"0.00";
+        self.totalRowsLabel.text = @"0";
+        self.sucRowsLabel.text = @"0";
+        self.revokeRowsLabel.text = @"0";
+    }
+    return self;
+}
 
 - (void)layoutSubviews {
     CGFloat modalH = 384.0;
@@ -47,8 +58,6 @@
     frame.origin.y += frame.size.height;
     frame.size.height = self.bounds.size.height - frame.size.height;
     [self addSubview:[self makeView2:frame]];
-    
-
 }
 
 - (UIView*) makeView1: (CGRect)frame {
@@ -70,7 +79,6 @@
     innerFrame.size.width = frame.size.width / 4.0 * 3.0 - LeftInset;
     innerFrame.size.height = frame.size.height - innerFrame.size.height;
     self.totalAmountLabel.frame = innerFrame;
-    self.totalAmountLabel.text = @"82462.88";
     [view addSubview:self.totalAmountLabel];
     
     // ￥
@@ -147,22 +155,18 @@
     innerframe.origin.y += innerframe.size.height;
     innerframe.size.height = curHeight - innerframe.size.height;
     self.totalRowsLabel.frame = innerframe;
-    self.totalRowsLabel.text = @"10";
     [view addSubview:self.totalRowsLabel];
     // 成功.下面
     innerframe.origin.x += innerframe.size.width;
     self.sucRowsLabel.frame = innerframe;
-    self.sucRowsLabel.text = @"10";
     [view addSubview:self.sucRowsLabel];
     // 撤销.下面
     innerframe.origin.x += innerframe.size.width;
     self.revokeRowsLabel.frame = innerframe;
-    self.revokeRowsLabel.text = @"0";
     [view addSubview:self.revokeRowsLabel];
     // 冲正.下面
     innerframe.origin.x += innerframe.size.width;
     self.flushRowsLabel.frame = innerframe;
-    self.flushRowsLabel.text = @"0";
     [view addSubview:self.flushRowsLabel];
     
     // 分割线
@@ -180,6 +184,26 @@
     
     return view;
 }
+
+
+#pragma mask ::: set 属性值
+
+- (void) setTotalAmount: (NSString*)totalAmount {
+    self.totalAmountLabel.text = totalAmount;
+}
+- (void) setTotalRows: (NSString*)totalRows {
+    self.totalRowsLabel.text = totalRows;
+}
+- (void) setSucRows: (NSString*)totalAmount {
+    self.sucRowsLabel.text = totalAmount;
+}
+- (void) setFlushRows: (NSString*)flushRows {
+    self.flushRowsLabel.text = flushRows;
+}
+- (void) setRevokeRows: (NSString*)totalAmount {
+    self.revokeRowsLabel.text = totalAmount;
+}
+
 
 
 #pragma mask ::: getter

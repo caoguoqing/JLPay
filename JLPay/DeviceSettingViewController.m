@@ -65,7 +65,8 @@ typedef enum {
      //第二步，注册SDK回调函数
 //     PosLib_SetDelegate((__bridge void*)self, PosLibResponce);
    
-    
+
+
     
     
     
@@ -881,5 +882,7 @@ static void PosLibResponce(void *userData,
  // Pass the selected object to the new view controller.
  }
  */
+
+
 
 @end

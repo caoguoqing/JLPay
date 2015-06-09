@@ -45,7 +45,16 @@
     UIColor *color                  = [UIColor redColor];
     NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:UITextAttributeTextColor];
     self.navigationController.navigationBar.titleTextAttributes = dict;
+    self.navigationController.navigationBar.tintColor = color;
     
+    // 自定义返回界面的按钮样式
+    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
+    UIImage* image = [UIImage imageNamed:@"backItem"];
+    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
+                                  forState:UIControlStateNormal
+                                barMetrics:UIBarMetricsDefault];
+    self.navigationItem.backBarButtonItem = backItem;
+
     [super viewDidLoad];
 }
 
@@ -160,7 +169,6 @@
                 // 交易管理
             {
                 TransDetailsTableViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"TransDetails"];
-                transDetailsVC.title = @"交易管理";
                 [self.navigationController pushViewController:transDetailsVC animated:YES];
             }
                 break;
@@ -323,6 +331,10 @@
     [cell addSubview:panImageView];
 }
 
+#pragma mask ::: 自定义返回上层界面按钮的功能
+- (IBAction) backToPreVC :(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 /*************************************
  * 功  能 : 初始化 cellNamesAndImages 字典数据;

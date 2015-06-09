@@ -94,6 +94,20 @@
 
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_CardSwiped_Success object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_CardSwiped_Fail object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_KeyboardNumberClicked object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_keyboardDeleteClicked object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_TransSale_Success object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_TransSale_Fail object:nil];
+}
+
 #pragma mask ::: 刷卡成功
 - (void) cardSwipeSuccess : (NSNotification*)notification {
     if ([self.activity isAnimating]) {
@@ -153,7 +167,8 @@
 #pragma mask ::: 密码输入提示框的按钮点击事件
 - (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     CustomIOSAlertView* alertV = (CustomIOSAlertView*)alertView;
-    
+    [alertV close];
+
     if (buttonIndex == 0) { // 取消
         // 弹出刷卡界面,回到金额输入界面
         [self.navigationController popViewControllerAnimated:YES];
@@ -165,7 +180,6 @@
 
     }
     
-    [alertV close];
 }
 
 

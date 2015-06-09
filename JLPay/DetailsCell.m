@@ -11,7 +11,7 @@
 @interface DetailsCell()
 @property (nonatomic, strong) UILabel* amountLabel;
 @property (nonatomic, strong) UILabel* cardNumberLabel;
-@property (nonatomic, strong) UILabel* tranDateLabel;
+@property (nonatomic, strong) UILabel* tranTimeLabel;
 
 @end
 
@@ -19,57 +19,62 @@
 @implementation DetailsCell
 @synthesize amountLabel = _amountLabel;
 @synthesize cardNumberLabel = _cardNumberLabel;
-@synthesize tranDateLabel = _tranDateLabel;
+@synthesize tranTimeLabel = _tranTimeLabel;
 
 
+#define AmountFont          20.0                // 金额字体大小
+#define OtherFont           12.0                // 其他描述信息字体大小
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
     if (self) {
-        [self addSubview:self.amountLabel];
-        [self addSubview:self.cardNumberLabel];
-        [self addSubview:self.tranDateLabel];
-
+        self.amountLabel.text = @"0.00";
+        self.cardNumberLabel.text = @"";
+        self.tranTimeLabel.text = @"";
     }
     return self;
 }
 
+
 #pragma mask ::: 加载 cell 的子视图
 - (void)layoutSubviews {
     CGFloat inset = 20.0;
+    CGFloat verticalInset = self.bounds.size.height/3.0/2.0;
     
+    // amount
     CGRect frame = self.bounds;
     frame.origin.x += inset;
     frame.size.width = (frame.size.width - inset * 2.0)/2.0;
     self.amountLabel.frame = frame;
-//    self.amountLabel.backgroundColor = [UIColor greenColor];
-
+    [self addSubview:self.amountLabel];
     
+    // cardNo.
     frame.origin.x += frame.size.width;
-    frame.size.height /= 2.0;
+    frame.origin.y += verticalInset;
+    frame.size.height = (self.bounds.size.height - verticalInset * 2.0)/2.0;
     self.cardNumberLabel.frame = frame;
-    self.cardNumberLabel.textAlignment = NSTextAlignmentRight;
-//    self.cardNumberLabel.backgroundColor = [UIColor orangeColor];
+    [self addSubview:self.cardNumberLabel];
     
+    // tranTime
     frame.origin.y += frame.size.height;
-    self.tranDateLabel.frame = frame;
-    self.tranDateLabel.textAlignment = NSTextAlignmentRight;
-
-//    self.tranDateLabel.backgroundColor = [UIColor grayColor];
+    self.tranTimeLabel.frame = frame;
+    [self addSubview:self.tranTimeLabel];
 }
 
 #pragma mask ::: 金额属性赋值
 - (void) setAmount : (NSString*)amount {
-    
+    self.amountLabel.text = [@"￥ "  stringByAppendingString:amount];
 }
 #pragma mask ::: 卡号属性赋值
 - (void) setCardNum : (NSString*)cardNum {
-    
+    NSString* preNum = [cardNum substringToIndex:6];
+    NSString* sufNum = [cardNum substringFromIndex:[cardNum length] - 4];
+    self.cardNumberLabel.text = [[preNum stringByAppendingString:@"******"] stringByAppendingString:sufNum];
 }
 #pragma mask ::: 日期时间赋值
-- (void) setDate : (NSString*)date {
-    
+- (void) setTime : (NSString*)time {
+    self.tranTimeLabel.text = time;
 }
 
 
@@ -78,20 +83,26 @@
 - (UILabel *)amountLabel {
     if (_amountLabel == nil) {
         _amountLabel = [[UILabel alloc] init];
+        _amountLabel.textAlignment = NSTextAlignmentLeft;
+        _amountLabel.font = [UIFont boldSystemFontOfSize:AmountFont];
     }
     return _amountLabel;
 }
 - (UILabel *)cardNumberLabel {
     if (_cardNumberLabel == nil) {
         _cardNumberLabel = [[UILabel alloc] init];
+        _cardNumberLabel.textAlignment = NSTextAlignmentRight;
+        _cardNumberLabel.font = [UIFont systemFontOfSize:OtherFont];
     }
     return _cardNumberLabel;
 }
-- (UILabel *)tranDateLabel {
-    if (_tranDateLabel == nil) {
-        _tranDateLabel = [[UILabel alloc] init];
+- (UILabel *)tranTimeLabel {
+    if (_tranTimeLabel == nil) {
+        _tranTimeLabel = [[UILabel alloc] init];
+        _tranTimeLabel.textAlignment = NSTextAlignmentRight;
+        _tranTimeLabel.font = [UIFont systemFontOfSize:OtherFont];
     }
-    return _tranDateLabel;
+    return _tranTimeLabel;
 }
 
 @end

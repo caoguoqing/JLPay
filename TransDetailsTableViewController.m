@@ -10,11 +10,50 @@
 #import "TotalAmountCell.h"
 #import "DetailsCell.h"
 
+
+@interface TransDetailsTableViewController()
+@property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
+
+@end
+
+
 @implementation TransDetailsTableViewController
+@synthesize dataArray = _dataArray;
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"交易管理";
+
+}
+
+#pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // 从后台异步获取数据
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        sleep(5);
+        // 自定义的数据------需要修改为从JSON中解析出来
+        self.dataArray = [NSArray arrayWithObjects:
+                          [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"23.45", @"8293796242739273", @"14:32",nil]
+                                                      forKeys:[NSArray arrayWithObjects:@"amount", @"cardNo", @"time", nil]],
+                          [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"5432.32", @"23823232355826384", @"11:05",nil]
+                                                      forKeys:[NSArray arrayWithObjects:@"amount", @"cardNo", @"time", nil]],
+                          
+                          nil];
+        // for ---- test
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    });
+    
+    // 加载一个 activity 控件
+}
+
+#pragma mask ::: 在表视图界面加载的同时从后台获取data
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 }
 
 
@@ -25,31 +64,36 @@
 
 #pragma mask ::: UITableViewDataSource -- row 个数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    return self.dataArray.count + 2;
 }
 
 #pragma mask ::: UITableViewDelegate -- cell的重用
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-//    NSString* identifier = @"transDetailCell";
-//    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    UITableViewCell* cell = nil;
-    
-    if (cell == nil) {
-
-        if (indexPath.row == 0) {
-//            cell = [[TotalAmountCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-            cell = [[TotalAmountCell alloc]  init];
-        } else {
-//            cell = [[DetailsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-            cell = [[DetailsCell alloc] init];
-        }
+    UITableViewCell* cell;
+    if (indexPath.row == 0)         // 总金额 cell
+    {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"totalAmountCell"];
+    } else if (indexPath.row == 1)  // 明细头描述 cell
+    {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"detailsHeaderCell"];
+        cell.textLabel.text = @"交易详情";
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:18.0];
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"search"]];
+        cell.accessoryView.bounds = CGRectMake(0, 0, cell.bounds.size.height / 4.0 * 3.0, cell.bounds.size.height / 4.0 * 3.0);
+    } else                          // 明细展示 cell
+    {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"transDetailCell"];
     }
+    
+    // 给cell加载数据
+    [self loadingDataForDetailCell:(DetailsCell*)cell atIndexPath:indexPath];
+
     return cell;
 }
 
+#pragma mask ::: 重定义各个类型 cell 的高度
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) {
+    if (indexPath.row == 0 ) {
         return 150.0;
     }
     else {
@@ -57,5 +101,48 @@
     }
 }
 
+#pragma mask ::: cell 的点击事件
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selected = NO;
+}
+
+
+#pragma mask ::: 给指定序号的cell装载数据
+- (void) loadingDataForDetailCell: (DetailsCell *)cell atIndexPath: (NSIndexPath *)indexPath {
+    if (indexPath.row == 0) {
+        // 计算总金额,并加载
+    } else if (indexPath.row == 1) {
+        // 不加载任何信息
+    } else {
+        // 加载明细单元格
+        NSDictionary* dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
+        [cell setAmount:[dataDic objectForKey:@"amount"]];
+        [cell setCardNum:[dataDic objectForKey:@"cardNo"]];
+        [cell setTime:[dataDic objectForKey:@"time"]];
+    }
+}
+
+
+
+
+#pragma mask --------------------------- 异步获取/解析后台交易明细数据
+
+
+
+
+
+#pragma mask ::: 自定义返回上层界面按钮的功能
+- (IBAction) backToPreVC :(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+#pragma mask ::: getter 
+- (NSArray *)dataArray {
+    if (_dataArray == nil) {
+        _dataArray = [[NSArray alloc] init];
+    }
+    return _dataArray;
+}
 
 @end
