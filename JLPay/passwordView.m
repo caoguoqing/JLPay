@@ -23,21 +23,6 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-//        CGFloat inset = 7;
-//        CGRect innerFrame = CGRectMake(frame.origin.x + inset, 0, frame.size.width - inset*2, (frame.size.height - inset*2)/2.0);
-//        // 支付密码描述
-//        [self makeLabel:innerFrame];
-//        
-//        // 分割线
-//        innerFrame.origin.y += (frame.size.height - inset*2)/2.0;
-//        innerFrame.size.height = 0.3;
-//        [self addSubview:[self line:innerFrame]];
-//        
-//        // 密码显示框
-//        innerFrame.origin.y += inset * 2 - 0.5;
-//        innerFrame.size.height = (frame.size.height - inset*2)/2.0;
-//        [self passwordDisplayedView:innerFrame];
-        
         self.pinCharCount = 0;
     }
     return self;
@@ -59,11 +44,6 @@
     innerFrame.origin.y += inset * 2 - 0.5;
     innerFrame.size.height = (self.frame.size.height - inset*2)/2.0;
     [self passwordDisplayedView:innerFrame];
-    
-    // 注册密码显示 textField 的字符接收事件
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addCharIntoPassword:) name:Noti_KeyboardNumberClicked object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteCharFromPassword:) name:Noti_keyboardDeleteClicked object:nil];
-
 }
 
 #pragma mask ::: 支付密码描述label
@@ -124,25 +104,26 @@
     return lieView;
 }
 
-
-#pragma mask ::: 注册密码显示 textField 的字符接收事件
-- (void) addCharIntoPassword : (NSNotification*)notification {
-    if (self.pinCharCount >= 6) {
+#pragma mask ::: 密码添加一位字符
+- (void) passwordAppendChar: (NSString*)aChar {
+    if (self.pinCharCount > 5) {
         return;
     }
     UITextField* textField = [self.arrayWithPasswordCharLabel objectAtIndex:self.pinCharCount];
-    textField.text = (NSString*)notification.object;
+    textField.text = [aChar copy];
     self.pinCharCount++;
 }
-- (void) deleteCharFromPassword : (NSNotification*)notification {
+
+#pragma mask ::: 密码删除一位字符
+- (void) passwordRemoveChar {
     if (self.pinCharCount < 1) {
         return;
     }
     UITextField* textField = [self.arrayWithPasswordCharLabel objectAtIndex:self.pinCharCount - 1];
     textField.text = nil;
-
     self.pinCharCount--;
 }
+
 
 #pragma mask ::: getter
 - (UILabel *)label {
@@ -163,6 +144,5 @@
     }
     return _arrayWithPasswordCharLabel;
 }
-
 
 @end

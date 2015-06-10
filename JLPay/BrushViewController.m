@@ -15,28 +15,21 @@
 #import "PasswordViewController.h"
 #import "Define_Header.h"
 #import "CustomIOSAlertView.h"
-#import "passwordView.h"
 #import "CustPayViewController.h"
 #import "WaitViewController.h"
 
 
 
-//@interface BrushViewController ()<CommunicationCallBack>
 @interface BrushViewController()<CustomIOSAlertViewDelegate>
 
-//@property(nonatomic,strong) CommunicationManager* osmanager;
 
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
-@property (nonatomic, strong) passwordView* passwordInnerView;
-@property (nonatomic, strong) NSMutableString *passWord;
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;
 
 @end
 
 @implementation BrushViewController
 @synthesize activity                    = _activity;
-@synthesize passwordInnerView           = _passwordInnerView;
-@synthesize passWord                    = _passWord;
 @synthesize passwordAlertView           = _passwordAlertView;
 
 /*************************************
@@ -51,6 +44,16 @@
     [super viewDidLoad];
     // 加载子视图
     [self addSubViews];
+    
+    // 注册刷卡成功的通知处理
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeSuccess:) name:Noti_CardSwiped_Success object:nil];
+    
+    // 注册刷卡失败的通知处理
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeFail:) name:Noti_CardSwiped_Fail object:nil];
+    
+    // 注册刷磁消费的通知处理
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
 }
 
 #pragma mask ::: 子视图的属性设置
@@ -77,47 +80,16 @@
         // 连接设备....循环中
         [delegate.device open];
     }
-    
-    // 注册刷卡成功的通知处理
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeSuccess:) name:Noti_CardSwiped_Success object:nil];
 
-    // 注册刷卡失败的通知处理
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeFail:) name:Noti_CardSwiped_Fail object:nil];
-    
-    // 注册密码显示 textField 的字符接收事件
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addCharIntoPassword:) name:Noti_KeyboardNumberClicked object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteCharFromPassword:) name:Noti_keyboardDeleteClicked object:nil];
-
-    // 注册刷磁消费的通知处理
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
 
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_CardSwiped_Success object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_CardSwiped_Fail object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_KeyboardNumberClicked object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_keyboardDeleteClicked object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_TransSale_Success object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self  name:Noti_TransSale_Fail object:nil];
-}
 
 #pragma mask ::: 刷卡成功
 - (void) cardSwipeSuccess : (NSNotification*)notification {
     if ([self.activity isAnimating]) {
         [self.activity stopAnimating];
     }
-    
-    // 跳转到密码输入界面 --- 修改:不要跳转,在当前界面添加自定义密码输入框: CustomIOSAlertView
-//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-//    UIViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"password"];
-//    [self.navigationController pushViewController:viewcon animated:YES];
     
     // 打开密码输入提示框
     [self makePasswordAlertView];
@@ -133,26 +105,10 @@
 
 }
 
-#pragma mask ::: 注册密码显示 textField 的字符接收事件
-- (void) addCharIntoPassword : (NSNotification*)notification {
-    if ([self.passWord length] >= 6) {
-        return;
-    }
-    [self.passWord appendString:(NSString*)notification.object];
-}
-- (void) deleteCharFromPassword : (NSNotification*)notification {
-    if ([self.passWord length] < 1) {
-        return;
-    }
-    NSRange range = NSMakeRange([self.passWord length] - 1, 1);
-    [self.passWord deleteCharactersInRange:range];
-}
 
 #pragma mask ::: 初始化并加载密码输入提示框
 - (void) makePasswordAlertView {
-//    CustomIOSAlertView* passwordAlertView = [[CustomIOSAlertView alloc] init];
-    self.passwordInnerView.frame = CGRectMake(0, 0, self.view.bounds.size.width - 20*2, 90);
-    [self.passwordAlertView setContainerView:self.passwordInnerView];
+    // innerView 放在 alertView 中创建
     
     self.passwordAlertView.delegate = self;
     [self.passwordAlertView setUseMotionEffects:YES];
@@ -174,14 +130,14 @@
         [self.navigationController popViewControllerAnimated:YES];
     } else {                // 确定
         long money = [self themoney] ;
-        //    [self TRANS_Sale:20000 :money :6 :self.textField.text];
         AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
-        [delegate_.device TRANS_Sale:20000 nAmount:money nPasswordlen:(int)self.passWord.length bPassKey:self.passWord];
-
+        // 这里的密码 password 用 alertView.password
+        [delegate_.device TRANS_Sale:20000
+                             nAmount:money
+                        nPasswordlen:(int)self.passwordAlertView.password.length
+                            bPassKey:self.passwordAlertView.password];
     }
-    
 }
-
 
 
 #pragma mask ::: 跳转到消费的联机阶段
@@ -199,7 +155,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.navigationController pushViewController:viewcon animated:YES];
     });
-    
 }
 
 #pragma mask ::: 跳转回金额输入界面
@@ -321,18 +276,12 @@
     [super didReceiveMemoryWarning];
 }
 
+#pragma mask ::: getter
 - (UIActivityIndicatorView *)activity {
     if (_activity == nil) {
         _activity                   = [[UIActivityIndicatorView alloc] init];
     }
     return _activity;
-}
-
-- (passwordView *)passwordInnerView {
-    if (_passwordInnerView == nil) {
-        _passwordInnerView = [[passwordView alloc] init];
-    }
-    return _passwordInnerView;
 }
 
 - (CustomIOSAlertView *)passwordAlertView {
@@ -342,12 +291,6 @@
     return _passwordAlertView;
 }
 
-#pragma mark - 密码的 getter
-- (NSMutableString *)passWord {
-    if (!_passWord) {
-        _passWord = [NSMutableString stringWithCapacity:6];
-    }
-    return _passWord;
-}
+
 
 @end

@@ -76,7 +76,7 @@
     }
     
     // 给cell加载数据
-    [self loadingDataForDetailCell:(DetailsCell*)cell atIndexPath:indexPath];
+    [self loadingDataForDetailCell:cell atIndexPath:indexPath];
 
     return cell;
 }
@@ -100,17 +100,19 @@
 
 
 #pragma mask ::: 给指定序号的cell装载数据
-- (void) loadingDataForDetailCell: (DetailsCell *)cell atIndexPath: (NSIndexPath *)indexPath {
+- (void) loadingDataForDetailCell: (UITableViewCell *)cell atIndexPath: (NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
         // 计算总金额,并加载
+        TotalAmountCell* tCell = (TotalAmountCell*)cell;
     } else if (indexPath.row == 1) {
         // 不加载任何信息
     } else {
         // 加载明细单元格
+        DetailsCell* dCell = (DetailsCell*)cell;
         NSDictionary* dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
-        [cell setAmount:[dataDic objectForKey:@"amount"]];
-        [cell setCardNum:[dataDic objectForKey:@"cardNo"]];
-        [cell setTime:[dataDic objectForKey:@"time"]];
+        [dCell setAmount:[dataDic objectForKey:@"amount"]];
+        [dCell setCardNum:[dataDic objectForKey:@"cardNo"]];
+        [dCell setTime:[dataDic objectForKey:@"time"]];
     }
 }
 

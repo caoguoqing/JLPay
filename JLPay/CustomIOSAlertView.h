@@ -27,6 +27,8 @@
 @property (nonatomic, retain) NSArray *buttonTitles;
 @property (nonatomic, assign) BOOL useMotionEffects;
 
+@property (nonatomic, copy) NSMutableString* password;
+
 @property (copy) void (^onButtonTouchUpInside)(CustomIOSAlertView *alertView, int buttonIndex) ;
 
 - (id)init;

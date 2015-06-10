@@ -10,4 +10,11 @@
 
 @interface passwordView : UIView
 - (instancetype)initWithFrame:(CGRect)frame ;
+
+#pragma mask ::: 密码添加一位字符
+- (void) passwordAppendChar: (NSString*)aChar;
+
+#pragma mask ::: 密码删除一位字符
+- (void) passwordRemoveChar;
+
 @end

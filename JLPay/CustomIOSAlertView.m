@@ -13,6 +13,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "Define_Header.h"
 #import "LVKeyboardView.h"
+#import "passwordView.h"
 
 const static CGFloat kCustomIOSAlertViewDefaultButtonHeight       = 40;     // 按钮高度
 const static CGFloat kCustomIOSAlertViewDefaultButtonSpacerHeight = 1;      // 分割线高度
@@ -23,8 +24,8 @@ const static CGFloat kCustomIOSContentViewHorizontalInset         = 7.0;    // �
 
 @interface CustomIOSAlertView()<LVKeyboardDelegate>
 @property (nonatomic, strong) LVKeyboardView* keyboard;
-@property (nonatomic, assign) int    pinCharCount;
 @property (nonatomic, strong) NSMutableArray* mutableArrayButtons;
+@property (nonatomic, retain) passwordView* passwordFieldView;
 @end
 
 
@@ -39,8 +40,9 @@ CGFloat buttonSpacerHeight = 0;
 @synthesize buttonTitles;
 @synthesize useMotionEffects;
 @synthesize keyboard;
-@synthesize pinCharCount = _pinCharCount;
+@synthesize passwordFieldView = _passwordFieldView;
 @synthesize mutableArrayButtons = _mutableArrayButtons;
+@synthesize password = _password;
 
 
 - (id)initWithParentView: (UIView *)_parentView
@@ -83,7 +85,6 @@ CGFloat buttonSpacerHeight = 0;
     // 创建自定义键盘
     [self createCustomKeyboard];
     [self addSubview:self.keyboard];
-    self.pinCharCount = 0;
   
     dialogView.layer.shouldRasterize = YES;
     dialogView.layer.rasterizationScale = [[UIScreen mainScreen] scale];
@@ -219,7 +220,9 @@ CGFloat buttonSpacerHeight = 0;
 - (UIView *)createContainerView
 {
     if (containerView == NULL) {
-        containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 150)];
+//        containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 150)];
+        self.passwordFieldView.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width - 20*2, 90);
+        containerView = self.passwordFieldView;
     }
 
     CGSize screenSize = [self countScreenSize];
@@ -500,52 +503,52 @@ CGFloat buttonSpacerHeight = 0;
 
 #pragma mark - LVKeyboardDelegate
 - (void)keyboard:(LVKeyboardView *)keyboard didClickButton:(UIButton *)button {
+    if (self.password.length > 5) return;
     
-    if (self.pinCharCount > 5) return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:Noti_KeyboardNumberClicked object:button.currentTitle];
-    self.pinCharCount++;
+    [self.password appendString:button.currentTitle];
 
+    // 调用 passwordView 的新方法
+    [self.passwordFieldView passwordAppendChar:button.currentTitle];
+    // 监控 确定 按钮的状态
+    for (int i = 1; i < self.mutableArrayButtons.count; i++) {
+        UIButton* button = [self.mutableArrayButtons objectAtIndex:i];
+        if ((_password.length == 6) && (!button.enabled)) {
+            [button setEnabled:YES];
+            [button setHighlighted:YES];
+        }
+    }
 }
 
 - (void)keyboard:(LVKeyboardView *)keyboard didClickDeleteBtn:(UIButton *)deleteBtn {
-    if (self.pinCharCount == 0)   return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:Noti_keyboardDeleteClicked object:nil];
-    self.pinCharCount--;
+    if (self.password.length < 1) return;
+    
+    [self.password deleteCharactersInRange:NSMakeRange(self.password.length - 1, 1)];
+    // 监控 确定 按钮的状态
+    for (int i = 1; i < self.mutableArrayButtons.count; i++) {
+        UIButton* button = [self.mutableArrayButtons objectAtIndex:i];
+        if ((_password.length < 6) && button.enabled) {
+            [button setEnabled:NO];
+            [button setHighlighted:NO];
+        }
+    }
+    [self.passwordFieldView passwordRemoveChar];
+    
 }
 
 
 #pragma mask ::: setter & getter
-- (int)pinCharCount {
-    return _pinCharCount;
+- (NSString *)password {
+    if (_password == nil) {
+        _password = [[NSMutableString alloc] init];
+    }
+    return _password;
 }
-- (void)setPinCharCount:(int)newPinCharCount {
-    BOOL enabel = NO;
-    if (newPinCharCount == 6) {
-        enabel = YES;
-    } else {
-        enabel = NO;
-    }
-    if (newPinCharCount > 0) {
-        if (enabel) {
-            for (int i = 1; i < self.mutableArrayButtons.count; i++) {
-                UIButton* button = [self.mutableArrayButtons objectAtIndex:i];
-                if (!button.enabled) {
-                    [button setEnabled:enabel];
-                    [button setHighlighted:enabel];
-                }
-            }
-        } else {
-            for (int i = 1; i < self.mutableArrayButtons.count; i++) {
-                UIButton* button = [self.mutableArrayButtons objectAtIndex:i];
-                if (button.enabled) {
-                    [button setEnabled:enabel];
-                    [button setHighlighted:enabel];
 
-                }
-            }
-        }
+- (passwordView *)passwordFieldView {
+    if (_passwordFieldView == nil) {
+        _passwordFieldView = [[passwordView alloc] init];
     }
-    _pinCharCount = newPinCharCount;
+    return _passwordFieldView;
 }
 
 - (NSMutableArray *)mutableArrayButtons {

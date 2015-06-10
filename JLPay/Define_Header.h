@@ -30,8 +30,6 @@
 #define Noti_CardSwiped_Fail            @"Noti_CardSwiped_Fail"
 #define Noti_TransSale_Success          @"Noti_TransSale_Success"       // 刷卡消费
 #define Noti_TransSale_Fail             @"Noti_TransSale_Fail"
-#define Noti_KeyboardNumberClicked      @"Noti_KeyboardNumberClicked"   // 自定义键盘的数字按钮的点击事件
-#define Noti_keyboardDeleteClicked      @"Noti_keyboardDeleteClicked"   // 自定义键盘的删除按钮的点击事件
 /*************[notification 变量声明区]**************/
 
 #define CustomKeyboardHeight            216.0                           // 自定义键盘的高度
@@ -108,7 +106,7 @@
 
 
 
-#define app_delegate  (AppDelegate *)([UIApplication sharedApplication].delegate)
+#define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
 #define Screen_Width  [UIScreen mainScreen].bounds.size.width
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
