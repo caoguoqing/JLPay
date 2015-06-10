@@ -62,9 +62,12 @@
     [self addSubview:self.tranTimeLabel];
 }
 
-#pragma mask ::: 金额属性赋值
+#pragma mask ::: 金额属性赋值 : 000000000010
 - (void) setAmount : (NSString*)amount {
-    self.amountLabel.text = [@"￥ "  stringByAppendingString:amount];
+    CGFloat fAmount = [amount floatValue];
+    fAmount /= 100.0;
+    self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
+//    self.amountLabel.text = [@"￥ "  stringByAppendingString:amount];
 }
 #pragma mask ::: 卡号属性赋值
 - (void) setCardNum : (NSString*)cardNum {
@@ -72,9 +75,13 @@
     NSString* sufNum = [cardNum substringFromIndex:[cardNum length] - 4];
     self.cardNumberLabel.text = [[preNum stringByAppendingString:@"******"] stringByAppendingString:sufNum];
 }
-#pragma mask ::: 日期时间赋值
+#pragma mask ::: 日期时间赋值 : 093412
 - (void) setTime : (NSString*)time {
-    self.tranTimeLabel.text = time;
+//    self.tranTimeLabel.text = time;
+    self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
+                               [time substringToIndex:2],
+                               [time substringWithRange:NSMakeRange(2, 2)],
+                               [time substringFromIndex:4]];
 }
 
 
@@ -84,6 +91,7 @@
     if (_amountLabel == nil) {
         _amountLabel = [[UILabel alloc] init];
         _amountLabel.textAlignment = NSTextAlignmentLeft;
+        _amountLabel.textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
         _amountLabel.font = [UIFont boldSystemFontOfSize:AmountFont];
     }
     return _amountLabel;
@@ -92,6 +100,7 @@
     if (_cardNumberLabel == nil) {
         _cardNumberLabel = [[UILabel alloc] init];
         _cardNumberLabel.textAlignment = NSTextAlignmentRight;
+        _cardNumberLabel.textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
         _cardNumberLabel.font = [UIFont systemFontOfSize:OtherFont];
     }
     return _cardNumberLabel;
@@ -100,6 +109,7 @@
     if (_tranTimeLabel == nil) {
         _tranTimeLabel = [[UILabel alloc] init];
         _tranTimeLabel.textAlignment = NSTextAlignmentRight;
+        _tranTimeLabel.textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
         _tranTimeLabel.font = [UIFont systemFontOfSize:OtherFont];
     }
     return _tranTimeLabel;

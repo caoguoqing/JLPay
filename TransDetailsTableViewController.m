@@ -14,13 +14,15 @@
 
 @interface TransDetailsTableViewController()<NSURLConnectionDataDelegate>
 @property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
-
+@property (nonatomic, strong) NSMutableData* reciveData;
+@property (nonatomic, strong) UIActivityIndicatorView* activity;
 @end
 
 
 @implementation TransDetailsTableViewController
 @synthesize dataArray = _dataArray;
-
+@synthesize reciveData = _reciveData;
+@synthesize activity = _activity;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -31,14 +33,17 @@
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSString* urlString = @"";
+    NSString* urlString = @"http://192.188.8.112:8083/jlagent/getMchntInfo";
+//    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
+    
     // 从后台异步获取数据
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // 需要修改为从JSON中解析出来......
-        
-    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        // 需要修改为从JSON中解析出来......
+//    });
+    [self toRequestDataFromURL: urlString];
     
     // 加载一个 activity 控件
+    [self.activity startAnimating];
 }
 
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
@@ -66,7 +71,7 @@
     } else if (indexPath.row == 1)  // 明细头描述 cell
     {
         cell = [tableView dequeueReusableCellWithIdentifier:@"detailsHeaderCell"];
-        cell.textLabel.text = @"交易详情";
+        cell.textLabel.text = @"交易明细";
         cell.textLabel.font = [UIFont boldSystemFontOfSize:18.0];
         cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"search"]];
         cell.accessoryView.bounds = CGRectMake(0, 0, cell.bounds.size.height / 4.0 * 3.0, cell.bounds.size.height / 4.0 * 3.0);
@@ -104,15 +109,16 @@
     if (indexPath.row == 0) {
         // 计算总金额,并加载
         TotalAmountCell* tCell = (TotalAmountCell*)cell;
+        [self colculateTotalAmountFromDataArray:tCell];
     } else if (indexPath.row == 1) {
         // 不加载任何信息
     } else {
         // 加载明细单元格
         DetailsCell* dCell = (DetailsCell*)cell;
         NSDictionary* dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
-        [dCell setAmount:[dataDic objectForKey:@"amount"]];
-        [dCell setCardNum:[dataDic objectForKey:@"cardNo"]];
-        [dCell setTime:[dataDic objectForKey:@"time"]];
+        [dCell setAmount:[dataDic objectForKey:@"amtTrans"]];
+        [dCell setCardNum:[dataDic objectForKey:@"pan"]];
+        [dCell setTime:[dataDic objectForKey:@"instTime"]];
     }
 }
 
@@ -143,8 +149,10 @@
     
     NSDateFormatter* dateFomatter = [[NSDateFormatter alloc] init];
     [dateFomatter setDateFormat:@"yyyyMMddHHmmss"];
-    [mutableRequest addValue:[dateFomatter stringFromDate:[NSDate date]] forHTTPHeaderField:@"queryBeginTime"];
-    [mutableRequest addValue:[dateFomatter stringFromDate:[NSDate date]] forHTTPHeaderField:@"queryEndTime"];
+    [mutableRequest addValue:[[dateFomatter stringFromDate:[NSDate date]] substringToIndex:8]
+          forHTTPHeaderField:@"queryBeginTime"];
+    [mutableRequest addValue:[[dateFomatter stringFromDate:[NSDate date]] substringToIndex:8]
+          forHTTPHeaderField:@"queryEndTime"];
     
     // 发起请求
     NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
@@ -153,7 +161,21 @@
 
 #pragma mask ::: 获取到后台JSON数据
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    NSLog(@"获取到后台数据[],开始解析...");
+    [self.reciveData appendData:data];
+}
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    
+    [self.activity stopAnimating];
+    // 开始解析 JSON 数据
+    [self analysisJSONDataToDisplay];
+    
+}
+
+#pragma mask ::: 接收后台数据失败
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"获取交易明细数据失败:" message:[error localizedDescription] delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alerView show];
+    [self.activity stopAnimating];
 }
 
 
@@ -162,12 +184,64 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+
+
+#pragma mask ::: 解析从后台获取的JSON格式明细，并展示到表视图
+- (void) analysisJSONDataToDisplay {
+    NSError* error;
+    NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
+        
+    self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
+    // 重载数据
+    [self.tableView reloadData];
+}
+
+#pragma mask ::: 计算解析到得数据数组中得总金额以及总笔数等数据
+- (void) colculateTotalAmountFromDataArray: (TotalAmountCell*)cell {
+    // 总金额
+    // 总笔数
+    // 总成功笔数
+    // 总撤销笔数
+    CGFloat tAmount = 0.0;
+    int tAcount = 0;
+    int tSucCount = 0;
+    int tRevokeCount = 0;
+    for (int i = 0; i < self.dataArray.count; i++) {
+        NSDictionary* data = [self.dataArray objectAtIndex:i];
+        if ([[data objectForKey:@"cancelFlag"] isEqualToString:@"1"]) {
+            tRevokeCount++;
+            tAmount -= [[data objectForKey:@"amtTrans"] floatValue]/100.0;
+        } else {
+            tAmount += [[data objectForKey:@"amtTrans"] floatValue]/100.0;
+        }
+        tAcount++;
+    }
+    tSucCount = tAcount - tRevokeCount;
+    [cell setTotalAmount:[NSString stringWithFormat:@"%.02f", tAmount]];
+    [cell setTotalRows:[NSString stringWithFormat:@"%d", tAcount]];
+    [cell setSucRows:[NSString stringWithFormat:@"%d", tSucCount]];
+    [cell setRevokeRows:[NSString stringWithFormat:@"%d", tRevokeCount]];
+}
+
+
 #pragma mask ::: getter 
 - (NSArray *)dataArray {
     if (_dataArray == nil) {
         _dataArray = [[NSArray alloc] init];
     }
     return _dataArray;
+}
+- (NSMutableData *)reciveData {
+    if (_reciveData == nil) {
+        _reciveData = [[NSMutableData alloc] init];
+    }
+    return _reciveData;
+}
+- (UIActivityIndicatorView *)activity {
+    if (_activity == nil) {
+        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    }
+    return _activity;
 }
 
 @end

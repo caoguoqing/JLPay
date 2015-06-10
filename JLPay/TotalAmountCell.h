@@ -17,7 +17,7 @@
 // 设置成功笔数
 - (void) setSucRows: (NSString*)totalAmount ;
 // 设置冲正笔数
-- (void) setFlushRows: (NSString*)flushRows ;
+//- (void) setFlushRows: (NSString*)flushRows ;
 // 设置撤销笔数
 - (void) setRevokeRows: (NSString*)totalAmount ;
 
