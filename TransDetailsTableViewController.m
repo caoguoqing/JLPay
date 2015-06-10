@@ -9,9 +9,10 @@
 #import "TransDetailsTableViewController.h"
 #import "TotalAmountCell.h"
 #import "DetailsCell.h"
+#import "PublicInformation.h"
 
 
-@interface TransDetailsTableViewController()
+@interface TransDetailsTableViewController()<NSURLConnectionDataDelegate>
 @property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
 
 @end
@@ -30,22 +31,11 @@
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+    NSString* urlString = @"";
     // 从后台异步获取数据
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        sleep(5);
-        // 自定义的数据------需要修改为从JSON中解析出来
-        self.dataArray = [NSArray arrayWithObjects:
-                          [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"23.45", @"8293796242739273", @"14:32",nil]
-                                                      forKeys:[NSArray arrayWithObjects:@"amount", @"cardNo", @"time", nil]],
-                          [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"5432.32", @"23823232355826384", @"11:05",nil]
-                                                      forKeys:[NSArray arrayWithObjects:@"amount", @"cardNo", @"time", nil]],
-                          
-                          nil];
-        // for ---- test
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+        // 需要修改为从JSON中解析出来......
+        
     });
     
     // 加载一个 activity 控件
@@ -105,6 +95,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
+    // 如果是明细的 cell ,需要跳转到明细详细展示界面，并在详细界面中提供“撤销”按钮及对应的功能
 }
 
 
@@ -127,9 +118,41 @@
 
 
 #pragma mask --------------------------- 异步获取/解析后台交易明细数据
+- (void) toRequestDataFromURL: (NSString*)urlString {
+    NSURL* url = [NSURL URLWithString:urlString];
+    if (url == nil) return;
+    
+    // 创建一个超时时间20s 且缓存策略为 NSURLRequestUseProtocolCachePolicy 的网络连接请求
+    NSMutableURLRequest* mutableRequest = [[NSMutableURLRequest alloc]initWithURL:url
+                                                                      cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                                  timeoutInterval:20];
+    
+    [mutableRequest setHTTPMethod:@"POST"];
+    
+    /* 开始给 http 添加参数 
+        -mchntNo        商户编号
+        -mchntNM        商户名称
+        -termNo         终端编号
+        -queryBeginTime 交易起始时间
+        -queryEndTime   交易终止时间
+    */
+    [mutableRequest addValue:[PublicInformation returnBusiness] forHTTPHeaderField:@"mchntNo"];
+    [mutableRequest addValue:[PublicInformation returnTerminal] forHTTPHeaderField:@"termNo"];
+    
+    NSDateFormatter* dateFomatter = [[NSDateFormatter alloc] init];
+    [dateFomatter setDateFormat:@"yyyyMMddHHmmss"];
+    [mutableRequest addValue:[dateFomatter stringFromDate:[NSDate date]] forHTTPHeaderField:@"queryBeginTime"];
+    [mutableRequest addValue:[dateFomatter stringFromDate:[NSDate date]] forHTTPHeaderField:@"queryEndTime"];
+    
+    // 发起请求
+    NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
+    [connection start];
+}
 
-
-
+#pragma mask ::: 获取到后台JSON数据
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    NSLog(@"获取到后台数据[],开始解析...");
+}
 
 
 #pragma mask ::: 自定义返回上层界面按钮的功能

@@ -311,7 +311,6 @@
     [cell addSubview:nameLabel];
     
     // mailLabel
-//    width                           = 50.f;
     frame.origin.y                  += littleHeight;
     frame.size.width                = width;
     UILabel *mailLabel              = [[UILabel alloc] initWithFrame:frame];
