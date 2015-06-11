@@ -178,7 +178,6 @@ static FieldTrackData TransData;
                     [[appDelegate window] makeToast:@"刷卡失败"];
                     NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Fail object:nil];
                     [[NSNotificationCenter defaultCenter] postNotification:notification];
-                    
                 });
             }
             break;
@@ -209,14 +208,19 @@ static FieldTrackData TransData;
 
 #pragma mask : 线程中的轮询方法:打开设备
 - (void) deviceOpenThread {
+    BOOL flag = YES;
     while (YES) {
         int result                  = [self openDevice];
-        [self stateCheck:result];
+        if (flag) {
+            [self stateCheck:result];
+            flag = NO;
+        }
         if (result == 0) {
             break;
         }
         [NSThread sleepForTimeInterval:0.5];
     }
+    // 出了循环就说明设备打开成功了,需要签到
 }
 
 #pragma mask : 打开设备
@@ -235,6 +239,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 设备已经打开", __func__);
+                    [[app_delegate window] makeToast:@"成功打开设备"];
                 }
             });
             break;
@@ -242,6 +247,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 设备正在识别......", __func__);
+                    [[app_delegate window] makeToast:@"正在识别设备..."];
                 }
             });
             break;
@@ -249,6 +255,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 设备无法识别", __func__);
+                    [[app_delegate window] makeToast:@"无法识别设备"];
                 }
             });
             break;
@@ -256,6 +263,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 没有设备介入 （设备拔出）", __func__);
+                    [[app_delegate window] makeToast:@"没有插入设备"];
                 }
             });
             break;
@@ -263,6 +271,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 刷卡器已识别，但需要升级", __func__);
+                    [[app_delegate window] makeToast:@"设备版本过低,请升级固件"];
                 }
             });
             break;

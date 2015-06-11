@@ -200,7 +200,7 @@
         <scene sceneID="PRN-cZ-eqD">
             <objects>
                 <tableViewController storyboardIdentifier="TransDetails" id="DFR-hI-MEs" customClass="TransDetailsTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="j9w-TB-AQo">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="j9w-TB-AQo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -232,7 +232,46 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="afp-zk-Gnw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="203" y="1768"/>
+            <point key="canvasLocation" x="63" y="1600"/>
+        </scene>
+        <!--Revoke View Controller-->
+        <scene sceneID="UFy-bu-0vF">
+            <objects>
+                <tableViewController storyboardIdentifier="revokeViewController" id="M2r-af-4sN" customClass="RevokeViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Igm-rr-pZ1">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="titleCell" rowHeight="66" id="Th3-DJ-bpb">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Th3-DJ-bpb" id="UDf-aR-RtE">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="detailCell" id="lTA-2Y-8gA">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lTA-2Y-8gA" id="BJZ-OH-cZE">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="revokeCell" id="mi0-hg-nfF">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mi0-hg-nfF" id="RWa-WE-A3i">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="M2r-af-4sN" id="bGc-2y-Toa"/>
+                            <outlet property="delegate" destination="M2r-af-4sN" id="d9G-ri-yKg"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Reh-rI-ygK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="517" y="1600"/>
         </scene>
         <!--参数设置-->
         <scene sceneID="aRT-Gt-YOT">
@@ -347,7 +386,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mNO-lT-50y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="191" y="2532"/>
+            <point key="canvasLocation" x="63" y="2540"/>
         </scene>
         <!--Terminal Param Set View Controller-->
         <scene sceneID="fMU-rk-W8N">
@@ -436,7 +475,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Ny-qw-6OI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1498" y="2832"/>
+            <point key="canvasLocation" x="650" y="3176"/>
         </scene>
         <!--Password View Controller-->
         <scene sceneID="MTX-eY-EhS">
@@ -554,7 +593,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s9L-AS-76U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1142" y="2310"/>
+            <point key="canvasLocation" x="650" y="2540"/>
         </scene>
         <!--商户管理-->
         <scene sceneID="fq6-ud-Js9">

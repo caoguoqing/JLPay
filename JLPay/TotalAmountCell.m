@@ -37,7 +37,6 @@
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-//        self.flushRowsLabel.text = @"0";
         self.totalAmountLabel.text = @"0.00";
         self.totalRowsLabel.text = @"0";
         self.sucRowsLabel.text = @"0";
@@ -59,6 +58,7 @@
     frame.origin.y += frame.size.height;
     frame.size.height = self.bounds.size.height - frame.size.height;
     [self addSubview:[self makeView2:frame]];
+    [super layoutSubviews];
 }
 
 - (UIView*) makeView1: (CGRect)frame {

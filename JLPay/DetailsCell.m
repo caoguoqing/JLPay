@@ -40,26 +40,31 @@
 #pragma mask ::: 加载 cell 的子视图
 - (void)layoutSubviews {
     CGFloat inset = 20.0;
-    CGFloat verticalInset = self.bounds.size.height/3.0/2.0;
+    CGFloat verticalInset = self.bounds.size.height/3.0/2.0;    // 垂直方向的间隔
     
     // amount
     CGRect frame = self.bounds;
     frame.origin.x += inset;
+    frame.origin.y += verticalInset;
     frame.size.width = (frame.size.width - inset * 2.0)/2.0;
+    frame.size.height -= verticalInset * 2.0;
     self.amountLabel.frame = frame;
     [self addSubview:self.amountLabel];
+//    self.amountLabel.backgroundColor = [UIColor orangeColor];
     
     // cardNo.
     frame.origin.x += frame.size.width;
-    frame.origin.y += verticalInset;
-    frame.size.height = (self.bounds.size.height - verticalInset * 2.0)/2.0;
+    frame.size.height /= 2.0;
     self.cardNumberLabel.frame = frame;
     [self addSubview:self.cardNumberLabel];
+//    self.cardNumberLabel.backgroundColor = [UIColor greenColor];
     
     // tranTime
     frame.origin.y += frame.size.height;
     self.tranTimeLabel.frame = frame;
     [self addSubview:self.tranTimeLabel];
+//    self.tranTimeLabel.backgroundColor = [UIColor grayColor];
+    [super layoutSubviews];
 }
 
 #pragma mask ::: 金额属性赋值 : 000000000010

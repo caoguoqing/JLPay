@@ -10,6 +10,7 @@
 #import "TotalAmountCell.h"
 #import "DetailsCell.h"
 #import "PublicInformation.h"
+#import "RevokeViewController.h"
 
 
 @interface TransDetailsTableViewController()<NSURLConnectionDataDelegate>
@@ -24,26 +25,30 @@
 @synthesize reciveData = _reciveData;
 @synthesize activity = _activity;
 
+#pragma mask ::: 在表视图界面在加载完自己的view后就到后台读取数据
 - (void)viewDidLoad {
-    [super viewDidLoad];
     self.title = @"交易管理";
+    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
+    // 从后台异步获取数据
+    [self toRequestDataFromURL: urlString];
+    
+    // 加载一个 activity 控件
+    [self.activity startAnimating];
+    
+    // 自定义返回界面的按钮样式
+    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
+    UIImage* image = [UIImage imageNamed:@"backItem"];
+    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
+                                  forState:UIControlStateNormal
+                                barMetrics:UIBarMetricsDefault];
+    self.navigationItem.backBarButtonItem = backItem;
 
+    [super viewDidLoad];
 }
 
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSString* urlString = @"http://192.188.8.112:8083/jlagent/getMchntInfo";
-//    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
-    
-    // 从后台异步获取数据
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        // 需要修改为从JSON中解析出来......
-//    });
-    [self toRequestDataFromURL: urlString];
-    
-    // 加载一个 activity 控件
-    [self.activity startAnimating];
 }
 
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
@@ -100,7 +105,15 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
-    // 如果是明细的 cell ,需要跳转到明细详细展示界面，并在详细界面中提供“撤销”按钮及对应的功能
+    if (indexPath.row == 1) {
+        // 用卡号+金额查询流水明细
+    } else {
+        // 如果是明细的 cell ,需要跳转到明细详细展示界面，并在详细界面中提供“撤销”按钮及对应的功能
+        RevokeViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"revokeViewController"];
+        viewController.dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
+    
 }
 
 
@@ -139,7 +152,6 @@
     
     /* 开始给 http 添加参数 
         -mchntNo        商户编号
-        -mchntNM        商户名称
         -termNo         终端编号
         -queryBeginTime 交易起始时间
         -queryEndTime   交易终止时间
@@ -154,7 +166,7 @@
     [mutableRequest addValue:[[dateFomatter stringFromDate:[NSDate date]] substringToIndex:8]
           forHTTPHeaderField:@"queryEndTime"];
     
-    // 发起请求
+    // 发起请求 -- 请求期间，不允许切换场景
     NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
     [connection start];
 }
@@ -164,7 +176,6 @@
     [self.reciveData appendData:data];
 }
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    
     [self.activity stopAnimating];
     // 开始解析 JSON 数据
     [self analysisJSONDataToDisplay];
@@ -173,9 +184,10 @@
 
 #pragma mask ::: 接收后台数据失败
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"获取交易明细数据失败:" message:[error localizedDescription] delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络超时，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+
     [alerView show];
-    [self.activity stopAnimating];
+//    [self.activity stopAnimating];
 }
 
 
@@ -192,6 +204,7 @@
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
         
     self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
+    
     // 重载数据
     [self.tableView reloadData];
 }
@@ -210,18 +223,20 @@
         NSDictionary* data = [self.dataArray objectAtIndex:i];
         if ([[data objectForKey:@"cancelFlag"] isEqualToString:@"1"]) {
             tRevokeCount++;
-            tAmount -= [[data objectForKey:@"amtTrans"] floatValue]/100.0;
+            tAmount -= [[data objectForKey:@"amtTrans"] floatValue];
         } else {
-            tAmount += [[data objectForKey:@"amtTrans"] floatValue]/100.0;
+            tAmount += [[data objectForKey:@"amtTrans"] floatValue];
         }
         tAcount++;
     }
-    tSucCount = tAcount - tRevokeCount;
+    tSucCount = tAcount - tRevokeCount*2;
+    tAmount /= 100.0;
     [cell setTotalAmount:[NSString stringWithFormat:@"%.02f", tAmount]];
     [cell setTotalRows:[NSString stringWithFormat:@"%d", tAcount]];
     [cell setSucRows:[NSString stringWithFormat:@"%d", tSucCount]];
     [cell setRevokeRows:[NSString stringWithFormat:@"%d", tRevokeCount]];
 }
+
 
 
 #pragma mask ::: getter 
