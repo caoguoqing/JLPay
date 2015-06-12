@@ -29,7 +29,7 @@
 - (void)viewDidLoad {
     self.title = @"交易管理";
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
-    // 从后台异步获取数据
+    // 从后台异步获取交易明细数据
     [self toRequestDataFromURL: urlString];
     
     // 加载一个 activity 控件
@@ -85,6 +85,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"transDetailCell"];
     }
     
+    
     // 给cell加载数据
     [self loadingDataForDetailCell:cell atIndexPath:indexPath];
 
@@ -132,6 +133,7 @@
         [dCell setAmount:[dataDic objectForKey:@"amtTrans"]];
         [dCell setCardNum:[dataDic objectForKey:@"pan"]];
         [dCell setTime:[dataDic objectForKey:@"instTime"]];
+        NSLog(@"\n=========\ndata=[%@]===========", [dataDic allKeys]);
     }
 }
 

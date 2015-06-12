@@ -2215,6 +2215,113 @@ static Unpacking8583 *sharedObj2 = nil;
             }
         }
     }
+#pragma mark---- 商户登陆
+    else if ([methodStr isEqualToString:@"loadIn"]){
+        {
+            @try {
+                // ---------解析位图
+                NSArray *bitmapArr=[[Unpacking8583 getInstance] bitmapArr:[PublicInformation getBinaryByhex:[signin substringWithRange:NSMakeRange(30, 16)]]];
+                NSLog(@"位图====%@",bitmapArr);
+                
+                // --- 本地配置文件，保存的信息是:::响应数据的 每个域索引号+域值 的字典
+                NSString *pathToConfigFile = [[NSBundle mainBundle] pathForResource:@"newisoconfig" ofType:@"plist"];
+                NSDictionary *allElementDic = [NSDictionary dictionaryWithContentsOfFile:pathToConfigFile];
+                
+                // --- 解析出每个域的值，保存到临时字典
+                NSMutableDictionary *bitDic=[[NSMutableDictionary alloc] init];
+                for (int i=0; i<[bitmapArr count]; i++) {
+                    NSString *bitStr=[bitmapArr objectAtIndex:i]; // 域索引值
+                    // --- 扫描本地配置信息
+                    for (int a=0; a<[[allElementDic allKeys] count]; a++) {
+                        if ([bitStr isEqualToString:[[allElementDic allKeys] objectAtIndex:a]]) {
+                            [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:[[allElementDic
+                                                                                                                              allKeys] objectAtIndex:a]]
+                                                                                         forKey:[[allElementDic allKeys] objectAtIndex:a]]];
+                        }
+                    }
+                }
+                NSArray* sortArr = [[NSArray alloc] initWithArray:bitmapArr];
+                //数据包
+                NSMutableString *dataStr=(NSMutableString *)[signin substringWithRange:NSMakeRange(46, ([signin length]-46))];
+                NSLog(@"数据包长度====%d,数据=====%@",[dataStr length],dataStr);
+                NSMutableArray *arr=[[NSMutableArray alloc] init];
+                
+                int location=0;
+                int length=0;
+                NSString *deleteStr=@"";
+                for (int c=0; c<[sortArr count]; c++) {
+                    
+                    // --- 解析 99 域
+                    if (([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"bcd99"])) {
+                        //剩下长度
+                        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
+                        //取一个字节，表示长度
+                        int otherLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]+2;
+                        if (otherLength%2 > 0) {
+                            otherLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]+2+1;
+                        }
+                        length=otherLength;
+                    }
+                    else if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"99"]) {
+                        //剩下长度
+                        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
+                        //取一个字节，表示长度
+                        int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]*2+2;
+                        length=oneCharLength;
+                    }else if([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"999"]){
+                        //剩下长度
+                        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
+                        //取两个字节，表示长度
+                        int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
+                        length=oneCharLength;
+                    }else{
+                        length=[[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"] intValue];
+                    }
+                    
+                    NSLog(@"location===%d,length====%d",location,length);
+                    deleteStr=[dataStr substringWithRange:NSMakeRange(location, length)];
+                    location += length;
+                    [arr addObject:deleteStr];
+                    
+                    // 解析 54 域
+//                    if ([[sortArr objectAtIndex:c] isEqualToString:@"54"]) {
+//                        
+//                        double money = [[deleteStr substringWithRange:NSMakeRange([deleteStr length]-12, 12)] doubleValue]*0.01;
+//                        NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
+//                        NSLog(@"money=====%.2f",money);
+//                        [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SearchCard_Money];
+//                        [[NSUserDefaults standardUserDefaults] synchronize];
+//                    }
+                    //39域,交易结果
+                    if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
+                        NSLog(@">>>>>>>>>>>39 = [%@]", deleteStr);
+                        if ([self IC_exchangeSuccess:deleteStr] ) {
+                            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:Is_Or_Consumer];
+                            [[NSUserDefaults standardUserDefaults] synchronize];
+                            rebackStr=@"登陆成功";
+                            rebackState=YES;
+                        }else{
+                            rebackStr=[self IC_exchangeResult:deleteStr];
+                            rebackState=NO;
+                        }
+                        break;
+                    }
+                    NSLog(@"位域====%@,长度=====%@,值====%@",[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
+                }
+                
+                NSLog(@"arr=====+%@",arr);
+                [self.delegate managerToCardState:rebackStr isSuccess:rebackState method:methodStr];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"%@", exception.reason);
+                rebackStr=@"查询失败";
+                [self.delegate managerToCardState:rebackStr isSuccess:NO method:methodStr];
+            }
+            @finally {
+                
+            }
+        }
+    }
 
 }
 

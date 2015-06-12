@@ -46,7 +46,7 @@
     return 40;
 }
 
-
+#pragma mask ::: cell 的重用及加载
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell;
     CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
@@ -150,7 +150,7 @@
 
 
 
-
+#pragma mask ::: getter & setter
 - (NSDictionary *)dataDic {
     if (_dataDic == nil) {
         _dataDic = [[NSDictionary alloc] init];

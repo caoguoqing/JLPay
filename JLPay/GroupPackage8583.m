@@ -376,6 +376,40 @@
     NSLog(@"binaryDataStr=====%@",binaryDataStr);
     return binaryDataStr;
 }
+
+
+/************************
+ *  商户登陆
+ *************************/
++(NSString *)loadIn{
+    
+    NSString* user_ID = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
+    NSString* user_PW = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPW"];
+    NSString* AF01 = [NSString stringWithFormat:@"AF01%02d%@",(int)[user_ID length], [EncodeString encodeASC:user_ID] ];
+    NSString* AF02 = [NSString stringWithFormat:@"AF02%02d%@", (int)[user_PW length], [EncodeString encodeASC:user_PW]];
+//    NSString* AF02 = [NSString stringWithFormat:@"AF02%02d%@", (int)[user_PW length]/2, user_PW];
+    NSString* F62 = [NSString stringWithFormat:@"%04d%@%@", (int)[user_PW length] + (int)[user_ID length] + 6, AF01, AF02];
+    
+    NSArray *arr=[[NSArray alloc] initWithObjects:
+                  [EncodeString encodeASC:[PublicInformation returnTerminal]],  //41,终端号，asc，定长8
+                  [EncodeString encodeASC:[PublicInformation returnBusiness]],  //42，商户号，asc，定长15
+                  @"0011960000004100",                                          //60,
+                  F62,                                                          //62,
+                  nil];
+    
+    NSLog(@"登陆数据=====%@",arr);
+    //二进制报文数据
+    NSArray *bitmapArr=[NSArray arrayWithObjects:@"41",@"42",@"60",@"62", nil];
+    NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
+                                                Tpdu:TPDU
+                                              Header:HEADER
+                                        ExchangeType:@"0800"
+                                             DataArr:arr];
+    NSLog(@"binaryDataStr=====%@",binaryDataStr);
+    return binaryDataStr;
+}
+
+
 //主密钥下发
 +(NSString *)downloadMainKey{
     

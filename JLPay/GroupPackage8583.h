@@ -34,6 +34,10 @@
 //签到
 +(NSString *)signIn;
 
+// 商户登陆
++(NSString *)loadIn;
+
+
 //公钥下发
 +(NSString *)downloadPublicKey;
 

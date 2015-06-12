@@ -13,6 +13,7 @@
 #import "Unpacking8583.h"
 #import "Toast+UIView.h"
 #import "OtherSignButton.h"
+#import "EncodeString.h"
 
 
 
@@ -143,37 +144,52 @@
 
 #pragma mark==========================================wallDelegate
 
+// 成功接收响应数据的回调 - TcpClientServer
 -(void)receiveGetData:(NSString *)data method:(NSString *)str
 {
-        //签到成功
-        if ([str  isEqualToString:@"tcpsignin"]) {
-            if ([data length] > 0) {
-                
-#pragma mark------------------界面跳转
-                [app_delegate signInSuccessToLogin:1];
-                
-                [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
-            }else{
-                [self.view makeToast:@"签到失败，请重新签到"];
-            }
-        }
+    if ([data length] > 0) {
+        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
+//        if ([str isEqualToString:@"loadIn"]) {              // 登陆
+//            
+//        }
+//        else if ([str isEqualToString:@"tcpsignin"]) {      // 签到
+//            [app_delegate signInSuccessToLogin:1];
+//        }
+    } else {
+        [self.view makeToast:@"网络超时,请重新登陆"];
+    }
+    
 }
+// 失败接收响应数据的回调
 -(void)falseReceiveGetDataMethod:(NSString *)str
 {
     if ([str  isEqualToString:@"tcpsignin"]) {
-        [self.view makeToast:@"连接超时，请重新签到"];
+        [self.view makeToast:@"网络超时,请检查网络"];
     }
 }
 
+// 响应数据拆包后的结果处理回调
 -(void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr
 {
-    if ([metStr isEqualToString:@"tcpsignin"]) {
+//    if ([metStr isEqualToString:@"tcpsignin"]) {    // 签到
         if (state) {
-            [[app_delegate window] makeToast:type];
+            dispatch_async(dispatch_get_main_queue(), ^{
+//                [[app_delegate window] makeToast:type];
+                [[app_delegate window] makeToast:@"登陆成功"];
+            });
+            [app_delegate signInSuccessToLogin:1];  // 成功了才切换到主场景
         }else{
             [self.view makeToast:type];
         }
-    }
+//    }
+//    else if ([metStr isEqualToString:@"loadIn"]) {  // 登陆
+//        if (state) {
+//            [self.view makeToast:type];
+////            [app_delegate signInSuccessToLogin:1];    // 跳转界面到主界面,签到也搬到主界面
+//        } else {
+//            [self.view makeToast:[NSString stringWithFormat:@"登陆失败:%@", type]];
+//        }
+//    }
 }
 
 
@@ -309,6 +325,7 @@
         self.userPasswordTextField.frame        = textFieldFrame;
         self.userPasswordTextField.placeholder  = @"请输入您的密码";
         self.userPasswordTextField.textColor    = [UIColor whiteColor];
+        self.userPasswordTextField.secureTextEntry = YES;
         [self.userPasswordTextField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
         
         [view addSubview:self.userPasswordTextField];
@@ -349,8 +366,40 @@
 - (IBAction)loadToMainView: (UIButton*)sender {
     // 添加动画效果
     sender.transform                      = CGAffineTransformIdentity;
+    
+//    if ([self.userNumberTextField.text length] == 0) {
+//        [self alertShow:@"请输入账号"];
+//        return;
+//    }
+//    if ([self.userPasswordTextField.text length] == 0) {
+//        [self alertShow:@"请输入密码"];
+//        return;
+//    }
+    
     // 发送签到报文
     [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
+    
+    // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
+    [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:@"userID"];
+    // 3des 加密
+    NSString* keyStr = @"123456789012345678901234567890123456789012345678";
+//    NSString* keyStr = @"00000000";
+    NSString* keyBCDStr = [EncodeString encodeASC:keyStr];
+    
+    
+    NSString* pinStr = self.userPasswordTextField.text;
+    if (pinStr.length < 8) {
+        for (int i = 8 - pinStr.length; i > 0; i--) {
+            pinStr = [pinStr stringByAppendingString:@"0"];
+        }
+    }
+    NSString* sourceStr = [EncodeString encodeASC:self.userPasswordTextField.text] ;
+    NSString* pin = [[Unpacking8583 getInstance] threeDesEncrypt:sourceStr keyValue:keyBCDStr];
+    NSString* BCDpin = [EncodeString encodeASC:pin];
+    NSString* truePin = @"1B42A49C0A9E80ABAAFC07A1BCC7594F";
+    NSLog(@"pin=[%@]",pin);
+    [[NSUserDefaults standardUserDefaults] setValue:truePin forKey:@"userPW"];
+//    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 loadIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"loadIn"];
 }
 
 /*************************************
@@ -374,6 +423,11 @@
 }
 
 
+#pragma mask ::: 弹出提示框
+- (void) alertShow: (NSString*) message {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
 
 
 - (void)didReceiveMemoryWarning {
