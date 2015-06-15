@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
 @property (nonatomic, strong) NSMutableData* reciveData;
 @property (nonatomic, strong) UIActivityIndicatorView* activity;
+@property (nonatomic, strong) NSURLConnection* URLConnection;
 @end
 
 
@@ -24,16 +25,15 @@
 @synthesize dataArray = _dataArray;
 @synthesize reciveData = _reciveData;
 @synthesize activity = _activity;
+@synthesize URLConnection = _URLConnection;
 
 #pragma mask ::: 在表视图界面在加载完自己的view后就到后台读取数据
 - (void)viewDidLoad {
+    [super viewDidLoad];
     self.title = @"交易管理";
-    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
-    // 从后台异步获取交易明细数据
-    [self toRequestDataFromURL: urlString];
-    
     // 加载一个 activity 控件
-    [self.activity startAnimating];
+//    [self.activity startAnimating];
+    [self.view addSubview:self.activity];
     
     // 自定义返回界面的按钮样式
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
@@ -43,17 +43,26 @@
                                 barMetrics:UIBarMetricsDefault];
     self.navigationItem.backBarButtonItem = backItem;
 
-    [super viewDidLoad];
+    // 从后台异步获取交易明细数据
+    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
+    [self toRequestDataFromURL: urlString];
 }
 
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.activity.frame = CGRectMake((self.view.bounds.size.width - 50.0)/2.0, (self.view.bounds.size.height - 50.0)/2.0, 50.0, 50.0);
+    [self.activity startAnimating];
 }
 
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+}
+
+#pragma mask ::: 界面即将切换后的方法的重载
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 }
 
 
@@ -106,9 +115,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
-    if (indexPath.row == 1) {
+    if (indexPath.row == 0) {
+        // 应该取消可点击状态
+    } else if (indexPath.row == 1) {
         // 用卡号+金额查询流水明细
-    } else {
+    }
+    else {
         // 如果是明细的 cell ,需要跳转到明细详细展示界面，并在详细界面中提供“撤销”按钮及对应的功能
         RevokeViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"revokeViewController"];
         viewController.dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
@@ -136,8 +148,6 @@
         NSLog(@"\n=========\ndata=[%@]===========", [dataDic allKeys]);
     }
 }
-
-
 
 
 #pragma mask --------------------------- 异步获取/解析后台交易明细数据
@@ -169,11 +179,13 @@
           forHTTPHeaderField:@"queryEndTime"];
     
     // 发起请求 -- 请求期间，不允许切换场景
-    NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
-    [connection start];
+//    NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
+    self.URLConnection = [NSURLConnection connectionWithRequest:mutableRequest delegate:self];
+    [self.URLConnection start];
 }
 
-#pragma mask ::: 获取到后台JSON数据
+
+#pragma mask ::: 获取到后台JSON数据 -- NSURLConnectionDataDelegate
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     [self.reciveData appendData:data];
 }
@@ -184,18 +196,29 @@
     
 }
 
-#pragma mask ::: 接收后台数据失败
+#pragma mask ::: 接收后台数据失败 -- NSURLConnectionDataDelegate
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    
+    
+    
+    
     UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络超时，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
 
     [alerView show];
-//    [self.activity stopAnimating];
+//    if (self.activity)
+//        [self.activity stopAnimating];
 }
+
+
 
 
 #pragma mask ::: 自定义返回上层界面按钮的功能
 - (IBAction) backToPreVC :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
+    [self.URLConnection cancel];
+    if ([self.activity isAnimating])
+        [self.activity stopAnimating];
+
 }
 
 
@@ -259,6 +282,12 @@
         _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     }
     return _activity;
+}
+-(NSURLConnection *)URLConnection {
+    if (_URLConnection) {
+        _URLConnection = [[NSURLConnection alloc] init];
+    }
+    return _URLConnection;
 }
 
 @end

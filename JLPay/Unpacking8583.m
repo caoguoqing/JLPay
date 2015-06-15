@@ -2304,7 +2304,7 @@ static Unpacking8583 *sharedObj2 = nil;
                             rebackStr=[self IC_exchangeResult:deleteStr];
                             rebackState=NO;
                         }
-                        break;
+//                        break;
                     }
                     NSLog(@"位域====%@,长度=====%@,值====%@",[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
                 }

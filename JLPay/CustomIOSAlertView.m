@@ -104,60 +104,60 @@ CGFloat buttonSpacerHeight = 0;
 
     // Can be attached to a view or to the top most window
     // Attached to a view:
-    if (parentView != NULL) {
-        [parentView addSubview:self];
+//    if (parentView != NULL) {
+//        [parentView addSubview:self];
+//
+//    // Attached to the top most window
+//    } else {
+//
+//        // On iOS7, calculate with orientation
+//        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
+//            
+//            UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+//            switch (interfaceOrientation) {
+//                case UIInterfaceOrientationLandscapeLeft:
+//                    self.transform = CGAffineTransformMakeRotation(M_PI * 270.0 / 180.0);
+//                    break;
+//                    
+//                case UIInterfaceOrientationLandscapeRight:
+//                    self.transform = CGAffineTransformMakeRotation(M_PI * 90.0 / 180.0);
+//                    break;
+//                    
+//                case UIInterfaceOrientationPortraitUpsideDown:
+//                    self.transform = CGAffineTransformMakeRotation(M_PI * 180.0 / 180.0);
+//                    break;
+//                    
+//                default:
+//                    break;
+//            }
+//            
+//            [self setFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+//
+//        // On iOS8, just place the dialog in the middle
+//        } else {
+//
+//            CGSize screenSize = [self countScreenSize];
+//            CGSize dialogSize = [self countDialogSize];
+//            CGSize keyboardSize = CGSizeMake(0, 0);
+//
+//            dialogView.frame = CGRectMake((screenSize.width - dialogSize.width) / 2, (screenSize.height - keyboardSize.height - dialogSize.height) / 2, dialogSize.width, dialogSize.height);
+//
+//        }
+//
+//        [[[[UIApplication sharedApplication] windows] firstObject] addSubview:self];
+//    }
 
-    // Attached to the top most window
-    } else {
-
-        // On iOS7, calculate with orientation
-        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
-            
-            UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-            switch (interfaceOrientation) {
-                case UIInterfaceOrientationLandscapeLeft:
-                    self.transform = CGAffineTransformMakeRotation(M_PI * 270.0 / 180.0);
-                    break;
-                    
-                case UIInterfaceOrientationLandscapeRight:
-                    self.transform = CGAffineTransformMakeRotation(M_PI * 90.0 / 180.0);
-                    break;
-                    
-                case UIInterfaceOrientationPortraitUpsideDown:
-                    self.transform = CGAffineTransformMakeRotation(M_PI * 180.0 / 180.0);
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            [self setFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-
-        // On iOS8, just place the dialog in the middle
-        } else {
-
-            CGSize screenSize = [self countScreenSize];
-            CGSize dialogSize = [self countDialogSize];
-            CGSize keyboardSize = CGSizeMake(0, 0);
-
-            dialogView.frame = CGRectMake((screenSize.width - dialogSize.width) / 2, (screenSize.height - keyboardSize.height - dialogSize.height) / 2, dialogSize.width, dialogSize.height);
-
-        }
-
-        [[[[UIApplication sharedApplication] windows] firstObject] addSubview:self];
-    }
-
-    dialogView.layer.opacity = 0.5f;
-    dialogView.layer.transform = CATransform3DMakeScale(1.3f, 1.3f, 1.0);
-
-    [UIView animateWithDuration:0.2f delay:0.0 options:UIViewAnimationOptionCurveEaseInOut
-					 animations:^{
-						 self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.4f];
-                         dialogView.layer.opacity = 1.0f;
-                         dialogView.layer.transform = CATransform3DMakeScale(1, 1, 1);
-					 }
-					 completion:NULL
-     ];
+//    dialogView.layer.opacity = 0.5f;
+//    dialogView.layer.transform = CATransform3DMakeScale(1.3f, 1.3f, 1.0);
+//
+//    [UIView animateWithDuration:0.2f delay:0.0 options:UIViewAnimationOptionCurveEaseInOut
+//					 animations:^{
+//						 self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.4f];
+//                         dialogView.layer.opacity = 1.0f;
+//                         dialogView.layer.transform = CATransform3DMakeScale(1, 1, 1);
+//					 }
+//					 completion:NULL
+//     ];
 
 }
 
@@ -222,19 +222,21 @@ CGFloat buttonSpacerHeight = 0;
     if (containerView == NULL) {
 //        containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 150)];
         self.passwordFieldView.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width - 20*2, 90);
-        containerView = self.passwordFieldView;
+//        containerView = self.passwordFieldView;
+        [self setSubView:self.passwordFieldView];
     }
 
     CGSize screenSize = [self countScreenSize];
     CGSize dialogSize = [self countDialogSize];     // 自定义 view 的size
-
+    NSLog(@"\n----------- \n screenSize=[%f,%f]\n dialogSize=[%f,%f] \n------------", screenSize.width, screenSize.height, dialogSize.width,dialogSize.height);
+    
     // For the black background
     [self setFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
 
     // This is the dialog's container; we attach the custom content and the buttons to this one
     UIView *dialogContainer = [[UIView alloc] initWithFrame:CGRectMake((screenSize.width - dialogSize.width - kCustomIOSContentViewHorizontalInset * 2.0) / 2.0,
                                                                        // 这里的 y 点坐标: (screen.height - keyboard.h - self.h )/2
-                                                                       (screenSize.height - dialogSize.height - CustomKeyboardHeight) / 2,
+                                                                       (screenSize.height - dialogSize.height - CustomKeyboardHeight) / 2.0,
                                                                        dialogSize.width,
                                                                        dialogSize.height)];
 

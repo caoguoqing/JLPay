@@ -14,6 +14,8 @@
 #import "Toast+UIView.h"
 #import "OtherSignButton.h"
 #import "EncodeString.h"
+#import "DesUtil.h"
+#import "ThreeDesUtil.h"
 
 
 
@@ -367,14 +369,14 @@
     // 添加动画效果
     sender.transform                      = CGAffineTransformIdentity;
     
-//    if ([self.userNumberTextField.text length] == 0) {
-//        [self alertShow:@"请输入账号"];
-//        return;
-//    }
-//    if ([self.userPasswordTextField.text length] == 0) {
-//        [self alertShow:@"请输入密码"];
-//        return;
-//    }
+    if ([self.userNumberTextField.text length] == 0) {
+        [self alertShow:@"请输入账号"];
+        return;
+    }
+    if ([self.userPasswordTextField.text length] == 0) {
+        [self alertShow:@"请输入密码"];
+        return;
+    }
     
     // 发送签到报文
     [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
@@ -382,23 +384,18 @@
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
     [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:@"userID"];
     // 3des 加密
-    NSString* keyStr = @"123456789012345678901234567890123456789012345678";
-//    NSString* keyStr = @"00000000";
-    NSString* keyBCDStr = [EncodeString encodeASC:keyStr];
-    
-    
-    NSString* pinStr = self.userPasswordTextField.text;
-    if (pinStr.length < 8) {
-        for (int i = 8 - pinStr.length; i > 0; i--) {
-            pinStr = [pinStr stringByAppendingString:@"0"];
-        }
-    }
+    // 原始 key
+    NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
     NSString* sourceStr = [EncodeString encodeASC:self.userPasswordTextField.text] ;
-    NSString* pin = [[Unpacking8583 getInstance] threeDesEncrypt:sourceStr keyValue:keyBCDStr];
-    NSString* BCDpin = [EncodeString encodeASC:pin];
-    NSString* truePin = @"1B42A49C0A9E80ABAAFC07A1BCC7594F";
-    NSLog(@"pin=[%@]",pin);
-    [[NSUserDefaults standardUserDefaults] setValue:truePin forKey:@"userPW"];
+    
+    // 开始加密
+    NSString* pin = [ThreeDesUtil encryptUse3DES:sourceStr key:keyStr];
+    
+    // 输出信息
+    NSLog(@"\n-----------\nsrc=[%@]\n------------------\npin=[%@]\n------------------", keyStr,pin);
+
+    // 准备上送加密数据
+    [[NSUserDefaults standardUserDefaults] setValue:pin forKey:@"userPW"];
 //    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 loadIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"loadIn"];
 }
 

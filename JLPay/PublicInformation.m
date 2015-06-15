@@ -263,7 +263,7 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
-        portStr=@"28080";//9182
+        portStr=@"28080";
 //        portStr = @"9088";
     }
     return [portStr intValue];

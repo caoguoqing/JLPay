@@ -95,7 +95,7 @@
     [self makePasswordAlertView];
     
 }
-#pragma mask ::: 刷卡失败
+#pragma mask ::: 通知事件 ->刷卡失败
 - (void) cardSwipeFail : (NSNotification*)notification {
     if ([self.activity isAnimating]) {
         [self.activity stopAnimating];
@@ -116,6 +116,7 @@
     [self.passwordAlertView setButtonTitles:[NSArray arrayWithObjects:@"取消", @"确定", nil]];
         
     [self.passwordAlertView show];
+    [self.view addSubview:self.passwordAlertView];
 }
 
 

@@ -51,6 +51,7 @@
 		5E82B7ED1B25662B00A58751 /* TransDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7EC1B25662B00A58751 /* TransDetailsTableViewController.m */; };
 		5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7EF1B256C6B00A58751 /* DetailsCell.m */; };
 		5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B8241B295F4400A58751 /* RevokeViewController.m */; };
+		5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -224,6 +225,8 @@
 		5E82B7EF1B256C6B00A58751 /* DetailsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsCell.m; sourceTree = "<group>"; };
 		5E82B8231B295F4400A58751 /* RevokeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevokeViewController.h; sourceTree = "<group>"; };
 		5E82B8241B295F4400A58751 /* RevokeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RevokeViewController.m; sourceTree = "<group>"; };
+		5E82B8291B2ED59800A58751 /* ThreeDesUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreeDesUtil.h; sourceTree = "<group>"; };
+		5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThreeDesUtil.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -758,6 +761,8 @@
 			children = (
 				5EBAA8FA1ACD3AFB00E2ABDD /* DesUtil.h */,
 				5EBAA8FB1ACD3AFB00E2ABDD /* DesUtil.m */,
+				5E82B8291B2ED59800A58751 /* ThreeDesUtil.h */,
+				5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */,
 				5EBAA8FC1ACD3AFB00E2ABDD /* ConverUtil.h */,
 				5EBAA8FD1ACD3AFB00E2ABDD /* ConverUtil.m */,
 			);
@@ -1018,6 +1023,7 @@
 				5E82B7EA1B2546A400A58751 /* TotalAmountCell.m in Sources */,
 				5EBAA9141ACD3F1B00E2ABDD /* SBJsonWriter.m in Sources */,
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
+				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
 				5EBAA8EE1ACD2FA800E2ABDD /* GroupPackage8583.m in Sources */,
 				5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */,
