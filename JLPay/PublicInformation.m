@@ -247,7 +247,7 @@
     return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_MacKey];
 }
 
-
+// 金融交易后台ip
 +(NSString *)settingIp{
     NSString *ipStr;
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Ip]) {
@@ -268,6 +268,28 @@
     }
     return [portStr intValue];
 }
+
+// 从配置中获取数据后台地址
++(NSString*) getDataSourceIP{
+    NSString* ip;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"Setting_Ip"]) {
+        ip = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_IP"];
+    } else {
+        ip = @"192.188.8.112";
+    }
+    return ip;
+}
++(NSString*) getDataSourcePort{
+    NSString* port;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
+        port = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_Port"];
+    }else{
+        port = @"8083";
+    }
+    return port;
+}
+
+
 
 //十六进制转化二进制
 +(NSString *)getBinaryByhex:(NSString *)hex

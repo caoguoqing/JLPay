@@ -2283,15 +2283,8 @@ static Unpacking8583 *sharedObj2 = nil;
                     location += length;
                     [arr addObject:deleteStr];
                     
-                    // 解析 54 域
-//                    if ([[sortArr objectAtIndex:c] isEqualToString:@"54"]) {
-//                        
-//                        double money = [[deleteStr substringWithRange:NSMakeRange([deleteStr length]-12, 12)] doubleValue]*0.01;
-//                        NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
-//                        NSLog(@"money=====%.2f",money);
-//                        [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SearchCard_Money];
-//                        [[NSUserDefaults standardUserDefaults] synchronize];
-//                    }
+                    // 60，62域的解析要单独解析
+                    
                     //39域,交易结果
                     if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
                         NSLog(@">>>>>>>>>>>39 = [%@]", deleteStr);

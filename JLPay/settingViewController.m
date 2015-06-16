@@ -163,28 +163,25 @@
                 // 账号名称
                 break;
             case 1:
-                // 商户管理
-                break;
-            case 2:
                 // 交易管理
             {
                 TransDetailsTableViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"TransDetails"];
                 [self.navigationController pushViewController:transDetailsVC animated:YES];
             }
                 break;
-            case 3:
+            case 2:
                 // 绑定机具
                 break;
-            case 4:
+            case 3:
                 // 连接机具
                 break;
-            case 5:
+            case 4:
                 // 额度查询
                 break;
-            case 6:
+            case 5:
                 // 修改密码
                 break;
-            case 7:
+            case 6:
                 // 参数设置
             {
                 UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -192,10 +189,10 @@
                 [self.navigationController pushViewController:viewContr animated:YES];
             }
                 break;
-            case 8:
+            case 7:
                 // 意见反馈
                 break;
-            case 9:
+            case 8:
                 // 帮助与关于
                 break;
             // 如新版本新增功能，在后面添加 case...
@@ -345,7 +342,6 @@
     // ...................图片名称需要更改
     self.cellNamesAndImages = @{
                                @"账号名称":@"01_01",
-                               @"商户管理":@"01_07",
                                @"交易管理":@"01_10",
                                @"绑定机具":@"01_12",
                                @"连接机具":@"01_14",
@@ -356,7 +352,6 @@
                                @"帮助和关于":@"01_24"};
     // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
-                                                @"商户管理",
                                                 @"交易管理",
                                                 @"绑定机具",
                                                 @"连接机具",

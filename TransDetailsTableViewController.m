@@ -32,7 +32,6 @@
     [super viewDidLoad];
     self.title = @"交易管理";
     // 加载一个 activity 控件
-//    [self.activity startAnimating];
     [self.view addSubview:self.activity];
     
     // 自定义返回界面的按钮样式
@@ -44,38 +43,39 @@
     self.navigationItem.backBarButtonItem = backItem;
 
     // 从后台异步获取交易明细数据
-    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
+    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+    //    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
+
     [self toRequestDataFromURL: urlString];
+    
+    [self.activity startAnimating];
+
 }
 
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.activity.frame = CGRectMake((self.view.bounds.size.width - 50.0)/2.0, (self.view.bounds.size.height - 50.0)/2.0, 50.0, 50.0);
-    [self.activity startAnimating];
 }
-
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 }
-
 #pragma mask ::: 界面即将切换后的方法的重载
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 }
 
 
+#pragma mask ----------------------------------------UITableViewDataSource部分
 #pragma mask ::: UITableViewDataSource -- section 个数
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
-
 #pragma mask ::: UITableViewDataSource -- row 个数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.dataArray.count + 2;
 }
-
 #pragma mask ::: UITableViewDelegate -- cell的重用
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell;
@@ -93,14 +93,11 @@
     {
         cell = [tableView dequeueReusableCellWithIdentifier:@"transDetailCell"];
     }
-    
-    
     // 给cell加载数据
     [self loadingDataForDetailCell:cell atIndexPath:indexPath];
 
     return cell;
 }
-
 #pragma mask ::: 重定义各个类型 cell 的高度
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0 ) {
@@ -110,7 +107,6 @@
         return 50.0;
     }
 }
-
 #pragma mask ::: cell 的点击事件
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -126,10 +122,7 @@
         viewController.dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
         [self.navigationController pushViewController:viewController animated:YES];
     }
-    
 }
-
-
 #pragma mask ::: 给指定序号的cell装载数据
 - (void) loadingDataForDetailCell: (UITableViewCell *)cell atIndexPath: (NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
@@ -178,7 +171,7 @@
     [mutableRequest addValue:[[dateFomatter stringFromDate:[NSDate date]] substringToIndex:8]
           forHTTPHeaderField:@"queryEndTime"];
     
-    // 发起请求 -- 请求期间，不允许切换场景
+    // 发起请求 -- 请求期间，不允许切换场景 --
 //    NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
     self.URLConnection = [NSURLConnection connectionWithRequest:mutableRequest delegate:self];
     [self.URLConnection start];
@@ -198,15 +191,9 @@
 
 #pragma mask ::: 接收后台数据失败 -- NSURLConnectionDataDelegate
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    
-    
-    
-    
     UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络超时，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-
     [alerView show];
-//    if (self.activity)
-//        [self.activity stopAnimating];
+    [self.activity stopAnimating];
 }
 
 

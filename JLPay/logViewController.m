@@ -151,12 +151,6 @@
 {
     if ([data length] > 0) {
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
-//        if ([str isEqualToString:@"loadIn"]) {              // 登陆
-//            
-//        }
-//        else if ([str isEqualToString:@"tcpsignin"]) {      // 签到
-//            [app_delegate signInSuccessToLogin:1];
-//        }
     } else {
         [self.view makeToast:@"网络超时,请重新登陆"];
     }
@@ -173,25 +167,14 @@
 // 响应数据拆包后的结果处理回调
 -(void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr
 {
-//    if ([metStr isEqualToString:@"tcpsignin"]) {    // 签到
         if (state) {
             dispatch_async(dispatch_get_main_queue(), ^{
-//                [[app_delegate window] makeToast:type];
                 [[app_delegate window] makeToast:@"登陆成功"];
             });
             [app_delegate signInSuccessToLogin:1];  // 成功了才切换到主场景
         }else{
             [self.view makeToast:type];
         }
-//    }
-//    else if ([metStr isEqualToString:@"loadIn"]) {  // 登陆
-//        if (state) {
-//            [self.view makeToast:type];
-////            [app_delegate signInSuccessToLogin:1];    // 跳转界面到主界面,签到也搬到主界面
-//        } else {
-//            [self.view makeToast:[NSString stringWithFormat:@"登陆失败:%@", type]];
-//        }
-//    }
 }
 
 
@@ -378,7 +361,7 @@
         return;
     }
     
-    // 发送签到报文
+    // 发送签到报文  -- 改到管理界面去签到、或刷卡界面
     [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
     
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
@@ -397,6 +380,9 @@
     // 准备上送加密数据
     [[NSUserDefaults standardUserDefaults] setValue:pin forKey:@"userPW"];
 //    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 loadIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"loadIn"];
+    
+    
+    // 修改::: 不要送 8583 报文，改送 HTTP
 }
 
 /*************************************

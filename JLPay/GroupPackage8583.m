@@ -391,7 +391,7 @@
     NSString* F62 = [NSString stringWithFormat:@"%04d%@%@", (int)[user_PW length] + (int)[user_ID length] + 6, AF01, AF02];
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
-                  @"000001",
+//                  @"000001",
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],  //41,终端号，asc，定长8
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],  //42，商户号，asc，定长15
                   @"0011960000004100",                                          //60,
