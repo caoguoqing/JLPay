@@ -11,9 +11,10 @@
 #import "DetailsCell.h"
 #import "PublicInformation.h"
 #import "RevokeViewController.h"
+#import "ASIFormDataRequest.h"
 
 
-@interface TransDetailsTableViewController()<NSURLConnectionDataDelegate>
+@interface TransDetailsTableViewController()<NSURLConnectionDataDelegate,ASIHTTPRequestDelegate>
 @property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
 @property (nonatomic, strong) NSMutableData* reciveData;
 @property (nonatomic, strong) UIActivityIndicatorView* activity;
@@ -44,9 +45,8 @@
 
     // 从后台异步获取交易明细数据
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-    //    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", @"192.188.8.112", @"8083" ];
 
-    [self toRequestDataFromURL: urlString];
+    [self requestDataFromURL:urlString];
     
     [self.activity startAnimating];
 
@@ -144,58 +144,45 @@
 
 
 #pragma mask --------------------------- 异步获取/解析后台交易明细数据
-- (void) toRequestDataFromURL: (NSString*)urlString {
+- (void) requestDataFromURL: (NSString*)urlString {
     NSURL* url = [NSURL URLWithString:urlString];
     if (url == nil) return;
     
-    // 创建一个超时时间20s 且缓存策略为 NSURLRequestUseProtocolCachePolicy 的网络连接请求
-    NSMutableURLRequest* mutableRequest = [[NSMutableURLRequest alloc]initWithURL:url
-                                                                      cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                                  timeoutInterval:20];
+    // 取当前日期的年月日
+    NSDateFormatter* dateFomater = [[NSDateFormatter alloc] init];
+    [dateFomater setDateFormat:@"yyyyMMddHHmmss"];
+    NSString* dateStr = [[dateFomater stringFromDate:[NSDate date]] substringToIndex:8];
     
-    [mutableRequest setHTTPMethod:@"POST"];
-    
-    /* 开始给 http 添加参数 
-        -mchntNo        商户编号
-        -termNo         终端编号
-        -queryBeginTime 交易起始时间
-        -queryEndTime   交易终止时间
-    */
-    [mutableRequest addValue:[PublicInformation returnBusiness] forHTTPHeaderField:@"mchntNo"];
-    [mutableRequest addValue:[PublicInformation returnTerminal] forHTTPHeaderField:@"termNo"];
-    
-    NSDateFormatter* dateFomatter = [[NSDateFormatter alloc] init];
-    [dateFomatter setDateFormat:@"yyyyMMddHHmmss"];
-    [mutableRequest addValue:[[dateFomatter stringFromDate:[NSDate date]] substringToIndex:8]
-          forHTTPHeaderField:@"queryBeginTime"];
-    [mutableRequest addValue:[[dateFomatter stringFromDate:[NSDate date]] substringToIndex:8]
-          forHTTPHeaderField:@"queryEndTime"];
-    
-    // 发起请求 -- 请求期间，不允许切换场景 --
-//    NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:mutableRequest delegate:self];
-    self.URLConnection = [NSURLConnection connectionWithRequest:mutableRequest delegate:self];
-    [self.URLConnection start];
+    NSMutableDictionary* dicOfHeader = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:
+                                                                                   [PublicInformation returnTerminal],
+                                                                                   [PublicInformation returnBusiness],
+                                                                                   dateStr,
+                                                                                   dateStr, nil]
+                                                                          forKeys:[NSArray arrayWithObjects:
+                                                                                   @"termNo",
+                                                                                   @"mchntNo",
+                                                                                   @"queryBeginTime",
+                                                                                   @"queryEndTime", nil]
+                                        ];
+    ASIFormDataRequest* request = [ASIFormDataRequest requestWithURL:url];
+    [request setRequestHeaders:dicOfHeader];
+
+    [request setDelegate:self];
+    [request startAsynchronous];  // 异步获取数据
+
 }
 
-
-#pragma mask ::: 获取到后台JSON数据 -- NSURLConnectionDataDelegate
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [self.reciveData appendData:data];
-}
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    [self.activity stopAnimating];
-    // 开始解析 JSON 数据
+#pragma mask ::: ASIHTTPRequest 的数据接收协议
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    [self.reciveData appendData:[request responseData]];
     [self analysisJSONDataToDisplay];
-    
+    [self.activity stopAnimating];
 }
-
-#pragma mask ::: 接收后台数据失败 -- NSURLConnectionDataDelegate
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+- (void)requestFailed:(ASIHTTPRequest *)request {
     UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络超时，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alerView show];
     [self.activity stopAnimating];
 }
-
 
 
 
@@ -217,8 +204,13 @@
         
     self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
     
-    // 重载数据
-    [self.tableView reloadData];
+    if (self.dataArray.count == 0) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
+    } else {
+        // 重载数据
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mask ::: 计算解析到得数据数组中得总金额以及总笔数等数据
