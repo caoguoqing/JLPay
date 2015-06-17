@@ -52,6 +52,19 @@
 		5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7EF1B256C6B00A58751 /* DetailsCell.m */; };
 		5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B8241B295F4400A58751 /* RevokeViewController.m */; };
 		5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */; };
+		5E82B8641B310AAD00A58751 /* JLActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B8631B310AAD00A58751 /* JLActivity.m */; };
+		5E82B8711B310AF000A58751 /* activitor01.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8651B310AF000A58751 /* activitor01.png */; };
+		5E82B8721B310AF000A58751 /* activitor02.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8661B310AF000A58751 /* activitor02.png */; };
+		5E82B8731B310AF000A58751 /* activitor03.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8671B310AF000A58751 /* activitor03.png */; };
+		5E82B8741B310AF000A58751 /* activitor04.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8681B310AF000A58751 /* activitor04.png */; };
+		5E82B8751B310AF000A58751 /* activitor05.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8691B310AF000A58751 /* activitor05.png */; };
+		5E82B8761B310AF000A58751 /* activitor06.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86A1B310AF000A58751 /* activitor06.png */; };
+		5E82B8771B310AF000A58751 /* activitor07.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86B1B310AF000A58751 /* activitor07.png */; };
+		5E82B8781B310AF000A58751 /* activitor08.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86C1B310AF000A58751 /* activitor08.png */; };
+		5E82B8791B310AF000A58751 /* activitor09.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86D1B310AF000A58751 /* activitor09.png */; };
+		5E82B87A1B310AF000A58751 /* activitor10.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86E1B310AF000A58751 /* activitor10.png */; };
+		5E82B87B1B310AF000A58751 /* activitor11.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86F1B310AF000A58751 /* activitor11.png */; };
+		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -227,6 +240,20 @@
 		5E82B8241B295F4400A58751 /* RevokeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RevokeViewController.m; sourceTree = "<group>"; };
 		5E82B8291B2ED59800A58751 /* ThreeDesUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreeDesUtil.h; sourceTree = "<group>"; };
 		5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThreeDesUtil.m; sourceTree = "<group>"; };
+		5E82B8621B310AAD00A58751 /* JLActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLActivity.h; sourceTree = "<group>"; };
+		5E82B8631B310AAD00A58751 /* JLActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLActivity.m; sourceTree = "<group>"; };
+		5E82B8651B310AF000A58751 /* activitor01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor01.png; sourceTree = "<group>"; };
+		5E82B8661B310AF000A58751 /* activitor02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor02.png; sourceTree = "<group>"; };
+		5E82B8671B310AF000A58751 /* activitor03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor03.png; sourceTree = "<group>"; };
+		5E82B8681B310AF000A58751 /* activitor04.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor04.png; sourceTree = "<group>"; };
+		5E82B8691B310AF000A58751 /* activitor05.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor05.png; sourceTree = "<group>"; };
+		5E82B86A1B310AF000A58751 /* activitor06.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor06.png; sourceTree = "<group>"; };
+		5E82B86B1B310AF000A58751 /* activitor07.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor07.png; sourceTree = "<group>"; };
+		5E82B86C1B310AF000A58751 /* activitor08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor08.png; sourceTree = "<group>"; };
+		5E82B86D1B310AF000A58751 /* activitor09.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor09.png; sourceTree = "<group>"; };
+		5E82B86E1B310AF000A58751 /* activitor10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor10.png; sourceTree = "<group>"; };
+		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor11.png; sourceTree = "<group>"; };
+		5E82B8701B310AF000A58751 /* activitor12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor12.png; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -499,6 +526,7 @@
 		5E397B3E1AD364A9004F206F /* TCP */ = {
 			isa = PBXGroup;
 			children = (
+				5EBAA8F21ACD2FDC00E2ABDD /* 8583 */,
 				5E397B3F1AD364A9004F206F /* AsyncSocket.h */,
 				5E397B401AD364A9004F206F /* AsyncSocket.m */,
 				5E397B411AD364A9004F206F /* TcpClientService.h */,
@@ -514,6 +542,7 @@
 		5E82B78A1B1BEF3600A58751 /* 设备管理 */ = {
 			isa = PBXGroup;
 			children = (
+				5EBF82841ADDFC3D005F7E15 /* JHL */,
 				5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */,
 				5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */,
 				5E82B78E1B1BFCC200A58751 /* JHLDevice.h */,
@@ -561,6 +590,27 @@
 			name = DeviceSetting;
 			sourceTree = "<group>";
 		};
+		5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */ = {
+			isa = PBXGroup;
+			children = (
+				5E82B8651B310AF000A58751 /* activitor01.png */,
+				5E82B8661B310AF000A58751 /* activitor02.png */,
+				5E82B8671B310AF000A58751 /* activitor03.png */,
+				5E82B8681B310AF000A58751 /* activitor04.png */,
+				5E82B8691B310AF000A58751 /* activitor05.png */,
+				5E82B86A1B310AF000A58751 /* activitor06.png */,
+				5E82B86B1B310AF000A58751 /* activitor07.png */,
+				5E82B86C1B310AF000A58751 /* activitor08.png */,
+				5E82B86D1B310AF000A58751 /* activitor09.png */,
+				5E82B86E1B310AF000A58751 /* activitor10.png */,
+				5E82B86F1B310AF000A58751 /* activitor11.png */,
+				5E82B8701B310AF000A58751 /* activitor12.png */,
+				5E82B8621B310AAD00A58751 /* JLActivity.h */,
+				5E82B8631B310AAD00A58751 /* JLActivity.m */,
+			);
+			name = "捷联通等待滚轮图标";
+			sourceTree = "<group>";
+		};
 		5EB6F9731AC8DD1C00E47AB5 = {
 			isa = PBXGroup;
 			children = (
@@ -592,33 +642,17 @@
 			children = (
 				5EB6F9831AC8DD1C00E47AB5 /* AppDelegate.h */,
 				5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */,
-				5ED3442E1AD8EB130005C890 /* JHNconnect.h */,
-				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
 				5EBAA8F91ACD38A600E2ABDD /* public */,
-				5EBF82841ADDFC3D005F7E15 /* JHL */,
-				5ED344251AD8C1DB0005C890 /* ProgressHUD */,
-				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
-				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
-				5EB9B1371AD79EC600A73190 /* SDK */,
 				5E397B3E1AD364A9004F206F /* TCP */,
-				5EBAA8F21ACD2FDC00E2ABDD /* 8583 */,
-				5E397AF31AD36429004F206F /* asi-http */,
-				5EBAA9001ACD3B0200E2ABDD /* des/3des */,
-				5EBAA9151ACD3F2400E2ABDD /* json */,
-				5EBF3C401AD3B5BB00091F83 /* Toast */,
 				5E82B78A1B1BEF3600A58751 /* 设备管理 */,
 				5EF4C0DD1B1706A300CE3E3F /* 登陆界面 */,
 				5E0D18661B09D9240092F4AB /* 刷卡界面 */,
 				5E0D18681B09D9BB0092F4AB /* 商户设置界面 */,
 				5E08AE701B0991A400B8C198 /* 增值服务界面 */,
 				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
-				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
-				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
 				5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */,
 				5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */,
 				5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */,
-				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
-				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
 			);
 			path = JLPay;
 			sourceTree = "<group>";
@@ -627,6 +661,8 @@
 			isa = PBXGroup;
 			children = (
 				5EBE92851ACBE9FE0096BD72 /* Default-568h@2x.png */,
+				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
+				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
 				5EB6F9801AC8DD1C00E47AB5 /* Info.plist */,
 				5EB6F9811AC8DD1C00E47AB5 /* main.m */,
 			);
@@ -740,11 +776,16 @@
 				5EBAA8F11ACD2FCB00E2ABDD /* 磁条卡 */,
 			);
 			name = 8583;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		5EBAA8F91ACD38A600E2ABDD /* public */ = {
 			isa = PBXGroup;
 			children = (
+				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
+				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
+				5ED3442E1AD8EB130005C890 /* JHNconnect.h */,
+				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
 				5EBAA8F31ACD389D00E2ABDD /* JsonToString.h */,
 				5EBAA8F41ACD389D00E2ABDD /* JsonToString.m */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
@@ -752,6 +793,15 @@
 				5EBA40FB1AEA3A3200F270C0 /* Photo.h */,
 				5EBA40FC1AEA3A3200F270C0 /* Photo.m */,
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
+				5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */,
+				5EB9B1371AD79EC600A73190 /* SDK */,
+				5EBF3C401AD3B5BB00091F83 /* Toast */,
+				5EBAA9001ACD3B0200E2ABDD /* des/3des */,
+				5EBAA9151ACD3F2400E2ABDD /* json */,
+				5E397AF31AD36429004F206F /* asi-http */,
+				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
+				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
+				5ED344251AD8C1DB0005C890 /* ProgressHUD */,
 			);
 			name = public;
 			sourceTree = "<group>";
@@ -894,6 +944,7 @@
 				TargetAttributes = {
 					5EB6F97B1AC8DD1C00E47AB5 = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = Q4WWR9BUQ4;
 					};
 					5EB6F9941AC8DD1C00E47AB5 = {
 						CreatedOnToolsVersion = 6.2;
@@ -926,17 +977,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				5EB9B1551AD7B92100A73190 /* MLTableAlertButtonPressed@2x.png in Resources */,
+				5E82B8741B310AF000A58751 /* activitor04.png in Resources */,
 				5EB9B1501AD7B92100A73190 /* MLTableAlertBackground.png in Resources */,
+				5E82B8731B310AF000A58751 /* activitor03.png in Resources */,
+				5E82B8791B310AF000A58751 /* activitor09.png in Resources */,
+				5E82B8751B310AF000A58751 /* activitor05.png in Resources */,
 				5ED344291AD8C1DB0005C890 /* ProgressHUD.bundle in Resources */,
 				5EB6F98B1AC8DD1C00E47AB5 /* Main.storyboard in Resources */,
+				5E82B8771B310AF000A58751 /* activitor07.png in Resources */,
 				5EB9B1521AD7B92100A73190 /* MLTableAlertButton.png in Resources */,
 				5EB9B1511AD7B92100A73190 /* MLTableAlertBackground@2x.png in Resources */,
 				5EBE92861ACBE9FE0096BD72 /* Default-568h@2x.png in Resources */,
+				5E82B8711B310AF000A58751 /* activitor01.png in Resources */,
 				5EB9B1571AD7B92100A73190 /* MLTableAlertShadowMask@2x.png in Resources */,
+				5E82B87C1B310AF000A58751 /* activitor12.png in Resources */,
+				5E82B8721B310AF000A58751 /* activitor02.png in Resources */,
+				5E82B87B1B310AF000A58751 /* activitor11.png in Resources */,
 				5ECB55921AD4D44800777866 /* newisoconfig.plist in Resources */,
+				5E82B87A1B310AF000A58751 /* activitor10.png in Resources */,
 				5EB9B1561AD7B92100A73190 /* MLTableAlertShadowMask.png in Resources */,
 				5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */,
 				5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */,
+				5E82B8761B310AF000A58751 /* activitor06.png in Resources */,
+				5E82B8781B310AF000A58751 /* activitor08.png in Resources */,
 				5EB9B1531AD7B92100A73190 /* MLTableAlertButton@2x.png in Resources */,
 				5EB9B1541AD7B92100A73190 /* MLTableAlertButtonPressed.png in Resources */,
 			);
@@ -992,6 +1055,7 @@
 				5ED344301AD8EB130005C890 /* JHNconnect.m in Sources */,
 				5EBAA9101ACD3F1B00E2ABDD /* NSString+SBJSON.m in Sources */,
 				5EBA40F61AEA366000F270C0 /* PosInformationViewController.m in Sources */,
+				5E82B8641B310AAD00A58751 /* JLActivity.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
 				5E0D186B1B09DA710092F4AB /* OtherPayButton.m in Sources */,
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
@@ -1174,6 +1238,33 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"${SDK_DIR}/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = JLPay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JLPay/SDK",
+					"$(PROJECT_DIR)/JLPay/JHL",
+					"$(PROJECT_DIR)/JLPay/JHN",
+				);
+				OTHER_LDFLAGS = "-lstdc++";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "edc083ee-e7d2-4c48-b4dd-b14ecf0d7071";
+			};
+			name = Debug;
+		};
+		5EB6F9A11AC8DD1C00E47AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1192,33 +1283,7 @@
 				);
 				OTHER_LDFLAGS = "-lstdc++";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "29fcea91-49b2-4d4c-ab0c-94da6bcd0a95";
-			};
-			name = Debug;
-		};
-		5EB6F9A11AC8DD1C00E47AB5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"${SDK_DIR}/usr/include/libxml2",
-				);
-				INFOPLIST_FILE = JLPay/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/JLPay/SDK",
-					"$(PROJECT_DIR)/JLPay/JHL",
-					"$(PROJECT_DIR)/JLPay/JHN",
-				);
-				OTHER_LDFLAGS = "-lstdc++";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "29fcea91-49b2-4d4c-ab0c-94da6bcd0a95";
+				PROVISIONING_PROFILE = "edc083ee-e7d2-4c48-b4dd-b14ecf0d7071";
 			};
 			name = Release;
 		};

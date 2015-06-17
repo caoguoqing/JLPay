@@ -153,6 +153,12 @@
 #define Terminal_Number @"terminal"
 #define Business_Number @"business"
 #define Business_Name @"businessname"
+// 终端个数
+#define Terminal_Count @"termCount"
+#define Terminal_Numbers @"terminals"
+
+// 邮箱
+#define Business_Email @"commEmail"
 
 //交易流水号，每次交易加1
 #define Exchange_Number @"exchangenumber"

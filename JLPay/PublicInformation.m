@@ -214,8 +214,8 @@
     if (terminalNumber && ![terminalNumber isEqualToString:@""] && ![terminalNumber isEqualToString:@"(null)"]) {
         terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
     }else{
-//        terminalNumber=@"10006079";
-        terminalNumber = @"10006241";
+        terminalNumber=@"10006079";     // 72环境终端号
+//        terminalNumber = @"10006241";
     }
     return terminalNumber;
 }
@@ -224,8 +224,8 @@
     if (businessNumber && ![businessNumber isEqualToString:@""] && ![businessNumber isEqualToString:@"(null)"]) {
         businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
     }else{
-//        businessNumber=@"888584053310002";
-        businessNumber = @"886100000000001";
+        businessNumber=@"888584053310002";      // 72环境商户号
+//        businessNumber = @"886100000000001";
     }
     return businessNumber;
 }
@@ -253,8 +253,8 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Ip]) {
         ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
     }else{
-        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";//
-//        ipStr   = @"202.104.101.126";
+//        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";//
+        ipStr   = @"202.104.101.126";
     }
     return ipStr;
 }
@@ -263,8 +263,8 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
-        portStr=@"28080";
-//        portStr = @"9088";
+//        portStr=@"28080";
+        portStr = @"9088";
     }
     return [portStr intValue];
 }

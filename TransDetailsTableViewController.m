@@ -12,13 +12,16 @@
 #import "PublicInformation.h"
 #import "RevokeViewController.h"
 #import "ASIFormDataRequest.h"
+#import "JLActivity.h"
 
 
 @interface TransDetailsTableViewController()<NSURLConnectionDataDelegate,ASIHTTPRequestDelegate>
 @property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
 @property (nonatomic, strong) NSMutableData* reciveData;
-@property (nonatomic, strong) UIActivityIndicatorView* activity;
-@property (nonatomic, strong) NSURLConnection* URLConnection;
+//@property (nonatomic, strong) UIActivityIndicatorView* activity;
+@property (nonatomic, strong) JLActivity*  activity;
+//@property (nonatomic, strong) NSURLConnection* URLConnection;
+@property (nonatomic, retain) ASIFormDataRequest* HTTPRequest;
 @end
 
 
@@ -26,7 +29,8 @@
 @synthesize dataArray = _dataArray;
 @synthesize reciveData = _reciveData;
 @synthesize activity = _activity;
-@synthesize URLConnection = _URLConnection;
+//@synthesize URLConnection = _URLConnection;
+@synthesize HTTPRequest = _HTTPRequest;
 
 #pragma mask ::: 在表视图界面在加载完自己的view后就到后台读取数据
 - (void)viewDidLoad {
@@ -64,6 +68,12 @@
 #pragma mask ::: 界面即将切换后的方法的重载
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    if (!self.HTTPRequest.complete) {
+        [self.HTTPRequest cancel];
+    }
+    if ([self.activity isAnimating]) {
+        [self.activity stopAnimating];
+    }
 }
 
 
@@ -152,7 +162,7 @@
     NSDateFormatter* dateFomater = [[NSDateFormatter alloc] init];
     [dateFomater setDateFormat:@"yyyyMMddHHmmss"];
     NSString* dateStr = [[dateFomater stringFromDate:[NSDate date]] substringToIndex:8];
-    
+    // 设置HTTP header参数
     NSMutableDictionary* dicOfHeader = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:
                                                                                    [PublicInformation returnTerminal],
                                                                                    [PublicInformation returnBusiness],
@@ -176,12 +186,12 @@
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [self.reciveData appendData:[request responseData]];
     [self analysisJSONDataToDisplay];
-    [self.activity stopAnimating];
+    if ([self.activity isAnimating]) [self.activity stopAnimating];
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络超时，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alerView show];
-    [self.activity stopAnimating];
+    if ([self.activity isAnimating]) [self.activity stopAnimating];
 }
 
 
@@ -189,9 +199,9 @@
 #pragma mask ::: 自定义返回上层界面按钮的功能
 - (IBAction) backToPreVC :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
-    [self.URLConnection cancel];
-    if ([self.activity isAnimating])
-        [self.activity stopAnimating];
+//    [self.URLConnection cancel];
+//    if ([self.activity isAnimating])
+//        [self.activity stopAnimating];
 
 }
 
@@ -256,17 +266,19 @@
     }
     return _reciveData;
 }
-- (UIActivityIndicatorView *)activity {
+- (JLActivity *)activity {
     if (_activity == nil) {
-        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+//        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        CGRect frame = CGRectMake((self.view.bounds.size.width - 100)/2.0, (self.view.bounds.size.height - 100)/2.0, 100, 100);
+        _activity = [[JLActivity alloc] initWithFrame:frame];
     }
     return _activity;
 }
--(NSURLConnection *)URLConnection {
-    if (_URLConnection) {
-        _URLConnection = [[NSURLConnection alloc] init];
-    }
-    return _URLConnection;
-}
+//-(NSURLConnection *)URLConnection {
+//    if (_URLConnection) {
+//        _URLConnection = [[NSURLConnection alloc] init];
+//    }
+//    return _URLConnection;
+//}
 
 @end

@@ -98,7 +98,8 @@ CGFloat buttonSpacerHeight = 0;
     }
 #endif
 
-    self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+//    self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+    self.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1];
 
     [self addSubview:dialogView];
 

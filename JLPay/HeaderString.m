@@ -34,7 +34,7 @@
     
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];
-    NSLog(@"%@  %@ %@ %@ %@ %@ %@",[self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
+    NSLog(@"%@  %@ %@ %@ %@ %@",[self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
     return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)[allStr length]/2],allStr];
 }
 

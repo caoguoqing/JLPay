@@ -16,6 +16,7 @@
 #import "EncodeString.h"
 #import "DesUtil.h"
 #import "ThreeDesUtil.h"
+#import "ASIFormDataRequest.h"
 
 
 
@@ -25,7 +26,7 @@
 #define ImageForBrand   @"01icon"                                   // 商标图片
 
 
-@interface logViewController ()<wallDelegate,managerToCard, UITextFieldDelegate>
+@interface logViewController ()<wallDelegate,managerToCard, UITextFieldDelegate, ASIHTTPRequestDelegate>
 
 
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
@@ -36,7 +37,6 @@
 @property (nonatomic, strong) UIButton    *pinChangeButton;         // 密码修改按钮
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
-
 
 @end
 
@@ -362,7 +362,7 @@
     }
     
     // 发送签到报文  -- 改到管理界面去签到、或刷卡界面
-    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
+//    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
     
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
     [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:@"userID"];
@@ -383,6 +383,7 @@
     
     
     // 修改::: 不要送 8583 报文，改送 HTTP
+    [self logInWithPin:pin];
 }
 
 /*************************************
@@ -403,6 +404,64 @@
  *************************************/
 - (IBAction)changePin: (id)sender {
     NSLog(@"修改密码的功能实现。。。。。。。");
+}
+
+#pragma mask ::: 上送登陆报文
+- (void)logInWithPin: (NSString*)pin {
+    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+    ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+    [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
+    [request addPostValue:pin forKey:@"passWord"];
+    request.delegate = self;
+    [request startAsynchronous];
+}
+
+#pragma mask ::: HTTP响应协议
+-(void)requestFinished:(ASIHTTPRequest *)request {
+    NSLog(@"登陆响应数据[%@]", [request responseString]);
+    NSData* data = [request responseData];
+    NSError* error;
+    NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    NSString* retcode = [dataDic objectForKey:@"code"];
+    NSString* retMsg = [dataDic objectForKey:@"message"];
+    NSLog(@"retcode = [%@], retMsg = [%@]", retcode, retMsg);
+    if ([retcode intValue] != 0) {      // 登陆失败
+        UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:retMsg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alerView show];
+    } else {                            // 登陆成功
+        // 解析响应数据
+        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];    // 商户编号
+        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];    // 商户名称
+        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
+        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
+        
+        int termCount = [[dataDic objectForKey:@"termCount"] intValue];
+        if (termCount == 0) {
+            
+        }
+//        else if (termCount == 1) {    // 一个终端的编号
+//            [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:[NSString stringWithFormat:@"%@.1", Terminal_Number]];
+//        }
+        else {                        // 终端编号组的编号
+            NSArray* array = [dataDic objectForKey:@"TermNoList"];
+//            for (int i = 0; i < array.count; i ++) {
+//                NSString* key = [NSString stringWithFormat:@"%@.%d",Terminal_Number, i+1];
+//                [[NSUserDefaults standardUserDefaults] setObject:[array objectAtIndex:i] forKey:key];
+//            }
+            [[NSUserDefaults standardUserDefaults] setObject:array forKey:Terminal_Numbers];
+        }
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[app_delegate window] makeToast:@"登陆成功"];
+        });
+        [app_delegate signInSuccessToLogin:1];  // 切换到主场景
+    }
+    
+}
+-(void)requestFailed:(ASIHTTPRequest *)request {
+    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请检查网络" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alerView show];
 }
 
 
