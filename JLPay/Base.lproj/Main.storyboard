@@ -64,7 +64,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZhB-4y-vDe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1635" y="840"/>
+            <point key="canvasLocation" x="-1643" y="388"/>
         </scene>
         <!--微信支付-->
         <scene sceneID="iK5-cr-5Tw">
@@ -96,7 +96,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="75k-Bu-3Bc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1195" y="110"/>
+            <point key="canvasLocation" x="-1203" y="-342"/>
         </scene>
         <!--支付宝支付-->
         <scene sceneID="Vw7-n7-Tbw">
@@ -128,7 +128,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QrP-3R-OZc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-841" y="110"/>
+            <point key="canvasLocation" x="-849" y="-342"/>
         </scene>
         <!--Cust Pay View Controller-->
         <scene sceneID="eaC-D2-oVh">
@@ -147,7 +147,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xiP-pQ-rat" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1195" y="840"/>
+            <point key="canvasLocation" x="-1203" y="388"/>
         </scene>
         <!--Brush View Controller-->
         <scene sceneID="CbX-sW-fA8">
@@ -166,7 +166,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4fU-iG-yJp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-768" y="840"/>
+            <point key="canvasLocation" x="-776" y="388"/>
         </scene>
         <!--商户管理-->
         <scene sceneID="pSU-mK-gDv">
@@ -195,6 +195,46 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JxU-cU-xeT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-592" y="1881"/>
+        </scene>
+        <!--Choose Device Tabel View Controller-->
+        <scene sceneID="tz4-FM-N68">
+            <objects>
+                <tableViewController storyboardIdentifier="chooseDeviceVC" id="VYW-eB-CEA" customClass="ChooseDeviceTabelViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="527-uW-R09">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="terminalNoCell" textLabel="Cf4-uy-UBC" detailTextLabel="jKA-eZ-7ZJ" style="IBUITableViewCellStyleValue1" id="53B-WZ-qeN">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="53B-WZ-qeN" id="Seb-s5-vSC">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Cf4-uy-UBC">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jKA-eZ-7ZJ">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="VYW-eB-CEA" id="dbf-Qj-FtP"/>
+                            <outlet property="delegate" destination="VYW-eB-CEA" id="zPT-DV-CMt"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vlT-rW-7Fg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="39" y="1980"/>
         </scene>
         <!--Trans Details Table View Controller-->
         <scene sceneID="PRN-cZ-eqD">
@@ -232,7 +272,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="afp-zk-Gnw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="63" y="1600"/>
+            <point key="canvasLocation" x="47" y="1184"/>
         </scene>
         <!--Revoke View Controller-->
         <scene sceneID="UFy-bu-0vF">
@@ -271,7 +311,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Reh-rI-ygK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="517" y="1600"/>
+            <point key="canvasLocation" x="501" y="1184"/>
         </scene>
         <!--参数设置-->
         <scene sceneID="aRT-Gt-YOT">
@@ -386,7 +426,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mNO-lT-50y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="63" y="2540"/>
+            <point key="canvasLocation" x="16" y="3692"/>
         </scene>
         <!--Terminal Param Set View Controller-->
         <scene sceneID="fMU-rk-W8N">
@@ -475,7 +515,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Ny-qw-6OI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="650" y="3176"/>
+            <point key="canvasLocation" x="603" y="4328"/>
         </scene>
         <!--Password View Controller-->
         <scene sceneID="MTX-eY-EhS">
@@ -516,7 +556,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iW0-76-brW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-234" y="840"/>
+            <point key="canvasLocation" x="-242" y="388"/>
         </scene>
         <!--Wait View Controller-->
         <scene sceneID="SVc-Zt-4Ay">
@@ -534,7 +574,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J9J-vR-h8c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="152" y="836"/>
+            <point key="canvasLocation" x="144" y="384"/>
         </scene>
         <!--Set View Controller-->
         <scene sceneID="ivJ-Io-iRu">
@@ -593,7 +633,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="s9L-AS-76U" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="650" y="2540"/>
+            <point key="canvasLocation" x="603" y="3692"/>
         </scene>
         <!--商户管理-->
         <scene sceneID="fq6-ud-Js9">
@@ -628,7 +668,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EJl-fZ-fBl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1635" y="3030"/>
+            <point key="canvasLocation" x="-1633" y="4150"/>
         </scene>
         <!--增值服务-->
         <scene sceneID="du3-CL-xUi">
@@ -647,7 +687,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="46S-Jv-gi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1205" y="3030"/>
+            <point key="canvasLocation" x="-1203" y="4150"/>
         </scene>
     </scenes>
     <resources>

@@ -786,8 +786,8 @@ static Unpacking8583 *sharedObj2 = nil;
 #pragma mask ::: 装载自定义写工作密钥
 //                    [[JHNconnect shareView]WriteWorkKey:57 :workStr];
 //                    AppDelegate* delegate = app_delegate;
-                    AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
-                    [delegatte.device WriteWorkKey:57 :workStr];
+//                    AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//                    [delegatte.device WriteWorkKey:57 :workStr];
                 }
                 
                 //交易结果

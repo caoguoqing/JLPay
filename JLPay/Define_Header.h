@@ -157,6 +157,10 @@
 #define Terminal_Count @"termCount"
 #define Terminal_Numbers @"terminals"
 
+// 账号
+#define UserID  @"userID"
+#define UserPW  @"userPW"
+
 // 邮箱
 #define Business_Email @"commEmail"
 

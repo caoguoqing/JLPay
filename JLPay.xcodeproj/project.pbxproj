@@ -65,6 +65,7 @@
 		5E82B87A1B310AF000A58751 /* activitor10.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86E1B310AF000A58751 /* activitor10.png */; };
 		5E82B87B1B310AF000A58751 /* activitor11.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86F1B310AF000A58751 /* activitor11.png */; };
 		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
+		5E82B8801B31617600A58751 /* ChooseDeviceTabelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B87F1B31617600A58751 /* ChooseDeviceTabelViewController.m */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -254,6 +255,8 @@
 		5E82B86E1B310AF000A58751 /* activitor10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor10.png; sourceTree = "<group>"; };
 		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor11.png; sourceTree = "<group>"; };
 		5E82B8701B310AF000A58751 /* activitor12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor12.png; sourceTree = "<group>"; };
+		5E82B87E1B31617600A58751 /* ChooseDeviceTabelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChooseDeviceTabelViewController.h; sourceTree = "<group>"; };
+		5E82B87F1B31617600A58751 /* ChooseDeviceTabelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChooseDeviceTabelViewController.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -459,8 +462,9 @@
 			children = (
 				5EB9B1B31AD7D6D900A73190 /* settingViewController.h */,
 				5EB9B1B41AD7D6D900A73190 /* settingViewController.m */,
-				5E82B7E31B253F5F00A58751 /* TransDetails */,
-				5E82B7E71B25425600A58751 /* DeviceSetting */,
+				5E82B7E31B253F5F00A58751 /* 交易管理 */,
+				5E82B87D1B31610700A58751 /* 连接机具 */,
+				5E82B7E71B25425600A58751 /* 参数设置 */,
 			);
 			name = "商户设置界面";
 			sourceTree = "<group>";
@@ -562,7 +566,7 @@
 			name = "密码输入框";
 			sourceTree = "<group>";
 		};
-		5E82B7E31B253F5F00A58751 /* TransDetails */ = {
+		5E82B7E31B253F5F00A58751 /* 交易管理 */ = {
 			isa = PBXGroup;
 			children = (
 				5E82B7EB1B25662B00A58751 /* TransDetailsTableViewController.h */,
@@ -574,10 +578,10 @@
 				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
 				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
 			);
-			name = TransDetails;
+			name = "交易管理";
 			sourceTree = "<group>";
 		};
-		5E82B7E71B25425600A58751 /* DeviceSetting */ = {
+		5E82B7E71B25425600A58751 /* 参数设置 */ = {
 			isa = PBXGroup;
 			children = (
 				5EBE92821ACB95BC0096BD72 /* DeviceSettingViewController.h */,
@@ -587,7 +591,7 @@
 				5EBE927F1ACB80FD0096BD72 /* TerminalParamSetViewController.h */,
 				5EBE92801ACB80FD0096BD72 /* TerminalParamSetViewController.m */,
 			);
-			name = DeviceSetting;
+			name = "参数设置";
 			sourceTree = "<group>";
 		};
 		5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */ = {
@@ -609,6 +613,15 @@
 				5E82B8631B310AAD00A58751 /* JLActivity.m */,
 			);
 			name = "捷联通等待滚轮图标";
+			sourceTree = "<group>";
+		};
+		5E82B87D1B31610700A58751 /* 连接机具 */ = {
+			isa = PBXGroup;
+			children = (
+				5E82B87E1B31617600A58751 /* ChooseDeviceTabelViewController.h */,
+				5E82B87F1B31617600A58751 /* ChooseDeviceTabelViewController.m */,
+			);
+			name = "连接机具";
 			sourceTree = "<group>";
 		};
 		5EB6F9731AC8DD1C00E47AB5 = {
@@ -1051,6 +1064,7 @@
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
+				5E82B8801B31617600A58751 /* ChooseDeviceTabelViewController.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
 				5ED344301AD8EB130005C890 /* JHNconnect.m in Sources */,
 				5EBAA9101ACD3F1B00E2ABDD /* NSString+SBJSON.m in Sources */,

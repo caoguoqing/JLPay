@@ -365,7 +365,7 @@
 //    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
     
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
-    [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:@"userID"];
+    [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
     // 3des 加密
     // 原始 key
     NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
@@ -430,8 +430,9 @@
         [alerView show];
     } else {                            // 登陆成功
         // 解析响应数据
-        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];    // 商户编号
-        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];    // 商户名称
+        [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
+        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
+        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
         
@@ -439,9 +440,9 @@
         if (termCount == 0) {
             
         }
-//        else if (termCount == 1) {    // 一个终端的编号
-//            [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:[NSString stringWithFormat:@"%@.1", Terminal_Number]];
-//        }
+        else if (termCount == 1) {    // 一个终端的编号
+            [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:Terminal_Number];
+        }
         else {                        // 终端编号组的编号
             NSArray* array = [dataDic objectForKey:@"TermNoList"];
 //            for (int i = 0; i < array.count; i ++) {

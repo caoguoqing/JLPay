@@ -220,7 +220,7 @@ static FieldTrackData TransData;
         }
         [NSThread sleepForTimeInterval:0.5];
     }
-    // 出了循环就说明设备打开成功了,需要签到
+    // 出了循环就说明设备打开成功了,需要通知调用方发起签到
 }
 
 #pragma mask : 打开设备

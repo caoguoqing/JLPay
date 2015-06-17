@@ -10,7 +10,8 @@
 #import "DeviceSettingViewController.h"
 #import <UIKit/UIKitDefines.h>
 #import "TransDetailsTableViewController.h"
-
+#import "Define_Header.h"
+#import "ChooseDeviceTabelViewController.h"
 
 #define LeftInsetOfCellCent             0.1f                    // 单元格元素的左边界距离
 #define ImageViewWidthInCellCent        0.1f                    // 单元格内的imageView.width占宽带比例
@@ -170,18 +171,19 @@
             }
                 break;
             case 2:
-                // 绑定机具
+                // 连接机具
+            {
+                ChooseDeviceTabelViewController* chooseDeviceVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"chooseDeviceVC"];
+                [self.navigationController pushViewController:chooseDeviceVC animated:YES];
+            }
                 break;
             case 3:
-                // 连接机具
-                break;
-            case 4:
                 // 额度查询
                 break;
-            case 5:
+            case 4:
                 // 修改密码
                 break;
-            case 6:
+            case 5:
                 // 参数设置
             {
                 UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -189,10 +191,10 @@
                 [self.navigationController pushViewController:viewContr animated:YES];
             }
                 break;
-            case 7:
+            case 6:
                 // 意见反馈
                 break;
-            case 8:
+            case 7:
                 // 帮助与关于
                 break;
             // 如新版本新增功能，在后面添加 case...
@@ -291,7 +293,8 @@
     frame.size.width                = width;
     frame.size.height               = littleHeight * FirstCellLargerCent;
     UILabel *cellLabel              = [[UILabel alloc] initWithFrame:frame];
-    cellLabel.text                  = [self.cellNames objectAtIndex:0 ];
+//    cellLabel.text                  = [self.cellNames objectAtIndex:0 ];
+    cellLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:UserID];
     cellLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
     cellLabel.textAlignment         = NSTextAlignmentLeft;
     [cell addSubview:cellLabel];
@@ -300,7 +303,8 @@
     frame.origin.y                  += (littleHeight * FirstCellLargerCent);
     frame.size.height               = littleHeight;
     UILabel *nameLabel              = [[UILabel alloc] initWithFrame:frame];
-    nameLabel.text                  = @"张三";      ////////////// 客户的名字需要根据登陆信息返回
+//    nameLabel.text                  = @"张三";      ////////////// 客户的名字需要根据登陆信息返回
+    nameLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Name];
     nameLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
     nameLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
     nameLabel.textAlignment         = NSTextAlignmentLeft;
@@ -311,7 +315,8 @@
     frame.origin.y                  += littleHeight;
     frame.size.width                = width;
     UILabel *mailLabel              = [[UILabel alloc] initWithFrame:frame];
-    mailLabel.text                  = @"1234567890@gmail.com";      // 客户的邮箱需要根据登陆信息返回
+//    mailLabel.text                  = @"1234567890@gmail.com";      // 客户的邮箱需要根据登陆信息返回
+    mailLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Email];
     mailLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
     mailLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
     mailLabel.textAlignment         = NSTextAlignmentLeft;
@@ -343,7 +348,6 @@
     self.cellNamesAndImages = @{
                                @"账号名称":@"01_01",
                                @"交易管理":@"01_10",
-                               @"绑定机具":@"01_12",
                                @"连接机具":@"01_14",
                                @"额度查询":@"01_16",
                                @"修改密码":@"01_18",
@@ -353,7 +357,6 @@
     // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
                                                 @"交易管理",
-                                                @"绑定机具",
                                                 @"连接机具",
                                                 @"额度查询",
                                                 @"修改密码",
