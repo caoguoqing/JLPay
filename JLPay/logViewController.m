@@ -71,10 +71,16 @@
     [self addSubViews];
     [self EndEdit];
     
-    // 打开设备..循环中。。这里需要读取设备么????????????????????????
-    AppDelegate* delegate_          = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    // 如果有登陆过，就显示账号
+    NSString* userID = [[NSUserDefaults standardUserDefaults] objectForKey:UserID];
+    if ([userID length] > 0) {
+        self.userNumberTextField.text = userID;
+    }
     
-    [delegate_.device open];
+    // 打开设备..循环中。。这里需要读取设备么????????????????????????
+//    AppDelegate* delegate_          = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    
+//    [delegate_.device open];
 
 }
 
@@ -378,7 +384,7 @@
     NSLog(@"\n-----------\nsrc=[%@]\n------------------\npin=[%@]\n------------------", keyStr,pin);
 
     // 准备上送加密数据
-    [[NSUserDefaults standardUserDefaults] setValue:pin forKey:@"userPW"];
+//    [[NSUserDefaults standardUserDefaults] setValue:pin forKey:@"userPW"];
 //    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 loadIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"loadIn"];
     
     
@@ -410,24 +416,23 @@
 - (void)logInWithPin: (NSString*)pin {
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
     ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+    request.delegate = self;
     [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
     [request addPostValue:pin forKey:@"passWord"];
-    request.delegate = self;
     [request startAsynchronous];
 }
 
 #pragma mask ::: HTTP响应协议
 -(void)requestFinished:(ASIHTTPRequest *)request {
-    NSLog(@"登陆响应数据[%@]", [request responseString]);
+//    NSLog(@"登陆响应数据[%@]", [request responseString]);
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
     NSString* retcode = [dataDic objectForKey:@"code"];
     NSString* retMsg = [dataDic objectForKey:@"message"];
-    NSLog(@"retcode = [%@], retMsg = [%@]", retcode, retMsg);
+//    NSLog(@"retcode = [%@], retMsg = [%@]", retcode, retMsg);
     if ([retcode intValue] != 0) {      // 登陆失败
-        UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:retMsg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        [alerView show];
+        [self alertShow:retMsg];
     } else {                            // 登陆成功
         // 解析响应数据
         [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
@@ -445,10 +450,6 @@
         }
         else {                        // 终端编号组的编号
             NSArray* array = [dataDic objectForKey:@"TermNoList"];
-//            for (int i = 0; i < array.count; i ++) {
-//                NSString* key = [NSString stringWithFormat:@"%@.%d",Terminal_Number, i+1];
-//                [[NSUserDefaults standardUserDefaults] setObject:[array objectAtIndex:i] forKey:key];
-//            }
             [[NSUserDefaults standardUserDefaults] setObject:array forKey:Terminal_Numbers];
         }
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -456,13 +457,14 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"登陆成功"];
         });
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:DeviceBeingSignedIn]; // 切换设备的签到标记
+        [[NSUserDefaults standardUserDefaults] synchronize];
         [app_delegate signInSuccessToLogin:1];  // 切换到主场景
     }
     
 }
 -(void)requestFailed:(ASIHTTPRequest *)request {
-    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请检查网络" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alerView show];
+    [self alertShow:@"网络异常，请检查网络"];
 }
 
 

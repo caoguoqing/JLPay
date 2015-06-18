@@ -145,7 +145,6 @@
         for (int j = 0; j<3; j++) {
             // frame 都已经准备好，可以直接装填数字按钮组了
             id button;
-            /////////// testing...
             // “撤销”按钮
             if (i == 3 && j == 2) {
                 button                                          = [[DeleteButton alloc] initWithFrame:frame];
@@ -314,12 +313,12 @@
  * 参  数 : 无
  * 返  回 : 无
  *************************************/
--(void)saveConsumerMoney {
-    // 保存的是字符串型的金额
-    [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
+//-(void)saveConsumerMoney {
+//    // 保存的是字符串型的金额
+//    [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
+//
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//}
 
 #pragma mark  ------跳转刷卡界面
 /*************************************
@@ -333,26 +332,40 @@
     UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     UIViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
     
+    
+    // 先校验是否签到
+    BOOL isSignedIn = [[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn];
+    if (!isSignedIn) {
+        [self alertShow:@"请先绑定机具"];
+        return;
+    }
+    // 再判断是否连接设备
+    
+    
     AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     if (![delegate.device isConnected])
     {
-        UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        alter.delegate                  = self;
-        [alter show];
+//        UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//        alter.delegate                  = self;
+//        [alter show];
+        [self alertShow:@"请连接设备"];
+        [delegate.device open];
     }else
     {
-        [self saveConsumerMoney];
+//        [self saveConsumerMoney];
+        // 保存的是字符串型的金额
+        [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         [self.navigationController pushViewController:viewcon animated:YES];
-        
     }
 }
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([alertView.message isEqualToString:@"请连接设备!"]) {
-        NSLog(@"点击了   alertView");
-        AppDelegate* delegate           = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [delegate.device  open];
-    }
-}
+//- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+//    if ([alertView.message isEqualToString:@"请连接设备!"]) {
+//        NSLog(@"点击了   alertView");
+//        AppDelegate* delegate           = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//        [delegate.device  open];
+//    }
+//}
 
 
 
@@ -413,6 +426,10 @@
 }
 
 
+- (void) alertShow: (NSString*) msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
 
 
 - (void)didReceiveMemoryWarning {

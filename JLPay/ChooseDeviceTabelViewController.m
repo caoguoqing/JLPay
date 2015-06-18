@@ -38,6 +38,11 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 }
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [delegatte.device open];
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -70,12 +75,12 @@
         // 签到
         [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
     } else {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
         // 打开设备
-        [delegatte.device open];
+        [delegatte.device open];        // 在后台打开的
     }
 }
-
-
 
 
 
@@ -87,9 +92,11 @@
     }
     if ([data length] > 0) {
         // 拆包
-        [[Unpacking8583 getInstance] unpackingSignin:data method:@"tcpsignin" getdelegate:self];
+        NSLog(@"开始拆包: 签到返回");
+
+        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
-        [self.view makeToast:@"签到报文返回空"];
+        [[app_delegate window] makeToast:@"签到报文返回空"];
     }
 }
 // 接收数据失败
@@ -99,17 +106,23 @@
 // 拆包结果的处理方法
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"]) return;
+    NSLog(@"state=[%hhd], message=[%@]", state, type);
     if (state) {
+        NSLog(@"拆包成功");
         AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 写工作密钥 ----- 到了这里就可以直接写了
-//        if ([delegatte.device isConnected]) {       // 设备是连接的就开始写工作密钥
-            NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
-            [delegatte.device WriteWorkKey:57 :workStr];
-//        } else {                                    // 未连接就打开设备并写卡
-//            [delegatte.device open];
-//        }
+        NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
+        NSLog(@"工作密钥: [%@]", workStr);
+        [delegatte.device WriteWorkKey:57 :workStr];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[delegatte window] makeToast:@"签到成功"];
+        });
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
-        [self.view makeToast:@"签到报文解析失败"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[app_delegate window] makeToast:@"连接设备失败:签到报文解析失败"];
+        });
     }
 
 }

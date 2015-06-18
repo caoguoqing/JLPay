@@ -253,8 +253,8 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Ip]) {
         ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
     }else{
-//        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";//
-        ipStr   = @"202.104.101.126";
+        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";//
+//        ipStr   = @"202.104.101.126";
     }
     return ipStr;
 }
@@ -263,8 +263,8 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
-//        portStr=@"28080";
-        portStr = @"9088";
+        portStr=@"28080";
+//        portStr = @"9088";
     }
     return [portStr intValue];
 }

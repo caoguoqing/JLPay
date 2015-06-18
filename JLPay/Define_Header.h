@@ -137,14 +137,10 @@
 
 //签到获取的pinkey
 #define Sign_in_PinKey @"pinkey"
-
 #define Sign_in_MacKey @"mackey"
-
-
 
 //消费获取的搜索参考号
 #define Consumer_Get_Sort @"cankaohao"
-
 
 //主秘钥明文，保存
 #define main_key_plain @"mainkeyplain"
@@ -174,7 +170,8 @@
 //#define Every_Sort_Number @"000000"
 #define Get_Sort_Number @"sortnumber"
 
-
+// 签到标志
+#define DeviceBeingSignedIn   @"DeviceBeingSignedIn"
 
 //初始化终端成功，可以签到
 #define Init_Terminal_Success @"initterminal"
