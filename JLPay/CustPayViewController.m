@@ -134,8 +134,9 @@
     // 数字按键组     4/8
     NSArray * numbers                   = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"delete",nil];
     frame.origin.y                      += bigHeight - bornerWith;
-    frame.size.width                    = self.view.bounds.size.width/3.0;
+    frame.size.width                    = (self.view.bounds.size.width - bornerWith*2.0)/3.0;
     frame.size.height                   = bigHeight;
+    CGRect numbersFrame                 = CGRectMake(frame.origin.x, frame.origin.y, self.view.bounds.size.width - bornerWith*3.0, bigHeight*4.0);
     NSInteger index                     = 0;
     for (int i = 0; i<4; i++) {
         frame.origin.x                  = 0.0;
@@ -148,8 +149,8 @@
             // “撤销”按钮
             if (i == 3 && j == 2) {
                 button                                          = [[DeleteButton alloc] initWithFrame:frame];
-                ((DeleteButton*)button).layer.borderWidth       = 0.3;
-                ((DeleteButton*)button).layer.borderColor       = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
+//                ((DeleteButton*)button).layer.borderWidth       = 0.3;
+//                ((DeleteButton*)button).layer.borderColor       = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
                 [(DeleteButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
@@ -166,8 +167,8 @@
                 [button setTitle:[numbers objectAtIndex:index] forState:UIControlStateNormal];
                 [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                 ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize];
-                ((UIButton*)button).layer.borderWidth           = 0.3;
-                ((UIButton*)button).layer.borderColor           = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
+//                ((UIButton*)button).layer.borderWidth           = 0.3;
+//                ((UIButton*)button).layer.borderColor           = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
                 [(UIButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
                 [(UIButton*)button  addTarget:self action:@selector(touchUp:) forControlEvents:UIControlEventTouchUpInside];
                 [(UIButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
@@ -180,14 +181,17 @@
         }
         frame.origin.y                  += bigHeight;
     }
+    // 分割线
+    [self drawLineInRect:numbersFrame];
+    
     
     // 支付宝按钮   3/8/3.3
     frame.origin.x                      = 0 + bornerWith;
-    frame.origin.y                      += bornerWith;
+    frame.origin.y                      += bornerWith * 4.0;
     frame.size.width                    = self.view.bounds.size.width/2.0 - bornerWith*2;
     frame.size.height                   = littleHeight - bornerWith*2;
     OtherPayButton *alipayButton        = [[OtherPayButton alloc] initWithFrame:frame];
-    // 添加 action ..........................
+    // 添加 action
     [alipayButton addTarget:self action:@selector(clickToWeAlipay:) forControlEvents:UIControlEventTouchUpInside];
     [alipayButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
     [alipayButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
@@ -199,7 +203,7 @@
     // 微信按钮
     frame.origin.x                      += self.view.bounds.size.width/2.0;
     OtherPayButton *weChatButton        = [[OtherPayButton alloc] initWithFrame:frame];
-    // 添加 action ..........................
+    // 添加 action
     [weChatButton setImageViewWithName:@"wx"];
     [weChatButton setLabelNameWithName:@"微信支付"];
     [weChatButton addTarget:self action:@selector(clickToWeChat:) forControlEvents:UIControlEventTouchUpInside];
@@ -229,6 +233,32 @@
     [self.view addSubview:brushButton];
 
     
+}
+
+#pragma mask ::: 数字按键组的分割线
+- (void) drawLineInRect : (CGRect)rect {
+    CGFloat lineWidth = 0.5;
+    CGFloat horizontalWidth = rect.size.width;  // 水平
+    CGRect frame = CGRectMake(rect.origin.x, rect.origin.y, horizontalWidth, lineWidth);
+    for (int i = 0; i < 5; i++) {
+        UIView* line = [[UIView alloc] initWithFrame:frame];
+        line.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.5];
+        frame.origin.y += rect.size.height/4.0;
+        if (i == 4) {
+            frame.origin.y -= frame.size.height;
+        }
+        [self.view addSubview:line];
+    }
+    frame.origin.y = rect.origin.y;
+    frame.size.width = lineWidth;
+    frame.size.height = rect.size.height;
+    for (int j = 0; j < 4; j++) {
+        UIView* line = [[UIView alloc] initWithFrame:frame];
+//        line.backgroundColor = [UIColor grayColor];
+        line.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.5];
+        frame.origin.x += rect.size.width/3.0;
+        [self.view addSubview:line];
+    }
 }
 
 

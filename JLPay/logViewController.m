@@ -390,6 +390,9 @@
     
     // 修改::: 不要送 8583 报文，改送 HTTP
     [self logInWithPin:pin];
+    
+    // testing ...
+//    [];
 }
 
 /*************************************
@@ -415,6 +418,7 @@
 #pragma mask ::: 上送登陆报文
 - (void)logInWithPin: (NSString*)pin {
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+    NSLog(@"ip:[%@], port:[%@], urlString=[%@]", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort], urlString);
     ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
     request.delegate = self;
     [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
@@ -424,7 +428,7 @@
 
 #pragma mask ::: HTTP响应协议
 -(void)requestFinished:(ASIHTTPRequest *)request {
-//    NSLog(@"登陆响应数据[%@]", [request responseString]);
+    NSLog(@"登陆响应数据[%@]", [request responseString]);
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
@@ -449,7 +453,12 @@
             [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:Terminal_Number];
         }
         else {                        // 终端编号组的编号
-            NSArray* array = [dataDic objectForKey:@"TermNoList"];
+            NSLog(@"\n--------------TermNoList[%@]",[dataDic objectForKey:@"TermNoList"]);
+//            NSArray* array = [dataDic objectForKey:@"TermNoList"];
+            NSString* terminalNumbersString = [dataDic objectForKey:@"TermNoList"];
+            NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
+            
+            
             [[NSUserDefaults standardUserDefaults] setObject:array forKey:Terminal_Numbers];
         }
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -467,6 +476,50 @@
     [self alertShow:@"网络异常，请检查网络"];
 }
 
+#pragma mask ::: 分隔终端号字符串
+- (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
+    NSMutableArray* array = [[NSMutableArray alloc] init];
+    NSString* tempString = [termString copy];
+    for (int i = 0; i < count; i++) {
+        NSLog(@"range:%d",[tempString rangeOfString:@","].length);
+        NSInteger index;
+        NSString* terminalNum;
+        if ([tempString rangeOfString:@","].length == 0) {
+//            index = [tempString length];
+            index = 0;
+            terminalNum = tempString;
+        } else {
+            index = [tempString rangeOfString:@","].location;
+            terminalNum = [tempString substringToIndex:index];
+        }
+        NSLog(@"\n<<<<<<<<<<<<<index=[%d],",index);
+        if (terminalNum == nil) {
+            break;
+        }
+        while ([terminalNum hasPrefix:@" "]) {
+            terminalNum = [terminalNum substringFromIndex:[terminalNum rangeOfString:@" "].location + 1];
+        }
+        if ([terminalNum hasSuffix:@" "]) {
+            terminalNum = [terminalNum substringToIndex:[terminalNum rangeOfString:@" "].location];
+        }
+        if (terminalNum != nil) {
+            [array addObject:terminalNum];
+        }
+        if (index != 0) {
+            tempString = [tempString substringFromIndex:index + 1];
+        }
+        NSLog(@"tempString = [%@]", tempString);
+    }
+    if (array.count == 0) {
+        return nil;
+    }
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count] intValue] != array.count) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%lu", (unsigned long)array.count] forKey:Terminal_Count];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    NSLog(@"\n-------------array=[%@]", array);
+    return array;
+}
 
 #pragma mask ::: 弹出提示框
 - (void) alertShow: (NSString*) message {

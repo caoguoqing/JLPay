@@ -25,8 +25,9 @@
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"连接机具";
+    self.title = @"绑定机具";
     NSString* terminalCount = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count];
+    
     if ([terminalCount intValue] > 1) {
         self.terminalNums = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Numbers];
     } else {
@@ -65,7 +66,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
-    
+    [[NSUserDefaults standardUserDefaults] setValue:cell.detailTextLabel.text forKey:Terminal_Number];
     
     // 怎样判断是哪种设备--- 打开方式不同
     
@@ -96,7 +97,7 @@
 
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
-        [[app_delegate window] makeToast:@"签到报文返回空"];
+        [[app_delegate window] makeToast:@"绑定失败:签到报文返回空"];
     }
 }
 // 接收数据失败
@@ -115,7 +116,7 @@
         NSLog(@"工作密钥: [%@]", workStr);
         [delegatte.device WriteWorkKey:57 :workStr];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[delegatte window] makeToast:@"签到成功"];
+            [[delegatte window] makeToast:@"绑定设备成功"];
         });
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
         [[NSUserDefaults standardUserDefaults] synchronize];

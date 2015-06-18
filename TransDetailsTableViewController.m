@@ -36,8 +36,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"交易管理";
-    // 加载一个 activity 控件
-    [self.view addSubview:self.activity];
     
     // 自定义返回界面的按钮样式
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
@@ -50,8 +48,13 @@
     // 从后台异步获取交易明细数据
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
 
-    [self requestDataFromURL:urlString];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        sleep(5);
+        [self requestDataFromURL:urlString];
+    });
     
+    // 加载一个 activity 控件
+    [self.view addSubview:self.activity];
     [self.activity startAnimating];
 
 }
@@ -184,6 +187,7 @@
 
 #pragma mask ::: ASIHTTPRequest 的数据接收协议
 - (void)requestFinished:(ASIHTTPRequest *)request {
+//    sleep(5);
     [self.reciveData appendData:[request responseData]];
     [self analysisJSONDataToDisplay];
     if ([self.activity isAnimating]) [self.activity stopAnimating];

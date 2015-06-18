@@ -276,6 +276,8 @@
         ip = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_IP"];
     } else {
         ip = @"192.188.8.112";
+//        ip = @"192.168.1.50";//122.0.64.19@"211.90.22.167";//
+
     }
     return ip;
 }
