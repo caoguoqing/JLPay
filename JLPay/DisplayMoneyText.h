@@ -23,4 +23,7 @@
 // 设置金额
 - (void) setNewMoneyString: (NSString*)moneyStr;
 
+// 返回小数点左边的金额
+- (NSString*) returnLeftNumbersAtDot;
+
 @end

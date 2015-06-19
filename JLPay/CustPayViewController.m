@@ -278,6 +278,12 @@
 - (IBAction) touchUp:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
+    
+    if ([[self.moneyStr returnLeftNumbersAtDot] length] > 4) {
+        return;
+    }
+
+    
     // 要计算属性值：金额：money
     [self plusNumberIntoMoney: sender];
     // 更新金额

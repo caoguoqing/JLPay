@@ -138,5 +138,9 @@
     return flag;
 }
 
+// 返回金额小数点左边的金额
+- (NSString *)returnLeftNumbersAtDot {
+    return [self.leftNumbersAtDot copy];
+}
 
 @end
