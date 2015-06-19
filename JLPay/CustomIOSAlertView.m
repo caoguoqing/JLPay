@@ -220,49 +220,34 @@ CGFloat buttonSpacerHeight = 0;
 // Creates the container view here: create the dialog, then add the custom content and buttons
 - (UIView *)createContainerView
 {
+    CGSize screenSize = [self countScreenSize];     // 屏幕 size
     if (containerView == NULL) {
-//        containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 150)];
-        self.passwordFieldView.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width - 20*2, 90);
-//        containerView = self.passwordFieldView;
+//        self.passwordFieldView.frame = CGRectMake(kCustomIOSContentViewHorizontalInset, 0, [[UIScreen mainScreen] bounds].size.width - 20*2, 90);
+        self.passwordFieldView.frame = CGRectMake(kCustomIOSContentViewHorizontalInset, 0, screenSize.width - 20*2, screenSize.height/6.0);
+
         [self setSubView:self.passwordFieldView];
     }
 
-    CGSize screenSize = [self countScreenSize];
-    CGSize dialogSize = [self countDialogSize];     // 自定义 view 的size
+    CGSize dialogSize = [self countDialogSize];     // alertView 的size
     NSLog(@"\n----------- \n screenSize=[%f,%f]\n dialogSize=[%f,%f] \n------------", screenSize.width, screenSize.height, dialogSize.width,dialogSize.height);
     
     // For the black background
     [self setFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
 
     // This is the dialog's container; we attach the custom content and the buttons to this one
-    UIView *dialogContainer = [[UIView alloc] initWithFrame:CGRectMake((screenSize.width - dialogSize.width - kCustomIOSContentViewHorizontalInset * 2.0) / 2.0,
+    UIView *dialogContainer = [[UIView alloc] initWithFrame:CGRectMake((screenSize.width - dialogSize.width) / 2.0,
                                                                        // 这里的 y 点坐标: (screen.height - keyboard.h - self.h )/2
                                                                        (screenSize.height - dialogSize.height - CustomKeyboardHeight) / 2.0,
                                                                        dialogSize.width,
                                                                        dialogSize.height)];
 
-    // First, we style the dialog to match the iOS7 UIAlertView >>>
-//    CAGradientLayer *gradient = [CAGradientLayer layer];
-//    gradient.frame = dialogContainer.bounds;
-//    gradient.colors = [NSArray arrayWithObjects:
-//                       (id)[[UIColor colorWithRed:218.0/255.0 green:218.0/255.0 blue:218.0/255.0 alpha:1.0f] CGColor],
-//                       (id)[[UIColor colorWithRed:233.0/255.0 green:233.0/255.0 blue:233.0/255.0 alpha:1.0f] CGColor],
-//                       (id)[[UIColor colorWithRed:218.0/255.0 green:218.0/255.0 blue:218.0/255.0 alpha:1.0f] CGColor],
-//                       nil];
-//    gradient.colors = [NSArray arrayWithObjects:
-////                       (id)[[UIColor colorWithRed:233.0/255.0 green:233.0/255.0 blue:233.0/255.0 alpha:1.0f] CGColor],
-//                       (id)[[UIColor colorWithRed:218.0/255.0 green:218.0/255.0 blue:218.0/255.0 alpha:1.0f] CGColor],
-//                       nil];
-//
-    CGFloat cornerRadius = kCustomIOSAlertViewCornerRadius;
-//    gradient.cornerRadius = cornerRadius;
-//    [dialogContainer.layer insertSublayer:gradient atIndex:0];
     dialogContainer.backgroundColor = [UIColor colorWithRed:233.0/255.0 green:233.0/255.0 blue:233.0/255.0 alpha:1.0f];
 
-    dialogContainer.layer.cornerRadius = cornerRadius;
+    dialogContainer.layer.cornerRadius = kCustomIOSAlertViewCornerRadius;
 
 
     // Add the custom container if there is any
+//    self.containerView.frame = CGRectMake(kCustomIOSContentViewHorizontalInset, 0, dialogContainer.bounds.size.width - kCustomIOSContentViewHorizontalInset * 2.0, <#CGFloat height#>)
     [dialogContainer addSubview:containerView];
 
     // Add the buttons too
@@ -332,7 +317,7 @@ CGFloat buttonSpacerHeight = 0;
 // Helper function: count and return the dialog's size
 - (CGSize)countDialogSize
 {
-    CGFloat dialogWidth = containerView.frame.size.width;
+    CGFloat dialogWidth = containerView.frame.size.width + kCustomIOSContentViewHorizontalInset * 2.0;
     CGFloat dialogHeight = containerView.frame.size.height + buttonHeight + buttonSpacerHeight + kCustomIOSContentViewHorizontalInset * 3;
 
     return CGSizeMake(dialogWidth, dialogHeight);

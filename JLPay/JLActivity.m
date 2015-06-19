@@ -23,21 +23,37 @@
 @synthesize timer = _timer;
 @synthesize acounting = _acounting;
 
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
+- (instancetype)init{
+    self = [super init];
     if (self) {
         _animate = NO;
         _acounting = 1;
         self.hidden = YES;
+        self.frame = [UIScreen mainScreen].bounds;
         [self addSubview:self.imageView];
-//        self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.3];
-        self.layer.cornerRadius = self.bounds.size.width/2.0;
-        self.layer.masksToBounds = YES;
+        
+        self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.3];
+//        self.layer.cornerRadius = self.bounds.size.width/2.0;
+//        self.layer.masksToBounds = YES;
+
     }
     return self;
 }
+
+//- (instancetype)initWithFrame:(CGRect)frame
+//{
+//    self = [super initWithFrame:frame];
+//    if (self) {
+//        _animate = NO;
+//        _acounting = 1;
+//        self.hidden = YES;
+//        [self addSubview:self.imageView];
+//        self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.3];
+//        self.layer.cornerRadius = self.bounds.size.width/2.0;
+//        self.layer.masksToBounds = YES;
+//    }
+//    return self;
+//}
 
 #pragma mask ::: 检查是否正在动画
 - (BOOL) isAnimating {
@@ -67,9 +83,10 @@
 
 #pragma mask ::: 转动的实现
 - (void) turningAround: (id) sender {
-    int i = self.acounting%13; // 1-12-0-1-12-0
+    int i = self.acounting%12; // 1-12-0-1-12-0
     if (i == 0) {
-        self.acounting++;
+//        self.acounting++;
+        i = 12;
     }
     self.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"activitor%02d", i]];
     self.acounting++;
@@ -82,7 +99,7 @@
 }
 - (UIImageView *)imageView {
     if (_imageView == nil) {
-        _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        _imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - 100)/2.0, (self.bounds.size.height - 100)/2.0, 100, 100)];
     }
     return _imageView;
 }

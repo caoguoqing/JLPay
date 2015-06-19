@@ -15,7 +15,7 @@
 @property (atomic, assign) int      pinCharCount;
 @end
 
-
+#define SeperateLineWidth   0.3
 
 @implementation passwordView
 
@@ -30,19 +30,21 @@
 
 #pragma mask ::: 构造子视图的frame
 - (void)layoutSubviews {
-    CGFloat inset = 7;
-    CGRect innerFrame = CGRectMake(self.frame.origin.x + inset, 0, self.frame.size.width - inset*2, (self.frame.size.height - inset*2)/2.0);
+    CGFloat inset = 14;
+//    CGRect innerFrame = CGRectMake(self.frame.origin.x + inset, 0, self.frame.size.width - inset*2, (self.frame.size.height - inset*2)/2.0);
+    CGRect innerFrame = CGRectMake(0, 0, self.frame.size.width, (self.frame.size.height - inset - SeperateLineWidth)/2.0);
+
     // 支付密码描述
     [self makeLabel:innerFrame];
     
     // 分割线
-    innerFrame.origin.y += (self.frame.size.height - inset*2)/2.0;
-    innerFrame.size.height = 0.3;
+    innerFrame.origin.y += (self.frame.size.height - inset - SeperateLineWidth)/2.0 ;
+    innerFrame.size.height = SeperateLineWidth;
     [self addSubview:[self line:innerFrame]];
     
     // 密码显示框
-    innerFrame.origin.y += inset * 2 - 0.5;
-    innerFrame.size.height = (self.frame.size.height - inset*2)/2.0;
+    innerFrame.origin.y += SeperateLineWidth + inset - 0.5;
+    innerFrame.size.height = (self.frame.size.height - inset - SeperateLineWidth)/2.0;
     [self passwordDisplayedView:innerFrame];
 }
 

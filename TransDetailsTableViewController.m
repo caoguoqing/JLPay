@@ -62,7 +62,7 @@
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.activity.frame = CGRectMake((self.view.bounds.size.width - 50.0)/2.0, (self.view.bounds.size.height - 50.0)/2.0, 50.0, 50.0);
+//    self.activity.frame = CGRectMake((self.view.bounds.size.width - 50.0)/2.0, (self.view.bounds.size.height - 50.0)/2.0, 50.0, 50.0);
 }
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
 - (void)viewDidAppear:(BOOL)animated {
@@ -71,9 +71,9 @@
 #pragma mask ::: 界面即将切换后的方法的重载
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    if (!self.HTTPRequest.complete) {
+//    if (!self.HTTPRequest.complete) {
         [self.HTTPRequest cancel];
-    }
+//    }
     if ([self.activity isAnimating]) {
         [self.activity stopAnimating];
     }
@@ -273,8 +273,9 @@
 - (JLActivity *)activity {
     if (_activity == nil) {
 //        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        CGRect frame = CGRectMake((self.view.bounds.size.width - 100)/2.0, (self.view.bounds.size.height - 100)/2.0, 100, 100);
-        _activity = [[JLActivity alloc] initWithFrame:frame];
+//        CGRect frame = CGRectMake((self.view.bounds.size.width - 100)/2.0, (self.view.bounds.size.height - 100)/2.0, 100, 100);
+//        _activity = [[JLActivity alloc] initWithFrame:frame];
+        _activity = [[JLActivity alloc] init];
     }
     return _activity;
 }
