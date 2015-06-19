@@ -47,16 +47,14 @@
 
     // 从后台异步获取交易明细数据
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        sleep(5);
-        [self requestDataFromURL:urlString];
-    });
+    [self requestDataFromURL:urlString];
     
     // 加载一个 activity 控件
     [self.view addSubview:self.activity];
     [self.activity startAnimating];
 
+    // 隐藏多余的单元格的分割线
+    [self setExtraCellLineHidden:self.tableView];
 }
 
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
@@ -67,13 +65,19 @@
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+//    if (self.HTTPRequest.delegate == nil) {
+//        self.HTTPRequest.delegate = self;
+//    }
 }
 #pragma mask ::: 界面即将切换后的方法的重载
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 //    if (!self.HTTPRequest.complete) {
-        [self.HTTPRequest cancel];
+//        [self.HTTPRequest cancel];
 //    }
+    // 将 ASIHTTPResponse.delegate设置为空，防止在连接还未断开而pop了当前界面
+//    [self.HTTPRequest setDelegate:nil];
+//    [self.HTTPRequest clearDelegatesAndCancel];
     if ([self.activity isAnimating]) {
         [self.activity stopAnimating];
     }
@@ -109,6 +113,7 @@
     // 给cell加载数据
     [self loadingDataForDetailCell:cell atIndexPath:indexPath];
 
+    
     return cell;
 }
 #pragma mask ::: 重定义各个类型 cell 的高度
@@ -179,15 +184,28 @@
                                         ];
     ASIFormDataRequest* request = [ASIFormDataRequest requestWithURL:url];
     [request setRequestHeaders:dicOfHeader];
-
-    [request setDelegate:self];
+//    [request setDelegate:self];
     [request startAsynchronous];  // 异步获取数据
 
+    __weak ASIFormDataRequest* blockRequest = request;
+    // 返回数据的处理
+    [request setCompletionBlock:^{
+        [self.reciveData appendData:[blockRequest responseData]];
+        [self analysisJSONDataToDisplay];
+        if ([self.activity isAnimating]) [self.activity stopAnimating];
+    }];
+    
+    // 返回失败的处理
+    [request setFailedBlock:^{
+        UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alerView show];
+        if ([self.activity isAnimating]) [self.activity stopAnimating];
+    }];
+    
 }
 
 #pragma mask ::: ASIHTTPRequest 的数据接收协议
 - (void)requestFinished:(ASIHTTPRequest *)request {
-//    sleep(5);
     [self.reciveData appendData:[request responseData]];
     [self analysisJSONDataToDisplay];
     if ([self.activity isAnimating]) [self.activity stopAnimating];
@@ -255,6 +273,12 @@
     [cell setRevokeRows:[NSString stringWithFormat:@"%d", tRevokeCount]];
 }
 
+#pragma mask ::: 去掉多余的单元格的分割线
+- (void) setExtraCellLineHidden: (UITableView*)tableView {
+    UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+}
 
 
 #pragma mask ::: getter 
