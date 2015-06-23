@@ -318,13 +318,18 @@
 //    mailLabel.text                  = @"1234567890@gmail.com";      // 客户的邮箱需要根据登陆信息返回
     mailLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Email];
     mailLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
+    // 设置 maillabel 的自适应大小
+    CGSize autoSize                 = [mailLabel.text sizeWithFont:mailLabel.font constrainedToSize:frame.size lineBreakMode:NSLineBreakByWordWrapping];
+    NSLog(@"autoSize.w = [%f], autoSize.h = [%f]", autoSize.width, autoSize.height);
+    frame                           = CGRectMake(frame.origin.x, frame.origin.y, autoSize.width, frame.size.height);
+    mailLabel.frame                 = frame;
+    // 设置 maillabel 的自适应大小
     mailLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
     mailLabel.textAlignment         = NSTextAlignmentLeft;
-
     [cell addSubview:mailLabel];
     
     // panImageView
-    frame.origin.x                  += width;
+    frame.origin.x                  += frame.size.width + 6/*分隔空白*/;
     frame.size.width                = littleHeight;
     UIImageView *panImageView       = [[UIImageView alloc] initWithFrame:frame];
     panImageView.image              = [UIImage imageNamed:@"bianji"];

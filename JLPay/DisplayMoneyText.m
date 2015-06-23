@@ -138,9 +138,19 @@
     return flag;
 }
 
+// 获取小数点标志
+- (BOOL)hasDot {
+    return self.dotFlag;
+}
+
 // 返回金额小数点左边的金额
 - (NSString *)returnLeftNumbersAtDot {
     return [self.leftNumbersAtDot copy];
 }
+// 返回小数点右边的金额
+- (NSString*) returnRightNumbersAtDot {
+    return [self.rightNumbersAtDot copy];
+}
+
 
 @end

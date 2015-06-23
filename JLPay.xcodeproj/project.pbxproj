@@ -225,8 +225,8 @@
 		5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalButton.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
-		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHLDevice.h; sourceTree = "<group>"; };
-		5E82B78F1B1BFCC200A58751 /* JHLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHLDevice.m; sourceTree = "<group>"; };
+		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = JLPay/JHLDevice.h; sourceTree = SOURCE_ROOT; };
+		5E82B78F1B1BFCC200A58751 /* JHLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JHLDevice.m; path = JLPay/JHLDevice.m; sourceTree = SOURCE_ROOT; };
 		5E82B7DD1B214B8200A58751 /* CustomIOSAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomIOSAlertView.h; sourceTree = "<group>"; };
 		5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomIOSAlertView.m; sourceTree = "<group>"; };
 		5E82B7E01B214B8F00A58751 /* passwordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = passwordView.h; sourceTree = "<group>"; };
@@ -546,11 +546,9 @@
 		5E82B78A1B1BEF3600A58751 /* 设备管理 */ = {
 			isa = PBXGroup;
 			children = (
-				5EBF82841ADDFC3D005F7E15 /* JHL */,
 				5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */,
 				5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */,
-				5E82B78E1B1BFCC200A58751 /* JHLDevice.h */,
-				5E82B78F1B1BFCC200A58751 /* JHLDevice.m */,
+				5EBF82841ADDFC3D005F7E15 /* JHL */,
 			);
 			name = "设备管理";
 			sourceTree = "<group>";
@@ -878,6 +876,8 @@
 		5EBF82841ADDFC3D005F7E15 /* JHL */ = {
 			isa = PBXGroup;
 			children = (
+				5E82B78E1B1BFCC200A58751 /* JHLDevice.h */,
+				5E82B78F1B1BFCC200A58751 /* JHLDevice.m */,
 				5EBF82851ADDFC3D005F7E15 /* CommunicationCallBack.h */,
 				5EBF82861ADDFC3D005F7E15 /* CommunicationManager.h */,
 				5EBF82871ADDFC3D005F7E15 /* libCommunicationManager.a */,

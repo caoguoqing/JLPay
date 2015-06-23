@@ -444,6 +444,13 @@
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
+        /**************** test for null of email ************/
+//        NSString* test = [dataDic objectForKey:@"commEmail"];
+//        if (test == nil || test.length == 0) {
+//            [[NSUserDefaults standardUserDefaults] setValue:@"89sdsdf2adfadfadfadfadfadsfa83972@qq.com" forKey:Business_Email];
+//        }
+        /****************test************/
+
         
         int termCount = [[dataDic objectForKey:@"termCount"] intValue];
         if (termCount == 0) {

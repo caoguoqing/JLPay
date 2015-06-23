@@ -168,6 +168,7 @@
                 [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                 ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize];
 //                ((UIButton*)button).layer.borderWidth           = 0.3;
+                ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize * [self resizeFontWithButton:button inFrame:frame]];
 //                ((UIButton*)button).layer.borderColor           = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
                 [(UIButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
                 [(UIButton*)button  addTarget:self action:@selector(touchUp:) forControlEvents:UIControlEventTouchUpInside];
@@ -279,10 +280,10 @@
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     
-    if ([[self.moneyStr returnLeftNumbersAtDot] length] > 4) {
+    // 先校验金额是否超限，超限直接退出
+    if ([self moneyIsOutLimit]) {
         return;
     }
-
     
     // 要计算属性值：金额：money
     [self plusNumberIntoMoney: sender];
@@ -461,6 +462,43 @@
     
 }
 
+/*************************************
+ * 功  能 : 检查金额是否超限;
+ * 参  数 :
+ * 返  回 :
+ *          - YES : 超限(>99999.99)
+ *          -  NO : 未超限
+ *************************************/
+- (BOOL) moneyIsOutLimit {
+    BOOL limit = NO;
+    // 整数部分必须小于等于5位
+    // 且==5时，必须有小数点标志
+    int length = [[self.moneyStr returnLeftNumbersAtDot] length];
+    if (length > 5) {               // > 5
+        limit = YES;
+    } else if (length == 5) {       // == 5
+        if (![self.moneyStr hasDot]) {
+            limit = YES;
+        } 
+    } else {                        // < 5
+    
+    }
+    return limit;
+}
+
+/*************************************
+ * 功  能 : 重新计算数字按钮组的文本的高度跟button高度的比例;
+ *          - 新的比例用 2/3 来计算
+ * 参  数 :
+ * 返  回 :
+ *************************************/
+- (CGFloat)resizeFontWithButton: (UIButton*)button inFrame: (CGRect) frame {
+    CGFloat resize = 0.0;
+    CGSize size = [button.titleLabel.text sizeWithFont:button.titleLabel.font];
+    // 设置字体的高度占 label 的高度的 2/3
+    resize = 2.0 * frame.size.height / (3.0 * size.height);
+    return resize;
+}
 
 - (void) alertShow: (NSString*) msg {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];

@@ -12,6 +12,7 @@
 
 // 设置小数点标记
 - (void) setDot;
+- (BOOL) hasDot;
 
 // 追加数字
 - (void) addNumber: (NSString*)number;
@@ -25,5 +26,7 @@
 
 // 返回小数点左边的金额
 - (NSString*) returnLeftNumbersAtDot;
+// 返回小数点右边的金额
+- (NSString*) returnRightNumbersAtDot;
 
 @end
