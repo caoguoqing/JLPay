@@ -34,6 +34,9 @@
         self.terminalNums = [NSArray arrayWithObjects:[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Number], nil];
     }
     
+    // 注册写工作密钥的结果通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingFailNote:) name:Noti_WorkKeyWriting_Fail object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -44,6 +47,7 @@
     AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
     [delegatte.device open];
 }
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -97,12 +101,18 @@
 
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
-        [[app_delegate window] makeToast:@"绑定失败:签到报文返回空"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[app_delegate window] makeToast:@"绑定失败:签到报文返回空"];
+            [self alertForMessage:@"绑定失败:签到报文返回空"];
+        });
     }
 }
 // 接收数据失败
 - (void)falseReceiveGetDataMethod:(NSString *)str {
-    [self.view makeToast:@"签到失败"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.view makeToast:@"签到失败"];
+        [self alertForMessage:@"连接设备失败:签到失败"];
+    });
 }
 // 拆包结果的处理方法
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
@@ -115,20 +125,34 @@
         NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
         NSLog(@"工作密钥: [%@]", workStr);
         [delegatte.device WriteWorkKey:57 :workStr];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[delegatte window] makeToast:@"绑定设备成功"];
-        });
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
-        [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[app_delegate window] makeToast:@"连接设备失败:签到报文解析失败"];
+//            [[app_delegate window] makeToast:@"连接设备失败:签到报文解析失败"];
+            [self alertForMessage:@"连接设备失败:签到报文解析失败"];
         });
     }
 
 }
 
+#pragma mask ::: 写工作密钥结果的通知处理
+- (void) workKeyWritingSuccNote: (NSNotification*)noti {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self alertForMessage:@"绑定设备成功"];
+    });
+    // 保存设备签到标志到本地;供刷卡时读取
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+}
+- (void) workKeyWritingFailNote: (NSNotification*)noti {
 
+}
+
+// 小工具: 为简化弹窗代码
+- (void) alertForMessage: (NSString*) messageStr {
+    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
 
 
 #pragma mask ::: getter & setter 

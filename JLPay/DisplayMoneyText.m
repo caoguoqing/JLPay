@@ -11,11 +11,11 @@
 #define Print_flag              1
 
 @interface DisplayMoneyText()
-@property (nonatomic)           NSString* moneyString;
-@property (nonatomic)           BOOL      dotFlag;
-@property (nonatomic,assign)    NSInteger dotIndex;
-@property (nonatomic,strong)    NSString* leftNumbersAtDot;
-@property (nonatomic,strong)    NSString* rightNumbersAtDot;
+@property (nonatomic)           NSString* moneyString;          // 算值属性:计算出完整的金额字符串
+@property (nonatomic)           BOOL      dotFlag;              // 小数点标志
+@property (nonatomic,assign)    NSInteger dotIndex;             // 小数位数
+@property (nonatomic,strong)    NSString* leftNumbersAtDot;     // 小数点左边数字串
+@property (nonatomic,strong)    NSString* rightNumbersAtDot;    // 小数点右边数字串
 
 @end
 
@@ -35,8 +35,8 @@
     if (self) {
         _dotFlag                = NO;
         _leftNumbersAtDot       = @"0";
-        _rightNumbersAtDot      = @"00";
-        _moneyString            = [[_leftNumbersAtDot stringByAppendingString:@"."] stringByAppendingString:_rightNumbersAtDot];
+        _rightNumbersAtDot      = @"0";
+//        _moneyString            = [[_leftNumbersAtDot stringByAppendingString:@"."] stringByAppendingString:_rightNumbersAtDot];
         _dotIndex               = 0;
     }
     return self;

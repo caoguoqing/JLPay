@@ -42,7 +42,6 @@
     _moneyStr                           = [[DisplayMoneyText alloc] init];
     _money                              = [_moneyStr money];
 
-   
     [self addSubViews];
 }
 
@@ -241,6 +240,7 @@
     CGFloat lineWidth = 0.5;
     CGFloat horizontalWidth = rect.size.width;  // 水平
     CGRect frame = CGRectMake(rect.origin.x, rect.origin.y, horizontalWidth, lineWidth);
+    // 横线
     for (int i = 0; i < 5; i++) {
         UIView* line = [[UIView alloc] initWithFrame:frame];
         line.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.5];
@@ -253,9 +253,9 @@
     frame.origin.y = rect.origin.y;
     frame.size.width = lineWidth;
     frame.size.height = rect.size.height;
+    // 竖线
     for (int j = 0; j < 4; j++) {
         UIView* line = [[UIView alloc] initWithFrame:frame];
-//        line.backgroundColor = [UIColor grayColor];
         line.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.5];
         frame.origin.x += rect.size.width/3.0;
         [self.view addSubview:line];

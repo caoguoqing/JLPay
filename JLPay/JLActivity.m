@@ -23,6 +23,8 @@
 @synthesize timer = _timer;
 @synthesize acounting = _acounting;
 
+
+// 初始化
 - (instancetype)init{
     self = [super init];
     if (self) {
@@ -33,27 +35,11 @@
         [self addSubview:self.imageView];
         
         self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.3];
-//        self.layer.cornerRadius = self.bounds.size.width/2.0;
-//        self.layer.masksToBounds = YES;
 
     }
     return self;
 }
 
-//- (instancetype)initWithFrame:(CGRect)frame
-//{
-//    self = [super initWithFrame:frame];
-//    if (self) {
-//        _animate = NO;
-//        _acounting = 1;
-//        self.hidden = YES;
-//        [self addSubview:self.imageView];
-//        self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.3];
-//        self.layer.cornerRadius = self.bounds.size.width/2.0;
-//        self.layer.masksToBounds = YES;
-//    }
-//    return self;
-//}
 
 #pragma mask ::: 检查是否正在动画
 - (BOOL) isAnimating {
@@ -85,7 +71,6 @@
 - (void) turningAround: (id) sender {
     int i = self.acounting%12; // 1-12-0-1-12-0
     if (i == 0) {
-//        self.acounting++;
         i = 12;
     }
     self.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"activitor%02d", i]];

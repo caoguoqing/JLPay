@@ -167,38 +167,55 @@ static FieldTrackData TransData;
                 NSLog(@"%s,result:%@",__func__,@"刷卡成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[appDelegate window] makeToast:@"刷卡成功"];
-                    NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Success object:nil];
-                    [[NSNotificationCenter defaultCenter] postNotification:notification];
                 });
+                NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Success object:nil];
+                [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
             else                // 失败
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡失败");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[appDelegate window] makeToast:@"刷卡失败"];
-                    NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Fail object:nil];
-                    [[NSNotificationCenter defaultCenter] postNotification:notification];
                 });
+                NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Fail object:nil];
+                [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
             break;
         // 消费:获取卡数据
         case GETTRACK_CMD:
             if (!ByteDate[1])   // 获取卡数据成功
             {
-                [[appDelegate window] makeToast:@"读卡成功"];
                 [self GetCard:data];    // 解析卡数据到缓存
                 [self cardDataUserDefult];
                 // 从缓存中读取密码密文
                 NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Success object:nil];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[appDelegate window] makeToast:@"读卡成功"];
+                });
                 [[NSNotificationCenter defaultCenter] postNotification:notification];
                 
             }
             else
             {
-                [[appDelegate window] makeToast:@"读卡失败"];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[appDelegate window] makeToast:@"读卡失败"];
+                });
                 NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Fail object:nil];
                 [[NSNotificationCenter defaultCenter] postNotification:notification];
 
+            }
+            break;
+        case WORKKEY_CMD:
+            if (!ByteDate[1]) { // 写工作密钥成功
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[appDelegate window] makeToast:@"写工作密钥成功"];
+                });
+                [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Success object:nil];
+            } else {            // 写失败
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[appDelegate window] makeToast:@"写工作密钥失败"];
+                });
+                [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Fail object:nil];
             }
             break;
         default:
@@ -480,10 +497,15 @@ static FieldTrackData TransData;
 
 #pragma mask : CommunicationCallBack 的暂时无用的协议
 - (void)onTimeout {
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[app_delegate window] makeToast:@"设备读取超时"];
+    });
 }
+
 - (void)onError:(NSInteger)code message:(NSString *)msg {
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[app_delegate window] makeToast:msg];
+    });
 }
 -(void)onSendOK {
 

@@ -30,6 +30,8 @@
 #define Noti_CardSwiped_Fail            @"Noti_CardSwiped_Fail"
 #define Noti_TransSale_Success          @"Noti_TransSale_Success"       // 刷卡消费
 #define Noti_TransSale_Fail             @"Noti_TransSale_Fail"
+#define Noti_WorkKeyWriting_Success     @"Noti_WorkKeyWriting_Success"  // 写工作密钥
+#define Noti_WorkKeyWriting_Fail        @"Noti_WorkKeyWriting_Fail"
 /*************[notification 变量声明区]**************/
 
 #define CustomKeyboardHeight            216.0                           // 自定义键盘的高度

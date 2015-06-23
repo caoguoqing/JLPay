@@ -10,6 +10,14 @@
 
 @interface DisplayMoneyText : NSObject
 
+
+// 返回金额
+// 追加输入的数字
+// 设置已有的金额
+
+
+
+
 // 设置小数点标记
 - (void) setDot;
 - (BOOL) hasDot;
@@ -21,7 +29,7 @@
 // 返回保存的字符串金额: 两位小数点
 - (NSString*) money;
 
-// 设置金额
+// 设置金额文本
 - (void) setNewMoneyString: (NSString*)moneyStr;
 
 // 返回小数点左边的金额

@@ -10,7 +10,7 @@
 
 @interface JLActivity : UIView
 
-- (id) initWithFrame:(CGRect)frame;
+- (instancetype) init;
 - (BOOL) isAnimating;
 - (void) startAnimating;
 - (void) stopAnimating;

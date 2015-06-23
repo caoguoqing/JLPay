@@ -17,20 +17,38 @@
 #import "CustomIOSAlertView.h"
 #import "CustPayViewController.h"
 #import "WaitViewController.h"
+#import "TcpClientService.h"
+#import "Unpacking8583.h"
+#import "QianPiViewController.h"
+#import "GroupPackage8583.h"
+//#import "JLActivity.h"
 
 
 
-@interface BrushViewController()<CustomIOSAlertViewDelegate>
-
-
+@interface BrushViewController()<CustomIOSAlertViewDelegate,wallDelegate,managerToCard,UIAlertViewDelegate>
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
-@property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;
-
+@property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
+@property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
+@property (nonatomic, assign) CGFloat leftInset;                            // 动态文本区域的左边静态文本区域的右边界长度
+@property (nonatomic, assign) int timeOut;                                  // 交易超时时间
+@property (nonatomic, strong) NSTimer* runLoopTimer;                        // 超时控制定时器
 @end
 
+/*************************************
+ * ---- 功能
+ *      1.刷卡
+ *      2.输入密码
+ *      3.发送消费报文
+ *      4.接收返回报文
+*************************************/
+ 
+ 
+ 
 @implementation BrushViewController
 @synthesize activity                    = _activity;
 @synthesize passwordAlertView           = _passwordAlertView;
+@synthesize waitingLabel                = _waitingLabel;
+@synthesize leftInset;
 
 /*************************************
  * 功  能 : 界面的初始化;
@@ -80,28 +98,29 @@
         // 连接设备....循环中
         [delegate.device open];
     }
-
-
 }
 
 
 #pragma mask ::: 刷卡成功
 - (void) cardSwipeSuccess : (NSNotification*)notification {
-    if ([self.activity isAnimating]) {
-        [self.activity stopAnimating];
-    }
-    
-    // 打开密码输入提示框
-    [self makePasswordAlertView];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+        // 打开密码输入提示框
+        [self makePasswordAlertView];
+    });
     
 }
 #pragma mask ::: 通知事件 ->刷卡失败
 - (void) cardSwipeFail : (NSNotification*)notification {
-    if ([self.activity isAnimating]) {
-        [self.activity stopAnimating];
-    }
-    // 弹出刷卡界面,回到金额输入界面
-    [self.navigationController popViewControllerAnimated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+        // 弹出刷卡界面,回到金额输入界面
+        [self.navigationController popViewControllerAnimated:YES];
+    });
 
 }
 
@@ -144,31 +163,186 @@
 #pragma mask ::: 跳转到消费的联机阶段
 - (void) toCust: (NSNotification*)notification {
     // 密码
-    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [delegate_.window makeToast:@"刷磁成功,交易处理中..."];
+//    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    [delegate_.window makeToast:@"刷磁成功,交易处理中..."];
+    dispatch_async(dispatch_get_main_queue(), ^{
+//        [[app_delegate window] makeToast:@"刷磁成功,交易处理中..."];
+//        if (![self.JLactivity isAnimating]) {
+//            [self.JLactivity startAnimating];
+//        }
+        [self setWaitingLabelText:@"交易处理中..."];
+        if (![self.activity isAnimating]) {
+            [self.activity startAnimating];
+        }
+    });
     
+    // 设置流水号
     NSString *liushui=[PublicInformation exchangeNumber];
     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    WaitViewController *viewcon = [[WaitViewController alloc]init];
-    viewcon.pinstr  = [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController pushViewController:viewcon animated:YES];
-    });
+//    WaitViewController *viewcon = [[WaitViewController alloc]init];
+//    viewcon.pinstr  = [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.navigationController pushViewController:viewcon animated:YES];
+//    });
+    // 异步发送消费报文 ,,,,,,, 超时的解决方案???????????????
+    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]]
+                                                 IP:Current_IP
+                                               PORT:Current_Port
+                                           Delegate:self
+                                             method:@"cousume"];
 }
 
 #pragma mask ::: 跳转回金额输入界面
 - (void) backToCust: (NSNotification*)notification {
-    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [delegate_.window makeToast:@"交易失败!"];
-    
-    UIStoryboard* storyBoard    = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    CustPayViewController* viewController   = [storyBoard instantiateViewControllerWithIdentifier:@"CustPayViewController"];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController popToViewController:viewController animated:YES];
-    });
+//    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    [delegate_.window makeToast:@"交易失败!"];
+//    [[app_delegate window] makeToast:@""];
+//    
+//    UIStoryboard* storyBoard    = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    CustPayViewController* viewController   = [storyBoard instantiateViewControllerWithIdentifier:@"CustPayViewController"];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.navigationController popToViewController:viewController animated:YES];
+//    });
+    [self alertForFailedMessage:@""];
 }
+
+
+
+
+#pragma mask ::: ------ 消费报文上送的接收协议 walldelegate
+- (void)receiveGetData:(NSString *)data method:(NSString *)str {
+    if ([data length] > 0) {
+        if ([str isEqualToString:@"cousume"]) {
+            NSLog(@"消费响应数据:[%@]", data);
+        }
+        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
+    } else {
+        [self alertForFailedMessage:@"网络异常，请检查网络"];
+    }
+
+}
+- (void)falseReceiveGetDataMethod:(NSString *)str {
+    if ([str isEqualToString:@"cousume"]) {
+        [self alertForFailedMessage:@"网络异常，请检查网络"];
+    }
+}
+
+#pragma mask ::: ------ 拆包结果的处理协议    managerToCard
+- (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
+    if (state) {
+        if ([metStr isEqualToString:@"cousume"]) {
+            if ([self.activity isAnimating]) {
+                [self.activity stopAnimating];
+            }
+            QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
+            [qianpi qianpiType:1];
+            [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
+            [qianpi leftTitle:[PublicInformation returnMoney]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationController pushViewController:qianpi animated:YES];
+            });
+
+        }
+    } else {
+        [self alertForFailedMessage:type];
+    }
+}
+
+
+
+
+
+/*************************************
+ * 功  能 : 界面的subviews的加载;
+ *          - 金额标签              UILabel + UIImageView
+ *          - 刷卡动态提示           UILabel + UIActiveView
+ *          - 刷卡说明图片           UIImageView
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) addSubViews {
+    CGFloat topInset            = 15;                // 子视图公用变量: 上边界
+    CGFloat fleftInset           = 15;                // 左边界
+    CGFloat rightInset          = 15;                // 右边界
+    CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
+    CGFloat uifont              = 20.0;              // 字体大小
+    
+    CGFloat xFrame              = 0 + fleftInset;
+    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
+    CGFloat width               = 40;
+    CGFloat height              = 30;
+    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
+    
+    // 背景
+    UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    backImage.image             = [UIImage imageNamed:@"bg"];
+    [self.view addSubview:backImage];
+    // 金额
+    UILabel* jine               = [[UILabel alloc] initWithFrame:frame];
+    jine.text                   = @"金额";
+    jine.font                   = [UIFont boldSystemFontOfSize:uifont];
+    jine.textAlignment          = NSTextAlignmentCenter;
+    [self.view addSubview:jine];
+    self.leftInset              = frame.origin.x + frame.size.width;
+    // 符号图片
+    frame.origin.x              += width;
+    frame.size.width            = frame.size.height;
+    UIImageView* jineImage      = [[UIImageView alloc] initWithFrame:frame];
+    jineImage.image             = [UIImage imageNamed:@"jine"];
+    [self.view addSubview:jineImage];
+    self.leftInset              += frame.size.width;
+    // 金额数值
+    frame.origin.x              += frame.size.width;
+    frame.size.width            = width * 3.0;
+    UILabel* money              = [[UILabel alloc] initWithFrame:frame];
+    money.font                   = [UIFont boldSystemFontOfSize:uifont];
+    money.textAlignment         = NSTextAlignmentLeft;
+    money.text                  = [[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money] stringByAppendingString:@"元"];
+    [self.view addSubview:money];
+    self.leftInset              += frame.size.width;
+    // 请刷卡...
+    frame.size.width            = 80.0;
+    frame.origin.x              = self.view.bounds.size.width - rightInset - frame.size.width;
+    self.waitingLabel.frame     = frame;
+    self.waitingLabel.textAlignment        = NSTextAlignmentLeft;
+    self.waitingLabel.font                   = [UIFont boldSystemFontOfSize:uifont];
+    self.waitingLabel.text                 = @"请刷卡...";
+    [self.view addSubview:self.waitingLabel];
+    // 动态滚动图
+    frame.origin.x              -= frame.size.height;
+    frame.size.width            = frame.size.height;
+    self.activity.frame         = frame;
+    [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    [self.view addSubview:self.activity];
+    if (![self.activity isAnimating]) {
+        [self.activity startAnimating];
+    }
+    // 图片1
+    frame.origin.y              += frame.size.height + inset;
+    fleftInset                   = self.view.bounds.size.width / 6.0;
+    rightInset                  *= 2;
+    frame.origin.x              = fleftInset;
+    frame.size.width            = self.view.bounds.size.width - fleftInset - rightInset;
+    frame.size.height           = frame.size.width * 0.8;
+    UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
+    shuakaImage.image           = [UIImage imageNamed:@"shuaka"];
+    [self.view addSubview:shuakaImage];
+    
+    // 图片2
+    frame.origin.x              = 0 + rightInset;
+    frame.origin.y              += frame.size.height;
+    UIImageView* shuakaImage1   = [[UIImageView alloc] initWithFrame:frame];
+    shuakaImage1.image          = [UIImage imageNamed:@"shuaka1"];
+    [self.view addSubview:shuakaImage1];
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
 
 
 
@@ -192,90 +366,33 @@
 
 
 /*************************************
- * 功  能 : 界面的subviews的加载;
- *          - 金额标签              UILabel + UIImageView
- *          - 刷卡动态提示           UILabel + UIActiveView
- *          - 刷卡说明图片           UIImageView
+ * 功  能 : 交易失败的alert显示;
+ *          在主线程中显示;
+ * 参  数 : 
+ *          (NSString*) message
+ * 返  回 : 无
+ *************************************/
+- (void) alertForFailedMessage: (NSString*) messageStr {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"交易失败" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+        [alert show];
+    });
+}
+/*************************************
+ * 功  能 : 交易失败的alert按钮跳转界面事件协议;
+ *          pop时要考虑资源释放;
  * 参  数 : 无
  * 返  回 : 无
  *************************************/
-- (void) addSubViews {
-    CGFloat topInset            = 15;                // 子视图公用变量: 上边界
-    CGFloat leftInset           = 15;                // 左边界
-    CGFloat rightInset          = 15;                // 右边界
-    CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
-    CGFloat uifont              = 20.0;              // 字体大小
-    
-    CGFloat xFrame              = 0 + leftInset;
-    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
-    CGFloat width               = 40;
-    CGFloat height              = 30;
-    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
-    
-    // 背景
-    UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    backImage.image             = [UIImage imageNamed:@"bg"];
-    [self.view addSubview:backImage];
-    // 金额
-    UILabel* jine               = [[UILabel alloc] initWithFrame:frame];
-    jine.text                   = @"金额";
-    jine.font                   = [UIFont boldSystemFontOfSize:uifont];
-    jine.textAlignment          = NSTextAlignmentCenter;
-    [self.view addSubview:jine];
-    // 符号图片
-    frame.origin.x              += width;
-    frame.size.width            = frame.size.height;
-    UIImageView* jineImage      = [[UIImageView alloc] initWithFrame:frame];
-    jineImage.image             = [UIImage imageNamed:@"jine"];
-    [self.view addSubview:jineImage];
-    // 金额数值
-    frame.origin.x              += frame.size.width;
-    frame.size.width            = width * 3.0;
-    UILabel* money              = [[UILabel alloc] initWithFrame:frame];
-    money.font                   = [UIFont boldSystemFontOfSize:uifont];
-    money.textAlignment         = NSTextAlignmentLeft;
-    money.text                  = [[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money] stringByAppendingString:@"元"];
-    [self.view addSubview:money];
-    // 请刷卡...
-    frame.size.width            = 80.0;
-    frame.origin.x              = self.view.bounds.size.width - rightInset - frame.size.width;
-    UILabel* shuaka             = [[UILabel alloc] initWithFrame:frame];
-    shuaka.textAlignment        = NSTextAlignmentLeft;
-    shuaka.font                   = [UIFont boldSystemFontOfSize:uifont];
-    shuaka.text                 = @"请刷卡...";
-    [self.view addSubview:shuaka];
-    // 动态滚动图
-    frame.origin.x              -= frame.size.height;
-    frame.size.width            = frame.size.height;
-    self.activity.frame         = frame;
-    [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
-    [self.view addSubview:self.activity];
-    if (![self.activity isAnimating]) {
-        [self.activity startAnimating];
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.title isEqualToString:@"交易失败"]) {
+        [self.navigationController popViewControllerAnimated:YES];
     }
-    // 图片1
-    frame.origin.y              += frame.size.height + inset;
-    leftInset                   = self.view.bounds.size.width / 6.0;
-    rightInset                  *= 2;
-    frame.origin.x              = leftInset;
-    frame.size.width            = self.view.bounds.size.width - leftInset - rightInset;
-    frame.size.height           = frame.size.width * 0.8;
-    UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage.image           = [UIImage imageNamed:@"shuaka"];
-    [self.view addSubview:shuakaImage];
-    
-    // 图片2
-    frame.origin.x              = 0 + rightInset;
-    frame.origin.y              += frame.size.height;
-    UIImageView* shuakaImage1   = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage1.image          = [UIImage imageNamed:@"shuaka1"];
-    [self.view addSubview:shuakaImage1];
-    
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
 
 #pragma mask ::: getter
 - (UIActivityIndicatorView *)activity {
@@ -292,6 +409,38 @@
     return _passwordAlertView;
 }
 
+- (UILabel *)waitingLabel {
+    if (_waitingLabel == nil) {
+        _waitingLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    }
+    return _waitingLabel;
+}
 
+/*************************************
+ * 功  能 : 设置 self.waitingLabel的文本;
+ *          该label的frame要根据文本的长度进行适配;
+ *          左边界的值是在装填金额等ui的时候计算出来的;
+ *          要考虑预留一个activity的宽度;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) setWaitingLabelText : (NSString*)text {
+    CGSize oldTextSize = [self.waitingLabel.text sizeWithFont:self.waitingLabel.font];
+    self.waitingLabel.text = text;
+    CGSize newTextSize = [self.waitingLabel.text sizeWithFont:self.waitingLabel.font];
+    // 新的文本长度如果长于旧的文本长度时就改变label的frame
+    CGFloat addLength = newTextSize.width - oldTextSize.width;
+    if (addLength > 0) {
+        CGRect frame = self.waitingLabel.frame;
+        frame.origin.x -= addLength;
+        frame.size.width += addLength;
+        self.waitingLabel.frame = frame;
+        
+        // 同时改变 activity 的frame;
+        frame = self.activity.frame;
+        frame.origin.x -= addLength;
+        self.activity.frame = frame;
+    }
+}
 
 @end
