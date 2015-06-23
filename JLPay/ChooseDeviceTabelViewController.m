@@ -158,7 +158,6 @@
 #pragma mask ::: getter & setter 
 - (NSArray *)terminalNums {
     if (_terminalNums == nil) {
-//        _terminalNums = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Numbers];
         _terminalNums = [[NSArray alloc] init];
     }
     return _terminalNums;

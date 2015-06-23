@@ -49,7 +49,8 @@
 @synthesize passwordAlertView           = _passwordAlertView;
 @synthesize waitingLabel                = _waitingLabel;
 @synthesize leftInset;
-
+@synthesize timeOut;
+@synthesize runLoopTimer                = _runLoopTimer;
 /*************************************
  * 功  能 : 界面的初始化;
  *          - 金额标签              UILabel + UIImageView
@@ -72,6 +73,8 @@
     // 注册刷磁消费的通知处理
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
+    // 交易超时时间为20秒
+    self.timeOut = 20;
 }
 
 #pragma mask ::: 子视图的属性设置
@@ -88,13 +91,15 @@
     AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     if ([delegate.device isConnected]) {
         // 刷卡
-        [[delegate window] makeToast:@"请刷卡..."];
+//        [[delegate window] makeToast:@"请刷卡..."];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             // 刷卡
             [delegate.device cardSwipe];
         });
     } else {
-        [[delegate window] makeToast:@"请插入设备"];
+//        [[delegate window] makeToast:@"请插入设备"];
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
         // 连接设备....循环中
         [delegate.device open];
     }
@@ -118,6 +123,7 @@
         if ([self.activity isAnimating]) {
             [self.activity stopAnimating];
         }
+        [[app_delegate window] makeToast:@"刷卡失败"];
         // 弹出刷卡界面,回到金额输入界面
         [self.navigationController popViewControllerAnimated:YES];
     });
@@ -160,16 +166,10 @@
 }
 
 
-#pragma mask ::: 跳转到消费的联机阶段
+#pragma mask ::: 跳转到消费的联机阶段-上送报文
 - (void) toCust: (NSNotification*)notification {
     // 密码
-//    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    [delegate_.window makeToast:@"刷磁成功,交易处理中..."];
     dispatch_async(dispatch_get_main_queue(), ^{
-//        [[app_delegate window] makeToast:@"刷磁成功,交易处理中..."];
-//        if (![self.JLactivity isAnimating]) {
-//            [self.JLactivity startAnimating];
-//        }
         [self setWaitingLabelText:@"交易处理中..."];
         if (![self.activity isAnimating]) {
             [self.activity startAnimating];
@@ -192,6 +192,15 @@
                                                PORT:Current_Port
                                            Delegate:self
                                              method:@"cousume"];
+    
+    // 启动超时定时器
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        self.runLoopTimer = [NSTimer scheduledTimerWithTimeInterval:1/*间隔1秒*/
+                                                             target:self
+                                                           selector:@selector(waitingForConsume)
+                                                           userInfo:nil repeats:YES];
+        [self.runLoopTimer fire];
+    });
 }
 
 #pragma mask ::: 跳转回金额输入界面
@@ -205,7 +214,7 @@
 //    dispatch_async(dispatch_get_main_queue(), ^{
 //        [self.navigationController popToViewController:viewController animated:YES];
 //    });
-    [self alertForFailedMessage:@""];
+    [self alertForFailedMessage:@"读卡失败"];
 }
 
 
@@ -220,12 +229,14 @@
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
+        [self.runLoopTimer invalidate]; // 注销定时器
     }
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     if ([str isEqualToString:@"cousume"]) {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
+        [self.runLoopTimer invalidate]; // 注销定时器
     }
 }
 
@@ -233,6 +244,7 @@
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (state) {
         if ([metStr isEqualToString:@"cousume"]) {
+            [self.runLoopTimer invalidate]; // 注销定时器
             if ([self.activity isAnimating]) {
                 [self.activity stopAnimating];
             }
@@ -243,10 +255,10 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.navigationController pushViewController:qianpi animated:YES];
             });
-
         }
     } else {
         [self alertForFailedMessage:type];
+        [self.runLoopTimer invalidate]; // 注销定时器
     }
 }
 
@@ -393,6 +405,24 @@
     }
 }
 
+/*************************************
+ * 功  能 : 交易发送后的计时器方法，超时了要弹窗并推出当前场景;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) waitingForConsume {
+    self.timeOut--;
+    NSLog(@"定时器:[%d]", self.timeOut);
+    if (self.timeOut == 0) {
+        // 超时了
+        [self.runLoopTimer invalidate]; // 停止计时
+        [self alertForFailedMessage:@"交易超时,请检查网络"];
+//        if ([self.activity isAnimating]) {
+//            [self.activity stopAnimating];
+//        }
+    }
+}
+
 
 #pragma mask ::: getter
 - (UIActivityIndicatorView *)activity {
@@ -415,7 +445,18 @@
     }
     return _waitingLabel;
 }
+- (NSTimer *)runLoopTimer {
+    if (_runLoopTimer == nil) {
+//        _runLoopTimer = [NSTimer scheduledTimerWithTimeInterval:1/*间隔1秒*/
+//                                                         target:self
+//                                                       selector:@selector(waitingForConsume)
+//                                                       userInfo:nil repeats:YES];
+        _runLoopTimer = [[NSTimer alloc] init];
+    }
+    return _runLoopTimer;
+}
 
+#pragma mask ::: setter
 /*************************************
  * 功  能 : 设置 self.waitingLabel的文本;
  *          该label的frame要根据文本的长度进行适配;
