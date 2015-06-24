@@ -66,7 +66,7 @@
         cell.frame = frame;
         [self loadDetailCell:cell atIndexPath: indexPath];
     }
-    cell.backgroundColor = [UIColor colorWithRed:212.0/255.0 green:212.0/255.0 blue:212.0/255.0 alpha:1];
+//    cell.backgroundColor = [UIColor colorWithRed:212.0/255.0 green:212.0/255.0 blue:212.0/255.0 alpha:1];
     return cell;
 }
 
@@ -86,9 +86,9 @@
 - (void) loadDetailCell: (UITableViewCell*)cell atIndexPath: (NSIndexPath*)indexPath{
     CGFloat leftWidth = cell.bounds.size.width / 4.0;
     
+    // key
     UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET, 0, leftWidth, cell.bounds.size.height)];
     label.text = [[self.detailNameIndex allKeys] objectAtIndex:indexPath.row - 1];
-//    label.backgroundColor = [UIColor grayColor];
     [cell addSubview:label];
     NSString* key = [self.detailNameIndex objectForKey:label.text];
     
@@ -98,14 +98,20 @@
                                                       cell.bounds.size.height)];
     label.font = [UIFont systemFontOfSize:15.0];
     label.textColor = [UIColor colorWithRed:82.0/255.0 green:82.0/255.0 blue:82.0/255.0 alpha:1.0];
-    if ([key isEqualToString:@"amtTrans"]) {
+    // 值
+    if ([key isEqualToString:@"amtTrans"]) { // 金额
         NSString* amount = [self.dataDic objectForKey:key];
         CGFloat fAmount = [amount floatValue]/100.0;
         label.text = [NSString stringWithFormat:@"%.02f", fAmount];
-    } else {
+    } else if ([key isEqualToString:@"pan"]) { // 卡号
+        NSString* cardNo = [self.dataDic objectForKey:key];
+        label.text = [NSString stringWithFormat:@"%@******%@",
+                      [cardNo substringToIndex:6],
+                      [cardNo substringFromIndex:[cardNo length] - 1 - 4]];
+    }
+    else {
         label.text = [self.dataDic objectForKey:key];
     }
-//    label.backgroundColor = [UIColor greenColor];
     [cell addSubview:label];
 }
 
@@ -118,8 +124,7 @@
                                                                0,
                                                                leftWidth,
                                                                cell.bounds.size.height)];
-    label.text = @"可否撤销";
-//    label.backgroundColor = [UIColor greenColor];
+    label.text = @"能否撤销";
     [cell addSubview:label];
     
     // 还有一个label没有显示
@@ -130,19 +135,27 @@
     
     // button
     width *= 2.0;
-    UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(cell.bounds.size.width - CELL_LEFT_INSET - width,
+//    UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(cell.bounds.size.width - CELL_LEFT_INSET - width,
+    UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET + leftWidth + CELL_LEFT_INSET/2.0,
                                                                   5,
                                                                   width,
                                                                   cell.bounds.size.height - 10)];
-    button.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
-    [button setTitle:@"撤销" forState:UIControlStateNormal];
     button.layer.cornerRadius = 3.0;
     
+    
     // 检查交易是否能被撤销
-    if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"1"]) {
+    if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"1"] &&
+        ![[self.dataDic objectForKey:@"revsal_flag"] isEqualToString:@"1"]) {
+        // 可撤销
+        button.backgroundColor = [UIColor colorWithRed:100.0/255.0 green:193.0/255.0 blue:35.0/255.0 alpha:1];
+        [button setTitle:@"能撤销" forState:UIControlStateNormal];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         [button setEnabled:YES];
     } else {
+        // 不可撤销
         [button setEnabled:NO];
+        button.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
+        [button setTitle:@"不能撤销" forState:UIControlStateNormal];
     }
     
     [cell addSubview:button];

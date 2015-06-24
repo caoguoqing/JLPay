@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TransDetailsTableViewController.m"
-            timestampString = "456392329.117875"
+            timestampString = "456832902.722309"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
             landmarkName = "-requestDataFromURL:"
             landmarkType = "5">
          </BreakpointContent>

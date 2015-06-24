@@ -184,11 +184,10 @@
                                         ];
     ASIFormDataRequest* request = [ASIFormDataRequest requestWithURL:url];
     [request setRequestHeaders:dicOfHeader];
-//    [request setDelegate:self];
     [request startAsynchronous];  // 异步获取数据
 
     __weak ASIFormDataRequest* blockRequest = request;
-    // 返回数据的处理
+    // 返回数据的处理 -- 不用 delegate, 改用 block
     [request setCompletionBlock:^{
         [self.reciveData appendData:[blockRequest responseData]];
         [self analysisJSONDataToDisplay];
@@ -233,7 +232,8 @@
 - (void) analysisJSONDataToDisplay {
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
-        
+    
+    NSLog(@"接收到得数据:[%@]", dataDic);
     self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
     
     if (self.dataArray.count == 0) {
