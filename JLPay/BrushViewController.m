@@ -21,7 +21,6 @@
 #import "Unpacking8583.h"
 #import "QianPiViewController.h"
 #import "GroupPackage8583.h"
-//#import "JLActivity.h"
 
 
 
@@ -31,7 +30,7 @@
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
 @property (nonatomic, assign) CGFloat leftInset;                            // 动态文本区域的左边静态文本区域的右边界长度
 @property (nonatomic, assign) int timeOut;                                  // 交易超时时间
-@property (nonatomic, strong) NSTimer* runLoopTimer;                        // 超时控制定时器
+@property (nonatomic, strong) NSTimer* consumeWaitingTimer;                        // 超时控制定时器
 @end
 
 /*************************************
@@ -50,7 +49,7 @@
 @synthesize waitingLabel                = _waitingLabel;
 @synthesize leftInset;
 @synthesize timeOut;
-@synthesize runLoopTimer                = _runLoopTimer;
+@synthesize consumeWaitingTimer                = _consumeWaitingTimer;
 /*************************************
  * 功  能 : 界面的初始化;
  *          - 金额标签              UILabel + UIImageView
@@ -91,13 +90,11 @@
     AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     if ([delegate.device isConnected]) {
         // 刷卡
-//        [[delegate window] makeToast:@"请刷卡..."];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             // 刷卡
             [delegate.device cardSwipe];
         });
     } else {
-//        [[delegate window] makeToast:@"请插入设备"];
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         // 连接设备....循环中
@@ -181,39 +178,22 @@
     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-//    WaitViewController *viewcon = [[WaitViewController alloc]init];
-//    viewcon.pinstr  = [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.navigationController pushViewController:viewcon animated:YES];
-//    });
-    // 异步发送消费报文 ,,,,,,, 超时的解决方案???????????????
-    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]]
-                                                 IP:Current_IP
-                                               PORT:Current_Port
-                                           Delegate:self
-                                             method:@"cousume"];
+    // 异步发送消费报文
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583
+                                                         consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]]
+                                                     IP:Current_IP
+                                                   PORT:Current_Port
+                                               Delegate:self
+                                                 method:@"cousume"];
+    });
     
     // 启动超时定时器
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        self.runLoopTimer = [NSTimer scheduledTimerWithTimeInterval:1/*间隔1秒*/
-                                                             target:self
-                                                           selector:@selector(waitingForConsume)
-                                                           userInfo:nil repeats:YES];
-        [self.runLoopTimer fire];
-    });
+    [[NSRunLoop mainRunLoop] addTimer:self.consumeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
 }
 
 #pragma mask ::: 跳转回金额输入界面
 - (void) backToCust: (NSNotification*)notification {
-//    AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    [delegate_.window makeToast:@"交易失败!"];
-//    [[app_delegate window] makeToast:@""];
-//    
-//    UIStoryboard* storyBoard    = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    CustPayViewController* viewController   = [storyBoard instantiateViewControllerWithIdentifier:@"CustPayViewController"];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.navigationController popToViewController:viewController animated:YES];
-//    });
     [self alertForFailedMessage:@"读卡失败"];
 }
 
@@ -229,14 +209,16 @@
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
-        [self.runLoopTimer invalidate]; // 注销定时器
+        [self.consumeWaitingTimer invalidate]; // 注销定时器
+        self.consumeWaitingTimer = nil;
     }
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     if ([str isEqualToString:@"cousume"]) {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
-        [self.runLoopTimer invalidate]; // 注销定时器
+        [self.consumeWaitingTimer invalidate]; // 注销定时器
+        self.consumeWaitingTimer = nil;
     }
 }
 
@@ -244,7 +226,10 @@
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (state) {
         if ([metStr isEqualToString:@"cousume"]) {
-            [self.runLoopTimer invalidate]; // 注销定时器
+            if (self.consumeWaitingTimer.valid) {
+                [self.consumeWaitingTimer invalidate]; // 注销定时器
+                self.consumeWaitingTimer = nil;
+            }
             if ([self.activity isAnimating]) {
                 [self.activity stopAnimating];
             }
@@ -258,7 +243,8 @@
         }
     } else {
         [self alertForFailedMessage:type];
-        [self.runLoopTimer invalidate]; // 注销定时器
+        [self.consumeWaitingTimer invalidate]; // 注销定时器
+        self.consumeWaitingTimer = nil;
     }
 }
 
@@ -411,16 +397,17 @@
  * 返  回 : 无
  *************************************/
 - (void) waitingForConsume {
-    self.timeOut--;
+    [self setWaitingLabelText:[NSString stringWithFormat:@"处理中:%02d秒",timeOut]];
     NSLog(@"定时器:[%d]", self.timeOut);
     if (self.timeOut == 0) {
         // 超时了
-        [self.runLoopTimer invalidate]; // 停止计时
+        if (self.consumeWaitingTimer.valid) {
+            [self.consumeWaitingTimer invalidate]; // 停止计时
+            self.consumeWaitingTimer = nil;
+        }
         [self alertForFailedMessage:@"交易超时,请检查网络"];
-//        if ([self.activity isAnimating]) {
-//            [self.activity stopAnimating];
-//        }
     }
+    self.timeOut--;
 }
 
 
@@ -445,15 +432,11 @@
     }
     return _waitingLabel;
 }
-- (NSTimer *)runLoopTimer {
-    if (_runLoopTimer == nil) {
-//        _runLoopTimer = [NSTimer scheduledTimerWithTimeInterval:1/*间隔1秒*/
-//                                                         target:self
-//                                                       selector:@selector(waitingForConsume)
-//                                                       userInfo:nil repeats:YES];
-        _runLoopTimer = [[NSTimer alloc] init];
+- (NSTimer *)consumeWaitingTimer {
+    if (_consumeWaitingTimer == nil) {
+        _consumeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForConsume) userInfo:nil repeats:YES];
     }
-    return _runLoopTimer;
+    return _consumeWaitingTimer;
 }
 
 #pragma mask ::: setter

@@ -528,7 +528,7 @@
 +(NSString *)consumeRepeal:(NSString *)pin liushui:(NSString *)liushuiStr money:(NSString *)moneyStr{
     //当前流水号
     NSString *currentLiushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];
-//保存撤销金额
+    //保存撤销金额
     [[NSUserDefaults standardUserDefaults] setValue:moneyStr forKey:Save_Return_Money];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -539,31 +539,45 @@
     //61域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@",[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:liushuiStr]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%d%@",(int)[ascStr length]/2,ascStr];
     NSLog(@"61域数据=====%@",betweenStr);
     
-        arr=[[NSArray alloc] initWithObjects:
-             [PublicInformation returnCard:[PublicInformation returnposCard]],//2 卡号 bcd（不定长19）
-             moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],//4 金额，bcd，定长12
-             currentLiushuiStr,//[PublicInformation returnLiushuiHao],//11 bcd,定长6
-             //@"",//14 卡有效期,bcd,(pos获取时存在)
-             //22输入模式,bcd,m,定长3
-             //25,条件代码,bcd,定长2
-             //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
-             [NSString stringWithFormat:@"%d%@",[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,[EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
-             //@"",//36，三磁道数据，asc，不定长104，(pos获取时存在)
-             [PublicInformation returnConsumerSort],//37,搜索参考号
-             [EncodeString encodeASC:[PublicInformation returnTerminal]],//41,终端号，asc，定长8
-             [EncodeString encodeASC:[PublicInformation returnBusiness]],//42，商户号，asc，定长15
-             [EncodeString encodeASC:@"156"],//49，货币代码，asc，定长3，（人民币156）
-             pin,//52，个人识别码，PIN，定长8，(参照附录2)//byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
-             [PublicInformation returnSignSort],//56,批次号，bcd，定长6
-             betweenStr,//(消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
-             [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],//63,操作员号，asc，不定长999，3字节
-             //[EncodeString encodeASC:@"D698B8F5"],//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
+    arr=[[NSArray alloc] initWithObjects:
+         //2 卡号 bcd（不定长19）
+         [PublicInformation returnCard:[PublicInformation returnposCard]],
+         //4 金额，bcd，定长12
+         moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],
+         //11 bcd,定长6
+         currentLiushuiStr,//[PublicInformation returnLiushuiHao],
+         //@"",//14 卡有效期,bcd,(pos获取时存在)
+         //22输入模式,bcd,m,定长3
+         //25,条件代码,bcd,定长2
+         //34,一磁道数据，asc，不定长76，(pos获取时存在)
+         //35，二磁道数据，asc，不定长37，(pos获取时存在)
+         [NSString stringWithFormat:@"%d%@",(int)[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
+                                            [EncodeString encodeASC: [PublicInformation returnTwoTrack]]],
+         //36，三磁道数据，asc，不定长104，(pos获取时存在)
+         //37,搜索参考号
+         [PublicInformation returnConsumerSort],
+         //41,终端号，asc，定长8
+         [EncodeString encodeASC:[PublicInformation returnTerminal]],
+         //42，商户号，asc，定长15
+         [EncodeString encodeASC:[PublicInformation returnBusiness]],
+         //49，货币代码，asc，定长3，（人民币156）
+         [EncodeString encodeASC:@"156"],
+         //52，个人识别码，PIN，定长8 //byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
+         pin,
+         //56,批次号，bcd，定长6
+         [PublicInformation returnSignSort],
+         //(消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
+         betweenStr,
+         //63,操作员号，asc，不定长999，3字节
+         [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
+         //[EncodeString encodeASC:@"D698B8F5"],//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
              nil];
-        //二进制报文数据
-        bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
+    
+    //二进制报文数据
+    bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
     
     NSLog(@"消费撤销数据====%@",arr);
     NSString *binaryDataStr=[HeaderString receiveArr:bitmaparr
