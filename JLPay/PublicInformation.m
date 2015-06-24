@@ -253,8 +253,8 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Ip]) {
         ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
     }else{
-        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";//
-//        ipStr   = @"202.104.101.126";
+//        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";// 28080
+        ipStr   = @"202.104.101.126";  // 9088 测试1 // 28099
     }
     return ipStr;
 }
@@ -263,7 +263,8 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
-        portStr=@"28080";
+//        portStr=@"28080";
+        portStr = @"28099";
 //        portStr = @"9088";
     }
     return [portStr intValue];
@@ -275,7 +276,9 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"Setting_Ip"]) {
         ip = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_IP"];
     } else {
-        ip = @"192.188.8.112";
+//        ip = @"192.188.8.112"; // 8083
+        ip   = @"202.104.101.126";  // 9088 测试1 // 8099
+
 //        ip = @"192.168.1.50";//122.0.64.19@"211.90.22.167";//
 
     }
@@ -286,7 +289,9 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         port = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_Port"];
     }else{
-        port = @"8083";
+//        port = @"8083";
+        port = @"8099";
+
     }
     return port;
 }

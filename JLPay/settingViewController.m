@@ -315,12 +315,10 @@
     frame.origin.y                  += littleHeight;
     frame.size.width                = width;
     UILabel *mailLabel              = [[UILabel alloc] initWithFrame:frame];
-//    mailLabel.text                  = @"1234567890@gmail.com";      // 客户的邮箱需要根据登陆信息返回
-    mailLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Email];
+    mailLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Number]; // 商户编号
     mailLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
     // 设置 maillabel 的自适应大小
     CGSize autoSize                 = [mailLabel.text sizeWithFont:mailLabel.font constrainedToSize:frame.size lineBreakMode:NSLineBreakByWordWrapping];
-    NSLog(@"autoSize.w = [%f], autoSize.h = [%f]", autoSize.width, autoSize.height);
     frame                           = CGRectMake(frame.origin.x, frame.origin.y, autoSize.width, frame.size.height);
     mailLabel.frame                 = frame;
     // 设置 maillabel 的自适应大小
@@ -332,9 +330,9 @@
     frame.origin.x                  += frame.size.width + 6/*分隔空白*/;
     frame.size.width                = littleHeight;
     UIImageView *panImageView       = [[UIImageView alloc] initWithFrame:frame];
-    panImageView.image              = [UIImage imageNamed:@"bianji"];
+//    panImageView.image              = [UIImage imageNamed:@"bianji"];
     // image
-    [cell addSubview:panImageView];
+//    [cell addSubview:panImageView];
 }
 
 #pragma mask ::: 自定义返回上层界面按钮的功能

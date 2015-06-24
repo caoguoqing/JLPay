@@ -11,6 +11,7 @@
 #import "Define_Header.h"
 #import "DisplayMoneyText.h"
 #import "Define_Header.h"
+#import "MoneyCalculated.h"
 
 
 
@@ -24,7 +25,7 @@
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) NSMutableArray    *moneyArray;                // 模拟金额栈：保存历史金额
 @property (nonatomic, strong) DisplayMoneyText* moneyStr;                   // 用来收集数字按钮点击的金额计算的类
-
+@property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
 @end
 
 @implementation CustPayViewController
@@ -32,12 +33,11 @@
 @synthesize money                       = _money;
 @synthesize moneyArray                  = _moneyArray;
 @synthesize moneyStr                    = _moneyStr;
-
+@synthesize moneyCalculated             = _moneyCalculated;
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _acountOfMoney                      = [[UILabel alloc] initWithFrame:CGRectZero];
     _moneyArray                         = [[NSMutableArray alloc] init];
     _moneyStr                           = [[DisplayMoneyText alloc] init];
     _money                              = [_moneyStr money];
@@ -67,13 +67,7 @@
 }
 
 
-/* 金额值的 setter 方法 */
-- (void)setMoney:(NSString*)money {
-    if (![_money isEqualToString: money]) {
-        _money                          = money;
-        _acountOfMoney.text             = _money;
-    }
-}
+
 
 /*************************************
  * 功  能 : CustPayViewController 的子控件加载;
@@ -123,7 +117,7 @@
     self.acountOfMoney.font             = [UIFont boldSystemFontOfSize:37];
     [moneyView addSubview:self.acountOfMoney];
     
-    // moneyImageView ...............
+    // moneyImageView
     CGRect moneySymbolFrame             = CGRectMake(innerFrame.origin.x + innerFrame.size.width + 5.0, frame.size.height/2.0, frame.size.height/4.0/4.0 * 3.0, frame.size.height/4.0);
     UILabel *moneySymbolLabel           = [[UILabel alloc] initWithFrame:moneySymbolFrame];
     moneySymbolLabel.text               = @"￥";
@@ -148,8 +142,6 @@
             // “撤销”按钮
             if (i == 3 && j == 2) {
                 button                                          = [[DeleteButton alloc] initWithFrame:frame];
-//                ((DeleteButton*)button).layer.borderWidth       = 0.3;
-//                ((DeleteButton*)button).layer.borderColor       = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
                 [(DeleteButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
                 [(DeleteButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
@@ -166,9 +158,7 @@
                 [button setTitle:[numbers objectAtIndex:index] forState:UIControlStateNormal];
                 [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                 ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize];
-//                ((UIButton*)button).layer.borderWidth           = 0.3;
                 ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize * [self resizeFontWithButton:button inFrame:frame]];
-//                ((UIButton*)button).layer.borderColor           = [UIColor colorWithWhite:0.8 alpha:0.5].CGColor;
                 [(UIButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
                 [(UIButton*)button  addTarget:self action:@selector(touchUp:) forControlEvents:UIControlEventTouchUpInside];
                 [(UIButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
@@ -280,19 +270,20 @@
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     
-    // 先校验金额是否超限，超限直接退出
-    if ([self moneyIsOutLimit]) {
-        return;
-    }
-    
-    // 要计算属性值：金额：money
-    [self plusNumberIntoMoney: sender];
-    // 更新金额
-    self.money                          = [[self.moneyStr money] copy];
-    // 新的金额追加到栈中
-    if (![self.money isEqualToString:[self.moneyArray lastObject]]) {
-        [self.moneyArray addObject:self.money];
-    }
+//    // 先校验金额是否超限，超限直接退出
+//    if ([self moneyIsOutLimit]) {
+//        return;
+//    }
+//    
+//    // 要计算属性值：金额：money
+//    [self plusNumberIntoMoney: sender];
+//    // 更新金额
+//    self.money                          = [[self.moneyStr money] copy];
+//    // 新的金额追加到栈中
+//    if (![self.money isEqualToString:[self.moneyArray lastObject]]) {
+//        [self.moneyArray addObject:self.money];
+//    }
+    self.money = [self.moneyCalculated moneyByAddedNumber:sender.titleLabel.text];
 }
 
 
@@ -301,12 +292,34 @@
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 将栈顶金额弹出丢弃，并取新的栈顶金额
-    self.money                          = [self pullMoneyStack];
+//    self.money                          = [self pullMoneyStack];
+    self.money = [self.moneyCalculated moneyByRevoked];
     
     // 更新金额到计算金额中
-    [self.moneyStr setNewMoneyString:self.money];
+//    [self.moneyStr setNewMoneyString:self.money];
 }
 
+/*************************************
+ * 功  能 : 撤销按钮的长按事件;清除所有金额；
+ * 参  数 :
+ * 返  回 :
+ *************************************/
+- (IBAction)longPressButtonOfDelete:(UILongPressGestureRecognizer*)sender {
+//    [self.moneyArray removeAllObjects];
+//    self.money                          = @"0.00";
+//    [self.moneyStr setNewMoneyString:self.money];
+    while (YES) {
+        self.money = [self.moneyCalculated moneyByRevoked];
+        if ([self.money isEqualToString:@"0.00"]) {
+            break;
+        }
+    }
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        sender.view.transform           = CGAffineTransformIdentity;
+        sender.view.backgroundColor     = [UIColor clearColor];
+    }
+}
 
 - (IBAction) touchUpOut:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
@@ -422,21 +435,7 @@
 }
 
 
-/*************************************
- * 功  能 : 撤销按钮的长按事件;清除所有金额；
- * 参  数 :
- * 返  回 :
- *************************************/
-- (IBAction)longPressButtonOfDelete:(UILongPressGestureRecognizer*)sender {
-    [self.moneyArray removeAllObjects];
-    self.money                          = @"0.00";
-    [self.moneyStr setNewMoneyString:self.money];
-    
-    if (sender.state == UIGestureRecognizerStateEnded) {
-        sender.view.transform           = CGAffineTransformIdentity;
-        sender.view.backgroundColor     = [UIColor clearColor];
-    }
-}
+
 
 
 #pragma mask ::: 自定义返回上层界面按钮的功能
@@ -508,6 +507,27 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+#pragma mask --- setter & getter
+- (MoneyCalculated *)moneyCalculated {
+    if (_moneyCalculated == nil) {
+        _moneyCalculated = [[MoneyCalculated alloc] initWithLimit:5];   // 金额限制在5位
+    }
+    return _moneyCalculated;
+}
+/* 金额值的 setter 方法 */
+- (void)setMoney:(NSString*)money {
+    if (![_money isEqualToString: money]) {
+        _money                          = money;
+        _acountOfMoney.text             = _money;
+    }
+}
+- (UILabel *)acountOfMoney {
+    if (_acountOfMoney == nil) {
+        _acountOfMoney = [[UILabel alloc] initWithFrame:CGRectZero];
+    }
+    return _acountOfMoney;
 }
 
 @end

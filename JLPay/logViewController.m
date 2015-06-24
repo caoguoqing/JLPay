@@ -418,7 +418,8 @@
 #pragma mask ::: 上送登陆报文
 - (void)logInWithPin: (NSString*)pin {
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-    NSLog(@"ip:[%@], port:[%@], urlString=[%@]", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort], urlString);
+//        NSString* urlString = [NSString stringWithFormat:@"http://%@:%d/jlagent/LoginService", [PublicInformation settingIp], [PublicInformation settingPort] ];
+//    NSLog(@"ip:[%@], port:[%@], urlString=[%@]", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort], urlString);
     ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
     request.delegate = self;
     [request addPostValue:self.userNumberTextField.text forKey:@"userName"];

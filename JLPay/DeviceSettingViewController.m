@@ -121,7 +121,9 @@ typedef enum {
 //    UITableViewCell* cell       = [tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.row > 1 ) {
 
-         if ([self.JHNCON isConnected] ) {
+//         if ([self.JHNCON isConnected] ) {
+        AppDelegate* appdelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        if ([appdelegate.device isConnected]) {
              switch (indexPath.row) {
                  case 0:
                      break;

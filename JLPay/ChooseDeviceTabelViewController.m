@@ -77,8 +77,14 @@
     AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
     // 先判断设备是否连接
     if ([delegatte.device isConnected]) {
-        // 签到
-        [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
+        // 签到 --- 要考虑线程安全--放在主线程发送
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
+                                                         IP:Current_IP
+                                                       PORT:Current_Port
+                                                   Delegate:self
+                                                     method:@"tcpsignin"];
+//        });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
@@ -98,11 +104,9 @@
     if ([data length] > 0) {
         // 拆包
         NSLog(@"开始拆包: 签到返回");
-
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-//            [[app_delegate window] makeToast:@"绑定失败:签到报文返回空"];
             [self alertForMessage:@"绑定失败:签到报文返回空"];
         });
     }
@@ -110,7 +114,6 @@
 // 接收数据失败
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.view makeToast:@"签到失败"];
         [self alertForMessage:@"连接设备失败:签到失败"];
     });
 }
@@ -127,11 +130,9 @@
         [delegatte.device WriteWorkKey:57 :workStr];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-//            [[app_delegate window] makeToast:@"连接设备失败:签到报文解析失败"];
             [self alertForMessage:@"连接设备失败:签到报文解析失败"];
         });
     }
-
 }
 
 #pragma mask ::: 写工作密钥结果的通知处理
@@ -142,10 +143,11 @@
     // 保存设备签到标志到本地;供刷卡时读取
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
 }
 - (void) workKeyWritingFailNote: (NSNotification*)noti {
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self alertForMessage:@"绑定设备失败:写工作密钥失败"];
+    });
 }
 
 // 小工具: 为简化弹窗代码

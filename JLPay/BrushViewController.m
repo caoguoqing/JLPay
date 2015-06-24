@@ -30,7 +30,8 @@
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
 @property (nonatomic, assign) CGFloat leftInset;                            // 动态文本区域的左边静态文本区域的右边界长度
 @property (nonatomic, assign) int timeOut;                                  // 交易超时时间
-@property (nonatomic, strong) NSTimer* consumeWaitingTimer;                        // 超时控制定时器
+@property (nonatomic, strong) NSTimer* consumeWaitingTimer;                 // 交易超时控制定时器
+@property (nonatomic, strong) NSTimer* swipeWaitingTimer;                   // 刷卡超时控制定时器
 @end
 
 /*************************************
@@ -40,7 +41,9 @@
  *      3.发送消费报文
  *      4.接收返回报文
 *************************************/
- 
+
+
+#define TIMEOUT 20              // 超时时间
  
  
 @implementation BrushViewController
@@ -49,7 +52,9 @@
 @synthesize waitingLabel                = _waitingLabel;
 @synthesize leftInset;
 @synthesize timeOut;
-@synthesize consumeWaitingTimer                = _consumeWaitingTimer;
+@synthesize consumeWaitingTimer         = _consumeWaitingTimer;
+@synthesize swipeWaitingTimer           = _swipeWaitingTimer;
+
 /*************************************
  * 功  能 : 界面的初始化;
  *          - 金额标签              UILabel + UIImageView
@@ -73,7 +78,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
     // 交易超时时间为20秒
-    self.timeOut = 20;
+    self.timeOut = TIMEOUT;
 }
 
 #pragma mask ::: 子视图的属性设置
@@ -91,21 +96,41 @@
     if ([delegate.device isConnected]) {
         // 刷卡
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            // 启动刷卡超时定时器
+            if (!self.swipeWaitingTimer.valid) {
+                self.swipeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(swipeWaitingTimer) userInfo:nil repeats:YES];
+            }
+            [[NSRunLoop mainRunLoop] addTimer:self.swipeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
             // 刷卡
             [delegate.device cardSwipe];
         });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
-        // 连接设备....循环中
+        // 连接设备....循环中.......还要优化定时器
         [delegate.device open];
     }
 }
-
+// 界面消失的资源回收
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    // 移除定时器
+    if (self.consumeWaitingTimer.valid) {
+        [self.consumeWaitingTimer invalidate];
+    }
+    if (self.swipeWaitingTimer.valid) {
+        [self.swipeWaitingTimer invalidate];
+    }
+    self.consumeWaitingTimer = nil;
+    self.swipeWaitingTimer = nil;
+}
 
 #pragma mask ::: 刷卡成功
 - (void) cardSwipeSuccess : (NSNotification*)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.swipeWaitingTimer.valid) {
+            [self.swipeWaitingTimer invalidate];
+        }
         if ([self.activity isAnimating]) {
             [self.activity stopAnimating];
         }
@@ -117,6 +142,9 @@
 #pragma mask ::: 通知事件 ->刷卡失败
 - (void) cardSwipeFail : (NSNotification*)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.swipeWaitingTimer.valid) {
+            [self.swipeWaitingTimer invalidate];
+        }
         if ([self.activity isAnimating]) {
             [self.activity stopAnimating];
         }
@@ -178,8 +206,8 @@
     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    // 异步发送消费报文
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    // 异步发送消费报文 -- 报文发送需要放在主线程
+    dispatch_async(dispatch_get_main_queue(), ^{
         [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583
                                                          consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]]
                                                      IP:Current_IP
@@ -189,6 +217,7 @@
     });
     
     // 启动超时定时器
+    self.timeOut = TIMEOUT;
     [[NSRunLoop mainRunLoop] addTimer:self.consumeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
 }
 
@@ -409,6 +438,25 @@
     }
     self.timeOut--;
 }
+/*************************************
+ * 功  能 : 等待刷卡的定时器任务;超时就退出当前场景;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) waitingForSwipe {
+    [self setWaitingLabelText:[NSString stringWithFormat:@"请刷卡:%02d秒",timeOut]];
+    NSLog(@"定时器:[%d]", self.timeOut);
+    if (self.timeOut == 0) {
+        // 超时了
+        if (self.swipeWaitingTimer.valid) {
+            [self.swipeWaitingTimer invalidate]; // 停止计时
+            self.swipeWaitingTimer = nil;
+        }
+        [[app_delegate window] makeToast:@"未刷卡"];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    self.timeOut--;
+}
 
 
 #pragma mask ::: getter
@@ -432,11 +480,19 @@
     }
     return _waitingLabel;
 }
+// 消费超时定时器
 - (NSTimer *)consumeWaitingTimer {
     if (_consumeWaitingTimer == nil) {
         _consumeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForConsume) userInfo:nil repeats:YES];
     }
     return _consumeWaitingTimer;
+}
+// 刷卡超时定时器
+- (NSTimer *)swipeWaitingTimer {
+    if (_swipeWaitingTimer == nil) {
+        _swipeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForSwipe) userInfo:nil repeats:YES];
+    }
+    return _swipeWaitingTimer;
 }
 
 #pragma mask ::: setter

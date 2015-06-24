@@ -42,6 +42,7 @@
 		5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B4B1AD3677E004F206F /* libxml2.dylib */; };
 		5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B531AD36D22004F206F /* libz.1.2.5.dylib */; };
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
+		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
 		5E5E5FBB1B12CB3D002F421D /* AdditionalButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
@@ -221,6 +222,8 @@
 		5E397B4B1AD3677E004F206F /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		5E397B531AD36D22004F206F /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		5E397B551AD37B4B004F206F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoneyCalculated.h; sourceTree = "<group>"; };
+		5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoneyCalculated.m; sourceTree = "<group>"; };
 		5E5E5FB91B12CB3D002F421D /* AdditionalButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalButton.h; sourceTree = "<group>"; };
 		5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalButton.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
@@ -444,6 +447,8 @@
 				5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */,
 				5EF4C0DA1B16E08100CE3E3F /* DisplayMoneyText.h */,
 				5EF4C0DB1B16E08100CE3E3F /* DisplayMoneyText.m */,
+				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
+				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
 				5E0D18691B09DA710092F4AB /* OtherPayButton.h */,
 				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
@@ -1064,6 +1069,7 @@
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
+				5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */,
 				5E82B8801B31617600A58751 /* ChooseDeviceTabelViewController.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
 				5ED344301AD8EB130005C890 /* JHNconnect.m in Sources */,
