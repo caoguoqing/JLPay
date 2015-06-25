@@ -12,6 +12,7 @@
 #import "DisplayMoneyText.h"
 #import "Define_Header.h"
 #import "MoneyCalculated.h"
+#import "BrushViewController.h"
 
 
 
@@ -380,7 +381,7 @@
     sender.transform                    = CGAffineTransformIdentity;
 
     UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    UIViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+    BrushViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
     
     
     // 先校验是否签到
@@ -406,6 +407,7 @@
         // 保存的是字符串型的金额
         [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
         [[NSUserDefaults standardUserDefaults] synchronize];
+        viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
         [self.navigationController pushViewController:viewcon animated:YES];
     }
 }

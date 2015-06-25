@@ -7,8 +7,10 @@
 //
 
 #import "RevokeViewController.h"
+#import "Define_Header.h"
+#import "BrushViewController.h"
 
-@interface RevokeViewController()
+@interface RevokeViewController()<UIAlertViewDelegate>
 @property (nonatomic, strong) NSDictionary* detailNameIndex;
 @end
 
@@ -24,6 +26,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"交易详情";
+}
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = NO;
+    }
 }
 
 
@@ -85,9 +93,38 @@
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {    // 撤销单元格
         cell.selected = NO;
+        
+        // 撤销代码 -- 发起撤销前，要弹窗提示商户是否确定要撤销
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"是否发起撤销?" message:nil delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
+        // 可撤销状态时，才能响应点击事件
+        if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"1"] &&
+            ![[self.dataDic objectForKey:@"revsal_flag"] isEqualToString:@"1"]) {
+            [alert show];
+        }
     }
 }
 
+// 撤销弹窗提示的点击事件 -- 确定撤销或否定
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {     // 否:不撤销
+        
+    } else {                    // 是:撤销
+        NSString* amount = [self.dataDic objectForKey:@"amtTrans"];
+        CGFloat fAmount = [amount floatValue]/100.0;
+        NSString* money = [NSString stringWithFormat:@"%.02f", fAmount];
+        [[NSUserDefaults standardUserDefaults] setValue:money forKey:Last_Exchange_Number]; // 保存原始消费金额
+        
+        
+        // 保存原消费流水号
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@""] forKey:Consumer_Get_Sort];
+        
+        // 切换到刷卡界面
+        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+        viewcon.stringOfTranType = TranType_ConsumeRepeal;    // 设置交易类型:消费撤销
+        [self.navigationController pushViewController:viewcon animated:YES];
+    }
+}
 
 
 

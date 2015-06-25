@@ -374,9 +374,12 @@
     [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
     // 3des 加密
     // 原始 key
+//    NSString* keyStr    = @"12345678901234567890123456789012";
     NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
-    NSString* sourceStr = [EncodeString encodeASC:self.userPasswordTextField.text] ;
     
+
+    NSString* sourceStr = [EncodeString encodeASC:self.userPasswordTextField.text] ;
+    NSLog(@"明文准备加密:%@", sourceStr);
     // 开始加密
     NSString* pin = [ThreeDesUtil encryptUse3DES:sourceStr key:keyStr];
     

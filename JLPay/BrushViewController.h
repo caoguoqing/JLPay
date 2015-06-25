@@ -10,5 +10,6 @@
 
 @interface BrushViewController : UIViewController
 //@property (nonatomic, assign) 
+@property (nonatomic, strong) NSString* stringOfTranType;                     // 交易类型:消费、撤销、退货
 
 @end

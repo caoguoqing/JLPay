@@ -463,16 +463,24 @@
                   @"12",//26
                   //@"",//14 卡有效期,bcd,(pos获取时存在)
                   //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
-                  [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
-//                  @"",//36，三磁道数据，asc，不定长104，(pos获取时存在)
-                  [EncodeString encodeASC:[PublicInformation returnTerminal]],//41,终端号，asc，定长8
-                  [EncodeString encodeASC:[PublicInformation returnBusiness]],//42，商户号，asc，定长15
-                  [EncodeString encodeASC:@"156"],//49，货币代码，asc，定长3，（人民币156）
-                 pin,//个人识别码，PIN，定长8，(参照附录2)//byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
-                  @"2600000000000000",//53
+                  //35，二磁道数据，asc，不定长37，(pos获取时存在)
+                  [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
+                  //36，三磁道数据，asc，不定长104，(pos获取时存在)
+                  //41,终端号，asc，定长8
+                  [EncodeString encodeASC:[PublicInformation returnTerminal]],
+                  //42，商户号，asc，定长15
+                  [EncodeString encodeASC:[PublicInformation returnBusiness]],
+                  //49，货币代码，asc，定长3，（人民币156）
+                  [EncodeString encodeASC:@"156"],
+                  //52 个人识别码，PIN，定长8，(参照附录2)//byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
+                  pin,
+                  //53
+                  @"2600000000000000",
 //                  [PublicInformation returnSignSort],//56,批次号，bcd，定长6
-                  @"001922000003000500000000",//60
-                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],//63,操作员号，asc，不定长999，3字节
+                  //60
+                  @"001922000003000500000000",
+                  //63,操作员号，asc，不定长999，3字节
+                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
 //                  @"4332353234363046",//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
                    nil];
     NSLog(@"pin======%@",pin);
@@ -543,43 +551,47 @@
     NSLog(@"61域数据=====%@",betweenStr);
     
     arr=[[NSArray alloc] initWithObjects:
-         //2 卡号 bcd（不定长19）
+         // 2 卡号 bcd（不定长19）
          [PublicInformation returnCard:[PublicInformation returnposCard]],
-         //3 交易类型:280000
+         // 3 交易类型:280000
          @"280000",
-         //4 金额，bcd，定长12
+         // 4 金额，bcd，定长12
          moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],
-         //11 bcd,定长6
+         // 11 bcd,定长6
          currentLiushuiStr,//[PublicInformation returnLiushuiHao],
          //@"",//14 卡有效期,bcd,(pos获取时存在)
-         @"022",//22输入模式,bcd,m,定长3
+         @"021",//22输入模式,bcd,m,定长3
          @"82",//25,条件代码,bcd,定长2
-         //34,一磁道数据，asc，不定长76，(pos获取时存在)
-         //35，二磁道数据，asc，不定长37，(pos获取时存在)
-         //[NSString stringWithFormat:@"%d%@",(int)[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
+         // 34,一磁道数据，asc，不定长76，(pos获取时存在)
+         // 35，二磁道数据，asc，不定长37，(pos获取时存在)
+//         [NSString stringWithFormat:@"%d%@",(int)[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
 //                                            [EncodeString encodeASC: [PublicInformation returnTwoTrack]]],
-         //36，三磁道数据，asc，不定长104，(pos获取时存在)
-         //37,搜索参考号
-         [PublicInformation returnConsumerSort],
-         //41,终端号，asc，定长8
+         [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
+         // 36，三磁道数据，asc，不定长104，(pos获取时存在)
+         // 37,搜索参考号
+//         [PublicInformation returnConsumerSort],
+         liushuiStr,
+         // 41,终端号，asc，定长8
          [EncodeString encodeASC:[PublicInformation returnTerminal]],
-         //42，商户号，asc，定长15
+         // 42，商户号，asc，定长15
          [EncodeString encodeASC:[PublicInformation returnBusiness]],
-         //49，货币代码，asc，定长3，（人民币156）
+         // 49，货币代码，asc，定长3，（人民币156）
          [EncodeString encodeASC:@"156"],
-         //52，个人识别码，PIN，定长8 //byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
-         //pin,
-         //56,批次号，bcd，定长6
-         [PublicInformation returnSignSort],
-         //(消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
+         // 52，个人识别码，PIN，定长8 //byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
+         pin,
+         // 53
+         @"2600000000000000",
+         // 56,批次号，bcd，定长6
+//         [PublicInformation returnSignSort],
+         // 61 (消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
          betweenStr,
-         //63,操作员号，asc，不定长999，3字节
-         [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
+         // 63,操作员号，asc，不定长999，3字节
+//         [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
          //[EncodeString encodeASC:@"D698B8F5"],//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
              nil];
     
     //二进制报文数据
-    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",/*@"35",*/@"37",@"41",@"42",@"49",/*@"52",@"56"*/@"61",@"63",@"64", nil];
+    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",@"35",@"37",@"41",@"42",@"49",@"52",@"61"/*,@"56",@"63"*/,@"64", nil];
 //    bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
 
     

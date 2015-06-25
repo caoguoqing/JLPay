@@ -34,7 +34,15 @@
 #define Noti_WorkKeyWriting_Fail        @"Noti_WorkKeyWriting_Fail"
 /*************[notification 变量声明区]**************/
 
-#define CustomKeyboardHeight            216.0                           // 自定义键盘的高度
+/*************[交易类型]**************/
+#define TranType_Consume            @"TranType_Consume"                 // 消费
+#define TranType_ConsumeRepeal      @"TranType_ConsumeRepeal"           // 消费撤销
+/*************[交易类型]**************/
+
+
+
+// 自定义键盘的高度
+#define CustomKeyboardHeight            216.0                           
 
 //操作员号
 #define Manager_Number @"001"

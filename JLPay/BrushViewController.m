@@ -38,7 +38,7 @@
  * ---- 功能
  *      1.刷卡
  *      2.输入密码
- *      3.发送消费报文
+ *      3.发送消费/撤销/退货报文
  *      4.接收返回报文
 *************************************/
 
@@ -54,6 +54,7 @@
 @synthesize timeOut;
 @synthesize consumeWaitingTimer         = _consumeWaitingTimer;
 @synthesize swipeWaitingTimer           = _swipeWaitingTimer;
+@synthesize stringOfTranType;
 
 /*************************************
  * 功  能 : 界面的初始化;
@@ -77,6 +78,7 @@
     // 注册刷磁消费的通知处理
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
+    
     // 交易超时时间为20秒
     self.timeOut = TIMEOUT;
 }
@@ -85,6 +87,9 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    if (!self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = YES;
+    }
     
 }
 
@@ -109,6 +114,7 @@
         [alert show];
         // 连接设备....循环中.......还要优化定时器
         [delegate.device open];
+        // 重新打开后要能继续刷卡............
     }
 }
 // 界面消失的资源回收
@@ -177,9 +183,11 @@
     [alertV close];
 
     if (buttonIndex == 0) { // 取消
-        // 弹出刷卡界面,回到金额输入界面
+        // 弹出刷卡界面,回到上层界面
         [self.navigationController popViewControllerAnimated:YES];
     } else {                // 确定
+        
+        ///   读磁道信息或芯片信息
         long money = [self themoney] ;
         AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 这里的密码 password 用 alertView.password
@@ -192,6 +200,9 @@
 
 
 #pragma mask ::: 跳转到消费的联机阶段-上送报文
+/*
+ * 这里要添加分支:消费、撤销、退货 都要支持
+ */
 - (void) toCust: (NSNotification*)notification {
     // 密码
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -206,14 +217,25 @@
     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    // 只有打包格式、交易名称需要定制
+    NSString* orderMethod;
+    NSString* methodStr;
+    if ([self.stringOfTranType isEqualToString:TranType_Consume]) {                 // 消费
+        orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
+        methodStr = @"cousume";
+    } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
+        orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]
+                                              liushui:[PublicInformation returnConsumerSort]
+                                                money:[[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number]];
+        methodStr = @"consumeRepeal";
+    }
     // 异步发送消费报文 -- 报文发送需要放在主线程
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583
-                                                         consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]]
+        [[TcpClientService getInstance] sendOrderMethod:orderMethod
                                                      IP:Current_IP
                                                    PORT:Current_Port
                                                Delegate:self
-                                                 method:@"cousume"];
+                                                 method:methodStr];
     });
     
     // 启动超时定时器
@@ -234,6 +256,8 @@
     if ([data length] > 0) {
         if ([str isEqualToString:@"cousume"]) {
             NSLog(@"消费响应数据:[%@]", data);
+        } else if ([str isEqualToString:@"撤销......"]) {
+            
         }
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
@@ -254,6 +278,7 @@
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (state) {
+        // 可以不校验交易名称,因为后续流程都一样
         if ([metStr isEqualToString:@"cousume"]) {
             if (self.consumeWaitingTimer.valid) {
                 [self.consumeWaitingTimer invalidate]; // 注销定时器
@@ -375,12 +400,22 @@
 
 #pragma mask ::: 从本地配置获取金额
 -(NSString *)returnMoney{
-    NSString *moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-    if (moneyStr && ![moneyStr isEqualToString:@"0.00"] && ![moneyStr isEqualToString:@"(null)"]) {
-        moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-    }else{
-        moneyStr=@"1";
+    NSString *moneyStr;
+    if ([self.stringOfTranType isEqualToString:TranType_Consume]) { // 消费
+        moneyStr = [[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
+    } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) { // 消费撤销
+        moneyStr = [[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number];
     }
+    if (moneyStr == nil || [moneyStr isEqualToString:@""]) {
+        moneyStr = @"0.00";
+    }
+    
+//    NSString *moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
+//    if (moneyStr && ![moneyStr isEqualToString:@"0.00"] && ![moneyStr isEqualToString:@"(null)"]) {
+//        moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
+//    }else{
+//        moneyStr=@"1";
+//    }
     return moneyStr;
 }
 
@@ -457,6 +492,8 @@
     }
     self.timeOut--;
 }
+
+
 
 
 #pragma mask ::: getter
