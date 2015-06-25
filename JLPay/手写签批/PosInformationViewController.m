@@ -18,6 +18,7 @@
 #import "Toast+UIView.h"
 #import "JsonToString.h"
 
+
 @interface PosInformationViewController ()
 
 @end
@@ -56,10 +57,11 @@
 }
 
 /**
- *    确定
+ *    确定-上传小票图片
 */
 -(void)requireMethod{
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self chatUploadImage];
+//    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 
@@ -77,11 +79,15 @@
     UIBarButtonItem *backBarBtn=[[UIBarButtonItem alloc] initWithCustomView:leftBackBtn];
     self.navigationItem.leftBarButtonItem=backBarBtn;
     
-    UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(10, 0, Screen_Width-20, Screen_Height-50-20)];
+    UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(10,   // 边界 10
+                                                                          0,
+                                                                          Screen_Width-20,  // 减去2*边界
+                                                                          Screen_Height-50-20)];
     scrollVi.backgroundColor=[UIColor whiteColor];
     scrollVi.contentSize=CGSizeMake(Screen_Width-20, 620);
     [self.view addSubview:scrollVi];
     
+    // 导航栏右标签按钮
     UIButton*rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     rightBtn.frame=CGRectMake(0, 7, 80, 30);
     rightBtn.backgroundColor=[UIColor clearColor];
@@ -117,7 +123,7 @@
     lineOneImg.image=[UIImage imageNamed:@"tabbar_shadow.png"];
     [scrollVi addSubview:lineOneImg];
     
-//商户名称
+    //商户名称
     UILabel *businessNameInfoLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 30, Screen_Width-30, 20)];
     businessNameInfoLab.backgroundColor=[UIColor clearColor];
     businessNameInfoLab.textColor=[UIColor blackColor];
@@ -327,7 +333,7 @@
     
     self.scrollAllImg=[self getNormalImage:scrollVi];
     scrollVi.frame=CGRectMake(10, 0, Screen_Width-20, Screen_Height-20-50);
-    [self chatUploadImage];
+//    [self chatUploadImage];
   
 }
 
@@ -348,7 +354,11 @@
 #pragma mark ------------图片上传
 -(void)chatUploadImage{
 //    [appdelegate showWaitingView:@"图片上传中..."];
-    NSString *uploadString=[NSString  stringWithFormat:@"%@attachment/add.do",kServerNewURL];
+//    NSString *uploadString=[NSString  stringWithFormat:@"%@attachment/add.do",kServerNewURL];
+    NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
+                              [PublicInformation getDataSourceIP],
+                              [PublicInformation getDataSourcePort]];
+
     [NSThread detachNewThreadSelector:@selector(uploadRequestMethod:) toTarget:self withObject:uploadString];
 }
 /**
@@ -373,23 +383,52 @@
     [uploadRequest setNumberOfTimesToRetryOnTimeout:2];
     [uploadRequest setTimeOutSeconds:30];
     uploadRequest.delegate=self;
-    [uploadRequest setPostValue:[PublicInformation returnConsumerMoney] forKey:@"money"];
-    [uploadRequest setPostValue:self.infoLiushuiStr forKey:@"trackNum"];
-    [uploadRequest setPostValue:[PublicInformation returnSignSort] forKey:@"batchNum"];
-    [uploadRequest setPostValue:Manager_Number forKey:@"operatorNum"];
-    [uploadRequest setPostValue:[PublicInformation returnposCard] forKey:@"accountNum"];
-    [uploadRequest setPostValue:photoStr forKey:@"img"];
     
-    NSLog(@"money====%@",[PublicInformation returnConsumerMoney]);
-    NSLog(@"trackNum====%@",self.infoLiushuiStr);
-    NSLog(@"batchNum====%@",[PublicInformation returnSignSort]);
-    NSLog(@"operatorNum====%@",Manager_Number);
-    NSLog(@"accountNum====%@",[PublicInformation returnposCard]);
     
-    [uploadRequest setDidFinishSelector:@selector(successLogin:)];
-    [uploadRequest setDidFailSelector:@selector(falseLogin:)];
+    /*
+     uploadRequstMchntNo	商户编号        15位
+     uploadRequestMchntNM	商户名称        不超过100位
+     uploadRequestReferNo	交易检索号       12位
+     uploadRequestTermNo	终端编号        8位
+     uploadRequestAmoumt	交易金额        以分为单位
+     uploadRequestTime      请求时间        14位
+     */
+    NSMutableDictionary* headerInfo = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[PublicInformation returnBusiness],
+                                                                    [PublicInformation returnBusinessName],
+                                                                    [PublicInformation returnConsumerSort],
+                                                                    [PublicInformation returnTerminal],
+                                                                    [PublicInformation returnMoney],
+                                                                    self.timeStr,nil]
+                                                           forKeys:[NSArray arrayWithObjects:
+                                                                    @"uploadRequstMchntNo",
+                                                                    @"uploadRequestMchntNM",
+                                                                    @"uploadRequestReferNo",
+                                                                    @"uploadRequestTermNo",
+                                                                    @"uploadRequestAmoumt",
+                                                                    @"uploadRequestTime", nil]];
+    
+//    [uploadRequest setPostValue:[PublicInformation returnConsumerMoney] forKey:@"money"];   // 金额
+//    [uploadRequest setPostValue:self.infoLiushuiStr forKey:@"trackNum"];                    // 流水号
+//    [uploadRequest setPostValue:[PublicInformation returnSignSort] forKey:@"batchNum"];     // 签到批次号
+//    [uploadRequest setPostValue:Manager_Number forKey:@"operatorNum"];                      // 操作员号
+//    [uploadRequest setPostValue:[PublicInformation returnposCard] forKey:@"accountNum"];    // 卡号
+    
+//    [uploadRequest setPostValue:photoStr forKey:@"img"];                                    // 小票图片data
+    [uploadRequest setRequestHeaders:headerInfo];
+    [uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
+
+//    [uploadRequest appendPostData:UIImagePNGRepresentation(self.scrollAllImg)];             // 小票图片data
+    
+//    NSLog(@"money====%@",[PublicInformation returnConsumerMoney]);
+//    NSLog(@"trackNum====%@",self.infoLiushuiStr);
+//    NSLog(@"batchNum====%@",[PublicInformation returnSignSort]);
+//    NSLog(@"operatorNum====%@",Manager_Number);
+//    NSLog(@"accountNum====%@",[PublicInformation returnposCard]);
+    
+    [uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
+    [uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
     [uploadRequest setShouldContinueWhenAppEntersBackground:YES];
-	[uploadRequest startAsynchronous];
+	[uploadRequest startAsynchronous];                              // 异步发送HTTP请求
 }
 
 -(void)successLogin:(ASIHTTPRequest *)successLoginStr{
@@ -397,14 +436,24 @@
     [successLoginStr clearDelegatesAndCancel];
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:successLoginStr.responseString]];
     NSLog(@"chatUpLoadDic===%@",chatUpLoadDic);
+    NSLog(@"successLoginStr.responseString===%@",successLoginStr.responseString);
+
     
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
-        [self.view makeToast:@"交易成功"];
         //缓存图片路径
         [self saveImagePathMethod:[chatUpLoadDic objectForKey:@"data"]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[app_delegate window] makeToast:@"小票上传成功"];
+            // 成功后就退出到root视图界面
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        });
     }else{
-        //[self.view makeToast:@"亲，网络不给力哦，请稍后再试吧！"];
-        [self.view makeToast:@"交易失败，请重新签名"];
+//        [self.view makeToast:@"亲，网络不给力哦，请稍后再试吧！"];
+//        [self.view makeToast:@"交易失败，请重新签名"];
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alert show];
+        });
     }
     
 }
@@ -412,14 +461,18 @@
 
     NSError *error = [falseScoreStr error];
     if (error) {
-        [self.view makeToast:@"亲，网络不给力哦，请稍后再试吧！"];
+//        [self.view makeToast:@"亲，网络不给力哦，请稍后再试吧！"];
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alert show];
+        });
     }
 }
 
 //缓存图片路径
 -(void)saveImagePathMethod:(NSString *)url{
-//撤销支付
     NSString *exchangeTypeStr=[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type];
+    //撤销支付
     if ([exchangeTypeStr isEqualToString:@"撤销支付"]) {
         
         NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:TheCarcd_Record]];

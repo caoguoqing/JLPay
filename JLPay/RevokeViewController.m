@@ -38,7 +38,6 @@
     return [self.detailNameIndex allKeys].count + 2;
 }
 
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
         return 60;
@@ -69,6 +68,28 @@
 //    cell.backgroundColor = [UIColor colorWithRed:212.0/255.0 green:212.0/255.0 blue:212.0/255.0 alpha:1];
     return cell;
 }
+
+
+#pragma mask ---- 除了撤销的cell，其他都不能高亮
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+//    if (indexPath.row == [self.detailNameIndex allKeys].count + 1) {
+    if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {
+        return YES;
+    }
+    return NO;
+}
+
+#pragma mask ---- 点击撤销单元格:执行撤销
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {    // 撤销单元格
+        cell.selected = NO;
+    }
+}
+
+
+
 
 #pragma mask ::: 加载标题单元格
 - (void) loadTitleCell: (UITableViewCell*)cell {
@@ -127,15 +148,14 @@
     label.text = @"能否撤销";
     [cell addSubview:label];
     
-    // 还有一个label没有显示
-    label = [[UILabel alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET + leftWidth + CELL_LEFT_INSET,
-                                                      0,
-                                                      width,
-                                                      cell.bounds.size.height)];
+//    // 还有一个label没有显示
+//    label = [[UILabel alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET + leftWidth + CELL_LEFT_INSET,
+//                                                      0,
+//                                                      width,
+//                                                      cell.bounds.size.height)];
     
     // button
     width *= 2.0;
-//    UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(cell.bounds.size.width - CELL_LEFT_INSET - width,
     UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET + leftWidth + CELL_LEFT_INSET/2.0,
                                                                   5,
                                                                   width,
@@ -164,16 +184,30 @@
 
 
 #pragma mask ::: getter & setter
+// 保存单条明细记录数据
 - (NSDictionary *)dataDic {
     if (_dataDic == nil) {
         _dataDic = [[NSDictionary alloc] init];
     }
     return _dataDic;
 }
+// 数据字典:保存字段描述和字段名
 - (NSDictionary *)detailNameIndex {
     if (_detailNameIndex == nil) {
-        NSArray* keys = [NSArray arrayWithObjects:@"商户编号",@"订单编号",@"终端编号",@"交易卡号",@"交易时间",@"交易金额", nil];
-        NSArray* objects    = [NSArray arrayWithObjects:@"cardAccpId",@"retrivlRef",@"cardAccpTermId",@"pan",@"instTime",@"amtTrans", nil];
+        NSArray* keys = [NSArray arrayWithObjects:
+                         @"商户编号",
+                         @"订单编号",
+                         @"终端编号",
+                         @"交易卡号",
+                         @"交易时间",
+                         @"交易金额", nil];
+        NSArray* objects    = [NSArray arrayWithObjects:
+                               @"cardAccpId",
+                               @"retrivlRef",
+                               @"cardAccpTermId",
+                               @"pan",
+                               @"instTime",
+                               @"amtTrans", nil];
         _detailNameIndex = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
     }
     return _detailNameIndex;

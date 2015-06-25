@@ -125,6 +125,16 @@
         return 50.0;
     }
 }
+
+#pragma mask ::: 第一个cell不能有点击效果
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == 0) {
+        return NO;
+    }
+    return YES;
+}
+
+
 #pragma mask ::: cell 的点击事件
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];

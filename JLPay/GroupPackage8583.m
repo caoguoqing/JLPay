@@ -545,17 +545,19 @@
     arr=[[NSArray alloc] initWithObjects:
          //2 卡号 bcd（不定长19）
          [PublicInformation returnCard:[PublicInformation returnposCard]],
+         //3 交易类型:280000
+         @"280000",
          //4 金额，bcd，定长12
          moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],
          //11 bcd,定长6
          currentLiushuiStr,//[PublicInformation returnLiushuiHao],
          //@"",//14 卡有效期,bcd,(pos获取时存在)
-         //22输入模式,bcd,m,定长3
-         //25,条件代码,bcd,定长2
+         @"022",//22输入模式,bcd,m,定长3
+         @"82",//25,条件代码,bcd,定长2
          //34,一磁道数据，asc，不定长76，(pos获取时存在)
          //35，二磁道数据，asc，不定长37，(pos获取时存在)
-         [NSString stringWithFormat:@"%d%@",(int)[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
-                                            [EncodeString encodeASC: [PublicInformation returnTwoTrack]]],
+         //[NSString stringWithFormat:@"%d%@",(int)[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
+//                                            [EncodeString encodeASC: [PublicInformation returnTwoTrack]]],
          //36，三磁道数据，asc，不定长104，(pos获取时存在)
          //37,搜索参考号
          [PublicInformation returnConsumerSort],
@@ -566,7 +568,7 @@
          //49，货币代码，asc，定长3，（人民币156）
          [EncodeString encodeASC:@"156"],
          //52，个人识别码，PIN，定长8 //byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
-         pin,
+         //pin,
          //56,批次号，bcd，定长6
          [PublicInformation returnSignSort],
          //(消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
@@ -577,14 +579,17 @@
              nil];
     
     //二进制报文数据
-    bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
+    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",/*@"35",*/@"37",@"41",@"42",@"49",/*@"52",@"56"*/@"61",@"63",@"64", nil];
+//    bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
+
     
     NSLog(@"消费撤销数据====%@",arr);
     NSString *binaryDataStr=[HeaderString receiveArr:bitmaparr
                                                 Tpdu:TPDU
                                               Header:HEADER
-                                        ExchangeType:@"0220"
-                                             DataArr:[self getNewPinAndMac:arr exchange:@"0220" bitmap:[HeaderString returnBitmap:bitmaparr]]];
+//                                        ExchangeType:@"0220"
+                                        ExchangeType:@"0200"
+                                             DataArr:[self getNewPinAndMac:arr exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmaparr]]];
     NSLog(@"消费撤销=====%@",binaryDataStr);
     return binaryDataStr;
 }
