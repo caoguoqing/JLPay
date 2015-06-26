@@ -129,7 +129,7 @@
     label = [[UILabel alloc] initWithFrame:innerframe];
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = [UIColor whiteColor];
-    label.text = @"成功";
+    label.text = @"消费";
     label.font = [UIFont systemFontOfSize:LittleFont];
     [view addSubview:label];
     

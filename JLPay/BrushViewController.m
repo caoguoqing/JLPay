@@ -165,7 +165,6 @@
 #pragma mask ::: 初始化并加载密码输入提示框
 - (void) makePasswordAlertView {
     // innerView 放在 alertView 中创建
-    
     self.passwordAlertView.delegate = self;
     [self.passwordAlertView setUseMotionEffects:YES];
     
@@ -185,9 +184,8 @@
     if (buttonIndex == 0) { // 取消
         // 弹出刷卡界面,回到上层界面
         [self.navigationController popViewControllerAnimated:YES];
-    } else {                // 确定
-        
-        ///   读磁道信息或芯片信息
+    } else {                // 确定-开始设备加密
+        // 读磁道信息或芯片信息
         long money = [self themoney] ;
         AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 这里的密码 password 用 alertView.password
@@ -221,12 +219,13 @@
     NSString* orderMethod;
     NSString* methodStr;
     if ([self.stringOfTranType isEqualToString:TranType_Consume]) {                 // 消费
-        orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
+        orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];    // 密文密码
         methodStr = @"cousume";
     } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
-        orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]
-                                              liushui:[PublicInformation returnConsumerSort]
-                                                money:[[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number]];
+        orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
+                                              liushui:[PublicInformation returnConsumerSort]  // 原系统流水号  Consumer_Get_Sort  returnConsumerSort  returnLiushuiHao
+                                                money:[PublicInformation returnConsumerMoney]]; // 原消费金额
+
         methodStr = @"consumeRepeal";
     }
     // 异步发送消费报文 -- 报文发送需要放在主线程
@@ -238,7 +237,7 @@
                                                  method:methodStr];
     });
     
-    // 启动超时定时器
+    // 启动超时定时器 -- 主线程
     self.timeOut = TIMEOUT;
     [[NSRunLoop mainRunLoop] addTimer:self.consumeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
 }
@@ -249,15 +248,13 @@
 }
 
 
-
-
 #pragma mask ::: ------ 消费报文上送的接收协议 walldelegate
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     if ([data length] > 0) {
         if ([str isEqualToString:@"cousume"]) {
             NSLog(@"消费响应数据:[%@]", data);
-        } else if ([str isEqualToString:@"撤销......"]) {
-            
+        } else if ([str isEqualToString:@"consumeRepeal"]) {
+            NSLog(@"消费撤销响应数据:[%@]", data);
         }
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
@@ -268,18 +265,16 @@
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
-    if ([str isEqualToString:@"cousume"]) {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
         [self.consumeWaitingTimer invalidate]; // 注销定时器
         self.consumeWaitingTimer = nil;
-    }
 }
 
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (state) {
         // 可以不校验交易名称,因为后续流程都一样
-        if ([metStr isEqualToString:@"cousume"]) {
+//        if ([metStr isEqualToString:@"cousume"]) {
             if (self.consumeWaitingTimer.valid) {
                 [self.consumeWaitingTimer invalidate]; // 注销定时器
                 self.consumeWaitingTimer = nil;
@@ -294,7 +289,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.navigationController pushViewController:qianpi animated:YES];
             });
-        }
+//        }
     } else {
         [self alertForFailedMessage:type];
         [self.consumeWaitingTimer invalidate]; // 注销定时器
@@ -316,7 +311,7 @@
  *************************************/
 - (void) addSubViews {
     CGFloat topInset            = 15;                // 子视图公用变量: 上边界
-    CGFloat fleftInset           = 15;                // 左边界
+    CGFloat fleftInset          = 15;                // 左边界
     CGFloat rightInset          = 15;                // 右边界
     CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
     CGFloat uifont              = 20.0;              // 字体大小
@@ -397,9 +392,8 @@
 
 
 
-
-#pragma mask ::: 从本地配置获取金额
--(NSString *)returnMoney{
+#pragma mask ::: 将小数点金额转换为报文需要的 int 无小数点格式
+-(int)themoney{
     NSString *moneyStr;
     if ([self.stringOfTranType isEqualToString:TranType_Consume]) { // 消费
         moneyStr = [[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
@@ -409,20 +403,7 @@
     if (moneyStr == nil || [moneyStr isEqualToString:@""]) {
         moneyStr = @"0.00";
     }
-    
-//    NSString *moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-//    if (moneyStr && ![moneyStr isEqualToString:@"0.00"] && ![moneyStr isEqualToString:@"(null)"]) {
-//        moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-//    }else{
-//        moneyStr=@"1";
-//    }
-    return moneyStr;
-}
-
-#pragma mask ::: 将小数点金额转换为报文需要的无小数点格式
--(int)themoney{
-    int money=[[self returnMoney] floatValue]*100;
-    return money;
+    return [moneyStr floatValue]*100;
 }
 
 
@@ -468,6 +449,7 @@
         if (self.consumeWaitingTimer.valid) {
             [self.consumeWaitingTimer invalidate]; // 停止计时
             self.consumeWaitingTimer = nil;
+            // 还要终止通讯连接。。。。。
         }
         [self alertForFailedMessage:@"交易超时,请检查网络"];
     }
@@ -486,6 +468,7 @@
         if (self.swipeWaitingTimer.valid) {
             [self.swipeWaitingTimer invalidate]; // 停止计时
             self.swipeWaitingTimer = nil;
+            // 还要终止设备............
         }
         [[app_delegate window] makeToast:@"未刷卡"];
         [self.navigationController popViewControllerAnimated:YES];

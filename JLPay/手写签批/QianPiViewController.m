@@ -18,6 +18,7 @@
 @property (strong,nonatomic)  MyView *drawView;
 @property (assign,nonatomic)  BOOL buttonHidden;
 @property (assign,nonatomic)  BOOL widthHidden;
+@property (nonatomic, strong) UILabel* labelForSigning;
 @end
 
 @implementation QianPiViewController
@@ -26,6 +27,7 @@
 @synthesize qianpitype;
 @synthesize currentLiushuiStr;
 @synthesize lastLiushuiStr;
+@synthesize labelForSigning;
 
 
 //撤销支付的流水号
@@ -92,7 +94,8 @@ static NSMutableArray *colors;
     isHiddenType=0;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-    self.view.backgroundColor=[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
+//    self.view.backgroundColor=[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
+    self.view.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
     appdeletate=(AppDelegate *)[UIApplication sharedApplication].delegate;
     
     //设置应用程序的状态栏到指定的方向
@@ -121,14 +124,18 @@ static NSMutableArray *colors;
     [titleView  addSubview:consumerLab];
     //消费-电子签名
     UILabel *exchangeLab=[[UILabel alloc] initWithFrame:CGRectMake((Screen_Width-120)/2, 15, 40, 20)];
-    exchangeLab.text=@"消费-";
+    if ([[PublicInformation returnTranType] isEqualToString:TranType_Consume]) {
+        exchangeLab.text = @"消费";
+    } else if ([[PublicInformation returnTranType] isEqualToString:TranType_ConsumeRepeal]) {
+        exchangeLab.text = @"消费撤销";
+    }
     exchangeLab.font = [UIFont systemFontOfSize:16.0f];
     exchangeLab.textColor=[UIColor darkGrayColor];
     exchangeLab.backgroundColor=[UIColor clearColor];
     [titleView  addSubview:exchangeLab];
     
     UILabel *signLab=[[UILabel alloc] initWithFrame:CGRectMake((Screen_Width-120)/2+40, 5, 80, 40)];
-    signLab.text=@"电子签名";
+    signLab.text=@"-电子签名";
     signLab.font = [UIFont systemFontOfSize:20.0f];
     signLab.textColor=[UIColor darkGrayColor];
     signLab.backgroundColor=[UIColor clearColor];
@@ -147,11 +154,13 @@ static NSMutableArray *colors;
     //横线
     UILabel *lineLab=[[UILabel alloc] initWithFrame:CGRectMake(0, 48, Screen_Width, 2)];
     lineLab.backgroundColor=[UIColor colorWithRed:0.98 green:0.54 blue:0.04 alpha:1.0];
-    [titleView  addSubview:lineLab];
+//    [titleView  addSubview:lineLab];
     
     
-    returnView=[[UIView alloc] initWithFrame:CGRectMake(10, 50, Screen_Width-20, Screen_Height-90)];
-    returnView.backgroundColor=[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
+    // 签名有效范围
+    returnView=[[UIView alloc] initWithFrame:CGRectMake(10, 50, Screen_Width-20, Screen_Height- 50 - 40 - 20)];
+//    returnView.backgroundColor=[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
+    returnView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:returnView];
     returnView.userInteractionEnabled=YES;
     
@@ -159,12 +168,14 @@ static NSMutableArray *colors;
     //CGRect viewFrame=returnView.frame;
     self.buttonHidden=YES;
     self.widthHidden=YES;
-    self.drawView=[[MyView alloc]initWithFrame:CGRectMake(0, 0, returnView.frame.size.width, returnView.frame.size.height)];
-    [self.drawView setBackgroundColor:[UIColor whiteColor]];
-    [returnView addSubview: self.drawView];
-    //[returnView sendSubviewToBack:self.drawView];
-    // Do any additional setup after loading the view, typically from a nib.
     
+    // 签名视图
+    self.drawView=[[MyView alloc]initWithFrame:CGRectMake(0, 0, returnView.frame.size.width, returnView.frame.size.height)];
+//    [self.drawView setBackgroundColor:[UIColor whiteColor]];
+    self.drawView.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
+    [returnView addSubview: self.drawView];
+    // Do any additional setup after loading the view, typically from a nib.
+    [returnView addSubview:self.labelForSigning];
     
     //流水号
     UILabel *sortLab=[[UILabel alloc] initWithFrame:CGRectMake((returnView.frame.size.width-150)/2, (returnView.frame.size.height-40)/2, 150, 40)];
@@ -173,28 +184,44 @@ static NSMutableArray *colors;
     sortLab.textColor=[UIColor blackColor];
     sortLab.backgroundColor=[UIColor redColor];
     sortLab.textAlignment=NSTextAlignmentCenter;
-    [returnView  addSubview:sortLab];
+//    [returnView  addSubview:sortLab]; // 不要流水号了
     
     
+    CGFloat midInset = 20.0;
+    CGRect frame = CGRectMake(returnView.frame.origin.x,
+                              returnView.frame.origin.y + returnView.frame.size.height,
+                              (returnView.frame.size.width - midInset)/2.0,
+                              40);
+    // 重新签名 按钮
     UIButton*againBtn=[UIButton buttonWithType:UIButtonTypeRoundedRect];
-    againBtn.frame=CGRectMake((Screen_Width-100*2-40)/2,Screen_Height-40,100,40);
-    againBtn.backgroundColor=[UIColor whiteColor];
+    againBtn.frame = frame;
+//    againBtn.frame=CGRectMake((Screen_Width-100*2-40)/2,Screen_Height-40 - 20,100,40);
+
+    againBtn.layer.cornerRadius = 8.0;
+//    againBtn.backgroundColor=[UIColor whiteColor];
+    againBtn.backgroundColor = [UIColor colorWithRed:90.0/255.0 green:99.f/255.0 blue:110.f/255.0 alpha:1.0];
     [againBtn setTitle:@"重新签名" forState:UIControlStateNormal];
+    [againBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [againBtn addTarget:self action:@selector(againMethod) forControlEvents:UIControlEventTouchUpInside];
-    [againBtn setBackgroundImage:[UIImage imageNamed:@"resign_normal.png"] forState:UIControlStateNormal];
-    [againBtn setBackgroundImage:[UIImage imageNamed:@"resign_pressed.png"] forState:UIControlStateHighlighted];
+//    [againBtn setBackgroundImage:[UIImage imageNamed:@"resign_normal.png"] forState:UIControlStateNormal];
+//    [againBtn setBackgroundImage:[UIImage imageNamed:@"resign_pressed.png"] forState:UIControlStateHighlighted];
     [self.view addSubview:againBtn];
     
     
     UIButton*requireBtn=[UIButton buttonWithType:UIButtonTypeRoundedRect];
     
-    requireBtn.frame=CGRectMake((Screen_Width-100*2-40)/2+100+40,Screen_Height-40,100,40);
-    requireBtn.backgroundColor=[UIColor whiteColor ];
+    // 确定  按钮
+    frame.origin.x += frame.size.width + midInset;
+    requireBtn.frame = frame;
+//    requireBtn.frame=CGRectMake((Screen_Width-100*2-40)/2+100+40,Screen_Height-40 - 20,100,40);
+//    requireBtn.backgroundColor=[UIColor whiteColor ];
+    requireBtn.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:58.f/255.0 blue:66.f/255.0 alpha:1.0];
+    requireBtn.layer.cornerRadius = 8.0;
     [requireBtn setTitle:@"确认" forState:UIControlStateNormal];
+    [requireBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [requireBtn addTarget:self action:@selector(requireSignMethod) forControlEvents:UIControlEventTouchUpInside];
-    [requireBtn setBackgroundImage:[UIImage imageNamed:@"sign_ok_normal.png"] forState:UIControlStateNormal];
-    [requireBtn setBackgroundImage:[UIImage imageNamed:@"sign_ok_pressed.png"] forState:UIControlStateHighlighted];
-    
+//    [requireBtn setBackgroundImage:[UIImage imageNamed:@"sign_ok_normal.png"] forState:UIControlStateNormal];
+//    [requireBtn setBackgroundImage:[UIImage imageNamed:@"sign_ok_pressed.png"] forState:UIControlStateHighlighted];
     [self.view addSubview:requireBtn];
     
     
@@ -214,6 +241,7 @@ static NSMutableArray *colors;
     [self.drawView clear];
 }
 -(void)requireSignMethod{
+    [self.labelForSigning removeFromSuperview];
     //先截图
     self.uploadImage=[self getNormalImage:returnView];
     [self exchange];
@@ -244,7 +272,7 @@ static NSMutableArray *colors;
 }
 
 -(void)newVersionMethod{
-    
+
     [newVersionVi removeFromSuperview];
     //[self.view removeFromSuperview];
     //状态栏旋转
@@ -277,15 +305,16 @@ static NSMutableArray *colors;
     // Dispose of any resources that can be recreated.
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+#pragma mask --- setter & getter
+// 请在绿色区域签名
+- (UILabel *)labelForSigning {
+    if (labelForSigning == nil) {
+        labelForSigning = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 200, 30)];
+        labelForSigning.text = @"请在绿色区域内签名";
+        labelForSigning.textColor = [UIColor whiteColor];
+        labelForSigning.backgroundColor = [UIColor clearColor];
+    }
+    return labelForSigning;
+}
 
 @end

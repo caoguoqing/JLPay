@@ -45,6 +45,7 @@ static Unpacking8583 *sharedObj2 = nil;
     self.delegate=de;
     NSString  *rebackStr=@"";
     BOOL rebackState=NO;
+    NSLog(@"交易名称：[%@]", methodStr);
 #pragma mark---------支付宝支付，(预下订单)
     //saomaOrder
     if ([methodStr isEqualToString:@"saomaOrder"]) {
@@ -1089,6 +1090,9 @@ static Unpacking8583 *sharedObj2 = nil;
                     [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Consumer_Get_Sort];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
+                // ExchangeMoney_Type 交易类型 中文
+                [[NSUserDefaults standardUserDefaults] setValue:@"消费" forKey:ExchangeMoney_Type];
+                [[NSUserDefaults standardUserDefaults] synchronize];
                 
                 //交易结果
                 if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
@@ -1244,7 +1248,7 @@ static Unpacking8583 *sharedObj2 = nil;
     }
     
 #pragma mark-------------消费撤销
-    else if ([methodStr isEqualToString:@"consumerepeal"]){
+    else if ([methodStr isEqualToString:@"consumeRepeal"]){
             @try {
                 NSArray *bitmapArr=[[Unpacking8583 getInstance] bitmapArr:[PublicInformation getBinaryByhex:[signin substringWithRange:NSMakeRange(30, 16)]]];//11,12,13,13....
                 NSLog(@"位图====%@",bitmapArr);
@@ -1338,6 +1342,11 @@ static Unpacking8583 *sharedObj2 = nil;
                         
                         [[JHNconnect shareView]WriteWorkKey:57 :workStr];
                     }
+                    
+                    // ExchangeMoney_Type 交易类型 中文
+                    [[NSUserDefaults standardUserDefaults] setValue:@"消费撤销" forKey:ExchangeMoney_Type];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+
                     
                     //交易结果
                     if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {

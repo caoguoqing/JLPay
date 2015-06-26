@@ -34,6 +34,8 @@
 
 //签到批次号
 +(NSString *)returnSignSort;
+//原交易批次号,用于撤销时获取
++(NSString *)returnFdReserved;
 
 //二磁道数据
 +(NSString *)returnTwoTrack;
@@ -114,5 +116,9 @@
 +(NSString *) returnUploadTime:(NSString  *)timeStr;
 
 +(NSString *) NEWreturnUploadTime:(NSString  *)timeStr;
+
+// 获取当前交易的交易类型
++(NSString *)returnTranType;
+
 
 @end

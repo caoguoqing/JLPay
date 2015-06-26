@@ -121,8 +121,16 @@
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"]) return;
     NSLog(@"state=[%hhd], message=[%@]", state, type);
-    if (state) {
+    if (state) {    // 签到成功
         NSLog(@"拆包成功");
+        // 更新批次号 returnSignSort -> Get_Sort_Number
+        NSString* signSort = [PublicInformation returnSignSort];
+        int intSignSort = [signSort intValue] + 1;
+        if (intSignSort > 999999) {
+            intSignSort = 1;
+        }
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
+        
         AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 写工作密钥 ----- 到了这里就可以直接写了
         NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];

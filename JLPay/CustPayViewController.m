@@ -383,7 +383,6 @@
     UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     BrushViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
     
-    
     // 先校验是否签到
     BOOL isSignedIn = [[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn];
     if (!isSignedIn) {
@@ -392,32 +391,22 @@
     }
     // 再判断是否连接设备
     
-    
     AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     if (![delegate.device isConnected])
     {
-//        UIAlertView * alter             = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//        alter.delegate                  = self;
-//        [alter show];
         [self alertShow:@"请连接设备"];
         [delegate.device open];
     }else
     {
-//        [self saveConsumerMoney];
         // 保存的是字符串型的金额
         [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
         [[NSUserDefaults standardUserDefaults] synchronize];
         viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
+        [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
         [self.navigationController pushViewController:viewcon animated:YES];
     }
 }
-//- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-//    if ([alertView.message isEqualToString:@"请连接设备!"]) {
-//        NSLog(@"点击了   alertView");
-//        AppDelegate* delegate           = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-//        [delegate.device  open];
-//    }
-//}
+
 
 
 

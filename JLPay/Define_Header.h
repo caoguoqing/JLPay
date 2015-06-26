@@ -35,6 +35,7 @@
 /*************[notification 变量声明区]**************/
 
 /*************[交易类型]**************/
+#define TranType                    @"TranType"
 #define TranType_Consume            @"TranType_Consume"                 // 消费
 #define TranType_ConsumeRepeal      @"TranType_ConsumeRepeal"           // 消费撤销
 /*************[交易类型]**************/
@@ -194,7 +195,8 @@
 
 //原交易流水号,消费交易的流水号
 #define Last_Exchange_Number @"lastnumber"
-
+// 原交易签到批次号
+#define Last_FldReserved_Number @"fldReserved"
 
 //保存撤销金额
 #define Save_Return_Money @"renturnmoney"

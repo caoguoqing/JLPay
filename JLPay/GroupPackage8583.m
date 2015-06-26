@@ -478,7 +478,11 @@
                   @"2600000000000000",
 //                  [PublicInformation returnSignSort],//56,批次号，bcd，定长6
                   //60
-                  @"001922000003000500000000",
+//                  @"001922000003000500000000",
+                  // 60.1、60.4要根据交易判断取值 60.2要取签到批次号
+//                  @"001922000001000200000000",
+                  [self makeF60],
+
                   //63,操作员号，asc，不定长999，3字节
                   [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
 //                  @"4332353234363046",//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
@@ -546,8 +550,13 @@
     NSArray *bitmaparr;
     //61域数据
     NSString *betweenStr;
-    NSString *ascStr=[NSString stringWithFormat:@"%@%@",[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:liushuiStr]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",(int)[ascStr length]/2,ascStr];
+    NSString *ascStr=[NSString stringWithFormat:@"%@%@",
+                        [PublicInformation returnFdReserved],    // 原交易批次号
+                        [PublicInformation returnLiushuiHao]];   // 原交易系统流水号
+//    [EncodeString encodeBCD:[PublicInformation returnFdReserved]],    // 原交易批次号
+//    [EncodeString encodeBCD:[PublicInformation returnLiushuiHao]]];   // 原交易系统流水号
+//
+    betweenStr=[NSString stringWithFormat:@"00%02d%@",(int)[ascStr length]/2,ascStr];
     NSLog(@"61域数据=====%@",betweenStr);
     
     arr=[[NSArray alloc] initWithObjects:
@@ -559,39 +568,34 @@
          moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],
          // 11 bcd,定长6
          currentLiushuiStr,//[PublicInformation returnLiushuiHao],
-         //@"",//14 卡有效期,bcd,(pos获取时存在)
-         @"021",//22输入模式,bcd,m,定长3
-         @"82",//25,条件代码,bcd,定长2
-         // 34,一磁道数据，asc，不定长76，(pos获取时存在)
+         // 22 输入模式,bcd,m,定长3
+         @"0210",
+         // 25,条件代码,bcd,定长2
+         @"82",
+         // 26
+         @"12",
          // 35，二磁道数据，asc，不定长37，(pos获取时存在)
-//         [NSString stringWithFormat:@"%d%@",(int)[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
-//                                            [EncodeString encodeASC: [PublicInformation returnTwoTrack]]],
          [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
          // 36，三磁道数据，asc，不定长104，(pos获取时存在)
-         // 37,搜索参考号
-//         [PublicInformation returnConsumerSort],
-         liushuiStr,
-         // 41,终端号，asc，定长8
+         // 37, 搜索参考号
+         [EncodeString encodeASC: liushuiStr],
+         // 41, 终端号，asc，定长8
          [EncodeString encodeASC:[PublicInformation returnTerminal]],
          // 42，商户号，asc，定长15
          [EncodeString encodeASC:[PublicInformation returnBusiness]],
          // 49，货币代码，asc，定长3，（人民币156）
          [EncodeString encodeASC:@"156"],
-         // 52，个人识别码，PIN，定长8 //byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
+         // 52，个人识别码，PIN，定长8
          pin,
          // 53
          @"2600000000000000",
-         // 56,批次号，bcd，定长6
-//         [PublicInformation returnSignSort],
+         // 60
+         [self makeF60],
          // 61 (消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
-         betweenStr,
-         // 63,操作员号，asc，不定长999，3字节
-//         [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
-         //[EncodeString encodeASC:@"D698B8F5"],//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
-             nil];
+         betweenStr,  nil];
     
     //二进制报文数据
-    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",@"35",@"37",@"41",@"42",@"49",@"52",@"61"/*,@"56",@"63"*/,@"64", nil];
+    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",@"26",@"35",@"37",@"41",@"42",@"49",@"52",@"53",@"60",@"61"/*,@"56",@"63"*/,@"64", nil];
 //    bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
 
     
@@ -675,5 +679,30 @@
     return binaryDataStr;
 }
 
++ (NSString*) makeF60 {
+    NSMutableString* F60 = [[NSMutableString alloc] initWithString:@"0019"];
+    NSString* tranType = [PublicInformation returnTranType];
+    // 60.1 N2 交易类型
+    if ([tranType isEqualToString:TranType_Consume]) {
+        [F60 appendString:@"22"];
+    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
+        [F60 appendString:@"23"];
+    }
+    // 60.2 N6 批次号
+    [F60 appendString:[PublicInformation returnSignSort]];
+    // 60.3 N3
+    [F60 appendString:@"000"];
+    // 60.4 N1 磁条:2 , IC : 5
+    [F60 appendString:@"2"];
+    // 60.5 N1
+    [F60 appendString:@"0"];
+    // 60.6 N4
+    [F60 appendString:@"0000"];
+    // 60.7 N2
+    [F60 appendString:@"00"];
+    // 补齐整数位
+    [F60 appendString:@"0"];
+    return F60;
+}
 
 @end

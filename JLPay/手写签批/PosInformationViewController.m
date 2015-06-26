@@ -84,6 +84,7 @@
                                                                           Screen_Width-20,  // 减去2*边界
                                                                           Screen_Height-50-20)];
     scrollVi.backgroundColor=[UIColor whiteColor];
+    // 滚动视图的frame.height不应该由子视图计算得来么
     scrollVi.contentSize=CGSizeMake(Screen_Width-20, 620);
     [self.view addSubview:scrollVi];
     
@@ -140,6 +141,7 @@
     businessNameLab.text=[PublicInformation returnBusinessName];
     [scrollVi addSubview:businessNameLab];
     
+    // 商户编号
     UILabel *businessNumberLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 80, Screen_Width-30, 20)];
     businessNumberLab.backgroundColor=[UIColor clearColor];
     businessNumberLab.textColor=[UIColor blackColor];
@@ -148,6 +150,7 @@
     businessNumberLab.text=[NSString stringWithFormat:@"商户号：%@",[PublicInformation returnBusiness]];
     [scrollVi addSubview:businessNumberLab];
     
+    // 终端编号
     UILabel *terminalLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 100, Screen_Width-30, 20)];
     terminalLab.backgroundColor=[UIColor clearColor];
     terminalLab.textColor=[UIColor blackColor];
@@ -156,7 +159,7 @@
     terminalLab.text=[NSString stringWithFormat:@"终端号：%@",[PublicInformation returnTerminal]];
     [scrollVi addSubview:terminalLab];
     
-    
+    // 管理员编号
     UILabel *managerNumberLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 120, Screen_Width-30, 20)];
     managerNumberLab.backgroundColor=[UIColor clearColor];
     managerNumberLab.textColor=[UIColor blackColor];
@@ -165,11 +168,12 @@
     managerNumberLab.text=[NSString stringWithFormat:@"操作员号：%@",Manager_Number];//Manager_Number
     [scrollVi addSubview:managerNumberLab];
     
+    // 分割线
     UIImageView *lineTwoImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 139, Screen_Width-30, 1)];
     lineTwoImg.image=[UIImage imageNamed:@"tabbar_shadow.png"];
     [scrollVi addSubview:lineTwoImg];
     
-//发卡行
+    //发卡行
     UILabel *bankCardLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 140, Screen_Width-30, 20)];
     bankCardLab.backgroundColor=[UIColor clearColor];
     bankCardLab.textColor=[UIColor blackColor];
@@ -178,6 +182,7 @@
     bankCardLab.text=@"发卡行：";
     [scrollVi addSubview:bankCardLab];
     
+    // 卡号
     UILabel *swipeCardNumLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 160, Screen_Width-30, 20)];
     swipeCardNumLab.backgroundColor=[UIColor clearColor];
     swipeCardNumLab.textColor=[UIColor blackColor];
@@ -194,6 +199,7 @@
     cardLab.text=[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll]];
     [scrollVi addSubview:cardLab];
     
+    // 交易类型
     UILabel *exchangeTypeLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 210, Screen_Width-30, 20)];
     exchangeTypeLab.backgroundColor=[UIColor clearColor];
     exchangeTypeLab.textColor=[UIColor blackColor];
@@ -353,8 +359,6 @@
 
 #pragma mark ------------图片上传
 -(void)chatUploadImage{
-//    [appdelegate showWaitingView:@"图片上传中..."];
-//    NSString *uploadString=[NSString  stringWithFormat:@"%@attachment/add.do",kServerNewURL];
     NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
                               [PublicInformation getDataSourceIP],
                               [PublicInformation getDataSourcePort]];
@@ -377,13 +381,12 @@
  * ***/
 -(void)uploadRequestMethod:(NSString *)url{
     //起码一张图片
-    NSString *photoStr=[Photo image2String:self.scrollAllImg];
+//    NSString *photoStr=[Photo image2String:self.scrollAllImg];
     ASIFormDataRequest *uploadRequest=[[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:url]];
     [uploadRequest setShouldAttemptPersistentConnection:YES];
     [uploadRequest setNumberOfTimesToRetryOnTimeout:2];
     [uploadRequest setTimeOutSeconds:30];
     uploadRequest.delegate=self;
-    
     
     /*
      uploadRequstMchntNo	商户编号        15位
@@ -407,23 +410,8 @@
                                                                     @"uploadRequestAmoumt",
                                                                     @"uploadRequestTime", nil]];
     
-//    [uploadRequest setPostValue:[PublicInformation returnConsumerMoney] forKey:@"money"];   // 金额
-//    [uploadRequest setPostValue:self.infoLiushuiStr forKey:@"trackNum"];                    // 流水号
-//    [uploadRequest setPostValue:[PublicInformation returnSignSort] forKey:@"batchNum"];     // 签到批次号
-//    [uploadRequest setPostValue:Manager_Number forKey:@"operatorNum"];                      // 操作员号
-//    [uploadRequest setPostValue:[PublicInformation returnposCard] forKey:@"accountNum"];    // 卡号
-    
-//    [uploadRequest setPostValue:photoStr forKey:@"img"];                                    // 小票图片data
     [uploadRequest setRequestHeaders:headerInfo];
     [uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
-
-//    [uploadRequest appendPostData:UIImagePNGRepresentation(self.scrollAllImg)];             // 小票图片data
-    
-//    NSLog(@"money====%@",[PublicInformation returnConsumerMoney]);
-//    NSLog(@"trackNum====%@",self.infoLiushuiStr);
-//    NSLog(@"batchNum====%@",[PublicInformation returnSignSort]);
-//    NSLog(@"operatorNum====%@",Manager_Number);
-//    NSLog(@"accountNum====%@",[PublicInformation returnposCard]);
     
     [uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
     [uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
@@ -432,13 +420,11 @@
 }
 
 -(void)successLogin:(ASIHTTPRequest *)successLoginStr{
-//    [appdelegate dismissWaitingView];
     [successLoginStr clearDelegatesAndCancel];
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:successLoginStr.responseString]];
     NSLog(@"chatUpLoadDic===%@",chatUpLoadDic);
     NSLog(@"successLoginStr.responseString===%@",successLoginStr.responseString);
 
-    
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
         //缓存图片路径
         [self saveImagePathMethod:[chatUpLoadDic objectForKey:@"data"]];
@@ -448,8 +434,6 @@
             [self.navigationController popToRootViewControllerAnimated:YES];
         });
     }else{
-//        [self.view makeToast:@"亲，网络不给力哦，请稍后再试吧！"];
-//        [self.view makeToast:@"交易失败，请重新签名"];
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         dispatch_async(dispatch_get_main_queue(), ^{
             [alert show];
@@ -461,7 +445,6 @@
 
     NSError *error = [falseScoreStr error];
     if (error) {
-//        [self.view makeToast:@"亲，网络不给力哦，请稍后再试吧！"];
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         dispatch_async(dispatch_get_main_queue(), ^{
             [alert show];
@@ -517,29 +500,14 @@
         NSLog(@"消费更新图片路径=====%@",resultArr);
         [[NSUserDefaults standardUserDefaults] setObject:resultArr forKey:TheCarcd_Record];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        
     }
-    
-    
-   
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

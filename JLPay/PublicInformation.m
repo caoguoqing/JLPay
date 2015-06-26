@@ -128,6 +128,18 @@
     return sortStr;
 }
 
+//原交易批次号,用于撤销时获取
++(NSString *)returnFdReserved{
+    NSString *FdReserved=[[NSUserDefaults standardUserDefaults] valueForKey:Last_FldReserved_Number];
+    NSLog(@"FdReserved ====%@",FdReserved);
+    if (FdReserved && ![FdReserved isEqualToString:@""] && ![FdReserved isEqualToString:@"(null)"]) {
+        FdReserved=[[NSUserDefaults standardUserDefaults] valueForKey:Last_FldReserved_Number];
+    }else{
+        FdReserved=@"000000";
+    }
+    return FdReserved;
+}
+
 //二磁道数据
 +(NSString *)returnTwoTrack{
     NSString *trackStr=[[NSUserDefaults standardUserDefaults] valueForKey:Two_Track_Data];
@@ -818,6 +830,12 @@
      */
 }
 
+
+// 获取当前交易的交易类型
++(NSString *)returnTranType{
+    NSString *businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:TranType];
+    return businessNumber;
+}
 
 
 @end

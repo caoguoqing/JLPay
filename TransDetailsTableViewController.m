@@ -230,10 +230,6 @@
 #pragma mask ::: 自定义返回上层界面按钮的功能
 - (IBAction) backToPreVC :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
-//    [self.URLConnection cancel];
-//    if ([self.activity isAnimating])
-//        [self.activity stopAnimating];
-
 }
 
 
@@ -259,7 +255,7 @@
 - (void) colculateTotalAmountFromDataArray: (TotalAmountCell*)cell {
     // 总金额
     // 总笔数
-    // 总成功笔数
+    // 总消费笔数
     // 总撤销笔数
     CGFloat tAmount = 0.0;
     int tAcount = 0;
@@ -275,7 +271,7 @@
         }
         tAcount++;
     }
-    tSucCount = tAcount - tRevokeCount*2;
+    tSucCount = tAcount - tRevokeCount;
     tAmount /= 100.0;
     [cell setTotalAmount:[NSString stringWithFormat:@"%.02f", tAmount]];
     [cell setTotalRows:[NSString stringWithFormat:@"%d", tAcount]];
@@ -306,18 +302,9 @@
 }
 - (JLActivity *)activity {
     if (_activity == nil) {
-//        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-//        CGRect frame = CGRectMake((self.view.bounds.size.width - 100)/2.0, (self.view.bounds.size.height - 100)/2.0, 100, 100);
-//        _activity = [[JLActivity alloc] initWithFrame:frame];
         _activity = [[JLActivity alloc] init];
     }
     return _activity;
 }
-//-(NSURLConnection *)URLConnection {
-//    if (_URLConnection) {
-//        _URLConnection = [[NSURLConnection alloc] init];
-//    }
-//    return _URLConnection;
-//}
 
 @end

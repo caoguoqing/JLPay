@@ -73,7 +73,6 @@
         cell.frame = frame;
         [self loadDetailCell:cell atIndexPath: indexPath];
     }
-//    cell.backgroundColor = [UIColor colorWithRed:212.0/255.0 green:212.0/255.0 blue:212.0/255.0 alpha:1];
     return cell;
 }
 
@@ -81,7 +80,6 @@
 #pragma mask ---- 除了撤销的cell，其他都不能高亮
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-//    if (indexPath.row == [self.detailNameIndex allKeys].count + 1) {
     if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {
         return YES;
     }
@@ -109,19 +107,23 @@
     if (buttonIndex == 0) {     // 否:不撤销
         
     } else {                    // 是:撤销
+        // 返回的金额已经是无小数点的金额串12位
         NSString* amount = [self.dataDic objectForKey:@"amtTrans"];
-        CGFloat fAmount = [amount floatValue]/100.0;
-        NSString* money = [NSString stringWithFormat:@"%.02f", fAmount];
-        [[NSUserDefaults standardUserDefaults] setValue:money forKey:Last_Exchange_Number]; // 保存原始消费金额
-        
-        
+        // 保存原始消费金额
+        [[NSUserDefaults standardUserDefaults] setValue:amount forKey:SuccessConsumerMoney];
         // 保存原消费流水号
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@""] forKey:Consumer_Get_Sort];
-        
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"retrivlRef"] forKey:Consumer_Get_Sort];
         // 切换到刷卡界面
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-        viewcon.stringOfTranType = TranType_ConsumeRepeal;    // 设置交易类型:消费撤销
+        // 保存原消费签到批次号;用于撤销报文的61.1域 Last_FldReserved_Number   Last_FldReserved_Number
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
+        // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number]; //retrivlRef sysSeqNum
+        // 设置交易类型:消费撤销
+        viewcon.stringOfTranType = TranType_ConsumeRepeal;
+        // 注册交易类型到本地配置
+        [[NSUserDefaults standardUserDefaults] setValue:TranType_ConsumeRepeal forKey:TranType];
         [self.navigationController pushViewController:viewcon animated:YES];
     }
 }
@@ -182,14 +184,8 @@
                                                                0,
                                                                leftWidth,
                                                                cell.bounds.size.height)];
-    label.text = @"能否撤销";
+    label.text = @"是否撤销";
     [cell addSubview:label];
-    
-//    // 还有一个label没有显示
-//    label = [[UILabel alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET + leftWidth + CELL_LEFT_INSET,
-//                                                      0,
-//                                                      width,
-//                                                      cell.bounds.size.height)];
     
     // button
     width *= 2.0;
@@ -199,20 +195,19 @@
                                                                   cell.bounds.size.height - 10)];
     button.layer.cornerRadius = 3.0;
     
-    
     // 检查交易是否能被撤销
     if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"1"] &&
         ![[self.dataDic objectForKey:@"revsal_flag"] isEqualToString:@"1"]) {
         // 可撤销
         button.backgroundColor = [UIColor colorWithRed:100.0/255.0 green:193.0/255.0 blue:35.0/255.0 alpha:1];
-        [button setTitle:@"能撤销" forState:UIControlStateNormal];
+        [button setTitle:@"未撤销" forState:UIControlStateNormal];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         [button setEnabled:YES];
     } else {
         // 不可撤销
         [button setEnabled:NO];
         button.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
-        [button setTitle:@"不能撤销" forState:UIControlStateNormal];
+        [button setTitle:@"已撤销" forState:UIControlStateNormal];
     }
     
     [cell addSubview:button];
