@@ -36,6 +36,7 @@
 
 
 static TcpClientService *sharedObj = nil;
+static int readTimeOut = 20;
 
 @implementation TcpClientService
 
@@ -61,7 +62,9 @@ static TcpClientService *sharedObj = nil;
 //建立连接
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port{
     [self senMessage];
-    [sock readDataWithTimeout:60 tag:0];
+    // 发送数据并等待返回:带参数超时
+    [sock readDataWithTimeout:readTimeOut tag:0];
+
 }
 
 //读取数据
@@ -76,8 +79,8 @@ static TcpClientService *sharedObj = nil;
     }
     
     NSData* aData= [aStr dataUsingEncoding: NSUTF8StringEncoding];
-    [sock writeData:aData withTimeout:60 tag:1];
-    [sock readDataWithTimeout:60 tag:0];
+    [sock writeData:aData withTimeout:readTimeOut tag:1];
+    [sock readDataWithTimeout:readTimeOut tag:0];
 
 //    NSLog(@"读取数据");
 }
@@ -118,7 +121,7 @@ static TcpClientService *sharedObj = nil;
     //设备匹配指令
     NSData *data = [self.orderInfoStr hexToBytes];
     NSLog(@"发送data====%@",data);
-    [asyncSocket writeData:data withTimeout:60 tag:1];
+    [asyncSocket writeData:data withTimeout:readTimeOut tag:1];
 }
 
 

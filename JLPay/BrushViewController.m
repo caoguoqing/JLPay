@@ -30,7 +30,7 @@
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
 @property (nonatomic, assign) CGFloat leftInset;                            // 动态文本区域的左边静态文本区域的右边界长度
 @property (nonatomic, assign) int timeOut;                                  // 交易超时时间
-@property (nonatomic, strong) NSTimer* consumeWaitingTimer;                 // 交易超时控制定时器
+//@property (nonatomic, strong) NSTimer* consumeWaitingTimer;                 // 交易超时控制定时器
 @property (nonatomic, strong) NSTimer* swipeWaitingTimer;                   // 刷卡超时控制定时器
 @end
 
@@ -52,7 +52,7 @@
 @synthesize waitingLabel                = _waitingLabel;
 @synthesize leftInset;
 @synthesize timeOut;
-@synthesize consumeWaitingTimer         = _consumeWaitingTimer;
+//@synthesize consumeWaitingTimer         = _consumeWaitingTimer;
 @synthesize swipeWaitingTimer           = _swipeWaitingTimer;
 @synthesize stringOfTranType;
 
@@ -121,13 +121,13 @@
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     // 移除定时器
-    if (self.consumeWaitingTimer.valid) {
-        [self.consumeWaitingTimer invalidate];
-    }
+//    if (self.consumeWaitingTimer.valid) {
+//        [self.consumeWaitingTimer invalidate];
+//    }
     if (self.swipeWaitingTimer.valid) {
         [self.swipeWaitingTimer invalidate];
     }
-    self.consumeWaitingTimer = nil;
+//    self.consumeWaitingTimer = nil;
     self.swipeWaitingTimer = nil;
 }
 
@@ -239,7 +239,7 @@
     
     // 启动超时定时器 -- 主线程
     self.timeOut = TIMEOUT;
-    [[NSRunLoop mainRunLoop] addTimer:self.consumeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
+//    [[NSRunLoop mainRunLoop] addTimer:self.consumeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
 }
 
 #pragma mask ::: 跳转回金额输入界面
@@ -259,15 +259,15 @@
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
-        [self.consumeWaitingTimer invalidate]; // 注销定时器
-        self.consumeWaitingTimer = nil;
+//        [self.consumeWaitingTimer invalidate]; // 注销定时器
+//        self.consumeWaitingTimer = nil;
     }
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
-        [self.consumeWaitingTimer invalidate]; // 注销定时器
-        self.consumeWaitingTimer = nil;
+//        [self.consumeWaitingTimer invalidate]; // 注销定时器
+//        self.consumeWaitingTimer = nil;
 }
 
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
@@ -275,10 +275,10 @@
     if (state) {
         // 可以不校验交易名称,因为后续流程都一样
 //        if ([metStr isEqualToString:@"cousume"]) {
-            if (self.consumeWaitingTimer.valid) {
-                [self.consumeWaitingTimer invalidate]; // 注销定时器
-                self.consumeWaitingTimer = nil;
-            }
+//            if (self.consumeWaitingTimer.valid) {
+//                [self.consumeWaitingTimer invalidate]; // 注销定时器
+//                self.consumeWaitingTimer = nil;
+//            }
             if ([self.activity isAnimating]) {
                 [self.activity stopAnimating];
             }
@@ -292,8 +292,8 @@
 //        }
     } else {
         [self alertForFailedMessage:type];
-        [self.consumeWaitingTimer invalidate]; // 注销定时器
-        self.consumeWaitingTimer = nil;
+//        [self.consumeWaitingTimer invalidate]; // 注销定时器
+//        self.consumeWaitingTimer = nil;
     }
 }
 
@@ -441,20 +441,20 @@
  * 参  数 : 无
  * 返  回 : 无
  *************************************/
-- (void) waitingForConsume {
-    [self setWaitingLabelText:[NSString stringWithFormat:@"处理中:%02d秒",timeOut]];
-    NSLog(@"定时器:[%d]", self.timeOut);
-    if (self.timeOut == 0) {
-        // 超时了
-        if (self.consumeWaitingTimer.valid) {
-            [self.consumeWaitingTimer invalidate]; // 停止计时
-            self.consumeWaitingTimer = nil;
-            // 还要终止通讯连接。。。。。
-        }
-        [self alertForFailedMessage:@"交易超时,请检查网络"];
-    }
-    self.timeOut--;
-}
+//- (void) waitingForConsume {
+//    [self setWaitingLabelText:[NSString stringWithFormat:@"处理中:%02d秒",timeOut]];
+//    NSLog(@"定时器:[%d]", self.timeOut);
+//    if (self.timeOut == 0) {
+//        // 超时了
+//        if (self.consumeWaitingTimer.valid) {
+//            [self.consumeWaitingTimer invalidate]; // 停止计时
+//            self.consumeWaitingTimer = nil;
+//            // 还要终止通讯连接。。。。。
+//        }
+//        [self alertForFailedMessage:@"交易超时,请检查网络"];
+//    }
+//    self.timeOut--;
+//}
 /*************************************
  * 功  能 : 等待刷卡的定时器任务;超时就退出当前场景;
  * 参  数 : 无
@@ -500,13 +500,13 @@
     }
     return _waitingLabel;
 }
-// 消费超时定时器
-- (NSTimer *)consumeWaitingTimer {
-    if (_consumeWaitingTimer == nil) {
-        _consumeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForConsume) userInfo:nil repeats:YES];
-    }
-    return _consumeWaitingTimer;
-}
+//// 消费超时定时器
+//- (NSTimer *)consumeWaitingTimer {
+//    if (_consumeWaitingTimer == nil) {
+//        _consumeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForConsume) userInfo:nil repeats:YES];
+//    }
+//    return _consumeWaitingTimer;
+//}
 // 刷卡超时定时器
 - (NSTimer *)swipeWaitingTimer {
     if (_swipeWaitingTimer == nil) {
