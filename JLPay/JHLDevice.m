@@ -224,7 +224,11 @@ static FieldTrackData TransData;
     if (!self.osmanager) {
         self.osmanager = [CommunicationManager sharedInstance];
     }
+    NSString *astring  =[CommunicationManager getLibVersion];
+    NSLog(@"库的版本号:::::%@",astring);
     int result = [self.osmanager openDevice];
+    
+    NSLog(@".........................openDevice = [%d]",result);
     return result;
 }
 

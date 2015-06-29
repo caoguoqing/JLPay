@@ -44,6 +44,7 @@
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
 		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
 		5E5E5FBB1B12CB3D002F421D /* AdditionalButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */; };
+		5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
 		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
@@ -123,7 +124,6 @@
 		5EBE92841ACB95BC0096BD72 /* DeviceSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE92831ACB95BC0096BD72 /* DeviceSettingViewController.m */; };
 		5EBE92861ACBE9FE0096BD72 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EBE92851ACBE9FE0096BD72 /* Default-568h@2x.png */; };
 		5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBF3C3E1AD3B5B400091F83 /* Toast+UIView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5EBF82881ADDFC3D005F7E15 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EBF82871ADDFC3D005F7E15 /* libCommunicationManager.a */; };
 		5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC14E641ADCE47700CCD764 /* BrushViewController.m */; };
 		5ECB55921AD4D44800777866 /* newisoconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5ECB55911AD4D44800777866 /* newisoconfig.plist */; };
 		5ED344291AD8C1DB0005C890 /* ProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5ED344261AD8C1DB0005C890 /* ProgressHUD.bundle */; };
@@ -226,6 +226,9 @@
 		5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoneyCalculated.m; sourceTree = "<group>"; };
 		5E5E5FB91B12CB3D002F421D /* AdditionalButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalButton.h; sourceTree = "<group>"; };
 		5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalButton.m; sourceTree = "<group>"; };
+		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
+		5E5FA5691B413E2F00387E69 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
+		5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
 		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = JLPay/JHLDevice.h; sourceTree = SOURCE_ROOT; };
@@ -365,9 +368,6 @@
 		5EBE92851ACBE9FE0096BD72 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5EBF3C3D1AD3B5B400091F83 /* Toast+UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Toast+UIView.h"; sourceTree = "<group>"; };
 		5EBF3C3E1AD3B5B400091F83 /* Toast+UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Toast+UIView.m"; sourceTree = "<group>"; };
-		5EBF82851ADDFC3D005F7E15 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
-		5EBF82861ADDFC3D005F7E15 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
-		5EBF82871ADDFC3D005F7E15 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
 		5EC14E631ADCE47700CCD764 /* BrushViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrushViewController.h; sourceTree = "<group>"; };
 		5EC14E641ADCE47700CCD764 /* BrushViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrushViewController.m; sourceTree = "<group>"; };
 		5ECB55911AD4D44800777866 /* newisoconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = newisoconfig.plist; sourceTree = "<group>"; };
@@ -396,7 +396,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EBF82881ADDFC3D005F7E15 /* libCommunicationManager.a in Frameworks */,
+				5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */,
 				5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */,
 				5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */,
 				5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */,
@@ -883,9 +883,9 @@
 			children = (
 				5E82B78E1B1BFCC200A58751 /* JHLDevice.h */,
 				5E82B78F1B1BFCC200A58751 /* JHLDevice.m */,
-				5EBF82851ADDFC3D005F7E15 /* CommunicationCallBack.h */,
-				5EBF82861ADDFC3D005F7E15 /* CommunicationManager.h */,
-				5EBF82871ADDFC3D005F7E15 /* libCommunicationManager.a */,
+				5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */,
+				5E5FA5691B413E2F00387E69 /* CommunicationManager.h */,
+				5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */,
 			);
 			path = JHL;
 			sourceTree = "<group>";
@@ -1272,9 +1272,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/JLPay/SDK",
 					"$(PROJECT_DIR)/JLPay/JHL",
-					"$(PROJECT_DIR)/JLPay/JHN",
 				);
-				OTHER_LDFLAGS = "-lstdc++";
+				OTHER_LDFLAGS = (
+					"-lstdc++",
+					"-force_load",
+					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "547975e4-d1c7-43fa-ab0a-6993b3a6135c";
 			};
@@ -1299,9 +1302,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/JLPay/SDK",
 					"$(PROJECT_DIR)/JLPay/JHL",
-					"$(PROJECT_DIR)/JLPay/JHN",
 				);
-				OTHER_LDFLAGS = "-lstdc++";
+				OTHER_LDFLAGS = (
+					"-lstdc++",
+					"-force_load",
+					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "547975e4-d1c7-43fa-ab0a-6993b3a6135c";
 			};
