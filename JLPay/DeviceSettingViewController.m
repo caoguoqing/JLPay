@@ -18,6 +18,7 @@
 #import "MLTableAlert.h"
 #import "MBProgressHUD.h"
 #import "JHNconnect.h"
+#import "IPSetViewController.h"
 
 typedef enum {
     ACTION_UNKNOWN = 0,
@@ -118,46 +119,49 @@ typedef enum {
  *************************************/
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    UITableViewCell* cell       = [tableView cellForRowAtIndexPath:indexPath];
-    if (indexPath.row > 1 ) {
-
-//         if ([self.JHNCON isConnected] ) {
-        AppDelegate* appdelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        if ([appdelegate.device isConnected]) {
-             switch (indexPath.row) {
-                 case 0:
-                     break;
-                 case 1:
-                     // 商户设置
-                     break;
-                 case 2:
-                     // 主密钥下载
-                 {
-                     // 这个提示窗口是否要自定义????
-                     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NULL message:@"是否下载密钥到手机?" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
-                     alert.delegate     = self;
-                     [alert show];
-                 }
-                     break;
-                 case 3:
-                     // 参数下载
-                     break;
-                 case 4:
-                     // IC卡公钥下载
-                     break;
-                 case 5:
-                     // EMV参数下载
-                     break;
-                 default:
-                     break;
-             }
-         } else {
-             UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-             alter.delegate      = self;
-             [alter show];
-         }
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NULL
+                                                    message:nil
+                                                   delegate:self
+                                          cancelButtonTitle:@"否"
+                                          otherButtonTitles:@"是", nil];
+    alert.delegate     = self;
+    AppDelegate* appdelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    if ([appdelegate.device isConnected]) {
+        NSLog(@"index.row = [%d]", indexPath.row);
+        switch (indexPath.row) {
+            case 0:
+            {
+                // 跳转到 IP 设置界面
+                IPSetViewController* ipViewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"settingIPAndPorts"];
+                [self.navigationController pushViewController:ipViewController animated:YES];
+                cell.selected = NO;
+                return;
+            }
+                break;
+            case 1:
+                // 主密钥下载
+                alert.message = @"是否下载主密钥?";
+                break;
+            case 2:
+                // IC卡公钥下载
+                alert.message = @"是否下载IC卡公钥?";
+                break;
+            case 3:
+                // EMV参数下载
+                alert.message = @"是否下载EMV参数?";
+                break;
+            default:
+                break;
+        } // END of switch (indexPath.row) {
+        [alert show];
+    } else { // END of if ([appdelegate.device isConnected]) {
+        UIAlertView * alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        alter.delegate      = self;
+        [alter show];
+        cell.selected = NO;
+    } // else
          
-    }
 }
 
 
@@ -169,13 +173,25 @@ typedef enum {
  *************************************/
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     // 下载主密钥
-    if ([alertView.message isEqualToString: @"是否下载密钥到手机?"]) {
+    if ([alertView.message isEqualToString: @"是否下载主密钥?"]) {
         if (buttonIndex == 1) {  // 点击了 "是"
             [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey] IP:Current_IP PORT:Current_Port Delegate:self method:@"downloadMainKey"];
         }
 
-    } else if ([alertView.message isEqualToString: @"请连接设备!"]) {
+    } else if ([alertView.message isEqualToString: @"是否下载IC卡公钥?"]) {
+        if (buttonIndex == 1) {
+            
+        }
         
+    } else if ([alertView.message isEqualToString: @"是否下载EMV参数?"]) {
+        if (buttonIndex == 1) {
+            
+        }
+    }
+    else if ([alertView.message isEqualToString: @"请连接设备!"]) {
+        // 连接设备
+        AppDelegate* appdelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        [appdelegate.device open];
     }
     // 被点击的 Cell 恢复未点击状态
     for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {

@@ -178,18 +178,18 @@
             }
                 break;
             case 3:
-                // 额度查询
-                break;
-            case 4:
-                // 修改密码
-                break;
-            case 5:
                 // 参数设置
             {
                 UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
                 [self.navigationController pushViewController:viewContr animated:YES];
             }
+                break;
+            case 4:
+                // 额度查询
+                break;
+            case 5:
+                // 修改密码
                 break;
             case 6:
                 // 意见反馈
@@ -352,18 +352,18 @@
                                @"账号名称":@"01_01",
                                @"交易管理":@"01_10",
                                @"绑定机具":@"01_14",
+                               @"参数设置":@"01_22",
                                @"额度查询":@"01_16",
                                @"修改密码":@"01_18",
-                               @"参数设置":@"01_22",
                                @"意见反馈":@"01_20",
                                @"帮助和关于":@"01_24"};
     // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
                                                 @"交易管理",
                                                 @"绑定机具",
+                                                @"参数设置",
                                                 @"额度查询",
                                                 @"修改密码",
-                                                @"参数设置",
                                                 @"意见反馈",
                                                 @"帮助和关于", nil];
 

@@ -365,7 +365,7 @@
 
                   nil];
 
-    NSLog(@"消费数据=====%@",arr);
+    NSLog(@"公钥下发请求数据=====%@",arr);
     //二进制报文数据
     NSArray *bitmapArr=[NSArray arrayWithObjects:@"41",@"42",@"60",@"62", nil];
     NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
@@ -648,10 +648,13 @@
 +(NSString *)deviceRefreshData:(NSString *)serialStr{
     NSLog(@"serialStr======%@=====%d",serialStr,[serialStr length]);
     NSArray *arr=[[NSArray alloc] initWithObjects:
-                  [PublicInformation exchangeNumber],//@"000008",//11,流水号bcd 6
-                  @"000000",//@"000000",//56,批次号bcd 6
-                  //[NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:[serialStr length]],[EncodeString encodeASC:serialStr]],//61,pos序列号 asc 不定长999
-                  [NSString stringWithFormat:@"%@%@",[NSString stringWithFormat:@"00%d",[serialStr length]],[EncodeString encodeASC:serialStr]],//61,pos序列号 asc 不定长999
+                  //11,流水号bcd 6
+                  [PublicInformation exchangeNumber],//@"000008",
+                  //56,批次号bcd 6
+                  @"000000",//@"000000",
+                  //61,pos序列号 asc 不定长999
+                  //[NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:[serialStr length]],[EncodeString encodeASC:serialStr]],
+                  [NSString stringWithFormat:@"%@%@",[NSString stringWithFormat:@"00%d",[serialStr length]],[EncodeString encodeASC:serialStr]],
                    nil];//3800006472
     NSLog(@"参数更新=====%@",arr);
     NSString *binaryDataStr=[HeaderString receiveArr:[NSArray arrayWithObjects:@"11",@"56",@"61", nil]

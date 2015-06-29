@@ -58,10 +58,11 @@
         return;
     }
     
-    [[NSUserDefaults standardUserDefaults] setObject:self.txtHost.text forKey:@"host"];
-    [[NSUserDefaults standardUserDefaults] setObject:self.txtPort.text forKey:@"port"];
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    /* 注意:::: 暂时不允许修改服务器IP和PORT */
+//    [[NSUserDefaults standardUserDefaults] setObject:self.txtHost.text forKey:@"host"];
+//    [[NSUserDefaults standardUserDefaults] setObject:self.txtPort.text forKey:@"port"];
+//    
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     
 //    PosLib_SetPostCenterParam([self.txtHost.text UTF8String], self.txtPort.text.intValue, 0);
     

@@ -34,7 +34,7 @@
         self.frame = [UIScreen mainScreen].bounds;
         [self addSubview:self.imageView];
         
-        self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.3];
+        self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.4];
 
     }
     return self;
@@ -83,8 +83,12 @@
     return _animate;
 }
 - (UIImageView *)imageView {
+    CGFloat width = self.bounds.size.width/6.0;
     if (_imageView == nil) {
-        _imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - 100)/2.0, (self.bounds.size.height - 100)/2.0, 100, 100)];
+        _imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - width)/2.0,
+                                                                   (self.bounds.size.height - width - 80)/2.0,
+                                                                   width,
+                                                                   width)];
     }
     return _imageView;
 }

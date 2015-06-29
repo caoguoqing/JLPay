@@ -8,6 +8,9 @@
 
 #import "TerminalParamSetViewController.h"
 
+/*
+ * --------- 暂时本控制器没用了
+ */
 
 static const char *PosLib_GetStr(NSString *str)
 {

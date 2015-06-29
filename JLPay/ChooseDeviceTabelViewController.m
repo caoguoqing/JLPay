@@ -12,19 +12,23 @@
 #import "Unpacking8583.h"
 #import "GroupPackage8583.h"
 #import "Toast+UIView.h"
+#import "JLActivity.h"
 
 
 @interface ChooseDeviceTabelViewController()<wallDelegate,managerToCard>
 @property (nonatomic, strong) NSArray* terminalNums;
+@property (nonatomic, strong) JLActivity* activitor;
 @end
 
 
 @implementation ChooseDeviceTabelViewController
 @synthesize terminalNums = _terminalNums;
+@synthesize activitor = _activitor;
 
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.view addSubview:self.activitor];
     self.title = @"绑定机具";
     NSString* terminalCount = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count];
     
@@ -84,6 +88,9 @@
                                                        PORT:Current_Port
                                                    Delegate:self
                                                      method:@"tcpsignin"];
+        if (![self.activitor isAnimating]) {
+            [self.activitor startAnimating];
+        }
 //        });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -101,12 +108,20 @@
     if (![str isEqualToString:@"tcpsignin"]) {
         return;
     }
+//    if ([self.activitor isAnimating]) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.activitor stopAnimating];
+//        });
+//    }
     if ([data length] > 0) {
         // 拆包
         NSLog(@"开始拆包: 签到返回");
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self.activitor isAnimating]) {
+                [self.activitor stopAnimating];
+            }
             [self alertForMessage:@"绑定失败:签到报文返回空"];
         });
     }
@@ -114,15 +129,19 @@
 // 接收数据失败
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activitor isAnimating]) {
+            [self.activitor stopAnimating];
+        }
         [self alertForMessage:@"连接设备失败:签到失败"];
     });
 }
 // 拆包结果的处理方法
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"]) return;
-    NSLog(@"state=[%hhd], message=[%@]", state, type);
     if (state) {    // 签到成功
-        NSLog(@"拆包成功");
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[app_delegate window] makeToast:@"签到成功,开始写工作密钥..."];
+        });
         // 更新批次号 returnSignSort -> Get_Sort_Number
         NSString* signSort = [PublicInformation returnSignSort];
         int intSignSort = [signSort intValue] + 1;
@@ -138,6 +157,9 @@
         [delegatte.device WriteWorkKey:57 :workStr];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self.activitor isAnimating]) {
+                [self.activitor stopAnimating];
+            }
             [self alertForMessage:@"连接设备失败:签到报文解析失败"];
         });
     }
@@ -146,6 +168,9 @@
 #pragma mask ::: 写工作密钥结果的通知处理
 - (void) workKeyWritingSuccNote: (NSNotification*)noti {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activitor isAnimating]) {
+            [self.activitor stopAnimating];
+        }
         [self alertForMessage:@"绑定设备成功"];
     });
     // 保存设备签到标志到本地;供刷卡时读取
@@ -154,6 +179,9 @@
 }
 - (void) workKeyWritingFailNote: (NSNotification*)noti {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activitor isAnimating]) {
+            [self.activitor stopAnimating];
+        }
         [self alertForMessage:@"绑定设备失败:写工作密钥失败"];
     });
 }
@@ -171,6 +199,12 @@
         _terminalNums = [[NSArray alloc] init];
     }
     return _terminalNums;
+}
+- (JLActivity *)activitor {
+    if (_activitor == nil) {
+        _activitor = [[JLActivity alloc] init];
+    }
+    return _activitor;
 }
 
 
