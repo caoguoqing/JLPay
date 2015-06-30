@@ -9,7 +9,7 @@
 #import "CustPayViewController.h"
 #import "JHNconnect.h"
 #import "Define_Header.h"
-#import "DisplayMoneyText.h"
+//#import "DisplayMoneyText.h"
 #import "Define_Header.h"
 #import "MoneyCalculated.h"
 #import "BrushViewController.h"
@@ -24,37 +24,23 @@
 @interface CustPayViewController ()<UIAlertViewDelegate>
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
-@property (nonatomic, strong) NSMutableArray    *moneyArray;                // 模拟金额栈：保存历史金额
-@property (nonatomic, strong) DisplayMoneyText* moneyStr;                   // 用来收集数字按钮点击的金额计算的类
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
 @end
 
 @implementation CustPayViewController
 @synthesize acountOfMoney               = _acountOfMoney;
 @synthesize money                       = _money;
-@synthesize moneyArray                  = _moneyArray;
-@synthesize moneyStr                    = _moneyStr;
 @synthesize moneyCalculated             = _moneyCalculated;
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _moneyArray                         = [[NSMutableArray alloc] init];
-    _moneyStr                           = [[DisplayMoneyText alloc] init];
-    _money                              = [_moneyStr money];
-
     [self addSubViews];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     self.navigationController.navigationBarHidden = YES;
-    
-    // 检测并打开设备
-//    AppDelegate* delegate           = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-//    if (![delegate.device isConnected]) {
-//    }
-//    [delegate.device  open];
     
     // 自定义返回界面的按钮样式
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
@@ -66,7 +52,6 @@
 
     [super viewWillAppear:animated];
 }
-
 
 
 
@@ -270,20 +255,7 @@
 - (IBAction) touchUp:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
-    
-//    // 先校验金额是否超限，超限直接退出
-//    if ([self moneyIsOutLimit]) {
-//        return;
-//    }
-//    
-//    // 要计算属性值：金额：money
-//    [self plusNumberIntoMoney: sender];
-//    // 更新金额
-//    self.money                          = [[self.moneyStr money] copy];
-//    // 新的金额追加到栈中
-//    if (![self.money isEqualToString:[self.moneyArray lastObject]]) {
-//        [self.moneyArray addObject:self.money];
-//    }
+    // 向金额对象压入输入的数字
     self.money = [self.moneyCalculated moneyByAddedNumber:sender.titleLabel.text];
 }
 
@@ -292,12 +264,8 @@
 - (IBAction) touchUpDelete:(DeleteButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
-    // 将栈顶金额弹出丢弃，并取新的栈顶金额
-//    self.money                          = [self pullMoneyStack];
+    // 获取撤销后的上一次输入的金额
     self.money = [self.moneyCalculated moneyByRevoked];
-    
-    // 更新金额到计算金额中
-//    [self.moneyStr setNewMoneyString:self.money];
 }
 
 /*************************************
@@ -306,9 +274,6 @@
  * 返  回 :
  *************************************/
 - (IBAction)longPressButtonOfDelete:(UILongPressGestureRecognizer*)sender {
-//    [self.moneyArray removeAllObjects];
-//    self.money                          = @"0.00";
-//    [self.moneyStr setNewMoneyString:self.money];
     while (YES) {
         self.money = [self.moneyCalculated moneyByRevoked];
         if ([self.money isEqualToString:@"0.00"]) {
@@ -358,18 +323,6 @@
 
 
 
-#pragma mark   -----保存金额数据
-/*************************************
- * 功  能 : 将确认的金额保存到本地配置文件;
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-//-(void)saveConsumerMoney {
-//    // 保存的是字符串型的金额
-//    [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-//
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-//}
 
 #pragma mark  ------跳转刷卡界面
 /*************************************
@@ -410,70 +363,9 @@
 
 
 
-/*************************************
- * 功  能 : 将金额栈的最上面的金额弹出;
- *************************************/
-- (NSString*) pullMoneyStack {
-    NSString* money;
-    if (self.moneyArray.count > 1) {
-        [self.moneyArray removeLastObject];
-    } else {
-        [self.moneyArray removeLastObject];
-        [self.moneyArray addObject:@"0.00"];
-    }
-    money                               = [[self.moneyArray lastObject] copy];
-    return  money;
-}
-
-
-
-
-
 #pragma mask ::: 自定义返回上层界面按钮的功能
 - (IBAction) backToPreVC :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-/*************************************
- * 功  能 : 将按钮的对应的数字或小数点计算到money属性中;
- * 参  数 :
- *          (UIButton*)sender         被点击的按钮
- * 返  回 : 无
- *************************************/
-- (void) plusNumberIntoMoney: (UIButton*)button {
-    // 小数点
-    if ([button.titleLabel.text isEqualToString:@"."]) {
-        [self.moneyStr setDot];
-    }
-    // 纯数字
-    else {
-        [self.moneyStr addNumber:button.titleLabel.text];
-    }
-    
-}
-
-/*************************************
- * 功  能 : 检查金额是否超限;
- * 参  数 :
- * 返  回 :
- *          - YES : 超限(>99999.99)
- *          -  NO : 未超限
- *************************************/
-- (BOOL) moneyIsOutLimit {
-    BOOL limit = NO;
-    // 整数部分必须小于等于5位
-    // 且==5时，必须有小数点标志
-    int length = [[self.moneyStr returnLeftNumbersAtDot] length];
-    if (length > 5) {               // > 5
-        limit = YES;
-    } else if (length == 5) {       // == 5
-        if (![self.moneyStr hasDot]) {
-            limit = YES;
-        } 
-    } else {                        // < 5
-    
-    }
-    return limit;
 }
 
 /*************************************
