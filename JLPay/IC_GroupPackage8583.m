@@ -533,7 +533,7 @@
                   @"0510",
                   //23,卡片序列号 bcd 3 （pos能判断时存在）
 //                  cardSN,
-                  @"000001",
+                  @"0001",
                   //25,服务点条件码 bcd 2
                   @"82",
                   //26,服务点pin获取码 bcd 2
@@ -743,6 +743,80 @@
                                              DataArr:[self IC_getNewPinAndMac:arr exchange:@"0400" bitmap:[HeaderString returnBitmap:bitmaparr] type:2]];
     NSLog(@"消费冲正=====%@",binaryDataStr);
     return binaryDataStr;
+}
+
+
+/**********************
+ * 功  能: 批上传
+ *          IC卡交易成功返回后，都要做一次批上传
+ **********************/
++(NSString *)uploadBatchTransOfICC { 
+    //55域
+    NSString *info55Data=[[NSUserDefaults standardUserDefaults] valueForKey:BlueIC55_Information];
+    //60域数据
+    NSString *betweenStr =[NSString stringWithFormat:@"001922%@000500000000", [PublicInformation returnSignSort]];
+    NSLog(@"消费60域数据=====%@",betweenStr);
+    // 23 卡序列号
+    NSString *cardSN=[NSString stringWithFormat:@"00%@",[[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23]];
+    NSLog(@"消费cardSN=====%@",cardSN);
+    
+    //14，卡有效期
+    NSString *cardTime=[[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime];
+    NSLog(@"cardTime======%@",cardTime);
+    
+    NSArray *arr=[[NSArray alloc] initWithObjects:
+                  //2,卡号
+                  [PublicInformation returnCard:[PublicInformation returnposCard]],
+                  @"190000",//3,交易处理码 bcd 6(银联协议)
+                  //4,交易金额 bcd 12
+                  [self themoney],//@"000000000001",
+                  //11,流水号 bcd 6
+                  [PublicInformation exchangeNumber],
+                  // 14 卡片有效期
+                  //                  cardTime,
+                  //22,服务点输入方式码 bcd 3(银联协议)
+                  @"0510",
+                  //23,卡片序列号 bcd 3 （pos能判断时存在）
+                  //                  cardSN,
+                  @"0001",
+                  //25,服务点条件码 bcd 2
+                  @"82",
+                  //26,服务点pin获取码 bcd 2
+                  @"12",
+                  //35,二磁道数据，asc，不定长37，(pos获取时存在)
+                  [NSString stringWithFormat:@"%d%@",
+                   [[PublicInformation returnTwoTrack] length]/2,
+                   [PublicInformation returnTwoTrack]],
+                  //41终端号asc
+                  [EncodeString encodeASC:[PublicInformation returnTerminal]],
+                  //42商户号asc
+                  [EncodeString encodeASC:[PublicInformation returnBusiness]],
+                  //49，货币代码，asc，定长3，（人民币156）
+                  [EncodeString encodeASC:@"156"],
+                  // 53
+                  @"2600000000000000",
+                  //55
+                  //                  info55Data,
+                  //                  [NSString stringWithFormat:@"%04d%@", info55Data.length/2, info55Data],
+                  [NSString stringWithFormat:@"%@%@", [PublicInformation ToBHex:(int)info55Data.length/2], info55Data],
+                  
+                  //56 bcd 签到返回的批次号批次号
+                  //                  [PublicInformation returnSignSort],
+                  //60,自定义域(60.1,60.2,60.3  交易类型码，批次号,网络管理信息码)压缩成BCD码占两个字节+最大13个字节的数字字符域
+                  betweenStr,
+                  nil];
+    NSLog(@"IC——消费====%@",arr);
+    NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"23",@"25",@"26",@"35",@"41",@"42",@"49",@"55",@"60",@"64",nil];
+    
+    //二进制报文数据
+    NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
+                                                Tpdu:TPDU
+                                              Header:HEADER
+                                        ExchangeType:@"0200"
+                                             DataArr:[self IC_getNewPinAndMac:arr exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmapArr] type:2]];
+    NSLog(@"IC——消费数据包======%@",binaryDataStr);
+    return binaryDataStr;
+
 }
 
 

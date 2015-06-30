@@ -277,7 +277,12 @@
             if ([metStr isEqualToString:@"cousume"] ||          // 消费、消费撤销要继续批上送
                 [metStr isEqualToString:@"consumeRepeal"]) {
                 // 继续发起批上送........
-                
+//                [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 ]
+//                                                             IP:Current_IP
+//                                                           PORT:Current_Port
+//                                                       Delegate:self
+//                                                         method:methodStr];
+
                 // 发送后就退出
                 return;
             }

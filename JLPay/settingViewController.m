@@ -104,6 +104,19 @@
     return tableView.rowHeight;
 }
 
+/*************************************
+ * 功  能 : UITableViewDelegate :屏蔽指定cell 的点击高亮效果
+ * 参  数 :
+ *          (NSIndexPath *)indexPath  cell的索引
+ * 返  回 :
+ *************************************/
+
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == 0) {
+        return NO;
+    }
+    return YES;
+}
 
 /*************************************
  * 功  能 : UITableViewDataSource :cellForRowAtIndexPath 协议;

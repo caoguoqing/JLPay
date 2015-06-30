@@ -114,8 +114,6 @@
 		5EBAA9121ACD3F1B00E2ABDD /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA9091ACD3F1B00E2ABDD /* SBJsonParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA90B1ACD3F1B00E2ABDD /* SBJsonStreamWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5EBAA9141ACD3F1B00E2ABDD /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA90D1ACD3F1B00E2ABDD /* SBJsonWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5EBC6A1A1AE0EBB6009A81E5 /* WaitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */; };
-		5EBE376B1ADF582C00901980 /* PasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE376A1ADF582C00901980 /* PasswordViewController.m */; };
 		5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE376E1ADF5BC700901980 /* LVKeyboardAccessoryBtn.m */; };
 		5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE37701ADF5BC700901980 /* LVKeyboardView.m */; };
 		5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE37741ADF5C2000901980 /* UIView+Extension.m */; };
@@ -135,7 +133,6 @@
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
-		5EF4C0DC1B16E08100CE3E3F /* DisplayMoneyText.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DB1B16E08100CE3E3F /* DisplayMoneyText.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 /* End PBXBuildFile section */
 
@@ -349,10 +346,6 @@
 		5EBAA90C1ACD3F1B00E2ABDD /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		5EBAA90D1ACD3F1B00E2ABDD /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
 		5EBAA90E1ACD3F1B00E2ABDD /* SBProxyForJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBProxyForJson.h; sourceTree = "<group>"; };
-		5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitViewController.h; sourceTree = "<group>"; };
-		5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaitViewController.m; sourceTree = "<group>"; };
-		5EBE37691ADF582C00901980 /* PasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordViewController.h; sourceTree = "<group>"; };
-		5EBE376A1ADF582C00901980 /* PasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasswordViewController.m; sourceTree = "<group>"; };
 		5EBE376D1ADF5BC700901980 /* LVKeyboardAccessoryBtn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LVKeyboardAccessoryBtn.h; sourceTree = "<group>"; };
 		5EBE376E1ADF5BC700901980 /* LVKeyboardAccessoryBtn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LVKeyboardAccessoryBtn.m; sourceTree = "<group>"; };
 		5EBE376F1ADF5BC700901980 /* LVKeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LVKeyboardView.h; sourceTree = "<group>"; };
@@ -385,8 +378,6 @@
 		5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatPayViewController.m; sourceTree = "<group>"; };
 		5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayViewController.h; sourceTree = "<group>"; };
 		5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlipayViewController.m; sourceTree = "<group>"; };
-		5EF4C0DA1B16E08100CE3E3F /* DisplayMoneyText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayMoneyText.h; sourceTree = "<group>"; };
-		5EF4C0DB1B16E08100CE3E3F /* DisplayMoneyText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayMoneyText.m; sourceTree = "<group>"; };
 		5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSignButton.h; sourceTree = "<group>"; };
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -437,6 +428,8 @@
 		5E0D18661B09D9240092F4AB /* 刷卡界面 */ = {
 			isa = PBXGroup;
 			children = (
+				5E82B7DC1B214B5300A58751 /* 密码输入框 */,
+				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
 				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
 				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
@@ -445,20 +438,12 @@
 				5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */,
 				5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */,
 				5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */,
-				5EF4C0DA1B16E08100CE3E3F /* DisplayMoneyText.h */,
-				5EF4C0DB1B16E08100CE3E3F /* DisplayMoneyText.m */,
 				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
 				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
 				5E0D18691B09DA710092F4AB /* OtherPayButton.h */,
 				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
-				5E82B7DC1B214B5300A58751 /* 密码输入框 */,
-				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
-				5EBE37691ADF582C00901980 /* PasswordViewController.h */,
-				5EBE376A1ADF582C00901980 /* PasswordViewController.m */,
-				5EBC6A181AE0EBB6009A81E5 /* WaitViewController.h */,
-				5EBC6A191AE0EBB6009A81E5 /* WaitViewController.m */,
 			);
 			name = "刷卡界面";
 			sourceTree = "<group>";
@@ -1058,7 +1043,6 @@
 				5EB6F9881AC8DD1C00E47AB5 /* logViewController.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
 				5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */,
-				5EBE376B1ADF582C00901980 /* PasswordViewController.m in Sources */,
 				5E397B311AD36429004F206F /* ASIDownloadCache.m in Sources */,
 				5E397B381AD36429004F206F /* ASIS3BucketRequest.m in Sources */,
 				5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */,
@@ -1102,7 +1086,6 @@
 				5ED3442A1AD8C1DB0005C890 /* ProgressHUD.m in Sources */,
 				5E397B321AD36429004F206F /* ASIFormDataRequest.m in Sources */,
 				5EBE92841ACB95BC0096BD72 /* DeviceSettingViewController.m in Sources */,
-				5EBC6A1A1AE0EBB6009A81E5 /* WaitViewController.m in Sources */,
 				5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */,
 				5E82B7EA1B2546A400A58751 /* TotalAmountCell.m in Sources */,
 				5EBAA9141ACD3F1B00E2ABDD /* SBJsonWriter.m in Sources */,
@@ -1127,7 +1110,6 @@
 				5E82B7ED1B25662B00A58751 /* TransDetailsTableViewController.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
 				5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */,
-				5EF4C0DC1B16E08100CE3E3F /* DisplayMoneyText.m in Sources */,
 				5E397B371AD36429004F206F /* ASIS3BucketObject.m in Sources */,
 				5EBAA8F71ACD389D00E2ABDD /* JsonToString.m in Sources */,
 			);
