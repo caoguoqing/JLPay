@@ -40,6 +40,8 @@
 #define TranType_ConsumeRepeal      @"TranType_ConsumeRepeal"           // 消费撤销
 /*************[交易类型]**************/
 
+/*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/
+#define CardTypeIsTrack             @"CardTypeIsTrack"                  // 值:YES(磁条)/NO(芯片)
 
 
 // 自定义键盘的高度
@@ -209,6 +211,10 @@
 #define Card_Number @"card"
 //二磁道数据
 #define Two_Track_Data @"trackdata"
+// 芯片卡数据55域数据
+#define ICCData_55      @"ICCData_55_"
+// 芯片卡序列号
+#define ICCardSeq_23    @"ICCardSeq_23_"
 
 //查询的金额
 #define SearchCard_Money @"searchmoney"

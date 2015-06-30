@@ -83,7 +83,7 @@
     return _animate;
 }
 - (UIImageView *)imageView {
-    CGFloat width = self.bounds.size.width/6.0;
+    CGFloat width = self.bounds.size.width/5.0;
     if (_imageView == nil) {
         _imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bounds.size.width - width)/2.0,
                                                                    (self.bounds.size.height - width - 80)/2.0,

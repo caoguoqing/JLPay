@@ -53,28 +53,26 @@
 typedef struct
 {
     unsigned char iTransNo;					//交易类型,指的什么交易 目前暂未使用
-    int iCardtype;				//刷卡卡类型  磁条卡 IC卡
-    int iCardmodem;				//刷卡模式
-    char TrackPAN[21];				//域2	主帐号
+    int iCardtype;                          //刷卡卡类型  磁条卡 IC卡
+    int iCardmodem;                         //刷卡模式
+    char TrackPAN[21];                      //域2	主帐号
     unsigned char CardValid[5];				//域14	卡有效期
-    char szServiceCode[4];			//服务代码
+    char szServiceCode[4];                  //服务代码
     unsigned char CardSeq[2];				//域23	卡片序列号
     unsigned char szEntryMode[3];			//域22	服务点输入方式
     int      nTrack2Len;                    //2磁道数据大小
     unsigned char szTrack2[40];				//域35	磁道2数据
-    int      nEncryTrack2Len;                   //2磁道加密数据大小
-    unsigned char szEncryTrack2[40];			//域35	磁道2加密数据	第一个字节为长度
+    int      nEncryTrack2Len;               //2磁道加密数据大小
+    unsigned char szEncryTrack2[40];		//域35	磁道2加密数据	第一个字节为长度
     int      nTrack3Len;                    //3磁道数据大小
     unsigned char szTrack3[108];			//域36	磁道3数据
-    int      nEncryTrack3Len;                    //3加密磁道数据大小
-    unsigned char szEncryTrack3[108];			//域36	磁道3加密数据
+    int      nEncryTrack3Len;               //3加密磁道数据大小
+    unsigned char szEncryTrack3[108];		//域36	磁道3加密数据
     unsigned char sPIN[13];					//域52	个人标识数据(pind ata)
     int      IccdataLen;
-    unsigned char Field55Iccdata[300];			//的55域信息512->300
+    unsigned char Field55Iccdata[300];		//的55域信息512->300
     int      YyEncrydataLen;
-    unsigned char FieldEncrydata[300];			//随机加密数据 //针对客户
-
-    
+    unsigned char FieldEncrydata[300];		//随机加密数据 //针对客户
 }FieldTrackData;
 
 

@@ -7,20 +7,20 @@
 //
 
 #import "BrushViewController.h"
-#import "CommunicationCallBack.h"
 #import "CommunicationManager.h"
 #import "Toast+UIView.h"
 #import "ProgressHUD/ProgressHUD.h"
 #import "AppDelegate.h"
-#import "PasswordViewController.h"
+//#import "PasswordViewController.h"
 #import "Define_Header.h"
 #import "CustomIOSAlertView.h"
 #import "CustPayViewController.h"
-#import "WaitViewController.h"
+//#import "WaitViewController.h"
 #import "TcpClientService.h"
 #import "Unpacking8583.h"
 #import "QianPiViewController.h"
 #import "GroupPackage8583.h"
+#import "IC_GroupPackage8583.h"
 
 
 
@@ -43,7 +43,7 @@
 *************************************/
 
 
-#define TIMEOUT 20              // 超时时间
+#define TIMEOUT 20                      // 超时时间
  
  
 @implementation BrushViewController
@@ -75,7 +75,7 @@
     // 注册刷卡失败的通知处理
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeFail:) name:Noti_CardSwiped_Fail object:nil];
     
-    // 注册刷磁消费的通知处理
+    // 注册刷卡消费的通知处理
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
     
@@ -121,13 +121,9 @@
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     // 移除定时器
-//    if (self.consumeWaitingTimer.valid) {
-//        [self.consumeWaitingTimer invalidate];
-//    }
     if (self.swipeWaitingTimer.valid) {
         [self.swipeWaitingTimer invalidate];
     }
-//    self.consumeWaitingTimer = nil;
     self.swipeWaitingTimer = nil;
 }
 
@@ -189,7 +185,7 @@
         long money = [self themoney] ;
         AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 这里的密码 password 用 alertView.password
-        [delegate_.device TRANS_Sale:20000
+        [delegate_.device TRANS_Sale:20000 // 20s
                              nAmount:money
                         nPasswordlen:(int)self.passwordAlertView.password.length
                             bPassKey:self.passwordAlertView.password];
@@ -218,8 +214,17 @@
     // 只有打包格式、交易名称需要定制
     NSString* orderMethod;
     NSString* methodStr;
+    
+    // -- 注意::::::要区分IC卡和磁条卡交易
     if ([self.stringOfTranType isEqualToString:TranType_Consume]) {                 // 消费
-        orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];    // 密文密码
+        // 磁条
+        if ([PublicInformation returnCardType_Track]) {
+            orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
+        }
+        // 芯片
+        else {
+            orderMethod = [IC_GroupPackage8583 blue_consumer_IC:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
+        }
         methodStr = @"cousume";
     } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
         orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
@@ -259,41 +264,40 @@
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
-//        [self.consumeWaitingTimer invalidate]; // 注销定时器
-//        self.consumeWaitingTimer = nil;
     }
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
-//        [self.consumeWaitingTimer invalidate]; // 注销定时器
-//        self.consumeWaitingTimer = nil;
 }
 
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (state) {
-        // 可以不校验交易名称,因为后续流程都一样
-//        if ([metStr isEqualToString:@"cousume"]) {
-//            if (self.consumeWaitingTimer.valid) {
-//                [self.consumeWaitingTimer invalidate]; // 注销定时器
-//                self.consumeWaitingTimer = nil;
-//            }
-            if ([self.activity isAnimating]) {
-                [self.activity stopAnimating];
+        // 需要判断是否芯片交易
+        if (![PublicInformation returnCardType_Track]) {     // 芯片卡交易
+            if ([metStr isEqualToString:@"cousume"] ||          // 消费、消费撤销要继续批上送
+                [metStr isEqualToString:@"consumeRepeal"]) {
+                // 继续发起批上送........
+                
+                // 发送后就退出
+                return;
             }
-            QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
-            [qianpi qianpiType:1];
-            [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
-            [qianpi leftTitle:[PublicInformation returnMoney]];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.navigationController pushViewController:qianpi animated:YES];
-            });
-//        }
+            // 如果是披上送交易，也可以跳转到签名界面了
+        }
+        // 交易成功，跳转到签名界面
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+        QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
+        [qianpi qianpiType:1];
+        [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
+        [qianpi leftTitle:[PublicInformation returnMoney]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.navigationController pushViewController:qianpi animated:YES];
+        });
     } else {
         [self alertForFailedMessage:type];
-//        [self.consumeWaitingTimer invalidate]; // 注销定时器
-//        self.consumeWaitingTimer = nil;
     }
 }
 

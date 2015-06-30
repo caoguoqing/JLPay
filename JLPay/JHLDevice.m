@@ -84,7 +84,7 @@ static FieldTrackData TransData;
     return SUCESS;
 }
 
-#pragma mask : 刷磁消费
+#pragma mask : 读取卡片信息：卡号、磁道信息、芯片信息
 -(int)TRANS_Sale:(long)timeout :(long)nAmount :(int)nPasswordlen :(NSString*)bPassKey
 {
     int nPasLen=0;
@@ -181,7 +181,7 @@ static FieldTrackData TransData;
                 [self cardDataUserDefult];
                 // 从缓存中读取密码密文
                 NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Success object:nil];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
+                [[NSNotificationCenter defaultCenter] postNotification:notification];   // test for reading card data,not trans
             }
             else
             {
@@ -417,6 +417,7 @@ static FieldTrackData TransData;
     nIndex +=2;
     memcpy(&TransData.Field55Iccdata, ByteData+nIndex, TransData.IccdataLen);
     nIndex+= TransData.IccdataLen;
+
     
     //PINBLOCK
     nIndexlen=ByteData[nIndex];
@@ -441,14 +442,19 @@ static FieldTrackData TransData;
     }
     if(nIndexlen >0)
     {
+        // 卡号
         strncpy(TransData.TrackPAN,(char *)szTrack2, nIndexlen);
-        strncpy((char *)TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
-        strncpy(TransData.szServiceCode, (char *)szTrack2+nIndexlen + 5, 3);	//服务代码
+        // 卡有效期
+        strncpy(TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
+        //服务代码
+        strncpy(TransData.szServiceCode, (char *)szTrack2+nIndexlen + 5, 3);
         if((TransData.szServiceCode[0] == '2') ||(TransData.szServiceCode[0] == '6'))
             TransData.iCardtype =1;
         else
             TransData.iCardtype =0;
     }
+    // 打印读到得数据
+    [self logTransData];
     
     return  SUCESS;
 }
@@ -456,24 +462,52 @@ static FieldTrackData TransData;
 #pragma mask : 将读卡数据的需要的部分值取出，并保存到本地配置
 - (void) cardDataUserDefult {
     Byte dataStr[512] = {0x00};
+    
+    // 卡片有效期 Card_DeadLineTime
+    memset(dataStr, 0, 512);
+//    [self BcdToAsc:dataStr :TransData.CardValid :(int)strlen((char*)TransData.CardValid)];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
+    
     // 2磁道加密数据
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
+    NSLog(@"2磁数据:[%s]", dataStr);
+//    if (TransData.IccdataLen > 0) {
+//        // 芯片卡的 2磁加密信息
+//        NSString* str = [self hexICCDataWithString:[NSString stringWithFormat:@"%s", dataStr]
+//                            length:strlen((char*)dataStr)];
+//        memcpy(dataStr, str.UTF8String, [str length]);
+//
+//    }
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     
-    // PINBLOCK
+    // PINBLOCK -- 密文密码
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Sign_in_PinKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 
+    // 芯片数据55域信息
+    if (TransData.IccdataLen > 0) {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];  // 设置读卡方式:芯片
+        memset(dataStr, 0, 512);
+        [self BcdToAsc:dataStr :TransData.Field55Iccdata :TransData.IccdataLen];
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:BlueIC55_Information];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];  // 设置读卡方式:磁条
+    }
+    
+    // 芯片序列号23域值
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.CardSeq :(int)strlen((char*)TransData.CardSeq)];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
+    
     // 卡号
     memset(dataStr, 0, 512);
     NSString *strData ;
     strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@*****%@",[strData substringWithRange:NSMakeRange(0, [strData length]-9)],[strData substringWithRange:NSMakeRange([strData length]-4, 4)]] forKey:GetCurrentCard_NotAll];
     [[NSUserDefaults  standardUserDefaults]setObject:strData forKey:Card_Number];
+    
     [[NSUserDefaults standardUserDefaults]synchronize];
 }
 
@@ -506,6 +540,71 @@ static FieldTrackData TransData;
     }
     return self;
 }
+
+
+// 打印读到的芯片卡得数据
+- (void) logTransData {
+    NSMutableString* logStr = [[NSMutableString alloc] initWithString:@"\n----\nTransData:[\n"];
+    /*
+     unsigned char iTransNo;         //交易类型,指的什么交易 目前暂未使用
+     int iCardtype;                          //刷卡卡类型  磁条卡 IC卡
+     int iCardmodem;                         //刷卡模式
+     char TrackPAN[21];                      //域2  主帐号
+     unsigned char CardValid[5];       //域14 卡有效期
+     char szServiceCode[4];                  //服务代码
+     unsigned char CardSeq[2];       //域23 卡片序列号
+     unsigned char szEntryMode[3];     //域22 服务点输入方式
+     unsigned char szTrack2[40];       //域35 磁道2数据
+     unsigned char szEncryTrack2[40];    //域35 磁道2加密数据 第一个字节为长度
+     unsigned char szTrack3[108];      //域36 磁道3数据
+     unsigned char szEncryTrack3[108];   //域36 磁道3加密数据
+     unsigned char sPIN[13];         //域52 个人标识数据(pind ata)
+     unsigned char Field55Iccdata[300];    //的55域信息512->300
+     unsigned char FieldEncrydata[300];    //随机加密数据 //针对客户
+     */
+    [logStr appendString:[NSString stringWithFormat:@"iTransNo = [%c]\n", TransData.iTransNo]];
+    [logStr appendString:[NSString stringWithFormat:@"iCardtype = [%d]\n", TransData.iCardtype]];
+    [logStr appendString:[NSString stringWithFormat:@"iCardmodem = [%d]\n", TransData.iCardmodem]];
+    [logStr appendString:[NSString stringWithFormat:@"TrackPAN = [%s]\n", TransData.TrackPAN]];
+    [logStr appendString:[NSString stringWithFormat:@"CardValid = [%s]\n", TransData.CardValid]];
+    [logStr appendString:[NSString stringWithFormat:@"szServiceCode = [%s]\n", TransData.szServiceCode]];
+    [logStr appendString:[NSString stringWithFormat:@"CardSeq = [%s]\n", TransData.CardSeq]];
+    [logStr appendString:[NSString stringWithFormat:@"szEntryMode = [%s]\n", TransData.szEntryMode]];
+    [logStr appendString:[NSString stringWithFormat:@"szTrack2 = [%s]\n", TransData.szTrack2]];
+    [logStr appendString:[NSString stringWithFormat:@"szEncryTrack2 = [%s]\n", TransData.szEncryTrack2]];
+    [logStr appendString:[NSString stringWithFormat:@"szTrack3 = [%s]\n", TransData.szTrack3]];
+    [logStr appendString:[NSString stringWithFormat:@"szEncryTrack3 = [%s]\n", TransData.szEncryTrack3]];
+    [logStr appendString:[NSString stringWithFormat:@"sPIN = [%s]\n", TransData.sPIN]];
+    [logStr appendString:[NSString stringWithFormat:@"Field55Iccdata = [%s]\n", TransData.Field55Iccdata]];
+    [logStr appendString:[NSString stringWithFormat:@"FieldEncrydata = [%s]\n", TransData.FieldEncrydata]];
+    [logStr appendString:[NSString stringWithFormat:@"iccDataLen = [%d]\n", TransData.IccdataLen]];
+
+    
+    [logStr appendString:@"]----\n"];
+    NSLog(@"%@",logStr);
+    
+}
+
+// 将bcd码的2磁字符串转换为十六进制的字符串
+//- (NSString*) hexICCDataWithString:(NSString*)string length:(int)strLength {
+//    char* hexString = (char*)malloc(strLength + 1);
+//    memset(hexString, 0x00, strLength + 1);
+//    char* source = hexString;
+////    NSMutableString* hexICCDataString = [[NSMutableString alloc] init];
+//    for (int i = 0; i < strLength; i += 2) {
+//        NSString* subString = [string substringWithRange:NSMakeRange(i, 2)];
+//        char ch = [subString intValue];
+//        *source = ch;
+//        source ++;
+////        if (ch < 'A' && ch < 'a') {
+////        
+////        } 
+////        [hexICCDataString appendString:[PublicInformation ToBHex:[subString intValue]]];
+//    }
+//    NSString* hexNSString = [NSString stringWithFormat:@"%s", hexString];
+//    free(hexString);
+//    return hexNSString;
+//}
 
 
 @end

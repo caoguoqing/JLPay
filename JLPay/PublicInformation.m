@@ -837,5 +837,11 @@
     return businessNumber;
 }
 
+// 读卡的方式 : YES(磁条) NO(芯片)
++(BOOL) returnCardType_Track {
+    BOOL trackOrIC = [[NSUserDefaults standardUserDefaults] boolForKey:CardTypeIsTrack];
+    return trackOrIC;
+}
+
 
 @end

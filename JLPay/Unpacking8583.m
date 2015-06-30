@@ -1090,6 +1090,11 @@ static Unpacking8583 *sharedObj2 = nil;
                     [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Consumer_Get_Sort];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
+                // 保存返回的 55 数据域
+                if ([[sortArr objectAtIndex:c] isEqualToString:@"55"]) {
+                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:BlueIC55_Information];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
                 // ExchangeMoney_Type 交易类型 中文
                 [[NSUserDefaults standardUserDefaults] setValue:@"消费" forKey:ExchangeMoney_Type];
                 [[NSUserDefaults standardUserDefaults] synchronize];

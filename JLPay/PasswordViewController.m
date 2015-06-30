@@ -88,13 +88,13 @@
 - (void) toCust: (NSNotification*)notification {
     // 密码
     AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [delegate_.window makeToast:@"刷磁成功,交易处理中..."];
-    
-     NSString *liushui=[PublicInformation exchangeNumber];
-     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
-     [[NSUserDefaults standardUserDefaults] synchronize];
+    [delegate_.window makeToast:@"刷卡成功,交易处理中..."];
+    // 流水号
+    NSString *liushui=[PublicInformation exchangeNumber];
+    [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
+    [[NSUserDefaults standardUserDefaults] synchronize];
      
-     WaitViewController *viewcon = [[WaitViewController alloc]init];
+    WaitViewController *viewcon = [[WaitViewController alloc]init];
     viewcon.pinstr  = [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.navigationController pushViewController:viewcon animated:YES];

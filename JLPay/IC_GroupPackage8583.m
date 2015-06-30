@@ -509,13 +509,10 @@
     //55域
     NSString *info55Data=[[NSUserDefaults standardUserDefaults] valueForKey:BlueIC55_Information];
     //60域数据
-    NSString *betweenStr;
-    NSString *ascStr=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"22"],[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:@"000501"]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    NSString *betweenStr =[NSString stringWithFormat:@"001922%@000500000000", [PublicInformation returnSignSort]];
     NSLog(@"消费60域数据=====%@",betweenStr);
-    //2卡号
-    //卡序列号
-    NSString *cardSN=[NSString stringWithFormat:@"00%@",[[NSUserDefaults standardUserDefaults] valueForKey:@"masterSNN"]];
+    // 23 卡序列号
+    NSString *cardSN=[NSString stringWithFormat:@"00%@",[[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23]];
     NSLog(@"消费cardSN=====%@",cardSN);
     
     //14，卡有效期
@@ -523,26 +520,50 @@
     NSLog(@"cardTime======%@",cardTime);
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
-                  [PublicInformation returnCard:[PublicInformation returnposCard]],//2,卡号
-                  @"000000",//3,交易处理码 bcd 6(银联协议)
-                  [self themoney],//@"000000000001",//4,交易金额 bcd 12
-                  [PublicInformation exchangeNumber],//11,流水号 bcd 6
-                  cardTime,
-                  @"0510",//22,服务点输入方式码 bcd 3(银联协议)
-                  cardSN,//23,卡片序列号 bcd 3 （pos能判断时存在）
-                  @"00",//25,服务点条件码 bcd 2
-                  @"12",//26,服务点pin获取码 bcd 2
-                  [NSString stringWithFormat:@"%d%@",[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,[EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35,二磁道数据，asc，不定长37，(pos获取时存在)
-                  [EncodeString encodeASC:[PublicInformation returnTerminal]],//41终端号asc
-                  [EncodeString encodeASC:[PublicInformation returnBusiness]],//42商户号asc
-                  [EncodeString encodeASC:@"156"],//49，货币代码，asc，定长3，（人民币156）
-                  pin,//52，个人识别码，PIN，定长8，
-                  info55Data,//55
-                  [PublicInformation returnSignSort],//56 bcd 签到返回的批次号批次号
-                  betweenStr,//betweenStr,//60,自定义域(60.1,60.2,60.3  交易类型码，批次号,网络管理信息码)压缩成BCD码占两个字节+最大13个字节的数字字符域
+                  //2,卡号
+                  [PublicInformation returnCard:[PublicInformation returnposCard]],
+                  @"190000",//3,交易处理码 bcd 6(银联协议)
+                  //4,交易金额 bcd 12
+                  [self themoney],//@"000000000001",
+                  //11,流水号 bcd 6
+                  [PublicInformation exchangeNumber],
+                  // 14 卡片有效期
+//                  cardTime,
+                  //22,服务点输入方式码 bcd 3(银联协议)
+                  @"0510",
+                  //23,卡片序列号 bcd 3 （pos能判断时存在）
+//                  cardSN,
+                  @"000001",
+                  //25,服务点条件码 bcd 2
+                  @"82",
+                  //26,服务点pin获取码 bcd 2
+                  @"12",
+                  //35,二磁道数据，asc，不定长37，(pos获取时存在)
+                  [NSString stringWithFormat:@"%d%@",
+                                    [[PublicInformation returnTwoTrack] length]/2,
+                                    [PublicInformation returnTwoTrack]],
+                  //41终端号asc
+                  [EncodeString encodeASC:[PublicInformation returnTerminal]],
+                  //42商户号asc
+                  [EncodeString encodeASC:[PublicInformation returnBusiness]],
+                  //49，货币代码，asc，定长3，（人民币156）
+                  [EncodeString encodeASC:@"156"],
+                  //52，个人识别码，PIN，定长8，
+                  pin,
+                  // 53
+                  @"2600000000000000",
+                  //55
+//                  info55Data,
+//                  [NSString stringWithFormat:@"%04d%@", info55Data.length/2, info55Data],
+                  [NSString stringWithFormat:@"%@%@", [PublicInformation ToBHex:(int)info55Data.length/2], info55Data],
+
+                  //56 bcd 签到返回的批次号批次号
+//                  [PublicInformation returnSignSort],
+                  //60,自定义域(60.1,60.2,60.3  交易类型码，批次号,网络管理信息码)压缩成BCD码占两个字节+最大13个字节的数字字符域
+                  betweenStr,
                   nil];
     NSLog(@"IC——消费====%@",arr);
-    NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"14",@"22",@"23",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"55",@"56",@"60",@"64",nil];
+    NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11"/*,@"14"*/,@"22",@"23",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"55"/*,@"56"*/,@"60",@"64",nil];
     
     //二进制报文数据
     NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
@@ -636,7 +657,11 @@
     NSLog(@"61域数据=====%@",betweenStr);
     
     //卡序列号
-    NSString *cardSN=[NSString stringWithFormat:@"00%@",[[NSUserDefaults standardUserDefaults] valueForKey:@"masterSNN"]];
+    NSString* snn = [[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23];
+    if (snn == nil || [snn intValue] == 0) {
+        snn = @"01";
+    }
+    NSString *cardSN=[NSString stringWithFormat:@"00%@",snn];
     
     //当前消费之后搜索参考号是否存在
     NSArray *arr;
@@ -653,7 +678,11 @@
          @"00",//25,服务点条件码 bcd 2
          //@"12",//26,服务点pin获取码 bcd 2
          //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
-         [NSString stringWithFormat:@"%d%@",[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,[EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
+         [NSString stringWithFormat:@"%d%@",
+                        [[PublicInformation returnTwoTrack] length]/2,
+                        [PublicInformation returnTwoTrack]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
+//                                [[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
+//                                [EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
          //@"",//36，三磁道数据，asc，不定长104，(pos获取时存在)
          [PublicInformation returnConsumerSort],//37,搜索参考号
          @"",//38,授权标示应答码

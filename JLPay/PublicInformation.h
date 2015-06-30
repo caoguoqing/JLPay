@@ -120,5 +120,7 @@
 // 获取当前交易的交易类型
 +(NSString *)returnTranType;
 
+// 读卡的方式 : YES(磁条) NO(芯片)
++(BOOL) returnCardType_Track;
 
 @end
