@@ -59,6 +59,8 @@
 +(NSString *)returnBusiness;
 +(NSString *)returnBusinessName;
 
+// 返回IC卡序列号
++(NSString *)returnICCardSeqNo;
 
 //签到保存mackey，pinkey
 +(NSString *)signinPin;

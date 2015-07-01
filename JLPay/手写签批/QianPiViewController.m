@@ -251,9 +251,11 @@ static NSMutableArray *colors;
 #pragma mark ----------------屏幕截图
 //获取当前屏幕内容
 - (UIImage *)getNormalImage:(UIView *)view{
-    float width = [UIScreen mainScreen].bounds.size.width;
-    float height = [UIScreen mainScreen].bounds.size.height;
-    UIGraphicsBeginImageContextWithOptions((CGSizeMake(height, width)), NO, 1.0);
+//    float width = [UIScreen mainScreen].bounds.size.width;
+//    float height = [UIScreen mainScreen].bounds.size.height;
+    float width = view.frame.size.width;
+    float height = view.frame.size.height;
+    UIGraphicsBeginImageContextWithOptions((CGSizeMake(width, height)), NO, 1.0);
     //UIGraphicsBeginImageContext(CGSizeMake(width, height));
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];

@@ -108,14 +108,22 @@
 //交易输入的金额
 #define Consumer_Money @"money"
 
+
+/*************[保存的 原交易信息]**************/
 //消费成功的金额,方便撤销支付
 #define SuccessConsumerMoney @"successmoney"
 
 //原交易流水号,消费交易的流水号
 #define Last_Exchange_Number @"lastnumber"
 
-//原交易批次号
-//#define Last_Exchange_Sort @"lastsort"
+//3,交易处理码                 -- 跟上一笔交易保持一致  Processing Code
+#define  LastF03_ProcessingCode     @"LastProcessingCode_F03__"
+//11,流水号 bcd 6           -- 跟上一笔交易保持一致    System Trace
+#define  LastF11_SystemTrace        @"LastSystemTrace_F11__"
+//22,服务点输入方式码         -- 跟上一笔交易保持一致    Service Entry Code
+#define  LastF22_ServiceEntryCode   @"LastServiceEntryCode_F22__"
+//60,                         -- 跟上一笔交易保持一致   Reserved Private
+#define  LastF60_Reserved           @"LastReserved_F60__"
 
 
 

@@ -16,13 +16,13 @@
 @end
 
 
-
 @implementation DeviceManager
 
 @synthesize device                  = _device;
 @synthesize manuefacturer           = _manuefacturer;
 
 
+static long timeOut = 60*1000;
 
 #pragma mask --------------------------[Public Interface]--------------------------
 
@@ -76,7 +76,7 @@
     int result;
     switch (self.manuefacturer) {
         case 0:     // 锦宏霖设备
-            result = [self.device cardSwipeInTime:60000 mount:0 mode:0];
+            result = [self.device cardSwipeInTime:timeOut mount:0 mode:0];
             break;
             
         default:

@@ -36,7 +36,7 @@
 
 
 static TcpClientService *sharedObj = nil;
-static int readTimeOut = 20;
+static int readTimeOut = 60;    // 超时时间统一60s
 
 @implementation TcpClientService
 
@@ -131,7 +131,9 @@ static int readTimeOut = 20;
     self.tcpMethodStr=methodStr;
     self.delegate=selfdelegate;
     self.orderInfoStr=order;
-    [asyncSocket disconnect];
+    if (asyncSocket != nil && [asyncSocket isConnected]) {
+        [asyncSocket disconnect];
+    }
     asyncSocket = [[AsyncSocket alloc] initWithDelegate:self];
     NSError *err = nil;
     
@@ -139,6 +141,31 @@ static int readTimeOut = 20;
         NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         [asyncSocket connectToHost:ip onPort:port error:&err];
         
+    }
+}
+
+// 发送方法2:不等待返回
+-(void)sendWithoutWaitingOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr{
+    //[SVProgressHUD showWithStatus:@"加载中..."];
+    NSLog(@"ip=====%@,port========%d",ip,port);
+    self.tcpMethodStr=methodStr;
+    self.delegate=selfdelegate;
+    self.orderInfoStr=order;
+    if (asyncSocket != nil && [asyncSocket isConnected]) {
+        [asyncSocket disconnect];
+    }
+    asyncSocket = [[AsyncSocket alloc] initWithDelegate:self];
+    NSError *err = nil;
+    
+    if ([[ip componentsSeparatedByString:@","] count] > 0) {
+        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
+        if ([asyncSocket connectToHost:ip onPort:port error:&err]) {
+            // 发送成功后就关闭连接
+            [asyncSocket setDelegate:nil];
+            [asyncSocket disconnect];
+            [asyncSocket release];
+            asyncSocket = nil;
+        }
     }
 }
 

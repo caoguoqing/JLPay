@@ -603,7 +603,6 @@
     NSString *binaryDataStr=[HeaderString receiveArr:bitmaparr
                                                 Tpdu:TPDU
                                               Header:HEADER
-//                                        ExchangeType:@"0220"
                                         ExchangeType:@"0200"
                                              DataArr:[self getNewPinAndMac:arr exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmaparr]]];
     NSLog(@"消费撤销=====%@",binaryDataStr);

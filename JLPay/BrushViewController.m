@@ -41,7 +41,7 @@
 *************************************/
 
 
-#define TIMEOUT 20                      // 超时时间
+#define TIMEOUT 60                      // 超时时间:统一60s
  
  
 @implementation BrushViewController
@@ -183,7 +183,8 @@
         long money = [self themoney] ;
         AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 这里的密码 password 用 alertView.password
-        [delegate_.device TRANS_Sale:20000 // 20s
+        long timeout = self.timeOut * 1000;
+        [delegate_.device TRANS_Sale:timeout // 60s
                              nAmount:money
                         nPasswordlen:(int)self.passwordAlertView.password.length
                             bPassKey:self.passwordAlertView.password];
@@ -242,7 +243,6 @@
     
     // 启动超时定时器 -- 主线程
     self.timeOut = TIMEOUT;
-//    [[NSRunLoop mainRunLoop] addTimer:self.consumeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
 }
 
 #pragma mask ::: 跳转回金额输入界面
@@ -258,7 +258,10 @@
             NSLog(@"消费响应数据:[%@]", data);
         } else if ([str isEqualToString:@"consumeRepeal"]) {
             NSLog(@"消费撤销响应数据:[%@]", data);
+        } else if ([str isEqualToString:@"batchUpload"]) {
+            NSLog(@"披上送响应数据:[%@]",data);
         }
+        // 拆包
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
@@ -266,7 +269,11 @@
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
-        [self alertForFailedMessage:@"网络异常，请检查网络"];
+    // 批上送交易失败不做任何操作
+//    if ([str isEqualToString:@"batchUpload"]) {
+//        return;
+//    }
+    [self alertForFailedMessage:@"网络异常，请检查网络"];
 }
 
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
@@ -277,15 +284,18 @@
             if ([metStr isEqualToString:@"cousume"] ||          // 消费、消费撤销要继续批上送
                 [metStr isEqualToString:@"consumeRepeal"]) {
                 // 继续发起批上送........
-//                [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 ]
-//                                                             IP:Current_IP
-//                                                           PORT:Current_Port
-//                                                       Delegate:self
-//                                                         method:methodStr];
+//                [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC]
+                 [[TcpClientService getInstance] sendWithoutWaitingOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC]
+                                                             IP:Current_IP
+                                                           PORT:Current_Port
+                                                       Delegate:self
+                                                         method:@"batchUpload"];
 
-                // 发送后就退出
-                return;
             }
+//            else if ([metStr isEqualToString:@"batchUpload"]) {
+//                // 如果是披上送，直接退出;因为发送后就直接切换到签名界面了
+//                return;
+//            }
             // 如果是披上送交易，也可以跳转到签名界面了
         }
         // 交易成功，跳转到签名界面

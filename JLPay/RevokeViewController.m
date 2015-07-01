@@ -43,7 +43,13 @@
 
 #pragma mask ::: 多少行
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.detailNameIndex allKeys].count + 2;
+    NSString* trantype = [self.dataDic objectForKey:@"txnNum"];
+    if (![trantype isEqualToString:@"消费"]) {
+        return [self.detailNameIndex allKeys].count - 1 + 2;
+    } else {
+        return [self.detailNameIndex allKeys].count + 2;
+    }
+    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -55,6 +61,7 @@
 
 #pragma mask ::: cell 的重用及加载
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSInteger rowsCount = [tableView numberOfRowsInSection:indexPath.section];
     UITableViewCell* cell;
     CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
     if (indexPath.row == 0) {
@@ -62,7 +69,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"titleCell"];
         cell.frame = frame;
         [self loadTitleCell:cell];
-    } else if (indexPath.row == [tableView numberOfRowsInSection:0] - 1) {
+    } else if ((rowsCount == [self.detailNameIndex allKeys].count + 2) && (indexPath.row == [tableView numberOfRowsInSection:0] - 1)) {
         // 撤销单元格
         cell = [tableView dequeueReusableCellWithIdentifier:@"revokeCell"];
         cell.frame = frame;
@@ -91,6 +98,12 @@
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {    // 撤销单元格
         cell.selected = NO;
+        // 先检查设备是否绑定
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未绑定设备，请先绑定设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+            [alert show];
+            return;
+        }
         
         // 撤销代码 -- 发起撤销前，要弹窗提示商户是否确定要撤销
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"是否发起撤销?" message:nil delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
@@ -116,7 +129,6 @@
         // 切换到刷卡界面
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-        // 保存原消费签到批次号;用于撤销报文的61.1域 Last_FldReserved_Number   Last_FldReserved_Number
         [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
         // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
         [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number]; //retrivlRef sysSeqNum

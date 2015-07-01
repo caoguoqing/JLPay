@@ -465,20 +465,12 @@ static FieldTrackData TransData;
     
     // 卡片有效期 Card_DeadLineTime
     memset(dataStr, 0, 512);
-//    [self BcdToAsc:dataStr :TransData.CardValid :(int)strlen((char*)TransData.CardValid)];
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
     
     // 2磁道加密数据
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
     NSLog(@"2磁数据:[%s]", dataStr);
-//    if (TransData.IccdataLen > 0) {
-//        // 芯片卡的 2磁加密信息
-//        NSString* str = [self hexICCDataWithString:[NSString stringWithFormat:@"%s", dataStr]
-//                            length:strlen((char*)dataStr)];
-//        memcpy(dataStr, str.UTF8String, [str length]);
-//
-//    }
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
     
     // PINBLOCK -- 密文密码
@@ -498,7 +490,14 @@ static FieldTrackData TransData;
     
     // 芯片序列号23域值
     memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.CardSeq :(int)strlen((char*)TransData.CardSeq)];
+//    [self BcdToAsc:dataStr :TransData.CardSeq :(int)strlen((char*)TransData.CardSeq)];
+    NSLog(@"获取到得IC卡序列号为:[%s]", dataStr);
+    if (*dataStr == 0) {
+//        strcpy((char*)dataStr, "01");
+    }
+    NSLog(@"获取到得IC卡序列号为:[%s]", dataStr);
+    strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
+
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
     
     // 卡号

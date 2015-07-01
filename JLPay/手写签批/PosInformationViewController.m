@@ -322,7 +322,8 @@
     [scrollVi addSubview:signLab];
     
     
-    UIImageView *signImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 440+isHeight, Screen_Width-30, 150)];
+    UIImageView *signImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 440+isHeight, 150, 150)];
+//    UIImageView *signImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 440+isHeight, Screen_Width-30, 150)];
     signImg.image=posImg;
     [scrollVi addSubview:signImg];
     

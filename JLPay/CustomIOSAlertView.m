@@ -19,7 +19,8 @@ const static CGFloat kCustomIOSAlertViewDefaultButtonHeight       = 40;     // �
 const static CGFloat kCustomIOSAlertViewDefaultButtonSpacerHeight = 1;      // 分割线高度
 const static CGFloat kCustomIOSAlertViewCornerRadius              = 7;      // 圆角半径
 const static CGFloat kCustomIOS7MotionEffectExtent                = 10.0;   //
-const static CGFloat kCustomIOSContentViewHorizontalInset         = 7.0;    // 内嵌视图跟 alertView 水平边界间隔值
+const static CGFloat kCustomIOSContentViewHorizontalInset         = 24.0;    // 内嵌视图跟 alertView 水平边界间隔值
+const static CGFloat kCustomIOSContentViewInset                   = 10.0;    // 内嵌视图跟 alertView 水平边界间隔值
 
 
 @interface CustomIOSAlertView()<LVKeyboardDelegate>
@@ -221,9 +222,15 @@ CGFloat buttonSpacerHeight = 0;
 - (UIView *)createContainerView
 {
     CGSize screenSize = [self countScreenSize];     // 屏幕 size
+    // For the black background
+    [self setFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
+    
     if (containerView == NULL) {
-//        self.passwordFieldView.frame = CGRectMake(kCustomIOSContentViewHorizontalInset, 0, [[UIScreen mainScreen] bounds].size.width - 20*2, 90);
-        self.passwordFieldView.frame = CGRectMake(kCustomIOSContentViewHorizontalInset, 0, screenSize.width - 20*2, screenSize.height/6.0);
+        // 先设置密码输入框 textField 的frame
+        self.passwordFieldView.frame = CGRectMake(kCustomIOSContentViewInset,
+                                                  0,
+                                                  screenSize.width - kCustomIOSContentViewInset*2 - kCustomIOSContentViewHorizontalInset*2,
+                                                  screenSize.height/6.0);
 
         [self setSubView:self.passwordFieldView];
     }
@@ -231,10 +238,9 @@ CGFloat buttonSpacerHeight = 0;
     CGSize dialogSize = [self countDialogSize];     // alertView 的size
     NSLog(@"\n----------- \n screenSize=[%f,%f]\n dialogSize=[%f,%f] \n------------", screenSize.width, screenSize.height, dialogSize.width,dialogSize.height);
     
-    // For the black background
-    [self setFrame:CGRectMake(0, 0, screenSize.width, screenSize.height)];
 
     // This is the dialog's container; we attach the custom content and the buttons to this one
+    // 初始化弹窗视图:用frame
     UIView *dialogContainer = [[UIView alloc] initWithFrame:CGRectMake((screenSize.width - dialogSize.width) / 2.0,
                                                                        // 这里的 y 点坐标: (screen.height - keyboard.h - self.h )/2
                                                                        (screenSize.height - dialogSize.height - CustomKeyboardHeight) / 2.0,
@@ -247,7 +253,6 @@ CGFloat buttonSpacerHeight = 0;
 
 
     // Add the custom container if there is any
-//    self.containerView.frame = CGRectMake(kCustomIOSContentViewHorizontalInset, 0, dialogContainer.bounds.size.width - kCustomIOSContentViewHorizontalInset * 2.0, <#CGFloat height#>)
     [dialogContainer addSubview:containerView];
 
     // Add the buttons too
@@ -273,10 +278,10 @@ CGFloat buttonSpacerHeight = 0;
     if (buttonTitles==NULL) { return; }
 
     // 按钮组平分了自定义view.width
-    CGFloat buttonWidth = (container.bounds.size.width - kCustomIOSContentViewHorizontalInset*2.0 - ([buttonTitles count] - 1)*kCustomIOSContentViewHorizontalInset) / [buttonTitles count];
+    CGFloat buttonWidth = (container.bounds.size.width - kCustomIOSContentViewInset*2.0 - ([buttonTitles count] - 1)*kCustomIOSContentViewInset) / [buttonTitles count];
 
-    CGRect frame = CGRectMake(0 + kCustomIOSContentViewHorizontalInset,
-                              container.bounds.size.height - kCustomIOSContentViewHorizontalInset - buttonHeight,
+    CGRect frame = CGRectMake(0 + kCustomIOSContentViewInset,
+                              container.bounds.size.height - kCustomIOSContentViewInset - buttonHeight,
                               buttonWidth,
                               buttonHeight);
     for (int i=0; i<[buttonTitles count]; i++) {
@@ -310,16 +315,18 @@ CGFloat buttonSpacerHeight = 0;
         [container addSubview:closeButton];
         
         //
-        frame.origin.x += buttonWidth + kCustomIOSContentViewHorizontalInset;
+        frame.origin.x += buttonWidth + kCustomIOSContentViewInset;
     }
 }
 
 // Helper function: count and return the dialog's size
 - (CGSize)countDialogSize
 {
-    CGFloat dialogWidth = containerView.frame.size.width + kCustomIOSContentViewHorizontalInset * 2.0;
-    CGFloat dialogHeight = containerView.frame.size.height + buttonHeight + buttonSpacerHeight + kCustomIOSContentViewHorizontalInset * 3;
+    // 密码框+按钮+按钮底间隙+3*公用间隙
+    CGFloat dialogWidth = containerView.frame.size.width + kCustomIOSContentViewInset * 2.0;
+    CGFloat dialogHeight = containerView.frame.size.height + buttonHeight + buttonSpacerHeight + kCustomIOSContentViewHorizontalInset;
 
+    
     return CGSizeMake(dialogWidth, dialogHeight);
 }
 
@@ -338,14 +345,14 @@ CGFloat buttonSpacerHeight = 0;
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
 
     // On iOS7, screen width and height doesn't automatically follow orientation
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
-        UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-            CGFloat tmp = screenWidth;
-            screenWidth = screenHeight;
-            screenHeight = tmp;
-        }
-    }
+//    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
+//        UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+//        if (UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+//            CGFloat tmp = screenWidth;
+//            screenWidth = screenHeight;
+//            screenHeight = tmp;
+//        }
+//    }
     
     return CGSizeMake(screenWidth, screenHeight);
 }

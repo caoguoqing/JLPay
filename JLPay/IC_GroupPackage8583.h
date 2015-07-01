@@ -47,7 +47,8 @@
 //消费冲正(交易异常)
 +(NSString *)blue_consumeReturn;
 
-
+// 披上送: IC卡交易完成后上送
++(NSString *)uploadBatchTransOfICC;
 
 
 @end

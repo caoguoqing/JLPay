@@ -18,9 +18,7 @@
 @interface TransDetailsTableViewController()<NSURLConnectionDataDelegate,ASIHTTPRequestDelegate>
 @property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
 @property (nonatomic, strong) NSMutableData* reciveData;
-//@property (nonatomic, strong) UIActivityIndicatorView* activity;
 @property (nonatomic, strong) JLActivity*  activity;
-//@property (nonatomic, strong) NSURLConnection* URLConnection;
 @property (nonatomic, retain) ASIFormDataRequest* HTTPRequest;
 @end
 
@@ -29,7 +27,6 @@
 @synthesize dataArray = _dataArray;
 @synthesize reciveData = _reciveData;
 @synthesize activity = _activity;
-//@synthesize URLConnection = _URLConnection;
 @synthesize HTTPRequest = _HTTPRequest;
 
 #pragma mask ::: 在表视图界面在加载完自己的view后就到后台读取数据
@@ -60,24 +57,14 @@
 #pragma mask ::: 在视图界面还未装载之前,就在后台获取需要展示的数据;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    self.activity.frame = CGRectMake((self.view.bounds.size.width - 50.0)/2.0, (self.view.bounds.size.height - 50.0)/2.0, 50.0, 50.0);
 }
 #pragma mask ::: 在表视图界面加载的同时从后台获取data
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-//    if (self.HTTPRequest.delegate == nil) {
-//        self.HTTPRequest.delegate = self;
-//    }
 }
 #pragma mask ::: 界面即将切换后的方法的重载
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    if (!self.HTTPRequest.complete) {
-//        [self.HTTPRequest cancel];
-//    }
-    // 将 ASIHTTPResponse.delegate设置为空，防止在连接还未断开而pop了当前界面
-//    [self.HTTPRequest setDelegate:nil];
-//    [self.HTTPRequest clearDelegatesAndCancel];
     if ([self.activity isAnimating]) {
         [self.activity stopAnimating];
     }
@@ -166,7 +153,12 @@
         [dCell setAmount:[dataDic objectForKey:@"amtTrans"]];
         [dCell setCardNum:[dataDic objectForKey:@"pan"]];
         [dCell setTime:[dataDic objectForKey:@"instTime"]];
-        NSLog(@"\n=========\ndata=[%@]===========", [dataDic allKeys]);
+        NSString* trantype = [dataDic objectForKey:@"txnNum"];
+        if ([trantype isEqualToString:@"消费撤销"]) {
+            trantype = @"撤销";
+        }
+        [dCell setTranType:trantype];
+        NSLog(@"\n=========\ndata=[%@]===========", dataDic );
     }
 }
 
@@ -241,6 +233,7 @@
     
     NSLog(@"接收到得数据:[%@]", dataDic);
     self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
+
     
     if (self.dataArray.count == 0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];

@@ -250,6 +250,16 @@
     }
     return businessName;
 }
+// 返回IC卡序列号
++(NSString *)returnICCardSeqNo{
+    NSString *returnStr=[[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23];
+    if (returnStr && ![returnStr isEqualToString:@""] && ![returnStr isEqualToString:@"(null)"]) {
+        returnStr = [[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23];
+    }else{
+        returnStr=@"0001";
+    }
+    return returnStr;
+}
 
 //签到保存mackey，pinkey
 +(NSString *)signinPin{//3A78137C68EA4E670A441384ABC5251E
@@ -842,6 +852,7 @@
     BOOL trackOrIC = [[NSUserDefaults standardUserDefaults] boolForKey:CardTypeIsTrack];
     return trackOrIC;
 }
+
 
 
 @end

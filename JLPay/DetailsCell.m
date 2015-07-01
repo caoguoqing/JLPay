@@ -12,6 +12,7 @@
 @property (nonatomic, strong) UILabel* amountLabel;
 @property (nonatomic, strong) UILabel* cardNumberLabel;
 @property (nonatomic, strong) UILabel* tranTimeLabel;
+@property (nonatomic, strong) UILabel* tranTypeLabel;
 
 @end
 
@@ -20,6 +21,7 @@
 @synthesize amountLabel = _amountLabel;
 @synthesize cardNumberLabel = _cardNumberLabel;
 @synthesize tranTimeLabel = _tranTimeLabel;
+@synthesize tranTypeLabel = _tranTypeLabel;
 
 
 #define AmountFont          20.0                // 金额字体大小
@@ -46,14 +48,24 @@
     CGRect frame = self.bounds;
     frame.origin.x += inset;
     frame.origin.y += verticalInset;
-    frame.size.width = (frame.size.width - inset * 2.0)/2.0;
+    frame.size.width = (frame.size.width - inset * 2.0)/2.0 - 20/*这20为标示label腾出来*/;
     frame.size.height -= verticalInset * 2.0;
+    
     self.amountLabel.frame = frame;
     [self addSubview:self.amountLabel];
 //    self.amountLabel.backgroundColor = [UIColor orangeColor];
     
+    // 中间添加一个视图:label:标示该笔交易的交易类型
+    frame.origin.x += frame.size.width;
+    frame.size.width = 20 + 20;
+    self.tranTypeLabel.frame = frame;
+    [self addSubview:self.tranTypeLabel];
+//    self.tranTypeLabel.backgroundColor = [UIColor redColor];
+    
+    
     // cardNo.
     frame.origin.x += frame.size.width;
+    frame.size.width = (self.bounds.size.width - inset * 2.0)/2.0 - 20/*这20为标示label腾出来*/;
     frame.size.height /= 2.0;
     self.cardNumberLabel.frame = frame;
     [self addSubview:self.cardNumberLabel];
@@ -72,7 +84,6 @@
     CGFloat fAmount = [amount floatValue];
     fAmount /= 100.0;
     self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
-//    self.amountLabel.text = [@"￥ "  stringByAppendingString:amount];
 }
 #pragma mask ::: 卡号属性赋值
 - (void) setCardNum : (NSString*)cardNum {
@@ -82,11 +93,14 @@
 }
 #pragma mask ::: 日期时间赋值 : 093412
 - (void) setTime : (NSString*)time {
-//    self.tranTimeLabel.text = time;
     self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
                                [time substringToIndex:2],
                                [time substringWithRange:NSMakeRange(2, 2)],
                                [time substringFromIndex:4]];
+}
+#pragma mask ::: 设置交易类型标记
+- (void) setTranType:(NSString *)tranType {
+    self.tranTypeLabel.text = tranType;
 }
 
 
@@ -118,6 +132,18 @@
         _tranTimeLabel.font = [UIFont systemFontOfSize:OtherFont];
     }
     return _tranTimeLabel;
+}
+- (UILabel *)tranTypeLabel {
+    if (_tranTypeLabel == nil) {
+        _tranTypeLabel = [[UILabel alloc] init];
+        _tranTypeLabel.textAlignment = NSTextAlignmentCenter;
+        _tranTypeLabel.textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
+        _tranTypeLabel.font = [UIFont systemFontOfSize:OtherFont ];
+        _tranTypeLabel.layer.cornerRadius = 7.0;
+        _tranTypeLabel.layer.borderColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0].CGColor;
+        _tranTypeLabel.layer.borderWidth = 0.5;
+    }
+    return _tranTypeLabel;
 }
 
 @end

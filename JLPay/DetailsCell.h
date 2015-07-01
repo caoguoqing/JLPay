@@ -16,6 +16,8 @@
 - (void) setCardNum : (NSString*)cardNum;
 #pragma mask ::: 日期时间赋值
 - (void) setTime : (NSString*)time;
+#pragma mask ::: 设置交易类型标记
+- (void) setTranType:(NSString *)tranType;
 
 
 
