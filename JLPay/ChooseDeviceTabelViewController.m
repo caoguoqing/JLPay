@@ -49,7 +49,9 @@
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    [delegatte.device open];
+    if (![delegatte.device isConnected]) {
+        [delegatte.device open];
+    }
 }
 
 
@@ -82,16 +84,14 @@
     // 先判断设备是否连接
     if ([delegatte.device isConnected]) {
         // 签到 --- 要考虑线程安全--放在主线程发送
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
-                                                         IP:Current_IP
-                                                       PORT:Current_Port
-                                                   Delegate:self
-                                                     method:@"tcpsignin"];
+        [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
+                                                     IP:Current_IP
+                                                   PORT:Current_Port
+                                               Delegate:self
+                                                 method:@"tcpsignin"];
         if (![self.activitor isAnimating]) {
             [self.activitor startAnimating];
         }
-//        });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
@@ -108,11 +108,6 @@
     if (![str isEqualToString:@"tcpsignin"]) {
         return;
     }
-//    if ([self.activitor isAnimating]) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self.activitor stopAnimating];
-//        });
-//    }
     if ([data length] > 0) {
         // 拆包
         NSLog(@"开始拆包: 签到返回");
@@ -139,9 +134,9 @@
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"]) return;
     if (state) {    // 签到成功
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[app_delegate window] makeToast:@"签到成功,开始写工作密钥..."];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[app_delegate window] makeToast:@"签到成功,开始写工作密钥..."];
+//        });
         // 更新批次号 returnSignSort -> Get_Sort_Number
         NSString* signSort = [PublicInformation returnSignSort];
         int intSignSort = [signSort intValue] + 1;

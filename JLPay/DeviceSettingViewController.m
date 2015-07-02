@@ -132,10 +132,11 @@ typedef enum {
         switch (indexPath.row) {
             case 0:
             {
-                // 跳转到 IP 设置界面
-                IPSetViewController* ipViewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"settingIPAndPorts"];
+                // 跳转到终端设置界面
+                IPSetViewController* ipViewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"terminalSettingVC"]; //terminalSettingVC settingIPAndPorts
                 [self.navigationController pushViewController:ipViewController animated:YES];
                 cell.selected = NO;
+                
                 return;
             }
                 break;

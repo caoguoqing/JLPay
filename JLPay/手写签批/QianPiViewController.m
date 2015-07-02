@@ -63,7 +63,6 @@
     //隐藏navigationController
     [self.navigationController setNavigationBarHidden:YES animated:NO];
     //隐藏状态栏
-//    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
@@ -94,72 +93,72 @@ static NSMutableArray *colors;
     isHiddenType=0;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-//    self.view.backgroundColor=[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
     self.view.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
     appdeletate=(AppDelegate *)[UIApplication sharedApplication].delegate;
     
-    //设置应用程序的状态栏到指定的方向
-//    [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeRight animated:YES];
-    //view旋转
-//    [self.view setTransform:CGAffineTransformMakeRotation(M_PI/2)];
-    
+    // 自定义标题栏
     UIView *titleView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
     titleView.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:titleView];
     
+    CGRect aframe = CGRectMake(20, 15, 20, 20);
     //￥
-    //撤销支付
-    UILabel *managerLab=[[UILabel alloc] initWithFrame:CGRectMake(20, 15, 20, 20)];
+    UILabel *managerLab=[[UILabel alloc] initWithFrame:aframe];
     managerLab.text=@"￥";
-    managerLab.font = [UIFont systemFontOfSize:16.0f];
+    managerLab.textAlignment = NSTextAlignmentRight;
+    managerLab.font = [UIFont boldSystemFontOfSize:16.0f];
     managerLab.textColor=[UIColor darkGrayColor];
     managerLab.backgroundColor=[UIColor clearColor];
     [titleView  addSubview:managerLab];
-    
-    UILabel *consumerLab=[[UILabel alloc] initWithFrame:CGRectMake(35, 5, 120, 40)];
+    // 金额
+    aframe.origin.x += aframe.size.width;
+    aframe.origin.y = 5;
+    aframe.size.width = 100;
+    aframe.size.height = 40;
+    UILabel *consumerLab=[[UILabel alloc] initWithFrame:aframe];
     consumerLab.text=self.exchangeTypeStr;
-    consumerLab.font = [UIFont systemFontOfSize:20.0f];
+    consumerLab.font = [UIFont boldSystemFontOfSize:20.0f];
+    consumerLab.textAlignment = NSTextAlignmentLeft;
     consumerLab.textColor=[UIColor colorWithRed:0.98 green:0.54 blue:0.04 alpha:1.0];
     consumerLab.backgroundColor=[UIColor clearColor];
     [titleView  addSubview:consumerLab];
-    //消费-电子签名
-    UILabel *exchangeLab=[[UILabel alloc] initWithFrame:CGRectMake((Screen_Width-120)/2, 15, 40, 20)];
+    
+    
+    // 交易类型
+    aframe.origin.x += aframe.size.width;
+    aframe.origin.y += 10;
+    aframe.size.width = 80;
+    aframe.size.height = 20;
+    UILabel *exchangeLab=[[UILabel alloc] initWithFrame:aframe];
     if ([[PublicInformation returnTranType] isEqualToString:TranType_Consume]) {
         exchangeLab.text = @"消费";
     } else if ([[PublicInformation returnTranType] isEqualToString:TranType_ConsumeRepeal]) {
         exchangeLab.text = @"消费撤销";
     }
+    exchangeLab.textAlignment = NSTextAlignmentRight;
     exchangeLab.font = [UIFont systemFontOfSize:16.0f];
     exchangeLab.textColor=[UIColor darkGrayColor];
     exchangeLab.backgroundColor=[UIColor clearColor];
     [titleView  addSubview:exchangeLab];
-    
-    UILabel *signLab=[[UILabel alloc] initWithFrame:CGRectMake((Screen_Width-120)/2+40, 5, 80, 40)];
+    // -电子签名
+    aframe.origin.x += aframe.size.width;
+    aframe.origin.y = 5;
+    aframe.size.width = Screen_Width - aframe.origin.x;
+    aframe.size.height = 40;
+    UILabel *signLab=[[UILabel alloc] initWithFrame:aframe];
     signLab.text=@"-电子签名";
     signLab.font = [UIFont systemFontOfSize:20.0f];
     signLab.textColor=[UIColor darkGrayColor];
     signLab.backgroundColor=[UIColor clearColor];
     [titleView  addSubview:signLab];
     
-    //捷联通
-    
-    UILabel *renrenLab=[[UILabel alloc] initWithFrame:CGRectMake(Screen_Width-120, 10, 80, 30)];
-    renrenLab.text=@"捷联通";
-    renrenLab.font = [UIFont systemFontOfSize:16.0f];
-    renrenLab.textColor=[UIColor blackColor];
-    renrenLab.backgroundColor=[UIColor clearColor];
-    renrenLab.textAlignment=NSTextAlignmentRight;
-    [titleView  addSubview:renrenLab];
-    
     //横线
     UILabel *lineLab=[[UILabel alloc] initWithFrame:CGRectMake(0, 48, Screen_Width, 2)];
     lineLab.backgroundColor=[UIColor colorWithRed:0.98 green:0.54 blue:0.04 alpha:1.0];
-//    [titleView  addSubview:lineLab];
     
     
     // 签名有效范围
     returnView=[[UIView alloc] initWithFrame:CGRectMake(10, 50, Screen_Width-20, Screen_Height- 50 - 40 - 20)];
-//    returnView.backgroundColor=[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
     returnView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:returnView];
     returnView.userInteractionEnabled=YES;
@@ -171,20 +170,10 @@ static NSMutableArray *colors;
     
     // 签名视图
     self.drawView=[[MyView alloc]initWithFrame:CGRectMake(0, 0, returnView.frame.size.width, returnView.frame.size.height)];
-//    [self.drawView setBackgroundColor:[UIColor whiteColor]];
     self.drawView.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
     [returnView addSubview: self.drawView];
     // Do any additional setup after loading the view, typically from a nib.
     [returnView addSubview:self.labelForSigning];
-    
-    //流水号
-    UILabel *sortLab=[[UILabel alloc] initWithFrame:CGRectMake((returnView.frame.size.width-150)/2, (returnView.frame.size.height-40)/2, 150, 40)];
-    sortLab.text=self.currentLiushuiStr;
-    sortLab.font = [UIFont systemFontOfSize:40.0f];
-    sortLab.textColor=[UIColor blackColor];
-    sortLab.backgroundColor=[UIColor redColor];
-    sortLab.textAlignment=NSTextAlignmentCenter;
-//    [returnView  addSubview:sortLab]; // 不要流水号了
     
     
     CGFloat midInset = 20.0;
@@ -195,16 +184,11 @@ static NSMutableArray *colors;
     // 重新签名 按钮
     UIButton*againBtn=[UIButton buttonWithType:UIButtonTypeRoundedRect];
     againBtn.frame = frame;
-//    againBtn.frame=CGRectMake((Screen_Width-100*2-40)/2,Screen_Height-40 - 20,100,40);
-
     againBtn.layer.cornerRadius = 8.0;
-//    againBtn.backgroundColor=[UIColor whiteColor];
     againBtn.backgroundColor = [UIColor colorWithRed:90.0/255.0 green:99.f/255.0 blue:110.f/255.0 alpha:1.0];
     [againBtn setTitle:@"重新签名" forState:UIControlStateNormal];
     [againBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [againBtn addTarget:self action:@selector(againMethod) forControlEvents:UIControlEventTouchUpInside];
-//    [againBtn setBackgroundImage:[UIImage imageNamed:@"resign_normal.png"] forState:UIControlStateNormal];
-//    [againBtn setBackgroundImage:[UIImage imageNamed:@"resign_pressed.png"] forState:UIControlStateHighlighted];
     [self.view addSubview:againBtn];
     
     
@@ -213,21 +197,16 @@ static NSMutableArray *colors;
     // 确定  按钮
     frame.origin.x += frame.size.width + midInset;
     requireBtn.frame = frame;
-//    requireBtn.frame=CGRectMake((Screen_Width-100*2-40)/2+100+40,Screen_Height-40 - 20,100,40);
-//    requireBtn.backgroundColor=[UIColor whiteColor ];
     requireBtn.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:58.f/255.0 blue:66.f/255.0 alpha:1.0];
     requireBtn.layer.cornerRadius = 8.0;
     [requireBtn setTitle:@"确认" forState:UIControlStateNormal];
     [requireBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [requireBtn addTarget:self action:@selector(requireSignMethod) forControlEvents:UIControlEventTouchUpInside];
-//    [requireBtn setBackgroundImage:[UIImage imageNamed:@"sign_ok_normal.png"] forState:UIControlStateNormal];
-//    [requireBtn setBackgroundImage:[UIImage imageNamed:@"sign_ok_pressed.png"] forState:UIControlStateHighlighted];
     [self.view addSubview:requireBtn];
     
     
     newVersionVi=[[NewVersionView alloc] initWithFrame:[UIScreen mainScreen].bounds info:@"签名成功" textHidden:YES];
     newVersionVi.backgroundColor=[UIColor clearColor];
-//    [newVersionVi setTransform:CGAffineTransformMakeRotation(M_PI/2)];
     newVersionVi.passwordStr.hidden=YES;
     newVersionVi.closedBtn.hidden=YES;
     [newVersionVi.requireBtn addTarget:self action:@selector(newVersionMethod) forControlEvents:UIControlEventTouchUpInside];
@@ -251,12 +230,9 @@ static NSMutableArray *colors;
 #pragma mark ----------------屏幕截图
 //获取当前屏幕内容
 - (UIImage *)getNormalImage:(UIView *)view{
-//    float width = [UIScreen mainScreen].bounds.size.width;
-//    float height = [UIScreen mainScreen].bounds.size.height;
     float width = view.frame.size.width;
     float height = view.frame.size.height;
     UIGraphicsBeginImageContextWithOptions((CGSizeMake(width, height)), NO, 1.0);
-    //UIGraphicsBeginImageContext(CGSizeMake(width, height));
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];
     

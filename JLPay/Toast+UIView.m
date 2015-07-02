@@ -34,7 +34,7 @@ static const CGSize  CSToastShadowOffset        = { 4.0, 4.0 };
 static const BOOL    CSToastDisplayShadow       = YES;
 
 // display duration and position
-static const CGFloat CSToastDefaultDuration     = 3.0;
+static const CGFloat CSToastDefaultDuration     = 1.0;
 static const NSString * CSToastDefaultPosition  = @"bottom";
 
 // image view size
@@ -93,21 +93,23 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
     toast.alpha = 0.0;
     [self addSubview:toast];
     
-    [UIView animateWithDuration:CSToastFadeDuration
-                          delay:0.0
-                        options:UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         toast.alpha = 0.8;  // 透明?
-                     } completion:^(BOOL finished) {
-                         [UIView animateWithDuration:CSToastFadeDuration
-                                               delay:interval
-                                             options:UIViewAnimationOptionCurveEaseIn
-                                          animations:^{
-                                              toast.alpha = 0.0;
-                                          } completion:^(BOOL finished) {
-                                              [toast removeFromSuperview];
-                                          }];
-                     }];
+    dispatch_async(dispatch_get_main_queue(), ^{  // 将toast显示事件放到主线程事件队列中
+        [UIView animateWithDuration:CSToastFadeDuration
+                              delay:0.0
+                            options:UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             toast.alpha = 0.8;  // 透明?
+                         } completion:^(BOOL finished) {
+                             [UIView animateWithDuration:CSToastFadeDuration
+                                                   delay:interval
+                                                 options:UIViewAnimationOptionCurveEaseIn
+                                              animations:^{
+                                                  toast.alpha = 0.0;
+                                              } completion:^(BOOL finished) {
+                                                  [toast removeFromSuperview];
+                                              }];
+                         }];
+    });
 }
 
 #pragma mark - Toast Activity Methods

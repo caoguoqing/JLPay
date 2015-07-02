@@ -329,7 +329,9 @@
     
     
     UIButton *requireBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    requireBtn.frame=CGRectMake(10, Screen_Height-20-45, [UIScreen mainScreen].bounds.size.width-20, 40);
+    requireBtn.frame=CGRectMake(10, Screen_Height-20-45, [UIScreen mainScreen].bounds.size.width-20, 55);
+    requireBtn.layer.cornerRadius = 10.0;
+    requireBtn.layer.masksToBounds = YES;
     [requireBtn setBackgroundImage:[PublicInformation createImageWithColor:[UIColor colorWithRed:0.14 green:0.64 blue:0.17 alpha:1.0]] forState:UIControlStateNormal];
     [requireBtn addTarget:self action:@selector(requireMethod) forControlEvents:UIControlEventTouchUpInside];
     [requireBtn setTitle:@"确定" forState:UIControlStateNormal];

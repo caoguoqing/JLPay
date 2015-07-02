@@ -29,12 +29,15 @@
     self.window.userInteractionEnabled=YES;
     
     UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
+    // 进入的初始界面为第二个
+    tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
     
-    self.window.rootViewController      = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
+    self.window.rootViewController      = tabBarController;
     
     // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
     NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
-    UITabBarController* tabBarController = (UITabBarController*)self.window.rootViewController;
+//    UITabBarController* tabBarController = (UITabBarController*)self.window.rootViewController;
     for (int i = 0; i< tabBarController.tabBar.items.count; i++) {
         UITabBarItem* item              = [tabBarController.tabBar.items objectAtIndex:i];
         item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
@@ -66,11 +69,7 @@
 
     // 初始化设备管理器
     self.device                         = [[DeviceManager alloc] init];
-    [self.device detecting];
-    
-    
-    
-    
+    [self.device detecting];    
     
     return YES;
 }
@@ -100,6 +99,8 @@
 - (void) DeviceStateChange : (NSNotification*)noti {
     NSString* result = [noti object];
     if ([result isEqualToString:@"1"]) {
+        // 打开设备
+        [self.device open];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.window makeToast:@"设备已插入"];
         });

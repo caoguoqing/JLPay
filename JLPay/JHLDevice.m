@@ -197,6 +197,23 @@ static FieldTrackData TransData;
                 [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Fail object:nil];
             }
             break;
+        // 读取设备电量
+        case BATTERY:
+            if (!ByteDate[1]) { // 成功
+                int batteryLeft = ByteDate[2];
+                NSLog(@"设备电量:%d", batteryLeft);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (batteryLeft < 10) {
+                        [[app_delegate window] makeToast:[NSString stringWithFormat:@"设备打开成功,电量过低:%d%%",batteryLeft]];
+                    } else {
+                        [[app_delegate window] makeToast:[NSString stringWithFormat:@"设备打开成功,电量:%d%%",batteryLeft]];
+                    }
+                });
+            } else {            // 失败
+                [[app_delegate window] makeToast:[NSString stringWithFormat:@"设备打开失败"]];
+            }
+            break;
+
         default:
             break;
     }
@@ -211,12 +228,13 @@ static FieldTrackData TransData;
             [self stateCheck:result];
             flag = NO;
         }
-        if (result == 0) {
+        if (result == KNOWED_DEVICE_ING) { // 成功
             break;
         }
         [NSThread sleepForTimeInterval:0.5];
     }
     // 出了循环就说明设备打开成功了,需要通知调用方发起签到
+    [self ReadBattery];
 }
 
 #pragma mask : 打开设备
@@ -239,7 +257,6 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 设备已经打开", __func__);
-//                    [[app_delegate window] makeToast:@"成功打开设备"];
                 }
             });
             break;
@@ -278,6 +295,28 @@ static FieldTrackData TransData;
         default:
             break;
     }
+}
+
+
+/*
+ 函 数 名：ReadBattery
+ 功能描述：获取电池电量
+ 入口参数：
+ 返回说明：成功/失败
+ **********************************************************/
+-(int)ReadBattery
+{
+    if (self.osmanager ==NULL)
+        self.osmanager = [CommunicationManager sharedInstance];
+    int result = [self.osmanager isConnected];
+    if (!result)
+        return  result;
+    
+    NSMutableData* data = [[NSMutableData alloc] init];
+    Byte array[1] = {BATTERY};
+    [data appendBytes:array length:1];
+    result =[self.osmanager exchangeData:data timeout:WAIT_TIMEOUT cb:self];
+    return result;
 }
 
 
@@ -445,7 +484,7 @@ static FieldTrackData TransData;
         // 卡号
         strncpy(TransData.TrackPAN,(char *)szTrack2, nIndexlen);
         // 卡有效期
-        strncpy(TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
+        strncpy((char*)TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
         //服务代码
         strncpy(TransData.szServiceCode, (char *)szTrack2+nIndexlen + 5, 3);
         if((TransData.szServiceCode[0] == '2') ||(TransData.szServiceCode[0] == '6'))
@@ -491,11 +530,6 @@ static FieldTrackData TransData;
     // 芯片序列号23域值
     memset(dataStr, 0, 512);
 //    [self BcdToAsc:dataStr :TransData.CardSeq :(int)strlen((char*)TransData.CardSeq)];
-    NSLog(@"获取到得IC卡序列号为:[%s]", dataStr);
-    if (*dataStr == 0) {
-//        strcpy((char*)dataStr, "01");
-    }
-    NSLog(@"获取到得IC卡序列号为:[%s]", dataStr);
     strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
 
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
@@ -584,26 +618,6 @@ static FieldTrackData TransData;
     
 }
 
-// 将bcd码的2磁字符串转换为十六进制的字符串
-//- (NSString*) hexICCDataWithString:(NSString*)string length:(int)strLength {
-//    char* hexString = (char*)malloc(strLength + 1);
-//    memset(hexString, 0x00, strLength + 1);
-//    char* source = hexString;
-////    NSMutableString* hexICCDataString = [[NSMutableString alloc] init];
-//    for (int i = 0; i < strLength; i += 2) {
-//        NSString* subString = [string substringWithRange:NSMakeRange(i, 2)];
-//        char ch = [subString intValue];
-//        *source = ch;
-//        source ++;
-////        if (ch < 'A' && ch < 'a') {
-////        
-////        } 
-////        [hexICCDataString appendString:[PublicInformation ToBHex:[subString intValue]]];
-//    }
-//    NSString* hexNSString = [NSString stringWithFormat:@"%s", hexString];
-//    free(hexString);
-//    return hexNSString;
-//}
 
 
 @end

@@ -329,7 +329,7 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gbU-ss-E1T" id="hYq-II-L5x">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="设置服务器IP地址、端口" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XB0-5C-OVj">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="设置商户号/终端号" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XB0-5C-OVj">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -397,7 +397,7 @@
         <!--Terminal Param Set View Controller-->
         <scene sceneID="fMU-rk-W8N">
             <objects>
-                <viewController hidesBottomBarWhenPushed="YES" id="NxS-i6-GpA" customClass="TerminalParamSetViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="terminalSettingVC" hidesBottomBarWhenPushed="YES" id="NxS-i6-GpA" customClass="TerminalParamSetViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="rLc-ld-KAb"/>
                         <viewControllerLayoutGuide type="bottom" id="qgY-Ad-EWQ"/>
