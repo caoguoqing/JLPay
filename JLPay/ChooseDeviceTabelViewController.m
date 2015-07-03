@@ -45,13 +45,18 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
 }
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    if (![delegatte.device isConnected]) {
-        [delegatte.device open];
-    }
+    
+    // 在后台识别,并连接所有可以连接的设备.....
+    
+    // 先屏蔽掉音频设备:因为接口还不支持读取终端号
+//    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    if (![delegatte.device isConnected]) {
+//        [delegatte.device open];
+//    }
 }
 
 
@@ -75,10 +80,18 @@
 #pragma mask ::: 点击终端编号对应的单元格: 进行签到、写工作密钥
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    NSString* terminalNo = cell.detailTextLabel.text;
     cell.selected = NO;
-    [[NSUserDefaults standardUserDefaults] setValue:cell.detailTextLabel.text forKey:Terminal_Number];
+    // 设置选择的终端号到本地配置
+    [[NSUserDefaults standardUserDefaults] setValue:terminalNo forKey:Terminal_Number];
     
-    // 怎样判断是哪种设备--- 打开方式不同
+    // 尝试打开对应终端号的设备
+    // [delegatte.device openDeviceOfTerminalNo:terminalNo];
+    
+    
+    // 成功了:::下一步就可以进行签到、写工作密钥了
+    
+    
     
     AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
     // 先判断设备是否连接
@@ -96,7 +109,7 @@
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         // 打开设备
-        [delegatte.device open];        // 在后台打开的
+//        [delegatte.device open];        // 在后台打开的
     }
 }
 

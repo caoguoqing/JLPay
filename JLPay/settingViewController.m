@@ -21,10 +21,10 @@
 
 
 
-@interface settingViewController ()
+@interface settingViewController ()<UIActionSheetDelegate>
 @property (nonatomic, strong) NSArray *cellNames;           // 单元格对应的功能名称
-//@property (nonatomic, strong) NSMutableArray *imageNames;   // 单元格的图标图片
 @property (nonatomic, strong) NSDictionary *cellNamesAndImages; // 单元格表示的数据字典
+@property (nonatomic, strong) NSArray* deviceTypeArray;
 @end
 
 
@@ -32,6 +32,7 @@
 //@synthesize imageNames = _imageNames;
 @synthesize cellNames  = _cellNames;
 @synthesize cellNamesAndImages      = _cellNamesAndImages;
+@synthesize deviceTypeArray;
 
 
 
@@ -57,6 +58,11 @@
     self.navigationItem.backBarButtonItem = backItem;
 
     [super viewDidLoad];
+    
+    // 设备类型数组:后续有厂商对接，需要更新数组
+    self.deviceTypeArray = [NSArray arrayWithObjects:
+                            DeviceType_JHL_A60,
+                            DeviceType_JHL_M60, nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,7 +90,6 @@
  *          NSInteger                 指定 section 中的 cell 的个数
  *************************************/
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    return self.cellNames.count;
     return self.cellNamesAndImages.count;
 }
 
@@ -151,10 +156,8 @@
 /*************************************
  * 功  能 : 单元格的点击动作实现;
  *          -账号名称及信息
- *          -商户管理
  *          -交易管理
  *          -绑定机具
- *          -连接机具
  *          -额度查询
  *          -修改密码
  *          -意见反馈
@@ -186,8 +189,17 @@
             case 2:
                 // 连接机具
             {
-                ChooseDeviceTabelViewController* chooseDeviceVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"chooseDeviceVC"];
-                [self.navigationController pushViewController:chooseDeviceVC animated:YES];
+                // 先弹窗供用户选择设备类型,在选择完了设备类型后才跳转界面
+                UIActionSheet* deviceTypeListSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型"
+                                                                                 delegate:self
+                                                                        cancelButtonTitle:@"取消"
+                                                                   destructiveButtonTitle:nil
+                                                                        otherButtonTitles:nil,nil];
+                for(int i = 0; i < self.deviceTypeArray.count; i++) { // 如果后续有厂商对接，只需要更新array和宏就可以
+                    [deviceTypeListSheet addButtonWithTitle:[self.deviceTypeArray objectAtIndex:i]];
+                }
+                [deviceTypeListSheet showFromToolbar:self.navigationController.toolbar];
+                
             }
                 break;
             case 3:
@@ -306,7 +318,6 @@
     frame.size.width                = width;
     frame.size.height               = littleHeight * FirstCellLargerCent;
     UILabel *cellLabel              = [[UILabel alloc] initWithFrame:frame];
-//    cellLabel.text                  = [self.cellNames objectAtIndex:0 ];
     cellLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:UserID];
     cellLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
     cellLabel.textAlignment         = NSTextAlignmentLeft;
@@ -316,7 +327,6 @@
     frame.origin.y                  += (littleHeight * FirstCellLargerCent);
     frame.size.height               = littleHeight;
     UILabel *nameLabel              = [[UILabel alloc] initWithFrame:frame];
-//    nameLabel.text                  = @"张三";      ////////////// 客户的名字需要根据登陆信息返回
     nameLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Name];
     nameLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
     nameLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
@@ -339,14 +349,34 @@
     mailLabel.textAlignment         = NSTextAlignmentLeft;
     [cell addSubview:mailLabel];
     
-    // panImageView
-    frame.origin.x                  += frame.size.width + 6/*分隔空白*/;
-    frame.size.width                = littleHeight;
-    UIImageView *panImageView       = [[UIImageView alloc] initWithFrame:frame];
-//    panImageView.image              = [UIImage imageNamed:@"bianji"];
-    // image
-//    [cell addSubview:panImageView];
 }
+
+
+
+/*************************************
+ * 功  能 : actionSheet的点击并退出回调;
+ *          要设置设备类型到本地，
+ *          并跳转到设备选择界面
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    BOOL pushView = YES;
+    NSLog(@"=====[%@]", [actionSheet buttonTitleAtIndex:buttonIndex]);
+    if (buttonIndex == 0) { // 取消
+        pushView = NO;
+    }
+    if (buttonIndex > 0) {
+        // 设置设备类型到本地配置
+        [[NSUserDefaults standardUserDefaults] setValue:[actionSheet buttonTitleAtIndex:buttonIndex] forKey:DeviceType];
+    }
+    if (pushView) {
+        ChooseDeviceTabelViewController* chooseDeviceVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"chooseDeviceVC"];
+        [self.navigationController pushViewController:chooseDeviceVC animated:YES];
+    }
+
+}
+
 
 #pragma mask ::: 自定义返回上层界面按钮的功能
 - (IBAction) backToPreVC :(id)sender {

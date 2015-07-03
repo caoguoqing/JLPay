@@ -20,7 +20,7 @@
 
 
 
-
+// 8583报文配置
 #define TPDU @"6000060000"
 #define HEADER @"600100310000"
 
@@ -44,11 +44,40 @@
 #define CardTypeIsTrack             @"CardTypeIsTrack"                  // 值:YES(磁条)/NO(芯片)
 
 
+
+#pragma mask ==========================商户相关的参数
+// 终端号，商户号,商户名称
+#define Terminal_Number @"terminal"
+#define Business_Number @"business"
+#define Business_Name @"businessname"
+// 终端个数
+#define Terminal_Count @"termCount"
+// 终端号列表-数组
+#define Terminal_Numbers @"terminals"
+// 账号
+#define UserID  @"userID"
+// 密码
+#define UserPW  @"userPW"
+// 邮箱
+#define Business_Email @"commEmail"
+
+// 操作员号
+#define Manager_Number @"001"
+
+
+#pragma mask ==========================设备操作相关的参数
+#define DeviceType                  @"DeviceType"               // 厂商设备类型
+#define DeviceType_JHL_A60          @"锦宏霖音频刷卡头A60"       // 锦宏霖音频A60
+#define DeviceType_JHL_M60          @"锦宏霖手持(蓝牙)刷卡器M60"       // 锦宏霖蓝牙M60
+
+
+
+
+
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0                           
 
-//操作员号
-#define Manager_Number @"001"
+
 
 
 //IC卡 SN序列号
@@ -85,10 +114,6 @@
 //主秘钥明文，保存
 #define main_key_plain @"mainkeyplain"
 
-//终端号，商户号,商户名称
-#define Terminal_Number @"terminal"
-#define Business_Number @"business"
-#define Business_Name @"businessname"
 
 //交易流水号，每次交易加1
 #define Exchange_Number @"exchangenumber"
@@ -166,20 +191,7 @@
 //主秘钥明文，保存
 #define main_key_plain @"mainkeyplain"
 
-//终端号，商户号,商户名称
-#define Terminal_Number @"terminal"
-#define Business_Number @"business"
-#define Business_Name @"businessname"
-// 终端个数
-#define Terminal_Count @"termCount"
-#define Terminal_Numbers @"terminals"
 
-// 账号
-#define UserID  @"userID"
-#define UserPW  @"userPW"
-
-// 邮箱
-#define Business_Email @"commEmail"
 
 //交易流水号，每次交易加1
 #define Exchange_Number @"exchangenumber"
@@ -252,7 +264,6 @@
 
 
 #pragma mark=============================================支付宝
-
 
 //支付宝二维码串
 #define ErWeiMaChuan @"erweimachuan"

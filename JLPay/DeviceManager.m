@@ -8,11 +8,15 @@
 
 #import "DeviceManager.h"
 #import "JHLDevice.h"
+#import "JHL_M60/ISControlManager.h"
 
 
 @interface DeviceManager()
 @property (nonatomic, strong) id    device;
 @property (nonatomic, assign) int   manuefacturer;
+@property (nonatomic, assign) NSArray*          deviceManagers;     // 保存所有厂商的设备管理类入口
+@property (nonatomic, strong) JHLDevice*        JHL_A60_manager;    // 音频设备管理器 锦宏霖
+@property (nonatomic, strong) ISControlManager* JHL_M60_manager;    // 蓝牙设备管理器 锦宏霖
 @end
 
 
@@ -38,7 +42,7 @@ static long timeOut = 60*1000;
     }
 }
 
-#pragma mask : 打开设备;
+#pragma mask : 打开设备:要匹配终端号;
 - (void)open {
     // 判断是哪个厂商的设备
     // 调对应厂商的设备接口 : 打开设备
@@ -51,6 +55,18 @@ static long timeOut = 60*1000;
             break;
     }
 }
+//- (BOOL)openDeviceOfTerminalNo: (NSString*)terminalNo {
+//    // 判断是哪个厂商的设备
+//    // 调对应厂商的设备接口 : 打开设备
+//    switch (self.manuefacturer) {
+//        case 0:     // 锦宏霖设备
+//            [self.device open];
+//            break;
+//            
+//        default:
+//            break;
+//    }
+//}
 
 #pragma mask : 关闭设备;
 - (void) close {

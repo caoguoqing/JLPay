@@ -37,7 +37,6 @@
     
     // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
     NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
-//    UITabBarController* tabBarController = (UITabBarController*)self.window.rootViewController;
     for (int i = 0; i< tabBarController.tabBar.items.count; i++) {
         UITabBarItem* item              = [tabBarController.tabBar.items objectAtIndex:i];
         item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
@@ -48,28 +47,16 @@
     
 }
 
-#pragma mask ::: 设备事件的实时监控
-//- (void) deviceStateObserved : (NSNotification*)notification {
-//    if ([notification.name isEqualToString:NotiName_DeviceState]) {
-//        NSString* state                     = (NSString*)[notification object];
-//        if ([state isEqualToString:@"1"]) {
-//            [self.window makeToast:@"设备已插入"];
-//        } else {
-//            [self.window makeToast:@"设备已拔出"];
-//        }
-//    }
-//}
 
 #pragma mask ::: app 的入口;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // 注册设备事件实时监控通知
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStateObserved:) name:NotiName_DeviceState object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(DeviceStateChange:) name:@"DeviceState" object:nil];
 
     // 初始化设备管理器
     self.device                         = [[DeviceManager alloc] init];
-    [self.device detecting];    
+//    [self.device detecting];    
     
     return YES;
 }
