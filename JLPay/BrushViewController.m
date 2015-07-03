@@ -95,8 +95,9 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    if ([delegate.device isConnected]) {
+//    AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    DeviceManager* device = [DeviceManager sharedInstance];
+    if ([device isConnected]) {
         // 刷卡
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             // 启动刷卡超时定时器
@@ -105,13 +106,13 @@
             }
             [[NSRunLoop mainRunLoop] addTimer:self.swipeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
             // 刷卡
-            [delegate.device cardSwipe];
+            [device cardSwipe];
         });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         // 连接设备....循环中.......还要优化定时器
-        [delegate.device open];
+        [device open];
         // 重新打开后要能继续刷卡............
     }
 }
@@ -181,13 +182,12 @@
     } else {                // 确定-开始设备加密
         // 读磁道信息或芯片信息
         long money = [self themoney] ;
-        AppDelegate* delegate_  = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 这里的密码 password 用 alertView.password
         long timeout = self.timeOut * 1000;
-        [delegate_.device TRANS_Sale:timeout // 60s
-                             nAmount:money
-                        nPasswordlen:(int)self.passwordAlertView.password.length
-                            bPassKey:self.passwordAlertView.password];
+        [[DeviceManager sharedInstance] TRANS_Sale:timeout // 60s
+                                           nAmount:money
+                                      nPasswordlen:(int)self.passwordAlertView.password.length
+                                          bPassKey:self.passwordAlertView.password];
     }
 }
 

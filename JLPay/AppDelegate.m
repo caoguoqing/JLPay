@@ -18,7 +18,7 @@
 
 
 @implementation AppDelegate
-@synthesize device                      = _device;
+//@synthesize device                      = _device;
 
 
 /*
@@ -55,8 +55,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(DeviceStateChange:) name:@"DeviceState" object:nil];
 
     // 初始化设备管理器
-    self.device                         = [[DeviceManager alloc] init];
-    [self.device detecting];    
+//    self.device                         = [[DeviceManager alloc] init];
+    DeviceManager* device = [DeviceManager sharedInstance];
+    [device detecting];
     
     return YES;
 }
@@ -87,7 +88,8 @@
     NSString* result = [noti object];
     if ([result isEqualToString:@"1"]) {
         // 打开设备
-        [self.device open];
+        DeviceManager* device = [DeviceManager sharedInstance];
+        [device open];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.window makeToast:@"设备已插入"];
         });

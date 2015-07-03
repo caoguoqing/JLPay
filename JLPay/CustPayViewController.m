@@ -344,11 +344,11 @@
     }
     // 再判断是否连接设备
     
-    AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    if (![delegate.device isConnected])
+    DeviceManager* device = [DeviceManager sharedInstance];
+    if (![device isConnected])
     {
         [self alertShow:@"请连接设备"];
-        [delegate.device open];
+        [device open];
     }else
     {
         // 保存的是字符串型的金额

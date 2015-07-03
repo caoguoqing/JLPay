@@ -21,7 +21,7 @@
 
 
 @implementation DeviceManager
-
+@synthesize delegate;
 @synthesize device                  = _device;
 @synthesize manuefacturer           = _manuefacturer;
 
@@ -29,6 +29,15 @@
 static long timeOut = 60*1000;
 
 #pragma mask --------------------------[Public Interface]--------------------------
++(DeviceManager*) sharedInstance {
+    static DeviceManager* _sharedDeviceManager;
+    static dispatch_once_t desp;
+    dispatch_once(&desp, ^{
+        _sharedDeviceManager = [[DeviceManager alloc] init];
+    });
+    return _sharedDeviceManager;
+}
+
 
 #pragma mask : 打开设备探测;
 - (void) detecting{
@@ -161,15 +170,17 @@ static long timeOut = 60*1000;
  *  初始化
  */
 - (instancetype)init {
-    self                            = [super init];
+    self = [super init];
     if (self) {
+        
+        
         // 找到对应设备的厂商：从 userDefult 配置中读取当前设备的厂商：绑定的设备的时候设定....
         // 调度对应厂商的接口
-        _manuefacturer              = 0; // 锦宏霖
+        _manuefacturer = 0; // 锦宏霖
         
         switch (_manuefacturer) {
             case 0:
-                _device             = [[JHLDevice alloc] init];
+                _device = [[JHLDevice alloc] init];
                 break;
                 
             default:

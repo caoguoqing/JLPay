@@ -53,10 +53,12 @@
     // 在后台识别,并连接所有可以连接的设备.....
     
     // 先屏蔽掉音频设备:因为接口还不支持读取终端号
-    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    if (![delegatte.device isConnected]) {
-        [delegatte.device open];
-    }
+//    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    if (![delegatte.device isConnected]) {
+//        [delegatte.device open];
+//    }
+    DeviceManager* device = [DeviceManager sharedInstance];
+    [device open];
 }
 
 
@@ -93,9 +95,10 @@
     
     
     
-    AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
     // 先判断设备是否连接
-    if ([delegatte.device isConnected]) {
+    DeviceManager* device = [DeviceManager sharedInstance];
+    if ([device isConnected]) {
         // 签到 --- 要考虑线程安全--放在主线程发送
         [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
                                                      IP:Current_IP
@@ -155,11 +158,11 @@
         }
         [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
         
-        AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//        AppDelegate* delegatte    = (AppDelegate*)[UIApplication sharedApplication].delegate;
         // 写工作密钥 ----- 到了这里就可以直接写了
         NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
         NSLog(@"工作密钥: [%@]", workStr);
-        [delegatte.device WriteWorkKey:57 :workStr];
+        [[DeviceManager sharedInstance] WriteWorkKey:57 :workStr];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([self.activitor isAnimating]) {

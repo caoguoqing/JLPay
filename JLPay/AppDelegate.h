@@ -14,7 +14,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property(nonatomic, strong)    DeviceManager*  device;
+//@property(nonatomic, strong)    DeviceManager*  device;
 
 -(void)signInSuccessToLogin:(int)select;
 

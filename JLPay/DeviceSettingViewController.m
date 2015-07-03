@@ -126,8 +126,7 @@ typedef enum {
                                           cancelButtonTitle:@"否"
                                           otherButtonTitles:@"是", nil];
     alert.delegate     = self;
-    AppDelegate* appdelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    if ([appdelegate.device isConnected]) {
+    if ([[DeviceManager sharedInstance] isConnected]) {
         NSLog(@"index.row = [%d]", indexPath.row);
         switch (indexPath.row) {
             case 0:
@@ -191,8 +190,7 @@ typedef enum {
     }
     else if ([alertView.message isEqualToString: @"请连接设备!"]) {
         // 连接设备
-        AppDelegate* appdelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [appdelegate.device open];
+        [[DeviceManager sharedInstance] open];
     }
     // 被点击的 Cell 恢复未点击状态
     for (int i = 0; i<[self.tableView numberOfRowsInSection:0]; i++) {
