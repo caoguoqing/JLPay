@@ -53,10 +53,10 @@
     // 在后台识别,并连接所有可以连接的设备.....
     
     // 先屏蔽掉音频设备:因为接口还不支持读取终端号
-//    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    if (![delegatte.device isConnected]) {
-//        [delegatte.device open];
-//    }
+    AppDelegate* delegatte = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    if (![delegatte.device isConnected]) {
+        [delegatte.device open];
+    }
 }
 
 
@@ -147,9 +147,6 @@
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"]) return;
     if (state) {    // 签到成功
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [[app_delegate window] makeToast:@"签到成功,开始写工作密钥..."];
-//        });
         // 更新批次号 returnSignSort -> Get_Sort_Number
         NSString* signSort = [PublicInformation returnSignSort];
         int intSignSort = [signSort intValue] + 1;

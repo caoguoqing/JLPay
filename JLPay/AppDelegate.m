@@ -56,7 +56,7 @@
 
     // 初始化设备管理器
     self.device                         = [[DeviceManager alloc] init];
-//    [self.device detecting];    
+    [self.device detecting];    
     
     return YES;
 }
