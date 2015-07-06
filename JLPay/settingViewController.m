@@ -21,7 +21,7 @@
 
 
 
-@interface settingViewController ()<UIActionSheetDelegate>
+@interface settingViewController ()<UIActionSheetDelegate,UIAlertViewDelegate>
 @property (nonatomic, strong) NSArray *cellNames;           // 单元格对应的功能名称
 @property (nonatomic, strong) NSDictionary *cellNamesAndImages; // 单元格表示的数据字典
 @property (nonatomic, strong) NSArray* deviceTypeArray;
@@ -61,7 +61,7 @@
     
     // 设备类型数组:后续有厂商对接，需要更新数组
     self.deviceTypeArray = [NSArray arrayWithObjects:
-                            DeviceType_JHL_A60,
+//                            DeviceType_JHL_A60,       // 先屏蔽音频设备
                             DeviceType_JHL_M60, nil];
 }
 
@@ -205,9 +205,21 @@
             case 3:
                 // 参数设置
             {
-                UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
-                [self.navigationController pushViewController:viewContr animated:YES];
+                // 只有代理商才能进行设备的参数设置，所以这里加上操作员登陆功能
+                UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"代理商请登陆"
+                                                                message:@"商户不用操作"
+                                                               delegate:self
+                                                      cancelButtonTitle:@"取消"
+                                                      otherButtonTitles:@"登陆", nil];
+                [alert setAlertViewStyle:UIAlertViewStyleLoginAndPasswordInput];
+                UITextField* loginName = [alert textFieldAtIndex:0];    // 操作员账号
+                loginName.placeholder = @"请输入操作员账号";
+                UITextField* loginPassword = [alert textFieldAtIndex:1];    // 操作员密码
+                loginPassword.placeholder = @"请输入操作员密码";
+
+                [alert show];
+                
+                
             }
                 break;
             case 4:
@@ -376,6 +388,31 @@
     }
 
 }
+
+/*************************************
+ * 功  能 : 操作员登陆弹窗的按钮点击事件;
+ *          确认后进行发送操作员登陆申请，
+ *          在登陆的回调中跳转到设备参数设置界面
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {             // 取消
+        
+    } else if (buttonIndex == 1) {      // 确定
+        UITextField* loginName = [alertView textFieldAtIndex:0];    // 操作员账号
+        UITextField* loginPassword = [alertView textFieldAtIndex:1];    // 操作员密码
+
+        // 操作员登陆
+        
+        
+        // 下面的转场为了测试；应该放在登陆成功后的回调中进行.............
+        UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
+        [self.navigationController pushViewController:viewContr animated:YES];
+    }
+}
+
 
 
 #pragma mask ::: 自定义返回上层界面按钮的功能

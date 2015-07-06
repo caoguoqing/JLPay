@@ -56,6 +56,7 @@
 		5E5FA5871B46342600387E69 /* ISMFiDataPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA57B1B46342600387E69 /* ISMFiDataPath.m */; };
 		5E5FA5881B46342600387E69 /* libReliableBurstData_arm64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA57C1B46342600387E69 /* libReliableBurstData_arm64.a */; };
 		5E5FA58B1B467A2D00387E69 /* DeviceListSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA58A1B467A2D00387E69 /* DeviceListSheet.m */; };
+		5E5FA58E1B477DD100387E69 /* JHLDevice_M60.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
 		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
@@ -256,6 +257,8 @@
 		5E5FA57E1B46342600387E69 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		5E5FA5891B467A2D00387E69 /* DeviceListSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceListSheet.h; sourceTree = "<group>"; };
 		5E5FA58A1B467A2D00387E69 /* DeviceListSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceListSheet.m; sourceTree = "<group>"; };
+		5E5FA58C1B477DD100387E69 /* JHLDevice_M60.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHLDevice_M60.h; sourceTree = "<group>"; };
+		5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHLDevice_M60.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
 		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = JLPay/JHLDevice.h; sourceTree = SOURCE_ROOT; };
@@ -570,6 +573,8 @@
 		5E5FA56C1B46342600387E69 /* JHL_M60 */ = {
 			isa = PBXGroup;
 			children = (
+				5E5FA58C1B477DD100387E69 /* JHLDevice_M60.h */,
+				5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */,
 				5E5FA56D1B46342600387E69 /* ILAlertView */,
 				5E5FA5741B46342600387E69 /* ISBLEDataPath.h */,
 				5E5FA5751B46342600387E69 /* ISBLEDataPath.m */,
@@ -1141,6 +1146,7 @@
 				5E397B361AD36429004F206F /* ASIS3Bucket.m in Sources */,
 				5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */,
 				5E5E5FBB1B12CB3D002F421D /* AdditionalButton.m in Sources */,
+				5E5FA58E1B477DD100387E69 /* JHLDevice_M60.m in Sources */,
 				5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */,
 				5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */,
 				5E397B2E1AD36429004F206F /* ASICloudFilesRequest.m in Sources */,

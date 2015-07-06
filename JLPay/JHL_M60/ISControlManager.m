@@ -265,6 +265,7 @@ __strong static id _sharedObject = nil;
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath *mDataPath = (ISBLEDataPath *)dataPath;
             if (aPeripheral == mDataPath.peripheral) {
+                // 如果已在已识别列表，则更新 advName
                 [mDataPath setPeripheral:aPeripheral withAdvName:advName];
                 find = YES;
                 break;

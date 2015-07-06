@@ -13,9 +13,10 @@
 #import "GroupPackage8583.h"
 #import "Toast+UIView.h"
 #import "JLActivity.h"
+#import "DeviceManager.h"
 
 
-@interface ChooseDeviceTabelViewController()<wallDelegate,managerToCard>
+@interface ChooseDeviceTabelViewController()<wallDelegate,managerToCard,DeviceManagerDelegate>
 @property (nonatomic, strong) NSArray* terminalNums;
 @property (nonatomic, strong) JLActivity* activitor;
 @end
@@ -30,13 +31,15 @@
     [super viewDidLoad];
     [self.view addSubview:self.activitor];
     self.title = @"绑定机具";
-    NSString* terminalCount = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count];
+//    NSString* terminalCount = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count];
     
-    if ([terminalCount intValue] > 1) {
-        self.terminalNums = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Numbers];
-    } else {
-        self.terminalNums = [NSArray arrayWithObjects:[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Number], nil];
-    }
+//    if ([terminalCount intValue] > 1) {
+//        self.terminalNums = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Numbers];
+//    } else {
+//        self.terminalNums = [NSArray arrayWithObjects:[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Number], nil];
+//    }
+    
+    
     
     // 注册写工作密钥的结果通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
@@ -58,7 +61,9 @@
 //        [delegatte.device open];
 //    }
     DeviceManager* device = [DeviceManager sharedInstance];
-    [device open];
+//    [device open];
+    [device setDelegate:self];
+    [device openAllDevices];
 }
 
 
@@ -67,15 +72,25 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSString* terminalCount = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count];
-    return [terminalCount intValue];
+//    NSString* terminalCount = [[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count];
+    if (self.terminalNums.count == 0) {
+        return 1;
+    } else {
+        return self.terminalNums.count;
+    }
 }
 
 #pragma mask ::: 装载终端编号单元格
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"terminalNoCell"];
     cell.textLabel.text = @"终端编号";
-    cell.detailTextLabel.text = [self.terminalNums objectAtIndex:indexPath.row];
+    if ([tableView numberOfRowsInSection:indexPath.section] == 1 &&
+        self.terminalNums.count == 0) {
+        cell.detailTextLabel.text = @"无";
+    } else {
+        cell.detailTextLabel.text = [self.terminalNums objectAtIndex:indexPath.row];
+    }
+    
     return cell;
 }
 
@@ -113,6 +128,17 @@
         [alert show];
         // 打开设备
 //        [delegatte.device open];        // 在后台打开的
+    }
+}
+
+
+#pragma mask : -------------  DeviceManagerDelegate
+// 设备管理器读到终端号变更后的回调--更新列表
+- (void)deviceManager:(DeviceManager *)deviceManager updatedTerminalArray:(NSArray *)terminalArray {
+    if (terminalArray != nil) {
+        self.terminalNums = terminalArray;
+        // 更新终端号列表后就刷新列表
+        [self.tableView reloadData];
     }
 }
 

@@ -12,6 +12,7 @@
 
 @interface DeviceManager : NSObject
 @property (assign) id<DeviceManagerDelegate> delegate;
+@property (nonatomic, strong) NSString* deviceType;
 +(DeviceManager*) sharedInstance;
 
 #pragma mask : 打开设备探测;
@@ -25,17 +26,25 @@
 #pragma mask : 刷卡
 - (int) cardSwipe;
 #pragma mask : 刷磁消费
--(int)TRANS_Sale:(long)timeout nAmount:(long)nAmount nPasswordlen:(int)nPasswordlen bPassKey:(NSString*)bPassKey;
+- (int) TRANS_Sale:(long)timeout nAmount:(long)nAmount nPasswordlen:(int)nPasswordlen bPassKey:(NSString*)bPassKey;
 #pragma mask : 主密钥下载
 - (int) mainKeyDownload;
 #pragma mask : 工作密钥设置
--(int)WriteWorkKey:(int)len :(NSString*)DataWorkkey;
+- (int) WriteWorkKey:(int)len :(NSString*)DataWorkkey;
 #pragma mask : 参数下载
 - (int) parameterDownload;
 #pragma mask : IC卡公钥下载
 - (int) ICPublicKeyDownload;
 #pragma mask : EMV参数下载
 - (int) EMVDownload;
+
+#pragma mask ---------------------------
+#pragma mask : 打开所有设备
+- (void) openAllDevices;
+#pragma mask : 读取所有设备的终端号
+- (NSArray*) terminalNumArrayOfReading;
+#pragma mask : 仅保留指定终端号的设备
+- (void) retainDeviceWithTerminalNum:(NSString*)terminalNum;
 
 @end
 
@@ -66,6 +75,14 @@
  * 写工作密钥成功/失败的回调
  */
 - (void) deviceManager:(DeviceManager*)deviceManager didWritingWorkKeySuccessOrNot:(BOOL)yesOrNot;
+/*
+ * 打开设备成功/失败的回调
+ */
+- (void) deviceManager:(DeviceManager*)deviceManager didWritingWorkKeySuccessOrNot:(BOOL)yesOrNot;
+/*
+ * 终端号列表更新后的回调
+ */
+- (void) deviceManager:(DeviceManager*)deviceManager updatedTerminalArray:(NSArray*)terminalArray;
 
 
 
