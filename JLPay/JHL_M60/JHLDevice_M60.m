@@ -118,11 +118,8 @@
 
 // 设备完成连接
 - (void)accessoryDidConnect:(ISDataPath *)accessory{
-    // 读取设备终端号，并追加到终端号列表，并调用协议方法，去更新数据
-//    [self readTerminalNoWithAccessory:accessory];
     ISBLEDataPath* mAccessory = (ISBLEDataPath*)accessory;
     NSLog(@"设备[%@]已连接", mAccessory.peripheral);
-
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -131,6 +128,7 @@
             if (iDataPath.peripheral == mAccessory.peripheral &&
                 [[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
                 [dataDic setValue:@"old" forKey:@"newOrOld"];
+                break;
             }
         }
     }
@@ -205,8 +203,6 @@
     }
     
     
-    NSLog(@"\n-------\n本地已识别设备列表[%@]\n-----------\n",self.knownDeviceList);
-    
     
     // 将名字前缀是 JHLM60 且是 ISMFiDataPath 类型的蓝牙设备添加到“已连接”列表
     // 本地的已连接列表更新是在建立连接的时候更新的
@@ -214,14 +210,23 @@
     // 如果本地没有，就添加到本地:并读取设备号，建立字典
     // 如果本地多余，就删除本地多余的字典
     [self compareConnectedDeviceListWithList:connectList];
-    NSLog(@"\n--------\n本地已连接设备列表[%@]\n-----------\n",self.connectedDeviceList);
 
-//        }
-//    }
-    // 每次刷新完，先判断是否需要连接已识别的设备s
-//    if (self.needOpenDevices) {
-        [self openInKnownDeviceList];
-//    }
+    NSLog(@"----------------knownDeviceList:");
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
+        NSString* newFlag = [dataDic valueForKey:@"newOrOld"];
+        NSLog(@"-- [%@],[%@]", dataPath.peripheral, newFlag);
+    }
+    NSLog(@"----------------connectedDeviceList:");
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
+        NSString* terno = [dataDic valueForKey:@"terminalNum"];
+        NSLog(@"-- [%@],[%@]", dataPath.peripheral, terno);
+    }
+    
+    
+    // 打开已识别列表中状态为 new 的设备
+    [self openInKnownDeviceList];
 }
 
 /*
@@ -260,8 +265,6 @@
     ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
     for (NSDictionary* dataDic in self.knownDeviceList) {
         // 逐个比对当前已识别列表中设备的序列号
-        NSLog(@"本地列表中得设备:[%@]", [dataDic valueForKey:@"dataPath"]);
-        NSLog(@"对比的后台已识别列表中的设备[%@]", dataPath);
         ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if ([innerDataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath* path = (ISBLEDataPath*)innerDataPath;
@@ -339,6 +342,7 @@
     
     // 如果 localNotComparedList 不为空就要删掉多余
     if (localNotComparedList.count > 0) {
+        NSLog(@"localNotComparedList.cout = [%d]",(int)localNotComparedList.count);
         for (ISBLEDataPath* dataPath in localNotComparedList) {
             for (NSDictionary* dataDic in self.connectedDeviceList) {
                 ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
@@ -356,7 +360,7 @@
             [dataDic setValue:nil forKey:@"terminalNum"];
             [self.connectedDeviceList addObject:dataDic];
             // 读取这个设备的终端号
-            NSLog(@"读取设备[]的终端号");
+            NSLog(@"读取设备[%@]的终端号",dataPath);
             [self readTerminalNoWithAccessory:dataPath];
         }
     }
@@ -634,17 +638,8 @@
                 strTerNumber =[strTerNumber substringFromIndex:5];
                 strTerNumber = [strTerNumber substringToIndex:23];
                 NSLog(@"获取到了终端号:[%@]",[self stringFromHexString:strTerNumber]);
-                /*************/
-                // 将读出的终端号+终端dataPath打成字典追加到本地的已连接列表，并提示外部delegate更新终端号列表：[dic allValues]
-                // 将获取到得终端号传递出去
-                /*************/
                 /* 将读到的终端号填充到本地已连接设备列表中对应的设备 */
                 [self updateConnetedListOnDevice:accessory byTerminalNum:[self stringFromHexString:strTerNumber]];
-                
-//                if (_delegate && [_delegate respondsToSelector:@selector(didReadingTerminalNo:)]) {
-//                    [_delegate didReadingTerminalNo:[self stringFromHexString:strTerNumber]];
-//                }
-                
             }
             
             break;
