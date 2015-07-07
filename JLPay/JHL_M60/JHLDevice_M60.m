@@ -113,12 +113,13 @@
 // 已经断开了跟设备的连接
 - (void)accessoryDidDisconnect {
     // 要更新已识别设备列表的对应关闭连接的设备的 new 状态
-//    for (NSDictionary* dataDic in self.knownDeviceList) {
-//        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
-//        if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:"new"]) {
-//            <#statements#>
-//        }
-//    }
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
+        if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:@"old"] &&
+            [dataPath state] == CBPeripheralStateDisconnected) {
+            [dataDic setValue:@"new" forKey:@"newOrOld"];
+        }
+    }
 }
 
 // 设备完成连接
@@ -211,29 +212,8 @@
         }
     }
     
-    
-    
-    // 将名字前缀是 JHLM60 且是 ISMFiDataPath 类型的蓝牙设备添加到“已连接”列表
-    // 本地的已连接列表更新是在建立连接的时候更新的
-    // 这里主要是用来检查后台丢失或新建立的连接的设备是否在当前列表中
-    // 如果本地没有，就添加到本地:并读取设备号，建立字典
-    // 如果本地多余，就删除本地多余的字典
     [self compareConnectedDeviceListWithList:connectList];
 
-    NSLog(@"----------------knownDeviceList:");
-    for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
-        NSString* newFlag = [dataDic valueForKey:@"newOrOld"];
-        NSLog(@"-- [%@],[%@]", dataPath.peripheral, newFlag);
-    }
-    NSLog(@"----------------connectedDeviceList:");
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
-        NSString* terno = [dataDic valueForKey:@"terminalNum"];
-        NSLog(@"-- [%@],[%@]", dataPath.peripheral, terno);
-    }
-    
-    
     // 打开已识别列表中状态为 new 的设备
     [self openInKnownDeviceList];
 }
@@ -302,9 +282,6 @@
  */
 - (void) compareConnectedDeviceListWithList:(NSArray*)connectList {
     BOOL compared = NO;
-//    NSMutableArray* localNotComparedList = [[NSMutableArray alloc] init];   // 本地不匹配列表
-//    NSMutableArray* bgNotComparedList = [[NSMutableArray alloc] init];      // 后台不匹配列表
-    
     // 先用本地跟后台列表比对，不匹配设备进入 localNotComparedList
     for (NSDictionary* dataDic in self.connectedDeviceList) {
         ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
@@ -320,7 +297,6 @@
             }
         }
         if (!compared) {
-//            [localNotComparedList addObject:innerDataPath];
             [self.connectedDeviceList removeObject:dataDic];
             [self renewTerminalNumbers];
         }
@@ -343,38 +319,12 @@
             }
         }
         if (!compared) {
-//            [bgNotComparedList addObject:bgDataPath];
             NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
             [dataDic setValue:bgDataPath forKey:@"dataPath"];
             [dataDic setValue:nil forKey:@"terminalNum"];
             [self.connectedDeviceList addObject:dataDic];
         }
     }
-    
-    // 如果 localNotComparedList 不为空就要删掉多余
-//    if (localNotComparedList.count > 0) {
-//        NSLog(@"localNotComparedList.cout = [%d]",(int)localNotComparedList.count);
-//        for (ISBLEDataPath* dataPath in localNotComparedList) {
-//            for (NSDictionary* dataDic in self.connectedDeviceList) {
-//                ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
-//                if (innerDataPath.peripheral == dataPath.peripheral) {
-//                    [self.connectedDeviceList removeObject:dataDic];
-//                }
-//            }
-//        }
-//    }
-    // 如果 bgNotComparedList 不为空就要添加到本地列表中,并逐个读取终端号
-//    if (bgNotComparedList.count > 0) {
-//        for (ISDataPath* dataPath in bgNotComparedList) {
-//            NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
-//            [dataDic setValue:dataPath forKey:@"dataPath"];
-//            [dataDic setValue:nil forKey:@"terminalNum"];
-//            [self.connectedDeviceList addObject:dataDic];
-//            // 读取这个设备的终端号
-////            NSLog(@"读取设备[%@]的终端号",dataPath);
-////            [self readTerminalNoWithAccessory:dataPath];
-//        }
-//    }
 }
 
 
