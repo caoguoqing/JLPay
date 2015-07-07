@@ -41,8 +41,8 @@
 static long timeOut = 60*1000;
 
 #pragma mask --------------------------[Public Interface]--------------------------
+static DeviceManager* _sharedDeviceManager;
 +(DeviceManager*) sharedInstance {
-    static DeviceManager* _sharedDeviceManager;
     static dispatch_once_t desp;
     dispatch_once(&desp, ^{
         _sharedDeviceManager = [[DeviceManager alloc] init];
@@ -188,13 +188,21 @@ static long timeOut = 60*1000;
 
 #pragma mask -------------------------- JHLDevice_M60_Delegate
 // 设备获取到终端号的回调协议
-- (void)didReadingTerminalNo:(NSString *)terminalNo {
-    NSLog(@"JHLDevice_M60_Delegate 的回调:");
-    if ([self.terminalArray indexOfObject:terminalNo] == NSNotFound) {
-        [self.terminalArray addObject:terminalNo];
-        // 更新调用者的终端号列表
+//- (void)didReadingTerminalNo:(NSString *)terminalNo {
+//    NSLog(@"JHLDevice_M60_Delegate 的回调:");
+//    if ([self.terminalArray indexOfObject:terminalNo] == NSNotFound) {
+//        [self.terminalArray addObject:terminalNo];
+//        // 更新调用者的终端号列表
+//        [self.delegate deviceManager:self updatedTerminalArray:self.terminalArray];
+//        NSLog(@"获取到更新的终端号列表[%@]", self.terminalArray);
+//    }
+//}
+// 设备终端号列表刷新的回调协议
+- (void)renewTerminalNumbers:(NSArray *)terminalNumbers {
+    [self.terminalArray removeAllObjects];
+    [self.terminalArray addObjectsFromArray:terminalNumbers];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(deviceManager:updatedTerminalArray:)]) {
         [self.delegate deviceManager:self updatedTerminalArray:self.terminalArray];
-        NSLog(@"获取到更新的终端号列表[%@]", self.terminalArray);
     }
 }
 

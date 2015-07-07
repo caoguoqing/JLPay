@@ -272,6 +272,7 @@ __strong static id _sharedObject = nil;
             }
         }
     }
+    // 只有新识别的没在已识别列表中得设备才会进入已识别列表
     if (!find) {
         ISBLEDataPath *dataPath = [[ISBLEDataPath alloc] init];
         [dataPath setPeripheral:aPeripheral withAdvName:advName];

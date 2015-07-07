@@ -58,27 +58,27 @@
  *      deviceType: DeviceType_A60, DeviceType_M60 ...
  *      在回调中，如果成功，要判断是不是M60设备，如果是，不用在手机中输入密码
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didSwipingSuccessOrNot:(BOOL)yesOrNot onDeviceType:(NSString*)deviceType;
+- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot onDeviceType:(NSString*)deviceType;
 
 /*
  * 校验密码成功/失败的回调
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didReadingTrackSuccessOrNot:(BOOL)yesOrNot;
+- (void) deviceManager:(DeviceManager*)deviceManager didReadTrackSuccessOrNot:(BOOL)yesOrNot;
 
 
 /*
  * 写主密钥成功/失败的回调
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didWritingMainKeySuccessOrNot:(BOOL)yesOrNot;
+- (void) deviceManager:(DeviceManager*)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot;
 
 /*
  * 写工作密钥成功/失败的回调
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didWritingWorkKeySuccessOrNot:(BOOL)yesOrNot;
+- (void) deviceManager:(DeviceManager*)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot;
 /*
  * 打开设备成功/失败的回调
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didWritingWorkKeySuccessOrNot:(BOOL)yesOrNot;
+- (void) deviceManager:(DeviceManager*)deviceManager didOpenSuccessOrNot:(BOOL)yesOrNot;
 /*
  * 终端号列表更新后的回调
  */

@@ -27,8 +27,12 @@
     int connectionStatus;
 }
 @property (nonatomic, retain) ISControlManager* manager;
-@property (nonatomic, strong) NSMutableArray* knownDeviceList;             // 已识别设备列表
-@property (nonatomic, strong) NSMutableArray* connectedDeviceList;         // 已连接设备列表
+// 已识别设备列表
+//      每个元素都是一个字典:[dataPath:ISDataPath*,newFlag:"new/old"]
+@property (nonatomic, strong) NSMutableArray* knownDeviceList;
+// 已连接设备列表
+//      每个元素都是一个字典:[dataPath:ISDataPath*,terminalNum:"11111111111"]
+@property (nonatomic, strong) NSMutableArray* connectedDeviceList;
 @property (nonatomic, assign) BOOL needOpenDevices;
 @end
 
@@ -51,7 +55,6 @@
  * 返  回: 无
  */
 - (void)openAllDevices {
-    self.needOpenDevices = YES;
     [self startScanning];
 }
 
@@ -110,12 +113,27 @@
 // 已经断开了跟设备的连接
 - (void)accessoryDidDisconnect {
     // 要更新设备列表
+//    self.needOpenDevices = NO;
 }
 
 // 设备完成连接
 - (void)accessoryDidConnect:(ISDataPath *)accessory{
     // 读取设备终端号，并追加到终端号列表，并调用协议方法，去更新数据
-    [self readTerminalNo];
+//    [self readTerminalNoWithAccessory:accessory];
+    ISBLEDataPath* mAccessory = (ISBLEDataPath*)accessory;
+    NSLog(@"设备[%@]已连接", mAccessory.peripheral);
+
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
+        if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
+            ISBLEDataPath* iDataPath = (ISBLEDataPath*)dataPath;
+            NSLog(@"设备[%@],状态为[%@]", iDataPath.peripheral,[dataDic valueForKey:@"newOrOld"]);
+            if (iDataPath.peripheral == mAccessory.peripheral &&
+                [[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
+                [dataDic setValue:@"old" forKey:@"newOrOld"];
+            }
+        }
+    }
 }
 
 // 已经读取到设备返回的数据
@@ -156,16 +174,16 @@
     memcpy(ByteDate, ByteReviceDate+2, nOffsetLen-2);
     data = [[NSData alloc] initWithBytes:ByteDate length:nOffsetLen-2];
     
-    [self onReceive:data];
+    [self onReceive:data withAccessory:accessory];
     [self  resetGetData];
 }
 // 完成向设备写数据:成功/失败还未知
 - (void)accessoryDidWriteData:(ISDataPath *)accessory bytes:(int)bytes complete:(BOOL)complete{
-    
+    NSLog(@"蓝牙设备交互数据成功");
 }
 // 写设备数据失败
 - (void)accessoryDidFailToWriteData:(ISDataPath *)accessory error:(NSError *)error{
-    NSLog([NSString stringWithFormat:@"蓝牙设备交互数据失败:[%@]", error]);
+    NSLog(@"蓝牙设备交互数据失败:[%@]", error);
 }
 
 #pragma mask --------------------- ISControlManagerDeviceList
@@ -177,55 +195,226 @@
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
     // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表
-    [_knownDeviceList removeAllObjects];
+    // 条件是:这个设备是新识别的
     for (ISDataPath* dataPath in devices) {
         if ([dataPath.name hasPrefix:@"JHLM60"] &&                      // 前缀
-            [dataPath isKindOfClass:[ISBLEDataPath class]] &&           // ISBLEDataPath
-            [_knownDeviceList indexOfObject:dataPath] == NSNotFound)    // 列表中不能重复
+            [dataPath isKindOfClass:[ISBLEDataPath class]] )            // ISBLEDataPath
         {
-            [_knownDeviceList addObject:dataPath];
+            [self knownDeviceListAddObject:dataPath];
         }
     }
     
+    
+    NSLog(@"\n-------\n本地已识别设备列表[%@]\n-----------\n",self.knownDeviceList);
+    
+    
     // 将名字前缀是 JHLM60 且是 ISMFiDataPath 类型的蓝牙设备添加到“已连接”列表
-    [_connectedDeviceList removeAllObjects];
-    for (ISDataPath* dataPath in connectList) {
-        if ([dataPath.name hasPrefix:@"JHLM60"] &&
-            [dataPath isKindOfClass:[ISMFiDataPath class]] &&
-            [_connectedDeviceList indexOfObject:dataPath] == NSNotFound)
-        {
-            [_connectedDeviceList addObject:dataPath];
-        }
-    }
+    // 本地的已连接列表更新是在建立连接的时候更新的
+    // 这里主要是用来检查后台丢失或新建立的连接的设备是否在当前列表中
+    // 如果本地没有，就添加到本地:并读取设备号，建立字典
+    // 如果本地多余，就删除本地多余的字典
+    [self compareConnectedDeviceListWithList:connectList];
+    NSLog(@"\n--------\n本地已连接设备列表[%@]\n-----------\n",self.connectedDeviceList);
+
+//        }
+//    }
     // 每次刷新完，先判断是否需要连接已识别的设备s
-    if (self.needOpenDevices) {
+//    if (self.needOpenDevices) {
         [self openInKnownDeviceList];
-    }
+//    }
 }
 
 /*
  * 函  数: openInKnownDeviceList
- * 功  能: 逐个打开已识别列表中得设备;
- *        一次只尝试打开一个；
- * 参  数: 无
+ * 功  能: 将已识别列表中得 new 状态的设备打开;
+ * 参  数:
+ *          (ISDataPath*)dataPath
  * 返  回: 无
  */
 - (void) openInKnownDeviceList {
-    ISBLEDataPath* needConnectDevice = nil;
-    if (self.knownDeviceList.count > 0) {
-        // 扫描设备列表，如果设备没连接就进行连接
-        for (ISBLEDataPath* dataPath in self.knownDeviceList) {
-            if ([dataPath state] == CBPeripheralStateDisconnected) {
-                needConnectDevice = dataPath;
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        NSLog(@"需要打开的设备【%@】状态为[%@]", [dataDic valueForKey:@"dataPath"], [dataDic valueForKey:@"newOrOld"]);
+        if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
+            // 打开设备
+            ISDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
+            if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
+                ISBLEDataPath* idataPath = (ISBLEDataPath*)dataPath;
+                NSLog(@"连接设备:[%@]", idataPath.peripheral);
+                [self.manager connectDevice:dataPath];
+            }
+            // 在回调中将设备的状态改为 old
+        }
+    }
+}
+
+
+/*
+ * 函  数: knownDeviceListAddedObject
+ * 功  能: 如果;
+ * 参  数: 
+ *          (ISDataPath*)dataPath
+ * 返  回: 无
+ */
+- (void) knownDeviceListAddObject:(ISDataPath*)dataPath {
+    BOOL hasElement = NO;
+    ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        // 逐个比对当前已识别列表中设备的序列号
+        NSLog(@"本地列表中得设备:[%@]", [dataDic valueForKey:@"dataPath"]);
+        NSLog(@"对比的后台已识别列表中的设备[%@]", dataPath);
+        ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+        if ([innerDataPath isKindOfClass:[ISBLEDataPath class]]) {
+            ISBLEDataPath* path = (ISBLEDataPath*)innerDataPath;
+            if (path.peripheral == oDataPath.peripheral) {
+                hasElement = YES;
+            }
+        }
+    }
+    // 设备不再当前列表中才将它添加到当前列表，并设置 newOrOld 标志
+    if (!hasElement) {
+        NSMutableDictionary* ddic = [[NSMutableDictionary alloc] init];
+        [ddic setValue:dataPath forKey:@"dataPath"];
+        [ddic setValue:@"new" forKey:@"newOrOld"];
+        [self.knownDeviceList addObject:ddic];
+    }
+}
+
+/*
+ * 函  数: compareConnectedDeviceListWithList
+ * 功  能: 对比两个已连接设备列表;
+ *          一个是后台蓝牙设备管理器的设备列表；
+ *          一个是本管理器中的设备列表；
+ *          如果本地没有，就添加到本地:并读取设备号，建立字典
+ *          如果本地多余，就删除本地多余的字典
+ *          但是不管怎样，两个列表最多只会相差一个
+ *
+ * 参  数:
+ *          (ISDataPath*)dataPath
+ * 返  回: 无
+ */
+- (void) compareConnectedDeviceListWithList:(NSArray*)connectList {
+    BOOL compared = NO;
+    NSMutableArray* localNotComparedList = [[NSMutableArray alloc] init];   // 本地不匹配列表
+    NSMutableArray* bgNotComparedList = [[NSMutableArray alloc] init];      // 后台不匹配列表
+    
+    // 先用本地跟后台列表比对，不匹配设备进入 localNotComparedList
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+        compared = NO;
+        for (ISDataPath* bgDataPath in connectList) {
+            ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
+            ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
+            if ([bgDataPath.name hasPrefix:@"JHLM60"] &&
+                [bgDataPath isKindOfClass:[ISBLEDataPath class]] &&
+                oDataPath.peripheral == iDataPath.peripheral ) {
+                compared = YES;
                 break;
             }
         }
-        if (needConnectDevice != nil) {
-            [self.manager connectDevice:needConnectDevice];
+        if (!compared) {
+            [localNotComparedList addObject:innerDataPath];
         }
-        
+    }
+    
+    // 用后台跟本地列表比对，不匹配设备进入 bgNotComparedList
+    for (ISDataPath* bgDataPath in connectList) {
+        if (![bgDataPath.name hasPrefix:@"JHLM60"] ||
+            ![bgDataPath isKindOfClass:[ISBLEDataPath class]]) {
+            continue;
+        }
+        compared = NO;
+        for (NSDictionary* dataDic in self.connectedDeviceList) {
+            ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+            ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
+            ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
+            if (oDataPath.peripheral == iDataPath.peripheral) {
+                compared = YES;
+                break;
+            }
+        }
+        if (!compared) {
+            [bgNotComparedList addObject:bgDataPath];
+        }
+    }
+    
+    // 如果 localNotComparedList 不为空就要删掉多余
+    if (localNotComparedList.count > 0) {
+        for (ISBLEDataPath* dataPath in localNotComparedList) {
+            for (NSDictionary* dataDic in self.connectedDeviceList) {
+                ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+                if (innerDataPath.peripheral == dataPath.peripheral) {
+                    [self.connectedDeviceList removeObject:dataDic];
+                }
+            }
+        }
+    }
+    // 如果 bgNotComparedList 不为空就要添加到本地列表中,并逐个读取终端号
+    if (bgNotComparedList.count > 0) {
+        for (ISDataPath* dataPath in bgNotComparedList) {
+            NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
+            [dataDic setValue:dataPath forKey:@"dataPath"];
+            [dataDic setValue:nil forKey:@"terminalNum"];
+            [self.connectedDeviceList addObject:dataDic];
+            // 读取这个设备的终端号
+            NSLog(@"读取设备[]的终端号");
+            [self readTerminalNoWithAccessory:dataPath];
+        }
     }
 }
+
+
+/*
+ * 函  数: updateConnetedListOnDevice:byTerminalNum
+ * 功  能: 更新本地已连接设备列表中对应设备的终端号;
+ *          终端号跟设备入口以字典形式保存着；
+ *
+ * 参  数:
+ *          (ISDataPath*)dataPath
+ *          (NSString*)terminalNum 终端编号
+ * 返  回: 无
+ */
+- (void) updateConnetedListOnDevice:(ISDataPath*)dataPath byTerminalNum:(NSString*)terminalNum {
+    ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+        if (oDataPath.peripheral == innerDataPath.peripheral) {
+            [dataDic setValue:terminalNum forKeyPath:@"terminalNum"];
+            // 刷新终端号列表给外部协议
+            [self renewTerminalNumbers];
+            break;
+        }
+    }
+}
+
+
+/*
+ * 函  数: renewTerminalNumbers
+ * 功  能: 刷新外部协议从本控制器读取的所有设备的终端号;
+ *          终端号跟设备入口以字典形式保存着；
+ *
+ * 参  数:
+ *          (ISDataPath*)dataPath
+ *          (NSString*)terminalNum 终端编号
+ * 返  回: 无
+ */
+- (void) renewTerminalNumbers {
+    NSMutableArray* terminalNumbers = [[NSMutableArray alloc] init];
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        NSString* terminalNumber = [dataDic valueForKey:@"terminalNum"];
+        if (terminalNumber != nil) {
+            [terminalNumbers addObject:terminalNumber];
+        }
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(renewTerminalNumbers:)]) {
+        [self.delegate renewTerminalNumbers:terminalNumbers];
+    }
+}
+
+
+
+
+
+
 
 #pragma mask --------------------- 设备交互
 /*
@@ -234,7 +423,7 @@
  * 参  数: 无
  * 返  回: 无
  */
--(void)onReceive:(NSData*)data{
+-(void)onReceive:(NSData*)data withAccessory:(ISDataPath*)accessory{
     
     NSLog(@"%s %@",__func__,data);
     Byte * ByteDate = (Byte *)[data bytes];
@@ -253,13 +442,7 @@
                     }
                     strPan =[self stringFromHexString:strPan];
                     
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Credit Sucess,Waiting...";
-//                    else
-//                        self.LabTip.text = @"刷卡成功,请等待处理..";
-                    
                     strPan = [@"PAN:" stringByAppendingString:strPan];
-//                    self.TextViewTip.text =strPan;
                     // [self TRANS_Sale:20000:nAmount:5:@"12345"];
                 });
                 
@@ -271,17 +454,7 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡失败");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    UIAlertView *alertTip;
-//                    if (Language ==0)
-//                        alertTip = [[UIAlertView alloc] initWithTitle:nil message:@"Credit card failure" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-//                    else
-//                        alertTip = [[UIAlertView alloc] initWithTitle:nil message:@"刷卡失败" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-//                    
-//                    
-//                    
-//                    [alertTip show];
                     return;
-                    
                 });
                 
                 
@@ -294,7 +467,6 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    self.LabTip.text =@"待机界面插入IC卡";
                     
                     
                 });
@@ -306,9 +478,6 @@
                 
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-//                    self.LabTip.text =@"正常交易状态插入IC卡";
-                    
                 });
             }
             
@@ -320,8 +489,6 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-//                    [self GetCard:data];
                 });
             }
             else
@@ -331,9 +498,6 @@
                 
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    
-                    
 //                    if (ByteDate[1]==0xE1 )
 //                        self.LabTip.text =@"获取卡号数据失败:用户取消";
 //                    else if (ByteDate[1]==0xE2 )
@@ -354,8 +518,6 @@
 //                        [self disconnectDevices];
                     
 //                    }
-                    
-                    
                 });
             }
             break;
@@ -375,19 +537,11 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"主密钥设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set MainKey Sucess";
-//                    else
-//                        self.LabTip.text = @"主密钥设置成功";
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set MainKey Fail";
-//                    else
-//                        self.LabTip.text = @"主密钥设置失败";
                 });
                 
             }
@@ -399,19 +553,11 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"工作密钥设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set WorkKey Sucess";
-//                    else
-//                        self.LabTip.text = @"工作密钥设置成功";
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set WorkKey Fail";
-//                    else
-//                        self.LabTip.text = @"工作密钥设置失败";
                 });
                 
             }
@@ -431,12 +577,8 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
                     NSLog(@"SN获取成功  %@",strSN);
-//                    self.LabTip.text = @"GET  SN  Sucess";
                     NSString * SN =@"SN:";
                     SN = [SN stringByAppendingString:strSN];
-//                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:SN delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-//                    self.TextViewTip.text = SN;
-//                    [alert show];
                 });
                 
             }
@@ -454,22 +596,12 @@
                     
                     
                     strMAC = [@"MAC值:" stringByAppendingString:strMAC];
-//                    self.TextViewTip.text =strMAC;
-                    
-//                    if (Language ==0)
-//                        self.LabTip.text = @"GET  MAC  Sucess";
-//                    else
-//                        self.LabTip.text = @"MAC获取成功";
                     
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"GET  MAC  Fail";
-//                    else
-//                        self.LabTip.text = @"MAC获取失败";
                     
                 });
                 
@@ -483,20 +615,11 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"终端号商户号设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set Terid Sucess";
-//                    else
-//                        self.LabTip.text = @"终端号商户号设置成功";
-//                    [self ReadTernumber];  //读取终端号
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set Terid Fail";
-//                    else
-//                        self.LabTip.text = @"终端号商户号设置失败";
                 });
                 
             }
@@ -511,10 +634,16 @@
                 strTerNumber =[strTerNumber substringFromIndex:5];
                 strTerNumber = [strTerNumber substringToIndex:23];
                 NSLog(@"获取到了终端号:[%@]",[self stringFromHexString:strTerNumber]);
+                /*************/
+                // 将读出的终端号+终端dataPath打成字典追加到本地的已连接列表，并提示外部delegate更新终端号列表：[dic allValues]
                 // 将获取到得终端号传递出去
-                if (_delegate && [_delegate respondsToSelector:@selector(didReadingTerminalNo:)]) {
-                    [_delegate didReadingTerminalNo:[self stringFromHexString:strTerNumber]];
-                }
+                /*************/
+                /* 将读到的终端号填充到本地已连接设备列表中对应的设备 */
+                [self updateConnetedListOnDevice:accessory byTerminalNum:[self stringFromHexString:strTerNumber]];
+                
+//                if (_delegate && [_delegate respondsToSelector:@selector(didReadingTerminalNo:)]) {
+//                    [_delegate didReadingTerminalNo:[self stringFromHexString:strTerNumber]];
+//                }
                 
             }
             
@@ -809,9 +938,10 @@
  * 功  能: 读取已识别列表中得设备号;
  *        一次尝试打开一批；
  * 参  数: 无
- * 返  回: 无
+ * 返  回:  
+ *        BOOL : 向设备发送请求数据成功或失败
  */
-- (BOOL) readTerminalNo {
+- (BOOL) readTerminalNoWithAccessory:(ISDataPath *)accessory {
 //    BOOL result = isConnect;
     BOOL result = YES;
 
@@ -820,9 +950,11 @@
     NSMutableData* data = [[NSMutableData alloc] init];
     Byte array[1] = {GETTERNUMBER};
     [data appendBytes:array length:1];
-    result =[self writeMposData:data];
+    result =[self writeMposData:data withAccessory:accessory];
     return result;
 }
+
+
 
 
 /*
@@ -832,7 +964,7 @@
  * 参  数: 无
  * 返  回: 无
  */
-- (BOOL)writeMposData:(NSData *)data
+- (BOOL)writeMposData:(NSData *)data withAccessory:(ISDataPath *)accessory
 {
     NSUInteger nlen =0,dwWriteBytes =0,dwCopyBytes =0;
     Byte templen[2]={0};
@@ -881,7 +1013,11 @@
         }
         NSData *Sendata = [[NSData alloc] initWithBytes:szSendBlock length:dwCopyBytes];
         //NSLog(@"[MFiDataPath] writeData1: %@", Sendata);
-        [[ISControlManager sharedInstance] writeData:Sendata];
+        if (accessory == nil) {
+            [[ISControlManager sharedInstance] writeData:Sendata];
+        } else {
+            [[ISControlManager sharedInstance] writeData:Sendata withAccessory:accessory];
+        }
         
         //[NSThread sleepForTimeInterval:0.001];
         dwWriteBytes += dwCopyBytes ;

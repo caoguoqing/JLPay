@@ -12,6 +12,7 @@
 @optional
 // 读取终端号成功
 - (void) didReadingTerminalNo:(NSString*)terminalNo;
+- (void) renewTerminalNumbers:(NSArray*)terminalNumbers;
 
 @end
 
@@ -28,7 +29,7 @@
  * 参  数: 无
  * 返  回: 无
  */
-- (BOOL) readTerminalNo;
+//- (BOOL) readTerminalNo;
 
 
 #pragma mask : 打开设备探测;
