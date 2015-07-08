@@ -11,7 +11,7 @@
 @protocol JHLDevice_M60_Delegate<NSObject>
 @optional
 // 读取终端号成功
-- (void) didReadingTerminalNo:(NSString*)terminalNo;
+- (void) didReadingTerminalNo:(NSString*)terminalNo;  // 无用了
 - (void) renewTerminalNumbers:(NSArray*)terminalNumbers;
 
 @end
@@ -22,14 +22,9 @@
 @property (assign) id<JHLDevice_M60_Delegate> delegate;
 /* 打开所有蓝牙设备 */
 - (void) openAllDevices;
-/*
- * 函  数: readTerminalNo
- * 功  能: 读取已识别列表中得设备号;
- *        一次尝试打开一批；
- * 参  数: 无
- * 返  回: 无
- */
-//- (BOOL) readTerminalNo;
+// pragma mask : 判断指定终端号的设备是否已连接
+- (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
+
 
 
 #pragma mask : 打开设备探测;

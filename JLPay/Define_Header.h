@@ -71,7 +71,7 @@
 #define DeviceType_JHL_M60          @"锦宏霖手持(蓝牙)刷卡器M60"       // 锦宏霖蓝牙M60
 
 
-
+#define SelectedTerminalNum         @"SelectedTerminalNum"      // 选择设备连接的终端号配置的key
 
 
 // 自定义键盘的高度

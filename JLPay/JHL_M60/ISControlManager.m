@@ -349,14 +349,14 @@ __strong static id _sharedObject = nil;
 - (void) centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)aPeripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
     NSLog(@"<---------\n[CBController] didDiscoverPeripheral, %@, count=%u, RSSI=%d , %@", aPeripheral.UUID, [advertisementData count], [RSSI intValue], [aPeripheral description]);
-    NSArray *advDataArray = [advertisementData allValues];
-    NSArray *advValueArray = [advertisementData allKeys];
-    
-    for (int i=0; i < [advertisementData count]; i++)
-    {
-        NSLog(@"adv data=%@, %@ ", [advDataArray objectAtIndex:i], [advValueArray objectAtIndex:i]);
-    }
-    NSLog(@"-------->");
+//    NSArray *advDataArray = [advertisementData allValues];
+//    NSArray *advValueArray = [advertisementData allKeys];
+//    
+//    for (int i=0; i < [advertisementData count]; i++)
+//    {
+//        NSLog(@"adv data=%@, %@ ", [advDataArray objectAtIndex:i], [advValueArray objectAtIndex:i]);
+//    }
+//    NSLog(@"-------->");
     [self addDiscoverPeripheral:aPeripheral advName:[advertisementData valueForKey:CBAdvertisementDataLocalNameKey]];
 }
 

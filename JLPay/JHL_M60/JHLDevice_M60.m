@@ -72,21 +72,52 @@
     // 设置了yes才能刷新已识别设备列表,并打开
     self.needOpenDevices = YES;
     [self.manager stopScaning];
-    // 重新扫描设备
+    [self.manager disconnectAllDevices];    // 会清空已连接设备的列表
+    if (self.knownDeviceList.count > 0) {
+        [self.knownDeviceList removeAllObjects];
+    }
+    if (self.connectedDeviceList.count > 0) {
+        [self.connectedDeviceList removeAllObjects];
+    }
+    // 重新扫描设备: 会先清空已识别设备的列表
     [self.manager scanDeviceList:ISControlManagerTypeCB];
 }
 
+
 /*
- * 函  数: openWithTerminalNo
- * 功  能: 开始扫描所有的蓝牙设备;
- *         识别到得设备会进入列表_knownDeviceList;
+ * 函  数: isConnectedOnTerminalNum:
+ * 功  能: 判断指定终端号的设备是否已连接;
  * 参  数: 无
  * 返  回: 无
  */
-- (void) openWithTerminalNo:(NSString*)terminalNo {
-    self.needOpenDevices = NO;
+- (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum {
+    BOOL result = NO;
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        if ([[dataDic valueForKey:@"terminalNum"] isEqualToString:terminalNum]) {
+            result = YES;
+        }
+    }
+    return result;
 }
 
+
+
+/*
+ * 函  数: retainDeviceWithTerminalNum
+ * 功  能: 只保留选择的终端号设备;
+ *          其他的都关闭;在connectedDeviceList中;
+ * 参  数: 无
+ * 返  回: 无
+ */
+//- (void) retainDeviceWithTerminalNum:(NSString*)terminalNum {
+//    for (NSDictionary* dataDic in self.connectedDeviceList) {
+//        NSString* iTerminalNum = [dataDic objectForKey:@"terminalNum"];
+//        if ([iTerminalNum isEqualToString:terminalNum]) {
+//            ISDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+//            [self.manager disconnectDevice:dataPath];
+//        }
+//    }
+//}
 
 
 
@@ -226,7 +257,9 @@
  * 返  回: 无
  */
 - (void) openInKnownDeviceList {
-    for (NSDictionary* dataDic in self.knownDeviceList) {
+//    for (NSDictionary* dataDic in self.knownDeviceList) {
+    for (int i = 0; i < self.knownDeviceList.count; i++) {
+        NSDictionary* dataDic = [self.knownDeviceList objectAtIndex:i];
         NSLog(@"需要打开的设备【%@】状态为[%@]", [dataDic valueForKey:@"dataPath"], [dataDic valueForKey:@"newOrOld"]);
         if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
@@ -248,7 +281,9 @@
 - (void) knownDeviceListAddObject:(ISDataPath*)dataPath {
     BOOL hasElement = NO;
     ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-    for (NSDictionary* dataDic in self.knownDeviceList) {
+//    for (NSDictionary* dataDic in self.knownDeviceList) {
+    for (int i = 0; i < self.knownDeviceList.count; i++) {
+        NSDictionary* dataDic = [self.knownDeviceList objectAtIndex:i];
         // 逐个比对当前已识别列表中设备的序列号
         ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if ([innerDataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -283,10 +318,14 @@
 - (void) compareConnectedDeviceListWithList:(NSArray*)connectList {
     BOOL compared = NO;
     // 先用本地跟后台列表比对，不匹配设备进入 localNotComparedList
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+//    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (int i = 0; i < self.connectedDeviceList.count; i++) {
+        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
         ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         compared = NO;
-        for (ISDataPath* bgDataPath in connectList) {
+//        for (ISDataPath* bgDataPath in connectList) {
+        for (int j = 0; j < connectList.count; j++) {
+            ISDataPath* bgDataPath = [connectList objectAtIndex:j];
             ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
             ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
             if ([bgDataPath.name hasPrefix:@"JHLM60"] &&
@@ -303,13 +342,17 @@
     }
     
     // 用后台跟本地列表比对，不匹配设备进入 bgNotComparedList
-    for (ISDataPath* bgDataPath in connectList) {
+//    for (ISDataPath* bgDataPath in connectList) {
+    for (int i = 0; i < connectList.count; i++) {
+        ISDataPath* bgDataPath = [connectList objectAtIndex:i];
         if (![bgDataPath.name hasPrefix:@"JHLM60"] ||
             ![bgDataPath isKindOfClass:[ISBLEDataPath class]]) {
             continue;
         }
         compared = NO;
-        for (NSDictionary* dataDic in self.connectedDeviceList) {
+//        for (NSDictionary* dataDic in self.connectedDeviceList) {
+        for (int j = 0; j < self.connectedDeviceList.count; j++) {
+            NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:j];
             ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
             ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
             ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
@@ -340,7 +383,9 @@
  */
 - (void) updateConnetedListOnDevice:(ISDataPath*)dataPath byTerminalNum:(NSString*)terminalNum {
     ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+//    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (int i = 0; i < self.connectedDeviceList.count; i++) {
+        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
         ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if (oDataPath.peripheral == innerDataPath.peripheral) {
             [dataDic setValue:terminalNum forKeyPath:@"terminalNum"];
@@ -364,7 +409,9 @@
  */
 - (void) renewTerminalNumbers {
     NSMutableArray* terminalNumbers = [[NSMutableArray alloc] init];
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+//    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (int i = 0; i < self.connectedDeviceList.count; i++) {
+        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
         NSString* terminalNumber = [dataDic valueForKey:@"terminalNum"];
         if (terminalNumber != nil) {
             [terminalNumbers addObject:terminalNumber];

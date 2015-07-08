@@ -448,24 +448,17 @@
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
-        /**************** test for null of email ************/
-//        NSString* test = [dataDic objectForKey:@"commEmail"];
-//        if (test == nil || test.length == 0) {
-//            [[NSUserDefaults standardUserDefaults] setValue:@"89sdsdf2adfadfadfadfadfadsfa83972@qq.com" forKey:Business_Email];
-//        }
-        /****************test************/
 
         
         int termCount = [[dataDic objectForKey:@"termCount"] intValue];
         if (termCount == 0) {
-            
+            // 没有终端号
         }
         else if (termCount == 1) {    // 一个终端的编号
             [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:Terminal_Number];
         }
         else {                        // 终端编号组的编号
             NSLog(@"\n--------------TermNoList[%@]",[dataDic objectForKey:@"TermNoList"]);
-//            NSArray* array = [dataDic objectForKey:@"TermNoList"];
             NSString* terminalNumbersString = [dataDic objectForKey:@"TermNoList"];
             NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
             

@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "logViewController.h"
 #import "Toast+UIView.h"
+#import "Define_Header.h"
 
 #define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
 
@@ -45,6 +46,8 @@
     // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
     tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
     
+    [[NSUserDefaults standardUserDefaults] setValue:@"无" forKey:SelectedTerminalNum];
+
 }
 
 

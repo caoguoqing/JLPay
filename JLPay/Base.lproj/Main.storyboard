@@ -225,6 +225,27 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonDoneCell" id="2c9-Tj-RM2">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2c9-Tj-RM2" id="AOW-wu-giZ">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGh-ko-vqY">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                            <color key="backgroundColor" red="0.0060300372280488604" green="0.77248984575271606" blue="0.43582904442849746" alpha="1" colorSpace="calibratedRGB"/>
+                                            <state key="normal" title="确定">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="buttonClicked:" destination="VYW-eB-CEA" eventType="touchUpInside" id="dfF-x1-HC8"/>
+                                                <action selector="buttonTouchDown:" destination="VYW-eB-CEA" eventType="touchDown" id="zLa-Br-j9X"/>
+                                                <action selector="buttonTouchUpOutSide:" destination="VYW-eB-CEA" eventType="touchUpOutside" id="3YC-xD-7DP"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="VYW-eB-CEA" id="dbf-Qj-FtP"/>

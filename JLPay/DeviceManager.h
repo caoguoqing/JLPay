@@ -12,9 +12,10 @@
 
 @interface DeviceManager : NSObject
 @property (assign) id<DeviceManagerDelegate> delegate;
-@property (nonatomic, strong) NSString* deviceType;
+//@property (nonatomic, strong) NSString* deviceType;
 +(DeviceManager*) sharedInstance;
 
+#pragma mask --------------------------老接口
 #pragma mask : 打开设备探测;
 - (void) detecting;
 #pragma mask : 打开设备;
@@ -38,13 +39,15 @@
 #pragma mask : EMV参数下载
 - (int) EMVDownload;
 
-#pragma mask ---------------------------
-#pragma mask : 打开所有设备
+#pragma mask --------------------------- 新接口
+// pragma mask : 打开所有设备
 - (void) openAllDevices;
-#pragma mask : 读取所有设备的终端号
+// pragma mask : 读取所有设备的终端号 -- useless
 - (NSArray*) terminalNumArrayOfReading;
-#pragma mask : 仅保留指定终端号的设备
+// pragma mask : 仅保留指定终端号的设备 -- useless
 - (void) retainDeviceWithTerminalNum:(NSString*)terminalNum;
+// pragma mask : 判断指定终端号的设备是否已连接
+- (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
 
 @end
 

@@ -34,14 +34,14 @@
 @synthesize delegate;
 @synthesize device = _device;
 @synthesize manuefacturer = _manuefacturer;
-@synthesize deviceType;
+//@synthesize deviceType;
 @synthesize terminalArray = _terminalArray;
 
 
 static long timeOut = 60*1000;
+static DeviceManager* _sharedDeviceManager = nil;
 
 #pragma mask --------------------------[Public Interface]--------------------------
-static DeviceManager* _sharedDeviceManager;
 +(DeviceManager*) sharedInstance {
     static dispatch_once_t desp;
     dispatch_once(&desp, ^{
@@ -51,7 +51,7 @@ static DeviceManager* _sharedDeviceManager;
 }
 
 
-#pragma mask : 打开设备探测;
+#pragma mask : 打开设备探测;  ---- 暂时无用
 - (void) detecting{
     switch (self.manuefacturer) {
         case 0:
@@ -86,13 +86,11 @@ static DeviceManager* _sharedDeviceManager;
 #pragma mask : 检测设备是否连接;
 - (BOOL) isConnected {
     BOOL result;
-    switch (self.manuefacturer) {
-        case 0:     // 锦宏霖设备
-            result = [self.device isConnected];
-            break;
-            
-        default:
-            break;
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {
+//        result = [self.JHL_A60_manager isConnected];
+    } else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {
+        // 怎样判断 m60 设备是连接的
     }
     return result;
 }
@@ -174,29 +172,36 @@ static DeviceManager* _sharedDeviceManager;
         [self.JHL_M60_manager openAllDevices];
     }
 }
-#pragma mask : 读取所有设备的终端号
-- (NSArray*) terminalNumArrayOfReading{
-    NSArray* terminalNumsArray;
-    return terminalNumsArray;
-}
-#pragma mask : 仅保留指定终端号的设备
-- (void) retainDeviceWithTerminalNum:(NSString*)terminalNum{
-    
+//#pragma mask : 读取所有设备的终端号
+//- (NSArray*) terminalNumArrayOfReading{
+//    NSArray* terminalNumsArray;
+//    return terminalNumsArray;
+//}
+//#pragma mask : 仅保留指定终端号的设备
+//- (void) retainDeviceWithTerminalNum:(NSString*)terminalNum{
+//    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+//        
+//    } else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+//        [self.JHL_M60_manager retainDeviceWithTerminalNum:terminalNum];
+//    }
+//}
+
+
+// pragma mask : 判断指定终端号的设备是否已连接
+- (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum {
+    BOOL result = NO;
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        result = [self.JHL_M60_manager isConnectedOnTerminalNum:terminalNum];
+    }
+    return result;
 }
 
 
 
 #pragma mask -------------------------- JHLDevice_M60_Delegate
-// 设备获取到终端号的回调协议
-//- (void)didReadingTerminalNo:(NSString *)terminalNo {
-//    NSLog(@"JHLDevice_M60_Delegate 的回调:");
-//    if ([self.terminalArray indexOfObject:terminalNo] == NSNotFound) {
-//        [self.terminalArray addObject:terminalNo];
-//        // 更新调用者的终端号列表
-//        [self.delegate deviceManager:self updatedTerminalArray:self.terminalArray];
-//        NSLog(@"获取到更新的终端号列表[%@]", self.terminalArray);
-//    }
-//}
 // 设备终端号列表刷新的回调协议
 - (void)renewTerminalNumbers:(NSArray *)terminalNumbers {
     [self.terminalArray removeAllObjects];
@@ -217,26 +222,9 @@ static DeviceManager* _sharedDeviceManager;
 - (instancetype)init {
     self = [super init];
     if (self) {
-        deviceType = nil;
         _JHL_A60_manager = nil;
         _JHL_M60_manager = [[JHLDevice_M60 alloc] init];
         [_JHL_M60_manager setDelegate:self];
-        
-        
-        
-        /* ------------------下面是没用了的操作，完成M60对接后可以删除了 */
-        // 找到对应设备的厂商：从 userDefult 配置中读取当前设备的厂商：绑定的设备的时候设定....
-        // 调度对应厂商的接口
-        _manuefacturer = 1; // 锦宏霖
-        
-        switch (_manuefacturer) {
-            case 0:
-                _device = [[JHLDevice alloc] init];
-                break;
-                
-            default:
-                break;
-        }
 
     }
     return self;
@@ -248,7 +236,9 @@ static DeviceManager* _sharedDeviceManager;
     }
     return _terminalArray;
 }
-
-
+// 获取配置中的设备类型
+- (NSString*) deviceType {
+    return [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+}
 
 @end
