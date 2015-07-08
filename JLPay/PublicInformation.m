@@ -847,6 +847,17 @@
     return businessNumber;
 }
 
+
+// 操作员号
++(NSString*) returnOperatorNum {
+    return @"99";
+}
+// 操作员密码
++(NSString*) returnOperatorPassword {
+    return @"12345678";
+}
+
+
 // 读卡的方式 : YES(磁条) NO(芯片)
 +(BOOL) returnCardType_Track {
     BOOL trackOrIC = [[NSUserDefaults standardUserDefaults] boolForKey:CardTypeIsTrack];

@@ -404,9 +404,16 @@
         UITextField* loginPassword = [alertView textFieldAtIndex:1];    // 操作员密码
 
         // 操作员登陆
+        if (![loginName.text isEqualToString:[PublicInformation returnOperatorNum]]) {
+            [self alertForMessage:@"操作员编号错误"];
+            return;
+        }
+        if (![loginPassword.text isEqualToString:[PublicInformation returnOperatorPassword]]) {
+            [self alertForMessage:@"操作员密码错误"];
+            return;
+        }
         
-        
-        // 下面的转场为了测试；应该放在登陆成功后的回调中进行.............
+        // 校验成功才跳转界面
         UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
         [self.navigationController pushViewController:viewContr animated:YES];
@@ -418,6 +425,12 @@
 #pragma mask ::: 自定义返回上层界面按钮的功能
 - (IBAction) backToPreVC :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+// 错误提示
+- (void) alertForMessage:(NSString*)message {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
 }
 
 /*************************************

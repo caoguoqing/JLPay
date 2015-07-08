@@ -100,28 +100,6 @@
     return result;
 }
 
-
-
-/*
- * 函  数: retainDeviceWithTerminalNum
- * 功  能: 只保留选择的终端号设备;
- *          其他的都关闭;在connectedDeviceList中;
- * 参  数: 无
- * 返  回: 无
- */
-//- (void) retainDeviceWithTerminalNum:(NSString*)terminalNum {
-//    for (NSDictionary* dataDic in self.connectedDeviceList) {
-//        NSString* iTerminalNum = [dataDic objectForKey:@"terminalNum"];
-//        if ([iTerminalNum isEqualToString:terminalNum]) {
-//            ISDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
-//            [self.manager disconnectDevice:dataPath];
-//        }
-//    }
-//}
-
-
-
-
 // 初始化::
 - (instancetype)init {
     self = [super init];

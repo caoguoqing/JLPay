@@ -206,7 +206,7 @@ static DeviceManager* _sharedDeviceManager = nil;
 - (void)renewTerminalNumbers:(NSArray *)terminalNumbers {
     [self.terminalArray removeAllObjects];
     [self.terminalArray addObjectsFromArray:terminalNumbers];
-    if (self.delegate && [self.delegate respondsToSelector:@selector(deviceManager:updatedTerminalArray:)]) {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:updatedTerminalArray:)]) {
         [self.delegate deviceManager:self updatedTerminalArray:self.terminalArray];
     }
 }

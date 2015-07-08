@@ -48,8 +48,10 @@
 //流水号,每次交易，递增,bcd,6(000008)
 +(NSString *)exchangeNumber;
 
-//初始化终端成功，可以签到
-//+(BOOL)initTerminalSuccess;
+// 操作员号
++(NSString*) returnOperatorNum;
+// 操作员密码
++(NSString*) returnOperatorPassword;
 
 //卡号转换
 +(NSString *)returnCard:(NSString *)card;
