@@ -24,6 +24,7 @@
 @property (nonatomic, strong) JHLDevice*        JHL_A60_manager;    // 音频设备管理器 锦宏霖
 @property (nonatomic, strong) JHLDevice_M60*    JHL_M60_manager;    // 蓝牙设备管理器 锦宏霖
 @property (nonatomic, strong) NSMutableArray*   terminalArray;      // 所有已连接设备的终端号
+@property (nonatomic, strong) NSMutableArray*   SNVersionArray;
 
 @property (nonatomic, strong) id    device;
 @property (nonatomic, assign) int   manuefacturer;
@@ -36,6 +37,7 @@
 @synthesize manuefacturer = _manuefacturer;
 //@synthesize deviceType;
 @synthesize terminalArray = _terminalArray;
+@synthesize SNVersionArray = _SNVersionArray;
 
 
 static long timeOut = 60*1000;
@@ -210,8 +212,14 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.delegate deviceManager:self updatedTerminalArray:self.terminalArray];
     }
 }
-
-
+// SN号的更新回调
+- (void)renewSNVersionNumbers:(NSArray *)SNVersionNumbers {
+    [self.SNVersionArray removeAllObjects];
+    [self.SNVersionArray addObjectsFromArray:SNVersionNumbers];
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:updatedSNVersionArray:)]) {
+        [self.delegate deviceManager:self updatedSNVersionArray:self.SNVersionArray];
+    }
+}
 
 #pragma mask --------------------------[Private Interface]--------------------------
 
@@ -235,6 +243,13 @@ static DeviceManager* _sharedDeviceManager = nil;
         _terminalArray = [[NSMutableArray alloc] init];
     }
     return _terminalArray;
+}
+// 所有已连接设备的SN号
+- (NSMutableArray *)SNVersionArray {
+    if (_SNVersionArray == nil) {
+        _SNVersionArray = [[NSMutableArray alloc] init];
+    }
+    return _SNVersionArray;
 }
 // 获取配置中的设备类型
 - (NSString*) deviceType {

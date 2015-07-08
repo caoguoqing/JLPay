@@ -12,7 +12,10 @@
 @optional
 // 读取终端号成功
 - (void) didReadingTerminalNo:(NSString*)terminalNo;  // 无用了
+// 刷新终端号列表
 - (void) renewTerminalNumbers:(NSArray*)terminalNumbers;
+// 刷新SN号列表
+- (void) renewSNVersionNumbers:(NSArray*)SNVersionNumbers;
 
 @end
 

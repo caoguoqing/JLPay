@@ -137,6 +137,8 @@
     NSLog(@"设备[%@]已连接", mAccessory.peripheral);
     // 读取终端号,并更新已连接设备中设备的终端号(在读取数据的回调中)
     [self readTerminalNoWithAccessory:accessory];
+    // 读取SN号,并更新已连接设备中设备的SN号
+    [self readSNNoWithAccessory:accessory];
     
     // 更新已识别设备中的对应设备的new状态
     for (NSDictionary* dataDic in self.knownDeviceList) {
@@ -296,14 +298,10 @@
 - (void) compareConnectedDeviceListWithList:(NSArray*)connectList {
     BOOL compared = NO;
     // 先用本地跟后台列表比对，不匹配设备进入 localNotComparedList
-//    for (NSDictionary* dataDic in self.connectedDeviceList) {
-    for (int i = 0; i < self.connectedDeviceList.count; i++) {
-        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
         ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         compared = NO;
-//        for (ISDataPath* bgDataPath in connectList) {
-        for (int j = 0; j < connectList.count; j++) {
-            ISDataPath* bgDataPath = [connectList objectAtIndex:j];
+        for (ISDataPath* bgDataPath in connectList) {
             ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
             ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
             if ([bgDataPath.name hasPrefix:@"JHLM60"] &&
@@ -320,17 +318,13 @@
     }
     
     // 用后台跟本地列表比对，不匹配设备进入 bgNotComparedList
-//    for (ISDataPath* bgDataPath in connectList) {
-    for (int i = 0; i < connectList.count; i++) {
-        ISDataPath* bgDataPath = [connectList objectAtIndex:i];
+    for (ISDataPath* bgDataPath in connectList) {
         if (![bgDataPath.name hasPrefix:@"JHLM60"] ||
             ![bgDataPath isKindOfClass:[ISBLEDataPath class]]) {
             continue;
         }
         compared = NO;
-//        for (NSDictionary* dataDic in self.connectedDeviceList) {
-        for (int j = 0; j < self.connectedDeviceList.count; j++) {
-            NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:j];
+        for (NSDictionary* dataDic in self.connectedDeviceList) {
             ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
             ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
             ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
@@ -343,6 +337,7 @@
             NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
             [dataDic setValue:bgDataPath forKey:@"dataPath"];
             [dataDic setValue:nil forKey:@"terminalNum"];
+            [dataDic setValue:nil forKey:@"SNVersion"];
             [self.connectedDeviceList addObject:dataDic];
         }
     }
@@ -361,14 +356,35 @@
  */
 - (void) updateConnetedListOnDevice:(ISDataPath*)dataPath byTerminalNum:(NSString*)terminalNum {
     ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-//    for (NSDictionary* dataDic in self.connectedDeviceList) {
-    for (int i = 0; i < self.connectedDeviceList.count; i++) {
-        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
         ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if (oDataPath.peripheral == innerDataPath.peripheral) {
             [dataDic setValue:terminalNum forKeyPath:@"terminalNum"];
             // 刷新终端号列表给外部协议
             [self renewTerminalNumbers];
+            break;
+        }
+    }
+}
+
+/*
+ * 函  数: updateConnetedListOnDevice:byTerminalNum
+ * 功  能: 更新本地已连接设备列表中对应设备的终端号;
+ *          终端号跟设备入口以字典形式保存着；
+ *
+ * 参  数:
+ *          (ISDataPath*)dataPath
+ *          (NSString*)terminalNum 终端编号
+ * 返  回: 无
+ */
+- (void) updateConnetedListOnDevice:(ISDataPath*)dataPath bySNNum:(NSString*)SNNum {
+    ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+        if (oDataPath.peripheral == innerDataPath.peripheral) {
+            [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
+            // 刷新SN号列表给外部协议
+            [self renewSNVersionNumbers];
             break;
         }
     }
@@ -387,23 +403,44 @@
  */
 - (void) renewTerminalNumbers {
     NSMutableArray* terminalNumbers = [[NSMutableArray alloc] init];
-//    for (NSDictionary* dataDic in self.connectedDeviceList) {
-    for (int i = 0; i < self.connectedDeviceList.count; i++) {
-        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+//    for (int i = 0; i < self.connectedDeviceList.count; i++) {
+//        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
         NSString* terminalNumber = [dataDic valueForKey:@"terminalNum"];
         if (terminalNumber != nil) {
             [terminalNumbers addObject:terminalNumber];
         }
     }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(renewTerminalNumbers:)]) {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(renewTerminalNumbers:)]) {
         [self.delegate renewTerminalNumbers:terminalNumbers];
     }
 }
 
 
+/*
+ * 函  数: renewSNVersionNumbers
+ * 功  能: 刷新外部协议从本控制器读取的所有设备的终端号;
+ *          终端号跟设备入口以字典形式保存着；
+ *
+ * 参  数:
+ *          (ISDataPath*)dataPath
+ *          (NSString*)terminalNum 终端编号
+ * 返  回: 无
+ */
+- (void) renewSNVersionNumbers {
+    NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
+        if (SNVersion != nil) {
+            [SNVersionArray addObject:SNVersion];
+        }
+    }
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(renewSNVersionNumbers:)]) {
+        [self.delegate renewSNVersionNumbers:SNVersionArray];
+    }
+}
 
-
-
+    
 
 
 #pragma mask --------------------- 设备交互
@@ -559,17 +596,11 @@
                 for (int i=3; i <19; i++) {
                     NSString *newHexStr = [NSString stringWithFormat:@"%02x",ByteDate[i]&0xff];///16进制数
                     strSN = [strSN stringByAppendingString:newHexStr];
-                    
                 }
                 strSN =[self stringFromHexString:strSN];
-                
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    NSLog(@"SN获取成功  %@",strSN);
-                    NSString * SN =@"SN:";
-                    SN = [SN stringByAppendingString:strSN];
-                });
+                NSLog(@"SN获取成功  %@",strSN);
+                // 更新已连接设备列表的sn号
+                [self updateConnetedListOnDevice:accessory bySNNum:strSN];
                 
             }
             break;
@@ -935,7 +966,25 @@
     return result;
 }
 
-
+/*
+ * 函  数: readTerminalNo
+ * 功  能: 读取已识别列表中得设备号;
+ *        一次尝试打开一批；
+ * 参  数: 无
+ * 返  回:
+ *        BOOL : 向设备发送请求数据成功或失败
+ */
+- (BOOL) readSNNoWithAccessory:(ISDataPath *)accessory {
+    BOOL result = YES;
+    
+    if (!result)
+        return  result;
+    NSMutableData* data = [[NSMutableData alloc] init];
+    Byte array[1] = {GETSNVERSION};
+    [data appendBytes:array length:1];
+    result =[self writeMposData:data withAccessory:accessory];
+    return result;
+}
 
 
 /*

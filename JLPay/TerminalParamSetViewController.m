@@ -7,6 +7,8 @@
 //
 
 #import "TerminalParamSetViewController.h"
+#import "DeviceManager.h"
+#import "Define_Header.h"
 
 /*
  * --------- 设置终端号、商户号
@@ -19,7 +21,7 @@
 //    return (const char *)[data bytes];
 //}
 
-@interface TerminalParamSetViewController ()<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface TerminalParamSetViewController ()<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,DeviceManagerDelegate,UIActionSheetDelegate>
 
 @property (strong, nonatomic)  UILabel*     businessNumLabel;
 @property (strong, nonatomic)  UILabel*     terminalNumLabel;
@@ -74,9 +76,25 @@
 }
 
 
+// uiactionSheet 的选项点击回调
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) { // 取消
+        
+    } else if (buttonIndex == 1) { // M60
+        [[NSUserDefaults standardUserDefaults] setObject:DeviceType_JHL_M60 forKey:DeviceType];
+        [[DeviceManager sharedInstance] openAllDevices];
+        [DeviceManager sharedInstance].delegate = self;
+    }
+}
 
-
-
+#pragma mask : DeviceManager 的回调
+- (void)deviceManager:(DeviceManager *)deviceManager updatedSNVersionArray:(NSArray *)SNVersionArray {
+    [self.deviceArray removeAllObjects];
+    if (SNVersionArray.count > 0) {
+        [self.deviceArray addObjectsFromArray:SNVersionArray];
+    }
+    [self.devicesTableView reloadData];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -183,6 +201,8 @@
 }
 
 
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"设备参数设置";
@@ -242,7 +262,13 @@
 // 设置各个事件
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+//    [[DeviceManager sharedInstance] openAllDevices];
+    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型"
+                                                             delegate:self
+                                                    cancelButtonTitle:@"取消"
+                                               destructiveButtonTitle:nil
+                                                    otherButtonTitles:@"锦宏霖M60手持(蓝牙)刷卡器", nil];
+    [actionSheet showFromToolbar:self.navigationController.toolbar];
     
 }
 -(void)viewWillDisappear:(BOOL)animated{

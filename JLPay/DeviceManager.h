@@ -86,6 +86,10 @@
  * 终端号列表更新后的回调
  */
 - (void) deviceManager:(DeviceManager*)deviceManager updatedTerminalArray:(NSArray*)terminalArray;
+/*
+ * SN号列表更新后的回调
+ */
+- (void) deviceManager:(DeviceManager*)deviceManager updatedSNVersionArray:(NSArray*)SNVersionArray;
 
 
 
