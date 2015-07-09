@@ -382,7 +382,7 @@
 #pragma mask ----------------------- 界面生命周期的处理
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"终端号/商户号设置";
+    self.title = @"参数设置";
     self.selectedSNVersion = nil;
     self.lastSelectedCell = nil;
     self.deviceNameArray = [[NSArray alloc] initWithObjects:DeviceType_JHL_M60, nil];
@@ -402,53 +402,53 @@
 {
     [super viewWillAppear:YES];
     [self hideTabBar];
+    if (self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = NO;
+    }
+
     // 重置子视图的frame
+    // 商户号标签
     CGFloat inset = 10.0;
     CGRect frame = CGRectMake(0, 0, 0, 0);
     frame.origin.y = self.navigationController.navigationBar.bounds.size.height +
                      [[UIApplication sharedApplication] statusBarFrame].size.height + inset;
     frame.size.width = self.view.bounds.size.width / 4.0;
     frame.size.height = 30;
-    
     self.businessNumLabel.frame = frame;
+    
+    // 商户号输入框
     frame.origin.x += frame.size.width;
-    frame.size.width *= 2.0;
-    
+    frame.size.width = self.view.bounds.size.width/4.0 * 3.0 - inset;
     self.bussinessNumTextField.frame = frame;
-    frame.origin.x += frame.size.width + inset;
-    frame.size.width = self.view.bounds.size.width - frame.origin.x - inset;
-    CGFloat height = frame.size.height;
-    frame.size.height += inset + frame.size.height;
     
-    self.btnSetTerminalNum.frame = frame;
-//    self.btnSetBussinessNum.frame = frame;
+    // 终端号标签
     frame.origin.x = 0;
-    frame.size.height = height;
     frame.origin.y += frame.size.height + inset;
     frame.size.width = self.view.bounds.size.width / 4.0;
-    
     self.terminalNumLabel.frame = frame;
+    
+    // 终端号输入框
     frame.origin.x += frame.size.width;
-    frame.size.width *= 2.0;
-
+    frame.size.width = self.view.bounds.size.width/4.0 * 3.0 - inset;
     self.terminalNumTextField.frame = frame;
-    frame.origin.x += frame.size.width + inset;
-    frame.size.width = self.view.bounds.size.width - frame.origin.x - inset;
 
-//    self.btnSetTerminalNum.frame = frame;
+    // 设备列表视图
     frame.origin.x = 0;
     frame.origin.y += frame.size.height + inset * 2.0;
     frame.size.width = self.view.bounds.size.width;
-    frame.size.height = self.view.bounds.size.height - frame.origin.y - 100/* bottomInset */;
-    
+    frame.size.height = self.view.bounds.size.height/2.5/* bottomInset */;
     self.devicesTableView.frame = frame;
+    
+    // 设置终端号+商户号按钮
     frame.origin.x = inset;
     frame.origin.y += frame.size.height + inset;
     frame.size.width = self.view.bounds.size.width - inset * 2;
     frame.size.height = 50;
+    self.btnSetTerminalNum.frame = frame;
     
+    // 设置主密钥按钮
+    frame.origin.y += frame.size.height + inset;
     self.btnSetMainKey.frame = frame;
-    
 }
 
 // 设置各个事件
@@ -488,7 +488,9 @@
 // 错误弹窗
 - (void) alertForMessage:(NSString*)msg {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
 }
 
 
@@ -535,25 +537,14 @@
     }
     return _terminalNumTextField;
 }
-// 设置商户号的按钮
-//- (UIButton *)btnSetBussinessNum {
-//    if (_btnSetBussinessNum == nil) {
-//        _btnSetBussinessNum = [[UIButton alloc] initWithFrame:CGRectZero];
-//        _btnSetBussinessNum.layer.cornerRadius = 8.0;
-//        _btnSetBussinessNum.layer.masksToBounds = YES;
-//        [_btnSetBussinessNum setTitle:@"设置" forState:UIControlStateNormal];
-//        _btnSetBussinessNum.backgroundColor = [UIColor greenColor];
-//    }
-//    return _btnSetBussinessNum;
-//}
 // 设置终端号的按钮
 - (UIButton *)btnSetTerminalNum {
     if (_btnSetTerminalNum == nil) {
         _btnSetTerminalNum = [[UIButton alloc] initWithFrame:CGRectZero];
         _btnSetTerminalNum.layer.cornerRadius = 8.0;
         _btnSetTerminalNum.layer.masksToBounds = YES;
-        [_btnSetTerminalNum setTitle:@"设置" forState:UIControlStateNormal];
-        _btnSetTerminalNum.backgroundColor = [UIColor greenColor];
+        [_btnSetTerminalNum setTitle:@"设置终端号/商户号" forState:UIControlStateNormal];
+        _btnSetTerminalNum.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
     }
     return _btnSetTerminalNum;
 

@@ -41,6 +41,8 @@
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
 // 设置主密钥
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
+// 设置工作密钥
+- (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
 
 
 

@@ -93,8 +93,9 @@
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum {
     BOOL result = NO;
     for (NSDictionary* dataDic in self.connectedDeviceList) {
-        if ([[dataDic valueForKey:@"terminalNum"] isEqualToString:terminalNum]) {
+        if ([[dataDic valueForKey:@"terminalNum"] hasPrefix:terminalNum]) {
             result = YES;
+            break;
         }
     }
     return result;
@@ -608,11 +609,13 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"工作密钥设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate didWriteWorkKeySucOrFail:NO withError:nil];
                 });
                 
             }
@@ -686,8 +689,10 @@
                 strTerNumber = [NSString stringWithFormat:@"%@",data];
                 strTerNumber = [strTerNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
                 strTerNumber =[strTerNumber substringFromIndex:5];
-                strTerNumber = [strTerNumber substringToIndex:23];
-                NSLog(@"获取到了终端号:[%@]",[self stringFromHexString:strTerNumber]);
+//                strTerNumber = [strTerNumber substringToIndex:23];
+                NSLog(@"原始终端号+商户号串[%@]",strTerNumber);
+                strTerNumber = [strTerNumber substringToIndex:(8+15)*2 + 1];
+                NSLog(@"解析后的终端号+商户号:[%@]",[self stringFromHexString:strTerNumber]);
                 /* 将读到的终端号填充到本地已连接设备列表中对应的设备 */
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self updateConnetedListOnDevice:accessory byTerminalNum:[self stringFromHexString:strTerNumber]];
@@ -1070,6 +1075,35 @@
         NSString* dataStr = [@"340110" stringByAppendingString:mainKey];
         NSData* data = [self StrHexToByte:dataStr];
         [self writeMposData:data withAccessory:dataPath];
+    }
+}
+
+// 设置工作密钥
+- (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum {
+    ISBLEDataPath* dataPath = nil;
+    NSLog(@"===========1");
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[dataDic objectForKey:@"terminalNum"] hasPrefix:terminalNum]) {
+            dataPath = iDataPath;
+        }
+    }
+    NSLog(@"===========2");
+
+    if (dataPath == nil) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteTerminalNumSucOrFail:withError:)]) {
+            [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", terminalNum]];
+        }
+    } else {
+        NSLog(@"准备写工作密钥的数据");
+        int len = (int)[workKey length];
+        Byte* bytesData = (Byte*)malloc(len + 1);
+        bytesData[0] = WORKKEY_CMD;
+        memcpy(bytesData + 1, [workKey cStringUsingEncoding:NSASCIIStringEncoding], len);
+        NSLog(@"字符串工作密钥:[%s]",[workKey cStringUsingEncoding:NSASCIIStringEncoding]);
+        NSData* data = [NSData dataWithBytes:bytesData length:1+len];
+        [self writeMposData:data withAccessory:dataPath];
+        free(bytesData);
     }
 }
 

@@ -54,6 +54,8 @@
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
 // pragma mask : 设置设备主密钥(指定设备的SN号)
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
+// pragma mask : 设置设备工作密钥(指定设备的终端号)
+- (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
 
 @end
 

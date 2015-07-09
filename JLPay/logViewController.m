@@ -370,8 +370,7 @@
     if ([self.userNumberTextField.text isEqualToString:[PublicInformation returnOperatorNum]] &&
         [self.userPasswordTextField.text isEqualToString:[PublicInformation returnOperatorPassword]]) {
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
-//        [app_delegate loadInViewController:vc];
+        UIViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"terminalSettingVC"];
         [self.navigationController pushViewController:vc animated:YES];
         return;
     }

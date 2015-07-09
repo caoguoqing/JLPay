@@ -415,7 +415,7 @@
         
         // 校验成功才跳转界面
         UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
+        DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"terminalSettingVC"];
         [self.navigationController pushViewController:viewContr animated:YES];
     }
 }

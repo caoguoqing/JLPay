@@ -232,7 +232,7 @@
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGh-ko-vqY">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
-                                            <color key="backgroundColor" red="0.0060300372280488604" green="0.77248984575271606" blue="0.43582904442849746" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" red="0.97248280048370361" green="0.27237936419722053" blue="0.16667217717478722" alpha="1" colorSpace="calibratedRGB"/>
                                             <state key="normal" title="确定">
                                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -456,13 +456,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="eGT-Qw-QUW">
-                        <barButtonItem key="rightBarButtonItem" title="完成" id="Z89-ab-EdT">
-                            <connections>
-                                <action selector="goSave:" destination="NxS-i6-GpA" id="kM3-9m-htx"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="eGT-Qw-QUW"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Ny-qw-6OI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

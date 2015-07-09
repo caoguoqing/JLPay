@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSArray* terminalNums;
 @property (nonatomic, strong) JLActivity* activitor;
 @property (nonatomic, strong) NSString* selectedTerminalNum;
+@property (nonatomic, strong) NSString* selectedBusinessNum;
 @end
 
 
@@ -27,6 +28,7 @@
 @synthesize terminalNums = _terminalNums;
 @synthesize activitor = _activitor;
 @synthesize selectedTerminalNum;
+@synthesize selectedBusinessNum;
 
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
@@ -37,6 +39,8 @@
     // 注册写工作密钥的结果通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingFailNote:) name:Noti_WorkKeyWriting_Fail object:nil];
+    
+    [[DeviceManager sharedInstance] setDelegate:self];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -57,9 +61,7 @@
     // 在后台识别,并连接所有可以连接的设备.....
     
     // 先屏蔽掉音频设备:因为接口还不支持读取终端号
-    DeviceManager* device = [DeviceManager sharedInstance];
-    [device setDelegate:self];
-    [device openAllDevices];
+    [[DeviceManager sharedInstance] openAllDevices];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -96,7 +98,8 @@
             cell.detailTextLabel.text = @"无";
             cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
-            cell.detailTextLabel.text = [self.terminalNums objectAtIndex:indexPath.row];
+            NSString* terNumAndBusinessNum = [self.terminalNums objectAtIndex:indexPath.row];
+            cell.detailTextLabel.text = [terNumAndBusinessNum substringToIndex:8];
             // 如果当前cell 的对应的终端号跟配置中的终端号一致，就添加标记
             if ([self.selectedTerminalNum isEqualToString:cell.detailTextLabel.text]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -133,6 +136,7 @@
         if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             self.selectedTerminalNum = @"无";
+            self.selectedBusinessNum = nil;
         } else {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             self.selectedTerminalNum = terminalNo;
@@ -162,6 +166,14 @@
     }
     // 更新终端号列表后就刷新列表
     [self.tableView reloadData];
+}
+// 设置工作密钥的回调
+- (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
+    if (yesOrNot) {
+        [self alertForMessage:@"绑定设备成功!"];
+    } else {
+        [self alertForMessage:@"绑定设备失败!"];
+    }
 }
 
 
@@ -210,8 +222,10 @@
         NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
         NSLog(@"工作密钥: [%@]", workStr);
         if ([[DeviceManager sharedInstance] isConnectedOnTerminalNum:self.selectedTerminalNum]) {
-            [self alertForMessage:@"签到成功,可以写工作密钥了"];
+//            [self alertForMessage:@"签到成功,可以写工作密钥了"];
 //            [[DeviceManager sharedInstance] WriteWorkKey:57 :workStr];
+            NSLog(@"--------1");
+            [[DeviceManager sharedInstance] writeWorkKey:workStr onTerminal:self.selectedTerminalNum];
         } else {
             [self alertForMessage:@"设备未连接"];
         }
@@ -248,6 +262,12 @@
                 }
             }
             if (compared) {
+                // 提取商户号
+                for (NSString* terBusiNum in self.terminalNums) {
+                    if ([[terBusiNum substringToIndex:8] isEqualToString:self.selectedTerminalNum]) {
+                        [[NSUserDefaults standardUserDefaults] setObject:[terBusiNum substringFromIndex:8] forKey:Business_Number];
+                    }
+                }
                 // 终端号合法 - 设置终端号到本地
                 [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
                 // 进行签到 -- 需要判断设备是否连接

@@ -232,6 +232,17 @@ static DeviceManager* _sharedDeviceManager = nil;
     }
 
 }
+// pragma mask : 设置设备工作密钥(指定设备的终端号)
+- (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum {
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        NSLog(@"----------2");
+        [self.JHL_M60_manager writeWorkKey:workKey onTerminal:terminalNum];
+    }
+
+}
 
 
 #pragma mask -------------------------- JHLDevice_M60_Delegate
@@ -261,6 +272,12 @@ static DeviceManager* _sharedDeviceManager = nil;
 - (void)didWriteMainKeySucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
     if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:didWriteMainKeySuccessOrNot:withMessage:)]) {
         [self.delegate deviceManager:self didWriteMainKeySuccessOrNot:yesOrNo withMessage:error];
+    }
+}
+// 设置工作密钥的回调
+- (void)didWriteWorkKeySucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:didWriteWorkKeySuccessOrNot:)]) {
+        [self.delegate deviceManager:self didWriteWorkKeySuccessOrNot:yesOrNo];
     }
 }
 
