@@ -16,6 +16,14 @@
 - (void) renewTerminalNumbers:(NSArray*)terminalNumbers;
 // 刷新SN号列表
 - (void) renewSNVersionNumbers:(NSArray*)SNVersionNumbers;
+// 写终端号结果回调
+- (void) didWriteTerminalNumSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
+// 写SN号结果回调
+- (void) didWriteSNVersionNumSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
+// 写主密钥结果回调
+- (void) didWriteMainKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
+// 写工作密钥结果回调
+- (void) didWriteWorkKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 
 @end
 
@@ -27,6 +35,12 @@
 - (void) openAllDevices;
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
+// pragma mask : 判断指定SN号的设备是否已连接
+- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+// 写终端号+商户号
+- (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
+// 设置主密钥
+- (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 
 
 

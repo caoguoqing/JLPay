@@ -17,6 +17,7 @@
 #import "DesUtil.h"
 #import "ThreeDesUtil.h"
 #import "ASIFormDataRequest.h"
+#import "AppDelegate.h"
 
 
 
@@ -76,12 +77,11 @@
     if ([userID length] > 0) {
         self.userNumberTextField.text = userID;
     }
-    
-    // 打开设备..循环中。。这里需要读取设备么????????????????????????
-//    AppDelegate* delegate_          = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    
-//    [delegate_.device open];
-
+}
+- (void)viewWillAppear:(BOOL)animated {
+    if (!self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = YES;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -366,36 +366,26 @@
         [self alertShow:@"请输入密码"];
         return;
     }
-    
-    // 发送签到报文  -- 改到管理界面去签到、或刷卡界面
-//    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"tcpsignin"];
-    
+    // 如果是操作员登陆的--就直接跳转到参数设置界面
+    if ([self.userNumberTextField.text isEqualToString:[PublicInformation returnOperatorNum]] &&
+        [self.userPasswordTextField.text isEqualToString:[PublicInformation returnOperatorPassword]]) {
+        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"deviceSettingViewController"];
+//        [app_delegate loadInViewController:vc];
+        [self.navigationController pushViewController:vc animated:YES];
+        return;
+    }
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
     [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
     // 3des 加密
     // 原始 key
-//    NSString* keyStr    = @"12345678901234567890123456789012";
     NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
-    
-
     NSString* sourceStr = [EncodeString encodeASC:self.userPasswordTextField.text] ;
     NSLog(@"明文准备加密:%@", sourceStr);
     // 开始加密
     NSString* pin = [ThreeDesUtil encryptUse3DES:sourceStr key:keyStr];
-    
-    // 输出信息
-    NSLog(@"\n-----------\nsrc=[%@]\n------------------\npin=[%@]\n------------------", keyStr,pin);
-
-    // 准备上送加密数据
-//    [[NSUserDefaults standardUserDefaults] setValue:pin forKey:@"userPW"];
-//    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 loadIn] IP:Current_IP PORT:Current_Port Delegate:self method:@"loadIn"];
-    
-    
-    // 修改::: 不要送 8583 报文，改送 HTTP
+    // 登陆
     [self logInWithPin:pin];
-    
-    // testing ...
-//    [];
 }
 
 /*************************************
@@ -421,8 +411,6 @@
 #pragma mask ::: 上送登陆报文
 - (void)logInWithPin: (NSString*)pin {
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-//        NSString* urlString = [NSString stringWithFormat:@"http://%@:%d/jlagent/LoginService", [PublicInformation settingIp], [PublicInformation settingPort] ];
-//    NSLog(@"ip:[%@], port:[%@], urlString=[%@]", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort], urlString);
     ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
     request.delegate = self;
     [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
@@ -438,7 +426,6 @@
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
     NSString* retcode = [dataDic objectForKey:@"code"];
     NSString* retMsg = [dataDic objectForKey:@"message"];
-//    NSLog(@"retcode = [%@], retMsg = [%@]", retcode, retMsg);
     if ([retcode intValue] != 0) {      // 登陆失败
         [self alertShow:retMsg];
     } else {                            // 登陆成功

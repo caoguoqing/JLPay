@@ -15,8 +15,9 @@
 @property (strong, nonatomic) UIWindow *window;
 
 //@property(nonatomic, strong)    DeviceManager*  device;
-
--(void)signInSuccessToLogin:(int)select;
+- (void)signInSuccessToLogin:(int)select;
+// 跳转到指定的界面
+- (void) loadInViewController:(UIViewController*)viewController ;
 
 @end
 

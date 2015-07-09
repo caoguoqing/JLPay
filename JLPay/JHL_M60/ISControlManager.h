@@ -30,13 +30,13 @@ typedef enum {
 #define GETTRACKDATA_CMD 0x22  //0xE1  用户取消  0xE2 超时退出 E3 IC卡数据处理失败 0xE4 无IC卡参数 0xE5 交易终止 0xE6 操作失败,请重试
 
 #define CHECK_IC    0x24  
-#define MAINKEY_CMD  0x34
-#define PINBLOCK_CMD 0x36
-#define GETMAC_CMD   0x37
-#define WORKKEY_CMD  0x38
-#define GETSNVERSION 0x40
-#define GETTERNUMBER 0x41
-#define WRITETERNUMBER   0x42
+#define MAINKEY_CMD  0x34       // 设置主密钥
+#define PINBLOCK_CMD 0x36       // 获取密文密钥
+#define GETMAC_CMD   0x37       // 获取MAC
+#define WORKKEY_CMD  0x38       // 写工作密钥
+#define GETSNVERSION 0x40       // 读取SV号
+#define GETTERNUMBER 0x41       // 读取终端号
+#define WRITETERNUMBER   0x42   // 写终端号
 #define YY_GETTRACK_CMD 0xff
 
 #define WriteAidParm   0x33  //AID

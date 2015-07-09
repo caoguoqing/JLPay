@@ -61,6 +61,10 @@
     [device setDelegate:self];
     [device openAllDevices];
 }
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[DeviceManager sharedInstance] setDelegate:nil];
+}
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

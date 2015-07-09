@@ -88,11 +88,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/DeviceManager.h"
-            timestampString = "458029736.236204"
+            timestampString = "458138370.883825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
             landmarkName = "-deviceManager:didOpenSuccessOrNot:"
             landmarkType = "4">
          </BreakpointContent>
@@ -104,11 +104,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/ChooseDeviceTabelViewController.m"
-            timestampString = "458035195.147751"
+            timestampString = "458117269.280011"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
             landmarkName = "-buttonTouchUpOutSide:"
             landmarkType = "5">
          </BreakpointContent>

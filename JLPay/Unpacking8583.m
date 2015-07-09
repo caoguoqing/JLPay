@@ -1965,18 +1965,13 @@ static Unpacking8583 *sharedObj2 = nil;
                 
                 NSLog(@"methodStr====%@位域====%@,长度=====%@,值====%@",methodStr,[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
                 
-
                 
                 if ([[sortArr objectAtIndex:c] isEqualToString:@"62"]) {
                     
                     NSRange range = [deleteStr rangeOfString:@"DF0210"];
-                    
-//                    NSString *reallyLengthStr=[deleteStr substringWithRange:NSMakeRange(4, length-4)];//[arr objectAtIndex:9]
                     //62域工作秘钥
                     //(1),获取秘钥明文（3des解密）(pin秘钥密文和工作秘钥)
                     NSString *astring = [deleteStr substringFromIndex:range.location+range.length];
-//                    NSString *pinresult=[reallyLengthStr substringWithRange:NSMakeRange(32, 8)];
-//                    NSString *pinString=[self threeDESdecrypt:[reallyLengthStr substringWithRange:NSMakeRange(0, 32)] keyValue:@"EF2AE9F834BFCDD5260B974A70AD1A4A"];
                     NSString *pinString=[self threeDESdecrypt:astring keyValue:@"EF2AE9F834BFCDD5260B974A70AD1A4A"];
                     NSLog(@"atring %@",astring);
 
@@ -1984,8 +1979,6 @@ static Unpacking8583 *sharedObj2 = nil;
                     
                     [[NSUserDefaults standardUserDefaults] setValue:pinString forKey:Sign_in_PinKey];
                     [[NSUserDefaults standardUserDefaults] synchronize];
-                    
-                    [[JHNconnect shareView]WriteMainKey:16 :pinString];
                 }
                
                 //交易结果
@@ -2008,8 +2001,8 @@ static Unpacking8583 *sharedObj2 = nil;
         }
         @catch (NSException *exception) {
             NSLog(@"--------%@", exception.reason);
-            rebackStr=@"签到失败";
-            //[self.delegate managerToCardState:rebackStr isSuccess:NO method:methodStr];
+            rebackStr=@"主密钥下载失败";
+            [self.delegate managerToCardState:rebackStr isSuccess:NO method:methodStr];
         }
         @finally {
             

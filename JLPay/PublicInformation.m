@@ -226,8 +226,7 @@
     if (terminalNumber && ![terminalNumber isEqualToString:@""] && ![terminalNumber isEqualToString:@"(null)"]) {
         terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
     }else{
-        terminalNumber=@"10006079";     // 72环境终端号
-//        terminalNumber = @"10006241";
+        terminalNumber=@"10006057";     // 72环境终端号
     }
     return terminalNumber;
 }
@@ -236,8 +235,7 @@
     if (businessNumber && ![businessNumber isEqualToString:@""] && ![businessNumber isEqualToString:@"(null)"]) {
         businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
     }else{
-        businessNumber=@"888584053310002";      // 72环境商户号
-//        businessNumber = @"886100000000001";
+        businessNumber=@"886584000000001";      // 72环境商户号
     }
     return businessNumber;
 }
@@ -276,7 +274,9 @@
         ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
     }else{
 //        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";// 28080
-        ipStr   = @"202.104.101.126";  // 9088 测试1 // 28099
+//        ipStr   = @"202.104.101.126";  // 75环境 9088 测试1 // 28099
+//        ipStr   = @"192.168.1.62";  // 62环境; 28080 886584000000001/10006057 捷联测试/00000000
+        ipStr   = @"183.16.197.201"; // 62 环境外网 6280、6288
     }
     return ipStr;
 }
@@ -285,9 +285,7 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
-//        portStr=@"28080";
-        portStr = @"28099";
-//        portStr = @"9088";
+        portStr=@"6280";
     }
     return [portStr intValue];
 }
@@ -299,9 +297,11 @@
         ip = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_IP"];
     } else {
 //        ip = @"192.188.8.112"; // 8083
-        ip   = @"202.104.101.126";  // 9088 测试1 // 8099
-
+//        ip   = @"202.104.101.126";  // 9088 测试1 // 8099
 //        ip = @"192.168.1.50";//122.0.64.19@"211.90.22.167";//
+        ip   = @"183.16.197.201";  // 62环境; 80
+
+
 
     }
     return ip;
@@ -311,10 +311,7 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         port = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_Port"];
     }else{
-//        port = @"8083";
-        port = @"8099";
-//        port = @"80";
-
+        port = @"6288";
     }
     return port;
 }

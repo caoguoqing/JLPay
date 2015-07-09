@@ -48,6 +48,12 @@
 - (void) retainDeviceWithTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
+// pragma mask : 判断指定SN号的设备是否已连接
+- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+// pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
+- (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
+// pragma mask : 设置设备主密钥(指定设备的SN号)
+- (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 
 @end
 
@@ -72,12 +78,21 @@
 /*
  * 写主密钥成功/失败的回调
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot;
+- (void) deviceManager:(DeviceManager*)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
 
 /*
  * 写工作密钥成功/失败的回调
  */
 - (void) deviceManager:(DeviceManager*)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot;
+/*
+ * 写终端号成功/失败的回调
+ */
+- (void) deviceManager:(DeviceManager*)deviceManager didWriteTerminalSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
+/*
+ * 写SN号成功/失败的回调
+ */
+- (void) deviceManager:(DeviceManager*)deviceManager didWriteSNVersionSuccessOrNot:(BOOL)yesOrNot;
+
 /*
  * 打开设备成功/失败的回调
  */

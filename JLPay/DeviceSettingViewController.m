@@ -19,6 +19,7 @@
 #import "MBProgressHUD.h"
 #import "JHNconnect.h"
 #import "IPSetViewController.h"
+#import "AppDelegate.h"
 
 typedef enum {
     ACTION_UNKNOWN = 0,
@@ -55,7 +56,7 @@ typedef enum {
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+    self.title = @"设备参数设置";
     m_arrayName = [[NSMutableArray alloc] init];
     m_arrayUUID = [[NSMutableArray alloc] init];
     m_euAction = ACTION_UNKNOWN;
@@ -65,12 +66,8 @@ typedef enum {
     
      //第二步，注册SDK回调函数
 //     PosLib_SetDelegate((__bridge void*)self, PosLibResponce);
-   
+    
 
-
-    
-    
-    
 }
 
 
@@ -102,7 +99,9 @@ typedef enum {
     
     [self hideTabBar];
     
-    
+    if (self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = NO;
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated{

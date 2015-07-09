@@ -201,6 +201,37 @@ static DeviceManager* _sharedDeviceManager = nil;
     return result;
 }
 
+// pragma mask : 判断指定SN号的设备是否已连接
+- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion {
+    BOOL result = NO;
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        result = [self.JHL_M60_manager isConnectedOnSNVersionNum:SNVersion];
+    }
+    return result;
+}
+
+// pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
+- (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion {
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        [self.JHL_M60_manager writeTerminalNum:terminalNumAndBusinessNum onSNVersion:SNVersion];
+    }
+}
+// pragma mask : 设置设备主密钥(指定设备的SN号)
+- (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion {
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        [self.JHL_M60_manager writeMainKey:mainKey onSNVersion:SNVersion];
+    }
+
+}
 
 
 #pragma mask -------------------------- JHLDevice_M60_Delegate
@@ -218,6 +249,18 @@ static DeviceManager* _sharedDeviceManager = nil;
     [self.SNVersionArray addObjectsFromArray:SNVersionNumbers];
     if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:updatedSNVersionArray:)]) {
         [self.delegate deviceManager:self updatedSNVersionArray:self.SNVersionArray];
+    }
+}
+// 设置终端号+商户号的回调
+- (void)didWriteTerminalNumSucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:didWriteTerminalSuccessOrNot:withMessage:)]) {
+        [self.delegate deviceManager:self didWriteTerminalSuccessOrNot:yesOrNo withMessage:error];
+    }
+}
+// 设置主密钥的回调
+- (void)didWriteMainKeySucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(deviceManager:didWriteMainKeySuccessOrNot:withMessage:)]) {
+        [self.delegate deviceManager:self didWriteMainKeySuccessOrNot:yesOrNo withMessage:error];
     }
 }
 
