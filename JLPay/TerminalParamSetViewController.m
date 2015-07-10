@@ -149,7 +149,9 @@
         [self.SNVersionArray addObjectsFromArray:SNVersionArray];
     }
     NSLog(@"回调:更新了sn列表:[%@]", self.SNVersionArray);
-    [self.devicesTableView reloadData];
+    runOnMainThreadWithBlock(^{
+        [self.devicesTableView reloadData];
+    });
 }
 // 设置终端号+商户号的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteTerminalSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
@@ -224,27 +226,6 @@
         [self.terminalNumTextField resignFirstResponder];
     }
     return YES;
-}
-
-// 完成按钮的点击事件
-- (IBAction)goSave:(id)sender
-{
-    [self.bussinessNumTextField resignFirstResponder];
-    [self.terminalNumTextField resignFirstResponder];
-    
-    if ([self.bussinessNumTextField.text length] > 15) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误" message:@"请输入正确的商户号" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
-        return;
-    }
-    
-    if ([self.terminalNumTextField.text length] > 8) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误" message:@"请输入正确的终端号" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
-        return;
-    }
-    
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)keyboardShow:(NSNotification *)notf
@@ -488,11 +469,21 @@
 // 错误弹窗
 - (void) alertForMessage:(NSString*)msg {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    runOnMainThreadWithBlock(^{
         [alert show];
     });
 }
 
+
+#pragma mask -------------- 私有工具
+// 添加副线程队列任务
+void runOnGlobalThreadWithBlock(dispatch_block_t block) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), block);
+}
+// 添加主线程队列任务
+void runOnMainThreadWithBlock(dispatch_block_t block) {
+    dispatch_async(dispatch_get_main_queue(), block);
+}
 
 #pragma mask -------------- setter && getter
 // 商户号

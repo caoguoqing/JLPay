@@ -15,7 +15,7 @@
 //@property (nonatomic, strong) NSString* deviceType;
 +(DeviceManager*) sharedInstance;
 
-#pragma mask --------------------------老接口
+#pragma mask --------------------------老接口 适用于A60
 #pragma mask : 打开设备探测;
 - (void) detecting;
 #pragma mask : 打开设备;
@@ -39,6 +39,9 @@
 #pragma mask : EMV参数下载
 - (int) EMVDownload;
 
+
+
+
 #pragma mask --------------------------- 新接口
 // pragma mask : 打开所有设备
 - (void) openAllDevices;
@@ -56,6 +59,8 @@
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 // pragma mask : 设置设备工作密钥(指定设备的终端号)
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
+// pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum;
 
 @end
 
@@ -69,7 +74,7 @@
  *      deviceType: DeviceType_A60, DeviceType_M60 ...
  *      在回调中，如果成功，要判断是不是M60设备，如果是，不用在手机中输入密码
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot onDeviceType:(NSString*)deviceType;
+- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
 
 /*
  * 校验密码成功/失败的回调

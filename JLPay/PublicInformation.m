@@ -275,8 +275,8 @@
     }else{
 //        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";// 28080
 //        ipStr   = @"202.104.101.126";  // 75环境 9088 测试1 // 28099
-//        ipStr   = @"192.168.1.62";  // 62环境; 28080 886584000000001/10006057 捷联测试/00000000
-        ipStr   = @"183.16.197.201"; // 62 环境外网 6280、6288
+        ipStr   = @"192.168.1.62";  // 62环境; 28080 886584000000001/10006057 捷联测试/00000000
+//        ipStr   = @"183.16.197.201"; // 62 环境外网 6280、6288
     }
     return ipStr;
 }
@@ -285,7 +285,7 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
-        portStr=@"6280";
+        portStr=@"28080";
     }
     return [portStr intValue];
 }
@@ -299,7 +299,7 @@
 //        ip = @"192.188.8.112"; // 8083
 //        ip   = @"202.104.101.126";  // 9088 测试1 // 8099
 //        ip = @"192.168.1.50";//122.0.64.19@"211.90.22.167";//
-        ip   = @"183.16.197.201";  // 62环境; 80
+        ip   = @"192.168.1.62";  // 62环境; 80
 
 
 
@@ -311,7 +311,7 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
         port = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_Port"];
     }else{
-        port = @"6288";
+        port = @"80";
     }
     return port;
 }

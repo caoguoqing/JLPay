@@ -11,6 +11,7 @@
 #import "ISDataPath.h"
 #import "ISBLEDataPath.h"
 #import "ISMFiDataPath.h"
+#import "../Define_Header.h"
 
 @interface JHLDevice_M60()<ISControlManagerDeviceList,ISControlManagerDelegate>{
     NSMutableArray *deviceList;   //查询到的设备名称列表
@@ -535,48 +536,39 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                 });
             }
-            
-            
             break;
         case GETTRACK_CMD:
         case  GETTRACKDATA_CMD:
             if (!ByteDate[1])   // 获取卡号数据成功
             {
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
+                // 解析读到的卡得数据
+                [self GetCard:data];
+                [self cardDataUserDefult];
+                // 保存读到的数据到本地
+                [self.delegate didCardSwipedSucOrFail:YES withError:nil];
             }
             else
             {
-                
-                
-                
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
-                dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (ByteDate[1]==0xE1 )
-//                        self.LabTip.text =@"获取卡号数据失败:用户取消";
-//                    else if (ByteDate[1]==0xE2 )
-//                        self.LabTip.text =@"获取卡号数据失败:超时退出";
-//                    else if (ByteDate[1]==0xE3 )
-//                        self.LabTip.text =@"获取卡号数据失败:IC卡数据处理失败";
-//                    else if (ByteDate[1]==0xE4 )
-//                        self.LabTip.text =@"获取卡号数据失败:无IC卡参数";
-//                    else if (ByteDate[1]==0xE5 )
-//                        self.LabTip.text =@"获取卡号数据失败:交易终止";
-//                    else if (ByteDate[1]==0xE6 )
-//                        self.LabTip.text =@"获取卡号数据失败:操作失败,请重试";
-//                    else if (ByteDate[1]==0x02 )
-//                        self.LabTip.text =@"获取卡号数据失败:操作失败,请重试";
-//                    else if (ByteDate[1]==0x46 )
-//                    {
-//                        self.LabTip.text =@"MPOS已关机";
-//                        [self disconnectDevices];
-                    
-//                    }
-                });
+                NSString* error = nil;
+                if (ByteDate[1]==0xE1 )
+                    error = @"获取卡号数据失败:用户取消";
+                else if (ByteDate[1]==0xE2 )
+                    error = @"获取卡号数据失败:超时退出";
+                else if (ByteDate[1]==0xE3 )
+                    error =@"获取卡号数据失败:IC卡数据处理失败";
+                else if (ByteDate[1]==0xE4 )
+                    error =@"获取卡号数据失败:无IC卡参数";
+                else if (ByteDate[1]==0xE5 )
+                    error =@"获取卡号数据失败:交易终止";
+                else if (ByteDate[1]==0x46 )
+                    error =@"MPOS已关机";
+                else // ByteDate[1]==0xE6,0x02,...
+                    error = @"获取卡号数据失败:操作失败,请重试";;
+                [self.delegate didCardSwipedSucOrFail:NO withError:error];
             }
             break;
-            
         case YY_GETTRACK_CMD:
         {
             
@@ -585,7 +577,6 @@
                 [self GetCard:data];
             });
         }
-            
             break;
         case MAINKEY_CMD:
             if (!ByteDate[1])   // 主密钥设置成功
@@ -599,10 +590,7 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteMainKeySucOrFail:NO withError:@"设置主密钥失败"];
                 });
-                
             }
-            
-            
             break;
         case WORKKEY_CMD:
             if (!ByteDate[1])   // 工作密钥设置成功
@@ -611,13 +599,11 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
                 });
-                
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteWorkKeySucOrFail:NO withError:nil];
                 });
-                
             }
             break;
         case GETSNVERSION:
@@ -634,7 +620,6 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self updateConnetedListOnDevice:accessory bySNNum:strSN];
                 });
-                
             }
             break;
         case GETMAC_CMD:
@@ -647,32 +632,23 @@
                     strMAC = [strMAC stringByReplacingOccurrencesOfString:@" " withString:@""];
                     strMAC =[strMAC substringFromIndex:5];
                     strMAC = [strMAC substringToIndex:16];
-                    
-                    
                     strMAC = [@"MAC值:" stringByAppendingString:strMAC];
-                    
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
                 });
-                
             }
-            
-            
-            
             break;
-        case WRITETERNUMBER:
+        case WRITETERNUMBER:    // 设置终端号+商户号
             if (!ByteDate[1])   // 成功
             {
                 NSLog(@"%s,result:%@",__func__,@"终端号商户号设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteTerminalNumSucOrFail:YES withError:nil];
                 });
-                
-            }else
+            }else               // 失败
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteTerminalNumSucOrFail:NO withError:@"设置终端号+商户号失败"];
@@ -683,13 +659,13 @@
             if (!ByteDate[1])   // 成功
             {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    // 开个线程读取SN号
                     [self readSNNoWithAccessory:accessory];
                 });
                 NSString * strTerNumber =@"";
                 strTerNumber = [NSString stringWithFormat:@"%@",data];
                 strTerNumber = [strTerNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
                 strTerNumber =[strTerNumber substringFromIndex:5];
-//                strTerNumber = [strTerNumber substringToIndex:23];
                 NSLog(@"原始终端号+商户号串[%@]",strTerNumber);
                 strTerNumber = [strTerNumber substringToIndex:(8+15)*2 + 1];
                 NSLog(@"解析后的终端号+商户号:[%@]",[self stringFromHexString:strTerNumber]);
@@ -705,22 +681,12 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡Aid参数设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set AID Sucess";
-//                    else
-//                        self.LabTip.text = @"IC卡Aid参数设置成功";
-                    
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set AID Fail";
-//                    else
-//                        self.LabTip.text = @"IC卡Aid参数设置失败";
                 });
-                
             }
             
             break;
@@ -730,20 +696,11 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡Aid参数清除成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Clear AID Sucess";
-//                    else
-//                        self.LabTip.text = @"IC卡Aid参数清除成功";
-                    
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Clear AID Fail";
-//                    else
-//                        self.LabTip.text = @"IC卡Aid参数清除失败";
                 });
                 
             }
@@ -754,20 +711,11 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡公钥参数设置成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set Pubkey Sucess";
-//                    else
-//                        self.LabTip.text = @"IC卡公钥参数设置成功";
-                    
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Set Pubkey Fail";
-//                    else
-//                        self.LabTip.text = @"IC卡公钥参数设置失败";
                 });
                 
             }
@@ -778,20 +726,11 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡公钥参数清除成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Clear Pubkey Sucess";
-//                    else
-//                        self.LabTip.text = @"IC卡公钥参数清除成功";
-                    
                 });
                 
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Clear AID Fail";
-//                    else
-//                        self.LabTip.text = @"IC卡Aid参数清除失败";
                 });
                 
             }
@@ -802,27 +741,15 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡二次论证成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC Proof Sucess";
-//                    else
-//                        self.LabTip.text = @"IC卡二次论证成功";
-//                    
                     NSString  *strData =@"";
                     for (int i=2; i <[data length]; i++) {
                         NSString *newHexStr = [NSString stringWithFormat:@"%02x",ByteDate[i]&0xff];///16进制数
                         strData = [strData stringByAppendingString:newHexStr];
-                        
                     }
-//                    self.TextViewTip.text =strData;
-                    
                 });
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC Proof Fail";
-//                    else
-//                        self.LabTip.text = @"IC卡二次论证失败";
                 });
             }
             break;
@@ -833,35 +760,15 @@
                 for (int i=2; i <3; i++) {
                     NSString *newHexStr = [NSString stringWithFormat:@"%02x",ByteDate[i]&0xff];///16进制数
                     strBattery = [strBattery stringByAppendingString:newHexStr];
-                    
                 }
-                
                 int nBattery =StrToNumber16([strBattery cStringUsingEncoding:NSASCIIStringEncoding]);
                 strBattery =[NSString stringWithFormat:@"%d",nBattery];
                 NSLog(@"%s,result:%@",__func__,@"电池电量获取成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                    {
-//                        NSString * strTer =@"";
-//                        strTer = [@"Get Battery Sucess:" stringByAppendingString:strBattery];
-//                        self.LabTip.text = strTer;
-//                    }
-//                    else
-//                    {
-//                        //self.LabTip.text = @"电池电量获取成功";
-//                        NSString * strTer =@"";
-//                        strTer = [@"电池电量获取成功:" stringByAppendingString:strBattery];
-//                        self.LabTip.text = strTer;
-//                    }
-                    
                 });
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"Get Battery Fail";
-//                    else
-//                        self.LabTip.text = @"电池电量获取失败";
                 });
             }
             break;
@@ -870,20 +777,10 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡在位");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC CARD  Insert";
-//                    else
-//                        self.LabTip.text = @"IC卡插入";
-                    
-                    
                 });
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC CARD  NO Insert";
-//                    else
-//                        self.LabTip.text = @"IC卡未插入";
                 });
             }
             break;
@@ -896,27 +793,14 @@
                 for (int i=0; i <ByteDate[2]+1; i++) {
                     NSString *newHexStr = [NSString stringWithFormat:@"%02x",ByteDate[i+2]&0xff];///16进制数
                     strSTR = [strSTR stringByAppendingString:newHexStr];
-                    
                 }
                 
                 strSTR = [@"上电ATR,第一个字节为大小:" stringByAppendingString:strSTR];
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    self.TextViewTip.text =strSTR;
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC OPEN   SUCESS";
-//                    else
-//                        self.LabTip.text = @"IC上电成功";
-                    
-                    
-                    
                 });
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC OPEN FAILD";
-//                    else
-//                        self.LabTip.text = @"IC上电失败";
                 });
             }
             
@@ -935,22 +819,10 @@
                 
                 strSTR = [@"APDU ATR,第一个字节为大小:" stringByAppendingString:strSTR];
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    self.TextViewTip.text =strSTR;
-//                    if (Language ==0)
-//                        self.LabTip.text = @"APUD GET   SUCESS";
-//                    else
-//                        self.LabTip.text = @"APUD发送成功";
-                    
-                    
-                    
                 });
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"APUD GET FAILD";
-//                    else
-//                        self.LabTip.text = @"APUD发送失败";
                 });
             }
             
@@ -960,19 +832,10 @@
             {
                 NSLog(@"%s,result:%@",__func__,@"IC关闭成功");
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC CLOSE  SUCESS";
-//                    else
-//                        self.LabTip.text = @"IC关闭成功";
-                    
                 });
             }else
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (Language ==0)
-//                        self.LabTip.text = @"IC CLOSE FAILD";
-//                    else
-//                        self.LabTip.text = @"IC关闭失败";
                 });
             }
             break;
@@ -1020,10 +883,6 @@
     
     if (!result)
         return  result;
-//    NSString *data = NULL;
-//    data = @"40";
-//    NSData* bytesDate =[self StrHexToByte:data];
-
     NSMutableData* data = [[NSMutableData alloc] init];
     Byte array[1] = {GETSNVERSION};
     [data appendBytes:array length:1];
@@ -1046,14 +905,10 @@
             [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[SN:%@]未连接", SNVersion]];
         }
     } else {
-//        NSData* data = [self StrHexToByte:terminalNumAndBusinessNum];
-//        int len = [data bytes];
         Byte bytesData[1+23] = {0x00};
         bytesData[0] = WRITETERNUMBER;
         memcpy(bytesData + 1, [terminalNumAndBusinessNum cStringUsingEncoding:NSUTF8StringEncoding], 23);
         NSData* data = [NSData dataWithBytes:bytesData length:1+23];
-//        NSString* DataTernumber = [@"42" stringByAppendingString:terminalNumAndBusinessNum];
-//        NSData* bytesDate =[self StrHexToByte:DataTernumber];
         [self writeMposData:data withAccessory:dataPath];
     }
 }
@@ -1081,31 +936,61 @@
 // 设置工作密钥
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum {
     ISBLEDataPath* dataPath = nil;
-    NSLog(@"===========1");
     for (NSDictionary* dataDic in self.connectedDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"terminalNum"] hasPrefix:terminalNum]) {
             dataPath = iDataPath;
         }
     }
-    NSLog(@"===========2");
-
     if (dataPath == nil) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteTerminalNumSucOrFail:withError:)]) {
             [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", terminalNum]];
         }
     } else {
-        NSLog(@"准备写工作密钥的数据");
-        int len = (int)[workKey length];
-        Byte* bytesData = (Byte*)malloc(len + 1);
-        bytesData[0] = WORKKEY_CMD;
-        memcpy(bytesData + 1, [workKey cStringUsingEncoding:NSASCIIStringEncoding], len);
-        NSLog(@"字符串工作密钥:[%s]",[workKey cStringUsingEncoding:NSASCIIStringEncoding]);
-        NSData* data = [NSData dataWithBytes:bytesData length:1+len];
-        [self writeMposData:data withAccessory:dataPath];
-        free(bytesData);
+        NSString* DataWorkkey = [@"38" stringByAppendingString:workKey];
+        NSData* bytesDate =[self StrHexToByte:DataWorkkey];
+        [self writeMposData:bytesDate withAccessory:dataPath];
     }
 }
+
+// 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum{
+    ISBLEDataPath* dataPath = nil;
+    for (NSDictionary* dataDic in self.connectedDeviceList) {
+        ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[dataDic objectForKey:@"terminalNum"] hasPrefix:terminalNum]) {
+            dataPath = iDataPath;
+        }
+    }
+    if (dataPath == nil) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteTerminalNumSucOrFail:withError:)]) {
+            [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", terminalNum]];
+        }
+    } else {
+        memset(&TransData, 0x00, sizeof(FieldTrackData));
+        Byte SendData[24]={0x00};
+        SendData[0] =GETTRACKDATA_CMD;
+        SendData[1] =0x00;
+        SendData[2] =0x01;
+        SendData[3] =0x01;
+        SendData[4] =TRACK_ENCRY_MODEM;
+        SendData[5] =PASSWORD_ENCRY_MODEM;
+        SendData[6] =TRACK_ENCRY_DATA;
+        SendData[7] =TRACK_ENCRY_DATA;
+        sprintf((char *)SendData+8, "%012d", MAmount);
+        NSString *strDate = [self returnDate];
+        NSData* bytesDate =[self StrHexToByte:strDate];
+        Byte * ByteDate = (Byte *)[bytesDate bytes];
+        memcpy(SendData+20,ByteDate+1, 3);
+        long ntimeout = (long)DeviceWaitingTime;
+        if ((DeviceWaitingTime <20) || (DeviceWaitingTime >60))
+            ntimeout = 60;
+        SendData[23] =ntimeout;
+        NSData *SendArryByte = [[NSData alloc] initWithBytes:SendData length:24];
+        [self writeMposData:SendArryByte withAccessory:dataPath];
+    }
+}
+
 
 /*
  * 函  数: writeMposData:
@@ -1164,7 +1049,6 @@
         if (accessory == nil) {
             [[ISControlManager sharedInstance] writeData:Sendata];
         } else {
-//            ISMFiDataPath* dataPath = (ISMFiDataPath*)accessory;
             [[ISControlManager sharedInstance] writeData:Sendata withAccessory:accessory];
         }
         
@@ -1172,10 +1056,64 @@
         dwWriteBytes += dwCopyBytes ;
     }
     
-    
 //    sendDeviceListTimer = [NSTimer scheduledTimerWithTimeInterval:WAIT_TIMEOUT target:self selector:@selector(sendDevictTimeout) userInfo:nil repeats:YES];
     return SUCESS;
 }
+
+
+
+
+#pragma mask -------------------------- 数据处理工具:私有
+// 将读到的卡数据保存到本地
+- (void) cardDataUserDefult {
+    Byte dataStr[512] = {0x00};
+    
+    // 卡片有效期 Card_DeadLineTime
+    memset(dataStr, 0, 512);
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
+    
+    // 2磁道加密数据
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
+    NSLog(@"2磁数据:[%s]", dataStr);
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
+    
+    // 2磁道数据
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szTrack2 :TransData.nTrack2Len];
+
+    // PINBLOCK -- 密文密码
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Sign_in_PinKey];
+    
+    // 芯片数据55域信息
+    if (TransData.IccdataLen > 0) {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];  // 设置读卡方式:芯片
+        memset(dataStr, 0, 512);
+        [self BcdToAsc:dataStr :TransData.Field55Iccdata :TransData.IccdataLen];
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:BlueIC55_Information];
+    } else {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];  // 设置读卡方式:磁条
+    }
+    
+    // 芯片序列号23域值
+    memset(dataStr, 0, 512);
+    strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
+    
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
+    
+    // 卡号
+    memset(dataStr, 0, 512);
+    NSString *strData ;
+    strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@*****%@",[strData substringWithRange:NSMakeRange(0, [strData length]-9)],[strData substringWithRange:NSMakeRange([strData length]-4, 4)]] forKey:GetCurrentCard_NotAll];
+    [[NSUserDefaults  standardUserDefaults]setObject:strData forKey:Card_Number];
+    
+    [[NSUserDefaults standardUserDefaults]synchronize];
+}
+
+
 
 - (void) resetGetData
 {
@@ -1202,10 +1140,7 @@
     int nIndex =0,nIndexlen=0;
     Byte  ByteData[512] ={0x00};
     Byte  szTrack2[80] ={0x00};
-    //NSUInteger len = [TrackData length];
     memcpy(ByteData, (Byte *)[TrackData bytes], [TrackData length]);
-    
-    
     
     
     if  (TRACK_ENCRY_DATA==0x01)
@@ -1214,9 +1149,7 @@
         TransData.YyEncrydataLen |= ByteData[3] & 0xFF;
         memcpy(TransData.FieldEncrydata, ByteData, TransData.YyEncrydataLen +4);
         nIndex =TransData.YyEncrydataLen +4;
-        
     }
-    
     
     nIndex ++;
     TransData.iCardmodem =ByteData[nIndex];
@@ -1224,13 +1157,6 @@
     memcpy(&TransData.szEntryMode, ByteData+nIndex, 2);
     nIndex +=2;
     
-    /*
-     //pan
-     nIndexlen =ByteData[nIndex];
-     memcpy(&TransData.TrackPAN, ByteData+nIndex+1, nIndexlen);
-     nIndex +=1;
-     nIndex +=nIndexlen;
-     */
     //2磁道数据
     TransData.nTrack2Len =ByteData[nIndex];
     memcpy(&TransData.szTrack2, ByteData+nIndex+1, TransData.nTrack2Len);
@@ -1290,36 +1216,13 @@
     if(nIndexlen >0)
     {
         strncpy(TransData.TrackPAN,(char *)szTrack2, nIndexlen);
-        strncpy(TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
+        strncpy((char*)TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
         strncpy(TransData.szServiceCode, (char *)szTrack2+nIndexlen + 5, 3);	//服务代码
         if((TransData.szServiceCode[0] == '2') ||(TransData.szServiceCode[0] == '6'))
             TransData.iCardtype =1;
         else
             TransData.iCardtype =0;
     }
-    
-    NSString *strData ;
-    NSString *strAmout ;
-    strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
-    
-    strData = [@"PAN:" stringByAppendingString:strData];
-    
-    strAmout= [[NSString alloc] initWithCString:(const char*)TransData.szAmount encoding:NSASCIIStringEncoding];
-    
-    
-//    self.TextViewTip.text  =strData;
-//    if (Language ==0)
-//    {
-//        strAmout = [@"Credit Sucess,Amout:" stringByAppendingString:strAmout];
-//        
-//        self.LabTip.text = strAmout;
-//    }
-//    else
-//    {
-//        strAmout = [@"刷卡成功,金额:" stringByAppendingString:strAmout];
-//        
-//        self.LabTip.text =strAmout;
-//    }
     
     return  SUCESS;
 }
@@ -1330,10 +1233,21 @@
 
 
 
+-(NSString *)returnDate
+{
+    NSDate *theDate = [NSDate date];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] ;
+    NSDateComponents *components = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekdayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit) fromDate:theDate];
+    
+    
+    NSString *returnString = [NSString stringWithFormat:@"%02i%02i%02i",(int)[components year],(int)[components month],(int)[components day]];
+    
+    
+    return returnString;
+}
 
 
-
--(void) BcdToAsc:(Byte *)Dest:(Byte *)Src:(int)Len
+-(void) BcdToAsc:(Byte *)Dest :(Byte *)Src :(int)Len
 {
     int i;
     for(i=0;i<Len;i++)
@@ -1359,7 +1273,7 @@
     }
 }
 
-
+// 16进制字符转换为对应的int
 int Char16ToInt(char c)
 {
     int num = 0;
@@ -1370,68 +1284,9 @@ int Char16ToInt(char c)
     } else if (c >= 'A' && c <= 'F') {
         num = c - ('A' - 10);
     }
-//    switch (c)
-//    {
-//        case '0':
-//            num = 0;
-//            break;
-//        case '1':
-//            num = 1;
-//            break;
-//        case '2':
-//            num = 2;
-//            break;
-//        case '3':
-//            num = 3;
-//            break;
-//        case '4':
-//            num = 4;
-//            break;
-//        case '5':
-//            num = 5;
-//            break;
-//        case '6':
-//            num = 6;
-//            break;
-//        case '7':
-//            num = 7;
-//            break;
-//        case '8':
-//            num = 8;
-//            break;
-//        case '9':
-//            num = 9;
-//            break;
-//        case 'a':
-//        case 'A':
-//            num = 10;
-//            break;
-//        case 'b':
-//        case 'B':
-//            num = 11;
-//            break;
-//        case 'c':
-//        case 'C':
-//            num = 12;
-//            break;
-//        case 'd':
-//        case 'D':
-//            num = 13;
-//            break;
-//        case 'e':
-//        case 'E':
-//            num = 14;
-//            break;
-//        case 'f':
-//        case 'F':
-//            num = 15;
-//            break;
-//        default:
-//            break;
-//    }
     return num;
 }
-
+// 将16进制字符串转换为整型
 int StrToNumber16(const char *str)
 {
     int len,i,num;
@@ -1499,4 +1354,47 @@ int StrToNumber16(const char *str)
     
     
 }
+// 打印读到的芯片卡得数据
+- (void) logTransData {
+    NSMutableString* logStr = [[NSMutableString alloc] initWithString:@"\n----\nTransData:[\n"];
+    /*
+     unsigned char iTransNo;         //交易类型,指的什么交易 目前暂未使用
+     int iCardtype;                          //刷卡卡类型  磁条卡 IC卡
+     int iCardmodem;                         //刷卡模式
+     char TrackPAN[21];                      //域2  主帐号
+     unsigned char CardValid[5];       //域14 卡有效期
+     char szServiceCode[4];                  //服务代码
+     unsigned char CardSeq[2];       //域23 卡片序列号
+     unsigned char szEntryMode[3];     //域22 服务点输入方式
+     unsigned char szTrack2[40];       //域35 磁道2数据
+     unsigned char szEncryTrack2[40];    //域35 磁道2加密数据 第一个字节为长度
+     unsigned char szTrack3[108];      //域36 磁道3数据
+     unsigned char szEncryTrack3[108];   //域36 磁道3加密数据
+     unsigned char sPIN[13];         //域52 个人标识数据(pind ata)
+     unsigned char Field55Iccdata[300];    //的55域信息512->300
+     unsigned char FieldEncrydata[300];    //随机加密数据 //针对客户
+     */
+//    [logStr appendString:[NSString stringWithFormat:@"iTransNo = [%c]\n", TransData.iTransNo]];
+    [logStr appendString:[NSString stringWithFormat:@"iCardtype = [%d]\n", TransData.iCardtype]];
+    [logStr appendString:[NSString stringWithFormat:@"iCardmodem = [%d]\n", TransData.iCardmodem]];
+    [logStr appendString:[NSString stringWithFormat:@"TrackPAN = [%s]\n", TransData.TrackPAN]];
+    [logStr appendString:[NSString stringWithFormat:@"CardValid = [%s]\n", TransData.CardValid]];
+    [logStr appendString:[NSString stringWithFormat:@"szServiceCode = [%s]\n", TransData.szServiceCode]];
+    [logStr appendString:[NSString stringWithFormat:@"CardSeq = [%s]\n", TransData.CardSeq]];
+    [logStr appendString:[NSString stringWithFormat:@"szEntryMode = [%s]\n", TransData.szEntryMode]];
+    [logStr appendString:[NSString stringWithFormat:@"szTrack2 = [%s]\n", TransData.szTrack2]];
+    [logStr appendString:[NSString stringWithFormat:@"szEncryTrack2 = [%s]\n", TransData.szEncryTrack2]];
+    [logStr appendString:[NSString stringWithFormat:@"szTrack3 = [%s]\n", TransData.szTrack3]];
+    [logStr appendString:[NSString stringWithFormat:@"szEncryTrack3 = [%s]\n", TransData.szEncryTrack3]];
+    [logStr appendString:[NSString stringWithFormat:@"sPIN = [%s]\n", TransData.sPIN]];
+    [logStr appendString:[NSString stringWithFormat:@"Field55Iccdata = [%s]\n", TransData.Field55Iccdata]];
+    [logStr appendString:[NSString stringWithFormat:@"FieldEncrydata = [%s]\n", TransData.FieldEncrydata]];
+    [logStr appendString:[NSString stringWithFormat:@"iccDataLen = [%d]\n", TransData.IccdataLen]];
+    
+    
+    [logStr appendString:@"]----\n"];
+    NSLog(@"%@",logStr);
+    
+}
+
 @end

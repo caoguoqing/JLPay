@@ -24,6 +24,8 @@
 - (void) didWriteMainKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 // 写工作密钥结果回调
 - (void) didWriteWorkKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
+// 刷卡结果回调
+- (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 
 @end
 
@@ -43,37 +45,8 @@
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 // 设置工作密钥
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
+// 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum;
 
-
-
-#pragma mask : 打开设备探测;
-- (void) detecting;
-
-#pragma mask : 打开设备;
-- (void) open;
-
-#pragma mask : 关闭设备;
-- (void) close;
-
-#pragma mask : 刷卡
-- (int) cardSwipeInTime: (long)timeOut mount: (long)nMount mode: (long)brushMode;
-
-#pragma mask : 刷磁消费
--(int)TRANS_Sale:(long)timeout :(long)nAmount :(int)nPasswordlen :(NSString*)bPassKey;
-
-#pragma mask : 主密钥下载
-- (int) mainKeyDownload;
-
-#pragma mask : 工作密钥设置
--(int)WriteWorkKey:(int)len :(NSString*)DataWorkkey;
-
-#pragma mask : 参数下载
-- (int) parameterDownload;
-
-#pragma mask : IC卡公钥下载
-- (int) ICPublicKeyDownload;
-
-#pragma mask : EMV参数下载
-- (int) EMVDownload;
 
 @end

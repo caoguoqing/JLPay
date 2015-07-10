@@ -19,10 +19,11 @@
 #import "QianPiViewController.h"
 #import "GroupPackage8583.h"
 #import "IC_GroupPackage8583.h"
+#import "DeviceManager.h"
 
 
 
-@interface BrushViewController()<CustomIOSAlertViewDelegate,wallDelegate,managerToCard,UIAlertViewDelegate>
+@interface BrushViewController()<CustomIOSAlertViewDelegate,wallDelegate,managerToCard,UIAlertViewDelegate,DeviceManagerDelegate>
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
@@ -88,16 +89,16 @@
     if (!self.navigationController.navigationBarHidden) {
         self.navigationController.navigationBarHidden = YES;
     }
-    
+    [[DeviceManager sharedInstance] setDelegate:self];
+    [[DeviceManager sharedInstance] openAllDevices];
+
 }
 
 #pragma mask ::: 界面显示后的事件注册及处理
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-//    AppDelegate* delegate               = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    DeviceManager* device = [DeviceManager sharedInstance];
-    if ([device isConnected]) {
+    NSString* terminalNum = [PublicInformation returnTerminal];
+    if ([[DeviceManager sharedInstance] isConnectedOnTerminalNum:terminalNum]) {
         // 刷卡
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             // 启动刷卡超时定时器
@@ -106,13 +107,15 @@
             }
             [[NSRunLoop mainRunLoop] addTimer:self.swipeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
             // 刷卡
-            [device cardSwipe];
+//            [[DeviceManager sharedInstance] cardSwipe];
+            // 如果是音频，先刷卡后读卡；如果是蓝牙，直接读卡
+            [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onTerminal:terminalNum];
         });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         // 连接设备....循环中.......还要优化定时器
-        [device open];
+        [[DeviceManager sharedInstance] openAllDevices];
         // 重新打开后要能继续刷卡............
     }
 }
@@ -124,8 +127,36 @@
         [self.swipeWaitingTimer invalidate];
     }
     self.swipeWaitingTimer = nil;
+    [[DeviceManager sharedInstance] setDelegate:nil];
 }
 
+
+#pragma mask ----------------------- 刷卡结果的回调
+- (void)deviceManager:(DeviceManager *)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.swipeWaitingTimer.valid) {
+            [self.swipeWaitingTimer invalidate];
+        }
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+        // 失败就退出
+        if (!yesOrNot) {
+            [[app_delegate window] makeToast:[NSString stringWithFormat:@"刷卡失败:%@",msg]];
+            [self.navigationController popViewControllerAnimated:YES];
+            return;
+        }
+        
+        NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+        if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
+            // 直接发起消费交易
+            [self toCust:nil];
+        } else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
+            // 打开密码输入提示框
+            [self makePasswordAlertView];
+        }
+    });
+}
 #pragma mask ::: 刷卡成功
 - (void) cardSwipeSuccess : (NSNotification*)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -240,9 +271,6 @@
                                                Delegate:self
                                                  method:methodStr];
     });
-    
-    // 启动超时定时器 -- 主线程
-    self.timeOut = TIMEOUT;
 }
 
 #pragma mask ::: 跳转回金额输入界面

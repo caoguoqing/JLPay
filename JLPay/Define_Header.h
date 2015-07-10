@@ -73,6 +73,7 @@
 
 #define SelectedTerminalNum         @"SelectedTerminalNum"      // 选择设备连接的终端号配置的key
 
+#define DeviceWaitingTime           20                          // 设备操作的等待超时时间
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0                           

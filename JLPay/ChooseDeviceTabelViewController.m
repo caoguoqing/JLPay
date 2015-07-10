@@ -37,14 +37,13 @@
     self.title = @"绑定机具";
     
     // 注册写工作密钥的结果通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingFailNote:) name:Noti_WorkKeyWriting_Fail object:nil];
-    
-    [[DeviceManager sharedInstance] setDelegate:self];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingFailNote:) name:Noti_WorkKeyWriting_Fail object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[DeviceManager sharedInstance] setDelegate:self];
     
 }
 - (void) viewDidAppear:(BOOL)animated {
@@ -57,14 +56,12 @@
         self.selectedTerminalNum = nil;
     }
     
-    
-    // 在后台识别,并连接所有可以连接的设备.....
-    
-    // 先屏蔽掉音频设备:因为接口还不支持读取终端号
+    // 打开所有设备
     [[DeviceManager sharedInstance] openAllDevices];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     [[DeviceManager sharedInstance] setDelegate:nil];
 }
 
@@ -171,6 +168,10 @@
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
     if (yesOrNot) {
         [self alertForMessage:@"绑定设备成功!"];
+        // 停止等待转轮
+        // 设置绑定标志
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
         [self alertForMessage:@"绑定设备失败!"];
     }
@@ -224,7 +225,6 @@
         if ([[DeviceManager sharedInstance] isConnectedOnTerminalNum:self.selectedTerminalNum]) {
 //            [self alertForMessage:@"签到成功,可以写工作密钥了"];
 //            [[DeviceManager sharedInstance] WriteWorkKey:57 :workStr];
-            NSLog(@"--------1");
             [[DeviceManager sharedInstance] writeWorkKey:workStr onTerminal:self.selectedTerminalNum];
         } else {
             [self alertForMessage:@"设备未连接"];
@@ -300,26 +300,26 @@
     button.highlighted = NO;
 }
 
-#pragma mask ::: 写工作密钥结果的通知处理
-- (void) workKeyWritingSuccNote: (NSNotification*)noti {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.activitor isAnimating]) {
-            [self.activitor stopAnimating];
-        }
-        [self alertForMessage:@"绑定设备成功"];
-    });
-    // 保存设备签到标志到本地;供刷卡时读取
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-- (void) workKeyWritingFailNote: (NSNotification*)noti {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.activitor isAnimating]) {
-            [self.activitor stopAnimating];
-        }
-        [self alertForMessage:@"绑定设备失败:写工作密钥失败"];
-    });
-}
+//#pragma mask ::: 写工作密钥结果的通知处理
+//- (void) workKeyWritingSuccNote: (NSNotification*)noti {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        if ([self.activitor isAnimating]) {
+//            [self.activitor stopAnimating];
+//        }
+//        [self alertForMessage:@"绑定设备成功"];
+//    });
+//    // 保存设备签到标志到本地;供刷卡时读取
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//}
+//- (void) workKeyWritingFailNote: (NSNotification*)noti {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        if ([self.activitor isAnimating]) {
+//            [self.activitor stopAnimating];
+//        }
+//        [self alertForMessage:@"绑定设备失败:写工作密钥失败"];
+//    });
+//}
 
 // 小工具: 为简化弹窗代码
 - (void) alertForMessage: (NSString*) messageStr {

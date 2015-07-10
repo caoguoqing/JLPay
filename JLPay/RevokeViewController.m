@@ -124,6 +124,9 @@
         NSString* amount = [self.dataDic objectForKey:@"amtTrans"];
         // 保存原始消费金额
         [[NSUserDefaults standardUserDefaults] setValue:amount forKey:SuccessConsumerMoney];
+        CGFloat money = [amount floatValue]/100.0;
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%.02f", money] forKey:Consumer_Money];
+
         // 保存原消费流水号
         [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"retrivlRef"] forKey:Consumer_Get_Sort];
         // 切换到刷卡界面

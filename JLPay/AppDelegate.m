@@ -57,14 +57,6 @@
 
 #pragma mask ::: app 的入口;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // 注册设备事件实时监控通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(DeviceStateChange:) name:@"DeviceState" object:nil];
-
-    // 初始化设备管理器
-//    self.device                         = [[DeviceManager alloc] init];
-//    DeviceManager* device = [DeviceManager sharedInstance];
-//    [device detecting];
     
     return YES;
 }
@@ -91,20 +83,5 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-- (void) DeviceStateChange : (NSNotification*)noti {
-    NSString* result = [noti object];
-    if ([result isEqualToString:@"1"]) {
-        // 打开设备
-        DeviceManager* device = [DeviceManager sharedInstance];
-        [device open];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.window makeToast:@"设备已插入"];
-        });
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.window makeToast:@"设备移除"];
-        });
-    }
-}
 
 @end

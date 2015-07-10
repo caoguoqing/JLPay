@@ -21,7 +21,7 @@
 
 
 
-@interface CustPayViewController ()<UIAlertViewDelegate>
+@interface CustPayViewController ()<UIAlertViewDelegate,DeviceManagerDelegate>
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
@@ -40,6 +40,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = YES;
     
     // 自定义返回界面的按钮样式
@@ -50,9 +51,12 @@
                                 barMetrics:UIBarMetricsDefault];
     self.navigationItem.backBarButtonItem = backItem;
 
-    [super viewWillAppear:animated];
+    [[DeviceManager sharedInstance] setDelegate:self];
 }
-
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[DeviceManager sharedInstance] setDelegate:nil];
+}
 
 
 /*************************************
@@ -324,18 +328,14 @@
 
 
 
-#pragma mark  ------跳转刷卡界面
+#pragma mark  ------点击了刷卡按钮: 跳转刷卡界面
 /*************************************
  * 功  能 : 刷卡按钮的点击事件:跳转到刷卡界面;
  * 参  数 : 无
  * 返  回 : 无
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
-    sender.transform                    = CGAffineTransformIdentity;
-
-    UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    BrushViewController *viewcon           = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-    
+    sender.transform = CGAffineTransformIdentity;
     // 先校验是否签到
     BOOL isSignedIn = [[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn];
     if (!isSignedIn) {
@@ -343,14 +343,17 @@
         return;
     }
     // 再判断是否连接设备
-    
     DeviceManager* device = [DeviceManager sharedInstance];
-    if (![device isConnected])
+    NSString* terminalNum = [PublicInformation returnTerminal];
+    if (![device isConnectedOnTerminalNum:terminalNum])
     {
         [self alertShow:@"请连接设备"];
-        [device open];
+//        [device open];
+        [device openAllDevices];
     }else
     {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
         // 保存的是字符串型的金额
         [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
         [[NSUserDefaults standardUserDefaults] synchronize];

@@ -275,7 +275,7 @@
     moneyLab.textColor=[UIColor blackColor];
     moneyLab.textAlignment=NSTextAlignmentLeft;
     moneyLab.font=[UIFont systemFontOfSize:20.0f];
-    moneyLab.text=[NSString stringWithFormat:@"RMB    %@",[PublicInformation returnConsumerMoney]];//[PublicInformation returnConsumerMoney]
+    moneyLab.text=[NSString stringWithFormat:@"RMB    %@",[PublicInformation returnMoney]];//[PublicInformation returnConsumerMoney]
     [scrollVi addSubview:moneyLab];
     
 //备注
@@ -399,12 +399,14 @@
      uploadRequestAmoumt	交易金额        以分为单位
      uploadRequestTime      请求时间        14位
      */
+    [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]];
+    NSString* normalTime = [self formatTime:self.timeStr]; // 2015-07-10 14:38:52  -> 20150710143852
     NSMutableDictionary* headerInfo = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[PublicInformation returnBusiness],
                                                                     [PublicInformation returnBusinessName],
-                                                                    [PublicInformation returnConsumerSort],
+                                                                    [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]],
                                                                     [PublicInformation returnTerminal],
                                                                     [PublicInformation returnMoney],
-                                                                    self.timeStr,nil]
+                                                                    normalTime,nil]
                                                            forKeys:[NSArray arrayWithObjects:
                                                                     @"uploadRequstMchntNo",
                                                                     @"uploadRequestMchntNM",
@@ -511,6 +513,30 @@
     [super didReceiveMemoryWarning];
 }
 
-
+// 格式化时间成功无任何符号格式
+- (NSString*) formatTime:(NSString*)timestr {
+    // 2015-07-10 14:38:52  -> 20150710143852
+    int length = [timestr length] + 1;
+    char* str = (char*)malloc(length);
+    char* ctimestr = (char*)malloc(14 + 1);
+    memset(str, 0x00, length);
+    memcpy(str, [timestr cStringUsingEncoding:NSASCIIStringEncoding], length - 1);
+    char* temp = str;
+    int index = 0;
+    for (int i = 0; i < length - 1; i++) {
+        if (*temp < '0' || *temp > '9') {
+            temp++;
+            continue;
+        } else {
+            ctimestr[index++] = *temp;
+            temp++;
+        }
+    }
+    NSLog(@"14位时间:[%s]", ctimestr);
+    NSString* normalTime = [NSString stringWithCString:ctimestr encoding:NSASCIIStringEncoding];
+    free(str);
+    free(ctimestr);
+    return normalTime;
+}
 
 @end

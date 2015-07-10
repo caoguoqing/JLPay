@@ -766,18 +766,24 @@ static Unpacking8583 *sharedObj2 = nil;
                 
                 
                 if ([[sortArr objectAtIndex:c] isEqualToString:@"62"]) {
-                    
+                    // 前面6位为长度
                     NSString *str1 = [deleteStr substringFromIndex:6];
 
                     NSMutableString *workStr = [[NSMutableString alloc]init];
-                    for (int i = 1; i<[str1 length]+1; i++) {
-                        if ( !((((i+1)%40 == 0 )|| (i%40 == 0)))) {
-                            
-                            NSString *str = [str1 substringWithRange:NSMakeRange(i-1, 1)];
-                            [workStr appendString:str];
-
-                        }                        
+                    // 锦宏霖A60设备需要处理下62域
+                    // M60不需要处理
+                    NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+                    if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
+                        for (int i = 1; i<[str1 length]+1; i++) {
+                            if ( !( ( ((i+1)%40 == 0 )|| (i%40 == 0) ) ) ) {
+                                NSString *str = [str1 substringWithRange:NSMakeRange(i-1, 1)];
+                                [workStr appendString:str];
+                            }
+                        }
+                    } else if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
+                        [workStr appendString:str1];
                     }
+                    
                     NSLog(@"workstr ---------%@",workStr);
                     
                     [[NSUserDefaults standardUserDefaults] setValue:workStr forKey:WorkKey];
