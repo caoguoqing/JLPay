@@ -152,8 +152,6 @@
     // 读取终端号,并更新已连接设备中设备的终端号(在读取数据的回调中)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [self readTerminalNoWithAccessory:accessory];
-        // 读取SN号,并更新已连接设备中设备的SN号
-//        [self readSNNoWithAccessory:accessory];
     });
     
     // 更新已识别设备中的对应设备的new状态
@@ -253,14 +251,15 @@
  * 返  回: 无
  */
 - (void) openInKnownDeviceList {
-//    for (NSDictionary* dataDic in self.knownDeviceList) {
-    for (int i = 0; i < self.knownDeviceList.count; i++) {
-        NSDictionary* dataDic = [self.knownDeviceList objectAtIndex:i];
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         NSLog(@"需要打开的设备【%@】状态为[%@]", [dataDic valueForKey:@"dataPath"], [dataDic valueForKey:@"newOrOld"]);
         if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
             if ([dataPath state] == CBPeripheralStateDisconnected) {
-                [self.manager connectDevice:(ISDataPath*)dataPath];
+                // 并发打开设备
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    [self.manager connectDevice:(ISDataPath*)dataPath];
+                });
             }
         }
     }
@@ -277,9 +276,7 @@
 - (void) knownDeviceListAddObject:(ISDataPath*)dataPath {
     BOOL hasElement = NO;
     ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-//    for (NSDictionary* dataDic in self.knownDeviceList) {
-    for (int i = 0; i < self.knownDeviceList.count; i++) {
-        NSDictionary* dataDic = [self.knownDeviceList objectAtIndex:i];
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         // 逐个比对当前已识别列表中设备的序列号
         ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if ([innerDataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -329,11 +326,10 @@
             }
         }
         if (!compared) {
-//            [self.connectedDeviceList removeObject:dataDic];
-//            [self renewTerminalNumbers];
             [changedObjects addObject:dataDic];
         }
     }
+    // 数组元素的删除必须在轮询结束才能操作
     if ([changedObjects count] > 0) {
         [self.connectedDeviceList removeObjectsInArray:changedObjects];
         [self renewTerminalNumbers];
@@ -363,7 +359,6 @@
             [dataDic setValue:bgDataPath forKey:@"dataPath"];
             [dataDic setValue:nil forKey:@"terminalNum"];
             [dataDic setValue:nil forKey:@"SNVersion"];
-//            [self.connectedDeviceList addObject:dataDic];
             [changedObjects addObject:dataDic];
         }
         if (changedObjects.count > 0) {
@@ -433,8 +428,6 @@
 - (void) renewTerminalNumbers {
     NSMutableArray* terminalNumbers = [[NSMutableArray alloc] init];
     for (NSDictionary* dataDic in self.connectedDeviceList) {
-//    for (int i = 0; i < self.connectedDeviceList.count; i++) {
-//        NSDictionary* dataDic = [self.connectedDeviceList objectAtIndex:i];
         NSString* terminalNumber = [dataDic valueForKey:@"terminalNum"];
         if (terminalNumber != nil) {
             [terminalNumbers addObject:terminalNumber];
@@ -488,7 +481,6 @@
             if (!ByteDate[1])   // 刷卡成功
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
                     NSString *strPan=@"";
                     int nlen =ByteDate[2]&0xff;
                     for (int i=0; i <nlen; i++) {
@@ -497,23 +489,12 @@
                         
                     }
                     strPan =[self stringFromHexString:strPan];
-                    
                     strPan = [@"PAN:" stringByAppendingString:strPan];
-                    // [self TRANS_Sale:20000:nAmount:5:@"12345"];
-                });
-                
-                
-                
-                
             }
             else
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡失败");
-                dispatch_async(dispatch_get_main_queue(), ^{
                     return;
-                });
-                
-                
             }
             
             break;
@@ -522,10 +503,6 @@
             if (!ByteDate[1])   // 获取卡号数据成功
             {
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    
-                });
             }
             else
             {
@@ -533,8 +510,6 @@
                 
                 
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             break;
         case GETTRACK_CMD:
@@ -573,37 +548,27 @@
         {
             
             NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
-            dispatch_async(dispatch_get_main_queue(), ^{
                 [self GetCard:data];
-            });
         }
             break;
         case MAINKEY_CMD:
             if (!ByteDate[1])   // 主密钥设置成功
             {
                 NSLog(@"%s,result:%@",__func__,@"主密钥设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteMainKeySucOrFail:YES withError:nil];
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteMainKeySucOrFail:NO withError:@"设置主密钥失败"];
-                });
             }
             break;
         case WORKKEY_CMD:
             if (!ByteDate[1])   // 工作密钥设置成功
             {
                 NSLog(@"%s,result:%@",__func__,@"工作密钥设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self.delegate didWriteWorkKeySucOrFail:NO withError:nil];
-                });
             }
             break;
         case GETSNVERSION:
@@ -617,42 +582,32 @@
                 strSN =[self stringFromHexString:strSN];
                 NSLog(@"SN获取成功  %@",strSN);
                 // 更新已连接设备列表的sn号
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self updateConnetedListOnDevice:accessory bySNNum:strSN];
-                });
             }
             break;
         case GETMAC_CMD:
             if (!ByteDate[1])   // MAC
             {
                 NSLog(@"%s,result:%@",__func__,@"MAC 获取成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
                     NSString * strMAC =@"";
                     strMAC = [NSString stringWithFormat:@"%@",data];
                     strMAC = [strMAC stringByReplacingOccurrencesOfString:@" " withString:@""];
                     strMAC =[strMAC substringFromIndex:5];
                     strMAC = [strMAC substringToIndex:16];
                     strMAC = [@"MAC值:" stringByAppendingString:strMAC];
-                });
                 
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             break;
         case WRITETERNUMBER:    // 设置终端号+商户号
             if (!ByteDate[1])   // 成功
             {
                 NSLog(@"%s,result:%@",__func__,@"终端号商户号设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.delegate didWriteTerminalNumSucOrFail:YES withError:nil];
-                });
+                [self.delegate didWriteTerminalNumSucOrFail:YES withError:nil];
             }else               // 失败
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.delegate didWriteTerminalNumSucOrFail:NO withError:@"设置终端号+商户号失败"];
-                });
+                [self.delegate didWriteTerminalNumSucOrFail:NO withError:@"设置终端号+商户号失败"];
             }
             break;
         case GETTERNUMBER:  // 获取终端号
@@ -670,9 +625,7 @@
                 strTerNumber = [strTerNumber substringToIndex:(8+15)*2 + 1];
                 NSLog(@"解析后的终端号+商户号:[%@]",[self stringFromHexString:strTerNumber]);
                 /* 将读到的终端号填充到本地已连接设备列表中对应的设备 */
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self updateConnetedListOnDevice:accessory byTerminalNum:[self stringFromHexString:strTerNumber]];
-                });
             }
             break;
             
@@ -680,13 +633,8 @@
             if (!ByteDate[1])   // 写AID成功
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡Aid参数设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             
             break;
@@ -695,14 +643,8 @@
             if (!ByteDate[1])   // 清除AID成功
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡Aid参数清除成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }
             
             break;
@@ -710,14 +652,8 @@
             if (!ByteDate[1])   // 写公钥成个
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡公钥参数设置成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }
             
             break;
@@ -725,32 +661,21 @@
             if (!ByteDate[1])   // 清除公钥成功
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡公钥参数清除成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
-                
             }
-            
             break;
         case ProofIcParm:
             if (!ByteDate[1])   // IC卡二次论证成功
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡二次论证成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
                     NSString  *strData =@"";
                     for (int i=2; i <[data length]; i++) {
                         NSString *newHexStr = [NSString stringWithFormat:@"%02x",ByteDate[i]&0xff];///16进制数
                         strData = [strData stringByAppendingString:newHexStr];
                     }
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             break;
         case BATTERY:
@@ -764,24 +689,16 @@
                 int nBattery =StrToNumber16([strBattery cStringUsingEncoding:NSASCIIStringEncoding]);
                 strBattery =[NSString stringWithFormat:@"%d",nBattery];
                 NSLog(@"%s,result:%@",__func__,@"电池电量获取成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             break;
         case IC_STATUS:
             if (!ByteDate[1])   // IC卡在位
             {
                 NSLog(@"%s,result:%@",__func__,@"IC卡在位");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             break;
         case IC_SOPEN:
@@ -796,12 +713,8 @@
                 }
                 
                 strSTR = [@"上电ATR,第一个字节为大小:" stringByAppendingString:strSTR];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             
             break;
@@ -818,12 +731,8 @@
                 }
                 
                 strSTR = [@"APDU ATR,第一个字节为大小:" stringByAppendingString:strSTR];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             
             break;
@@ -831,12 +740,8 @@
             if (!ByteDate[1])   // IC关闭
             {
                 NSLog(@"%s,result:%@",__func__,@"IC关闭成功");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }else
             {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                });
             }
             break;
         default:

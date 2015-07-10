@@ -644,12 +644,12 @@
 		5E82B7E71B25425600A58751 /* 参数设置 */ = {
 			isa = PBXGroup;
 			children = (
+				5EBE927F1ACB80FD0096BD72 /* TerminalParamSetViewController.h */,
+				5EBE92801ACB80FD0096BD72 /* TerminalParamSetViewController.m */,
 				5EBE92821ACB95BC0096BD72 /* DeviceSettingViewController.h */,
 				5EBE92831ACB95BC0096BD72 /* DeviceSettingViewController.m */,
 				5EBE927C1ACB7FE70096BD72 /* IPSetViewController.h */,
 				5EBE927D1ACB7FE70096BD72 /* IPSetViewController.m */,
-				5EBE927F1ACB80FD0096BD72 /* TerminalParamSetViewController.h */,
-				5EBE92801ACB80FD0096BD72 /* TerminalParamSetViewController.m */,
 			);
 			name = "参数设置";
 			sourceTree = "<group>";

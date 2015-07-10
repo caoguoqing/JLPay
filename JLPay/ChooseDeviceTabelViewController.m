@@ -17,10 +17,10 @@
 
 
 @interface ChooseDeviceTabelViewController()<wallDelegate,managerToCard,DeviceManagerDelegate>
-@property (nonatomic, strong) NSArray* terminalNums;
-@property (nonatomic, strong) JLActivity* activitor;
-@property (nonatomic, strong) NSString* selectedTerminalNum;
-@property (nonatomic, strong) NSString* selectedBusinessNum;
+@property (nonatomic, strong) NSArray* terminalNums;                // 终端号列表
+@property (nonatomic, strong) JLActivity* activitor;                // 捷联通商标转轮
+@property (nonatomic, strong) NSString* selectedTerminalNum;        // 已选择的终端号:设置到本地,交易时读取
+@property (nonatomic, strong) NSString* selectedBusinessNum;        // 已选择的商户号:设置到本地,交易时读取
 @end
 
 
@@ -35,6 +35,7 @@
     [super viewDidLoad];
     [self.view addSubview:self.activitor];
     self.title = @"绑定机具";
+    [DeviceManager sharedInstance];
     
     // 注册写工作密钥的结果通知
 //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
@@ -55,8 +56,7 @@
     } else {
         self.selectedTerminalNum = nil;
     }
-    
-    // 打开所有设备
+    // 重新打开所有设备
     [[DeviceManager sharedInstance] openAllDevices];
 }
 - (void)viewWillDisappear:(BOOL)animated {
@@ -65,6 +65,8 @@
     [[DeviceManager sharedInstance] setDelegate:nil];
 }
 
+
+#pragma mask ------------------------------ 表视图 delegate & dataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
@@ -84,7 +86,7 @@
     return rows;
 }
 
-#pragma mask ::: 装载终端编号单元格
+// pragma mask ::: 装载终端编号单元格
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell;
     if (indexPath.section == 0) {
@@ -110,7 +112,7 @@
     return cell;
 }
 
-#pragma mask ::: 设置section 头
+// pragma mask ::: 设置section 头
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) {
         return @"终端列表";
@@ -120,10 +122,10 @@
 }
 
 
-#pragma mask ::: 点击终端编号对应的单元格
 /*
- * 1.显示标记
- * 2.登记已选择的终端号到缓存
+ * pragma mask ::: 点击终端编号对应的单元格
+ *  1.显示标记
+ *  2.登记已选择的终端号到缓存
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -154,6 +156,7 @@
 
 
 #pragma mask : -------------  DeviceManagerDelegate
+
 // 设备管理器读到终端号变更后的回调--更新列表
 - (void)deviceManager:(DeviceManager *)deviceManager updatedTerminalArray:(NSArray *)terminalArray {
     if (terminalArray != nil) {
@@ -169,10 +172,20 @@
     if (yesOrNot) {
         [self alertForMessage:@"绑定设备成功!"];
         // 停止等待转轮
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self.activitor isAnimating]) {
+                [self.activitor stopAnimating];
+            }
+        });
         // 设置绑定标志
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
         [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self.activitor isAnimating]) {
+                [self.activitor stopAnimating];
+            }
+        });
         [self alertForMessage:@"绑定设备失败!"];
     }
 }
@@ -223,10 +236,13 @@
         NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
         NSLog(@"工作密钥: [%@]", workStr);
         if ([[DeviceManager sharedInstance] isConnectedOnTerminalNum:self.selectedTerminalNum]) {
-//            [self alertForMessage:@"签到成功,可以写工作密钥了"];
-//            [[DeviceManager sharedInstance] WriteWorkKey:57 :workStr];
-            [[DeviceManager sharedInstance] writeWorkKey:workStr onTerminal:self.selectedTerminalNum];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                [[DeviceManager sharedInstance] writeWorkKey:workStr onTerminal:self.selectedTerminalNum];
+            });
         } else {
+            if ([self.activitor isAnimating]) {
+                [self.activitor stopAnimating];
+            }
             [self alertForMessage:@"设备未连接"];
         }
     } else {

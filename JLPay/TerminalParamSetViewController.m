@@ -27,25 +27,23 @@
 
 @interface TerminalParamSetViewController ()<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,DeviceManagerDelegate,UIActionSheetDelegate, wallDelegate,managerToCard>
 
-@property (strong, nonatomic)  UILabel*     businessNumLabel;
-@property (strong, nonatomic)  UILabel*     terminalNumLabel;
-@property (strong, nonatomic)  UITextField *bussinessNumTextField;
-@property (strong, nonatomic)  UITextField *terminalNumTextField;
-//@property (strong, nonatomic)  UIButton*    btnSetBussinessNum;
-@property (strong, nonatomic)  UIButton*    btnSetTerminalNum;
-@property (strong, nonatomic)  UIButton*    btnSetMainKey;
-@property (nonatomic, strong)  UITableView* devicesTableView;
-@property (nonatomic, strong)  NSMutableArray* SNVersionArray;
-@property (nonatomic, strong)  NSString*    selectedSNVersion;
-@property (nonatomic, strong)  UITableViewCell* lastSelectedCell;
-@property (nonatomic, strong)  NSArray*     deviceNameArray;
+@property (strong, nonatomic)  UILabel*     businessNumLabel;           // 商户号标签
+@property (strong, nonatomic)  UILabel*     terminalNumLabel;           // 终端号标签
+@property (strong, nonatomic)  UITextField *bussinessNumTextField;      // 商户号输入框
+@property (strong, nonatomic)  UITextField *terminalNumTextField;       // 终端号输入框
+@property (strong, nonatomic)  UIButton*    btnSetTerminalNum;          // 设置终端号+商户号的按钮
+@property (strong, nonatomic)  UIButton*    btnSetMainKey;              // 设置主密钥的按钮
+@property (nonatomic, strong)  UITableView* devicesTableView;           // 显示设备列表的表视图
+@property (nonatomic, strong)  NSMutableArray* SNVersionArray;          // 动态保存设备管理器识别的设备SN号
+@property (nonatomic, strong)  NSString*    selectedSNVersion;          // 选择的SN号
+@property (nonatomic, strong)  UITableViewCell* lastSelectedCell;       // 上一次选择的cell:用来取消多余的选择标志
+@property (nonatomic, strong)  NSArray*     deviceNameArray;            // 设备类型列表:用户选择供设备管理器识别设备
 @end
 
 @implementation TerminalParamSetViewController
 @synthesize bussinessNumTextField = _bussinessNumTextField;
 @synthesize terminalNumTextField = _terminalNumTextField;
 @synthesize btnSetTerminalNum = _btnSetTerminalNum;
-//@synthesize btnSetBussinessNum = _btnSetBussinessNum;
 @synthesize btnSetMainKey = _btnSetMainKey;
 @synthesize devicesTableView = _devicesTableView;
 @synthesize businessNumLabel = _businessNumLabel;
@@ -116,8 +114,7 @@
             self.selectedSNVersion = nil;
             self.lastSelectedCell = nil;
         }
-
-    } 
+    }
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 // 显示section header
@@ -137,8 +134,9 @@
         
     } else if ([buttonTitle isEqualToString:DeviceType_JHL_M60]) { // M60
         [[NSUserDefaults standardUserDefaults] setObject:DeviceType_JHL_M60 forKey:DeviceType];
-        [[DeviceManager sharedInstance] openAllDevices];
+        // 应该先关闭再打开所有设备
         [DeviceManager sharedInstance].delegate = self;
+        [[DeviceManager sharedInstance] openAllDevices];
     }
 }
 
@@ -290,9 +288,8 @@
     if ([self.bussinessNumTextField.text length] != 15) {
         [self alertForMessage:@"商户号位数不为15!"];
     }
-    // 开始写终端号
+    // 开始写终端号+商户号
     NSString* terminalNumAndBusinessNum = [self.terminalNumTextField.text stringByAppendingString:self.bussinessNumTextField.text];
-    NSLog(@"开始写终端号+商户号:[%@]",terminalNumAndBusinessNum);
     [[DeviceManager sharedInstance] writeTerminalNum:terminalNumAndBusinessNum onSNVersion:self.selectedSNVersion];
 }
 
@@ -311,10 +308,7 @@
         [self alertForMessage:@"请先连接设备"];
         return;
     }
-
-    
     [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey] IP:Current_IP PORT:Current_Port Delegate:self method:@"downloadMainKey"];
-
 }
 
 - (IBAction) btnDown:(id)sender {
@@ -351,7 +345,7 @@
         if (state) {
             NSString* mainKey = [PublicInformation signinPin];
             [[app_delegate window] makeToast:[NSString stringWithFormat:@"获取主密钥[%@]成功", mainKey]];
-            // 可以向设备中写了
+            // 可以向设备中写工作密钥了
             [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersion];
         } else {
             [self alertForMessage:@"获取主密钥数据失败"];
@@ -366,9 +360,11 @@
     self.title = @"参数设置";
     self.selectedSNVersion = nil;
     self.lastSelectedCell = nil;
+    // 数组用来显示设备类型列表,供用户选择
     self.deviceNameArray = [[NSArray alloc] initWithObjects:DeviceType_JHL_M60, nil];
     self.devicesTableView.dataSource = self;
     self.devicesTableView.delegate = self;
+    [DeviceManager sharedInstance];
     // 加载子视图
     [self.view addSubview:self.businessNumLabel];
     [self.view addSubview:self.terminalNumLabel];
@@ -417,7 +413,7 @@
     frame.origin.x = 0;
     frame.origin.y += frame.size.height + inset * 2.0;
     frame.size.width = self.view.bounds.size.width;
-    frame.size.height = self.view.bounds.size.height/2.5/* bottomInset */;
+    frame.size.height = self.view.bounds.size.height/2.5 /* bottomInset */;
     self.devicesTableView.frame = frame;
     
     // 设置终端号+商户号按钮
@@ -462,6 +458,7 @@
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:YES];
     self.tabBarController.tabBar.hidden = NO;
+    // 界面消失时注销设备管理器的 delegate
     [[DeviceManager sharedInstance] setDelegate:nil];
 }
 
