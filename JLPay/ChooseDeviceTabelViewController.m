@@ -20,7 +20,7 @@
 @property (nonatomic, strong) NSArray* terminalNums;                // 终端号列表
 @property (nonatomic, strong) JLActivity* activitor;                // 捷联通商标转轮
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 已选择的终端号:设置到本地,交易时读取
-@property (nonatomic, strong) NSString* selectedBusinessNum;        // 已选择的商户号:设置到本地,交易时读取
+//@property (nonatomic, strong) NSString* selectedBusinessNum;        // 已选择的商户号:设置到本地,交易时读取
 @end
 
 
@@ -28,7 +28,7 @@
 @synthesize terminalNums = _terminalNums;
 @synthesize activitor = _activitor;
 @synthesize selectedTerminalNum;
-@synthesize selectedBusinessNum;
+//@synthesize selectedBusinessNum;
 
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
@@ -36,28 +36,32 @@
     [self.view addSubview:self.activitor];
     self.title = @"绑定机具";
     [DeviceManager sharedInstance];
-    
-    // 注册写工作密钥的结果通知
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingSuccNote:) name:Noti_WorkKeyWriting_Success object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(workKeyWritingFailNote:) name:Noti_WorkKeyWriting_Fail object:nil];
 }
-
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[DeviceManager sharedInstance] setDelegate:self];
+    
+    // 检查设备是否已经签到 - 签到了就重置已选择终端号
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
+        self.selectedTerminalNum = [PublicInformation returnTerminal];
+    } else {
+        self.selectedTerminalNum = nil;
+    }
     
 }
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     // 重置终端号的缓存
-    NSString* terminalNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedTerminalNum];
-    if (terminalNum != nil) {
-        self.selectedTerminalNum = terminalNum;
-    } else {
-        self.selectedTerminalNum = nil;
-    }
+//    NSString* terminalNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedTerminalNum];
+//    if (terminalNum != nil) {
+//        self.selectedTerminalNum = terminalNum;
+//    } else {
+//        self.selectedTerminalNum = nil;
+//    }
     // 重新打开所有设备
-    [[DeviceManager sharedInstance] openAllDevices];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[DeviceManager sharedInstance] openAllDevices];
+    });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -92,10 +96,11 @@
     if (indexPath.section == 0) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"terminalNoCell"];
         cell.textLabel.text = @"终端编号";
+        
         if ([tableView numberOfRowsInSection:indexPath.section] == 1 &&
             self.terminalNums.count == 0) {
             cell.detailTextLabel.text = @"无";
-            cell.accessoryType = UITableViewCellAccessoryNone;
+//            cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
             NSString* terNumAndBusinessNum = [self.terminalNums objectAtIndex:indexPath.row];
             cell.detailTextLabel.text = [terNumAndBusinessNum substringToIndex:8];
@@ -128,17 +133,18 @@
  *  2.登记已选择的终端号到缓存
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.section == 0) {
-        NSString* terminalNo = cell.detailTextLabel.text;
-        cell.selected = NO;
+//        NSString* terminalNo = cell.detailTextLabel.text;
+//        cell.selected = NO;
         if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             cell.accessoryType = UITableViewCellAccessoryNone;
-            self.selectedTerminalNum = @"无";
-            self.selectedBusinessNum = nil;
+            self.selectedTerminalNum = nil;
+//            self.selectedBusinessNum = nil;
         } else {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            self.selectedTerminalNum = terminalNo;
+            self.selectedTerminalNum = cell.detailTextLabel.text;
         }
         // 取消其它的 checkmark 标记
         for (int i = 0; i < [tableView numberOfRowsInSection:indexPath.section]; i++) {
@@ -148,7 +154,6 @@
                 otherCell.accessoryType = UITableViewCellAccessoryNone;
             }
         }
-        
     } else if (indexPath.section == 1) {
         // 点击事件产生在 buttonClicked 中
     }
@@ -192,7 +197,7 @@
 
 
 
-#pragma mask : -------------  wallDelegate
+#pragma mask : -------------  wallDelegate: 本模块只用到了“签到”
 // 成功接收到数据
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     if (![str isEqualToString:@"tcpsignin"]) {
@@ -220,7 +225,7 @@
         [self alertForMessage:@"连接设备失败:签到失败"];
     });
 }
-// 拆包结果的处理方法
+// 拆包结果的回调方法
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"]) return;
     if (state) {    // 签到成功
@@ -256,17 +261,22 @@
 }
 
 
-#pragma mask ::: 确定按钮 的点击事件
+#pragma mask ::: 确定按钮 的点击事件 -- 
+/*
+ * 1.校验选择的终端号是否在商户登陆的终端号列表中
+ * 2.设置选择的终端号+商户号到本地配置中
+ * 3.发送签到报文
+ * 4.写工作密钥在签到报文的回调中执行
+ */
 - (IBAction) buttonClicked:(id)sender {
     UIButton* button = (UIButton*)sender;
     button.highlighted = NO;
 
     NSLog(@"点击了确定按钮");
     // 设置选择的终端号到本地配置 并签到
-    if (self.selectedTerminalNum != nil &&
-        ![self.selectedTerminalNum isEqualToString:@"无"]) {
-        NSArray* terminalArray = [[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Numbers];
-        if (terminalArray.count == 0 || terminalArray == nil) {
+    if (self.selectedTerminalNum != nil) {
+        NSArray* terminalArray = [[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Numbers]; // 本地配置保存的商户登陆获取的终端号列表
+        if (terminalArray == nil || terminalArray.count == 0) {
             [self alertForMessage:[NSString stringWithFormat:@"商户无此终端号:[%@]", self.selectedTerminalNum]];
         } else {
             // 判断选择的终端号是否在商户的服务端终端号列表中
@@ -277,28 +287,33 @@
                     break;
                 }
             }
-            if (compared) {
+            if (!compared) {
+                // 终端号不合法
+                [self alertForMessage:[NSString stringWithFormat:@"商户无此终端号:[%@]", self.selectedTerminalNum]];
+            } else {
                 // 提取商户号
                 for (NSString* terBusiNum in self.terminalNums) {
                     if ([[terBusiNum substringToIndex:8] isEqualToString:self.selectedTerminalNum]) {
+                        // 保存商户号到本地
                         [[NSUserDefaults standardUserDefaults] setObject:[terBusiNum substringFromIndex:8] forKey:Business_Number];
+                        break;
                     }
                 }
                 // 终端号合法 - 设置终端号到本地
                 [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
                 // 进行签到 -- 需要判断设备是否连接
                 if ([[DeviceManager sharedInstance] isConnectedOnTerminalNum:self.selectedTerminalNum]) {
-                    [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
-                                                                 IP:Current_IP
-                                                               PORT:Current_Port
-                                                           Delegate:self
-                                                             method:@"tcpsignin"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
+                                                                     IP:Current_IP
+                                                                   PORT:Current_Port
+                                                               Delegate:self
+                                                                 method:@"tcpsignin"];
+                        [self.activitor startAnimating];
+                    });
                 } else {
                     [self alertForMessage:@"设备未连接"];
                 }
-            } else {
-                // 终端号不合法
-                [self alertForMessage:[NSString stringWithFormat:@"商户无此终端号:[%@]", self.selectedTerminalNum]];
             }
         }
         
@@ -307,35 +322,17 @@
     }
 
 }
+// 按钮按下事件
 - (IBAction) buttonTouchDown:(id)sender {
     UIButton* button = (UIButton*)sender;
     button.highlighted = YES;
 }
+// 按钮抬起在外部
 - (IBAction) buttonTouchUpOutSide:(id)sender {
     UIButton* button = (UIButton*)sender;
     button.highlighted = NO;
 }
 
-//#pragma mask ::: 写工作密钥结果的通知处理
-//- (void) workKeyWritingSuccNote: (NSNotification*)noti {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        if ([self.activitor isAnimating]) {
-//            [self.activitor stopAnimating];
-//        }
-//        [self alertForMessage:@"绑定设备成功"];
-//    });
-//    // 保存设备签到标志到本地;供刷卡时读取
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-//}
-//- (void) workKeyWritingFailNote: (NSNotification*)noti {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        if ([self.activitor isAnimating]) {
-//            [self.activitor stopAnimating];
-//        }
-//        [self alertForMessage:@"绑定设备失败:写工作密钥失败"];
-//    });
-//}
 
 // 小工具: 为简化弹窗代码
 - (void) alertForMessage: (NSString*) messageStr {

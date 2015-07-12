@@ -77,6 +77,10 @@
     if ([userID length] > 0) {
         self.userNumberTextField.text = userID;
     }
+    
+    // 只要重新登陆了，就要重新签到
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:DeviceBeingSignedIn]; // 重置设备的签到标记
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 - (void)viewWillAppear:(BOOL)animated {
     if (!self.navigationController.navigationBarHidden) {
@@ -456,8 +460,6 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"登陆成功"];
         });
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:DeviceBeingSignedIn]; // 切换设备的签到标记
-        [[NSUserDefaults standardUserDefaults] synchronize];
         [app_delegate signInSuccessToLogin:1];  // 切换到主场景
     }
     

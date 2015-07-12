@@ -90,7 +90,7 @@
         self.navigationController.navigationBarHidden = YES;
     }
     [[DeviceManager sharedInstance] setDelegate:self];
-    [[DeviceManager sharedInstance] openAllDevices];
+//    [[DeviceManager sharedInstance] openAllDevices];
 
 }
 

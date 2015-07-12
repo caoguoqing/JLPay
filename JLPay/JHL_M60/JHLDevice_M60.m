@@ -223,7 +223,7 @@
 /*
  * 蓝牙设备列表刷新后的回调;
  * 只保存 JHLM60 的设备
- * devices     : 已识别，但未连接
+ * devices     : 已识别，有连接跟未连接
  * connectList : 已识别，且连接
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
@@ -234,6 +234,8 @@
             [dataPath isKindOfClass:[ISBLEDataPath class]] )            // ISBLEDataPath
         {
             [self knownDeviceListAddObject:dataPath];
+            // 列表只保存dataPath了，不再维护 new 状态
+//            [self.knownDeviceList addObject:dataPath];
         }
     }
     
