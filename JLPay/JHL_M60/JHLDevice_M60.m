@@ -59,8 +59,19 @@
     [self startScanning];
 }
 
-
-
+/*
+ * 函  数: closeAllDevices
+ * 功  能: 断开所有的蓝牙设备;
+ *          并清空本地的所有设备列表
+ * 参  数: 无
+ * 返  回: 无
+ */
+- (void) closeAllDevices {
+    [self.manager stopScaning];
+    [self.manager disconnectAllDevices];
+    [self.knownDeviceList removeAllObjects];
+    [self.connectedDeviceList removeAllObjects];
+}
 
 /*
  * 函  数: startScanning
@@ -135,14 +146,6 @@
 #pragma mask --------------------- ISControlManagerDelegate
 // 已经断开了跟设备的连接
 - (void)accessoryDidDisconnect {
-    // 要更新已识别设备列表的对应关闭连接的设备的 new 状态
-    for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
-        if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:@"old"] &&
-            [dataPath state] == CBPeripheralStateDisconnected) {
-            [dataDic setValue:@"new" forKey:@"newOrOld"];
-        }
-    }
 }
 
 // 设备完成连接
@@ -153,20 +156,6 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [self readTerminalNoWithAccessory:accessory];
     });
-    
-    // 更新已识别设备中的对应设备的new状态
-    for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISDataPath* dataPath = [dataDic valueForKey:@"dataPath"];
-        if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
-            ISBLEDataPath* iDataPath = (ISBLEDataPath*)dataPath;
-            NSLog(@"设备[%@],状态为[%@]", iDataPath.peripheral,[dataDic valueForKey:@"newOrOld"]);
-            if (iDataPath.peripheral == mAccessory.peripheral &&
-                [[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
-                [dataDic setValue:@"old" forKey:@"newOrOld"];
-                break;
-            }
-        }
-    }
 }
 
 // 已经读取到设备返回的数据
@@ -228,130 +217,73 @@
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
     // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表
-    // 条件是:这个设备是新识别的
     for (ISDataPath* dataPath in devices) {
         if ([dataPath.name hasPrefix:@"JHLM60"] &&                      // 前缀
             [dataPath isKindOfClass:[ISBLEDataPath class]] )            // ISBLEDataPath
         {
-            [self knownDeviceListAddObject:dataPath];
-            // 列表只保存dataPath了，不再维护 new 状态
-//            [self.knownDeviceList addObject:dataPath];
+            NSLog(@"---------------------------------------------------扫描后台已识别设备:[%@]",dataPath);
+
+            [self.knownDeviceList addObject:dataPath];
         }
     }
-    
+    // 更新本地已连接设备列表
     [self compareConnectedDeviceListWithList:connectList];
 
-    // 打开已识别列表中状态为 new 的设备
-    [self openInKnownDeviceList];
-}
-
-/*
- * 函  数: openInKnownDeviceList
- * 功  能: 将已识别列表中得 new 状态的设备打开;
- * 参  数:
- *          (ISDataPath*)dataPath
- * 返  回: 无
- */
-- (void) openInKnownDeviceList {
-    for (NSDictionary* dataDic in self.knownDeviceList) {
-        NSLog(@"需要打开的设备【%@】状态为[%@]", [dataDic valueForKey:@"dataPath"], [dataDic valueForKey:@"newOrOld"]);
-        if ([[dataDic valueForKey:@"newOrOld"] isEqualToString:@"new"]) {
-            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
-            if ([dataPath state] == CBPeripheralStateDisconnected) {
-                // 并发打开设备
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                    [self.manager connectDevice:(ISDataPath*)dataPath];
-                });
-            }
+    // 打开已识别列表中状态为 未连接 的设备
+    for (ISBLEDataPath* dataPath in self.knownDeviceList) {
+        if ([dataPath state] == CBPeripheralStateDisconnected) {
+            [self.manager connectDevice:dataPath];
         }
     }
 }
 
 
-/*
- * 函  数: knownDeviceListAddedObject
- * 功  能: 如果;
- * 参  数: 
- *          (ISDataPath*)dataPath
- * 返  回: 无
- */
-- (void) knownDeviceListAddObject:(ISDataPath*)dataPath {
-    BOOL hasElement = NO;
-    ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-    for (NSDictionary* dataDic in self.knownDeviceList) {
-        // 逐个比对当前已识别列表中设备的序列号
-        ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
-        if ([innerDataPath isKindOfClass:[ISBLEDataPath class]]) {
-            ISBLEDataPath* path = (ISBLEDataPath*)innerDataPath;
-            if (path.peripheral == oDataPath.peripheral) {
-                hasElement = YES;
-            }
-        }
-    }
-    // 设备不再当前列表中才将它添加到当前列表，并设置 newOrOld 标志
-    if (!hasElement) {
-        NSMutableDictionary* ddic = [[NSMutableDictionary alloc] init];
-        [ddic setValue:dataPath forKey:@"dataPath"];
-        [ddic setValue:@"new" forKey:@"newOrOld"];
-        [self.knownDeviceList addObject:ddic];
-    }
-}
 
-/*
+/* -----------------------------
  * 函  数: compareConnectedDeviceListWithList
  * 功  能: 对比两个已连接设备列表;
  *          一个是后台蓝牙设备管理器的设备列表；
  *          一个是本管理器中的设备列表；
  *          如果本地没有，就添加到本地:并读取设备号，建立字典
  *          如果本地多余，就删除本地多余的字典
- *          但是不管怎样，两个列表最多只会相差一个
+ *          但是不管怎样，比较前，两个列表最多只会相差一个
  *
  * 参  数:
- *          (ISDataPath*)dataPath
+ *          (NSArray*)connectList
  * 返  回: 无
  */
 - (void) compareConnectedDeviceListWithList:(NSArray*)connectList {
     BOOL compared = NO;
-    // 先用本地跟后台列表比对，不匹配设备进入 localNotComparedList
-    NSMutableArray* changedObjects = [[NSMutableArray alloc] init];
+    NSMutableArray* addArray = [[NSMutableArray alloc] init];
+    NSMutableArray* delArray = [[NSMutableArray alloc] init];
+
+    // 用本地跟后台列表比对，不匹配设备进入 delArray
     for (NSDictionary* dataDic in self.connectedDeviceList) {
-        ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+        ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         compared = NO;
-        for (ISDataPath* bgDataPath in connectList) {
-            ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
-            ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
+        for (ISBLEDataPath* bgDataPath in connectList) {
             if ([bgDataPath.name hasPrefix:@"JHLM60"] &&
-                [bgDataPath isKindOfClass:[ISBLEDataPath class]] &&
-                oDataPath.peripheral == iDataPath.peripheral ) {
+                bgDataPath.peripheral == innerDataPath.peripheral ) {
                 compared = YES;
                 break;
             }
         }
         if (!compared) {
-            [changedObjects addObject:dataDic];
+            [delArray addObject:dataDic];
         }
     }
-    // 数组元素的删除必须在轮询结束才能操作
-    if ([changedObjects count] > 0) {
-        [self.connectedDeviceList removeObjectsInArray:changedObjects];
-        [self renewTerminalNumbers];
-        [self renewSNVersionNumbers];
-    }
+    // 用后台跟本地列表比对，不匹配设备进入 addArray
+    for (ISBLEDataPath* bgDataPath in connectList) {
+        NSLog(@"---------------------------------------------------扫描后台已连接设备:[%@]",bgDataPath.peripheral);
 
-    
-    // 用后台跟本地列表比对，不匹配设备进入 bgNotComparedList
-    [changedObjects removeAllObjects];
-    for (ISDataPath* bgDataPath in connectList) {
         if (![bgDataPath.name hasPrefix:@"JHLM60"] ||
             ![bgDataPath isKindOfClass:[ISBLEDataPath class]]) {
             continue;
         }
         compared = NO;
         for (NSDictionary* dataDic in self.connectedDeviceList) {
-            ISDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
-            ISBLEDataPath* oDataPath = (ISBLEDataPath*)bgDataPath;
-            ISBLEDataPath* iDataPath = (ISBLEDataPath*)innerDataPath;
-            if (oDataPath.peripheral == iDataPath.peripheral) {
+            ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+            if (innerDataPath.peripheral == bgDataPath.peripheral) {
                 compared = YES;
                 break;
             }
@@ -361,14 +293,24 @@
             [dataDic setValue:bgDataPath forKey:@"dataPath"];
             [dataDic setValue:nil forKey:@"terminalNum"];
             [dataDic setValue:nil forKey:@"SNVersion"];
-            [changedObjects addObject:dataDic];
-        }
-        if (changedObjects.count > 0) {
-            [self.connectedDeviceList addObjectsFromArray:changedObjects];
+            [addArray addObject:dataDic];
         }
     }
+    
+    // 本地“已连接”列表如果多余要删除
+    if ([delArray count] > 0) {
+        [self.connectedDeviceList removeObjectsInArray:delArray];
+        [self renewTerminalNumbers];
+        [self renewSNVersionNumbers];
+    }
+    // 后台“已连接”列表如果多余要添加到本地
+    if ([addArray count] > 0) {
+        NSLog(@"---------------------------------------------------开始添加已连接设备列表");
+        [self.connectedDeviceList addObjectsFromArray:addArray];
+    }
+    
+    
 }
-
 
 /*
  * 函  数: updateConnetedListOnDevice:byTerminalNum
@@ -394,8 +336,8 @@
 }
 
 /*
- * 函  数: updateConnetedListOnDevice:byTerminalNum
- * 功  能: 更新本地已连接设备列表中对应设备的终端号;
+ * 函  数: updateConnetedListOnDevice:bySNNum
+ * 功  能: 更新本地已连接设备列表中对应设备的SN号;
  *          终端号跟设备入口以字典形式保存着；
  *
  * 参  数:
@@ -417,15 +359,15 @@
 }
 
 
-/*
+/* 
+ * ---------------------------
  * 函  数: renewTerminalNumbers
  * 功  能: 刷新外部协议从本控制器读取的所有设备的终端号;
  *          终端号跟设备入口以字典形式保存着；
  *
- * 参  数:
- *          (ISDataPath*)dataPath
- *          (NSString*)terminalNum 终端编号
+ * 参  数: 无
  * 返  回: 无
+ * ---------------------------
  */
 - (void) renewTerminalNumbers {
     NSMutableArray* terminalNumbers = [[NSMutableArray alloc] init];
@@ -442,14 +384,14 @@
 
 
 /*
+ * ---------------------------
  * 函  数: renewSNVersionNumbers
- * 功  能: 刷新外部协议从本控制器读取的所有设备的终端号;
+ * 功  能: 刷新外部协议从本控制器读取的所有设备的SN号;
  *          终端号跟设备入口以字典形式保存着；
  *
- * 参  数:
- *          (ISDataPath*)dataPath
- *          (NSString*)terminalNum 终端编号
+ * 参  数: 无
  * 返  回: 无
+ * ---------------------------
  */
 - (void) renewSNVersionNumbers {
     NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
@@ -469,10 +411,12 @@
 
 #pragma mask --------------------- 设备交互
 /*
- * 函  数: onReceive:
+ * ---------------------------
+ * 函  数: onReceive:withAccessory
  * 功  能: 解析从蓝牙设备中读取的数据;
  * 参  数: 无
  * 返  回: 无
+ * ---------------------------
  */
 -(void)onReceive:(NSData*)data withAccessory:(ISDataPath*)accessory{
     
@@ -755,12 +699,14 @@
 
 
 /*
+ * ---------------------------
  * 函  数: readTerminalNo
  * 功  能: 读取已识别列表中得设备号;
  *        一次尝试打开一批；
  * 参  数: 无
  * 返  回:  
  *        BOOL : 向设备发送请求数据成功或失败
+ * ---------------------------
  */
 - (BOOL) readTerminalNoWithAccessory:(ISDataPath *)accessory {
 //    BOOL result = isConnect;
@@ -1198,7 +1144,7 @@ int StrToNumber16(const char *str)
 {
     int len,i,num;
     num = 0;//使用数据必须初始化否则产生不确定值
-    len = strlen(str);
+    len = (int)strlen(str);
     for (i = 0; i < len; i++)
     {
         num = num*16 + Char16ToInt(str[i]);/*十六进制字符串与10进制的对应数据*/
@@ -1263,25 +1209,24 @@ int StrToNumber16(const char *str)
 }
 // 打印读到的芯片卡得数据
 - (void) logTransData {
-    NSMutableString* logStr = [[NSMutableString alloc] initWithString:@"\n----\nTransData:[\n"];
+    NSMutableString* logStr = [[NSMutableString alloc] initWithString:@"\n------------------\nTransData:[\n"];
     /*
-     unsigned char iTransNo;         //交易类型,指的什么交易 目前暂未使用
-     int iCardtype;                          //刷卡卡类型  磁条卡 IC卡
-     int iCardmodem;                         //刷卡模式
-     char TrackPAN[21];                      //域2  主帐号
-     unsigned char CardValid[5];       //域14 卡有效期
-     char szServiceCode[4];                  //服务代码
-     unsigned char CardSeq[2];       //域23 卡片序列号
-     unsigned char szEntryMode[3];     //域22 服务点输入方式
-     unsigned char szTrack2[40];       //域35 磁道2数据
-     unsigned char szEncryTrack2[40];    //域35 磁道2加密数据 第一个字节为长度
-     unsigned char szTrack3[108];      //域36 磁道3数据
-     unsigned char szEncryTrack3[108];   //域36 磁道3加密数据
-     unsigned char sPIN[13];         //域52 个人标识数据(pind ata)
-     unsigned char Field55Iccdata[300];    //的55域信息512->300
-     unsigned char FieldEncrydata[300];    //随机加密数据 //针对客户
+     unsigned char iTransNo;                    //交易类型,指的什么交易 目前暂未使用
+     int iCardtype;                             //刷卡卡类型  磁条卡 IC卡
+     int iCardmodem;                            //刷卡模式
+     char TrackPAN[21];                         //域2  主帐号
+     unsigned char CardValid[5];                //域14 卡有效期
+     char szServiceCode[4];                     //服务代码
+     unsigned char CardSeq[2];                  //域23 卡片序列号
+     unsigned char szEntryMode[3];              //域22 服务点输入方式
+     unsigned char szTrack2[40];                //域35 磁道2数据
+     unsigned char szEncryTrack2[40];           //域35 磁道2加密数据 第一个字节为长度
+     unsigned char szTrack3[108];               //域36 磁道3数据
+     unsigned char szEncryTrack3[108];          //域36 磁道3加密数据
+     unsigned char sPIN[13];                    //域52 个人标识数据(pind ata)
+     unsigned char Field55Iccdata[300];         //的55域信息512->300
+     unsigned char FieldEncrydata[300];         //随机加密数据 //针对客户
      */
-//    [logStr appendString:[NSString stringWithFormat:@"iTransNo = [%c]\n", TransData.iTransNo]];
     [logStr appendString:[NSString stringWithFormat:@"iCardtype = [%d]\n", TransData.iCardtype]];
     [logStr appendString:[NSString stringWithFormat:@"iCardmodem = [%d]\n", TransData.iCardmodem]];
     [logStr appendString:[NSString stringWithFormat:@"TrackPAN = [%s]\n", TransData.TrackPAN]];
@@ -1299,7 +1244,7 @@ int StrToNumber16(const char *str)
     [logStr appendString:[NSString stringWithFormat:@"iccDataLen = [%d]\n", TransData.IccdataLen]];
     
     
-    [logStr appendString:@"]----\n"];
+    [logStr appendString:@"]----------------------\n"];
     NSLog(@"%@",logStr);
     
 }

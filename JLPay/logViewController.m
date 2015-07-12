@@ -460,6 +460,9 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"登陆成功"];
         });
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [DeviceManager sharedInstance];
+        });
         [app_delegate signInSuccessToLogin:1];  // 切换到主场景
     }
     

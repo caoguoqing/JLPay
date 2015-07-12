@@ -35,12 +35,16 @@
     [super viewDidLoad];
     [self.view addSubview:self.activitor];
     self.title = @"绑定机具";
-    [DeviceManager sharedInstance];
+//    [DeviceManager sharedInstance];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[DeviceManager sharedInstance] setDelegate:self];
-    
+    // 重新打开所有设备
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[DeviceManager sharedInstance] openAllDevices];
+    });
+
     // 检查设备是否已经签到 - 签到了就重置已选择终端号
     if ([[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
         self.selectedTerminalNum = [PublicInformation returnTerminal];
@@ -51,17 +55,6 @@
 }
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    // 重置终端号的缓存
-//    NSString* terminalNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedTerminalNum];
-//    if (terminalNum != nil) {
-//        self.selectedTerminalNum = terminalNum;
-//    } else {
-//        self.selectedTerminalNum = nil;
-//    }
-    // 重新打开所有设备
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [[DeviceManager sharedInstance] openAllDevices];
-    });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];

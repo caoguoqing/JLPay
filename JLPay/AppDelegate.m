@@ -46,7 +46,6 @@
     // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
     tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
     
-//    [[NSUserDefaults standardUserDefaults] setValue:@"无" forKey:SelectedTerminalNum];
 
 }
 // 跳转到指定的界面
