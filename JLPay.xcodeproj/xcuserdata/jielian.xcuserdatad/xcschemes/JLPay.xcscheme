@@ -112,6 +112,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "JLPay"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
