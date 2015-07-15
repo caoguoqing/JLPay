@@ -344,8 +344,9 @@
     }
     // 再判断是否连接设备
     DeviceManager* device = [DeviceManager sharedInstance];
-    NSString* terminalNum = [PublicInformation returnTerminal];
-    if (![device isConnectedOnTerminalNum:terminalNum])
+//    NSString* terminalNum = [PublicInformation returnTerminal];
+    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+    if (![device isConnectedOnSNVersionNum:SNVersionNum])
     {
         [self alertShow:@"请连接设备"];
 //        [device open];

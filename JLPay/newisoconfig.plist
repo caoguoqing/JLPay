@@ -163,14 +163,14 @@
 		<key>type</key>
 		<string>bcd</string>
 		<key>length</key>
-		<string>3</string>
+		<string>4</string>
 	</dict>
 	<key>23</key>
 	<dict>
 		<key>type</key>
 		<string>bcd</string>
 		<key>length</key>
-		<string>3</string>
+		<string>4</string>
 	</dict>
 	<key>24</key>
 	<dict>

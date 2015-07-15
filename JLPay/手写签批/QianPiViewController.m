@@ -92,8 +92,9 @@ static NSMutableArray *colors;
     
     isHiddenType=0;
     
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-    self.view.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
+//    self.view.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
+    self.view.backgroundColor = [UIColor whiteColor];
     appdeletate=(AppDelegate *)[UIApplication sharedApplication].delegate;
     
     // 自定义标题栏
@@ -153,8 +154,8 @@ static NSMutableArray *colors;
     [titleView  addSubview:signLab];
     
     //横线
-    UILabel *lineLab=[[UILabel alloc] initWithFrame:CGRectMake(0, 48, Screen_Width, 2)];
-    lineLab.backgroundColor=[UIColor colorWithRed:0.98 green:0.54 blue:0.04 alpha:1.0];
+//    UILabel *lineLab=[[UILabel alloc] initWithFrame:CGRectMake(0, 48, Screen_Width, 2)];
+//    lineLab.backgroundColor=[UIColor colorWithRed:0.98 green:0.54 blue:0.04 alpha:1.0];
     
     
     // 签名有效范围
@@ -170,7 +171,8 @@ static NSMutableArray *colors;
     
     // 签名视图
     self.drawView=[[MyView alloc]initWithFrame:CGRectMake(0, 0, returnView.frame.size.width, returnView.frame.size.height)];
-    self.drawView.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
+//    self.drawView.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
+    self.drawView.backgroundColor = [UIColor whiteColor];
     [returnView addSubview: self.drawView];
     // Do any additional setup after loading the view, typically from a nib.
     [returnView addSubview:self.labelForSigning];
@@ -288,8 +290,8 @@ static NSMutableArray *colors;
 - (UILabel *)labelForSigning {
     if (labelForSigning == nil) {
         labelForSigning = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 200, 30)];
-        labelForSigning.text = @"请在绿色区域内签名";
-        labelForSigning.textColor = [UIColor whiteColor];
+        labelForSigning.text = @"请在空白区域内签名";
+        labelForSigning.textColor = [UIColor blackColor];
         labelForSigning.backgroundColor = [UIColor clearColor];
     }
     return labelForSigning;

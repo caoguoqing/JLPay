@@ -309,8 +309,6 @@
         self.userNumberTextField.frame          = textFieldFrame;
         self.userNumberTextField.placeholder    = @"请输入您的账号";
         self.userNumberTextField.textColor      = [UIColor whiteColor];
-        [self.userNumberTextField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
-        
         [view addSubview:self.userNumberTextField];
         
         /* 然后设置该 view 的标签图片 */
@@ -321,7 +319,6 @@
         self.userPasswordTextField.placeholder  = @"请输入您的密码";
         self.userPasswordTextField.textColor    = [UIColor whiteColor];
         self.userPasswordTextField.secureTextEntry = YES;
-        [self.userPasswordTextField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
         
         [view addSubview:self.userPasswordTextField];
         
@@ -331,7 +328,7 @@
     }
     [view addSubview:imageView];
     
-    view.backgroundColor                        = [UIColor colorWithWhite:0.9 alpha:0.5];
+    view.backgroundColor                        = [UIColor colorWithWhite:0.8 alpha:0.5];
     
     return view;
 }
@@ -370,14 +367,6 @@
         [self alertShow:@"请输入密码"];
         return;
     }
-    // 如果是操作员登陆的--就直接跳转到参数设置界面
-    if ([self.userNumberTextField.text isEqualToString:[PublicInformation returnOperatorNum]] &&
-        [self.userPasswordTextField.text isEqualToString:[PublicInformation returnOperatorPassword]]) {
-        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"terminalSettingVC"];
-        [self.navigationController pushViewController:vc animated:YES];
-        return;
-    }
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
     [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
     // 3des 加密
@@ -389,6 +378,10 @@
     NSString* pin = [ThreeDesUtil encryptUse3DES:sourceStr key:keyStr];
     // 登陆
     [self logInWithPin:pin];
+    
+    //***************** test for 不登陆 ************
+//    [app_delegate signInSuccessToLogin:1];  // 切换到主场景
+
 }
 
 /*************************************
@@ -480,7 +473,6 @@
         NSInteger index;
         NSString* terminalNum;
         if ([tempString rangeOfString:@","].length == 0) {
-//            index = [tempString length];
             index = 0;
             terminalNum = tempString;
         } else {

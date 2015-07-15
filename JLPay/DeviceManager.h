@@ -45,6 +45,8 @@
 #pragma mask --------------------------- 新接口
 // pragma mask : 打开所有设备
 - (void) openAllDevices;
+// pragma mask : 停止扫描设备
+- (void) stopScanningDevices;
 // pragma mask : 读取所有设备的终端号 -- useless
 - (NSArray*) terminalNumArrayOfReading;
 // pragma mask : 仅保留指定终端号的设备 -- useless
@@ -59,8 +61,12 @@
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 // pragma mask : 设置设备工作密钥(指定设备的终端号)
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
+// pragma mask : 设置设备工作密钥(指定设备的SN号)
+- (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion;
 // pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum;
+// pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion;
 
 @end
 
@@ -91,6 +97,7 @@
  * 写工作密钥成功/失败的回调
  */
 - (void) deviceManager:(DeviceManager*)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot;
+
 /*
  * 写终端号成功/失败的回调
  */
@@ -113,6 +120,10 @@
  */
 - (void) deviceManager:(DeviceManager*)deviceManager updatedSNVersionArray:(NSArray*)SNVersionArray;
 
+/*
+ * 设备操作超时的回调
+ */
+- (void) deviceManagerTimeOut;
 
 
 @end

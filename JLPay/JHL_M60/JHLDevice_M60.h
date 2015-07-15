@@ -26,7 +26,8 @@
 - (void) didWriteWorkKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 // 刷卡结果回调
 - (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
-
+// 设备超时
+- (void) deviceTimeOut;
 @end
 
 
@@ -35,6 +36,8 @@
 @property (assign) id<JHLDevice_M60_Delegate> delegate;
 /* 打开所有蓝牙设备 */
 - (void) openAllDevices;
+// pragma mask : 停止扫描设备
+- (void) stopScanningDevices;
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定SN号的设备是否已连接
@@ -45,8 +48,12 @@
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 // 设置工作密钥
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
+- (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion;
+
 // 刷卡: 有金额+无密码, 无金额+无密码,
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum;
+// 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion;
 
 
 @end

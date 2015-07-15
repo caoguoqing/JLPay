@@ -11,7 +11,7 @@
 #import <UIKit/UIKitDefines.h>
 #import "TransDetailsTableViewController.h"
 #import "Define_Header.h"
-#import "ChooseDeviceTabelViewController.h"
+#import "DeviceSignInViewController.h"
 
 #define LeftInsetOfCellCent             0.1f                    // 单元格元素的左边界距离
 #define ImageViewWidthInCellCent        0.1f                    // 单元格内的imageView.width占宽带比例
@@ -50,7 +50,10 @@
     self.navigationController.navigationBar.tintColor = color;
     
     // 自定义返回界面的按钮样式
-    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
+    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@""
+                                                                 style:UIBarButtonItemStyleBordered
+                                                                target:self
+                                                                action:@selector(backToPreVC:)];
     UIImage* image = [UIImage imageNamed:@"backItem"];
     [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
                                   forState:UIControlStateNormal
@@ -63,6 +66,7 @@
     self.deviceTypeArray = [NSArray arrayWithObjects:
 //                            DeviceType_JHL_A60,       // 先屏蔽音频设备
                             DeviceType_JHL_M60, nil];
+    [self setExtraCellLineHidden:self.tableView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -202,36 +206,36 @@
                 
             }
                 break;
+//            case 3:
+//                // 参数设置
+//            {
+//                // 只有代理商才能进行设备的参数设置，所以这里加上操作员登陆功能
+//                UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"代理商请登陆"
+//                                                                message:@"商户不用操作"
+//                                                               delegate:self
+//                                                      cancelButtonTitle:@"取消"
+//                                                      otherButtonTitles:@"登陆", nil];
+//                [alert setAlertViewStyle:UIAlertViewStyleLoginAndPasswordInput];
+//                UITextField* loginName = [alert textFieldAtIndex:0];    // 操作员账号
+//                loginName.placeholder = @"请输入操作员账号";
+//                UITextField* loginPassword = [alert textFieldAtIndex:1];    // 操作员密码
+//                loginPassword.placeholder = @"请输入操作员密码";
+//
+//                [alert show];
+//                
+//                
+//            }
+//                break;
             case 3:
-                // 参数设置
-            {
-                // 只有代理商才能进行设备的参数设置，所以这里加上操作员登陆功能
-                UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"代理商请登陆"
-                                                                message:@"商户不用操作"
-                                                               delegate:self
-                                                      cancelButtonTitle:@"取消"
-                                                      otherButtonTitles:@"登陆", nil];
-                [alert setAlertViewStyle:UIAlertViewStyleLoginAndPasswordInput];
-                UITextField* loginName = [alert textFieldAtIndex:0];    // 操作员账号
-                loginName.placeholder = @"请输入操作员账号";
-                UITextField* loginPassword = [alert textFieldAtIndex:1];    // 操作员密码
-                loginPassword.placeholder = @"请输入操作员密码";
-
-                [alert show];
-                
-                
-            }
-                break;
-            case 4:
                 // 额度查询
                 break;
-            case 5:
+            case 4:
                 // 修改密码
                 break;
-            case 6:
+            case 5:
                 // 意见反馈
                 break;
-            case 7:
+            case 6:
                 // 帮助与关于
                 break;
             // 如新版本新增功能，在后面添加 case...
@@ -383,8 +387,9 @@
         [[NSUserDefaults standardUserDefaults] setValue:[actionSheet buttonTitleAtIndex:buttonIndex] forKey:DeviceType];
     }
     if (pushView) {
-        ChooseDeviceTabelViewController* chooseDeviceVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"chooseDeviceVC"];
-        [self.navigationController pushViewController:chooseDeviceVC animated:YES];
+//        ChooseDeviceTabelViewController* chooseDeviceVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"chooseDeviceVC"];        
+        DeviceSignInViewController* deviceSigninVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+        [self.navigationController pushViewController:deviceSigninVC animated:YES];
     }
 
 }
@@ -445,7 +450,7 @@
                                @"账号名称":@"01_01",
                                @"交易管理":@"01_10",
                                @"绑定机具":@"01_14",
-                               @"参数设置":@"01_22",
+//                               @"参数设置":@"01_22",
                                @"额度查询":@"01_16",
                                @"修改密码":@"01_18",
                                @"意见反馈":@"01_20",
@@ -454,7 +459,7 @@
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
                                                 @"交易管理",
                                                 @"绑定机具",
-                                                @"参数设置",
+//                                                @"参数设置",
                                                 @"额度查询",
                                                 @"修改密码",
                                                 @"意见反馈",
@@ -462,5 +467,29 @@
 
 }
 
+/*************************************
+ * 功  能 : 重置图片的大小;
+ *          新的比例通过传入的新的 width 来计算；
+ * 参  数 : 
+ *          (UIImage*)image  需要重置大小的图片
+ *          (CGFloat)width   用来计算缩放比例的宽度
+ * 返  回 : 无
+ *************************************/
+- (UIImage*) resizeImage:(UIImage*)image byWidth:(CGFloat)width {
+    UIImage* newImage;
+    CGFloat newHeight = [image size].height * width/[image size].width;
+    CGSize newSize = CGSizeMake(width, newHeight);
+    UIGraphicsBeginImageContext(newSize);
+    [image drawInRect:CGRectMake(0, 0, width, newHeight)];
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
 
+// pragma mask ::: 去掉多余的单元格的分割线
+- (void) setExtraCellLineHidden: (UITableView*)tableView {
+    UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+}
 @end

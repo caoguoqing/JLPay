@@ -546,7 +546,7 @@
                   // 53
                   @"2600000000000000",
                   // 55
-                  [NSString stringWithFormat:@"%@%@", [PublicInformation ToBHex:(int)info55Data.length/2], info55Data],
+                  [NSString stringWithFormat:@"%04d%@", (int)info55Data.length/2, info55Data],
                   // 60,自定义域(60.1,60.2,60.3  交易类型码，批次号,网络管理信息码)压缩成BCD码占两个字节+最大13个字节的数字字符域
                   betweenStr,
                   nil];
@@ -667,7 +667,6 @@
          @"310000",//3,交易处理码 bcd 6(银联协议)
          moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],//4 金额，bcd，定长12
          currentLiushuiStr,//[PublicInformation returnLiushuiHao],//11 bcd,定长6
-         //@"",//14 卡有效期,bcd,(pos获取时存在)
          @"0520",//22,服务点输入方式码 bcd 3(银联协议)
          cardSN,//23,卡片序列号 bcd 3 （pos能判断时存在）
          @"00",//25,服务点条件码 bcd 2
@@ -676,8 +675,6 @@
          [NSString stringWithFormat:@"%d%@",
                         [[PublicInformation returnTwoTrack] length]/2,
                         [PublicInformation returnTwoTrack]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
-//                                [[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,
-//                                [EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
          //@"",//36，三磁道数据，asc，不定长104，(pos获取时存在)
          [PublicInformation returnConsumerSort],//37,搜索参考号
          @"",//38,授权标示应答码
@@ -748,6 +745,10 @@
 +(NSString *)uploadBatchTransOfICC { 
     //55域
     NSString *info55Data=[[NSUserDefaults standardUserDefaults] valueForKey:BlueIC55_Information];
+    NSString* oldF60 = [[NSUserDefaults standardUserDefaults] valueForKey:LastF60_Reserved];
+    //60,   60.3 改为 203 // 0019 22 000000 000 500000000   Reserved Private
+    NSString* newF60 = [[oldF60 substringToIndex:12] stringByAppendingString:@"203"];
+    newF60 = [newF60 stringByAppendingString:[oldF60 substringFromIndex:15]];
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   //2,卡号
                   [PublicInformation returnCard:[PublicInformation returnposCard]],
@@ -772,9 +773,9 @@
                   //49，货币代码，asc，定长3，（人民币156）
                   [EncodeString encodeASC:@"156"],
                   //55                          -- 跟上一笔交易保持一致   IC Card Data
-                  [NSString stringWithFormat:@"%@%@", [PublicInformation ToBHex:(int)info55Data.length/2], info55Data],
-                  //60,                         -- 跟上一笔交易保持一致   Reserved Private
-                  [[NSUserDefaults standardUserDefaults] valueForKey:LastF60_Reserved],
+                  [NSString stringWithFormat:@"%04d%@", (int)info55Data.length/2, info55Data],
+                  //60,   60.3 改为 203 // 0019 22 000000 000 500000000   Reserved Private
+                  newF60,
                   nil];
     NSLog(@"IC——披上送====%@",arr);
     NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"23",@"25",@"26",@"41",@"42",@"49",@"55",@"60",nil];

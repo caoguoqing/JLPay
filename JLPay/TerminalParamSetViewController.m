@@ -36,6 +36,7 @@
 @property (nonatomic, strong)  UITableView* devicesTableView;           // 显示设备列表的表视图
 @property (nonatomic, strong)  NSMutableArray* SNVersionArray;          // 动态保存设备管理器识别的设备SN号
 @property (nonatomic, strong)  NSString*    selectedSNVersion;          // 选择的SN号
+//@property (nonatomic, strong)  UITableView* tableView;
 @property (nonatomic, strong)  UITableViewCell* lastSelectedCell;       // 上一次选择的cell:用来取消多余的选择标志
 @property (nonatomic, strong)  NSArray*     deviceNameArray;            // 设备类型列表:用户选择供设备管理器识别设备
 @end
@@ -49,6 +50,7 @@
 @synthesize businessNumLabel = _businessNumLabel;
 @synthesize terminalNumLabel = _terminalNumLabel;
 @synthesize SNVersionArray = _SNVersionArray;
+//@synthesize tableView = _tableView;
 @synthesize selectedSNVersion;
 @synthesize lastSelectedCell;
 
@@ -79,7 +81,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* identifier = @"deviceSN_Cell";
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
+    if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:identifier];
     }
     cell.textLabel.text = [NSString stringWithFormat:@"设备%d SN:", (int)indexPath.row + 1];
@@ -387,8 +389,10 @@
     // 商户号标签
     CGFloat inset = 10.0;
     CGRect frame = CGRectMake(0, 0, 0, 0);
-    frame.origin.y = self.navigationController.navigationBar.bounds.size.height +
-                     [[UIApplication sharedApplication] statusBarFrame].size.height + inset;
+//    CGFloat tabBarHeight = self.tabBarController.tabBar.bounds.size.height;
+    CGFloat statusHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    CGFloat navigationHeight = self.navigationController.navigationBar.bounds.size.height;
+    frame.origin.y = navigationHeight + statusHeight + inset;
     frame.size.width = self.view.bounds.size.width / 4.0;
     frame.size.height = 30;
     self.businessNumLabel.frame = frame;
@@ -413,7 +417,7 @@
     frame.origin.x = 0;
     frame.origin.y += frame.size.height + inset * 2.0;
     frame.size.width = self.view.bounds.size.width;
-    frame.size.height = self.view.bounds.size.height/2.5 /* bottomInset */;
+    frame.size.height = self.view.bounds.size.height - frame.origin.y - 50*2 - 3 * inset /* bottomInset */;
     self.devicesTableView.frame = frame;
     
     // 设置终端号+商户号按钮
@@ -565,5 +569,11 @@ void runOnMainThreadWithBlock(dispatch_block_t block) {
     }
     return _SNVersionArray;
 }
+//- (UITableView *)tableView {
+//    if (_tableView == nil) {
+//        _tableView = [[UITableView alloc] init];
+//    }
+//    return _tableView;
+//}
 
 @end

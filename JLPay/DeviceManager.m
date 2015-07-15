@@ -185,7 +185,17 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.JHL_M60_manager openAllDevices];
     }
 }
+// pragma mask : 停止扫描设备
+- (void) stopScanningDevices {
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager stopScanningDevices];
+    }
 
+}
 
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum {
@@ -240,6 +250,17 @@ static DeviceManager* _sharedDeviceManager = nil;
     }
 
 }
+// pragma mask : 设置设备工作密钥(指定设备的SN号)
+- (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion {
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        [self.JHL_M60_manager writeWorkKey:workKey onSNVersion:SNVersion];
+    }
+    
+}
+
 // pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum {
     if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
@@ -249,6 +270,16 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.JHL_M60_manager cardSwipeWithMoney:money yesOrNot:yesOrNot onTerminal:terminalNum];
     }
 
+}
+// pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        [self.JHL_M60_manager cardSwipeWithMoney:money yesOrNot:yesOrNot onSNVersion:SNVersion];
+    }
+    
 }
 
 

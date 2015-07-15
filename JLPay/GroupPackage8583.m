@@ -387,11 +387,9 @@
     NSString* user_PW = [[NSUserDefaults standardUserDefaults] objectForKey:@"userPW"];
     NSString* AF01 = [NSString stringWithFormat:@"AF01%02d%@",(int)[user_ID length], [EncodeString encodeASC:user_ID] ];
     NSString* AF02 = [NSString stringWithFormat:@"AF02%02d%@", (int)[user_PW length], [EncodeString encodeASC:user_PW]];
-//    NSString* AF02 = [NSString stringWithFormat:@"AF02%02d%@", (int)[user_PW length]/2, user_PW];
     NSString* F62 = [NSString stringWithFormat:@"%04d%@%@", (int)[user_PW length] + (int)[user_ID length] + 6, AF01, AF02];
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
-//                  @"000001",
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],  //41,终端号，asc，定长8
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],  //42，商户号，asc，定长15
                   @"0011960000004100",                                          //60,
@@ -476,16 +474,10 @@
                   pin,
                   //53
                   @"2600000000000000",
-//                  [PublicInformation returnSignSort],//56,批次号，bcd，定长6
                   //60
-//                  @"001922000003000500000000",
-                  // 60.1、60.4要根据交易判断取值 60.2要取签到批次号
-//                  @"001922000001000200000000",
                   [self makeF60],
-
                   //63,操作员号，asc，不定长999，3字节
                   [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
-//                  @"4332353234363046",//64,MAC校验数据，PIN，定长8//byte[] byte64 = { 0x42, 0x35, 0x31, 0x46, 0x38, 0x44, 0x31, 0x32, };
                    nil];
     NSLog(@"pin======%@",pin);
     NSLog(@"消费数据=====%@",arr);
@@ -553,9 +545,6 @@
     NSString *ascStr=[NSString stringWithFormat:@"%@%@",
                         [PublicInformation returnFdReserved],    // 原交易批次号
                         [PublicInformation returnLiushuiHao]];   // 原交易系统流水号
-//    [EncodeString encodeBCD:[PublicInformation returnFdReserved]],    // 原交易批次号
-//    [EncodeString encodeBCD:[PublicInformation returnLiushuiHao]]];   // 原交易系统流水号
-//
     betweenStr=[NSString stringWithFormat:@"00%02d%@",(int)[ascStr length]/2,ascStr];
     NSLog(@"61域数据=====%@",betweenStr);
     
@@ -596,7 +585,6 @@
     
     //二进制报文数据
     bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",@"26",@"35",@"37",@"41",@"42",@"49",@"52",@"53",@"60",@"61"/*,@"56",@"63"*/,@"64", nil];
-//    bitmaparr=[NSArray arrayWithObjects:@"2",@"4",@"11",@"35",@"37",@"41",@"42",@"49",@"52",@"56",@"61",@"63",@"64", nil];
 
     
     NSLog(@"消费撤销数据====%@",arr);

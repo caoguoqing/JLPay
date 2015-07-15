@@ -51,7 +51,6 @@
 @synthesize waitingLabel                = _waitingLabel;
 @synthesize leftInset;
 @synthesize timeOut;
-//@synthesize consumeWaitingTimer         = _consumeWaitingTimer;
 @synthesize swipeWaitingTimer           = _swipeWaitingTimer;
 @synthesize stringOfTranType;
 
@@ -97,8 +96,9 @@
 #pragma mask ::: 界面显示后的事件注册及处理
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    NSString* terminalNum = [PublicInformation returnTerminal];
-    if ([[DeviceManager sharedInstance] isConnectedOnTerminalNum:terminalNum]) {
+//    NSString* terminalNum = [PublicInformation returnTerminal];
+    NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+    if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:SNVersion]) {
         // 刷卡
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             // 启动刷卡超时定时器
@@ -107,15 +107,13 @@
             }
             [[NSRunLoop mainRunLoop] addTimer:self.swipeWaitingTimer forMode:@"NSDefaultRunLoopMode"];
             // 刷卡
-//            [[DeviceManager sharedInstance] cardSwipe];
-            // 如果是音频，先刷卡后读卡；如果是蓝牙，直接读卡
-            [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onTerminal:terminalNum];
+            [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onSNVersion:SNVersion];
         });
     } else {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         // 连接设备....循环中.......还要优化定时器
-        [[DeviceManager sharedInstance] openAllDevices];
+//        [[DeviceManager sharedInstance] openAllDevices];
         // 重新打开后要能继续刷卡............
     }
 }
@@ -312,18 +310,13 @@
             if ([metStr isEqualToString:@"cousume"] ||          // 消费、消费撤销要继续批上送
                 [metStr isEqualToString:@"consumeRepeal"]) {
                 // 继续发起批上送........
-//                [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC]
-                 [[TcpClientService getInstance] sendWithoutWaitingOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC]
-                                                             IP:Current_IP
-                                                           PORT:Current_Port
-                                                       Delegate:self
-                                                         method:@"batchUpload"];
-
+                [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC] IP:Current_IP PORT:Current_Port Delegate:self method:@"batchUpload"];
+                return;
             }
-//            else if ([metStr isEqualToString:@"batchUpload"]) {
-//                // 如果是披上送，直接退出;因为发送后就直接切换到签名界面了
-//                return;
-//            }
+            else if ([metStr isEqualToString:@"batchUpload"]) {
+                // 如果是披上送，直接退出;因为发送后就直接切换到签名界面了
+//                NSLog(@"*************批上送返回结果信息:[%@]",type);
+            }
             // 如果是披上送交易，也可以跳转到签名界面了
         }
         // 交易成功，跳转到签名界面
@@ -476,9 +469,10 @@
  * 返  回 : 无
  *************************************/
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([alertView.title isEqualToString:@"交易失败"]) {
+//    if ([alertView.title isEqualToString:@"交易失败"]) {
+    // 要么是交易失败，要么设备未连接，都要弹出界面
         [self.navigationController popViewControllerAnimated:YES];
-    }
+//    }
 }
 
 /*************************************

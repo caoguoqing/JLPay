@@ -72,6 +72,7 @@
 
 
 #define SelectedTerminalNum         @"SelectedTerminalNum"      // 选择设备连接的终端号配置的key
+#define SelectedSNVersionNum        @"SelectedSNVersionNum"     // 选择设备连接的SN号的key
 
 #define DeviceWaitingTime           20                          // 设备操作的等待超时时间
 

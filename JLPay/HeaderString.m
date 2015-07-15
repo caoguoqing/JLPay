@@ -34,6 +34,11 @@
     
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];
+    NSLog(@"componentsJoinedByString处理过的上送数据:---[%@]---", allStr);
+    NSLog(@"--------上送数据de的长度:[%d]", (int)[allStr length]/2);
+    NSLog(@"--------16进制上送数据de的长度:[%@]", [self ToBHex:(int)[allStr length]/2]);
+
+
     NSLog(@"%@  %@ %@ %@ %@ %@",[self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
     return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)[allStr length]/2],allStr];
 }
@@ -51,58 +56,102 @@
 
 
 //十进制转16进制
+
 +(NSString *)ToBHex:(int)tmpid{
     //NSLog(@"tmpid=====%d",tmpid);
+
     NSString *endtmp=@"";
-    NSString *nLetterValue;
-    NSString *nStrat;
-    int ttmpig=tmpid%16;
-    int tmp=tmpid/16;
-    switch (ttmpig)
-    {
-        case 10:
-            nLetterValue =@"A";break;
-        case 11:
-            nLetterValue =@"B";break;
-        case 12:
-            nLetterValue =@"C";break;
-        case 13:
-            nLetterValue =@"D";break;
-        case 14:
-            nLetterValue =@"E";break;
-        case 15:
-            nLetterValue =@"F";break;
-        default:nLetterValue=[[NSString alloc]initWithFormat:@"%i",ttmpig];
-            
-    }
-    switch (tmp)
-    {
-        case 10:
-            nStrat =@"A";break;
-        case 11:
-            nStrat =@"B";break;
-        case 12:
-            nStrat =@"C";break;
-        case 13:
-            nStrat =@"D";break;
-        case 14:
-            nStrat =@"E";break;
-        case 15:
-            nStrat =@"F";break;
-        default:nStrat=[[NSString alloc]initWithFormat:@"%i",tmp];
-            
-    }
-    endtmp=[[NSString alloc]initWithFormat:@"%@%@",nStrat,nLetterValue];
-    NSString *str=@"";
-    if([endtmp length]<4)
-    {
-        for (int x=[endtmp length]; x<4; x++) {
-            str=[str stringByAppendingString:@"0"];
+    int yushu = 0;
+    int chushu = 0;
+    while (1) {
+        yushu = tmpid % 16;     // 余数
+        chushu = tmpid / 16;    // 除数
+        // 追加余数到 endTmp
+        if (yushu < 10) {
+            endtmp = [[NSString stringWithFormat:@"%d",yushu] stringByAppendingString:endtmp];
+        } else {
+            endtmp = [[NSString stringWithFormat:@"%c",yushu - 10 + 'A'] stringByAppendingString:endtmp];
         }
-        endtmp=[[NSString alloc]initWithFormat:@"%@%@",str,endtmp];
+        if (chushu == 0) break;
+        tmpid /= 16;
+    }
+    int icount = 4 - (int)[endtmp length];
+    NSMutableString* added0 = [[NSMutableString alloc] init];
+    if (icount > 0) {
+        for (int i = 0; i < icount; i++) {
+            [added0 appendString:@"0"];
+        }
+        endtmp = [added0 stringByAppendingString:endtmp];
     }
     return endtmp;
 }
+//+(NSString *)ToBHex:(int)tmpid{
+//    //NSLog(@"tmpid=====%d",tmpid);
+//    NSString *endtmp=@"";
+//    NSString *nLetterValue;
+//    NSString *nStrat;
+//    NSLog(@"==============tmpid=[%d]",tmpid);
+//    
+//    int ttmpig=tmpid%16;
+//    NSLog(@"==============ttmpig=[%d]",ttmpig);
+//    
+//    int tmp=tmpid/16;
+//    NSLog(@"==============tmp=[%d]",tmp);
+//    
+//    switch (ttmpig)
+//    {
+//        case 10:
+//            nLetterValue =@"A";break;
+//        case 11:
+//            nLetterValue =@"B";break;
+//        case 12:
+//            nLetterValue =@"C";break;
+//        case 13:
+//            nLetterValue =@"D";break;
+//        case 14:
+//            nLetterValue =@"E";break;
+//        case 15:
+//            nLetterValue =@"F";break;
+//        default:nLetterValue=[[NSString alloc]initWithFormat:@"%i",ttmpig];
+//            
+//    }
+//    NSLog(@"==============nLetterValue=[%@]",nLetterValue);
+//    
+//    switch (tmp)
+//    {
+//        case 10:
+//            nStrat =@"A";break;
+//        case 11:
+//            nStrat =@"B";break;
+//        case 12:
+//            nStrat =@"C";break;
+//        case 13:
+//            nStrat =@"D";break;
+//        case 14:
+//            nStrat =@"E";break;
+//        case 15:
+//            nStrat =@"F";break;
+//        default:nStrat=[[NSString alloc]initWithFormat:@"%i",tmp];
+//            
+//    }
+//    NSLog(@"==============nStrat=[%@]",nStrat);
+//    
+//    endtmp=[[NSString alloc]initWithFormat:@"%@%@",nStrat,nLetterValue];
+//    NSLog(@"==============endtmp=[%@]",endtmp);
+//    
+//    NSString *str=@"";
+//    if([endtmp length]<4)
+//    {
+//        for (int x=[endtmp length]; x<4; x++) {
+//            str=[str stringByAppendingString:@"0"];
+//        }
+//        endtmp=[[NSString alloc]initWithFormat:@"%@%@",str,endtmp];
+//    }
+//    NSLog(@"==============endtmp=[%@]",endtmp);
+//    
+//    return endtmp;
+//}
+
 
 
 //(DL_UINT8)((DL_ASCHEX_2_NIBBLE(dataPtr[0]) << 4) |
