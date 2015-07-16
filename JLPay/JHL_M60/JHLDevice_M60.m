@@ -221,7 +221,10 @@
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
     // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表
+    [self.knownDeviceList removeAllObjects];
     for (ISDataPath* dataPath in devices) {
+        ISBLEDataPath* mDataPath = (ISBLEDataPath*)dataPath;
+        NSLog(@"=============== 已识别设备ISDataPath.identifier:[%@]",[[mDataPath peripheral] identifier].UUIDString);
         if ([dataPath.name hasPrefix:@"JHLM60"] &&                      // 前缀
             [dataPath isKindOfClass:[ISBLEDataPath class]] )            // ISBLEDataPath
         {

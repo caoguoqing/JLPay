@@ -79,8 +79,8 @@
     }
     
     // 只要重新登陆了，就要重新签到
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:DeviceBeingSignedIn]; // 重置设备的签到标记
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:DeviceBeingSignedIn]; // 重置设备的签到标记
+//    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 - (void)viewWillAppear:(BOOL)animated {
     if (!self.navigationController.navigationBarHidden) {
@@ -259,7 +259,6 @@
     /*
      *   注册按钮修改:
      *      1.新建一个自定义 OtherSignButton : UIButton
-     *      2.
      */
     self.signInButton.frame             = signInFrame;
     [self.signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
@@ -268,7 +267,7 @@
     [self.view addSubview:self.signInButton];
     
     /* 间隔图标 */
-    signInFrame.origin.x                       += signInViewWidth * 0.9 + midInset;
+    signInFrame.origin.x   += signInViewWidth * 0.9 + midInset;
     signInFrame.size.width              = midViewLeave;
     UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
     midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
@@ -441,7 +440,7 @@
             [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:Terminal_Number];
         }
         else {                        // 终端编号组的编号
-            NSLog(@"\n--------------TermNoList[%@]",[dataDic objectForKey:@"TermNoList"]);
+//            NSLog(@"\n--------------TermNoList[%@]",[dataDic objectForKey:@"TermNoList"]);
             NSString* terminalNumbersString = [dataDic objectForKey:@"TermNoList"];
             NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
             
@@ -469,7 +468,7 @@
     NSMutableArray* array = [[NSMutableArray alloc] init];
     NSString* tempString = [termString copy];
     for (int i = 0; i < count; i++) {
-        NSLog(@"range:%d",[tempString rangeOfString:@","].length);
+//        NSLog(@"range:%d",[tempString rangeOfString:@","].length);
         NSInteger index;
         NSString* terminalNum;
         if ([tempString rangeOfString:@","].length == 0) {
@@ -479,7 +478,7 @@
             index = [tempString rangeOfString:@","].location;
             terminalNum = [tempString substringToIndex:index];
         }
-        NSLog(@"\n<<<<<<<<<<<<<index=[%d],",index);
+//        NSLog(@"\n<<<<<<<<<<<<<index=[%d],",index);
         if (terminalNum == nil) {
             break;
         }
@@ -495,7 +494,7 @@
         if (index != 0) {
             tempString = [tempString substringFromIndex:index + 1];
         }
-        NSLog(@"tempString = [%@]", tempString);
+//        NSLog(@"tempString = [%@]", tempString);
     }
     if (array.count == 0) {
         return nil;
@@ -504,7 +503,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%lu", (unsigned long)array.count] forKey:Terminal_Count];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
-    NSLog(@"\n-------------array=[%@]", array);
+//    NSLog(@"\n-------------array=[%@]", array);
     return array;
 }
 

@@ -68,13 +68,13 @@
     
     
     // 检查设备是否已经签到 - 签到了就重置已选择终端号
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
-        self.selectedTerminalNum = [PublicInformation returnTerminal];
-        self.selectedSNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-    } else {
+//    if ([[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
+//        self.selectedTerminalNum = [PublicInformation returnTerminal];
+//        self.selectedSNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+//    } else {
         self.selectedTerminalNum = nil;
         self.selectedSNVersionNum = nil;
-    }
+//    }
     [[DeviceManager sharedInstance] setDelegate:self];
     // 还要检查设备 SN 号...
 }
@@ -132,7 +132,7 @@
             cell.detailTextLabel.text = @"无";
         } else {
             cell.detailTextLabel.text = [self.terminalNums objectAtIndex:indexPath.row];
-            // 如果当前cell 的对应的终端号跟配置中的终端号一致，就添加标记
+            // 如果当前cell 的对应的终端号跟缓存中的终端号一致，就添加标记
             if ([self.selectedTerminalNum isEqualToString:cell.detailTextLabel.text]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
@@ -146,7 +146,7 @@
             cell.detailTextLabel.text = @"无";
         } else {
             cell.detailTextLabel.text = [self.SNVersionNums objectAtIndex:indexPath.row];
-            // 如果当前cell 的对应的终端号跟配置中的终端号一致，就添加标记
+            // 如果当前cell 的对应的SN号跟配置中的SN号一致，就添加标记
             if ([self.selectedSNVersionNum isEqualToString:cell.detailTextLabel.text]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
@@ -180,7 +180,6 @@
     if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
         cell.accessoryType = UITableViewCellAccessoryNone;
         if (indexPath.section == 0) {
-            
             self.selectedTerminalNum = nil;
         }
         else if (indexPath.section == 1) {
@@ -366,7 +365,7 @@
         return;
     }
     
-    // 终端号合法 - 设置终端号\SN到本地
+    // 保存已选择的终端号/SN号到本地，以字典形式包装成数组保存在本地
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedSNVersionNum forKey:SelectedSNVersionNum];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
     // 下载主密钥 -- 需要判断设备是否连接

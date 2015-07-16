@@ -411,11 +411,10 @@
 
 //主密钥下发
 +(NSString *)downloadMainKey{
-    
-    NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];//[PublicInformation exchangeNumber];
+    NSString* liushuiStr = [PublicInformation exchangeNumber];
     [[NSUserDefaults standardUserDefaults] setValue:liushuiStr forKey:Last_Exchange_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
+    
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   
                   liushuiStr,//11 流水号,bcd,定长6

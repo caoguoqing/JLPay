@@ -29,12 +29,12 @@
     size_t numBytesEncrypted = 0;
     ;
     NSData *testData=[PublicInformation NewhexStrToNSData:clearText];
-    NSLog(@"明文data:%@,length = [%d]", testData, [testData length]);
+//    NSLog(@"明文data:%@,length = [%d]", testData, [testData length]);
     Byte *test=(Byte *)[testData bytes];
 //    printf("%d",strlen(test));
-    for (int i = 0; i < 16; i++) {
-        NSLog(@"明文data:%x,sizeof(test)=[%lu]", *(test+i), sizeof(test));
-    }
+//    for (int i = 0; i < 16; i++) {
+//        NSLog(@"明文data:%x,sizeof(test)=[%lu]", *(test+i), sizeof(test));
+//    }
 
     
     Byte *keybyte=(Byte *)[[PublicInformation NewhexStrToNSData:key] bytes];
@@ -55,8 +55,6 @@
         //NSLog(@"DES加密失败");
     }
     return ciphertext;
-    
-
 }
 
 /**

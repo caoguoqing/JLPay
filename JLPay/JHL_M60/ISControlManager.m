@@ -77,8 +77,7 @@ __strong static id _sharedObject = nil;
     // 所有外设入口
     for (EAAccessory *obj in accessories_array) {
         BOOL haveAccessory = NO;
-        // 从已连接的设备列表中检索是否有当前外设- 最开始是没有设备的
-        // 这个流程有点乱，应该将这个 for 放到上层for 的外面
+        // 从已连接的设备列表中检索是否有当前外设- 最开始有可能有蓝牙配对
         for (ISDataPath *dataPath in _connectedAccessory) {
             if ([dataPath isKindOfClass:[ISMFiDataPath class]]) {
                 ISMFiDataPath *mDataPath = (ISMFiDataPath *)dataPath;
@@ -95,10 +94,10 @@ __strong static id _sharedObject = nil;
         }
         // 没有就检查这个外设是不是需要的，是得话就插入到已连接设备列表
         for (NSString *protocol in MFi_SPP_Protocol) {
-            NSLog(@"[obtainAccessoryForProtocol]111 protocolStr: %@", [obj protocolStrings]);
+//            NSLog(@"[obtainAccessoryForProtocol]111 protocolStr: %@", [obj protocolStrings]);
             if ([[obj protocolStrings] containsObject:protocol]) {
                 accessory = obj;
-                NSLog(@"[obtainAccessoryForProtocol] protocolStr: %@", [obj protocolStrings]);
+//                NSLog(@"[obtainAccessoryForProtocol] protocolStr: %@", [obj protocolStrings]);
                 ISMFiDataPath *dataPath = [[ISMFiDataPath alloc] init];
                 dataPath.delegate = self;
                 [dataPath setProtocolString:protocol withAccessory:obj];
@@ -277,7 +276,8 @@ __strong static id _sharedObject = nil;
         ISBLEDataPath *dataPath = [[ISBLEDataPath alloc] init];
         [dataPath setPeripheral:aPeripheral withAdvName:advName];
         [devices addObject:dataPath];
-        if (aPeripheral.isConnected) {
+//        if (aPeripheral.isConnected) {
+        if ([aPeripheral state] == CBPeripheralStateConnected) {
             [_connectedAccessory addObject:dataPath];
             dataPath.delegate = self;
             _connect = YES;
@@ -286,7 +286,7 @@ __strong static id _sharedObject = nil;
             // 调用者的回调:::获取完了各个设备列表后的处理
             [_deviceList didGetDeviceList:devices andConnected:_connectedAccessory];
         }
-        NSLog(@"deviceList = %@",[devices description]);
+//        NSLog(@"deviceList = %@",[devices description]);
     }
 }
 
