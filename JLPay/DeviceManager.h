@@ -45,6 +45,10 @@
 #pragma mask --------------------------- 新接口
 // pragma mask : 打开所有设备
 - (void) openAllDevices;
+// 打开指定SNVersion号的设备
+- (void) openDevice:(NSString*)SNVersion;
+// pragma mask : 开始扫描设备
+- (void) startScanningDevices;
 // pragma mask : 停止扫描设备
 - (void) stopScanningDevices;
 // pragma mask : 读取所有设备的终端号 -- useless

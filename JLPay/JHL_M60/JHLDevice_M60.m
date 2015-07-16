@@ -56,6 +56,28 @@
  * 返  回: 无
  */
 - (void)openAllDevices {
+//    [self startScanning];
+    NSLog(@";;;;;;;;;;;;;;;knownDeviceList.count=[%d]",(int)self.knownDeviceList.count);
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        NSLog(@".....打开设备[%@]", [[dataPath peripheral] identifier].UUIDString);
+        if ([dataPath state] == CBPeripheralStateDisconnected) {
+            [self.manager connectDevice:dataPath];
+        }
+    }
+}
+// 打开指定SNVersion号的设备
+- (void) openDevice:(NSString*)SNVersion {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+            [self.manager connectDevice:dataPath];
+        }
+    }
+}
+
+// pragma mask : 开始扫描设备
+- (void) startScanningDevices {
     [self startScanning];
 }
 // pragma mask : 停止扫描设备
@@ -85,15 +107,15 @@
  */
 - (void) startScanning {
     // 设置了yes才能刷新已识别设备列表,并打开
-    self.needOpenDevices = YES;
+//    self.needOpenDevices = YES;
     [self.manager stopScaning];
-    [self.manager disconnectAllDevices];    // 会清空已连接设备的列表
-    if (self.knownDeviceList.count > 0) {
-        [self.knownDeviceList removeAllObjects];
-    }
-    if (self.connectedDeviceList.count > 0) {
-        [self.connectedDeviceList removeAllObjects];
-    }
+//    [self.manager disconnectAllDevices];    // 会清空已连接设备的列表
+//    if (self.knownDeviceList.count > 0) {
+//        [self.knownDeviceList removeAllObjects];
+//    }
+//    if (self.connectedDeviceList.count > 0) {
+//        [self.connectedDeviceList removeAllObjects];
+//    }
     // 重新扫描设备: 会先清空已识别设备的列表
     [self.manager scanDeviceList:ISControlManagerTypeCB];
 }
@@ -119,9 +141,12 @@
 // pragma mask : 判断指定SN号的设备是否已连接
 - (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion {
     BOOL result = NO;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
-            result = YES;
+            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+            if ([dataPath state] == CBPeripheralStateConnected || [dataPath state] == CBPeripheralStateConnecting) {
+                result = YES;
+            }
         }
     }
     return result;
@@ -153,8 +178,8 @@
 
 // 设备完成连接
 - (void)accessoryDidConnect:(ISDataPath *)accessory{
-    ISBLEDataPath* mAccessory = (ISBLEDataPath*)accessory;
-    NSLog(@"设备[%@]已连接", mAccessory.peripheral);
+//    ISBLEDataPath* mAccessory = (ISBLEDataPath*)accessory;
+//    NSLog(@"设备[%@]已连接", mAccessory.peripheral);
     // 读取终端号,并更新已连接设备中设备的终端号(在读取数据的回调中)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [self readSNNoWithAccessory:accessory];
@@ -220,26 +245,41 @@
  * connectList : 已识别，且连接
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
-    // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表
-    [self.knownDeviceList removeAllObjects];
+    // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表 -- 新增的才加
+//    [self.knownDeviceList removeAllObjects];
     for (ISDataPath* dataPath in devices) {
         ISBLEDataPath* mDataPath = (ISBLEDataPath*)dataPath;
         NSLog(@"=============== 已识别设备ISDataPath.identifier:[%@]",[[mDataPath peripheral] identifier].UUIDString);
         if ([dataPath.name hasPrefix:@"JHLM60"] &&                      // 前缀
             [dataPath isKindOfClass:[ISBLEDataPath class]] )            // ISBLEDataPath
         {
-            [self.knownDeviceList addObject:dataPath];
+            BOOL new = YES;
+            for (NSDictionary* dic in self.knownDeviceList) {
+                ISBLEDataPath* inDataPath = [dic objectForKey:@"dataPath"];
+                if (mDataPath.peripheral == inDataPath.peripheral) {
+                    new = NO;
+                    break;
+                }
+            }
+            if (new) {
+                NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
+                [dataDic setObject:dataPath forKey:@"dataPath"];
+                [dataDic setValue:@"" forKey:@"SNVersion"];
+                [self.knownDeviceList addObject:dataDic];
+            }
         }
     }
     // 更新本地已连接设备列表
-    [self compareConnectedDeviceListWithList:connectList];
+//    [self compareConnectedDeviceListWithList:connectList];
+//    [self.connectedDeviceList removeAllObjects];
+//    [self.connectedDeviceList addObjectsFromArray:connectList];
 
     // 打开已识别列表中状态为 未连接 的设备
-    for (ISBLEDataPath* dataPath in self.knownDeviceList) {
-        if ([dataPath state] == CBPeripheralStateDisconnected) {
-            [self.manager connectDevice:dataPath];
-        }
-    }
+//    for (ISBLEDataPath* dataPath in devices) {
+//        if ([dataPath state] == CBPeripheralStateDisconnected) {
+//            [self.manager connectDevice:dataPath];
+//        }
+//    }
 }
 
 
@@ -349,7 +389,7 @@
  */
 - (void) updateConnetedListOnDevice:(ISDataPath*)dataPath bySNNum:(NSString*)SNNum {
     ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if (oDataPath.peripheral == innerDataPath.peripheral) {
             [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
@@ -396,11 +436,26 @@
  * ---------------------------
  */
 - (void) renewSNVersionNumbers {
+//    NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
+//    for (NSDictionary* dataDic in self.connectedDeviceList) {
+//        NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
+//        if (SNVersion != nil) {
+//            [SNVersionArray addObject:SNVersion];
+//        }
+//    }
     NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
-        NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
-        if (SNVersion != nil) {
-            [SNVersionArray addObject:SNVersion];
+    for (NSDictionary* dic in self.knownDeviceList) {
+        NSString* SNVersion = [dic valueForKey:@"SNVersion"];
+        // 如果sn号不为空
+        if (SNVersion != nil && ![SNVersion isEqualToString: @""]) {
+            ISBLEDataPath* dataPath = [dic objectForKey:@"dataPath"];
+            // 取出设备的 identifier
+            NSString* identifier = [[dataPath peripheral] identifier].UUIDString;
+            NSMutableDictionary* newDic = [[NSMutableDictionary alloc] init];
+            [newDic setValue:SNVersion forKey:@"SNVersion"];
+            [newDic setValue:identifier forKey:@"identifier"];
+            // 封装 sn+identifier 并追加到回调的数组中
+            [SNVersionArray addObject:newDic];
         }
     }
     if (self.delegate != nil && [self.delegate respondsToSelector:@selector(renewSNVersionNumbers:)]) {
@@ -529,6 +584,8 @@
                 }
                 strSN =[self stringFromHexString:strSN];
                 NSLog(@"SN获取成功  %@",strSN);
+                // 读出SN号就可以关闭设备了
+                [self.manager disconnectDevice:accessory];
                 // 更新已连接设备列表的sn号
                 [self updateConnetedListOnDevice:accessory bySNNum:strSN];
             }
@@ -818,7 +875,8 @@
     }
     if (dataPath == nil) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteTerminalNumSucOrFail:withError:)]) {
-            [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
+//            [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
+            [self.delegate didWriteWorkKeySucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
         }
     } else {
         NSString* DataWorkkey = [@"38" stringByAppendingString:workKey];

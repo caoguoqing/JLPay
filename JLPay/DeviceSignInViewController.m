@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 已选择的终端号:设置到本地,交易时读取
 @property (nonatomic, strong) NSString* selectedSNVersionNum;       // 已选择的设备SN号
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
+@property (nonatomic, strong) UIButton* refreshButton;              // “刷新”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @end
 
@@ -33,6 +34,7 @@
 @synthesize activitor = _activitor;
 @synthesize tableView = _tableView;
 @synthesize sureButton = _sureButton;
+@synthesize refreshButton = _refreshButton;
 @synthesize selectedTerminalNum;
 
 #pragma mask ::: 主视图加载
@@ -41,6 +43,7 @@
     self.title = @"绑定机具";
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.refreshButton];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self setExtraCellLineHidden:self.tableView];
@@ -53,17 +56,19 @@
     CGFloat navigationBarHeight = self.navigationController.navigationBar.bounds.size.height;
     CGFloat tabBarHeignth = self.tabBarController.tabBar.bounds.size.height;
     CGFloat buttonHeight = 50;
-    CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight - inset*2;
+    CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight*2 - inset*3;
     // 表视图
     CGRect frame = CGRectMake(0,
                               statusBarHeight + navigationBarHeight,
                               self.view.bounds.size.width,
                               tableViewHeight);
     self.tableView.frame = frame;
-    
-    // 绑定按钮
+    // 刷新按钮
     frame.origin.y += frame.size.height + inset;
     frame.size.height = buttonHeight;
+    self.refreshButton.frame = frame;
+    // 绑定按钮
+    frame.origin.y += frame.size.height + inset;
     self.sureButton.frame = frame;
     
     
@@ -83,9 +88,14 @@
     [self.sureButton addTarget:self action:@selector(buttonTouchDown:) forControlEvents:UIControlEventTouchDown];
     [self.sureButton addTarget:self action:@selector(buttonTouchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
     [self.sureButton addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.refreshButton addTarget:self action:@selector(buttonTouchDown:) forControlEvents:UIControlEventTouchDown];
+    [self.refreshButton addTarget:self action:@selector(buttonTouchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+    [self.refreshButton addTarget:self action:@selector(buttonClickedToRefresh:) forControlEvents:UIControlEventTouchUpInside];
+
     // 重新打开所有设备
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [[DeviceManager sharedInstance] openAllDevices];
+        [[DeviceManager sharedInstance] startScanningDevices];
     });
 }
 - (void)viewWillDisappear:(BOOL)animated {
@@ -109,9 +119,19 @@
             rows = self.terminalNums.count;
         }
     } else if (section == 1) {
+//        NSMutableArray* SNVersions = [[NSMutableArray alloc] init];
+//        for (NSDictionary* dataDic in self.SNVersionNums) {
+//            NSString* snNum = [dataDic valueForKey:@"SNVersion"];
+//            if (snNum != nil && ![snNum isEqualToString:@""]) {
+//                [SNVersions addObject:snNum];
+//            }
+//        }
+//        rows = (SNVersions.count == 0)?(1):(SNVersions.count);
+        
         if (self.SNVersionNums.count == 0) {
             rows = 1;
         } else {
+            
             rows = self.SNVersionNums.count;
         }
     }
@@ -140,12 +160,21 @@
             }
         }
     } else if (indexPath.section == 1) { // 加载SN号
-        cell.textLabel.text = @"终端SN编号";
+//        NSMutableArray* SNVersions = [[NSMutableArray alloc] init];
+//        for (NSDictionary* dataDic in self.SNVersionNums) {
+//            NSString* snNum = [dataDic valueForKey:@"SNVersion"];
+//            if (snNum != nil && ![snNum isEqualToString:@""]) {
+//                [SNVersions addObject:snNum];
+//            }
+//        }
+
+        cell.textLabel.text = @"设备SN编号";
         if ([tableView numberOfRowsInSection:indexPath.section] == 1 &&
             self.SNVersionNums.count == 0) {
             cell.detailTextLabel.text = @"无";
         } else {
-            cell.detailTextLabel.text = [self.SNVersionNums objectAtIndex:indexPath.row];
+            NSString* snNum = [[self.SNVersionNums objectAtIndex:indexPath.row] valueForKey:@"SNVersion"];
+            cell.detailTextLabel.text = snNum;
             // 如果当前cell 的对应的SN号跟配置中的SN号一致，就添加标记
             if ([self.selectedSNVersionNum isEqualToString:cell.detailTextLabel.text]) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -161,9 +190,9 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     NSString* headerTitle = @"";
     if (section == 0) {
-        headerTitle = @"终端号列表";
+        headerTitle = @"请选择终端号";
     } else if (section == 1) {
-        headerTitle = @"设备SN号列表";
+        headerTitle = @"请选择设备";
     }
     return headerTitle;
 }
@@ -223,8 +252,9 @@
         self.SNVersionNums = [[NSArray alloc] init];
     }
     // 更新终端号列表后就刷新列表
-    [self.tableView reloadData];
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 // 设置主密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
@@ -248,6 +278,8 @@
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
     if (yesOrNot) {
+        // 保存已绑定设备的信息到本地列表
+        [self saveBindedDevice];
         [self alertForMessage:@"绑定设备成功!"];
         // 停止等待转轮
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -257,8 +289,8 @@
         });
 //        [[DeviceManager sharedInstance] stopScanningDevices];
         // 设置绑定标志
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([self.activitor isAnimating]) {
@@ -302,34 +334,35 @@
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"] && ![metStr isEqualToString:@"downloadMainKey"]) return;
     if (state) {    // 成功
-        if ([metStr isEqualToString:@"downloadMainKey"]) {  // 下载主密钥
-            [[DeviceManager sharedInstance] writeMainKey:[PublicInformation signinPin] onSNVersion:self.selectedSNVersionNum];
-
-        }
-        else if ([metStr isEqualToString:@"tcpsignin"]) {   // 下载工作密钥
-            // 更新批次号 returnSignSort -> Get_Sort_Number
-            NSString* signSort = [PublicInformation returnSignSort];
-            int intSignSort = [signSort intValue] + 1;
-            if (intSignSort > 999999) {
-                intSignSort = 1;
+        // 先判断设备是否连接
+        if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum]) {
+            if ([metStr isEqualToString:@"downloadMainKey"]) {  // 下载主密钥
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    [[DeviceManager sharedInstance] writeMainKey:[PublicInformation signinPin] onSNVersion:self.selectedSNVersionNum];
+                });
             }
-            [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            
-//            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
-            // 写工作密钥 ----- 到了这里就可以直接写了
-            NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
-            NSLog(@"工作密钥: [%@]", workStr);
-            if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum]) {
+            else if ([metStr isEqualToString:@"tcpsignin"]) {   // 下载工作密钥
+                // 更新批次号 returnSignSort -> Get_Sort_Number
+                NSString* signSort = [PublicInformation returnSignSort];
+                int intSignSort = [signSort intValue] + 1;
+                if (intSignSort > 999999) {
+                    intSignSort = 1;
+                }
+                [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                // 写工作密钥 ----- 到了这里就可以直接写了
+                NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
+                NSLog(@"工作密钥: [%@]", workStr);
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                     [[DeviceManager sharedInstance] writeWorkKey:workStr onSNVersion:self.selectedSNVersionNum];
                 });
-            } else {
-                if ([self.activitor isAnimating]) {
-                    [self.activitor stopAnimating];
-                }
-                [self alertForMessage:@"设备未连接"];
             }
+        } else {
+            if ([self.activitor isAnimating]) {
+                [self.activitor stopAnimating];
+            }
+            [self alertForMessage:@"设备未连接"];
         }
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -383,6 +416,20 @@
     }
     
 }
+/*
+ * 1.打开所有已识别但未打开的设备
+ */
+- (IBAction) buttonClickedToRefresh:(id)sender {
+    UIButton* button = (UIButton*)sender;
+    button.highlighted = NO;
+    button.transform = CGAffineTransformIdentity;
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[DeviceManager sharedInstance] openAllDevices];
+    });
+}
+
+
 // 按钮按下事件
 - (IBAction) buttonTouchDown:(id)sender {
     UIButton* button = (UIButton*)sender;
@@ -408,6 +455,40 @@
     UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
     view.backgroundColor = [UIColor clearColor];
     [tableView setTableFooterView:view];
+}
+
+
+// 保存绑定的设备到本地列表中
+- (void) saveBindedDevice {
+    NSMutableArray* deviceList = [[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:BindedDeviceList]];
+    NSString* identifier = nil;
+    for (NSDictionary* dataDic in self.SNVersionNums) {
+        if ([self.selectedSNVersionNum isEqualToString:[dataDic valueForKey:@"SNVersion"]]) {
+            identifier = [dataDic valueForKey:@"identifier"];
+            break;
+        }
+    }
+    // 如果本地列表中已经有了旧的绑定设备信息，就更新；否则新建
+    NSMutableDictionary* hasDevice = nil;
+    for (NSMutableDictionary* dataDic in deviceList) {
+        NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
+        if ([SNVersion isEqualToString:self.selectedSNVersionNum]) {
+            hasDevice = dataDic;
+            break;
+        }
+    }
+    if (hasDevice != nil) {
+        [hasDevice setValue:self.selectedTerminalNum forKey:@"terminalNum"];
+        [hasDevice setValue:identifier forKey:@"identifier"];
+    } else {
+        NSDictionary* dic = [[NSMutableDictionary alloc] init];
+        [dic setValue:self.selectedSNVersionNum forKey:@"SNVersion"];
+        [dic setValue:self.selectedTerminalNum forKey:@"terminalNum"];
+        [dic setValue:identifier forKey:@"identifier"];
+        [deviceList addObject:dic];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:deviceList forKey:BindedDeviceList];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mask ::: getter & setter
@@ -437,6 +518,15 @@
         _sureButton.layer.cornerRadius = 8.0;
     }
     return _sureButton;
+}
+- (UIButton *)refreshButton {
+    if (_refreshButton == nil) {
+        _refreshButton = [[UIButton alloc] init];
+        [_refreshButton setTitle:@"刷新列表" forState:UIControlStateNormal];
+        _refreshButton.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+        _refreshButton.layer.cornerRadius = 8.0;
+    }
+    return _refreshButton;
 }
 - (UITableView *)tableView {
     if (_tableView == nil) {

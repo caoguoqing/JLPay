@@ -185,6 +185,30 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.JHL_M60_manager openAllDevices];
     }
 }
+// 打开指定SNVersion号的设备
+- (void) openDevice:(NSString*)SNVersion {
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager openDevice:SNVersion];
+    }
+
+}
+
+// pragma mask : 开始扫描设备
+- (void) startScanningDevices {
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager startScanningDevices];
+    }
+
+}
+
 // pragma mask : 停止扫描设备
 - (void) stopScanningDevices {
     NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];

@@ -286,7 +286,7 @@ __strong static id _sharedObject = nil;
             // 调用者的回调:::获取完了各个设备列表后的处理
             [_deviceList didGetDeviceList:devices andConnected:_connectedAccessory];
         }
-//        NSLog(@"deviceList = %@",[devices description]);
+        NSLog(@"deviceList = %@",[devices description]);
     }
 }
 
@@ -348,7 +348,7 @@ __strong static id _sharedObject = nil;
  */
 - (void) centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)aPeripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
-    NSLog(@"<---------\n[CBController] didDiscoverPeripheral, %@, count=%u, RSSI=%d , %@", aPeripheral.UUID, [advertisementData count], [RSSI intValue], [aPeripheral description]);
+//    NSLog(@"<---------\n[CBController] didDiscoverPeripheral, %@, count=%u, RSSI=%d , %@", aPeripheral.UUID, [advertisementData count], [RSSI intValue], [aPeripheral description]);
 //    NSArray *advDataArray = [advertisementData allValues];
 //    NSArray *advValueArray = [advertisementData allKeys];
 //    
@@ -366,7 +366,7 @@ __strong static id _sharedObject = nil;
  */
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
 {
-    NSLog(@"Retrieved peripheral: %u - %@", [peripherals count], peripherals);
+//    NSLog(@"Retrieved peripheral: %u - %@", [peripherals count], peripherals);
     if([peripherals count] >=1)
     {
         //[self connectDevice:[peripherals objectAtIndex:0]];

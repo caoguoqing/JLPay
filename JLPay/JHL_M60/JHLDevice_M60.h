@@ -36,6 +36,13 @@
 @property (assign) id<JHLDevice_M60_Delegate> delegate;
 /* 打开所有蓝牙设备 */
 - (void) openAllDevices;
+- (void) closeAllDevices;
+- (void) readSNVersions;
+// 打开指定SNVersion号的设备
+- (void) openDevice:(NSString*)SNVersion;
+- (void) closeDevice:(NSString*)SNVersion;
+// pragma mask : 开始扫描设备
+- (void) startScanningDevices;
 // pragma mask : 停止扫描设备
 - (void) stopScanningDevices;
 // pragma mask : 判断指定终端号的设备是否已连接

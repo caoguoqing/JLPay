@@ -350,7 +350,7 @@
     {
         [self alertShow:@"请连接设备"];
 //        [device open];
-        [device openAllDevices];
+//        [device startScanningDevices];
     }else
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
