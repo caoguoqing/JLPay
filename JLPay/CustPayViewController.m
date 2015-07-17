@@ -20,17 +20,20 @@
 
 
 
-@interface CustPayViewController ()<UIAlertViewDelegate,DeviceManagerDelegate>
+@interface CustPayViewController ()<UIAlertViewDelegate,DeviceManagerDelegate,UIActionSheetDelegate>
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
-@property (nonatomic, strong) NSArray*          deviceList;
+@property (nonatomic, strong) NSArray*          deviceList;                 // 设备列表
+@property (nonatomic, strong) NSString*         selectedSNVersion;          // 选择的SN号
 @end
 
 @implementation CustPayViewController
 @synthesize acountOfMoney               = _acountOfMoney;
 @synthesize money                       = _money;
 @synthesize moneyCalculated             = _moneyCalculated;
+@synthesize deviceList;
+@synthesize selectedSNVersion;
 
 
 - (void)viewDidLoad {
@@ -56,10 +59,14 @@
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    // 检查绑定的设备个数，如果为2要弹窗选择一个
+    [self chooseDeviceSNVersion];
+    
+    
     // 扫描蓝牙设备，如果扫描到了已绑定过的设备的identifier，就打开
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [self openBindedDevices];
-    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        [self openBindedDevices];
+//    });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -67,9 +74,8 @@
 }
 
 #pragma mask -------------------- DeviceManagerDelegate:打开设备，获取终端号的回调
-
 - (void)deviceManager:(DeviceManager *)deviceManager updatedSNVersionArray:(NSArray *)SNVersionArray {
-    
+    self.deviceList = SNVersionArray;
 }
 
 
@@ -195,32 +201,42 @@
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
     sender.transform = CGAffineTransformIdentity;
-    // 先校验是否签到
-//    BOOL isSignedIn = [[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn];
-//    if (!isSignedIn) {
-//        [self alertShow:@"请先绑定机具"];
-//        return;
-//    }
-    // 再判断是否连接设备
-    DeviceManager* device = [DeviceManager sharedInstance];
-    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-    if (![device isConnectedOnSNVersionNum:SNVersionNum])
-    {
-        [self alertShow:@"请连接设备"];
-//        [device open];
-//        [device startScanningDevices];
-    }else
-    {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-        // 保存的是字符串型的金额
-        [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
-        [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
-        [self.navigationController pushViewController:viewcon animated:YES];
+    
+    /* 如果绑定的只有一个设备就不用弹窗
+         2个以上才需要弹窗，选择要打开的设备
+    */
+    if ([self.deviceList count] == 0) {
+        [self alertShow:@"注意:未连接设备,请先打开设备,再点击确认!"];
+        return;
     }
+    else if ([self.deviceList count] == 1) {
+        
+    }
+//    UIActionSheet* actionSheet = [UIActionSheet alloc] initWithTitle:<#(NSString *)#> delegate:<#(id<UIActionSheetDelegate>)#> cancelButtonTitle:<#(NSString *)#> destructiveButtonTitle:<#(NSString *)#> otherButtonTitles:<#(NSString *), ...#>, nil;
+    
+    
+    // 再判断是否连接设备
+//    DeviceManager* device = [DeviceManager sharedInstance];
+//    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+//    if (![device isConnectedOnSNVersionNum:SNVersionNum])
+//    {
+//        [self alertShow:@"请连接设备"];
+////        [device open];
+////        [device startScanningDevices];
+//    }else
+//    {
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+//        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+//        // 保存的是字符串型的金额
+//        [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//        viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
+//        [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
+//        [self.navigationController pushViewController:viewcon animated:YES];
+//    }
 }
+
+
 
 
 
@@ -263,7 +279,30 @@
         }
     }
 }
-
+/*************************************
+ * 功  能 : 判断绑定的设备个数;
+ *          - 为0就报错:无绑定设备
+ *          - 为1就直接打开设备
+ *          - 为n就弹窗，选择一个
+ * 参  数 :
+ * 返  回 :
+ *************************************/
+- (void) chooseDeviceSNVersion {
+    NSArray* bindedList = [[NSUserDefaults standardUserDefaults] objectForKey:BindedDeviceList];
+    if (bindedList.count == 0) {
+        [self alertShow:@"商户未绑定设备,请先绑定设备!"];
+    } else if (bindedList.count == 1) {
+        NSDictionary* deviceDic = [bindedList objectAtIndex:0];
+        // 打开对应id的设备
+        [[DeviceManager sharedInstance] openDeviceWithIdentifier:[deviceDic valueForKey:@"identifier"]];
+    } else {
+        UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择要打开的设备的SN号(请先打开对应设备)" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+        for (NSDictionary* deviceDic in bindedList) {
+            [actionSheet addButtonWithTitle:[deviceDic valueForKey:@"SNVersion"]];
+        }
+        [actionSheet showFromToolbar:self.navigationController.toolbar];
+    }
+}
 
 /*************************************
  * 功  能 : CustPayViewController 的子控件加载;

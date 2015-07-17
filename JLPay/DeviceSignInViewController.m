@@ -508,7 +508,14 @@
 }
 - (NSArray *)terminalNums {
     if (_terminalNums == nil) {
-        _terminalNums = [[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Numbers];
+        int terCount = [[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Count] intValue];
+        if (terCount == 0) {
+            _terminalNums = [[NSArray alloc] init];
+        } else if (terCount == 1) {
+            _terminalNums = [[NSArray alloc] initWithObjects:[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number], nil];
+        } else {
+            _terminalNums = [[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Numbers];
+        }
     }
     return _terminalNums;
 }
