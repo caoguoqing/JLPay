@@ -217,6 +217,11 @@ static DeviceManager* _sharedDeviceManager = nil;
     }
 
 }
+// 专属于蓝牙设备:打开对应identifier的设备 -- M60专属接口
+- (void) openDeviceWithIdentifier:(NSString*)identifier {
+    [self.JHL_M60_manager openDeviceWithIdentifier:identifier];
+}
+
 - (void) closeDevice:(NSString*)SNVersion {
     NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
     if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备

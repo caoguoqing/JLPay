@@ -90,6 +90,16 @@
         }
     }
 }
+- (void) openDeviceWithIdentifier:(NSString*)identifier {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
+            if ([dataPath state] == CBPeripheralStateDisconnected) {
+                [self.manager connectDevice:dataPath];
+            }
+        }
+    }
+}
 - (void) closeDevice:(NSString *)SNVersion {
     for (NSDictionary* dataDic in self.knownDeviceList) {
         if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
@@ -198,13 +208,10 @@
 
 // 设备完成连接
 - (void)accessoryDidConnect:(ISDataPath *)accessory{
-//    ISBLEDataPath* mAccessory = (ISBLEDataPath*)accessory;
-//    NSLog(@"设备[%@]已连接", mAccessory.peripheral);
     // 读取终端号,并更新已连接设备中设备的终端号(在读取数据的回调中)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [self readSNNoWithAccessory:accessory];
     });
-//        [self readTerminalNoWithAccessory:accessory];
 }
 
 // 已经读取到设备返回的数据
@@ -352,6 +359,7 @@
             }
         }
         if (!compared) {
+            // 返回的SN列表每个元素包含2个域: 设备入口、SN号
             NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
             [dataDic setValue:bgDataPath forKey:@"dataPath"];
             [dataDic setValue:nil forKey:@"SNVersion"];

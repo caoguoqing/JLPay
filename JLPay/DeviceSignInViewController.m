@@ -470,7 +470,16 @@
         [hasDevice setValue:self.selectedTerminalNum forKey:@"terminalNum"];
         [hasDevice setValue:identifier forKey:@"identifier"];
     } else {
+        /*
+         * 字典包含4个元素:
+         * 1.设备类型
+         * 2.终端号
+         * 3.设备SN号
+         * 4.蓝牙设备 identifier
+         */
         NSDictionary* dic = [[NSMutableDictionary alloc] init];
+        NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+        [dic setValue:deviceType forKey:DeviceType];
         [dic setValue:self.selectedSNVersionNum forKey:@"SNVersion"];
         [dic setValue:self.selectedTerminalNum forKey:@"terminalNum"];
         [dic setValue:identifier forKey:@"identifier"];

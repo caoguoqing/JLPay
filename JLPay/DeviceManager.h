@@ -49,6 +49,7 @@
 - (void) readSNVersions;
 // 打开指定SNVersion号的设备
 - (void) openDevice:(NSString*)SNVersion;
+- (void) openDeviceWithIdentifier:(NSString*)identifier;    // 特别给M60使用
 - (void) closeDevice:(NSString*)SNVersion;
 // pragma mask : 开始扫描设备
 - (void) startScanningDevices;
