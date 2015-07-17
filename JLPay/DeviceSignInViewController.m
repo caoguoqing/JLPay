@@ -25,6 +25,7 @@
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UIButton* refreshButton;              // “刷新”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
+@property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
 @end
 
 
@@ -35,6 +36,7 @@
 @synthesize tableView = _tableView;
 @synthesize sureButton = _sureButton;
 @synthesize refreshButton = _refreshButton;
+@synthesize waitingTimer;
 @synthesize selectedTerminalNum;
 
 #pragma mask ::: 主视图加载
@@ -101,7 +103,12 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
+    [[DeviceManager sharedInstance] closeAllDevices];
     [[DeviceManager sharedInstance] setDelegate:nil];
+    if ([self.waitingTimer isValid]) {
+        [self.waitingTimer invalidate];
+        self.waitingTimer = nil;
+    }
 }
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
@@ -119,15 +126,6 @@
             rows = self.terminalNums.count;
         }
     } else if (section == 1) {
-//        NSMutableArray* SNVersions = [[NSMutableArray alloc] init];
-//        for (NSDictionary* dataDic in self.SNVersionNums) {
-//            NSString* snNum = [dataDic valueForKey:@"SNVersion"];
-//            if (snNum != nil && ![snNum isEqualToString:@""]) {
-//                [SNVersions addObject:snNum];
-//            }
-//        }
-//        rows = (SNVersions.count == 0)?(1):(SNVersions.count);
-        
         if (self.SNVersionNums.count == 0) {
             rows = 1;
         } else {
@@ -160,14 +158,6 @@
             }
         }
     } else if (indexPath.section == 1) { // 加载SN号
-//        NSMutableArray* SNVersions = [[NSMutableArray alloc] init];
-//        for (NSDictionary* dataDic in self.SNVersionNums) {
-//            NSString* snNum = [dataDic valueForKey:@"SNVersion"];
-//            if (snNum != nil && ![snNum isEqualToString:@""]) {
-//                [SNVersions addObject:snNum];
-//            }
-//        }
-
         cell.textLabel.text = @"设备SN编号";
         if ([tableView numberOfRowsInSection:indexPath.section] == 1 &&
             self.SNVersionNums.count == 0) {
@@ -248,62 +238,56 @@
 - (void)deviceManager:(DeviceManager *)deviceManager updatedSNVersionArray:(NSArray *)SNVersionArray {
     if (SNVersionArray != nil) {
         self.SNVersionNums = SNVersionArray;
+        
     } else {
         self.SNVersionNums = [[NSArray alloc] init];
     }
     // 更新终端号列表后就刷新列表
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.SNVersionNums.count > 0) {
+            if ([self.waitingTimer isValid]) {
+                [self.waitingTimer invalidate];
+                self.waitingTimer = nil;
+            }
+            [self.activitor stopAnimating];
+        }
         [self.tableView reloadData];
     });
 }
 // 设置主密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
-    if (yesOrNot) {
         // 主密钥下载成功了就继续签到
-        [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
-                                                     IP:Current_IP
-                                                   PORT:Current_Port
-                                               Delegate:self
-                                                 method:@"tcpsignin"];
-    } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.activitor isAnimating]) {
+            if (yesOrNot) {
+            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
+                                                         IP:Current_IP
+                                                       PORT:Current_Port
+                                                   Delegate:self
+                                                     method:@"tcpsignin"];
+            } else {
                 [self.activitor stopAnimating];
+                [self alertForMessage:@"绑定设备失败!"];
             }
         });
-        [self alertForMessage:@"绑定设备失败!"];
-    }
-
 }
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
+    // 停止等待转轮
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activitor stopAnimating];
+    });
     if (yesOrNot) {
         // 保存已绑定设备的信息到本地列表
         [self saveBindedDevice];
         [self alertForMessage:@"绑定设备成功!"];
-        // 停止等待转轮
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.activitor isAnimating]) {
-                [self.activitor stopAnimating];
-            }
-        });
-//        [[DeviceManager sharedInstance] stopScanningDevices];
-        // 设置绑定标志
-//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:DeviceBeingSignedIn];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.activitor isAnimating]) {
-                [self.activitor stopAnimating];
-            }
-        });
         [self alertForMessage:@"绑定设备失败!"];
     }
 }
 
 
 
-#pragma mask : -------------  wallDelegate: 本模块只用到了“签到”
+#pragma mask : -------------  wallDelegate: 本模块用到了“签到”+"主密钥下载"
 // 成功接收到数据
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     if (![str isEqualToString:@"tcpsignin"] && ![str isEqualToString:@"downloadMainKey"]) {
@@ -314,9 +298,7 @@
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.activitor isAnimating]) {
-                [self.activitor stopAnimating];
-            }
+            [self.activitor stopAnimating];
             [self alertForMessage:@"连接设备失败:签到失败"];
         });
     }
@@ -324,18 +306,17 @@
 // 接收数据失败
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.activitor isAnimating]) {
-            [self.activitor stopAnimating];
-        }
-        [self alertForMessage:@"连接设备失败:签到失败"];
+        [self.activitor stopAnimating];
     });
+    [self alertForMessage:@"连接设备失败:签到失败"];
 }
 // 拆包结果的回调方法
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (![metStr isEqualToString:@"tcpsignin"] && ![metStr isEqualToString:@"downloadMainKey"]) return;
     if (state) {    // 成功
         // 先判断设备是否连接
-        if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum]) {
+        int connectedState = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
+        if (connectedState == 1) { // 已连接
             if ([metStr isEqualToString:@"downloadMainKey"]) {  // 下载主密钥
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                     [[DeviceManager sharedInstance] writeMainKey:[PublicInformation signinPin] onSNVersion:self.selectedSNVersionNum];
@@ -359,18 +340,19 @@
                 });
             }
         } else {
-            if ([self.activitor isAnimating]) {
-                [self.activitor stopAnimating];
-            }
+            [self.activitor stopAnimating];
             [self alertForMessage:@"设备未连接"];
+            if (connectedState == 0) { // 如果设备已识别，但未连接，进行连接
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    [[DeviceManager sharedInstance] openDevice:self.selectedSNVersionNum];
+                });
+            }
         }
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.activitor isAnimating]) {
-                [self.activitor stopAnimating];
-            }
-            [self alertForMessage:@"连接设备失败:签到报文解析失败"];
+            [self.activitor stopAnimating];
         });
+        [self alertForMessage:@"连接设备失败:签到报文解析失败"];
     }
 }
 
@@ -402,7 +384,8 @@
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedSNVersionNum forKey:SelectedSNVersionNum];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
     // 下载主密钥 -- 需要判断设备是否连接
-    if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum]) {
+    int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
+    if (beingConnect == 1) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey]
                                                          IP:Current_IP
@@ -426,6 +409,12 @@
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [[DeviceManager sharedInstance] openAllDevices];
+//        [NSThread sleepForTimeInterval:1];
+        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.activitor startAnimating];
+//            self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
+        });
+//        [[DeviceManager sharedInstance] readSNVersions];
     });
 }
 
@@ -473,7 +462,7 @@
     for (NSMutableDictionary* dataDic in deviceList) {
         NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
         if ([SNVersion isEqualToString:self.selectedSNVersionNum]) {
-            hasDevice = dataDic;
+            hasDevice = [NSMutableDictionary dictionaryWithDictionary:dataDic];
             break;
         }
     }
@@ -489,6 +478,16 @@
     }
     [[NSUserDefaults standardUserDefaults] setObject:deviceList forKey:BindedDeviceList];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+// 超时后解除转轮，并输出错误信息
+- (void) waitingTimeoutWithMsg {
+    if ([self.activitor isAnimating]) {
+        [self.activitor stopAnimating];
+    }
+    [self alertForMessage:@"设备连接超时"];
+    [self.waitingTimer invalidate];
+    self.waitingTimer = nil;
 }
 
 #pragma mask ::: getter & setter

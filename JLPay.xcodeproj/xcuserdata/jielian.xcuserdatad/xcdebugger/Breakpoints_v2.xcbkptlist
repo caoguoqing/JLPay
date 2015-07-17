@@ -88,11 +88,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/DeviceManager.h"
-            timestampString = "458730832.901926"
+            timestampString = "458742748.974638"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
             landmarkName = "-deviceManager:didOpenSuccessOrNot:"
             landmarkType = "4">
          </BreakpointContent>

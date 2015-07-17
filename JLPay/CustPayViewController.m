@@ -53,6 +53,10 @@
 
     [[DeviceManager sharedInstance] setDelegate:self];
 }
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    // 扫描蓝牙设备，如果扫描到了已绑定过的设备的identifier，就打开
+}
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[DeviceManager sharedInstance] setDelegate:nil];

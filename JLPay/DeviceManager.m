@@ -185,6 +185,27 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.JHL_M60_manager openAllDevices];
     }
 }
+- (void) closeAllDevices {
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager closeAllDevices];
+    }
+
+}
+- (void) readSNVersions{
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager readSNVersions];
+    }
+
+}
+
 // 打开指定SNVersion号的设备
 - (void) openDevice:(NSString*)SNVersion {
     NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
@@ -193,6 +214,16 @@ static DeviceManager* _sharedDeviceManager = nil;
     }
     else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
         [self.JHL_M60_manager openDevice:SNVersion];
+    }
+
+}
+- (void) closeDevice:(NSString*)SNVersion {
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager closeDevice:SNVersion];
     }
 
 }
@@ -233,9 +264,14 @@ static DeviceManager* _sharedDeviceManager = nil;
     return result;
 }
 
-// pragma mask : 判断指定SN号的设备是否已连接
-- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion {
-    BOOL result = NO;
+/*
+ * pragma mask : 判断指定SN号的设备是否已连接
+ *  0:已打开，未连接
+ *  1:已连接
+ *  -1:未打开
+ */
+- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion {
+    int result = -1;
     if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
         
     }

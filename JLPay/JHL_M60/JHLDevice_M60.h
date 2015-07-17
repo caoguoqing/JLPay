@@ -48,7 +48,7 @@
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定SN号的设备是否已连接
-- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
 // 写终端号+商户号
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
 // 设置主密钥

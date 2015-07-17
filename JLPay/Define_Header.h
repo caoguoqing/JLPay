@@ -38,6 +38,9 @@
 #define TranType                    @"TranType"
 #define TranType_Consume            @"TranType_Consume"                 // 消费
 #define TranType_ConsumeRepeal      @"TranType_ConsumeRepeal"           // 消费撤销
+#define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
+#define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
+#define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
 /*************[交易类型]**************/
 
 /*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/

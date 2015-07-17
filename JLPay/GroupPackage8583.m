@@ -421,7 +421,7 @@
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],//41,终端号，asc，定长8
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],//42，商户号，asc，定长15
                   
-                  @"0011990000000030",//60,
+                  @"001399000000003100",//60,
                 @"01449F0605DF000000049F220101DF9981804ff32b878be48f71335aa4a3f3c54bcfc574020b9bc8d28692ff54523db6e57f3a865c4460963d59a3f6fc5c82d366a2cb95655e92224e204afd1b7d22cd2fb012013208970cbb24d22a9072e734acc13afe128191cfaf97e0969bbf2f1658b092398f8f0446421daca0862e93d9ad174e85e2a68eac8ec9897328ca5b5fa4e6",//62,
                   
                   @"00113030313030303030303030", //63
@@ -676,7 +676,7 @@
         [F60 appendString:@"22"];
     } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
         [F60 appendString:@"23"];
-    }
+    } 
     // 60.2 N6 批次号
     [F60 appendString:[PublicInformation returnSignSort]];
     // 60.3 N3

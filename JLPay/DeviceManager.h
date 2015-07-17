@@ -45,8 +45,11 @@
 #pragma mask --------------------------- 新接口
 // pragma mask : 打开所有设备
 - (void) openAllDevices;
+- (void) closeAllDevices;
+- (void) readSNVersions;
 // 打开指定SNVersion号的设备
 - (void) openDevice:(NSString*)SNVersion;
+- (void) closeDevice:(NSString*)SNVersion;
 // pragma mask : 开始扫描设备
 - (void) startScanningDevices;
 // pragma mask : 停止扫描设备
@@ -58,7 +61,7 @@
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定SN号的设备是否已连接
-- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
 // pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
 // pragma mask : 设置设备主密钥(指定设备的SN号)

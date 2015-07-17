@@ -66,12 +66,35 @@
         }
     }
 }
+- (void)closeAllDevices {
+    [self.manager disconnectAllDevices];
+}
+// 读取所有已连接设备的SN号
+- (void)readSNVersions {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        if ([dataPath state] == CBPeripheralStateConnected &&
+            ([dataDic valueForKey:@"SNVersion"] == nil || [[dataDic valueForKey:@"SNVersion"] isEqualToString:@""])
+            ) {
+            [self readSNNoWithAccessory:dataPath];
+        }
+    }
+}
+
 // 打开指定SNVersion号的设备
 - (void) openDevice:(NSString*)SNVersion {
     for (NSDictionary* dataDic in self.knownDeviceList) {
         if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
             [self.manager connectDevice:dataPath];
+        }
+    }
+}
+- (void) closeDevice:(NSString *)SNVersion {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+            [self.manager disconnectDevice:dataPath];
         }
     }
 }
@@ -85,20 +108,6 @@
     [self.manager stopScaning];
 }
 /*
- * 函  数: closeAllDevices
- * 功  能: 断开所有的蓝牙设备;
- *          并清空本地的所有设备列表
- * 参  数: 无
- * 返  回: 无
- */
-- (void) closeAllDevices {
-    [self.manager stopScaning];
-    [self.manager disconnectAllDevices];
-    [self.knownDeviceList removeAllObjects];
-    [self.connectedDeviceList removeAllObjects];
-}
-
-/*
  * 函  数: startScanning
  * 功  能: 开始扫描所有的蓝牙设备;
  *         识别到得设备会进入列表_knownDeviceList;
@@ -110,9 +119,10 @@
 //    self.needOpenDevices = YES;
     [self.manager stopScaning];
 //    [self.manager disconnectAllDevices];    // 会清空已连接设备的列表
-//    if (self.knownDeviceList.count > 0) {
-//        [self.knownDeviceList removeAllObjects];
-//    }
+    // 刷新时要先清空本地的已识别设备列表
+    if (self.knownDeviceList.count > 0) {
+        [self.knownDeviceList removeAllObjects];
+    }
 //    if (self.connectedDeviceList.count > 0) {
 //        [self.connectedDeviceList removeAllObjects];
 //    }
@@ -139,17 +149,27 @@
 }
 
 // pragma mask : 判断指定SN号的设备是否已连接
-- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion {
+- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion {
     BOOL result = NO;
+    BOOL inList = NO;
     for (NSDictionary* dataDic in self.knownDeviceList) {
         if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+            inList = YES;
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
-            if ([dataPath state] == CBPeripheralStateConnected || [dataPath state] == CBPeripheralStateConnecting) {
+            if ([dataPath state] == CBPeripheralStateConnected/* || [dataPath state] == CBPeripheralStateConnecting*/) {
                 result = YES;
             }
         }
     }
-    return result;
+    if (!inList) {
+        return -1;          // 设备未打开
+    } else {
+        if (result) {
+            return 1;       // 设备已连接
+        } else {
+            return 0;       // 设备已打开，但未连接
+        }
+    }
 }
 
 
@@ -392,9 +412,11 @@
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if (oDataPath.peripheral == innerDataPath.peripheral) {
-            [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
-            // 刷新SN号列表给外部协议
-            [self renewSNVersionNumbers];
+//            if (![[dataDic valueForKey:@"SNVersion"] isEqualToString:SNNum]) {
+                [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
+                // 刷新SN号列表给外部协议
+                [self renewSNVersionNumbers];
+//            }
             break;
         }
     }
@@ -584,8 +606,6 @@
                 }
                 strSN =[self stringFromHexString:strSN];
                 NSLog(@"SN获取成功  %@",strSN);
-                // 读出SN号就可以关闭设备了
-                [self.manager disconnectDevice:accessory];
                 // 更新已连接设备列表的sn号
                 [self updateConnetedListOnDevice:accessory bySNNum:strSN];
             }
@@ -828,7 +848,7 @@
 // 设置主密钥
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"SNVersion"] isEqualToString:SNVersion]) {
             dataPath = iDataPath;
@@ -848,7 +868,7 @@
 // 设置工作密钥 with terminal
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum {
     ISBLEDataPath* dataPath = nil;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"terminalNum"] hasPrefix:terminalNum]) {
             dataPath = iDataPath;
@@ -867,7 +887,7 @@
 // 设置工作密钥 with SNVersion
 - (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"SNVersion"] hasPrefix:SNVersion]) {
             dataPath = iDataPath;
@@ -879,16 +899,21 @@
             [self.delegate didWriteWorkKeySucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
         }
     } else {
-        NSString* DataWorkkey = [@"38" stringByAppendingString:workKey];
-        NSData* bytesDate =[self StrHexToByte:DataWorkkey];
-        [self writeMposData:bytesDate withAccessory:dataPath];
+//        NSString* DataWorkkey = [@"38" stringByAppendingString:workKey];
+//        NSData* bytesDate =[self StrHexToByte:DataWorkkey];
+        Byte byteData = WORKKEY_CMD;
+        NSData* data = [self StrHexToByte:workKey];
+        Byte* writeBytes = (Byte*)malloc((int)[data length] + 1);
+        writeBytes[0] = byteData;
+        memcpy(writeBytes + 1, [data bytes], [data length]);
+        [self writeMposData:[NSData dataWithBytes:writeBytes length:[data length] + 1] withAccessory:dataPath];
     }
 }
 
 // 刷卡: 有金额+无密码, 无金额+无密码,
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum{
     ISBLEDataPath* dataPath = nil;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"terminalNum"] hasPrefix:terminalNum]) {
             dataPath = iDataPath;
@@ -924,7 +949,7 @@
 }
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
-    for (NSDictionary* dataDic in self.connectedDeviceList) {
+    for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"SNVersion"] isEqualToString:SNVersion]) {
             dataPath = iDataPath;
