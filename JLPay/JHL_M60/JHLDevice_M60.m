@@ -273,7 +273,6 @@
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
     // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表 -- 新增的才加
-//    [self.knownDeviceList removeAllObjects];
     for (ISDataPath* dataPath in devices) {
         ISBLEDataPath* mDataPath = (ISBLEDataPath*)dataPath;
         NSLog(@"=============== 已识别设备ISDataPath.identifier:[%@]",[[mDataPath peripheral] identifier].UUIDString);
@@ -296,17 +295,36 @@
             }
         }
     }
-    // 更新本地已连接设备列表
-//    [self compareConnectedDeviceListWithList:connectList];
-//    [self.connectedDeviceList removeAllObjects];
-//    [self.connectedDeviceList addObjectsFromArray:connectList];
+    /* 
+     * 打开已识别列表中状态为 未连接 的设备
+     * 1.如果已经有了绑定的设备ID，就专注于打开绑定的那个设备
+     * 2.如果没有，就打开所有设备
+     * 3.打开所有设备的时候要判断是否之前就打开过了，如果是就不用打开，但要读取SN号
+     */
+    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+    if (identifier != nil) {
+        for (NSDictionary* dataDic in self.knownDeviceList) {
+            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+            if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier] &&
+                [dataPath state] == CBPeripheralStateDisconnected) {
+                [self.manager connectDevice:dataPath];
+            }
+        }
+    } else {
+        for (NSDictionary* dataDic in self.knownDeviceList) {
+            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+            NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
+            // 未连接就建立连接
+            if ([dataPath state] == CBPeripheralStateDisconnected) {
+                [self.manager connectDevice:dataPath];
+            }
+            // 已连接但未读SN号的就读SN号
+            else if ([dataPath state] == CBPeripheralStateConnected && (SNVersion == nil || [SNVersion isEqualToString:@""])) {
+                [self readSNNoWithAccessory:dataPath];
+            }
+        }
 
-    // 打开已识别列表中状态为 未连接 的设备
-//    for (ISBLEDataPath* dataPath in devices) {
-//        if ([dataPath state] == CBPeripheralStateDisconnected) {
-//            [self.manager connectDevice:dataPath];
-//        }
-//    }
+    }
 }
 
 
@@ -466,13 +484,6 @@
  * ---------------------------
  */
 - (void) renewSNVersionNumbers {
-//    NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
-//    for (NSDictionary* dataDic in self.connectedDeviceList) {
-//        NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
-//        if (SNVersion != nil) {
-//            [SNVersionArray addObject:SNVersion];
-//        }
-//    }
     NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
     for (NSDictionary* dic in self.knownDeviceList) {
         NSString* SNVersion = [dic valueForKey:@"SNVersion"];

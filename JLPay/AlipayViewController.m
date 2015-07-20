@@ -12,16 +12,8 @@
 @implementation AlipayViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title  = @"支付宝支付";
-    self.navigationController.navigationBarHidden = NO;
 
 }
 
-
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    CustPayViewController* viewController = segue.destinationViewController;
-    viewController.navigationController.navigationBarHidden = YES;
-}
 
 @end

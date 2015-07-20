@@ -149,9 +149,9 @@
         
     } else {
         [self loadCell:cell atIndex:indexPath.row];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     return cell;
 }
@@ -206,39 +206,24 @@
                 
             }
                 break;
-//            case 3:
-//                // 参数设置
-//            {
-//                // 只有代理商才能进行设备的参数设置，所以这里加上操作员登陆功能
-//                UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"代理商请登陆"
-//                                                                message:@"商户不用操作"
-//                                                               delegate:self
-//                                                      cancelButtonTitle:@"取消"
-//                                                      otherButtonTitles:@"登陆", nil];
-//                [alert setAlertViewStyle:UIAlertViewStyleLoginAndPasswordInput];
-//                UITextField* loginName = [alert textFieldAtIndex:0];    // 操作员账号
-//                loginName.placeholder = @"请输入操作员账号";
-//                UITextField* loginPassword = [alert textFieldAtIndex:1];    // 操作员密码
-//                loginPassword.placeholder = @"请输入操作员密码";
-//
-//                [alert show];
-//                
-//                
-//            }
-//                break;
             case 3:
                 // 额度查询
+                [self pushViewControllerTo:@"额度查询"];
                 break;
             case 4:
                 // 修改密码
+                [self pushViewControllerTo:@"修改密码"];
                 break;
             case 5:
                 // 意见反馈
+                [self pushViewControllerTo:@"意见反馈"];
+
                 break;
             case 6:
                 // 帮助与关于
+                [self pushViewControllerTo:@"帮助与关于"];
+
                 break;
-            // 如新版本新增功能，在后面添加 case...
             default:
                 break;
         }
@@ -491,5 +476,14 @@
     UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
     view.backgroundColor = [UIColor clearColor];
     [tableView setTableFooterView:view];
+}
+
+// 未实现功能的界面跳转
+- (void) pushViewControllerTo:(NSString*)title {
+    UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
+    viewController.title = title;
+    [self.navigationController pushViewController:viewController animated:YES];
+
 }
 @end

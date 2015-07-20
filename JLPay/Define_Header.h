@@ -48,7 +48,7 @@
 
 
 
-#pragma mask ==========================商户相关的参数
+#pragma mask ========================== 商户相关的参数
 // 终端号，商户号,商户名称
 #define Terminal_Number @"terminal"
 #define Business_Number @"business"
@@ -63,35 +63,39 @@
 #define UserPW  @"userPW"
 // 邮箱
 #define Business_Email @"commEmail"
-
 // 操作员号
 #define Manager_Number @"001"
 
 
-#pragma mask ==========================设备操作相关的参数
-#define DeviceType                  @"DeviceType"               // 厂商设备类型
-#define DeviceType_JHL_A60          @"锦宏霖音频刷卡头A60"       // 锦宏霖音频A60
-#define DeviceType_JHL_M60          @"锦宏霖手持(蓝牙)刷卡器M60"       // 锦宏霖蓝牙M60
-
-
-#define SelectedTerminalNum         @"SelectedTerminalNum"      // 选择设备连接的终端号配置的key   -- useless
-#define SelectedSNVersionNum        @"SelectedSNVersionNum"     // 选择设备连接的SN号的key       -- useless
-
-
-/* 
+#pragma mask ========================== 设备操作相关的参数
+// 厂商设备类型
+#define DeviceType                  @"DeviceType"               
+// 锦宏霖音频A60
+#define DeviceType_JHL_A60          @"锦宏霖音频刷卡头A60"       
+// 锦宏霖蓝牙M60
+#define DeviceType_JHL_M60          @"锦宏霖手持(蓝牙)刷卡器M60"
+// 已绑定的设备de ID
+#define DeviceIDOfBinded            @"DeviceIDOfBinded"
+// 选择设备连接的终端号配置的key   -- useless
+#define SelectedTerminalNum         @"SelectedTerminalNum"      
+// 选择设备连接的SN号的key       -- useless
+#define SelectedSNVersionNum        @"SelectedSNVersionNum"     
+/*
  * 绑定de设备信息列表:
+ *      deviceType
  *      terminalNum
  *      SNVersion
  *      identifier
  */
 #define BindedDeviceList            @"BindedDeviceList"
+// 设备操作的等待超时时间
+#define DeviceWaitingTime           20                          
 
-#define DeviceWaitingTime           20                          // 设备操作的等待超时时间
+
+
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0                           
-
-
 
 
 //IC卡 SN序列号

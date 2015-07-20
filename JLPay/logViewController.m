@@ -27,7 +27,7 @@
 #define ImageForBrand   @"01icon"                                   // 商标图片
 
 
-@interface logViewController ()<wallDelegate,managerToCard, UITextFieldDelegate, ASIHTTPRequestDelegate>
+@interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate>
 
 
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
@@ -77,12 +77,9 @@
     if ([userID length] > 0) {
         self.userNumberTextField.text = userID;
     }
-    
-    // 只要重新登陆了，就要重新签到
-//    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:DeviceBeingSignedIn]; // 重置设备的签到标记
-//    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     if (!self.navigationController.navigationBarHidden) {
         self.navigationController.navigationBarHidden = YES;
     }
@@ -139,7 +136,7 @@
 }
 
 
-#pragma mark =======点击取消键盘
+#pragma mark =======点击空白区域取消键盘
 
 -(void)EndEdit
 {
@@ -152,40 +149,6 @@
     [self.view endEditing:YES];
 }
 
-
-
-#pragma mark==========================================wallDelegate
-
-// 成功接收响应数据的回调 - TcpClientServer
--(void)receiveGetData:(NSString *)data method:(NSString *)str
-{
-    if ([data length] > 0) {
-        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
-    } else {
-        [self.view makeToast:@"网络超时,请重新登陆"];
-    }
-    
-}
-// 失败接收响应数据的回调
--(void)falseReceiveGetDataMethod:(NSString *)str
-{
-    if ([str  isEqualToString:@"tcpsignin"]) {
-        [self.view makeToast:@"网络超时,请检查网络"];
-    }
-}
-
-// 响应数据拆包后的结果处理回调
--(void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr
-{
-        if (state) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[app_delegate window] makeToast:@"登陆成功"];
-            });
-            [app_delegate signInSuccessToLogin:1];  // 成功了才切换到主场景
-        }else{
-            [self.view makeToast:type];
-        }
-}
 
 
 #pragma mark ======================================= 添加子控件
@@ -435,16 +398,12 @@
         int termCount = [[dataDic objectForKey:@"termCount"] intValue];
         if (termCount == 0) {
             // 没有终端号
-        }
-        else if (termCount == 1) {    // 一个终端的编号
-            [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"TermNoList"] forKey:Terminal_Number];
+            [[NSUserDefaults standardUserDefaults] setObject:nil forKey:Terminal_Numbers];
         }
         else {                        // 终端编号组的编号
-//            NSLog(@"\n--------------TermNoList[%@]",[dataDic objectForKey:@"TermNoList"]);
             NSString* terminalNumbersString = [dataDic objectForKey:@"TermNoList"];
+            // 将终端号列表字符串拆成数组保存到 Terminal_Numbers
             NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
-            
-            
             [[NSUserDefaults standardUserDefaults] setObject:array forKey:Terminal_Numbers];
         }
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -468,7 +427,6 @@
     NSMutableArray* array = [[NSMutableArray alloc] init];
     NSString* tempString = [termString copy];
     for (int i = 0; i < count; i++) {
-//        NSLog(@"range:%d",[tempString rangeOfString:@","].length);
         NSInteger index;
         NSString* terminalNum;
         if ([tempString rangeOfString:@","].length == 0) {
@@ -478,7 +436,6 @@
             index = [tempString rangeOfString:@","].location;
             terminalNum = [tempString substringToIndex:index];
         }
-//        NSLog(@"\n<<<<<<<<<<<<<index=[%d],",index);
         if (terminalNum == nil) {
             break;
         }
@@ -494,7 +451,6 @@
         if (index != 0) {
             tempString = [tempString substringFromIndex:index + 1];
         }
-//        NSLog(@"tempString = [%@]", tempString);
     }
     if (array.count == 0) {
         return nil;
@@ -503,7 +459,6 @@
         [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%lu", (unsigned long)array.count] forKey:Terminal_Count];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
-//    NSLog(@"\n-------------array=[%@]", array);
     return array;
 }
 

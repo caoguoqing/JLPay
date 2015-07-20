@@ -45,6 +45,10 @@
 {
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = YES;
+    // 修改标题栏的字体颜色
+    UIColor* color = [UIColor redColor];
+    NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
+    self.navigationController.navigationBar.titleTextAttributes = textAttri;
     
     // 自定义返回界面的按钮样式
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
@@ -60,7 +64,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     // 检查绑定的设备个数，如果为2要弹窗选择一个
-    [self chooseDeviceSNVersion];
+    NSLog(@"==============刷卡界面出现============");
+//    [self chooseDeviceSNVersion];
     
     
     // 扫描蓝牙设备，如果扫描到了已绑定过的设备的identifier，就打开
@@ -177,6 +182,7 @@
     sender.transform                    = CGAffineTransformIdentity;
     UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
+    viewController.title = @"微信支付";
     [self.navigationController pushViewController:viewController animated:YES];
     
 }
@@ -186,7 +192,9 @@
 - (IBAction) clickToWeAlipay:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"alipayPay"];
+//    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"alipayPay"];
+    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
+    viewController.title = @"支付宝支付";
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -201,39 +209,33 @@
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
     sender.transform = CGAffineTransformIdentity;
+
     
-    /* 如果绑定的只有一个设备就不用弹窗
-         2个以上才需要弹窗，选择要打开的设备
+    /* 
+     * 再判断是否连接设备
+     *  0:已打开，未连接
+     *  1:已连接
+     *  -1:未打开
     */
-    if ([self.deviceList count] == 0) {
-        [self alertShow:@"注意:未连接设备,请先打开设备,再点击确认!"];
-        return;
+    DeviceManager* device = [DeviceManager sharedInstance];
+    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+    int connected = [device isConnectedOnSNVersionNum:SNVersionNum];
+    if (connected == -1)
+    {
+        [self alertShow:@"请连接设备"];
+    }else if (connected == 0) { // 正在连接
+        [self alertShow:@"设备正在连接,请稍候..."];
     }
-    else if ([self.deviceList count] == 1) {
-        
+    else if (connected == 1) {  // 已连接
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+        // 保存的是字符串型的金额
+        [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
+        [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
+        [self.navigationController pushViewController:viewcon animated:YES];
     }
-//    UIActionSheet* actionSheet = [UIActionSheet alloc] initWithTitle:<#(NSString *)#> delegate:<#(id<UIActionSheetDelegate>)#> cancelButtonTitle:<#(NSString *)#> destructiveButtonTitle:<#(NSString *)#> otherButtonTitles:<#(NSString *), ...#>, nil;
-    
-    
-    // 再判断是否连接设备
-//    DeviceManager* device = [DeviceManager sharedInstance];
-//    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-//    if (![device isConnectedOnSNVersionNum:SNVersionNum])
-//    {
-//        [self alertShow:@"请连接设备"];
-////        [device open];
-////        [device startScanningDevices];
-//    }else
-//    {
-//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-//        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-//        // 保存的是字符串型的金额
-//        [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//        viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
-//        [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
-//        [self.navigationController pushViewController:viewcon animated:YES];
-//    }
 }
 
 

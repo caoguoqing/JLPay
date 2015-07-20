@@ -565,6 +565,7 @@
  *************************************/
 - (void) setWaitingLabelText : (NSString*)text {
     CGSize oldTextSize = [self.waitingLabel.text sizeWithFont:self.waitingLabel.font];
+    
     self.waitingLabel.text = text;
     CGSize newTextSize = [self.waitingLabel.text sizeWithFont:self.waitingLabel.font];
     // 新的文本长度如果长于旧的文本长度时就改变label的frame
