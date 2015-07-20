@@ -160,6 +160,7 @@ typedef struct {
 @protocol ISControlManagerDelegate<NSObject>
 @optional
 - (void)accessoryDidDisconnect;
+- (void)accessoryDidDisconnect:(ISDataPath *)accessory;
 - (void)accessoryDidConnect:(ISDataPath *)accessory;
 - (void)accessoryDidReadData:(ISDataPath *)accessory data:(NSData *)data;
 - (void)accessoryDidWriteData:(ISDataPath *)accessory bytes:(int)bytes complete:(BOOL)complete;

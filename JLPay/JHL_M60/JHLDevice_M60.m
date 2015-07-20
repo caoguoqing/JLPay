@@ -203,7 +203,20 @@
 
 #pragma mask --------------------- ISControlManagerDelegate
 // 已经断开了跟设备的连接
-- (void)accessoryDidDisconnect {
+- (void)accessoryDidDisconnect:(ISDataPath *)accessory {
+    // 设备断开连接了，先引发回调，然后刷新列表
+    // 防止在后面的刷新列表中，重复打开设备，这里就删掉本地列表中对应的设备入口
+    ISBLEDataPath* mDataPath = (ISBLEDataPath*)accessory;
+    NSString* oIdentifier = [[mDataPath peripheral] identifier].UUIDString;
+    NSMutableArray* objDel = [[NSMutableArray alloc] init];
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:oIdentifier]) {
+//            [self.knownDeviceList removeObject:dataPath];
+            [objDel addObject:dataPath];
+        }
+    }
+    [self.knownDeviceList removeObjectsInArray:objDel];
 }
 
 // 设备完成连接
@@ -270,14 +283,21 @@
  * 只保存 JHLM60 的设备
  * devices     : 已识别，有连接跟未连接
  * connectList : 已识别，且连接
+ * 引发事件包括:
+ *      1.扫描到了新设备
+ *      2.打开了设备
+ *      3.关闭了设备
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
+    
+    
+    
     // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表 -- 新增的才加
     for (ISDataPath* dataPath in devices) {
         ISBLEDataPath* mDataPath = (ISBLEDataPath*)dataPath;
         NSLog(@"=============== 已识别设备ISDataPath.identifier:[%@]",[[mDataPath peripheral] identifier].UUIDString);
-        if ([dataPath.name hasPrefix:@"JHLM60"] &&                      // 前缀
-            [dataPath isKindOfClass:[ISBLEDataPath class]] )            // ISBLEDataPath
+        if ([dataPath.name hasPrefix:@"JHLM60"] /*&&                      // 前缀
+            [dataPath isKindOfClass:[ISBLEDataPath class]] */)            // ISBLEDataPath
         {
             BOOL new = YES;
             for (NSDictionary* dic in self.knownDeviceList) {
@@ -290,11 +310,18 @@
             if (new) {
                 NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
                 [dataDic setObject:dataPath forKey:@"dataPath"];
-                [dataDic setValue:@"" forKey:@"SNVersion"];
+                [dataDic setValue:nil forKey:@"SNVersion"];
+                //                [dataDic setValue:@"" forKey:@"SNVersion"];
                 [self.knownDeviceList addObject:dataDic];
             }
         }
     }
+    
+    
+    
+    // 如果是因为是设备断开引发的刷新，就不能再打开设备了
+
+    
     /* 
      * 打开已识别列表中状态为 未连接 的设备
      * 1.如果已经有了绑定的设备ID，就专注于打开绑定的那个设备
@@ -323,7 +350,6 @@
                 [self readSNNoWithAccessory:dataPath];
             }
         }
-
     }
 }
 
@@ -388,12 +414,10 @@
     // 本地“已连接”列表如果多余要删除
     if ([delArray count] > 0) {
         [self.connectedDeviceList removeObjectsInArray:delArray];
-//        [self renewTerminalNumbers];
         [self renewSNVersionNumbers];
     }
     // 后台“已连接”列表如果多余要添加到本地
     if ([addArray count] > 0) {
-        NSLog(@"---------------------------------------------------开始添加已连接设备列表");
         [self.connectedDeviceList addObjectsFromArray:addArray];
     }
     
@@ -903,6 +927,7 @@
         [self writeMposData:bytesDate withAccessory:dataPath];
     }
 }
+
 // 设置工作密钥 with SNVersion
 - (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
@@ -914,12 +939,9 @@
     }
     if (dataPath == nil) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteTerminalNumSucOrFail:withError:)]) {
-//            [self.delegate didWriteTerminalNumSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
             [self.delegate didWriteWorkKeySucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
         }
     } else {
-//        NSString* DataWorkkey = [@"38" stringByAppendingString:workKey];
-//        NSData* bytesDate =[self StrHexToByte:DataWorkkey];
         Byte byteData = WORKKEY_CMD;
         NSData* data = [self StrHexToByte:workKey];
         Byte* writeBytes = (Byte*)malloc((int)[data length] + 1);

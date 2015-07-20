@@ -9,6 +9,7 @@
 #import "RevokeViewController.h"
 #import "Define_Header.h"
 #import "BrushViewController.h"
+#import "DeviceManager.h"
 
 @interface RevokeViewController()<UIAlertViewDelegate>
 @property (nonatomic, strong) NSDictionary* detailNameIndex;
@@ -99,11 +100,16 @@
     if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {    // 撤销单元格
         cell.selected = NO;
         // 先检查设备是否绑定
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未绑定设备，请先绑定设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//        if (![[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
+        NSString* selectedSNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+        int connected = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:selectedSNVersion];
+        if (connected != 1) {
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"设备未连接,请先连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
             [alert show];
             return;
         }
+        
+        // 如果设备是绑定的设备，还要校验终端编号
         
         // 撤销代码 -- 发起撤销前，要弹窗提示商户是否确定要撤销
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"是否发起撤销?" message:nil delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];

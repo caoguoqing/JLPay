@@ -176,15 +176,6 @@
 }
 
 //流水号,每次交易，递增,bcd,6(000008)
-
-/*
- <?php
- $var=sprintf("%04d", 2);//生成4位数，不足前面补0
- echo $var;//结果为0002
- //("%04d", 2)
- NSLog(@"六位数====%06d",112);
- */
-
 +(NSString *)exchangeNumber{
     int number;
     NSString *exchangeStr=[[NSUserDefaults standardUserDefaults] valueForKey:Exchange_Number];
@@ -202,19 +193,11 @@
     return [NSString stringWithFormat:@"%06d",number];
 }
 
-/*
-//初始化终端成功，可以签到
-+(BOOL)initTerminalSuccess{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:Init_Terminal_Success];
-}
- */
-
 
 +(NSString *)returnCard:(NSString *)card{
     int cardlength=card.length;
     NSString *newCard=@"";
     if ((cardlength)%2 > 0) {
-//        newCard=[NSString stringWithFormat:@"%d%@0",cardlength,card];
         newCard=[NSString stringWithFormat:@"%d%@0",cardlength,card];
     }else{
         newCard=[NSString stringWithFormat:@"%d%@",cardlength,card];

@@ -372,7 +372,6 @@
         [[NSUserDefaults standardUserDefaults] setValue:[actionSheet buttonTitleAtIndex:buttonIndex] forKey:DeviceType];
     }
     if (pushView) {
-//        ChooseDeviceTabelViewController* chooseDeviceVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"chooseDeviceVC"];        
         DeviceSignInViewController* deviceSigninVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:deviceSigninVC animated:YES];
     }

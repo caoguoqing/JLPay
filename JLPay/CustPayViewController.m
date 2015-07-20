@@ -58,24 +58,18 @@
                                 barMetrics:UIBarMetricsDefault];
     self.navigationItem.backBarButtonItem = backItem;
     [[DeviceManager sharedInstance] setDelegate:self];
-    // 重新扫描设备
-    [[DeviceManager sharedInstance] startScanningDevices];
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    // 检查绑定的设备个数，如果为2要弹窗选择一个
-    NSLog(@"==============刷卡界面出现============");
-//    [self chooseDeviceSNVersion];
-    
-    
-    // 扫描蓝牙设备，如果扫描到了已绑定过的设备的identifier，就打开
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        [self openBindedDevices];
-//    });
+    // 重新扫描设备
+    NSLog(@"-=-=-=-=-=-=-=进入CustPay 界面");
+    [[DeviceManager sharedInstance] startScanningDevices];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[DeviceManager sharedInstance] setDelegate:nil];
+    [[DeviceManager sharedInstance] stopScanningDevices];
+    [[DeviceManager sharedInstance] closeAllDevices];
 }
 
 #pragma mask -------------------- DeviceManagerDelegate:打开设备，获取终端号的回调

@@ -461,8 +461,11 @@ __strong static id _sharedObject = nil;
     if ([_connectedAccessory count] == 0) {
         _connect = NO;
     }
-    if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidDisconnect)]) {
-        [_delegate accessoryDidDisconnect];
+//    if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidDisconnect)]) {
+//        [_delegate accessoryDidDisconnect];
+//    }
+    if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidDisconnect:)]) {
+        [_delegate accessoryDidDisconnect:dataPath];
     }
 }
 

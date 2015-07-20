@@ -89,14 +89,12 @@
         self.navigationController.navigationBarHidden = YES;
     }
     [[DeviceManager sharedInstance] setDelegate:self];
-//    [[DeviceManager sharedInstance] openAllDevices];
-
+//    [[DeviceManager sharedInstance] startScanningDevices];
 }
 
 #pragma mask ::: 界面显示后的事件注册及处理
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-//    NSString* terminalNum = [PublicInformation returnTerminal];
     NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
     if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:SNVersion]) {
         // 刷卡
@@ -110,11 +108,8 @@
             [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onSNVersion:SNVersion];
         });
     } else {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请插入设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
-        // 连接设备....循环中.......还要优化定时器
-//        [[DeviceManager sharedInstance] openAllDevices];
-        // 重新打开后要能继续刷卡............
     }
 }
 // 界面消失的资源回收
@@ -126,6 +121,8 @@
     }
     self.swipeWaitingTimer = nil;
     [[DeviceManager sharedInstance] setDelegate:nil];
+    [[DeviceManager sharedInstance] stopScanningDevices];
+    [[DeviceManager sharedInstance] closeAllDevices];
 }
 
 
@@ -296,9 +293,9 @@
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     // 批上送交易失败不做任何操作
-//    if ([str isEqualToString:@"batchUpload"]) {
-//        return;
-//    }
+    if ([str isEqualToString:@"batchUpload"]) {
+        return;
+    }
     [self alertForFailedMessage:@"网络异常，请检查网络"];
 }
 
@@ -312,10 +309,6 @@
                 // 继续发起批上送........
                 [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC] IP:Current_IP PORT:Current_Port Delegate:self method:@"batchUpload"];
                 return;
-            }
-            else if ([metStr isEqualToString:@"batchUpload"]) {
-                // 如果是披上送，直接退出;因为发送后就直接切换到签名界面了
-//                NSLog(@"*************批上送返回结果信息:[%@]",type);
             }
             // 如果是披上送交易，也可以跳转到签名界面了
         }
@@ -469,31 +462,10 @@
  * 返  回 : 无
  *************************************/
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-//    if ([alertView.title isEqualToString:@"交易失败"]) {
     // 要么是交易失败，要么设备未连接，都要弹出界面
-        [self.navigationController popViewControllerAnimated:YES];
-//    }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
-/*************************************
- * 功  能 : 交易发送后的计时器方法，超时了要弹窗并推出当前场景;
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-//- (void) waitingForConsume {
-//    [self setWaitingLabelText:[NSString stringWithFormat:@"处理中:%02d秒",timeOut]];
-//    NSLog(@"定时器:[%d]", self.timeOut);
-//    if (self.timeOut == 0) {
-//        // 超时了
-//        if (self.consumeWaitingTimer.valid) {
-//            [self.consumeWaitingTimer invalidate]; // 停止计时
-//            self.consumeWaitingTimer = nil;
-//            // 还要终止通讯连接。。。。。
-//        }
-//        [self alertForFailedMessage:@"交易超时,请检查网络"];
-//    }
-//    self.timeOut--;
-//}
 /*************************************
  * 功  能 : 等待刷卡的定时器任务;超时就退出当前场景;
  * 参  数 : 无

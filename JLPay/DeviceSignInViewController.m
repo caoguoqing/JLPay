@@ -45,7 +45,6 @@
     self.title = @"绑定机具";
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.tableView];
-//    [self.view addSubview:self.refreshButton];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self setExtraCellLineHidden:self.tableView];
@@ -65,12 +64,10 @@
                               self.view.bounds.size.width,
                               tableViewHeight);
     self.tableView.frame = frame;
-    // 刷新按钮
+    
+    // 绑定按钮
     frame.origin.y += frame.size.height + inset*2;
     frame.size.height = buttonHeight;
-//    self.refreshButton.frame = frame;
-    // 绑定按钮
-//    frame.origin.y += frame.size.height + inset;
     self.sureButton.frame = frame;
     
     
@@ -91,10 +88,6 @@
     [self.sureButton addTarget:self action:@selector(buttonTouchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
     [self.sureButton addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
-//    [self.refreshButton addTarget:self action:@selector(buttonTouchDown:) forControlEvents:UIControlEventTouchDown];
-//    [self.refreshButton addTarget:self action:@selector(buttonTouchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
-//    [self.refreshButton addTarget:self action:@selector(buttonClickedToRefresh:) forControlEvents:UIControlEventTouchUpInside];
-
     // 重新打开所有设备
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [[DeviceManager sharedInstance] startScanningDevices];
@@ -103,13 +96,25 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
+    [[DeviceManager sharedInstance] setDelegate:nil];
+//    [[DeviceManager sharedInstance] stopScanningDevices];
+//    [[DeviceManager sharedInstance] closeAllDevices];
+//    if ([self.waitingTimer isValid]) {
+//        [self.waitingTimer invalidate];
+//        self.waitingTimer = nil;
+//    }
+}
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
+//    [[DeviceManager sharedInstance] setDelegate:nil];
     [[DeviceManager sharedInstance] stopScanningDevices];
     [[DeviceManager sharedInstance] closeAllDevices];
-    [[DeviceManager sharedInstance] setDelegate:nil];
     if ([self.waitingTimer isValid]) {
         [self.waitingTimer invalidate];
         self.waitingTimer = nil;
     }
+
 }
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
@@ -374,6 +379,7 @@
     // 保存已选择的终端号/SN号到本地
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedSNVersionNum forKey:SelectedSNVersionNum];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     // 下载主密钥 -- 需要判断设备是否连接
     int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
     if (beingConnect == 1) {
