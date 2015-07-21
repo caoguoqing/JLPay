@@ -34,6 +34,7 @@
 // 已连接设备列表
 //      每个元素都是一个字典:[dataPath:ISDataPath*,SNVersionNum:"******"]
 @property (nonatomic, strong) NSMutableArray* connectedDeviceList;
+// 用来标记是否自动打开设备的标记
 @property (nonatomic, assign) BOOL needOpenDevices;
 @end
 
@@ -46,6 +47,12 @@
 
 
 #pragma mask ===================== [Public interface]
+// pragma mask : 设置自动标记:是否自动打开设备
+- (void) setOpenAutomaticaly:(BOOL)yesOrNo {
+    self.needOpenDevices = yesOrNo;
+}
+
+
 /*
  * 函  数: openAllDevices
  * 功  能: 打开所有蓝牙设备;
@@ -126,16 +133,11 @@
  */
 - (void) startScanning {
     // 设置了yes才能刷新已识别设备列表,并打开
-//    self.needOpenDevices = YES;
     [self.manager stopScaning];
-//    [self.manager disconnectAllDevices];    // 会清空已连接设备的列表
     // 刷新时要先清空本地的已识别设备列表
     if (self.knownDeviceList.count > 0) {
         [self.knownDeviceList removeAllObjects];
     }
-//    if (self.connectedDeviceList.count > 0) {
-//        [self.connectedDeviceList removeAllObjects];
-//    }
     // 重新扫描设备: 会先清空已识别设备的列表
     [self.manager scanDeviceList:ISControlManagerTypeCB];
 }
@@ -182,6 +184,35 @@
     }
 }
 
+// pragma mask : 判断指定设备ID的设备是否已连接
+- (int) isConnectedOnIdentifier:(NSString*)identifier {
+    BOOL result = NO;
+    BOOL inList = NO;
+    for (NSDictionary* dataDic in self.knownDeviceList) {
+        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
+            inList = YES;
+            NSLog(@"-00000000000   设备连接状态[%d]", [dataPath state]);
+            if ([dataPath state] == CBPeripheralStateConnected/* || [dataPath state] == CBPeripheralStateConnecting*/) {
+                result = YES;
+            }
+            else if ([dataPath state] == CBPeripheralStateDisconnected) {
+                inList = NO;
+            }
+        }
+    }
+    if (!inList) {
+        return -1;          // 设备未打开
+    } else {
+        if (result) {
+            return 1;       // 设备已连接
+        } else {
+            return 0;       // 设备已打开，但未连接
+        }
+    }
+}
+
+
 
 // 初始化::
 - (instancetype)init {
@@ -212,7 +243,6 @@
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
         if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:oIdentifier]) {
-//            [self.knownDeviceList removeObject:dataPath];
             [objDel addObject:dataPath];
         }
     }
@@ -223,8 +253,16 @@
 - (void)accessoryDidConnect:(ISDataPath *)accessory{
     // 读取终端号,并更新已连接设备中设备的终端号(在读取数据的回调中)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [self readSNNoWithAccessory:accessory];
+//        NSString* indentifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+        // 绑定设备id为空才读取SN，否则没必要读取
+//        if (indentifier == nil) {
+            [self readSNNoWithAccessory:accessory];
+//        }
     });
+    // 连接设备成功的回调
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didOpenDeviceSucOrFail:withError:)]) {
+        [self.delegate didOpenDeviceSucOrFail:YES withError:nil];
+    }
 }
 
 // 已经读取到设备返回的数据
@@ -289,9 +327,6 @@
  *      3.关闭了设备
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
-    
-    
-    
     // 将名字前缀是 JHLM60 且是 ISBLEDataPath 类型的蓝牙设备添加到“已识别”列表 -- 新增的才加
     for (ISDataPath* dataPath in devices) {
         ISBLEDataPath* mDataPath = (ISBLEDataPath*)dataPath;
@@ -311,16 +346,11 @@
                 NSMutableDictionary* dataDic = [[NSMutableDictionary alloc] init];
                 [dataDic setObject:dataPath forKey:@"dataPath"];
                 [dataDic setValue:nil forKey:@"SNVersion"];
-                //                [dataDic setValue:@"" forKey:@"SNVersion"];
                 [self.knownDeviceList addObject:dataDic];
             }
         }
     }
-    
-    
-    
     // 如果是因为是设备断开引发的刷新，就不能再打开设备了
-
     
     /* 
      * 打开已识别列表中状态为 未连接 的设备
@@ -332,7 +362,8 @@
     if (identifier != nil) {
         for (NSDictionary* dataDic in self.knownDeviceList) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
-            if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier] &&
+            if (self.needOpenDevices &&
+                [[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier] &&
                 [dataPath state] == CBPeripheralStateDisconnected) {
                 [self.manager connectDevice:dataPath];
             }
@@ -341,18 +372,17 @@
         for (NSDictionary* dataDic in self.knownDeviceList) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
             NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
-            // 未连接就建立连接
-            if ([dataPath state] == CBPeripheralStateDisconnected) {
+            // 未连接就建立连接,先判断自动打开标记
+            if (self.needOpenDevices && [dataPath state] == CBPeripheralStateDisconnected) {
                 [self.manager connectDevice:dataPath];
             }
             // 已连接但未读SN号的就读SN号
-            else if ([dataPath state] == CBPeripheralStateConnected && (SNVersion == nil || [SNVersion isEqualToString:@""])) {
+            else if (self.needOpenDevices && [dataPath state] == CBPeripheralStateConnected && (SNVersion == nil || [SNVersion isEqualToString:@""])) {
                 [self readSNNoWithAccessory:dataPath];
             }
         }
     }
 }
-
 
 
 /* -----------------------------
@@ -988,11 +1018,14 @@
         [self writeMposData:SendArryByte withAccessory:dataPath];
     }
 }
+// 刷卡:使用SNVersion匹配设备-- 新版修改:使用 ID而不是SN匹配
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
+//    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+//        if ([[[iDataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
             dataPath = iDataPath;
         }
     }

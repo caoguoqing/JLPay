@@ -174,6 +174,16 @@ static DeviceManager* _sharedDeviceManager = nil;
 
 
 #pragma mask --------------------------------- 新接口
+// pragma mask : 设置自动标记:是否自动打开设备
+- (void) setOpenAutomaticaly:(BOOL)yesOrNo {
+    NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
+        
+    }
+    else if ([ideviceType isEqualToString:DeviceType_JHL_M60]) {     // 锦宏霖蓝牙设备
+        [self.JHL_M60_manager setOpenAutomaticaly:yesOrNo];
+    }
+}
 
 #pragma mask : 打开所有设备
 - (void) openAllDevices{
@@ -286,6 +296,19 @@ static DeviceManager* _sharedDeviceManager = nil;
     return result;
 }
 
+// pragma mask : 判断指定设备ID的设备是否已连接
+- (int)isConnectedOnIdentifier:(NSString*)identifier {
+    int result = -1;
+    NSLog(@"=-=-=-=-=-=-=--=--=-=-=设备类型[%@]",[self deviceType]);
+    if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
+        
+    }
+    else if ([[self deviceType] isEqualToString:DeviceType_JHL_M60]) {
+        result = [self.JHL_M60_manager isConnectedOnIdentifier:identifier];
+    }
+    return result;
+}
+
 // pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion {
     if ([[self deviceType] isEqualToString:DeviceType_JHL_A60]) {
@@ -349,6 +372,13 @@ static DeviceManager* _sharedDeviceManager = nil;
 
 
 #pragma mask -------------------------- JHLDevice_M60_Delegate
+// 连接设别结果的回调
+- (void)didOpenDeviceSucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(deviceManager:didOpenSuccessOrNot:withMessage:)]) {
+        [self.delegate deviceManager:self didOpenSuccessOrNot:yesOrNo withMessage:error];
+    }
+}
+
 // 设备终端号列表刷新的回调协议
 - (void)renewTerminalNumbers:(NSArray *)terminalNumbers {
     [self.terminalArray removeAllObjects];

@@ -101,13 +101,13 @@
         cell.selected = NO;
         // 先检查设备是否绑定
 //        if (![[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
-        NSString* selectedSNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-        int connected = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:selectedSNVersion];
-        if (connected != 1) {
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"设备未连接,请先连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-            [alert show];
-            return;
-        }
+//        NSString* selectedSNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+//        int connected = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:selectedSNVersion];
+//        if (connected != 1) {
+//            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"设备未连接,请先连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//            [alert show];
+//            return;
+//        }
         
         // 如果设备是绑定的设备，还要校验终端编号
         

@@ -31,8 +31,8 @@
     
     UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
-    // 进入的初始界面为第二个
-    tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
+    // 进入的初始界面为第一个
+    tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
     
     self.window.rootViewController      = tabBarController;
     

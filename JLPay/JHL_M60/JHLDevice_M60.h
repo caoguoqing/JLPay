@@ -10,6 +10,8 @@
 
 @protocol JHLDevice_M60_Delegate<NSObject>
 @optional
+// 连接设备de结果回调
+- (void) didOpenDeviceSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 // 读取终端号成功
 - (void) didReadingTerminalNo:(NSString*)terminalNo;  // 无用了
 // 刷新终端号列表
@@ -34,6 +36,9 @@
 
 @interface JHLDevice_M60 : NSObject
 @property (assign) id<JHLDevice_M60_Delegate> delegate;
+// pragma mask : 设置自动标记:是否自动打开设备
+- (void) setOpenAutomaticaly:(BOOL)yesOrNo;
+
 /* 打开所有蓝牙设备 */
 - (void) openAllDevices;
 - (void) closeAllDevices;
@@ -50,6 +55,8 @@
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定SN号的设备是否已连接
 - (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+// pragma mask : 判断指定设备ID的设备是否已连接
+- (int)isConnectedOnIdentifier:(NSString*)identifier ;
 // 写终端号+商户号
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
 // 设置主密钥

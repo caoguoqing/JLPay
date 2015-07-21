@@ -57,19 +57,27 @@
                                   forState:UIControlStateNormal
                                 barMetrics:UIBarMetricsDefault];
     self.navigationItem.backBarButtonItem = backItem;
-    [[DeviceManager sharedInstance] setDelegate:self];
+    
+    // 重置金额
+    self.money = @"0.00";
+    self.moneyCalculated = nil;
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     // 重新扫描设备
     NSLog(@"-=-=-=-=-=-=-=进入CustPay 界面");
-    [[DeviceManager sharedInstance] startScanningDevices];
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        [[DeviceManager sharedInstance] setDelegate:self];
+//        [[DeviceManager sharedInstance] startScanningDevices];
+//    });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[DeviceManager sharedInstance] setDelegate:nil];
-    [[DeviceManager sharedInstance] stopScanningDevices];
-    [[DeviceManager sharedInstance] closeAllDevices];
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        [[DeviceManager sharedInstance] setDelegate:nil];
+//        [[DeviceManager sharedInstance] stopScanningDevices];
+//        [[DeviceManager sharedInstance] closeAllDevices];
+//    });
 }
 
 #pragma mask -------------------- DeviceManagerDelegate:打开设备，获取终端号的回调
@@ -211,16 +219,16 @@
      *  1:已连接
      *  -1:未打开
     */
-    DeviceManager* device = [DeviceManager sharedInstance];
-    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-    int connected = [device isConnectedOnSNVersionNum:SNVersionNum];
-    if (connected == -1)
-    {
-        [self alertShow:@"请连接设备"];
-    }else if (connected == 0) { // 正在连接
-        [self alertShow:@"设备正在连接,请稍候..."];
-    }
-    else if (connected == 1) {  // 已连接
+//    DeviceManager* device = [DeviceManager sharedInstance];
+//    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+//    int connected = [device isConnectedOnSNVersionNum:SNVersionNum];
+//    if (connected == -1)
+//    {
+//        [self alertShow:@"请连接设备"];
+//    }else if (connected == 0) { // 正在连接
+//        [self alertShow:@"设备正在连接,请稍候..."];
+//    }
+//    else if (connected == 1) {  // 已连接
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
         BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
         // 保存的是字符串型的金额
@@ -229,7 +237,7 @@
         viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
         [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
         [self.navigationController pushViewController:viewcon animated:YES];
-    }
+//    }
 }
 
 
@@ -257,48 +265,52 @@
 }
 
 /*************************************
- * 功  能 : 打开保存在本地已绑定设备列表中的设备;
+ * 功  能 : 打开保存在本地已绑定设备列表中的设备;       --- useless
  *          - 在副线程打开
  *          - 要区分设备类型:厂商设备类型
  * 参  数 :
  * 返  回 :
  *************************************/
-- (void) openBindedDevices {
-    NSArray* bindedDeviceList = [[NSUserDefaults standardUserDefaults] objectForKey:BindedDeviceList];
-    for (NSDictionary* deviceDic in bindedDeviceList) {
-        // 先判断设备类型；根据不同设备类型，调用不同的打开方法
-        NSString* deviceType = [deviceDic valueForKey:DeviceType];
-        if ([deviceType isEqualToString:DeviceType_JHL_M60]) {      // 锦宏霖M60蓝牙
-            [[DeviceManager sharedInstance] openDeviceWithIdentifier:[deviceDic valueForKey:@"identifier"]];
-        }
-        else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
-        }
-    }
-}
+//- (void) openBindedDevices {
+//    NSArray* bindedDeviceList = [[NSUserDefaults standardUserDefaults] objectForKey:BindedDeviceList];
+//    for (NSDictionary* deviceDic in bindedDeviceList) {
+//        // 先判断设备类型；根据不同设备类型，调用不同的打开方法
+//        NSString* deviceType = [deviceDic valueForKey:DeviceType];
+//        if ([deviceType isEqualToString:DeviceType_JHL_M60]) {      // 锦宏霖M60蓝牙
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//                [[DeviceManager sharedInstance] openDeviceWithIdentifier:[deviceDic valueForKey:@"identifier"]];
+//            });
+//        }
+//        else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
+//        }
+//    }
+//}
 /*************************************
- * 功  能 : 判断绑定的设备个数;
+ * 功  能 : 判断绑定的设备个数;                    --- useless
  *          - 为0就报错:无绑定设备
  *          - 为1就直接打开设备
  *          - 为n就弹窗，选择一个
  * 参  数 :
  * 返  回 :
  *************************************/
-- (void) chooseDeviceSNVersion {
-    NSArray* bindedList = [[NSUserDefaults standardUserDefaults] objectForKey:BindedDeviceList];
-    if (bindedList.count == 0) {
-        [self alertShow:@"商户未绑定设备,请先绑定设备!"];
-    } else if (bindedList.count == 1) {
-        NSDictionary* deviceDic = [bindedList objectAtIndex:0];
-        // 打开对应id的设备
-        [[DeviceManager sharedInstance] openDeviceWithIdentifier:[deviceDic valueForKey:@"identifier"]];
-    } else {
-        UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择要打开的设备的SN号(请先打开对应设备)" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
-        for (NSDictionary* deviceDic in bindedList) {
-            [actionSheet addButtonWithTitle:[deviceDic valueForKey:@"SNVersion"]];
-        }
-        [actionSheet showFromToolbar:self.navigationController.toolbar];
-    }
-}
+//- (void) chooseDeviceSNVersion {
+//    NSArray* bindedList = [[NSUserDefaults standardUserDefaults] objectForKey:BindedDeviceList];
+//    if (bindedList.count == 0) {
+//        [self alertShow:@"商户未绑定设备,请先绑定设备!"];
+//    } else if (bindedList.count == 1) {
+//        NSDictionary* deviceDic = [bindedList objectAtIndex:0];
+//        // 打开对应id的设备
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//            [[DeviceManager sharedInstance] openDeviceWithIdentifier:[deviceDic valueForKey:@"identifier"]];
+//        });
+//    } else {
+//        UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择要打开的设备的SN号(请先打开对应设备)" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+//        for (NSDictionary* deviceDic in bindedList) {
+//            [actionSheet addButtonWithTitle:[deviceDic valueForKey:@"SNVersion"]];
+//        }
+//        [actionSheet showFromToolbar:self.navigationController.toolbar];
+//    }
+//}
 
 /*************************************
  * 功  能 : CustPayViewController 的子控件加载;

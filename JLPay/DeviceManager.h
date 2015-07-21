@@ -43,6 +43,8 @@
 
 
 #pragma mask --------------------------- 新接口
+// pragma mask : 设置自动标记:是否自动打开设备
+- (void) setOpenAutomaticaly:(BOOL)yesOrNo;
 // pragma mask : 打开所有设备
 - (void) openAllDevices;
 - (void) closeAllDevices;
@@ -63,6 +65,8 @@
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定SN号的设备是否已连接
 - (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+// pragma mask : 判断指定设备ID的设备是否已连接
+- (int)isConnectedOnIdentifier:(NSString*)identifier;
 // pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
 - (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
 // pragma mask : 设置设备主密钥(指定设备的SN号)
@@ -118,7 +122,7 @@
 /*
  * 打开设备成功/失败的回调
  */
-- (void) deviceManager:(DeviceManager*)deviceManager didOpenSuccessOrNot:(BOOL)yesOrNot;
+- (void) deviceManager:(DeviceManager*)deviceManager didOpenSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
 /*
  * 终端号列表更新后的回调
  */

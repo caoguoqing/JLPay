@@ -26,6 +26,7 @@
 //@property (nonatomic, strong) UIButton* refreshButton;              // “刷新”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
+@property (nonatomic, strong) NSString* oldIdentifier;              // 用来保存旧的id
 @end
 
 
@@ -77,6 +78,7 @@
     [[DeviceManager sharedInstance] setDelegate:self];
     
     // 将绑定设备的ID设置为空,让后台设备扫描能扫所有设备
+    self.oldIdentifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
     [[NSUserDefaults standardUserDefaults] setObject:nil forKey:DeviceIDOfBinded];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -90,32 +92,44 @@
     
     // 重新打开所有设备
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[DeviceManager sharedInstance] setOpenAutomaticaly:YES]; // 开启自动打开标记
         [[DeviceManager sharedInstance] startScanningDevices];
     });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+    if (identifier == nil) {
+        [[NSUserDefaults standardUserDefaults] setValue:self.oldIdentifier forKey:DeviceIDOfBinded];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
+    
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
-    [[DeviceManager sharedInstance] setDelegate:nil];
-//    [[DeviceManager sharedInstance] stopScanningDevices];
-//    [[DeviceManager sharedInstance] closeAllDevices];
-//    if ([self.waitingTimer isValid]) {
-//        [self.waitingTimer invalidate];
-//        self.waitingTimer = nil;
-//    }
-}
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
-//    [[DeviceManager sharedInstance] setDelegate:nil];
-    [[DeviceManager sharedInstance] stopScanningDevices];
-    [[DeviceManager sharedInstance] closeAllDevices];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [[DeviceManager sharedInstance] setDelegate:nil];
+        [[DeviceManager sharedInstance] setOpenAutomaticaly:NO]; // 关闭自动打开标记
+        [[DeviceManager sharedInstance] stopScanningDevices];
+        [[DeviceManager sharedInstance] closeAllDevices];
+    });
     if ([self.waitingTimer isValid]) {
         [self.waitingTimer invalidate];
         self.waitingTimer = nil;
     }
-
 }
+//- (void)viewDidDisappear:(BOOL)animated {
+//    [super viewDidDisappear:animated];
+//    // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        [[DeviceManager sharedInstance] stopScanningDevices];
+//        [[DeviceManager sharedInstance] closeAllDevices];
+//    });
+//    if ([self.waitingTimer isValid]) {
+//        [self.waitingTimer invalidate];
+//        self.waitingTimer = nil;
+//    }
+//
+//}
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
 
