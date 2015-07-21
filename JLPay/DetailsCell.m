@@ -47,17 +47,16 @@
     // amount
     CGRect frame = self.bounds;
     frame.origin.x += inset;
-    frame.origin.y += verticalInset;
-    frame.size.width = (frame.size.width - inset * 2.0)/2.0 - 20/*这20为标示label腾出来*/;
-    frame.size.height -= verticalInset * 2.0;
-    
+    frame.origin.y = verticalInset/2.0;
+    frame.size.width = (frame.size.width - inset * 2.0)/2.0 /*- 20这20为标示label腾出来*/;
+    frame.size.height = (self.bounds.size.height - verticalInset)/ 2.0;  // 高度为 cell.height * 1/2
     self.amountLabel.frame = frame;
     [self addSubview:self.amountLabel];
 //    self.amountLabel.backgroundColor = [UIColor orangeColor];
     
-    // 中间添加一个视图:label:标示该笔交易的交易类型
-    frame.origin.x += frame.size.width;
-    frame.size.width = 20 + 20;
+    // label:标示该笔交易的交易类型
+    frame.origin.y += frame.size.height;
+//    frame.size.height /= 2.0;
     self.tranTypeLabel.frame = frame;
     [self addSubview:self.tranTypeLabel];
 //    self.tranTypeLabel.backgroundColor = [UIColor redColor];
@@ -65,11 +64,12 @@
     
     // cardNo.
     frame.origin.x += frame.size.width;
-    frame.size.width = (self.bounds.size.width - inset * 2.0)/2.0 - 20/*这20为标示label腾出来*/;
-    frame.size.height /= 2.0;
+    frame.origin.y = 0 + verticalInset;
+    frame.size.height = (self.frame.size.height -  verticalInset * 2.0)/2.0;
     self.cardNumberLabel.frame = frame;
     [self addSubview:self.cardNumberLabel];
 //    self.cardNumberLabel.backgroundColor = [UIColor greenColor];
+    
     
     // tranTime
     frame.origin.y += frame.size.height;
@@ -80,10 +80,11 @@
 }
 
 #pragma mask ::: 金额属性赋值 : 000000000010
-- (void) setAmount : (NSString*)amount {
+- (void) setAmount : (NSString*)amount withColor:(UIColor *)color{
     CGFloat fAmount = [amount floatValue];
     fAmount /= 100.0;
     self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
+    self.amountLabel.textColor = color;
 }
 #pragma mask ::: 卡号属性赋值
 - (void) setCardNum : (NSString*)cardNum {
@@ -99,8 +100,9 @@
                                [time substringFromIndex:4]];
 }
 #pragma mask ::: 设置交易类型标记
-- (void) setTranType:(NSString *)tranType {
+- (void) setTranType:(NSString *)tranType withColor:(UIColor *)color{
     self.tranTypeLabel.text = tranType;
+    self.tranTypeLabel.textColor = color;
 }
 
 
@@ -136,12 +138,12 @@
 - (UILabel *)tranTypeLabel {
     if (_tranTypeLabel == nil) {
         _tranTypeLabel = [[UILabel alloc] init];
-        _tranTypeLabel.textAlignment = NSTextAlignmentCenter;
+        _tranTypeLabel.textAlignment = NSTextAlignmentLeft;
         _tranTypeLabel.textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
         _tranTypeLabel.font = [UIFont systemFontOfSize:OtherFont ];
-        _tranTypeLabel.layer.cornerRadius = 7.0;
-        _tranTypeLabel.layer.borderColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0].CGColor;
-        _tranTypeLabel.layer.borderWidth = 0.5;
+//        _tranTypeLabel.layer.cornerRadius = 7.0;
+//        _tranTypeLabel.layer.borderColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0].CGColor;
+//        _tranTypeLabel.layer.borderWidth = 0.5;
     }
     return _tranTypeLabel;
 }

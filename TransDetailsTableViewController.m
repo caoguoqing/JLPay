@@ -150,14 +150,30 @@
         // 加载明细单元格
         DetailsCell* dCell = (DetailsCell*)cell;
         NSDictionary* dataDic = [self.dataArray objectAtIndex:indexPath.row - 2];
-        [dCell setAmount:[dataDic objectForKey:@"amtTrans"]];
         [dCell setCardNum:[dataDic objectForKey:@"pan"]];
         [dCell setTime:[dataDic objectForKey:@"instTime"]];
         NSString* trantype = [dataDic objectForKey:@"txnNum"];
-        if ([trantype isEqualToString:@"消费撤销"]) {
-            trantype = @"撤销";
+        UIColor* textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
+        if ([trantype isEqualToString:@"消费"]) {
+            if ([[dataDic valueForKey:@"revsal_flag"] isEqualToString:@"1"]) {
+                trantype = @"已冲正";
+//                textColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+                textColor = [UIColor redColor];
+            }
+            else if ([[dataDic valueForKey:@"cancelFlag"] isEqualToString:@"1"]) {
+                trantype = @"已撤销";
+//                textColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+                textColor = [UIColor redColor];
+            }
+            else {
+                trantype = @"消费成功";
+            }
+        } else {
+//            textColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+            textColor = [UIColor redColor];
         }
-        [dCell setTranType:trantype];
+        [dCell setTranType:trantype withColor:textColor];
+        [dCell setAmount:[dataDic objectForKey:@"amtTrans"] withColor:textColor];
         NSLog(@"\n=========\ndata=[%@]===========", dataDic );
     }
 }
