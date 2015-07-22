@@ -161,6 +161,8 @@
 #define Save_Return_Money @"renturnmoney"
 // F11:   交易流水号，每次交易加1
 #define Exchange_Number @"exchangenumber"
+// F14:   卡片有效期
+#define EXP_DATE_14     @"EXP_DATE_14_"
 // F23:   芯片卡序列号
 #define ICCardSeq_23    @"ICCardSeq_23_"
 // F35:   二磁道数据

@@ -58,31 +58,32 @@
 
 
 -(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
+    [super viewWillAppear:animated];
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
     //隐藏navigationController
     [self.navigationController setNavigationBarHidden:YES animated:NO];
     //隐藏状态栏
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
-    [super viewDidDisappear:YES];
-    if (isHiddenType == 0) {
-        [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-        self.navigationController.navigationBar.hidden=YES;
+    [super viewDidDisappear:animated];
+//    if (isHiddenType == 0) {
+//        [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
+        self.navigationController.navigationBar.hidden=NO;
         //显示状态栏
-        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
         //显示navigationController
-    }else{
-        [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
-        //显示状态栏
-        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-        //显示navigationController
-    }
+//    }else{
+////        [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
+//        [self.navigationController setNavigationBarHidden:NO animated:YES];
+//        //显示状态栏
+//        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+//    }
     
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
 
 //保存线条颜色
 static NSMutableArray *colors;
@@ -182,7 +183,7 @@ static NSMutableArray *colors;
     CGRect frame = CGRectMake(returnView.frame.origin.x,
                               returnView.frame.origin.y + returnView.frame.size.height,
                               (returnView.frame.size.width - midInset)/2.0,
-                              40);
+                              50);
     // 重新签名 按钮
     UIButton*againBtn=[UIButton buttonWithType:UIButtonTypeRoundedRect];
     againBtn.frame = frame;
@@ -264,7 +265,7 @@ static NSMutableArray *colors;
     //[appdeletate returnApplocation];
     PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
     posInformationVc.posImg=self.uploadImage;
-    [posInformationVc liushuiNum:self.currentLiushuiStr time:[PublicInformation formatCompareDate] lastliushuinum:self.lastLiushuiStr];
+    [posInformationVc liushuiNum:self.currentLiushuiStr time:[PublicInformation formatDate] lastliushuinum:self.lastLiushuiStr];
     [self.navigationController pushViewController:posInformationVc animated:YES];
 //    [self presentViewController:posInformationVc animated:YES completion:nil];
     

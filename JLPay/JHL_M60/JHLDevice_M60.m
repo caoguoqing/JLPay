@@ -350,8 +350,6 @@
             }
         }
     }
-    // 如果是因为是设备断开引发的刷新，就不能再打开设备了
-    
     /* 
      * 打开已识别列表中状态为 未连接 的设备
      * 1.如果已经有了绑定的设备ID，就专注于打开绑定的那个设备
@@ -359,6 +357,7 @@
      * 3.打开所有设备的时候要判断是否之前就打开过了，如果是就不用打开，但要读取SN号
      */
     NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+    NSLog(@"*******************需要识别的设备的ID=[%@]", identifier);
     if (identifier != nil) {
         for (NSDictionary* dataDic in self.knownDeviceList) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
@@ -386,7 +385,7 @@
 
 
 /* -----------------------------
- * 函  数: compareConnectedDeviceListWithList
+ * 函  数: compareConnectedDeviceListWithList  ----------- 暂时无用了
  * 功  能: 对比两个已连接设备列表;
  *          一个是后台蓝牙设备管理器的设备列表；
  *          一个是本管理器中的设备列表；
@@ -1021,11 +1020,9 @@
 // 刷卡:使用SNVersion匹配设备-- 新版修改:使用 ID而不是SN匹配
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
-//    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
         if ([[dataDic objectForKey:@"SNVersion"] isEqualToString:SNVersion]) {
-//        if ([[[iDataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
             dataPath = iDataPath;
         }
     }

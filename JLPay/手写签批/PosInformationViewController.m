@@ -17,13 +17,17 @@
 #import "Photo.h"
 #import "Toast+UIView.h"
 #import "JsonToString.h"
+#import "JLActivity.h"
 
 
 @interface PosInformationViewController ()
-
+@property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
+@property (nonatomic, strong) JLActivity* activitor;
 @end
 
 @implementation PosInformationViewController
+@synthesize uploadRequest = _uploadRequest;
+@synthesize activitor = _activitor;
 @synthesize posImg;
 @synthesize scrollAllImg;
 @synthesize infoLiushuiStr;
@@ -41,8 +45,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
-        
         appdelegate=(AppDelegate *)[UIApplication sharedApplication].delegate;
     }
     return self;
@@ -61,7 +63,6 @@
 */
 -(void)requireMethod{
     [self chatUploadImage];
-//    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 
@@ -69,8 +70,6 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
-
-    
     self.title=@"POS-签购单";
     // 导航栏的退出按钮置空
     UIButton*leftBackBtn=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -80,48 +79,30 @@
     self.navigationItem.leftBarButtonItem=backBarBtn;
     
     // 小字体
-    UIFont* littleFont = [UIFont systemFontOfSize:12.f];
+    UIFont* littleFont = [UIFont systemFontOfSize:10.f];
     NSDictionary* littleTextAttri = [NSDictionary dictionaryWithObject:littleFont forKey:NSFontAttributeName];
     // 中字体
-    UIFont* midFont = [UIFont systemFontOfSize:15.f];
+    UIFont* midFont = [UIFont systemFontOfSize:17.f];
     NSDictionary* midTextAttri = [NSDictionary dictionaryWithObject:midFont forKey:NSFontAttributeName];
     // 大字体,加粗
-    UIFont* bigFont = [UIFont boldSystemFontOfSize:20.f];
+    UIFont* bigFont = [UIFont boldSystemFontOfSize:22.f];
     NSDictionary* bigTextAttri = [NSDictionary dictionaryWithObject:bigFont forKey:NSFontAttributeName];
     // 每组 label 之间的间隔
     CGFloat inset = 5.f;
     // 按钮高度
     CGFloat buttonHeight = 50.f;
     // navigation 高度
-    CGFloat navigationHeigt = self.navigationController.navigationBar.bounds.size.height;
+//    CGFloat navigationHeigt = self.navigationController.navigationBar.bounds.size.height;
     
     // 小票是滚动视图
     UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(0,
-                                                                          navigationHeigt,
+                                                                          0,
                                                                           self.view.bounds.size.width,
-                                                                          self.view.bounds.size.height - navigationHeigt - buttonHeight - inset * 4)];
+                                                                          self.view.bounds.size.height - buttonHeight - inset * 4)];
     scrollVi.backgroundColor=[UIColor whiteColor];
+    scrollVi.bounces = NO;
     
-    
-    
-    
-    
-    // 导航栏右标签按钮
-//    UIButton*rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-//    rightBtn.frame=CGRectMake(0, 7, 80, 30);
-//    rightBtn.backgroundColor=[UIColor clearColor];
-//    [rightBtn setBackgroundImage:[PublicInformation imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 44)] forState:UIControlStateNormal];
-//    [rightBtn setTitle:@"重新上传" forState:UIControlStateNormal];
-//    [rightBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//    [rightBtn.titleLabel setFont:[UIFont systemFontOfSize:15.0f]];
-//    [rightBtn addTarget:self action:@selector(uploadMethod) forControlEvents:UIControlEventTouchUpInside];
-//    rightBtn.layer.cornerRadius=6;
-//    rightBtn.layer.masksToBounds = YES;
-//    rightBtn.layer.borderColor=[UIColor colorWithRed:0.10 green:0.21 blue:0.49 alpha:1.0].CGColor;
-//    rightBtn.layer.borderWidth=1.0f;
-//    UIBarButtonItem *againUploadBtn=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
-//    self.navigationItem.rightBarButtonItem=againUploadBtn;
-    
+    #pragma mask : 开始加载滚动视图的子视图
     //POS-签购单 商户存根
     NSString* text = @"POS-签购单";
     CGRect frame = CGRectMake(0, 0, scrollVi.bounds.size.width, [text sizeWithAttributes:bigTextAttri].height);
@@ -298,7 +279,7 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
     // 有效期 - 值
-    text = self.timeStr;
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:EXP_DATE_14];
     frame.origin.x += frame.size.width;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
@@ -316,7 +297,6 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-
     // 备注 - 名
     text = @"备注(REFERENCE)";
     frame.origin.y += inset + frame.size.height;
@@ -343,15 +323,16 @@
     [scrollVi addSubview:signImg];
 
     // 描述信息
-    text = @"本人确认以上交易,同意将其计入本卡账户";
+    text = @"本人确认以上交易,同意将其计入本卡账户.";
     frame.origin.y += inset + frame.size.height;
     frame.size.width *= 2.0;
     frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 英文描述
-    text = @"I ACKNOWLEDGE SATISFATORY RECEIPT OF RELATIVE GOODS/SERVICES";
+    text = @"I ACKNOWLEDGE SATISFATORY RECEIPT OF RELATIVE GOODS/SERVICES.";
     frame.origin.y += frame.size.height;
+    frame.size.height *= 2.0;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     
@@ -375,7 +356,7 @@
     requireBtn.frame = frame;
     requireBtn.layer.cornerRadius = 10.0;
     requireBtn.layer.masksToBounds = YES;
-    [requireBtn setBackgroundImage:[PublicInformation createImageWithColor:[UIColor colorWithRed:0.14 green:0.64 blue:0.17 alpha:1.0]] forState:UIControlStateNormal];
+    [requireBtn setBackgroundImage:[PublicInformation createImageWithColor:[UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0]] forState:UIControlStateNormal];
     [requireBtn addTarget:self action:@selector(requireMethod) forControlEvents:UIControlEventTouchUpInside];
     [requireBtn setTitle:@"确定" forState:UIControlStateNormal];
     requireBtn.titleLabel.font = bigFont;
@@ -383,7 +364,7 @@
     [self.view addSubview:requireBtn];
     
     // 将滚动视图的内容装填成图片.jpg
-    self.scrollAllImg=[self getNormalImage:scrollVi];
+//    self.scrollAllImg=[self getNormalImage:scrollVi];
 }
 // 简化代码:label可以用同一个产出方式
 - (UILabel*) newTextLabelWithText:(NSString*)text
@@ -397,20 +378,33 @@
     textLabel.textAlignment = textAlignment;
     textLabel.textColor = [UIColor blackColor];
     textLabel.font = font;
+    [textLabel setNumberOfLines:0];
+    textLabel.lineBreakMode = NSLineBreakByWordWrapping;
     return textLabel;
 }
 
+// 视图退出,要取消
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.activitor stopAnimating];
+    self.activitor = nil;
+    [self.uploadRequest clearDelegatesAndCancel];
+    self.uploadRequest = nil;
+}
 
 
 #pragma mark ----------------屏幕截图
 //获取当前屏幕内容
 - (UIImage *)getNormalImage:(UIScrollView *)view{
-    view.frame=CGRectMake(0, 0, view.contentSize.width, view.contentSize.height);
-    UIGraphicsBeginImageContextWithOptions(view.contentSize, view.opaque, 1.0);
+    CGRect oldFrame = view.frame;
+    view.frame = CGRectMake(0, 0, view.contentSize.width, view.contentSize.height);
+    CGSize size = CGSizeMake(oldFrame.size.width, oldFrame.size.height);
+    UIGraphicsBeginImageContextWithOptions(size, view.opaque, 1.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
     img=[UIImage imageWithData:UIImageJPEGRepresentation(img, 0.5)];
     UIGraphicsEndImageContext();
+    view.frame = oldFrame;
     return img;
     
 }
@@ -440,12 +434,12 @@
  * ***/
 -(void)uploadRequestMethod:(NSString *)url{
     //起码一张图片
-//    NSString *photoStr=[Photo image2String:self.scrollAllImg];
-    ASIFormDataRequest *uploadRequest=[[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:url]];
-    [uploadRequest setShouldAttemptPersistentConnection:YES];
-    [uploadRequest setNumberOfTimesToRetryOnTimeout:2];
-    [uploadRequest setTimeOutSeconds:30];
-    uploadRequest.delegate=self;
+//    ASIFormDataRequest *uploadRequest=[[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:url]];
+//    [uploadRequest setShouldAttemptPersistentConnection:YES];
+//    [uploadRequest setNumberOfTimesToRetryOnTimeout:2];
+//    [uploadRequest setTimeOutSeconds:30];
+//    uploadRequest.delegate=self;
+    [self.uploadRequest setDelegate:self];
     
     /*
      uploadRequstMchntNo	商户编号        15位
@@ -455,14 +449,13 @@
      uploadRequestAmoumt	交易金额        以分为单位
      uploadRequestTime      请求时间        14位
      */
-    [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]];
-    NSString* normalTime = [self formatTime:self.timeStr]; // 2015-07-10 14:38:52  -> 20150710143852
     NSMutableDictionary* headerInfo = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[PublicInformation returnBusiness],
                                                                     [PublicInformation returnBusinessName],
                                                                     [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]],
                                                                     [PublicInformation returnTerminal],
                                                                     [PublicInformation returnMoney],
-                                                                    normalTime,nil]
+                                                                    [self formatTime:self.timeStr], // 2015-07-10 14:38:52  -> 20150710143852
+                                                                        nil]
                                                            forKeys:[NSArray arrayWithObjects:
                                                                     @"uploadRequstMchntNo",
                                                                     @"uploadRequestMchntNM",
@@ -471,39 +464,52 @@
                                                                     @"uploadRequestAmoumt",
                                                                     @"uploadRequestTime", nil]];
     
-    [uploadRequest setRequestHeaders:headerInfo];
-    [uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
+    [self.uploadRequest setRequestHeaders:headerInfo];
+    [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
     
-    [uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
-    [uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
-    [uploadRequest setShouldContinueWhenAppEntersBackground:YES];
-	[uploadRequest startAsynchronous];                              // 异步发送HTTP请求
+//    [uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
+//    [uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
+//    [uploadRequest setShouldContinueWhenAppEntersBackground:YES];
+	[self.uploadRequest startSynchronous];                           // 异步发送HTTP请求
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activitor startAnimating];
+    });
 }
 
+// HTTP 请求成功
 -(void)successLogin:(ASIHTTPRequest *)successLoginStr{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activitor stopAnimating];
+    });
     [successLoginStr clearDelegatesAndCancel];
+    self.uploadRequest = nil;
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:successLoginStr.responseString]];
     NSLog(@"chatUpLoadDic===%@",chatUpLoadDic);
     NSLog(@"successLoginStr.responseString===%@",successLoginStr.responseString);
 
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
         //缓存图片路径
-        [self saveImagePathMethod:[chatUpLoadDic objectForKey:@"data"]];
+//        [self saveImagePathMethod:[chatUpLoadDic objectForKey:@"data"]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"小票上传成功"];
             // 成功后就退出到root视图界面
             [self.navigationController popToRootViewControllerAnimated:YES];
         });
     }else{
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"小票上传失败，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         dispatch_async(dispatch_get_main_queue(), ^{
             [alert show];
         });
     }
     
 }
+// HTTP 请求失败
 -(void)falseLogin:(ASIHTTPRequest *)falseScoreStr{
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activitor stopAnimating];
+    });
+    [falseScoreStr clearDelegatesAndCancel];
+    self.uploadRequest = nil;
     NSError *error = [falseScoreStr error];
     if (error) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -588,6 +594,32 @@
     free(str);
     free(ctimestr);
     return normalTime;
+}
+
+
+#pragma mask ::: setter && getter
+- (ASIFormDataRequest *)uploadRequest {
+    if (_uploadRequest == nil) {
+        NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
+                                  [PublicInformation getDataSourceIP],
+                                  [PublicInformation getDataSourcePort]];
+        NSURL* url = [NSURL URLWithString:uploadString];
+        _uploadRequest = [[ASIFormDataRequest alloc] initWithURL:url];
+        [_uploadRequest setShouldAttemptPersistentConnection:YES];
+        [_uploadRequest setNumberOfTimesToRetryOnTimeout:2];
+        [_uploadRequest setTimeOutSeconds:30];
+        [_uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
+        [_uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
+        [_uploadRequest setShouldContinueWhenAppEntersBackground:YES];
+    }
+    return _uploadRequest;
+}
+
+- (JLActivity *)activitor {
+    if (_activitor == nil) {
+        _activitor = [[JLActivity alloc] init];
+    }
+    return _activitor;
 }
 
 @end

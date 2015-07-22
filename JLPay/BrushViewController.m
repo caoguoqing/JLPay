@@ -67,16 +67,6 @@
     // 加载子视图
     [self addSubViews];
     
-    // 注册刷卡成功的通知处理
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeSuccess:) name:Noti_CardSwiped_Success object:nil];
-//    
-//    // 注册刷卡失败的通知处理
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSwipeFail:) name:Noti_CardSwiped_Fail object:nil];
-//    
-//    // 注册刷卡消费的通知处理
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toCust:) name:Noti_TransSale_Success object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToCust:) name:Noti_TransSale_Fail object:nil];
-    
     // 交易超时时间为20秒
     self.timeOut = TIMEOUT;
 }
@@ -88,11 +78,6 @@
     if (!self.navigationController.navigationBarHidden) {
         self.navigationController.navigationBarHidden = YES;
     }
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        [[DeviceManager sharedInstance] setDelegate:self];
-//        [[DeviceManager sharedInstance] setOpenAutomaticaly:YES];   // 设置自动打开设备标记
-//        [[DeviceManager sharedInstance] startScanningDevices];
-//    });
 }
 
 #pragma mask ::: 界面显示后的事件注册及处理
@@ -128,36 +113,7 @@
         [device setDelegate:self];
         [device setOpenAutomaticaly:YES];   // 设置自动打开设备标记
         [device startScanningDevices];
-        
-//            while (1) { // 循环中判断设备是否已经连接
-//                int connected = [device isConnectedOnIdentifier:identifier];
-//                NSLog(@"循环扫描设备中....[%@],结果[%d]",identifier,connected);
-//                if (connected == 1) { // 已连接就退出循环,并停止主线程的定时器，然后进行刷卡
-//                    break;
-//                }
-//                [NSThread sleepForTimeInterval:0.5];
-//            }
-
-        // 进行刷卡
-//        [self beginToBruash];
     });
-    
-//    if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:SNVersion]) {
-//        // 刷卡
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//            // 启动刷卡超时定时器
-//            if (!self.waitingTimer.valid) {
-//                self.waitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingTimer) userInfo:nil repeats:YES];
-//            }
-//            [[NSRunLoop mainRunLoop] addTimer:self.waitingTimer forMode:@"NSDefaultRunLoopMode"];
-//            // 刷卡
-//            [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onSNVersion:SNVersion];
-//        });
-//    }
-//    else {
-//        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"未检测到设备,请连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//        [alert show];
-//    }
 }
 
 // 界面消失的资源回收
@@ -174,6 +130,10 @@
         [[DeviceManager sharedInstance] stopScanningDevices];
         [[DeviceManager sharedInstance] closeAllDevices];
     });
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 
@@ -320,12 +280,6 @@
     });
 }
 
-#pragma mask ::: 跳转回金额输入界面
-//- (void) backToCust: (NSNotification*)notification {
-//    [self alertForFailedMessage:@"读卡失败"];
-//}
-
-
 #pragma mask ::: ------ 消费报文上送的接收协议 walldelegate
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     if ([data length] > 0) {
@@ -346,6 +300,17 @@
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     // 批上送交易失败不做任何操作
     if ([str isEqualToString:@"batchUpload"]) {
+        // 交易成功，跳转到签名界面
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+        QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
+        [qianpi qianpiType:1];
+        [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
+        [qianpi leftTitle:[PublicInformation returnMoney]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.navigationController pushViewController:qianpi animated:YES];
+        });
         return;
     }
     [self alertForFailedMessage:@"网络异常，请检查网络"];

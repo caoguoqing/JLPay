@@ -1077,17 +1077,19 @@ static Unpacking8583 *sharedObj2 = nil;
                     float money=[deleteStr floatValue]/100;
                     NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
                     [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SuccessConsumerMoney];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"14"]) {
+                    // 卡有效期
+                    NSString* yyyymm = [NSString stringWithFormat:@"20%@/%@",[deleteStr substringToIndex:2],[deleteStr substringFromIndex:2]];
+                    [[NSUserDefaults standardUserDefaults] setValue:yyyymm forKey:EXP_DATE_14];
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"37"]) {
                     //获取搜索参考号
                     [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Consumer_Get_Sort];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"38"]) {
                     // 授权码
                     [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:AuthNo_38];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"44"]) {
                     // 发卡行代码 + 收单行代码
@@ -1098,7 +1100,6 @@ static Unpacking8583 *sharedObj2 = nil;
                     acq_no = [PublicInformation stringFromHexString:acq_no];
                     [[NSUserDefaults standardUserDefaults] setValue:iss_no forKey:ISS_NO_44_1];
                     [[NSUserDefaults standardUserDefaults] setValue:acq_no forKey:ACQ_NO_44_2];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
                 // ExchangeMoney_Type 交易类型 中文
                 [[NSUserDefaults standardUserDefaults] setValue:@"消费" forKey:ExchangeMoney_Type];
@@ -1331,38 +1332,25 @@ static Unpacking8583 *sharedObj2 = nil;
                     
                     NSLog(@"methodStr====%@位域====%@,长度=====%@,值====%@",methodStr,[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
                     
-                    
-                    if ([[sortArr objectAtIndex:c] isEqualToString:@"62"]) {
-                        
-                        NSString *str1 = [deleteStr substringFromIndex:6];
-                        
-                        NSMutableString *workStr = [[NSMutableString alloc]init];
-                        for (int i = 1; i<[str1 length]+1; i++) {
-                            if ( !((((i+1)%40 == 0 )|| (i%40 == 0)))) {
-                                
-                                NSString *str = [str1 substringWithRange:NSMakeRange(i-1, 1)];
-                                [workStr appendString:str];
-                                
-                            }
-                        }
-                        NSLog(@"workstr ---------%@",workStr);
-                        
-                        [[NSUserDefaults standardUserDefaults] setValue:workStr forKey:WorkKey];
-                        [[NSUserDefaults standardUserDefaults] synchronize];
-                        
-                        [[JHNconnect shareView]WriteWorkKey:57 :workStr];
+                    if ([[sortArr objectAtIndex:c] isEqualToString:@"14"]) {
+                        // 卡有效期
+                        NSString* yyyymm = [NSString stringWithFormat:@"20%@/%@",[deleteStr substringToIndex:2],[deleteStr substringFromIndex:2]];
+                        [[NSUserDefaults standardUserDefaults] setValue:yyyymm forKey:EXP_DATE_14];
                     }
-                    
-                    // ExchangeMoney_Type 交易类型 中文
-                    [[NSUserDefaults standardUserDefaults] setValue:@"消费撤销" forKey:ExchangeMoney_Type];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-
-                    
-                    //交易结果
-                    if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
+                    else if ([[sortArr objectAtIndex:c] isEqualToString:@"37"]) {
+                        //获取搜索参考号
+                        NSLog(@"Consumer_Get_Sort=[%@]", deleteStr);
+                        [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Consumer_Get_Sort];
+                    }
+                    else if ([[sortArr objectAtIndex:c] isEqualToString:@"38"]) {
+                        // 授权码
+                        [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:AuthNo_38];
+                    }
+                    else if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
+                        //交易结果
                         if ([self IC_exchangeSuccess:deleteStr]){
-                            if ([methodStr isEqualToString:@"tcpsignin"]){
-                                rebackStr=@"签到成功";
+                            if ([methodStr isEqualToString:@"consumeRepeal"]){
+                                rebackStr=@"交易成功";
                             }
                             rebackState=YES;
                         }else{
@@ -1370,7 +1358,20 @@ static Unpacking8583 *sharedObj2 = nil;
                             rebackState=NO;
                         }
                     }
+                    else if ([[sortArr objectAtIndex:c] isEqualToString:@"44"]) {
+                        // 发卡行代码 + 收单行代码
+                        int len = [[deleteStr substringToIndex:2] intValue];
+                        NSString* iss_no = [deleteStr substringWithRange:NSMakeRange(2, len)];
+                        NSString* acq_no = [deleteStr substringWithRange:NSMakeRange(2+len, len)];
+                        iss_no = [PublicInformation stringFromHexString:iss_no];
+                        acq_no = [PublicInformation stringFromHexString:acq_no];
+                        [[NSUserDefaults standardUserDefaults] setValue:iss_no forKey:ISS_NO_44_1];
+                        [[NSUserDefaults standardUserDefaults] setValue:acq_no forKey:ACQ_NO_44_2];
+                    }
                     
+                    // ExchangeMoney_Type 交易类型 中文
+                    [[NSUserDefaults standardUserDefaults] setValue:@"消费撤销" forKey:ExchangeMoney_Type];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
                 }
                 NSLog(@"arr=====+%@",arr);
                 [self.delegate managerToCardState:rebackStr isSuccess:rebackState method:methodStr];

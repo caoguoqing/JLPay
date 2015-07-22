@@ -717,7 +717,6 @@
 +(NSString *)formatDate{
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy/MM/dd HH:mm:ss"];
-    //[formatter setDateFormat:@"MM-dd    HH:mm"];
     NSString* str = [formatter stringFromDate:[NSDate date]];
     return str;
 }
