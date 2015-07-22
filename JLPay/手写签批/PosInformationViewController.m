@@ -68,288 +68,344 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor=[UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
+    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
 
     
     self.title=@"POS-签购单";
-    
+    // 导航栏的退出按钮置空
     UIButton*leftBackBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     leftBackBtn.frame=CGRectMake(0,0,0,0);
     leftBackBtn.backgroundColor=[UIColor clearColor];
     UIBarButtonItem *backBarBtn=[[UIBarButtonItem alloc] initWithCustomView:leftBackBtn];
     self.navigationItem.leftBarButtonItem=backBarBtn;
     
-    UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(10,   // 边界 10
-                                                                          0,
-                                                                          Screen_Width-20,  // 减去2*边界
-                                                                          Screen_Height-50-20)];
+    // 小字体
+    UIFont* littleFont = [UIFont systemFontOfSize:12.f];
+    NSDictionary* littleTextAttri = [NSDictionary dictionaryWithObject:littleFont forKey:NSFontAttributeName];
+    // 中字体
+    UIFont* midFont = [UIFont systemFontOfSize:15.f];
+    NSDictionary* midTextAttri = [NSDictionary dictionaryWithObject:midFont forKey:NSFontAttributeName];
+    // 大字体,加粗
+    UIFont* bigFont = [UIFont boldSystemFontOfSize:20.f];
+    NSDictionary* bigTextAttri = [NSDictionary dictionaryWithObject:bigFont forKey:NSFontAttributeName];
+    // 每组 label 之间的间隔
+    CGFloat inset = 5.f;
+    // 按钮高度
+    CGFloat buttonHeight = 50.f;
+    // navigation 高度
+    CGFloat navigationHeigt = self.navigationController.navigationBar.bounds.size.height;
+    
+    // 小票是滚动视图
+    UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(0,
+                                                                          navigationHeigt,
+                                                                          self.view.bounds.size.width,
+                                                                          self.view.bounds.size.height - navigationHeigt - buttonHeight - inset * 4)];
     scrollVi.backgroundColor=[UIColor whiteColor];
-    // 滚动视图的frame.height不应该由子视图计算得来么
-    scrollVi.contentSize=CGSizeMake(Screen_Width-20, 620);
-    [self.view addSubview:scrollVi];
+    
+    
+    
+    
     
     // 导航栏右标签按钮
-    UIButton*rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    rightBtn.frame=CGRectMake(0, 7, 80, 30);
-    rightBtn.backgroundColor=[UIColor clearColor];
-    [rightBtn setBackgroundImage:[PublicInformation imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 44)] forState:UIControlStateNormal];
-    [rightBtn setTitle:@"重新上传" forState:UIControlStateNormal];
-    [rightBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [rightBtn.titleLabel setFont:[UIFont systemFontOfSize:15.0f]];
-    [rightBtn addTarget:self action:@selector(uploadMethod) forControlEvents:UIControlEventTouchUpInside];
-    rightBtn.layer.cornerRadius=6;
-    rightBtn.layer.masksToBounds = YES;
-    rightBtn.layer.borderColor=[UIColor colorWithRed:0.10 green:0.21 blue:0.49 alpha:1.0].CGColor;
-    rightBtn.layer.borderWidth=1.0f;
-    UIBarButtonItem *againUploadBtn=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
-    self.navigationItem.rightBarButtonItem=againUploadBtn;
-//POS-签购单 商户存根
-    UILabel *titleLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 0, Screen_Width-30, 30)];
-    titleLab.backgroundColor=[UIColor clearColor];
-    titleLab.textColor=[UIColor blackColor];
-    titleLab.textAlignment=NSTextAlignmentCenter;
-    titleLab.font=[UIFont systemFontOfSize:20.0f];
-    titleLab.text=@"POS-签购单";
-    [scrollVi addSubview:titleLab];
+//    UIButton*rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+//    rightBtn.frame=CGRectMake(0, 7, 80, 30);
+//    rightBtn.backgroundColor=[UIColor clearColor];
+//    [rightBtn setBackgroundImage:[PublicInformation imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 44)] forState:UIControlStateNormal];
+//    [rightBtn setTitle:@"重新上传" forState:UIControlStateNormal];
+//    [rightBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    [rightBtn.titleLabel setFont:[UIFont systemFontOfSize:15.0f]];
+//    [rightBtn addTarget:self action:@selector(uploadMethod) forControlEvents:UIControlEventTouchUpInside];
+//    rightBtn.layer.cornerRadius=6;
+//    rightBtn.layer.masksToBounds = YES;
+//    rightBtn.layer.borderColor=[UIColor colorWithRed:0.10 green:0.21 blue:0.49 alpha:1.0].CGColor;
+//    rightBtn.layer.borderWidth=1.0f;
+//    UIBarButtonItem *againUploadBtn=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+//    self.navigationItem.rightBarButtonItem=againUploadBtn;
     
-    UILabel *titleInfoLab=[[UILabel alloc] initWithFrame:CGRectMake(Screen_Width-25-100, 10, 100, 20)];
-    titleInfoLab.backgroundColor=[UIColor clearColor];
-    titleInfoLab.textColor=[UIColor blackColor];
-    titleInfoLab.textAlignment=NSTextAlignmentRight;
-    titleInfoLab.font=[UIFont systemFontOfSize:15.0f];
-    titleInfoLab.text=@"商户存根";
-    [scrollVi addSubview:titleInfoLab];
-    
-    UIImageView *lineOneImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 29, Screen_Width-30, 1)];
-    lineOneImg.image=[UIImage imageNamed:@"tabbar_shadow.png"];
-    [scrollVi addSubview:lineOneImg];
-    
-    //商户名称
-    UILabel *businessNameInfoLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 30, Screen_Width-30, 20)];
-    businessNameInfoLab.backgroundColor=[UIColor clearColor];
-    businessNameInfoLab.textColor=[UIColor blackColor];
-    businessNameInfoLab.textAlignment=NSTextAlignmentLeft;
-    businessNameInfoLab.font=[UIFont systemFontOfSize:15.0f];
-    businessNameInfoLab.text=@"商户名称：";
-    [scrollVi addSubview:businessNameInfoLab];
-    
-    UILabel *businessNameLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 50, Screen_Width-30, 30)];
-    businessNameLab.backgroundColor=[UIColor clearColor];
-    businessNameLab.textColor=[UIColor blackColor];
-    businessNameLab.textAlignment=NSTextAlignmentLeft;
-    businessNameLab.font=[UIFont systemFontOfSize:20.0f];
-    businessNameLab.text=[PublicInformation returnBusinessName];
-    [scrollVi addSubview:businessNameLab];
-    
-    // 商户编号
-    UILabel *businessNumberLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 80, Screen_Width-30, 20)];
-    businessNumberLab.backgroundColor=[UIColor clearColor];
-    businessNumberLab.textColor=[UIColor blackColor];
-    businessNumberLab.textAlignment=NSTextAlignmentLeft;
-    businessNumberLab.font=[UIFont systemFontOfSize:15.0f];
-    businessNumberLab.text=[NSString stringWithFormat:@"商户号：%@",[PublicInformation returnBusiness]];
-    [scrollVi addSubview:businessNumberLab];
-    
-    // 终端编号
-    UILabel *terminalLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 100, Screen_Width-30, 20)];
-    terminalLab.backgroundColor=[UIColor clearColor];
-    terminalLab.textColor=[UIColor blackColor];
-    terminalLab.textAlignment=NSTextAlignmentLeft;
-    terminalLab.font=[UIFont systemFontOfSize:15.0f];
-    terminalLab.text=[NSString stringWithFormat:@"终端号：%@",[PublicInformation returnTerminal]];
-    [scrollVi addSubview:terminalLab];
-    
-    // 管理员编号
-    UILabel *managerNumberLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 120, Screen_Width-30, 20)];
-    managerNumberLab.backgroundColor=[UIColor clearColor];
-    managerNumberLab.textColor=[UIColor blackColor];
-    managerNumberLab.textAlignment=NSTextAlignmentLeft;
-    managerNumberLab.font=[UIFont systemFontOfSize:15.0f];
-    managerNumberLab.text=[NSString stringWithFormat:@"操作员号：%@",Manager_Number];//Manager_Number
-    [scrollVi addSubview:managerNumberLab];
-    
-    // 分割线
-    UIImageView *lineTwoImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 139, Screen_Width-30, 1)];
-    lineTwoImg.image=[UIImage imageNamed:@"tabbar_shadow.png"];
-    [scrollVi addSubview:lineTwoImg];
-    
-    //发卡行
-    UILabel *bankCardLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 140, Screen_Width-30, 20)];
-    bankCardLab.backgroundColor=[UIColor clearColor];
-    bankCardLab.textColor=[UIColor blackColor];
-    bankCardLab.textAlignment=NSTextAlignmentLeft;
-    bankCardLab.font=[UIFont systemFontOfSize:15.0f];
-    bankCardLab.text=@"发卡行：";
-    [scrollVi addSubview:bankCardLab];
-    
-    // 卡号
-    UILabel *swipeCardNumLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 160, Screen_Width-30, 20)];
-    swipeCardNumLab.backgroundColor=[UIColor clearColor];
-    swipeCardNumLab.textColor=[UIColor blackColor];
-    swipeCardNumLab.textAlignment=NSTextAlignmentLeft;
-    swipeCardNumLab.font=[UIFont systemFontOfSize:15.0f];
-    swipeCardNumLab.text=@"刷卡卡号";
-    [scrollVi addSubview:swipeCardNumLab];
-    
-    UILabel *cardLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 180, Screen_Width-30, 30)];
-    cardLab.backgroundColor=[UIColor clearColor];
-    cardLab.textColor=[UIColor blackColor];
-    cardLab.textAlignment=NSTextAlignmentLeft;
-    cardLab.font=[UIFont systemFontOfSize:20.0f];
-    cardLab.text=[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll]];
-    [scrollVi addSubview:cardLab];
-    
-    // 交易类型
-    UILabel *exchangeTypeLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 210, Screen_Width-30, 20)];
-    exchangeTypeLab.backgroundColor=[UIColor clearColor];
-    exchangeTypeLab.textColor=[UIColor blackColor];
-    exchangeTypeLab.textAlignment=NSTextAlignmentLeft;
-    exchangeTypeLab.font=[UIFont systemFontOfSize:15.0f];
-    exchangeTypeLab.text=@"交易类型：";
-    [scrollVi addSubview:exchangeTypeLab];
-    
-    UILabel *consumerLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 230, Screen_Width-30, 20)];
-    consumerLab.backgroundColor=[UIColor clearColor];
-    consumerLab.textColor=[UIColor blackColor];
-    consumerLab.textAlignment=NSTextAlignmentLeft;
-    consumerLab.font=[UIFont systemFontOfSize:20.0f];
-    consumerLab.text=[NSString stringWithFormat:@"%@(S)",[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type]];
-    [scrollVi addSubview:consumerLab];
-    
-    UIImageView *lineThreeImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 249, Screen_Width-30, 1)];
-    lineThreeImg.image=[UIImage imageNamed:@"tabbar_shadow.png"];
-    [scrollVi addSubview:lineThreeImg];
-    
-//批次号
-    UILabel *piciLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 250, Screen_Width-30, 20)];
-    piciLab.backgroundColor=[UIColor clearColor];
-    piciLab.textColor=[UIColor blackColor];
-    piciLab.textAlignment=NSTextAlignmentLeft;
-    piciLab.font=[UIFont systemFontOfSize:15.0f];
-    piciLab.text=[NSString stringWithFormat:@"批次号：%@",[[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number]];
-    [scrollVi addSubview:piciLab];
-//
-    UILabel *pingzhengLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 270, Screen_Width-30, 20)];
-    pingzhengLab.backgroundColor=[UIColor clearColor];
-    pingzhengLab.textColor=[UIColor blackColor];
-    pingzhengLab.textAlignment=NSTextAlignmentLeft;
-    pingzhengLab.font=[UIFont systemFontOfSize:15.0f];
-    pingzhengLab.text=[NSString stringWithFormat:@"凭证号：%@",self.infoLiushuiStr];//流水号，self.infoLiushuiStr
-    [scrollVi addSubview:pingzhengLab];
-//
-    UILabel *shouquanmaLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 290, Screen_Width-30, 20)];
-    shouquanmaLab.backgroundColor=[UIColor clearColor];
-    shouquanmaLab.textColor=[UIColor blackColor];
-    shouquanmaLab.textAlignment=NSTextAlignmentLeft;
-    shouquanmaLab.font=[UIFont systemFontOfSize:15.0f];
-    shouquanmaLab.text=@"授权码：";
-    [scrollVi addSubview:shouquanmaLab];
-    
-    UILabel *timeLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 310, Screen_Width-30, 20)];
-    timeLab.backgroundColor=[UIColor clearColor];
-    timeLab.textColor=[UIColor blackColor];
-    timeLab.textAlignment=NSTextAlignmentLeft;
-    timeLab.font=[UIFont systemFontOfSize:15.0f];
-    timeLab.text=[NSString stringWithFormat:@"日期/时间：%@",self.timeStr];//self.timeStr
-    [scrollVi addSubview:timeLab];
-    
-    UILabel *cankaoNumberLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 330, Screen_Width-30, 20)];
-    cankaoNumberLab.backgroundColor=[UIColor clearColor];
-    cankaoNumberLab.textColor=[UIColor blackColor];
-    cankaoNumberLab.textAlignment=NSTextAlignmentLeft;
-    cankaoNumberLab.font=[UIFont systemFontOfSize:15.0f];
-    cankaoNumberLab.text=[NSString stringWithFormat:@"参考号：%@",[PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]]];
-    [scrollVi addSubview:cankaoNumberLab];
-    
-    
-    UILabel *moneyInfolab=[[UILabel alloc] initWithFrame:CGRectMake(5, 350, Screen_Width-30, 20)];
-    moneyInfolab.backgroundColor=[UIColor clearColor];
-    moneyInfolab.textColor=[UIColor blackColor];
-    moneyInfolab.textAlignment=NSTextAlignmentLeft;
-    moneyInfolab.font=[UIFont systemFontOfSize:15.0f];
-    moneyInfolab.text=@"金额(AMOUNT)：";
-    [scrollVi addSubview:moneyInfolab];
-    
-    UILabel *moneyLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 370, Screen_Width-30, 30)];
-    moneyLab.backgroundColor=[UIColor clearColor];
-    moneyLab.textColor=[UIColor blackColor];
-    moneyLab.textAlignment=NSTextAlignmentLeft;
-    moneyLab.font=[UIFont systemFontOfSize:20.0f];
-    moneyLab.text=[NSString stringWithFormat:@"RMB    %@",[PublicInformation returnMoney]];//[PublicInformation returnConsumerMoney]
-    [scrollVi addSubview:moneyLab];
-    
-//备注
-    UILabel *beizhuLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 400, Screen_Width-30, 20)];
-    beizhuLab.backgroundColor=[UIColor clearColor];
-    beizhuLab.textColor=[UIColor blackColor];
-    beizhuLab.textAlignment=NSTextAlignmentLeft;
-    beizhuLab.font=[UIFont systemFontOfSize:15.0f];
-    beizhuLab.text=@"备注：";
-    [scrollVi addSubview:beizhuLab];
-    
-    
-    float isHeight;
-    NSString *lastNum=@"";
-    NSString *exchangeTypeStr=[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type];
-    if ([exchangeTypeStr isEqualToString:@"撤销支付"]) {
-        isHeight=20;
-        lastNum=[NSString stringWithFormat:@"原凭证号：%@",self.lastLiushuiStr];
-    }else{
-        isHeight=0;
-        lastNum=@"";
+    //POS-签购单 商户存根
+    NSString* text = @"POS-签购单";
+    CGRect frame = CGRectMake(0, 0, scrollVi.bounds.size.width, [text sizeWithAttributes:bigTextAttri].height);
+    UILabel* textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentCenter font:bigFont];
+    [scrollVi addSubview:textLabel];
+    // 商户存根
+    text = @"商户存根";
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.width = scrollVi.bounds.size.width - inset*2;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentRight font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 商户名称 - 名
+    text = @"商户名称(MERCHANT NAME)";
+    frame.origin.y += inset + frame.size.height;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 商户名称 - 值
+    text = [PublicInformation returnBusinessName];
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
+    [scrollVi addSubview:textLabel];
+    // 商户编号 - 名
+    text = @"商户编号(MERCHANT NO)";
+    frame.origin.y += inset + frame.size.height;
+    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 终端编号 - 名 并列
+    text = @"终端号(TERMINAL NO)";
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 商户编号 - 值
+    text = [PublicInformation returnBusiness];
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 终端编号 - 值 并列
+    text = [PublicInformation returnTerminal];
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 卡号 - 名
+    text = @"卡号(CARD NO)";
+    frame.origin.x = inset;
+    frame.origin.y += inset + frame.size.height;
+    frame.size.width *= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 卡号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll];
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
+    [scrollVi addSubview:textLabel];
+    // 发卡行号 - 名
+    text = @"发卡行号(ISS NO)";
+    frame.origin.y += frame.size.height + inset;
+    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 收单行号 - 名
+    text = @"收单行号(ACQ NO)";
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 发卡行号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:ISS_NO_44_1];
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 收单行号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:ACQ_NO_44_2];
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 交易类型 - 名
+    text = @"交易类型(TRANS TYPE)";
+    frame.origin.x = inset;
+    frame.origin.y += inset + frame.size.height;
+    frame.size.width *= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 交易类型 - 值
+    text=[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type];
+    if ([text isEqualToString:@"消费"]) {
+        text = [text stringByAppendingString:@" (SALE)"];
+    } else if ([text isEqualToString:@"消费撤销"]) {
+        text = [text stringByAppendingString:@" (VOID)"];
     }
-    
-    UILabel *yuanpingzhengNumlab=[[UILabel alloc] initWithFrame:CGRectMake(5, 420, Screen_Width-30, isHeight)];
-    yuanpingzhengNumlab.backgroundColor=[UIColor clearColor];
-    yuanpingzhengNumlab.textColor=[UIColor blackColor];
-    yuanpingzhengNumlab.textAlignment=NSTextAlignmentLeft;
-    yuanpingzhengNumlab.font=[UIFont systemFontOfSize:15.0f];
-    yuanpingzhengNumlab.text=lastNum;//上一次的流水号,撤销支付的时候才有
-    [scrollVi addSubview:yuanpingzhengNumlab];
-    
-    
-    UIImageView *lineFourImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 419+isHeight, Screen_Width-30, 1)];
-    lineFourImg.image=[UIImage imageNamed:@"tabbar_shadow.png"];
-    [scrollVi addSubview:lineFourImg];
-    
-    
-    UILabel *signLab=[[UILabel alloc] initWithFrame:CGRectMake(5, 420+isHeight, Screen_Width-30, 20)];
-    signLab.backgroundColor=[UIColor clearColor];
-    signLab.textColor=[UIColor blackColor];
-    signLab.textAlignment=NSTextAlignmentLeft;
-    signLab.font=[UIFont systemFontOfSize:15.0f];
-    signLab.text=@"签名：";
-    [scrollVi addSubview:signLab];
-    
-    
-    UIImageView *signImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 440+isHeight, 150, 150)];
-//    UIImageView *signImg=[[UIImageView  alloc] initWithFrame:CGRectMake(5, 440+isHeight, Screen_Width-30, 150)];
-    signImg.image=posImg;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
+    [scrollVi addSubview:textLabel];
+    // 批次号 - 名
+    text = @"批次号(BATCH NO)";
+    frame.origin.y += frame.size.height + inset;
+    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 凭证号 - 名
+    text = @"凭证号(VOUCHER NO)";
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 批次号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 凭证号 - 值
+    text = self.infoLiushuiStr;
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 授权码 - 名
+    text = @"授权码(AUTH NO)";
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height + inset;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 日期/时间 - 名
+    text = @"日期/时间(DATE/TIME)";
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 授权码 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:AuthNo_38];
+    if (text == nil || [text isEqualToString:@""]) text = @" ";
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 日期/时间 - 值
+    text = self.timeStr;
+    frame.origin.x += frame.size.width;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 交易参考号 - 名
+    text = @"交易参考号(REFER NO)";
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height + inset;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 有效期 - 名
+    text = @"有效期(EXP DATE)";
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 交易参考号 - 值
+    text = [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]];
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 有效期 - 值
+    text = self.timeStr;
+    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 金额 - 名
+    text = @"金额(AMOUNT)";
+    frame.origin.x = inset;
+    frame.origin.y += inset + frame.size.height;
+    frame.size.width *= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 金额 - 值
+    text = [NSString stringWithFormat:@"RMB: %@",[PublicInformation returnMoney]];;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
+    [scrollVi addSubview:textLabel];
+
+    // 备注 - 名
+    text = @"备注(REFERENCE)";
+    frame.origin.y += inset + frame.size.height;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 备注 - 值
+    text = @" ";
+    frame.origin.y += frame.size.height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 持卡人签名 - 名
+    text = @"持卡人签名(CARDHOLDER SIGNATURE):";
+    frame.origin.y += inset + frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 持卡人签名 - 图片
+    frame.origin.y += inset + frame.size.height;
+    frame.size.width /= 2.0;
+    frame.size.height = frame.size.width * (posImg.size.height/posImg.size.width);
+    UIImageView *signImg=[[UIImageView alloc] initWithFrame:frame];
+    signImg.image = posImg;
     [scrollVi addSubview:signImg];
+
+    // 描述信息
+    text = @"本人确认以上交易,同意将其计入本卡账户";
+    frame.origin.y += inset + frame.size.height;
+    frame.size.width *= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 英文描述
+    text = @"I ACKNOWLEDGE SATISFATORY RECEIPT OF RELATIVE GOODS/SERVICES";
+    frame.origin.y += frame.size.height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
     
     
+    frame.origin.y += inset + frame.size.height;
+    scrollVi.contentSize = CGSizeMake(Screen_Width, frame.origin.y); // 高度要重新定义
+    [self.view addSubview:scrollVi];
+
+    
+//    NSString *exchangeTypeStr=[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type];
+//    lastNum=[NSString stringWithFormat:@"原凭证号(): %@",self.lastLiushuiStr];
+ 
+    
+    
+    // 确定按钮
+    frame.origin.x = inset * 2.0;
+    frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height + inset * 2.0;
+    frame.size.width = scrollVi.bounds.size.width - inset * 2.0 * 2.0;
+    frame.size.height = buttonHeight;
     UIButton *requireBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    requireBtn.frame=CGRectMake(10, Screen_Height-20-45, [UIScreen mainScreen].bounds.size.width-20, 55);
+    requireBtn.frame = frame;
     requireBtn.layer.cornerRadius = 10.0;
     requireBtn.layer.masksToBounds = YES;
     [requireBtn setBackgroundImage:[PublicInformation createImageWithColor:[UIColor colorWithRed:0.14 green:0.64 blue:0.17 alpha:1.0]] forState:UIControlStateNormal];
     [requireBtn addTarget:self action:@selector(requireMethod) forControlEvents:UIControlEventTouchUpInside];
     [requireBtn setTitle:@"确定" forState:UIControlStateNormal];
-    requireBtn.titleLabel.font=[UIFont systemFontOfSize:20.0f];
+    requireBtn.titleLabel.font = bigFont;
     requireBtn.titleLabel.textColor=[UIColor whiteColor];
     [self.view addSubview:requireBtn];
     
-    
+    // 将滚动视图的内容装填成图片.jpg
     self.scrollAllImg=[self getNormalImage:scrollVi];
-    scrollVi.frame=CGRectMake(10, 0, Screen_Width-20, Screen_Height-20-50);
-//    [self chatUploadImage];
-  
 }
+// 简化代码:label可以用同一个产出方式
+- (UILabel*) newTextLabelWithText:(NSString*)text
+                          inFrame:(CGRect)frame
+                        alignment:(NSTextAlignment)textAlignment
+                             font:(UIFont*)font
+{
+    UILabel* textLabel = [[UILabel alloc] initWithFrame:frame];
+    textLabel.backgroundColor = [UIColor clearColor];
+    textLabel.text = text;
+    textLabel.textAlignment = textAlignment;
+    textLabel.textColor = [UIColor blackColor];
+    textLabel.font = font;
+    return textLabel;
+}
+
+
 
 #pragma mark ----------------屏幕截图
 //获取当前屏幕内容
 - (UIImage *)getNormalImage:(UIScrollView *)view{
-    view.frame=CGRectMake(10, 0, Screen_Width-20, view.contentSize.height);
+    view.frame=CGRectMake(0, 0, view.contentSize.width, view.contentSize.height);
     UIGraphicsBeginImageContextWithOptions(view.contentSize, view.opaque, 1.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
@@ -491,10 +547,6 @@
         for (int i=0; i<[allCardArr count]; i++) {
             [resultArr addObjectsFromArray:[[NSUserDefaults standardUserDefaults] objectForKey:[allCardArr objectAtIndex:i]]];
         }
-        
-        //NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:TheCarcd_Record]];
-        NSLog(@"消费前======%@",resultArr);
-        
         for (int i=0; i<[resultArr count]; i++) {
             if ([[[resultArr objectAtIndex:i] objectForKey:@"liushui"] isEqualToString:self.infoLiushuiStr]) {
                 NSMutableDictionary *dic=[[NSMutableDictionary alloc] initWithDictionary:[resultArr objectAtIndex:i]];
@@ -502,7 +554,6 @@
                 [resultArr replaceObjectAtIndex:i withObject:dic];
             }
         }
-        NSLog(@"消费更新图片路径=====%@",resultArr);
         [[NSUserDefaults standardUserDefaults] setObject:resultArr forKey:TheCarcd_Record];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }

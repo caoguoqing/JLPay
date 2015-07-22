@@ -12,27 +12,42 @@
 #import "AppDelegate.h"
 #import "PublicInformation.h"
 
-#define app_delegate  (AppDelegate *)[UIApplication sharedApplication].delegate
-
 
 //上传电子单的接口
 #define kServerNewURL @"http://122.0.64.115:8080/pos/"//@"http://192.168.1.106:8080/pos/"//@"http://122.0.64.115:8080/pos/"//@"http://122.0.64.115/pos/"
 
+// 自定义键盘的高度
+#define CustomKeyboardHeight            216.0
 
 
 // 8583报文配置
 #define TPDU @"6000060000"
 #define HEADER @"600100310000"
 
+#define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
+#define Screen_Width  [UIScreen mainScreen].bounds.size.width
+#define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
-/*************[notification 变量声明区]**************/
+
+// 设置,用来判断是否设置环境ip
+#define Setting_Ip @"settingip"
+#define Setting_Port @"settingport"
+// 环境:8585报文上送的环境
+#define Current_IP    [PublicInformation settingIp]
+#define Current_Port  [PublicInformation settingPort]//8182//9182    ,测试ip：211.90.22.167；9181
+// HTTP协议的ip配置
+#define Tcp_IP  @"tcpip"
+#define Tcp_Port @"tcpport"
+
+
+
+/*************[Notification 变量声明区]**************/
 #define Noti_CardSwiped_Success         @"Noti_CardSwiped_Success"      // 读卡
 #define Noti_CardSwiped_Fail            @"Noti_CardSwiped_Fail"
 #define Noti_TransSale_Success          @"Noti_TransSale_Success"       // 刷卡消费
 #define Noti_TransSale_Fail             @"Noti_TransSale_Fail"
 #define Noti_WorkKeyWriting_Success     @"Noti_WorkKeyWriting_Success"  // 写工作密钥
 #define Noti_WorkKeyWriting_Fail        @"Noti_WorkKeyWriting_Fail"
-/*************[notification 变量声明区]**************/
 
 /*************[交易类型]**************/
 #define TranType                    @"TranType"
@@ -41,14 +56,14 @@
 #define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
 #define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
 #define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
-/*************[交易类型]**************/
 
 /*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/
 #define CardTypeIsTrack             @"CardTypeIsTrack"                  // 值:YES(磁条)/NO(芯片)
 
 
 
-#pragma mask ========================== 商户相关的参数
+/*************[商户相关的参数:]**************/
+
 // 终端号，商户号,商户名称
 #define Terminal_Number @"terminal"
 #define Business_Number @"business"
@@ -67,7 +82,8 @@
 #define Manager_Number @"001"
 
 
-#pragma mask ========================== 设备操作相关的参数
+/*************[设备操作相关的参数:]**************/
+
 // 厂商设备类型
 #define DeviceType                  @"DeviceType"               
 // 锦宏霖音频A60
@@ -91,19 +107,11 @@
 // 设备操作的等待超时时间
 #define DeviceWaitingTime           20                          
 
-
-
-
-// 自定义键盘的高度
-#define CustomKeyboardHeight            216.0                           
-
-
 //IC卡 SN序列号
 #define Blue_Device_SN @"4800006472"//@"4800006472"//csn=====@"0800040270000023"//
 
 //蓝牙卡头 CSN
 #define Blue_Device_CSN @"bluecsn"
-
 #define Blue_IC_PiciNmuber @"000001"
 
 //公钥下载 tlv
@@ -118,41 +126,10 @@
 #define BlueIC55_Information @"55info"
 
 
-//签到获取的pinkey
-#define Sign_in_PinKey @"pinkey"
-
-#define Sign_in_MacKey @"mackey"
-
-
-
-//消费获取的搜索参考号
-#define Consumer_Get_Sort @"cankaohao"
-
-
-//主秘钥明文，保存
-#define main_key_plain @"mainkeyplain"
-
-
-//交易流水号，每次交易加1
-#define Exchange_Number @"exchangenumber"
-
-//是否消费
-#define Is_Or_Consumer @"isconsumer"
-
-//批次号,签到默认6-bcd，从签到中获取
-//#define Every_Sort_Number @"000000"
-#define Get_Sort_Number @"sortnumber"
-
-
-
-//初始化终端成功，可以签到
-#define Init_Terminal_Success @"initterminal"
-
-//交易输入的金额
-#define Consumer_Money @"money"
 
 
 /*************[保存的 原交易信息]**************/
+
 //消费成功的金额,方便撤销支付
 #define SuccessConsumerMoney @"successmoney"
 
@@ -170,118 +147,100 @@
 
 
 
-#define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
-#define Screen_Width  [UIScreen mainScreen].bounds.size.width
-#define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
-#define Current_IP    [PublicInformation settingIp]
-#define Current_Port  [PublicInformation settingPort]//8182//9182    ,测试ip：211.90.22.167；9181
 
-#define Tcp_IP  @"tcpip"
-#define Tcp_Port @"tcpport"
+/*************[8583 交易使用的配置信息 交易信息]**************/
 
-#define Setting_Ip @"settingip"
-#define Setting_Port @"settingport"
+// F02:   银行卡号
+#define Card_Number @"card"
+//        获取带星的卡号
+#define GetCurrentCard_NotAll @"notallcard"
+// F04:   交易输入的金额
+#define Consumer_Money @"money"
+//        保存撤销金额
+#define Save_Return_Money @"renturnmoney"
+// F11:   交易流水号，每次交易加1
+#define Exchange_Number @"exchangenumber"
+// F23:   芯片卡序列号
+#define ICCardSeq_23    @"ICCardSeq_23_"
+// F35:   二磁道数据
+#define Two_Track_Data @"trackdata"
+// F38:   授权码:AUTH NO
+#define AuthNo_38       @"AuthNo_38_"
+// F44.1:   发卡行标识
+#define ISS_NO_44_1         @"ISS_NO_44_1_"
+// F44.2:   结算行标识
+#define ACQ_NO_44_2         @"ACQ_NO_44_2_"
+// F55:   芯片卡数据55域数据
+#define ICCData_55      @"ICCData_55_"
+// F60.2: 批次号,签到默认6-bcd，从签到中获取
+#define Get_Sort_Number @"sortnumber"
+//        O_F60.2 原交易签到批次号
+#define Last_FldReserved_Number @"fldReserved"
 
-//参数更新(解密key)
+// 参数更新(解密key)
 #define DECRYPT_KEY @"31313131313131313232323232323232"
 
-//签到(主密钥)
+// ----- 暂时没用到 :主密钥
 #define Main_Work_key [PublicInformation getMainSecret]
-
-//@"D4A372400FDCAB7A4817643301CF9E6C"
 
 #define IsOrRefresh_MainKey @"refreshkey"
 #define Refresh_Later_MainKey @"laterkey"
 
-
-//C678E939CD3811BE8C8FAC526A2CF20A
-
-#define WorkKey @"workkey"
-
-//签到获取的pinkey
+// 签到获取的pinkey
 #define Sign_in_PinKey @"pinkey"
 #define Sign_in_MacKey @"mackey"
 
-//消费获取的搜索参考号
+// 消费获取的搜索参考号
 #define Consumer_Get_Sort @"cankaohao"
 
-//主秘钥明文，保存
+// 主秘钥明文，保存
 #define main_key_plain @"mainkeyplain"
 
-
-
-//交易流水号，每次交易加1
-#define Exchange_Number @"exchangenumber"
-
-//是否消费
+// 是否消费
 #define Is_Or_Consumer @"isconsumer"
 
-//批次号,签到默认6-bcd，从签到中获取
-//#define Every_Sort_Number @"000000"
-#define Get_Sort_Number @"sortnumber"
+// 初始化终端成功，可以签到
+#define Init_Terminal_Success @"initterminal"
+
+// 下载的工作密钥
+#define WorkKey @"workkey"
+
+// 签到获取的pinkey
+#define Sign_in_PinKey @"pinkey"
+#define Sign_in_MacKey @"mackey"
+
+// 消费获取的搜索参考号
+#define Consumer_Get_Sort @"cankaohao"
+
+// 主秘钥明文，保存
+#define main_key_plain @"mainkeyplain"
 
 // 签到标志
 #define DeviceBeingSignedIn   @"DeviceBeingSignedIn"
 
-//初始化终端成功，可以签到
-#define Init_Terminal_Success @"initterminal"
-
-//交易输入的金额
-#define Consumer_Money @"money"
-
-//消费成功的金额,方便撤销支付
-#define SuccessConsumerMoney @"successmoney"
-
-//原交易流水号,消费交易的流水号
-#define Last_Exchange_Number @"lastnumber"
-// 原交易签到批次号
-#define Last_FldReserved_Number @"fldReserved"
-
-//保存撤销金额
-#define Save_Return_Money @"renturnmoney"
-
-//缓存卡号信息
-#define Save_All_NonCardInfo @"allcardinfo"
-
-
-//银行卡号
-#define Card_Number @"card"
-//二磁道数据
-#define Two_Track_Data @"trackdata"
-// 芯片卡数据55域数据
-#define ICCData_55      @"ICCData_55_"
-// 芯片卡序列号
-#define ICCardSeq_23    @"ICCardSeq_23_"
-
-//查询的金额
+// 查询的金额
 #define SearchCard_Money @"searchmoney"
 
-//刷卡记录
+// 刷卡记录
 #define TheCarcd_Record [PublicInformation returnposCard]//@"cardcord"
 
-//保存终端号
+// 保存终端号
 #define The_terminal_Number @"terminalaaaaa"
 
-
-//保存本次消费的流水号
+// 保存本次消费的流水号
 #define Current_Liushui_Number @"liushuinumber"
 
-//获取带星的卡号
-#define GetCurrentCard_NotAll @"notallcard"
-
-//交易类型
+// 交易类型
 #define ExchangeMoney_Type @"exchangetype"
-
-
-//保存撤销金额
-#define Save_Return_Money @"renturnmoney"
 
 //缓存卡号信息
 #define Save_All_NonCardInfo @"allcardinfo"
 
 
-#pragma mark=============================================支付宝
+
+
+/*************[支付宝 相关的参数:]**************/
 
 //支付宝二维码串
 #define ErWeiMaChuan @"erweimachuan"
@@ -298,10 +257,8 @@
 //支付宝查询订单号
 #define Zhifubao_Search_Order @"searchorder"
 
-
 //支付宝条码支付，缓存消费记录
 #define ZhifubaoTiaomaRecord @"zhifubaotiaomarecord"
-
 
 //支付宝订单号状态切换(条码、扫码成功 state=1；撤销、退款 state=0)
 #define ZhifubaoDingdanState @"dingdanstate"

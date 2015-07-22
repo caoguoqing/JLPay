@@ -1028,7 +1028,7 @@ static Unpacking8583 *sharedObj2 = nil;
             NSArray* sortArr = [[NSArray alloc] initWithArray:bitmapArr];
             //数据包
             NSMutableString *dataStr=(NSMutableString *)[signin substringWithRange:NSMakeRange(46, ([signin length]-46))];
-            NSLog(@"数据包长度====%d,数据=====%@",[dataStr length],dataStr);
+            NSLog(@"数据包长度====%d,数据=====%@",(int)[dataStr length],dataStr);
             NSMutableArray *arr=[[NSMutableArray alloc] init];
             
             int location=0;
@@ -1037,42 +1037,31 @@ static Unpacking8583 *sharedObj2 = nil;
             for (int c=0; c<[sortArr count]; c++) {
                 
                 if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"99"]) {
-                    
                     //剩下长度
                     NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                    
-                    
                     if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"type"] isEqualToString: @"bcd"]) {
                         //取一个字节，表示长度
                         int oneCharLength=(([[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]+1)/2 *2)+2;
                         length=oneCharLength;
-                        
                     }else
                     {
                         //取一个字节，表示长度
                         int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]*2+2;
                         length=oneCharLength;
                     }
-                    
                 }else if([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"999"]){
                     //剩下长度
                     NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                    //                    //取两个字节，表示长度
-                    //                    int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-                    //                    length=oneCharLength;
                     if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"type"] isEqualToString: @"bcd"]) {
                         //取两个字节，表示长度
                         int oneCharLength=(([[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]+1)/2*2)+4;
                         length=oneCharLength;
-                        
                     }else
                     {
                         //取两个字节，表示长度
                         int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-                        
                         length=oneCharLength;
                     }
-                    NSLog(@"--------------remainstr%@    length%d",[remainStr substringWithRange:NSMakeRange(0, 4)],length);
                 }else{
                     length=[[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"] intValue];
                 }
@@ -1080,27 +1069,37 @@ static Unpacking8583 *sharedObj2 = nil;
                 deleteStr=[dataStr substringWithRange:NSMakeRange(location, length)];
                 location += length;
                 [arr addObject:deleteStr];
-                
-                NSLog(@"methodStr====%@位域====%@,长度=====%@,值====%@",methodStr,[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
+                NSLog(@"methodStr====[%@] 位域====[%@] 长度=====[%@] 值====[%@]",methodStr,[sortArr objectAtIndex:c],
+                      [[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
                 
                 //保存消费成功的交易金额
                 if (([[sortArr objectAtIndex:c] isEqualToString:@"4"])) {
-                    NSLog(@"消费的次数");
                     float money=[deleteStr floatValue]/100;
                     NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
                     [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SuccessConsumerMoney];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
-                if ([[sortArr objectAtIndex:c] isEqualToString:@"37"]) {
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"37"]) {
                     //获取搜索参考号
                     [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Consumer_Get_Sort];
                     [[NSUserDefaults standardUserDefaults] synchronize];
                 }
-                // 保存返回的 55 数据域
-//                if ([[sortArr objectAtIndex:c] isEqualToString:@"55"]) {
-//                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:BlueIC55_Information];
-//                    [[NSUserDefaults standardUserDefaults] synchronize];
-//                }
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"38"]) {
+                    // 授权码
+                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:AuthNo_38];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"44"]) {
+                    // 发卡行代码 + 收单行代码
+                    int len = [[deleteStr substringToIndex:2] intValue];
+                    NSString* iss_no = [deleteStr substringWithRange:NSMakeRange(2, len)];
+                    NSString* acq_no = [deleteStr substringWithRange:NSMakeRange(2+len, len)];
+                    iss_no = [PublicInformation stringFromHexString:iss_no];
+                    acq_no = [PublicInformation stringFromHexString:acq_no];
+                    [[NSUserDefaults standardUserDefaults] setValue:iss_no forKey:ISS_NO_44_1];
+                    [[NSUserDefaults standardUserDefaults] setValue:acq_no forKey:ACQ_NO_44_2];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
                 // ExchangeMoney_Type 交易类型 中文
                 [[NSUserDefaults standardUserDefaults] setValue:@"消费" forKey:ExchangeMoney_Type];
                 [[NSUserDefaults standardUserDefaults] synchronize];

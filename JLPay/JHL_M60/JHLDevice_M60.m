@@ -1174,7 +1174,8 @@
     memset(dataStr, 0, 512);
     NSString *strData ;
     strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@*****%@",[strData substringWithRange:NSMakeRange(0, [strData length]-9)],[strData substringWithRange:NSMakeRange([strData length]-4, 4)]] forKey:GetCurrentCard_NotAll];
+    NSString* cardNo_notAll = [NSString stringWithFormat:@"%@******%@", [strData substringToIndex:6], [strData substringFromIndex:[strData length] - 4]];
+    [[NSUserDefaults standardUserDefaults] setValue:cardNo_notAll forKey:GetCurrentCard_NotAll];
     [[NSUserDefaults  standardUserDefaults]setObject:strData forKey:Card_Number];
     
     [[NSUserDefaults standardUserDefaults]synchronize];
