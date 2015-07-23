@@ -595,7 +595,7 @@
         myBuffer[i / 2] = (char)anInt;
     }
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
-    NSLog(@"------字符串=======%@",unicodeString);
+    NSLog(@"------字符串=======[%@]",unicodeString);
     return unicodeString;
     
     

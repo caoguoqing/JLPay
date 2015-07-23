@@ -211,38 +211,15 @@
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
     sender.transform = CGAffineTransformIdentity;
-
-    
-    /* 
-     * 再判断是否连接设备
-     *  0:已打开，未连接
-     *  1:已连接
-     *  -1:未打开
-    */
-//    DeviceManager* device = [DeviceManager sharedInstance];
-//    NSString* SNVersionNum = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-//    int connected = [device isConnectedOnSNVersionNum:SNVersionNum];
-//    if (connected == -1)
-//    {
-//        [self alertShow:@"请连接设备"];
-//    }else if (connected == 0) { // 正在连接
-//        [self alertShow:@"设备正在连接,请稍候..."];
-//    }
-//    else if (connected == 1) {  // 已连接
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-        // 保存的是字符串型的金额
-        [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
-        [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
-        [self.navigationController pushViewController:viewcon animated:YES];
-//    }
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+    // 保存的是字符串型的金额
+    [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
+//    viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
+    [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [self.navigationController pushViewController:viewcon animated:YES];
 }
-
-
-
-
 
 
 #pragma mask ::: 自定义返回上层界面按钮的功能
@@ -258,8 +235,10 @@
  *************************************/
 - (CGFloat)resizeFontWithButton: (UIButton*)button inFrame: (CGRect) frame {
     CGFloat resize = 0.0;
-    CGSize size = [button.titleLabel.text sizeWithFont:button.titleLabel.font];
-    // 设置字体的高度占 label 的高度的 2/3
+//    CGSize size = [button.titleLabel.text sizeWithFont:button.titleLabel.font];
+    NSDictionary* textAttri = [NSDictionary dictionaryWithObject:button.titleLabel.font forKey:NSFontAttributeName];
+    CGSize size = [button.titleLabel.text sizeWithAttributes:textAttri];
+    // 重置:设置字体的高度占 label 的高度的 2/3
     resize = 2.0 * frame.size.height / (3.0 * size.height);
     return resize;
 }
@@ -282,7 +261,6 @@
     CGFloat visibleHeight               = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
     CGFloat  bornerWith                 = 0.5;
     
-    
     // 图标          3/8/3.3
     CGFloat littleHeight                = visibleHeight * (3.0/8.0/3.3);
     CGFloat littleHeight_2              = littleHeight * 0.8;
@@ -294,7 +272,6 @@
     imageView.image                     = [UIImage imageNamed:ImageForBrand];
     
     [self.view addSubview:imageView];
-    
     
     // 金额显示框     1/8
     CGFloat bigHeight                   = visibleHeight * 1.0/8.0;
@@ -418,8 +395,6 @@
     
     [brushButton setSelected:YES];
     [self.view addSubview:brushButton];
-    
-    
 }
 
 

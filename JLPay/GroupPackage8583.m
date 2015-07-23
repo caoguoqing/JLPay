@@ -421,7 +421,7 @@
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],//41,终端号，asc，定长8
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],//42，商户号，asc，定长15
                   
-                  @"001399000000003100",//60,
+                  @"001399000000003100",//60, 主密钥下载的 60.1 = 99, 60.3 = 003, 60.4 = 1,60.5 = 0
                 @"01449F0605DF000000049F220101DF9981804ff32b878be48f71335aa4a3f3c54bcfc574020b9bc8d28692ff54523db6e57f3a865c4460963d59a3f6fc5c82d366a2cb95655e92224e204afd1b7d22cd2fb012013208970cbb24d22a9072e734acc13afe128191cfaf97e0969bbf2f1658b092398f8f0446421daca0862e93d9ad174e85e2a68eac8ec9897328ca5b5fa4e6",//62,
                   
                   @"00113030313030303030303030", //63
@@ -447,14 +447,14 @@
 +(NSString *)consume:(NSString *)pin{
     //流水号
     NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];//[PublicInformation exchangeNumber];
-    [[NSUserDefaults standardUserDefaults] setValue:liushuiStr forKey:Last_Exchange_Number];
+//    [[NSUserDefaults standardUserDefaults] setValue:liushuiStr forKey:Last_Exchange_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
-                  
                   @"190000",//3
                   [self themoney],//4 金额，bcd，定长12
                   liushuiStr,//@"000027",//11 流水号,bcd,定长6
+                  [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime],// 14 有效期
                   @"0210",//22
                   @"82",//25
                   @"12",//26
@@ -481,7 +481,7 @@
     NSLog(@"pin======%@",pin);
     NSLog(@"消费数据=====%@",arr);
     //二进制报文数据
-    NSArray *bitmapArr=[NSArray arrayWithObjects:@"3",@"4",@"11",@"22",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"60",@"63",@"64", nil];
+    NSArray *bitmapArr=[NSArray arrayWithObjects:@"3",@"4",@"11",@"14",@"22",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"60",@"63",@"64", nil];
     NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
                                                 Tpdu:TPDU
                                               Header:HEADER
@@ -553,9 +553,11 @@
          // 3 交易类型:280000
          @"280000",
          // 4 金额，bcd，定长12
-         moneyStr,//[PublicInformation returnConsumerMoney],//[self themoney],
+         moneyStr,
          // 11 bcd,定长6
-         currentLiushuiStr,//[PublicInformation returnLiushuiHao],
+         currentLiushuiStr,
+         // 14 有效期
+         [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime],
          // 22 输入模式,bcd,m,定长3
          @"0210",
          // 25,条件代码,bcd,定长2
@@ -564,7 +566,6 @@
          @"12",
          // 35，二磁道数据，asc，不定长37，(pos获取时存在)
          [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
-         // 36，三磁道数据，asc，不定长104，(pos获取时存在)
          // 37, 搜索参考号
          [EncodeString encodeASC: liushuiStr],
          // 41, 终端号，asc，定长8
@@ -583,7 +584,7 @@
          betweenStr,  nil];
     
     //二进制报文数据
-    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"25",@"26",@"35",@"37",@"41",@"42",@"49",@"52",@"53",@"60",@"61"/*,@"56",@"63"*/,@"64", nil];
+    bitmaparr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"14",@"22",@"25",@"26",@"35",@"37",@"41",@"42",@"49",@"52",@"53",@"60",@"61"/*,@"56",@"63"*/,@"64", nil];
 
     
     NSLog(@"消费撤销数据====%@",arr);

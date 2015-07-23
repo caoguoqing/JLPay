@@ -131,11 +131,9 @@
 /*************[保存的 原交易信息]**************/
 
 //消费成功的金额,方便撤销支付
-#define SuccessConsumerMoney @"successmoney"
-
+#define  SuccessConsumerMoney       @"successmoney"
 //原交易流水号,消费交易的流水号
-#define Last_Exchange_Number @"lastnumber"
-
+#define  Last_Exchange_Number       @"lastnumber"
 //3,交易处理码                 -- 跟上一笔交易保持一致  Processing Code
 #define  LastF03_ProcessingCode     @"LastProcessingCode_F03__"
 //11,流水号 bcd 6           -- 跟上一笔交易保持一致    System Trace
@@ -144,9 +142,6 @@
 #define  LastF22_ServiceEntryCode   @"LastServiceEntryCode_F22__"
 //60,                         -- 跟上一笔交易保持一致   Reserved Private
 #define  LastF60_Reserved           @"LastReserved_F60__"
-
-
-
 
 
 /*************[8583 交易使用的配置信息 交易信息]**************/
@@ -161,6 +156,10 @@
 #define Save_Return_Money @"renturnmoney"
 // F11:   交易流水号，每次交易加1
 #define Exchange_Number @"exchangenumber"
+// F12:   交易时间
+#define Trans_Time_12      @"Trans_Time_12_"
+// F13:   交易日期
+#define Trans_Date_13      @"Trans_Date_13_"
 // F14:   卡片有效期
 #define EXP_DATE_14     @"EXP_DATE_14_"
 // F23:   芯片卡序列号
@@ -193,6 +192,9 @@
 #define Sign_in_PinKey @"pinkey"
 #define Sign_in_MacKey @"mackey"
 
+// 保存本次消费的流水号
+#define Current_Liushui_Number @"liushuinumber"
+
 // 消费获取的搜索参考号
 #define Consumer_Get_Sort @"cankaohao"
 
@@ -212,12 +214,6 @@
 #define Sign_in_PinKey @"pinkey"
 #define Sign_in_MacKey @"mackey"
 
-// 消费获取的搜索参考号
-#define Consumer_Get_Sort @"cankaohao"
-
-// 主秘钥明文，保存
-#define main_key_plain @"mainkeyplain"
-
 // 签到标志
 #define DeviceBeingSignedIn   @"DeviceBeingSignedIn"
 
@@ -229,9 +225,6 @@
 
 // 保存终端号
 #define The_terminal_Number @"terminalaaaaa"
-
-// 保存本次消费的流水号
-#define Current_Liushui_Number @"liushuinumber"
 
 // 交易类型
 #define ExchangeMoney_Type @"exchangetype"

@@ -262,21 +262,21 @@ static NSMutableArray *colors;
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     
-    //[appdeletate returnApplocation];
     PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
     posInformationVc.posImg=self.uploadImage;
-    [posInformationVc liushuiNum:self.currentLiushuiStr time:[PublicInformation formatDate] lastliushuinum:self.lastLiushuiStr];
-    [self.navigationController pushViewController:posInformationVc animated:YES];
-//    [self presentViewController:posInformationVc animated:YES completion:nil];
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyyMMddHHmmss"];
+    NSString* transDateAndTime = [formatter stringFromDate:[NSDate date]];
+    NSString* trantime = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Time_12];
+    NSString* trandate = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Date_13];
+    transDateAndTime = [NSString stringWithFormat:@"%@/%@/%@ %@:%@:%@",
+                        [transDateAndTime substringToIndex:4],[trandate substringToIndex:2],[trandate substringFromIndex:2],
+                        [trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]
+                        ];
+    [posInformationVc liushuiNum:self.currentLiushuiStr time:transDateAndTime lastliushuinum:self.lastLiushuiStr];
     
-    /*
-     self.navigationController.navigationBar.hidden=NO;
-     [newVersionVi removeFromSuperview];
-     [self.view removeFromSuperview];
-     //状态栏旋转
-     [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
-     [self.navigationController popToRootViewControllerAnimated:YES];
-     */
+    // 跳转到小票界面
+    [self.navigationController pushViewController:posInformationVc animated:YES];
 }
 
 

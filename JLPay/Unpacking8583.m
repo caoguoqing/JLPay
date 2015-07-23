@@ -1078,6 +1078,14 @@ static Unpacking8583 *sharedObj2 = nil;
                     NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
                     [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SuccessConsumerMoney];
                 }
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"12"]) {
+                    // hhmmss 时间
+                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Trans_Time_12];
+                }
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"13"]) {
+                    // MMDD 日期
+                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Trans_Date_13];
+                }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"14"]) {
                     // 卡有效期
                     NSString* yyyymm = [NSString stringWithFormat:@"20%@/%@",[deleteStr substringToIndex:2],[deleteStr substringFromIndex:2]];
@@ -1101,25 +1109,25 @@ static Unpacking8583 *sharedObj2 = nil;
                     [[NSUserDefaults standardUserDefaults] setValue:iss_no forKey:ISS_NO_44_1];
                     [[NSUserDefaults standardUserDefaults] setValue:acq_no forKey:ACQ_NO_44_2];
                 }
-                // ExchangeMoney_Type 交易类型 中文
-                [[NSUserDefaults standardUserDefaults] setValue:@"消费" forKey:ExchangeMoney_Type];
-                [[NSUserDefaults standardUserDefaults] synchronize];
                 
                 //交易结果
-                if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
+                else if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
                     if ([self IC_exchangeSuccess:deleteStr] ) {
                         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:Is_Or_Consumer];
                         [[NSUserDefaults standardUserDefaults] synchronize];
                         //保存消费刷卡记录
                         rebackStr=@"交易成功";
                         rebackState=YES;
-                        [self saveExchangeResultMethod];
+//                        [self saveExchangeResultMethod];
                     }else{
                         rebackStr=[self zhifubaoexchangeSuccess:deleteStr];
                         rebackState=NO;
                         
                     }
                 }
+                // ExchangeMoney_Type 交易类型 中文
+                [[NSUserDefaults standardUserDefaults] setValue:@"消费" forKey:ExchangeMoney_Type];
+                [[NSUserDefaults standardUserDefaults] synchronize];
                 
             }
             NSLog(@"arr=====+%@",arr);
@@ -1332,7 +1340,16 @@ static Unpacking8583 *sharedObj2 = nil;
                     
                     NSLog(@"methodStr====%@位域====%@,长度=====%@,值====%@",methodStr,[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
                     
-                    if ([[sortArr objectAtIndex:c] isEqualToString:@"14"]) {
+                    
+                    if ([[sortArr objectAtIndex:c] isEqualToString:@"12"]) {
+                        // hhmmss 时间
+                        [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Trans_Time_12];
+                    }
+                    else if ([[sortArr objectAtIndex:c] isEqualToString:@"13"]) {
+                        // MMDD 日期
+                        [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Trans_Date_13];
+                    }
+                    else if ([[sortArr objectAtIndex:c] isEqualToString:@"14"]) {
                         // 卡有效期
                         NSString* yyyymm = [NSString stringWithFormat:@"20%@/%@",[deleteStr substringToIndex:2],[deleteStr substringFromIndex:2]];
                         [[NSUserDefaults standardUserDefaults] setValue:yyyymm forKey:EXP_DATE_14];

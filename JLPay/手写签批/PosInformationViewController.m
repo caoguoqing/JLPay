@@ -85,14 +85,12 @@
     UIFont* midFont = [UIFont systemFontOfSize:17.f];
     NSDictionary* midTextAttri = [NSDictionary dictionaryWithObject:midFont forKey:NSFontAttributeName];
     // 大字体,加粗
-    UIFont* bigFont = [UIFont boldSystemFontOfSize:22.f];
+    UIFont* bigFont = [UIFont systemFontOfSize:22.f];
     NSDictionary* bigTextAttri = [NSDictionary dictionaryWithObject:bigFont forKey:NSFontAttributeName];
     // 每组 label 之间的间隔
     CGFloat inset = 5.f;
     // 按钮高度
     CGFloat buttonHeight = 50.f;
-    // navigation 高度
-//    CGFloat navigationHeigt = self.navigationController.navigationBar.bounds.size.height;
     
     // 小票是滚动视图
     UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(0,
@@ -116,6 +114,13 @@
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentRight font:midFont];
     [scrollVi addSubview:textLabel];
+    // 商户存根 - 英文描述
+    text = @"MERCHANT COPY";
+    frame.origin.y += frame.size.height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentRight font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+    
     // 商户名称 - 名
     text = @"商户名称(MERCHANT NAME)";
     frame.origin.y += inset + frame.size.height;
@@ -128,35 +133,40 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
+    
     // 商户编号 - 名
     text = @"商户编号(MERCHANT NO)";
     frame.origin.y += inset + frame.size.height;
-    frame.size.width /= 2.0;
+//    frame.size.width /= 2.0;
     frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 终端编号 - 名 并列
-    text = @"终端号(TERMINAL NO)";
-    frame.origin.x += frame.size.width;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 商户编号 - 值
     text = [PublicInformation returnBusiness];
-    frame.origin.x = inset;
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
+    
+    // 终端编号 - 名 并列
+    text = @"终端号(TERMINAL NO)";
+//    frame.origin.x += frame.size.width;
+    frame.origin.y += inset + frame.size.height;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
     // 终端编号 - 值 并列
     text = [PublicInformation returnTerminal];
-    frame.origin.x += frame.size.width;
+//    frame.origin.x += frame.size.width;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
     // 卡号 - 名
     text = @"卡号(CARD NO)";
-    frame.origin.x = inset;
+//    frame.origin.x = inset;
     frame.origin.y += inset + frame.size.height;
-    frame.size.width *= 2.0;
+//    frame.size.width *= 2.0;
     frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
@@ -166,35 +176,11 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-    // 发卡行号 - 名
-    text = @"发卡行号(ISS NO)";
-    frame.origin.y += frame.size.height + inset;
-    frame.size.width /= 2.0;
-    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 收单行号 - 名
-    text = @"收单行号(ACQ NO)";
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 发卡行号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:ISS_NO_44_1];
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height;
-    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
-    // 收单行号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:ACQ_NO_44_2];
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
     // 交易类型 - 名
     text = @"交易类型(TRANS TYPE)";
-    frame.origin.x = inset;
+    //    frame.origin.x = inset;
     frame.origin.y += inset + frame.size.height;
-    frame.size.width *= 2.0;
+    //    frame.size.width *= 2.0;
     frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
@@ -209,85 +195,12 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-    // 批次号 - 名
-    text = @"批次号(BATCH NO)";
-    frame.origin.y += frame.size.height + inset;
-    frame.size.width /= 2.0;
-    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 凭证号 - 名
-    text = @"凭证号(VOUCHER NO)";
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 批次号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height;
-    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
-    // 凭证号 - 值
-    text = self.infoLiushuiStr;
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
-    // 授权码 - 名
-    text = @"授权码(AUTH NO)";
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset;
-    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 日期/时间 - 名
-    text = @"日期/时间(DATE/TIME)";
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 授权码 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:AuthNo_38];
-    if (text == nil || [text isEqualToString:@""]) text = @" ";
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height;
-    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
-    // 日期/时间 - 值
-    text = self.timeStr;
-    frame.origin.x += frame.size.width;
-    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
-    // 交易参考号 - 名
-    text = @"交易参考号(REFER NO)";
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset;
-    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 有效期 - 名
-    text = @"有效期(EXP DATE)";
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
-    [scrollVi addSubview:textLabel];
-    // 交易参考号 - 值
-    text = [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]];
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height;
-    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
-    // 有效期 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:EXP_DATE_14];
-    frame.origin.x += frame.size.width;
-    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
-    [scrollVi addSubview:textLabel];
+    
     // 金额 - 名
     text = @"金额(AMOUNT)";
-    frame.origin.x = inset;
+    //    frame.origin.x = inset;
     frame.origin.y += inset + frame.size.height;
-    frame.size.width *= 2.0;
+    //    frame.size.width *= 2.0;
     frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
@@ -297,6 +210,149 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
+
+    // 日期/时间 - 名
+    text = @"日期/时间(DATE/TIME)";
+    //    frame.origin.x += frame.size.width;
+    frame.origin.y += frame.size.height + inset;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 日期/时间 - 值
+    text = self.timeStr;
+    //    frame.origin.x += frame.size.width;
+    //    frame.size.width *= 2.0;
+    frame.origin.y += frame.size.height;
+    //    frame.size.width *= 2.0/3.0;
+    
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+
+    // 发卡行号 - 名
+    text = @"发卡行号(ISS NO)";
+    frame.origin.y += frame.size.height + inset;
+//    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 发卡行号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:ISS_NO_44_1];
+//    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 收单行号 - 名
+    text = @"收单行号(ACQ NO)";
+    //    frame.origin.x += frame.size.width;
+    frame.origin.y += frame.size.height + inset;
+    //    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 收单行号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:ACQ_NO_44_2];
+//    frame.origin.x += frame.size.width;
+    frame.origin.y += frame.size.height;
+    //    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+    
+    
+    
+    
+    // 批次号 - 名
+    text = @"批次号(BATCH NO)";
+    frame.origin.y += frame.size.height + inset;
+//    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 批次号 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
+//    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    // 凭证号 - 名
+    text = @"凭证号(VOUCHER NO)";
+    frame.origin.y += frame.size.height + inset;
+    //    frame.size.width /= 2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    //    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 凭证号 - 值
+    text = self.infoLiushuiStr;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+//    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+    
+    // 授权码 - 名
+    text = @"授权码(AUTH NO)";
+//    frame.origin.x = inset;
+    frame.origin.y += frame.size.height + inset;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 授权码 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:AuthNo_38];
+    if (text == nil || [text isEqualToString:@""]) text = @" ";
+//    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+//    frame.size.width *= 2.0/3.0;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+    
+    
+    
+    
+    // 交易参考号 - 名
+    text = @"交易参考号(REFER NO)";
+//    frame.origin.x = inset;
+    frame.origin.y += frame.size.height + inset;
+//    frame.size.width = scrollVi.bounds.size.width/2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 交易参考号 - 值
+    text = [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]];
+//    frame.origin.x = inset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+    // 有效期 - 名
+    text = @"有效期(EXP DATE)";
+    frame.origin.y += frame.size.height + inset;
+    //    frame.size.width = scrollVi.bounds.size.width/2.0;
+    frame.size.height = [text sizeWithAttributes:littleTextAttri].height;
+
+    //    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
+    [scrollVi addSubview:textLabel];
+    // 有效期 - 值
+    text = [[NSUserDefaults standardUserDefaults] valueForKey:EXP_DATE_14]; // yymm
+    frame.origin.y += frame.size.height;
+    frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+//    frame.origin.x += frame.size.width;
+    textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
+    [scrollVi addSubview:textLabel];
+    
+    
+    
     // 备注 - 名
     text = @"备注(REFERENCE)";
     frame.origin.y += inset + frame.size.height;
@@ -364,7 +420,7 @@
     [self.view addSubview:requireBtn];
     
     // 将滚动视图的内容装填成图片.jpg
-//    self.scrollAllImg=[self getNormalImage:scrollVi];
+    self.scrollAllImg=[self getNormalImage:scrollVi];
 }
 // 简化代码:label可以用同一个产出方式
 - (UILabel*) newTextLabelWithText:(NSString*)text
@@ -378,6 +434,7 @@
     textLabel.textAlignment = textAlignment;
     textLabel.textColor = [UIColor blackColor];
     textLabel.font = font;
+    // 设置自动换行
     [textLabel setNumberOfLines:0];
     textLabel.lineBreakMode = NSLineBreakByWordWrapping;
     return textLabel;
@@ -398,7 +455,7 @@
 - (UIImage *)getNormalImage:(UIScrollView *)view{
     CGRect oldFrame = view.frame;
     view.frame = CGRectMake(0, 0, view.contentSize.width, view.contentSize.height);
-    CGSize size = CGSizeMake(oldFrame.size.width, oldFrame.size.height);
+    CGSize size = CGSizeMake(view.frame.size.width, view.frame.size.height);
     UIGraphicsBeginImageContextWithOptions(size, view.opaque, 1.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
@@ -466,11 +523,7 @@
     
     [self.uploadRequest setRequestHeaders:headerInfo];
     [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
-    
-//    [uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
-//    [uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
-//    [uploadRequest setShouldContinueWhenAppEntersBackground:YES];
-	[self.uploadRequest startSynchronous];                           // 异步发送HTTP请求
+	[self.uploadRequest startSynchronous];                           // 同步发送HTTP请求
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.activitor startAnimating];
     });

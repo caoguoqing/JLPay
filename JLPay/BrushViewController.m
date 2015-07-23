@@ -46,13 +46,13 @@
  
  
 @implementation BrushViewController
-@synthesize activity                    = _activity;
-@synthesize passwordAlertView           = _passwordAlertView;
-@synthesize waitingLabel                = _waitingLabel;
+@synthesize activity = _activity;
+@synthesize passwordAlertView = _passwordAlertView;
+@synthesize waitingLabel = _waitingLabel;
 @synthesize leftInset;
 @synthesize timeOut;
-@synthesize waitingTimer           = _waitingTimer;
-@synthesize stringOfTranType;
+@synthesize waitingTimer = _waitingTimer;
+@synthesize stringOfTranType = _stringOfTranType;
 
 /*************************************
  * 功  能 : 界面的初始化;
@@ -66,8 +66,7 @@
     [super viewDidLoad];
     // 加载子视图
     [self addSubViews];
-    
-    // 交易超时时间为20秒
+    // 交易超时时间为60秒,后面可以重置
     self.timeOut = TIMEOUT;
 }
 
@@ -131,7 +130,7 @@
         [[DeviceManager sharedInstance] closeAllDevices];
     });
 }
-
+// 隐藏状态栏
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
@@ -208,7 +207,7 @@
  *          (NSString*) message
  * 返  回 : 无
  *************************************/
-- (void) beginToBruash {
+- (void) beginToSwipe {
     self.timeOut = TIMEOUT; // 超时时间改为 60
     dispatch_async(dispatch_get_main_queue(), ^{
         // 加载定时器
@@ -224,7 +223,6 @@
         NSLog(@";;;';';;';开始刷卡");
         NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
         [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onSNVersion:SNVersion];
-        //
     });
 }
 
@@ -243,7 +241,7 @@
         }
     });
     
-    // 设置流水号
+    // 设置流水号 - 除了冲正是用原交易的流水号，其他交易都是新生成
     NSString *liushui=[PublicInformation exchangeNumber];
     [[NSUserDefaults standardUserDefaults] setValue:liushui forKey:Current_Liushui_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -306,7 +304,8 @@
         }
         QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
         [qianpi qianpiType:1];
-        [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
+//        [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
+        [qianpi getCurretnLiushui:[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number]];
         [qianpi leftTitle:[PublicInformation returnMoney]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.navigationController pushViewController:qianpi animated:YES];
@@ -335,7 +334,7 @@
         }
         QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
         [qianpi qianpiType:1];
-        [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
+        [qianpi getCurretnLiushui:[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number]];
         [qianpi leftTitle:[PublicInformation returnMoney]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.navigationController pushViewController:qianpi animated:YES];
@@ -514,11 +513,8 @@
  *************************************/
 - (void) openDeviceInTimer {
     DeviceManager* device = [DeviceManager sharedInstance];
-//    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
     NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-//    int connected = [device isConnectedOnIdentifier:identifier];
     int connected = [device isConnectedOnSNVersionNum:SNVersion];
-    NSLog(@"((((((((((((( timeout = [%d]",self.timeOut);
     if (self.timeOut < 0) { // 超时了
         [self.waitingTimer invalidate];
         self.waitingTimer = nil;
@@ -531,7 +527,7 @@
         [self.waitingTimer invalidate];
         self.waitingTimer = nil;
         // 继续刷卡
-        [self beginToBruash];
+        [self beginToSwipe];
         return;
     }
     self.timeOut--;
@@ -574,19 +570,18 @@
     }
     return _waitingLabel;
 }
-//// 消费超时定时器
-//- (NSTimer *)consumeWaitingTimer {
-//    if (_consumeWaitingTimer == nil) {
-//        _consumeWaitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForConsume) userInfo:nil repeats:YES];
-//    }
-//    return _consumeWaitingTimer;
-//}
 // 刷卡超时定时器
 - (NSTimer *)waitingTimer {
     if (_waitingTimer == nil) {
-//        _waitingTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(waitingForSwipe) userInfo:nil repeats:YES];
     }
     return _waitingTimer;
+}
+// 交易类型
+- (NSString *)stringOfTranType {
+    if (_stringOfTranType == nil) {
+        _stringOfTranType = [[NSUserDefaults standardUserDefaults] valueForKey:TranType];
+    }
+    return _stringOfTranType;
 }
 
 #pragma mask ::: setter
@@ -599,22 +594,23 @@
  * 返  回 : 无
  *************************************/
 - (void) setWaitingLabelText : (NSString*)text {
-    CGSize oldTextSize = [self.waitingLabel.text sizeWithFont:self.waitingLabel.font];
+    NSDictionary* oldAttri = [NSDictionary dictionaryWithObject:self.waitingLabel.font forKey:NSFontAttributeName];
+    CGSize oldTextSize = [self.waitingLabel.text sizeWithAttributes:oldAttri];
     self.waitingLabel.text = text;
-    CGSize newTextSize = [self.waitingLabel.text sizeWithFont:self.waitingLabel.font];
+    NSDictionary* newAttri = [NSDictionary dictionaryWithObject:self.waitingLabel.font forKey:NSFontAttributeName];
+    CGSize newTextSize = [self.waitingLabel.text sizeWithAttributes:newAttri];
     // 新的文本长度如果长于旧的文本长度时就改变label的frame
     CGFloat addLength = newTextSize.width - oldTextSize.width;
-//    if (addLength > 0) {
-        CGRect frame = self.waitingLabel.frame;
-        frame.origin.x -= addLength;
-        frame.size.width += addLength;
-        self.waitingLabel.frame = frame;
+    CGRect frame = self.waitingLabel.frame;
+    frame.origin.x -= addLength;
+    frame.size.width += addLength;
+    self.waitingLabel.frame = frame;
         
-        // 同时改变 activity 的frame;
-        frame = self.activity.frame;
-        frame.origin.x -= addLength;
-        self.activity.frame = frame;
-//    }
+    // 同时改变 activity 的frame;
+    frame = self.activity.frame;
+    frame.origin.x -= addLength;
+    self.activity.frame = frame;
 }
+
 
 @end

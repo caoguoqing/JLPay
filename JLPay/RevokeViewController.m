@@ -99,18 +99,6 @@
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell.accessoryType == UITableViewCellAccessoryDisclosureIndicator) {    // 撤销单元格
         cell.selected = NO;
-        // 先检查设备是否绑定
-//        if (![[NSUserDefaults standardUserDefaults] boolForKey:DeviceBeingSignedIn]) {
-//        NSString* selectedSNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-//        int connected = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:selectedSNVersion];
-//        if (connected != 1) {
-//            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"设备未连接,请先连接设备" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//            [alert show];
-//            return;
-//        }
-        
-        // 如果设备是绑定的设备，还要校验终端编号
-        
         // 撤销代码 -- 发起撤销前，要弹窗提示商户是否确定要撤销
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"是否发起撤销?" message:nil delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
         // 可撤销状态时，才能响应点击事件
@@ -132,19 +120,18 @@
         [[NSUserDefaults standardUserDefaults] setValue:amount forKey:SuccessConsumerMoney];
         CGFloat money = [amount floatValue]/100.0;
         [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%.02f", money] forKey:Consumer_Money];
-
         // 保存原消费流水号
         [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"retrivlRef"] forKey:Consumer_Get_Sort];
+        // 保存原消费批次号 用于撤销报文的61.1域
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
+        // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number];
+        // 注册交易类型到本地配置
+        [[NSUserDefaults standardUserDefaults] setValue:TranType_ConsumeRepeal forKey:TranType];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         // 切换到刷卡界面
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
-        // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number]; //retrivlRef sysSeqNum
-        // 设置交易类型:消费撤销
-        viewcon.stringOfTranType = TranType_ConsumeRepeal;
-        // 注册交易类型到本地配置
-        [[NSUserDefaults standardUserDefaults] setValue:TranType_ConsumeRepeal forKey:TranType];
         [self.navigationController pushViewController:viewcon animated:YES];
     }
 }

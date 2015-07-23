@@ -513,6 +513,8 @@
     //60域数据
     NSString *betweenStr =[NSString stringWithFormat:@"001922%@000500000000", [PublicInformation returnSignSort]];
     NSLog(@"消费60域数据=====%@",betweenStr);
+    NSString* liushuihao = [[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];
+//    NSString* liushuihao = [PublicInformation exchangeNumber];
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   // 2,卡号
@@ -522,7 +524,7 @@
                   // 4,交易金额 bcd 12
                   [self themoney],//@"000000000001",
                   // 11,流水号 bcd 6
-                  [PublicInformation exchangeNumber],
+                  liushuihao,
                   // 22,服务点输入方式码 bcd 3(银联协议)
                   @"0510",
                   // 23,卡片序列号 bcd 3 （pos能判断时存在）
@@ -555,9 +557,11 @@
     
     // 上送交易前先保存当前消费的部分字段,用于冲正、撤销、批上送
     [[NSUserDefaults standardUserDefaults] setValue:@"190000" forKey:LastF03_ProcessingCode];
-    [[NSUserDefaults standardUserDefaults] setValue:[PublicInformation exchangeNumber] forKey:LastF11_SystemTrace];
     [[NSUserDefaults standardUserDefaults] setValue:@"0510" forKey:LastF22_ServiceEntryCode];
     [[NSUserDefaults standardUserDefaults] setValue:betweenStr forKey:LastF60_Reserved];
+    [[NSUserDefaults standardUserDefaults] setValue:liushuihao forKey:LastF11_SystemTrace];
+    [[NSUserDefaults standardUserDefaults] setValue:liushuihao forKey:Last_Exchange_Number];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 
     
     //二进制报文数据

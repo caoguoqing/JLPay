@@ -1135,6 +1135,7 @@
     // 卡片有效期 Card_DeadLineTime
     memset(dataStr, 0, 512);
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
+    NSLog(@"^^^^^^^^^^^ 卡片有效期:[%s]",(char*)TransData.CardValid);
     
     // 2磁道加密数据
     memset(dataStr, 0, 512);
