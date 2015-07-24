@@ -421,6 +421,7 @@
     
     // 将滚动视图的内容装填成图片.jpg
     self.scrollAllImg=[self getNormalImage:scrollVi];
+    [self.view addSubview:self.activitor];
 }
 // 简化代码:label可以用同一个产出方式
 - (UILabel*) newTextLabelWithText:(NSString*)text
@@ -523,7 +524,7 @@
     
     [self.uploadRequest setRequestHeaders:headerInfo];
     [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
-	[self.uploadRequest startSynchronous];                           // 同步发送HTTP请求
+	[self.uploadRequest startAsynchronous];                           // 同步发送HTTP请求
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.activitor startAnimating];
     });
@@ -542,7 +543,6 @@
 
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
         //缓存图片路径
-//        [self saveImagePathMethod:[chatUpLoadDic objectForKey:@"data"]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"小票上传成功"];
             // 成功后就退出到root视图界面

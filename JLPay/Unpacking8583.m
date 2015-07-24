@@ -1097,7 +1097,8 @@ static Unpacking8583 *sharedObj2 = nil;
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"38"]) {
                     // 授权码
-                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:AuthNo_38];
+                    NSString* authNo_38 = [PublicInformation stringFromHexString:deleteStr];
+                    [[NSUserDefaults standardUserDefaults] setValue:authNo_38 forKey:AuthNo_38];
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"44"]) {
                     // 发卡行代码 + 收单行代码
@@ -1361,7 +1362,8 @@ static Unpacking8583 *sharedObj2 = nil;
                     }
                     else if ([[sortArr objectAtIndex:c] isEqualToString:@"38"]) {
                         // 授权码
-                        [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:AuthNo_38];
+                        NSString* authNo_38 = [PublicInformation stringFromHexString:deleteStr];
+                        [[NSUserDefaults standardUserDefaults] setValue:authNo_38 forKey:AuthNo_38];
                     }
                     else if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
                         //交易结果

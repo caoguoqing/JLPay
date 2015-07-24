@@ -35,12 +35,12 @@
     self.title = @"交易管理";
     
     // 自定义返回界面的按钮样式
-    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
-    UIImage* image = [UIImage imageNamed:@"backItem"];
-    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
-                                  forState:UIControlStateNormal
-                                barMetrics:UIBarMetricsDefault];
-    self.navigationItem.backBarButtonItem = backItem;
+//    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
+//    UIImage* image = [UIImage imageNamed:@"backItem"];
+//    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
+//                                  forState:UIControlStateNormal
+//                                barMetrics:UIBarMetricsDefault];
+//    self.navigationItem.backBarButtonItem = backItem;
 
     // 从后台异步获取交易明细数据
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
@@ -91,8 +91,9 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"detailsHeaderCell"];
         cell.textLabel.text = @"交易明细";
         cell.textLabel.font = [UIFont boldSystemFontOfSize:18.0];
-        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"search"]];
-        cell.accessoryView.bounds = CGRectMake(0, 0, cell.bounds.size.height / 4.0 * 3.0, cell.bounds.size.height / 4.0 * 3.0);
+        // 搜索功能未实现 -- 暂不上图标
+//        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"search"]];
+//        cell.accessoryView.bounds = CGRectMake(0, 0, cell.bounds.size.height / 4.0 * 3.0, cell.bounds.size.height / 4.0 * 3.0);
     } else                          // 明细展示 cell
     {
         cell = [tableView dequeueReusableCellWithIdentifier:@"transDetailCell"];

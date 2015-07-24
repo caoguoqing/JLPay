@@ -45,20 +45,20 @@
     
     // 设置 title 的字体颜色
     UIColor *color                  = [UIColor redColor];
-    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:UITextAttributeTextColor];
+    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = dict;
     self.navigationController.navigationBar.tintColor = color;
     
-    // 自定义返回界面的按钮样式
-    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@""
-                                                                 style:UIBarButtonItemStyleBordered
-                                                                target:self
-                                                                action:@selector(backToPreVC:)];
-    UIImage* image = [UIImage imageNamed:@"backItem"];
-    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
-                                  forState:UIControlStateNormal
-                                barMetrics:UIBarMetricsDefault];
-    self.navigationItem.backBarButtonItem = backItem;
+    // 自定义返回界面的按钮样式 -- 暂不用自定义的,使用系统自带的模式
+//    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@""
+//                                                                 style:UIBarButtonItemStyleBordered
+//                                                                target:self
+//                                                                action:@selector(backToPreVC:)];
+//    UIImage* image = [UIImage imageNamed:@"backItem"];
+//    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
+//                                  forState:UIControlStateNormal
+//                                barMetrics:UIBarMetricsDefault];
+//    self.navigationItem.backBarButtonItem = backItem;
 
     [super viewDidLoad];
     

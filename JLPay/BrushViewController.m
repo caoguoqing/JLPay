@@ -168,9 +168,7 @@
     // innerView 放在 alertView 中创建
     self.passwordAlertView.delegate = self;
     [self.passwordAlertView setUseMotionEffects:YES];
-    
     [self.passwordAlertView setButtonTitles:[NSArray arrayWithObjects:@"取消", @"确定", nil]];
-        
     [self.passwordAlertView show];
     [self.view addSubview:self.passwordAlertView];
 }

@@ -20,20 +20,20 @@
 
 
 
-@interface CustPayViewController ()<UIAlertViewDelegate,DeviceManagerDelegate,UIActionSheetDelegate>
+@interface CustPayViewController ()<UIAlertViewDelegate>
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
-@property (nonatomic, strong) NSArray*          deviceList;                 // 设备列表
-@property (nonatomic, strong) NSString*         selectedSNVersion;          // 选择的SN号
+//@property (nonatomic, strong) NSArray*          deviceList;                 // 设备列表
+//@property (nonatomic, strong) NSString*         selectedSNVersion;          // 选择的SN号
 @end
 
 @implementation CustPayViewController
 @synthesize acountOfMoney               = _acountOfMoney;
 @synthesize money                       = _money;
 @synthesize moneyCalculated             = _moneyCalculated;
-@synthesize deviceList;
-@synthesize selectedSNVersion;
+//@synthesize deviceList;
+//@synthesize selectedSNVersion;
 
 
 - (void)viewDidLoad {
@@ -50,13 +50,13 @@
     NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = textAttri;
     
-    // 自定义返回界面的按钮样式
-    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
-    UIImage* image = [UIImage imageNamed:@"backItem"];
-    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
-                                  forState:UIControlStateNormal
-                                barMetrics:UIBarMetricsDefault];
-    self.navigationItem.backBarButtonItem = backItem;
+    // 自定义返回界面的按钮样式 -- 改为使用系统自带的样式
+//    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
+//    UIImage* image = [UIImage imageNamed:@"backItem"];
+//    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
+//                                  forState:UIControlStateNormal
+//                                barMetrics:UIBarMetricsDefault];
+//    self.navigationItem.backBarButtonItem = backItem;
     
     // 重置金额
     self.money = @"0.00";
@@ -65,24 +65,9 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     // 重新扫描设备
-    NSLog(@"-=-=-=-=-=-=-=进入CustPay 界面");
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        [[DeviceManager sharedInstance] setDelegate:self];
-//        [[DeviceManager sharedInstance] startScanningDevices];
-//    });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        [[DeviceManager sharedInstance] setDelegate:nil];
-//        [[DeviceManager sharedInstance] stopScanningDevices];
-//        [[DeviceManager sharedInstance] closeAllDevices];
-//    });
-}
-
-#pragma mask -------------------- DeviceManagerDelegate:打开设备，获取终端号的回调
-- (void)deviceManager:(DeviceManager *)deviceManager updatedSNVersionArray:(NSArray *)SNVersionArray {
-    self.deviceList = SNVersionArray;
 }
 
 
@@ -215,7 +200,6 @@
     BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
     // 保存的是字符串型的金额
     [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-//    viewcon.stringOfTranType = TranType_Consume;    // 设置交易类型
     [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self.navigationController pushViewController:viewcon animated:YES];
@@ -235,7 +219,6 @@
  *************************************/
 - (CGFloat)resizeFontWithButton: (UIButton*)button inFrame: (CGRect) frame {
     CGFloat resize = 0.0;
-//    CGSize size = [button.titleLabel.text sizeWithFont:button.titleLabel.font];
     NSDictionary* textAttri = [NSDictionary dictionaryWithObject:button.titleLabel.font forKey:NSFontAttributeName];
     CGSize size = [button.titleLabel.text sizeWithAttributes:textAttri];
     // 重置:设置字体的高度占 label 的高度的 2/3
@@ -256,60 +239,95 @@
  * 返  回 : 无
  *************************************/
 - (void) addSubViews {
+    // 数字按钮组的字体大小
     CGFloat numFontSize                 = 30.0;
     CGFloat statusBarHeight             = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    // 视图的有效高度
     CGFloat visibleHeight               = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
-    CGFloat  bornerWith                 = 0.5;
+    // 分割线宽度
+    CGFloat  bornerWith                 = 1;
     
-    // 图标          3/8/3.3
-    CGFloat littleHeight                = visibleHeight * (3.0/8.0/3.3);
-    CGFloat littleHeight_2              = littleHeight * 0.8;
-    CGRect  frame                       = CGRectMake((self.view.bounds.size.width - littleHeight_2*3)/2,
-                                                     0 + statusBarHeight + (littleHeight - littleHeight_2)/2.0,
-                                                     littleHeight_2*3,
-                                                     littleHeight_2);
+    
+    // 重新排版的各子视图的宽、高
+    CGFloat inset                       = 5.0;
+    
+    // 数字按钮宽度
+    CGFloat numBtnWidth                 = self.view.bounds.size.width/3.0;
+    // 金额显示框的高度:固定高度
+    CGFloat displayMoneyHeight          = numBtnWidth * 3.0/4.0 * 3.0/4.0;
+    
+    CGSize  logoImgSize                  = [UIImage imageNamed:ImageForBrand].size;
+    CGFloat logoImgWidth                = self.view.bounds.size.width / 2.0;
+    CGFloat logoImgHeight               = logoImgWidth * logoImgSize.height/logoImgSize.width;
+    // logo imageView高度
+    CGFloat logoImgViewHeight           = (visibleHeight - displayMoneyHeight*4)/3.0;
+    if (logoImgViewHeight < logoImgHeight + inset*2.0) {
+        logoImgViewHeight = logoImgHeight + inset*2.0;
+    }
+    
+    // 刷卡按钮的高度
+    CGFloat swipeBtnHeight = displayMoneyHeight;
+    // 数字按钮高度
+    CGFloat numBtnHeight = displayMoneyHeight;
+    
+    if (numBtnWidth * 5 + inset * 2 + bornerWith > visibleHeight - logoImgViewHeight - displayMoneyHeight) {
+        numBtnHeight = (visibleHeight - logoImgViewHeight - displayMoneyHeight - bornerWith - inset*2)/5.0;
+        if (numBtnHeight < 60.0) {
+            swipeBtnHeight = 60.0;
+            numBtnHeight = (numBtnHeight * 5.0 - 60.0)/4.0;
+        }
+    }
+    
+    // 图标
+    CGRect  frame                       = CGRectMake((self.view.bounds.size.width - logoImgWidth)/2,
+                                                     0 + statusBarHeight + (logoImgViewHeight - logoImgHeight)/2.0,
+                                                     logoImgWidth,
+                                                     logoImgHeight);
     UIImageView *imageView              = [[UIImageView alloc] initWithFrame:frame];
     imageView.image                     = [UIImage imageNamed:ImageForBrand];
-    
     [self.view addSubview:imageView];
     
-    // 金额显示框     1/8
-    CGFloat bigHeight                   = visibleHeight * 1.0/8.0;
+    // 金额显示框
     frame.origin.x                      = 0 + bornerWith;
-    frame.origin.y                      += littleHeight + bornerWith - (littleHeight - littleHeight_2)/2.0;
+    frame.origin.y                      += frame.size.height+ (logoImgViewHeight - logoImgHeight)/2.0 + bornerWith;
     frame.size.width                    = self.view.bounds.size.width - bornerWith*2;
-    frame.size.height                   = bigHeight - bornerWith * 2;
+    frame.size.height                   = displayMoneyHeight;
     UIView  *moneyView                  = [[UIView alloc] initWithFrame:frame];
     moneyView.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0];
     [self.view addSubview:moneyView];
-    
     // moneyLabel
-    CGRect innerFrame                   = CGRectMake(0, 0, frame.size.width - 40, frame.size.height);
+    CGRect innerFrame                   = CGRectMake(0, 0, frame.size.width - 45, frame.size.height);
     self.acountOfMoney.frame            = innerFrame;
     self.acountOfMoney.text             = @"0.00";
     self.acountOfMoney.textAlignment    = NSTextAlignmentRight;
-    self.acountOfMoney.font             = [UIFont boldSystemFontOfSize:37];
-    [moneyView addSubview:self.acountOfMoney];
+    CGSize fontSize = [self.acountOfMoney.text sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:37] forKey:NSFontAttributeName]];
+    // 金额字体大小占 frame 高度的 2/3
+    self.acountOfMoney.font             = [UIFont boldSystemFontOfSize: (innerFrame.size.height*2.0/3.0 / fontSize.height * 37)];
     
-    // moneyImageView
-    CGRect moneySymbolFrame             = CGRectMake(innerFrame.origin.x + innerFrame.size.width + 5.0, frame.size.height/2.0, frame.size.height/4.0/4.0 * 3.0, frame.size.height/4.0);
-    UILabel *moneySymbolLabel           = [[UILabel alloc] initWithFrame:moneySymbolFrame];
+    
+    
+    [moneyView addSubview:self.acountOfMoney];
+    // moneyImageView 金额符号Label : 字体大小为金额字体大小的 3/4, 因为字体为汉字，显示要比英文字母高一点，所以将y降低一个 inset，高度也减少一个 inset
+    innerFrame.origin.x                 += innerFrame.size.width + inset;
+    innerFrame.origin.y                 += inset;
+    innerFrame.size.width               = frame.size.width - innerFrame.origin.x;
+    innerFrame.size.height              -= inset;
+    UILabel *moneySymbolLabel           = [[UILabel alloc] initWithFrame:innerFrame];
     moneySymbolLabel.text               = @"￥";
-    moneySymbolLabel.font               = [UIFont systemFontOfSize:15];
+    moneySymbolLabel.textAlignment      = NSTextAlignmentLeft;
+    moneySymbolLabel.font               = [UIFont boldSystemFontOfSize:(innerFrame.size.height*2.0/3.0 / fontSize.height * 37)/4.0*3.0];
     [moneyView addSubview:moneySymbolLabel];
     
     // 数字按键组     4/8
     NSArray * numbers                   = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"delete",nil];
-    frame.origin.y                      += bigHeight - bornerWith;
-    frame.size.width                    = (self.view.bounds.size.width - bornerWith*2.0)/3.0;
-    frame.size.height                   = bigHeight;
-    CGRect numbersFrame                 = CGRectMake(frame.origin.x, frame.origin.y, self.view.bounds.size.width - bornerWith*3.0, bigHeight*4.0);
+    frame.origin.x                      = 0;
+    frame.origin.y                      += frame.size.height + bornerWith*2.0;
+    frame.size.width                    = numBtnWidth;
+    frame.size.height                   = numBtnHeight;
+    CGRect numbersFrame                 = CGRectMake(frame.origin.x, frame.origin.y, self.view.bounds.size.width, numBtnHeight*4.0);
     NSInteger index                     = 0;
     for (int i = 0; i<4; i++) {
         frame.origin.x                  = 0.0;
-        if (i == 3) {
-            frame.origin.y              -= 0.6;
-        }
         for (int j = 0; j<3; j++) {
             // frame 都已经准备好，可以直接装填数字按钮组了
             id button;
@@ -343,45 +361,45 @@
             index++;
             frame.origin.x              += frame.size.width;
         }
-        frame.origin.y                  += bigHeight;
+        frame.origin.y                  += numBtnHeight;
     }
     // 分割线
     [self drawLineInRect:numbersFrame];
     
     
     // 支付宝按钮   3/8/3.3
-    frame.origin.x                      = 0 + bornerWith;
-    frame.origin.y                      += bornerWith * 4.0;
-    frame.size.width                    = self.view.bounds.size.width/2.0 - bornerWith*2;
-    frame.size.height                   = littleHeight - bornerWith*2;
-    OtherPayButton *alipayButton        = [[OtherPayButton alloc] initWithFrame:frame];
-    // 添加 action
-    [alipayButton addTarget:self action:@selector(clickToWeAlipay:) forControlEvents:UIControlEventTouchUpInside];
-    [alipayButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
-    [alipayButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
-    
-    [alipayButton setImageViewWithName:@"zfb"];
-    [alipayButton setLabelNameWithName:@"支付宝支付"];
-    [self.view addSubview:alipayButton];
-    
-    // 微信按钮
-    frame.origin.x                      += self.view.bounds.size.width/2.0;
-    OtherPayButton *weChatButton        = [[OtherPayButton alloc] initWithFrame:frame];
-    // 添加 action
-    [weChatButton setImageViewWithName:@"wx"];
-    [weChatButton setLabelNameWithName:@"微信支付"];
-    [weChatButton addTarget:self action:@selector(clickToWeChat:) forControlEvents:UIControlEventTouchUpInside];
-    [weChatButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
-    [weChatButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
-    
-    [self.view addSubview:weChatButton];
+//    frame.origin.x                      = 0 + bornerWith;
+//    frame.origin.y                      += bornerWith * 4.0;
+//    frame.size.width                    = self.view.bounds.size.width/2.0 - bornerWith*2;
+//    frame.size.height                   = littleHeight - bornerWith*2;
+//    OtherPayButton *alipayButton        = [[OtherPayButton alloc] initWithFrame:frame];
+//    // 添加 action
+//    [alipayButton addTarget:self action:@selector(clickToWeAlipay:) forControlEvents:UIControlEventTouchUpInside];
+//    [alipayButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
+//    [alipayButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
+//    
+//    [alipayButton setImageViewWithName:@"zfb"];
+//    [alipayButton setLabelNameWithName:@"支付宝支付"];
+//    [self.view addSubview:alipayButton];
+//    
+//    // 微信按钮
+//    frame.origin.x                      += self.view.bounds.size.width/2.0;
+//    OtherPayButton *weChatButton        = [[OtherPayButton alloc] initWithFrame:frame];
+//    // 添加 action
+//    [weChatButton setImageViewWithName:@"wx"];
+//    [weChatButton setLabelNameWithName:@"微信支付"];
+//    [weChatButton addTarget:self action:@selector(clickToWeChat:) forControlEvents:UIControlEventTouchUpInside];
+//    [weChatButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
+//    [weChatButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
+//    
+//    [self.view addSubview:weChatButton];
     
     // 刷卡按钮       3/8/3.3 * 1.3
-    CGFloat newBornerWith               = 2.0;
-    frame.origin.x                      = 0 + newBornerWith;
-    frame.origin.y                      += frame.size.height + bornerWith + newBornerWith;
-    frame.size.width                    = self.view.bounds.size.width - newBornerWith*2;
-    frame.size.height                   = littleHeight * 1.3 - newBornerWith*2;
+//    CGFloat newBornerWith               = 2.0;
+    frame.origin.x                      = 0 + inset;
+    frame.origin.y                      += (visibleHeight - frame.origin.y + statusBarHeight - swipeBtnHeight)/2.0;
+    frame.size.width                    = self.view.bounds.size.width - inset*2;
+    frame.size.height                   = swipeBtnHeight;
     UIButton *brushButton               = [[UIButton alloc] initWithFrame:frame];
     brushButton.layer.cornerRadius      = 8.0;
     brushButton.backgroundColor         = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
