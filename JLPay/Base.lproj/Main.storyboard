@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="jPT-Yr-IlL">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="jPT-Yr-IlL">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -9,10 +9,6 @@
         <scene sceneID="cyo-gP-zsV">
             <objects>
                 <viewController id="ufw-MO-OCX" customClass="logViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="3qX-OA-rhl"/>
-                        <viewControllerLayoutGuide type="bottom" id="Ywb-1E-rqd"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="LM9-YZ-Cna">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -69,27 +65,26 @@
         <scene sceneID="iK5-cr-5Tw">
             <objects>
                 <viewController storyboardIdentifier="weChatPay" id="nWZ-Ta-9VG" customClass="WeChatPayViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="AjJ-Ar-57L"/>
-                        <viewControllerLayoutGuide type="bottom" id="gK0-QD-45C"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Cza-CM-On3">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="功能建设中......" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T8t-PO-nwO">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="功能建设中......" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="T8t-PO-nwO">
                                 <rect key="frame" x="92" y="274" width="158" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="w0e-Cv-9QV">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" id="w0e-Cv-9QV">
                                 <rect key="frame" x="50" y="157" width="221" height="72"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="请关注捷联通版本更新" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n7p-C8-cPy">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请关注捷联通版本更新" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="n7p-C8-cPy">
                                 <rect key="frame" x="65" y="304" width="191" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -104,24 +99,22 @@
         <scene sceneID="Vw7-n7-Tbw">
             <objects>
                 <viewController storyboardIdentifier="alipayPay" title="支付宝支付" id="gkC-Bm-0Cz" customClass="AlipayViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="OlB-NG-6u6"/>
-                        <viewControllerLayoutGuide type="bottom" id="cyj-rI-Urg"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="3Sb-AT-1vF" customClass="Al">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="功能建设中......" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Qe-ia-i7D">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="功能建设中......" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0Qe-ia-i7D">
                                 <rect key="frame" x="81" y="128" width="158" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="请关注捷联通版本更新" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UEx-3J-4r6">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请关注捷联通版本更新" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UEx-3J-4r6">
                                 <rect key="frame" x="65" y="164" width="191" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -136,10 +129,6 @@
         <scene sceneID="eaC-D2-oVh">
             <objects>
                 <viewController id="BRz-xC-VH6" customClass="CustPayViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="w4r-8c-dgL"/>
-                        <viewControllerLayoutGuide type="bottom" id="qVg-jb-5ez"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Lcl-B9-CJ7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -155,10 +144,6 @@
         <scene sceneID="CbX-sW-fA8">
             <objects>
                 <viewController storyboardIdentifier="brush" hidesBottomBarWhenPushed="YES" id="Jd9-aa-lz6" customClass="BrushViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="n5x-TE-TiJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="tFc-yu-60U"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="7BT-Rt-cdi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -180,8 +165,10 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Oel-g4-WqE">
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Oel-g4-WqE" id="FPx-mx-XqX">
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -202,10 +189,6 @@
         <scene sceneID="rB3-Ma-VxS">
             <objects>
                 <viewController storyboardIdentifier="deviceSigninVC" id="jiQ-sm-6xF" customClass="DeviceSignInViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Ecm-E3-pbR"/>
-                        <viewControllerLayoutGuide type="bottom" id="o43-qc-6GQ"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="MpL-xA-8Fo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -226,20 +209,26 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="totalAmountCell" id="tkM-zT-moA" customClass="TotalAmountCell">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tkM-zT-moA" id="SyE-yH-eI3">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="transDetailCell" id="z8D-Vj-wAh" customClass="DetailsCell">
+                                <rect key="frame" x="0.0" y="66" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z8D-Vj-wAh" id="B5T-i5-a1e">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="detailsHeaderCell" id="akl-J3-2jI">
+                                <rect key="frame" x="0.0" y="110" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="akl-J3-2jI" id="MGh-WF-d1f">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -261,23 +250,29 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Igm-rr-pZ1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="titleCell" rowHeight="66" id="Th3-DJ-bpb">
+                                <rect key="frame" x="0.0" y="49.5" width="320" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Th3-DJ-bpb" id="UDf-aR-RtE">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="detailCell" id="lTA-2Y-8gA">
+                                <rect key="frame" x="0.0" y="115.5" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lTA-2Y-8gA" id="BJZ-OH-cZE">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="revokeCell" id="mi0-hg-nfF">
+                                <rect key="frame" x="0.0" y="159.5" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mi0-hg-nfF" id="RWa-WE-A3i">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -297,10 +292,6 @@
         <scene sceneID="fMU-rk-W8N">
             <objects>
                 <viewController storyboardIdentifier="terminalSettingVC" hidesBottomBarWhenPushed="YES" id="NxS-i6-GpA" customClass="TerminalParamSetViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="rLc-ld-KAb"/>
-                        <viewControllerLayoutGuide type="bottom" id="qgY-Ad-EWQ"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="BHT-1J-48T">
                         <rect key="frame" x="0.0" y="64" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -316,24 +307,22 @@
         <scene sceneID="MTX-eY-EhS">
             <objects>
                 <viewController storyboardIdentifier="password" id="FXD-ma-91M" customClass="PasswordViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="4wj-Bh-CrT"/>
-                        <viewControllerLayoutGuide type="bottom" id="oam-dJ-Mad"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="w1z-U0-JDc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hfd-z7-RFH">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" clearsOnBeginEditing="YES" minimumFontSize="17" id="hfd-z7-RFH">
                                 <rect key="frame" x="76" y="105" width="168" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="FXD-ma-91M" id="kzh-U4-BMi"/>
                                 </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tfo-8W-3Ze">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Tfo-8W-3Ze">
                                 <rect key="frame" x="76" y="160" width="168" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="确定">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -357,10 +346,6 @@
         <scene sceneID="SVc-Zt-4Ay">
             <objects>
                 <viewController storyboardIdentifier="waitview" id="vCL-IC-PA4" customClass="WaitViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="HmD-IW-Nfr"/>
-                        <viewControllerLayoutGuide type="bottom" id="6ir-tB-Gwg"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5Lh-WY-bE7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -410,10 +395,6 @@
         <scene sceneID="du3-CL-xUi">
             <objects>
                 <viewController id="cEQ-CM-f1g" customClass="AdditionalServicesViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="xnB-pI-JOu"/>
-                        <viewControllerLayoutGuide type="bottom" id="94L-vs-WkV"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Sx9-n8-0MA">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

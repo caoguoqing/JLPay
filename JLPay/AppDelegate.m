@@ -28,9 +28,9 @@
 #pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 -(void)signInSuccessToLogin:(int)select{
     self.window.userInteractionEnabled=YES;
-    
-    UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
+
     // 进入的初始界面为第一个
     tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
     
@@ -45,8 +45,6 @@
     
     // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
     tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
-    
-
 }
 // 跳转到指定的界面
 - (void) loadInViewController:(UIViewController*)viewController {

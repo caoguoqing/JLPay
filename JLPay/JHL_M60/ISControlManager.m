@@ -178,7 +178,7 @@ __strong static id _sharedObject = nil;
             else {
                 // 如果设备不能立即断开连接，要先等待数据交互完成或等待10s后断开
                 dispatch_async(dispatch_queue_create("temp", NULL), ^{
-                    NSLog(@"[CBController] disconnectDevice : Wait for data clear");
+//                    NSLog(@"[CBController] disconnectDevice : Wait for data clear");
                     int timer_count = 0;
                     while (![mDataPath.transmit canDisconnect]) {
                         //[NSThread sleepForTimeInterval:0.1];
@@ -288,15 +288,15 @@ __strong static id _sharedObject = nil;
             // 调用者的回调:::获取完了各个设备列表后的处理
             [_deviceList didGetDeviceList:devices andConnected:_connectedAccessory];
         }
-        NSLog(@"deviceList = %@",[devices description]);
+//        NSLog(@"deviceList = %@",[devices description]);
     }
 }
 
 #pragma mark - EAAccessory Notifications
 
 - (void)accessoryDidConnect:(NSNotification *)notification {
-    NSLog(@"[MFiDataPath] accessoryDidConnect");
-    NSLog(@"%@",[[notification userInfo] description]);
+//    NSLog(@"[MFiDataPath] accessoryDidConnect");
+//    NSLog(@"%@",[[notification userInfo] description]);
     EAAccessory *accessory = [[notification userInfo] objectForKey:@"EAAccessoryKey"];
     if (accessory) {
          BOOL haveAccessory = NO;
@@ -337,7 +337,7 @@ __strong static id _sharedObject = nil;
 }
 
 - (void) centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary *)dict {
-    NSLog(@"%@",[dict description]);
+//    NSLog(@"%@",[dict description]);
     if (dict[@"kCBRestoredPeripherals"]) {
         for (CBPeripheral *peripheral in dict[@"kCBRestoredPeripherals"]) {
             [self addDiscoverPeripheral:peripheral advName:peripheral.name];
@@ -381,7 +381,7 @@ __strong static id _sharedObject = nil;
  */
 - (void) centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)aPeripheral
 {
-    NSLog(@"[CBController] didConnectPeripheral, uuid=%@", aPeripheral.UUID);
+//    NSLog(@"[CBController] didConnectPeripheral, uuid=%@", aPeripheral.UUID);
     for (ISDataPath *dataPath in devices) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath *mDataPath = (ISBLEDataPath *)dataPath;
@@ -405,7 +405,7 @@ __strong static id _sharedObject = nil;
  */
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)aPeripheral error:(NSError *)error
 {
-    NSLog(@"[CBController] didDisonnectPeripheral uuid = %@, error msg:%d, %@, %@", aPeripheral.UUID, error.code ,[error localizedFailureReason], [error localizedDescription]);
+//    NSLog(@"[CBController] didDisonnectPeripheral uuid = %@, error msg:%d, %@, %@", aPeripheral.UUID, error.code ,[error localizedFailureReason], [error localizedDescription]);
     NSMutableArray *objToRemove = [NSMutableArray array];
     for (ISDataPath *dataPath in _connectedAccessory) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -429,7 +429,7 @@ __strong static id _sharedObject = nil;
  */
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)aPeripheral error:(NSError *)error
 {
-    NSLog(@"[CBController] Fail to connect to peripheral: %@ with error = %@", aPeripheral, [error localizedDescription]);
+//    NSLog(@"[CBController] Fail to connect to peripheral: %@ with error = %@", aPeripheral, [error localizedDescription]);
     NSMutableArray *objToRemove = [NSMutableArray array];
     for (ISDataPath *dataPath in _connectedAccessory) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -475,7 +475,7 @@ __strong static id _sharedObject = nil;
     if ([dataPath isKindOfClass:[ISMFiDataPath class]]) {
         [dataPath openSession];
     }
-    NSLog(@"%@",dataPath.name);
+//    NSLog(@"%@",dataPath.name);
     _connect = YES;
     if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidConnect:)]) {
         [_delegate accessoryDidConnect:dataPath];

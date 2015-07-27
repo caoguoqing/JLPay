@@ -297,7 +297,7 @@
 }
 
 - (void)setTransDataNotification:(BOOL)notify {
-    NSLog(@"[MyPeripheral] setTransDataNotification UUID = %@",_transparentDataReadChar.UUID);
+//    NSLog(@"[MyPeripheral] setTransDataNotification UUID = %@",_transparentDataReadChar.UUID);
     [_peripheral setNotifyValue:notify forCharacteristic:_transparentDataReadChar];
     isPatch = YES;
 }
@@ -310,7 +310,7 @@
     struct _AIR_PATCH_COMMAND_FORMAT command;
     command.commandID = AIR_PATCH_COMMAND_VENDOR_MP_ENABLE;
     NSData *data = [[NSData alloc] initWithBytes:&command length:1];
-    NSLog(@"[MyPeripheral] vendorMPEnable data = %@", data);
+//    NSLog(@"[MyPeripheral] vendorMPEnable data = %@", data);
     [_peripheral writeValue:data forCharacteristic:self.airPatchChar type:CBCharacteristicWriteWithResponse];
     _vendorMPEnable = true;
 }
@@ -418,7 +418,7 @@
                 unsigned short int d;
                 [returnEvent getBytes:&d range:NSMakeRange(5, length)];
                 d = NSSwapBigShortToHost(d);
-                NSLog(@"%x = %x",add,d);
+//                NSLog(@"%x = %x",add,d);
                 if ([_hardwareRevision hasPrefix:[NSString stringFromHexString:BM77SPP_HW]] && [_firmwareRevision hasPrefix:[NSString stringFromHexString:BM77SPP_FW]] && add == BM77SPP_AD) {
                     if (d != 0x0017) {
                         char w[2];
@@ -458,7 +458,7 @@
 {
     for (CBService *aService in aPeripheral.services)
     {
-        NSLog(@"[CBController] Service found with UUID: %@", aService.UUID);
+//        NSLog(@"[CBController] Service found with UUID: %@", aService.UUID);
         //  NSArray *uuids = [[NSArray alloc] initWithObjects:[CBUUID UUIDWithString:@"2A4D"], nil];
         [aPeripheral discoverCharacteristics:nil forService:aService];
         //  [uuids release];
@@ -471,7 +471,7 @@
  */
 - (void) peripheral:(CBPeripheral *)aPeripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
 {
-    NSLog(@"\n[CBController] didDiscoverCharacteristicsForService: %@", service.UUID);
+//    NSLog(@"\n[CBController] didDiscoverCharacteristicsForService: %@", service.UUID);
     CBCharacteristic *aChar = nil;
     BOOL isISSCPeripheral = NO;
     if ([service.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_ISSC_PROPRIETARY_SERVICE]]) {
@@ -480,21 +480,21 @@
         {
             if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_ISSC_TRANS_RX]]) {
                 _transparentDataWriteChar = aChar;
-                NSLog(@"found TRANS_RX");
+//                NSLog(@"found TRANS_RX");
                 
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_ISSC_TRANS_TX]]) {
-                NSLog(@"found TRANS_TX");
+//                NSLog(@"found TRANS_TX");
                 _transparentDataReadChar=aChar;
                 //[aPeripheral setNotifyValue:TRUE forCharacteristic:aChar];
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_CONNECTION_PARAMETER_CHAR]]) {
                 _connectionParameterChar=aChar;
-                NSLog(@"found CONNECTION_PARAMETER_CHAR");
+//                NSLog(@"found CONNECTION_PARAMETER_CHAR");
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_AIR_PATCH_CHAR]]) {
                 _airPatchChar=aChar;
-                NSLog(@"found UUIDSTR_AIR_PATCH_CHAR");
+//                NSLog(@"found UUIDSTR_AIR_PATCH_CHAR");
                 [_transmit enableReliableBurstTransmit:self.peripheral andAirPatchCharacteristic:aChar];
             }
         }
@@ -505,45 +505,45 @@
         {
             if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_MANUFACTURE_NAME_CHAR]]) {
                 _manufactureNameChar=aChar;
-                NSLog(@"found manufacture name char");
+//                NSLog(@"found manufacture name char");
                 [self readManufactureName];
                 
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_MODEL_NUMBER_CHAR]]) {
                 _modelNumberChar=aChar;
-                NSLog(@"found model number char");
+//                NSLog(@"found model number char");
                 [self readModelNumber];
                 
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_SERIAL_NUMBER_CHAR]]) {
                 _serialNumberChar=aChar;
-                NSLog(@"found serial number char");
+//                NSLog(@"found serial number char");
                 [self readSerialNumber];
                 
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_HARDWARE_REVISION_CHAR]]) {
                 _hardwareRevisionChar=aChar;
-                NSLog(@"found hardware revision char");
+//                NSLog(@"found hardware revision char");
                 [self readHardwareRevision];
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_FIRMWARE_REVISION_CHAR]]) {
                 _firmwareRevisionChar=aChar;
-                NSLog(@"found firmware revision char");
+//                NSLog(@"found firmware revision char");
                 [self readFirmwareRevision];
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_SOFTWARE_REVISION_CHAR]]) {
                 _softwareRevisionChar=aChar;
-                NSLog(@"found software revision char");
+//                NSLog(@"found software revision char");
                 [self readSoftwareRevison];
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_SYSTEM_ID_CHAR]]) {
                 _systemIDChar=aChar;
-                NSLog(@"[CBController] found system ID char");
+//                NSLog(@"[CBController] found system ID char");
                 [self readSystemID];
             }
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_IEEE_11073_20601_CHAR]]) {
                 _certDataListChar=aChar;
-                NSLog(@"found certification data list char");
+//                NSLog(@"found certification data list char");
                 [self readCertificationData];
             }
         }
@@ -578,39 +578,39 @@
  */
 - (void) peripheral:(CBPeripheral *)aPeripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    NSLog(@"[CBController] didUpdateValueForCharacteristic UUID = %@  %@",characteristic.UUID,[characteristic  value]);
+//    NSLog(@"[CBController] didUpdateValueForCharacteristic UUID = %@  %@",characteristic.UUID,[characteristic  value]);
     /*if ([characteristic.service.UUID isEqual:[CBUUID UUIDWithString:@"1803"]]) {
      [_peripheral  performSelector:@selector(readValueForCharacteristic:) withObject:characteristic afterDelay:2.0];
      }*/
     if ([characteristic.service.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_DEVICE_INFO_SERVICE]]) {
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_MANUFACTURE_NAME_CHAR]]) {
-            NSLog(@"[CBController] update manufacture name");
+//            NSLog(@"[CBController] update manufacture name");
             _manufacturer = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_MODEL_NUMBER_CHAR]]) {
-            NSLog(@"[CBController] update model number");
+//            NSLog(@"[CBController] update model number");
             _modelNumber = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_SERIAL_NUMBER_CHAR]]) {
-            NSLog(@"[CBController] update serial number");
+//            NSLog(@"[CBController] update serial number");
             _serialNumber = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_HARDWARE_REVISION_CHAR]]) {
-            NSLog(@"[CBController] update hardware revision");
+//            NSLog(@"[CBController] update hardware revision");
             _hardwareRevision = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_FIRMWARE_REVISION_CHAR]]) {
-            NSLog(@"[CBController] update firmware revision");
+//            NSLog(@"[CBController] update firmware revision");
             _firmwareRevision = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_SOFTWARE_REVISION_CHAR]]) {
-            NSLog(@"[CBController] update software revision, V%@",[[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding]);
+//            NSLog(@"[CBController] update software revision, V%@",[[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding]);
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_SYSTEM_ID_CHAR]]) {
-            NSLog(@"[CBController] update system ID , ID = %@",[[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding]);
+//            NSLog(@"[CBController] update system ID , ID = %@",[[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding]);
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_IEEE_11073_20601_CHAR]]) {
-            NSLog(@"[CBController] update IEEE_11073_20601: %@",characteristic.value);
+//            NSLog(@"[CBController] update IEEE_11073_20601: %@",characteristic.value);
         }
         if (_hardwareRevision && _firmwareRevision && !isPatch) {
             if ([_hardwareRevision hasPrefix:[NSString stringFromHexString:BM77SPP_HW]] && [_firmwareRevision hasPrefix:[NSString stringFromHexString:BM77SPP_FW]]) {
@@ -623,14 +623,14 @@
             }
             else {
                 [self setTransDataNotification:TRUE];
-                NSLog(@"[CBController] enable TransDataNotification");
+//                NSLog(@"[CBController] enable TransDataNotification");
             }
         }
         
     }
     else if ([characteristic.service.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_ISSC_PROPRIETARY_SERVICE]]) {
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_CONNECTION_PARAMETER_CHAR]]) {
-            NSLog(@"[CBController] update connection parameter: %@", characteristic.value);
+//            NSLog(@"[CBController] update connection parameter: %@", characteristic.value);
             unsigned char buf[10];
             CONNECTION_PARAMETER_FORMAT *parameter;
             
@@ -649,15 +649,15 @@
                         break;
                     case UPDATE_PARAMETERS_STEP_CHECK_RESULT:
                         if (buf[0] != 0x00) {
-                            NSLog(@"[CBController] check connection parameter status again");
+//                            NSLog(@"[CBController] check connection parameter status again");
                             [self checkConnectionParameterStatus];
                         }
                         else {
                             if ([self compareBackupConnectionParameter:parameter] == TRUE) {
-                                NSLog(@"[CBController] connection parameter no change");
+//                                NSLog(@"[CBController] connection parameter no change");
                             }
                             else {
-                                NSLog(@"connection parameter update success");
+//                                NSLog(@"connection parameter update success");
                                 [self updateBackupConnectionParameter:parameter];
                             }
                         }
@@ -682,8 +682,8 @@
 
 - (void) peripheral:(CBPeripheral *)aPeripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    NSLog(@"[CBController] didWriteValueForCharacteristic error msg:%ld, %@, %@", (long)error.code ,[error localizedFailureReason], [error localizedDescription]);
-    NSLog(@"characteristic data = %@ id = %@",characteristic.value,characteristic.UUID);
+//    NSLog(@"[CBController] didWriteValueForCharacteristic error msg:%ld, %@, %@", (long)error.code ,[error localizedFailureReason], [error localizedDescription]);
+//    NSLog(@"characteristic data = %@ id = %@",characteristic.value,characteristic.UUID);
     if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUIDSTR_ISSC_TRANS_RX]]) {
         if ([_transmit isReliableBurstTransmit:characteristic]) {
             return;
@@ -714,7 +714,7 @@
                 }
                 else {
                     [_transmit reliableBurstTransmit:[_writeData subdataWithRange:NSMakeRange(0, cont)] withTransparentCharacteristic:self.transparentDataWriteChar];
-                    NSLog(@"%@",[_writeData subdataWithRange:NSMakeRange(0, cont)]);
+//                    NSLog(@"%@",[_writeData subdataWithRange:NSMakeRange(0, cont)]);
                 }
             }
             else {
@@ -740,21 +740,21 @@
 
 - (void) peripheral:(CBPeripheral *)aPeripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    NSLog(@"[CBController] didDiscoverDescriptorsForCharacteristic error msg:%ld, %@, %@", (long)error.code ,[error localizedFailureReason], [error localizedDescription]);
+//    NSLog(@"[CBController] didDiscoverDescriptorsForCharacteristic error msg:%ld, %@, %@", (long)error.code ,[error localizedFailureReason], [error localizedDescription]);
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error
 {
-    NSLog(@"[CBController] didUpdateValueForDescriptor");
+//    NSLog(@"[CBController] didUpdateValueForDescriptor");
 }
 
 -(void) peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    NSLog(@"[CBController] didUpdateNotificationStateForCharacteristic, UUID = %@ ,isNotifying = %hhd", characteristic.UUID,characteristic.isNotifying);
+//    NSLog(@"[CBController] didUpdateNotificationStateForCharacteristic, UUID = %@ ,isNotifying = %hhd", characteristic.UUID,characteristic.isNotifying);
 }
 
 - (void)reliableBurstData:(ReliableBurstData *)reliableBurstData didSendDataWithCharacteristic:(CBCharacteristic *)transparentDataWriteChar {
-    NSLog(@"reliableBurstData:didSendDataWithCharacteristic:");
+//    NSLog(@"reliableBurstData:didSendDataWithCharacteristic:");
     static int b = 0;
     int length;
     if ([_writeData length]>=[_transmit transmitSize]) {
@@ -775,7 +775,7 @@
     }
     if (cont != 0) {
         [_transmit reliableBurstTransmit:[_writeData subdataWithRange:NSMakeRange(0, cont)] withTransparentCharacteristic:self.transparentDataWriteChar];
-        NSLog(@"%@",[_writeData subdataWithRange:NSMakeRange(0, cont)]);
+//        NSLog(@"%@",[_writeData subdataWithRange:NSMakeRange(0, cont)]);
     }
     else {
         complete = YES;

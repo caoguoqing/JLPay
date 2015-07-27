@@ -64,10 +64,12 @@
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
     // 重新扫描设备
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
 }
 
 
@@ -196,6 +198,11 @@
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
     sender.transform = CGAffineTransformIdentity;
+    if ([self.money floatValue] < 0.0001) {
+        [self alertShow:@"请输入金额!"];
+        return;
+    }
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
     // 保存的是字符串型的金额

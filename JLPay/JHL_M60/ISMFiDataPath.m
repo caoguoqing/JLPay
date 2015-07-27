@@ -51,7 +51,7 @@
 
 - (EAAccessory *)obtainAccessoryForProtocol:(NSString *)protocolString
 {
-    NSLog(@"[obtainAccessoryForProtocol]");
+//    NSLog(@"[obtainAccessoryForProtocol]");
     if (protocolString == nil)
         return nil;
     NSArray *accessories_array = [[EAAccessoryManager sharedAccessoryManager]
@@ -59,11 +59,11 @@
     EAAccessory *accessory = nil;
     
     for (EAAccessory *obj in accessories_array) {
-        NSLog(@"[obtainAccessoryForProtocol]111 protocolStr: %@", [obj protocolStrings]);
+//        NSLog(@"[obtainAccessoryForProtocol]111 protocolStr: %@", [obj protocolStrings]);
         if ([[obj protocolStrings] containsObject:protocolString]) {
             accessory = obj;
             [accessory setDelegate:self];
-            NSLog(@"[obtainAccessoryForProtocol] protocolStr: %@", [obj protocolStrings]);
+//            NSLog(@"[obtainAccessoryForProtocol] protocolStr: %@", [obj protocolStrings]);
             break;
         }
         
@@ -104,16 +104,16 @@
     [[_session outputStream] removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     //  [[_session outputStream] setDelegate:nil];
         if (_writeData) {
-            NSLog(@"[MFiDataPath] _writeData release");
+//            NSLog(@"[MFiDataPath] _writeData release");
             _writeData = nil;
         }
     // NSLog(@"[MFiDataPath] closeSession2");
     if (_readData) {
-        NSLog(@"[MFiDataPath] _readData release");
+//        NSLog(@"[MFiDataPath] _readData release");
         _readData = nil;
     }
     //  NSLog(@"[MFiDataPath] closeSession3");
-    NSLog(@"[MFiDataPath] closeSession");
+//    NSLog(@"[MFiDataPath] closeSession");
     //there is a iOS dealloc bug in iOS 6.0/6.0.1 base on discussion in the network. (deallocated while still in use)
     _session = nil;
     
@@ -150,7 +150,7 @@
 
 #pragma mark - EAAccessory Notifications
 - (void)accessoryDidDisconnect:(EAAccessory *)theAccessory {
-    NSLog(@"[MFiDataPath] accessoryDidDisconnect");
+//    NSLog(@"[MFiDataPath] accessoryDidDisconnect");
     if (_accessory == theAccessory) {
         if (_session) {
             [self closeSession];
@@ -163,7 +163,7 @@
 }
 
 - (void)accessoryDidConnect:(NSNotification *)notification {
-    NSLog(@"[MFiDataPath] accessoryDidConnect");
+//    NSLog(@"[MFiDataPath] accessoryDidConnect");
     _accessory = [self obtainAccessoryForProtocol:_protocolString];
     if (_accessory) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(accessoryDidConnect:)])
@@ -181,7 +181,7 @@
         {
             
             NSInteger bytesWritten = [[_session outputStream] write:[_writeData bytes] maxLength:[_writeData length]];
-            NSLog(@"_writeData length = %d", [_writeData length]);
+//            NSLog(@"_writeData length = %d", [_writeData length]);
             if (bytesWritten == -1)
             {
                 NSLog(@"write error");
@@ -191,7 +191,7 @@
             {
                 [_writeData replaceBytesInRange:NSMakeRange(0, bytesWritten) withBytes:NULL length:0];
                 if ([_writeData length] == 0) {
-                    NSLog(@"write complete");
+//                    NSLog(@"write complete");
                     if (self.delegate && [self.delegate respondsToSelector:@selector(accessoryDidWriteData:bytes:complete:)]) {
                         [self.delegate accessoryDidWriteData:self bytes:bytesWritten complete:YES];
                     }
@@ -216,9 +216,9 @@
             _readData = [[NSMutableData alloc] init];
         }
         [_readData appendBytes:(void *)buf length:bytesRead];
-        NSLog(@"read %d bytes from input stream, %@", bytesRead, _readData);
+//        NSLog(@"read %d bytes from input stream, %@", bytesRead, _readData);
     }
-    NSLog(@"delegate = %@",self.delegate);
+//    NSLog(@"delegate = %@",self.delegate);
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataReceived:)])
         [self.delegate dataReceived:self];
 }

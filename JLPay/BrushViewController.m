@@ -220,7 +220,10 @@
         // 刷卡:刷卡回调中要注销定时器
         NSLog(@";;;';';;';开始刷卡");
         NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
-        [[DeviceManager sharedInstance] cardSwipeWithMoney:nil yesOrNot:NO onSNVersion:SNVersion];
+        NSString* money = [PublicInformation returnMoney];
+        CGFloat moneyFloat = [money floatValue]* 100.0;
+        NSString* cstringMoney = [NSString stringWithFormat:@"%012d",(int)moneyFloat];
+        [[DeviceManager sharedInstance] cardSwipeWithMoney:cstringMoney yesOrNot:NO onSNVersion:SNVersion];
     });
 }
 

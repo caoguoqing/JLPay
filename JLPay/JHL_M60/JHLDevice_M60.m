@@ -288,11 +288,10 @@
         nTotalDatalen |= ByteDate[1] & 0xFF;
         isAllData =true;
     }
-    if (nTotalDatalen +2 !=nOffsetLen)  //数据没收全
+    if (nTotalDatalen +2 != nOffsetLen)  //数据没收全
     {
         return;
     }
-    
     
     //接收到数据,复位时间
     if (sendDeviceListTimer) {
@@ -373,12 +372,14 @@
             NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
             // 未连接就建立连接,先判断自动打开标记
             if (self.needOpenDevices && [dataPath state] == CBPeripheralStateDisconnected) {
+                NSLog(@"======开始打开设备[%@]",[[dataPath peripheral] identifier].UUIDString);
                 [self.manager connectDevice:dataPath];
             }
             // 已连接但未读SN号的就读SN号
-            else if (self.needOpenDevices && [dataPath state] == CBPeripheralStateConnected && (SNVersion == nil || [SNVersion isEqualToString:@""])) {
-                [self readSNNoWithAccessory:dataPath];
-            }
+//            else if (self.needOpenDevices && [dataPath state] == CBPeripheralStateConnected && (SNVersion == nil || [SNVersion isEqualToString:@""])) {
+//                NSLog(@"======开始读取已经打开但未读取[%@]",[[dataPath peripheral] identifier].UUIDString);
+//                [self readSNNoWithAccessory:dataPath];
+//            }
         }
     }
 }
@@ -571,7 +572,7 @@
  */
 -(void)onReceive:(NSData*)data withAccessory:(ISDataPath*)accessory{
     
-    NSLog(@"%s %@",__func__,data);
+//    NSLog(@"%s %@",__func__,data);
     Byte * ByteDate = (Byte *)[data bytes];
     switch (ByteDate[0]) {
         case GETCARD_CMD:
@@ -603,10 +604,7 @@
             }
             else
             {
-                
-                
-                
-                NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
+                NSLog(@"%s,func=[%x],result:%@",__func__,ByteDate[0],@"获取卡号数据失败");
             }
             break;
         case GETTRACK_CMD:
@@ -622,7 +620,7 @@
             }
             else
             {
-                NSLog(@"%s,result:%@",__func__,@"获取卡号数据失败");
+                NSLog(@"%s,func=[%x],result:%@",__func__,ByteDate[0],@"获取卡号数据失败");
                 NSString* error = nil;
                 if (ByteDate[1]==0xE1 )
                     error = @"获取卡号数据失败:用户取消";
@@ -997,7 +995,7 @@
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
         SendData[0] =GETTRACKDATA_CMD;
-        SendData[1] =0x00;
+        SendData[1] =0x01;  // 00 是不显示金额
         SendData[2] =0x01;
         SendData[3] =0x01;
         SendData[4] =TRACK_ENCRY_MODEM;
@@ -1034,14 +1032,17 @@
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
         SendData[0] =GETTRACKDATA_CMD;
-        SendData[1] =0x00;
+        SendData[1] =0x01;
         SendData[2] =0x01;
         SendData[3] =0x01;
         SendData[4] =TRACK_ENCRY_MODEM;
         SendData[5] =PASSWORD_ENCRY_MODEM;
         SendData[6] =TRACK_ENCRY_DATA;
         SendData[7] =TRACK_ENCRY_DATA;
-        sprintf((char *)SendData+8, "%012d", MAmount);
+//        sprintf((char *)SendData+8, "%012d", MAmount);
+        memcpy((char*)SendData+8, [money cStringUsingEncoding:NSUTF8StringEncoding], 12);
+//        sprintf((char *)SendData+8, "%012d", MAmount);
+
         NSString *strDate = [self returnDate];
         NSData* bytesDate =[self StrHexToByte:strDate];
         Byte * ByteDate = (Byte *)[bytesDate bytes];
@@ -1416,7 +1417,7 @@ int StrToNumber16(const char *str)
         myBuffer[i / 2] = (char)anInt;
     }
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
-    NSLog(@"------字符串=======%@",unicodeString);
+//    NSLog(@"------字符串=======%@",unicodeString);
     free(myBuffer);
     return unicodeString;
     

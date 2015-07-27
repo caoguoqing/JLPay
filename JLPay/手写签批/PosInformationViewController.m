@@ -523,6 +523,7 @@
                                                                     @"uploadRequestTime", nil]];
     
     [self.uploadRequest setRequestHeaders:headerInfo];
+    NSLog(@"上传的图片大小:[%@]",UIImageJPEGRepresentation(self.scrollAllImg, 1.0));
     [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
 	[self.uploadRequest startAsynchronous];                           // 同步发送HTTP请求
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -538,8 +539,6 @@
     [successLoginStr clearDelegatesAndCancel];
     self.uploadRequest = nil;
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:successLoginStr.responseString]];
-    NSLog(@"chatUpLoadDic===%@",chatUpLoadDic);
-    NSLog(@"successLoginStr.responseString===%@",successLoginStr.responseString);
 
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
         //缓存图片路径

@@ -2737,6 +2737,7 @@ static Unpacking8583 *sharedObj2 = nil;
 
 -(NSString *)zhifubaoexchangeSuccess:(NSString *)result{
     NSString *codeResult=[ErrorType errInfo:[PublicInformation stringFromHexString:result]];
+    codeResult = [NSString stringWithFormat:@"[%@]:%@",result, codeResult];
     return codeResult;
 }
 
@@ -2744,6 +2745,7 @@ static Unpacking8583 *sharedObj2 = nil;
     //143030E4BAA4E69893E68890E58A9F,00成功
     NSString *theResult=result;
     NSString *codeResult=[ErrorType errInfo:[PublicInformation stringFromHexString:theResult]];
+    codeResult = [NSString stringWithFormat:@"[%@]:%@",result, codeResult];
     return codeResult;
 }
 
