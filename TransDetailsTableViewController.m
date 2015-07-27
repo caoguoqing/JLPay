@@ -15,8 +15,8 @@
 #import "JLActivity.h"
 
 
-@interface TransDetailsTableViewController()<NSURLConnectionDataDelegate,ASIHTTPRequestDelegate>
-@property (nonatomic, strong) NSArray* dataArray;           // 交易明细数组
+@interface TransDetailsTableViewController()<UIAlertViewDelegate,NSURLConnectionDataDelegate,ASIHTTPRequestDelegate>
+@property (nonatomic, strong) NSMutableArray* dataArray;           // 交易明细数组
 @property (nonatomic, strong) NSMutableData* reciveData;
 @property (nonatomic, strong) JLActivity*  activity;
 @property (nonatomic, retain) ASIFormDataRequest* HTTPRequest;
@@ -131,6 +131,10 @@
         // 应该取消可点击状态
     } else if (indexPath.row == 1) {
         // 用卡号+金额查询流水明细
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"明细查询" message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查询", nil];
+        [alert setAlertViewStyle:UIAlertViewStylePlainTextInput];
+        [[alert textFieldAtIndex:0] setPlaceholder:@"请输入需要查询的卡号或金额"];
+        [alert show];
     }
     else {
         // 如果是明细的 cell ,需要跳转到明细详细展示界面，并在详细界面中提供“撤销”按钮及对应的功能
@@ -180,6 +184,39 @@
 }
 
 
+/*************************************
+ * 功  能 : UIAlertView 的点击事件;
+ *           执行查询步骤;
+ * 参  数 :
+ * 返  回 :
+ *************************************/
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (![alertView.title isEqualToString:@"明细查询"]) {
+        return;
+    }
+    if (buttonIndex == 1) { // 查询
+        UITextField* textField = [alertView textFieldAtIndex:0];
+        if (textField.text == nil || [textField.text length] == 0) {
+            [self alertShow:@"查询条件为空,请输入卡号或金额"];
+            return;
+        }
+        
+        NSArray* selectedArray = [self detailsSelectedByCardOrMoney:textField.text];
+        if (selectedArray.count == 0) {
+            [self alertShow:@"未查询到匹配的明细"];
+        } else {
+            [self.dataArray removeAllObjects];
+            [self.dataArray addObjectsFromArray:selectedArray];
+            // 重载 table 会将总金额也重载掉,所以要将第一个cell拆到tableView外面去
+//            [self.tableView reloadData];
+        }
+    }
+}
+
+
+
+
+
 #pragma mask --------------------------- 异步获取/解析后台交易明细数据
 - (void) requestDataFromURL: (NSString*)urlString {
     NSURL* url = [NSURL URLWithString:urlString];
@@ -205,6 +242,7 @@
     [request setRequestHeaders:dicOfHeader];
     [request startAsynchronous];  // 异步获取数据
 
+    #pragma mask ********************** 需要修改:不要用 block ，改用 delegate
     __weak ASIFormDataRequest* blockRequest = request;
     // 返回数据的处理 -- 不用 delegate, 改用 block
     [request setCompletionBlock:^{
@@ -249,7 +287,8 @@
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
     
     NSLog(@"接收到得数据:[%@]", dataDic);
-    self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
+//    self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
+    [self.dataArray addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
 
     
     if (self.dataArray.count == 0) {
@@ -297,10 +336,38 @@
 }
 
 
+
+/*************************************
+ * 功  能 : 从明细列表中模糊查询出匹配的记录:卡号或金额;
+ * 参  数 :
+ *          (NSString*)cardOrMoney 需要查询的卡号或金额
+ * 返  回 :
+ *          (NSArray*)             查询到的明细数组
+ *************************************/
+- (NSArray*) detailsSelectedByCardOrMoney:(NSString*)cardOrMoney {
+    NSMutableArray* selectedArray = [[NSMutableArray alloc] init];
+    for (NSDictionary* dataDic in self.dataArray) {
+        NSString* cardNum = [dataDic valueForKey:@"pan"];
+        CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
+        if ([cardNum isEqualToString:cardOrMoney] || money == [cardOrMoney floatValue]) {
+            [selectedArray addObject:[dataDic copy]];
+        }
+    }
+    return selectedArray;
+}
+
+/*************************************
+ * 功  能 : 简化代码;
+ *************************************/
+- (void) alertShow:(NSString*)msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
+
 #pragma mask ::: getter 
 - (NSArray *)dataArray {
     if (_dataArray == nil) {
-        _dataArray = [[NSArray alloc] init];
+        _dataArray = [[NSMutableArray alloc] init];
     }
     return _dataArray;
 }

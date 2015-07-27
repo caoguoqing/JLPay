@@ -27,7 +27,7 @@
 #define ImageForBrand   @"logo"                                   // 商标图片
 
 
-@interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate>
+@interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
 
 
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
@@ -303,6 +303,7 @@
 - (IBAction)touchDownLoad: (UIButton*)sender {
     // 添加动画效果: 缩小
     sender.transform                      = CGAffineTransformMakeScale(0.98, 0.98);
+    [sender setEnabled:NO];
 }
 - (IBAction)touchOutLoad: (UIButton*)sender {
     // 添加动画效果: 恢复原大小
@@ -463,6 +464,9 @@
 - (void) alertShow: (NSString*) message {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [self.loadButton setEnabled:YES];
 }
 
 
