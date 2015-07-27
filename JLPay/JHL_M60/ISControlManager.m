@@ -234,16 +234,18 @@ __strong static id _sharedObject = nil;
     switch ([manager state])
     {
         case CBCentralManagerStateUnsupported:
-            state = @"The platform/hardware doesn't support Bluetooth Low Energy.";
-            break;
+//            state = @"蓝牙设备电量过低,请先充电.";
+//            break;
         case CBCentralManagerStateUnauthorized:
-            state = @"The app is not authorized to use Bluetooth Low Energy.";
+            state = @"蓝牙设备电量过低,请先充电.";
+//            state = @"The app is not authorized to use Bluetooth Low Energy.";
+
             break;
         case CBCentralManagerStatePoweredOff:
-            state = @"Bluetooth is currently powered off.";
+            state = @"手机蓝牙未打开,请先打开手机蓝牙.";
             break;
         case CBCentralManagerStatePoweredOn:
-            NSLog(@"Bluetooth power on");
+//            NSLog(@"手机蓝牙已开启");
             return TRUE;
         case CBCentralManagerStateUnknown:
         default:
@@ -251,9 +253,9 @@ __strong static id _sharedObject = nil;
             
     }
     
-    NSLog(@"Central manager state: %@", state);
+//    NSLog(@"Central manager state: %@", state);
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bluetooth alert"  message:state delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles: nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"蓝牙提示"  message:state delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
     [alertView show];
     return FALSE;
 }

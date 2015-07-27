@@ -104,18 +104,17 @@
     NSValue* value                  = [userInfo valueForKey:UIKeyboardFrameEndUserInfoKey];
     CGFloat keyboardHeight          = [value CGRectValue].size.height;
 
-    
-    // checkout textField, and push up Window
-    if ([self.userNumberTextField isFirstResponder] || [self.userPasswordTextField isFirstResponder]) {
-        UIView* view                = [self.userPasswordTextField superview];
-        
-        // 高度差 = 键盘高度 - (屏幕高度 - (密码输入框.superview.y坐标 + view.高度))
-        //    大于0 : 表示键盘遮盖了输入框
-        CGFloat insetOfViewAndKeyboard = keyboardHeight - (self.view.bounds.size.height - (view.frame.origin.y + view.frame.size.height));
-
-        // 遮盖时才将 window 向上移动
+    UITextField* textField = nil;
+    if ([self.userNumberTextField isFirstResponder]) {
+        textField = self.userNumberTextField;
+    } else if ([self.userPasswordTextField isFirstResponder]) {
+        textField = self.userPasswordTextField;
+    }
+    if (textField != nil) {
+        UIView* superView = [textField superview];
+        CGFloat insetOfViewAndKeyboard = keyboardHeight - (self.view.bounds.size.height - (superView.frame.origin.y + superView.frame.size.height));
         if (insetOfViewAndKeyboard > 0) {
-            self.moveHeightByWindow = insetOfViewAndKeyboard;
+            self.moveHeightByWindow += insetOfViewAndKeyboard;
             [UIView animateWithDuration:0.3 animations:^{
                 CGRect frame        = self.view.frame;
                 frame.origin.y      -= self.moveHeightByWindow;

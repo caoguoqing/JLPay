@@ -1065,6 +1065,8 @@
  */
 - (BOOL)writeMposData:(NSData *)data withAccessory:(ISDataPath *)accessory
 {
+    Byte* dataBytes = (Byte*)[data bytes];
+    NSLog(@"设备交互类型:[[[[[[[[[[[[[[%x]",dataBytes[0]);
     NSUInteger nlen =0,dwWriteBytes =0,dwCopyBytes =0;
     Byte templen[2]={0};
     Byte szSendBlock[BLUE_MAX_PACKET_SIZE_EP]={0x00};
