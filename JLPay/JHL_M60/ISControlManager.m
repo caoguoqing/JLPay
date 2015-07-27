@@ -237,7 +237,7 @@ __strong static id _sharedObject = nil;
 //            state = @"蓝牙设备电量过低,请先充电.";
 //            break;
         case CBCentralManagerStateUnauthorized:
-            state = @"蓝牙设备电量过低,请先充电.";
+            state = @"手机蓝牙不支持刷卡器.";
 //            state = @"The app is not authorized to use Bluetooth Low Energy.";
 
             break;

@@ -58,16 +58,7 @@
     UIImageView *bgImageView        = [[UIImageView alloc] initWithFrame:self.view.bounds];
     bgImageView.image               = [UIImage imageNamed:@"bg"];
     [self.view addSubview:bgImageView];
-
-    _loadButton                     = [[UIButton alloc] initWithFrame:CGRectZero];
-//    _pinChangeButton                = [[UIButton alloc] initWithFrame:CGRectZero];
-//    _signInButton                   = [[UIButton alloc] initWithFrame:CGRectZero];
-    _userNumberTextField            = [[UITextField alloc] initWithFrame:CGRectZero];
-    _userPasswordTextField          = [[UITextField alloc] initWithFrame:CGRectZero];
     _moveHeightByWindow             = 0.0;
-    
-    _userPasswordTextField.delegate = self;
-    
     // 登陆按钮
     [self addSubViews];
     [self EndEdit];
@@ -112,7 +103,7 @@
     }
     if (textField != nil) {
         UIView* superView = [textField superview];
-        CGFloat insetOfViewAndKeyboard = keyboardHeight - (self.view.bounds.size.height - (superView.frame.origin.y + superView.frame.size.height));
+        CGFloat insetOfViewAndKeyboard = keyboardHeight - (self.view.frame.size.height - (superView.frame.origin.y + self.view.frame.origin.y + superView.frame.size.height));
         if (insetOfViewAndKeyboard > 0) {
             self.moveHeightByWindow += insetOfViewAndKeyboard;
             [UIView animateWithDuration:0.3 animations:^{
@@ -199,10 +190,6 @@
     /* 登陆按钮：UIButton */
     frame.origin.y                      += frame.size.height + inset * 2.0;
     self.loadButton.frame               = frame;
-    self.loadButton.backgroundColor     = [UIColor colorWithRed:234.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
-    self.loadButton.layer.cornerRadius  = ViewCornerRadius;
-    self.loadButton.titleLabel.font     = [UIFont fontWithName:@"Helvetica-Bold" size:22];// 设置字体大小
-    [self.loadButton setTitle:@"登陆" forState:UIControlStateNormal];
     [self.view addSubview:self.loadButton];
     /* 给“登陆”按钮绑定一个登陆的 action */
     [self.loadButton addTarget:self action:@selector(touchDownLoad:) forControlEvents:UIControlEventTouchDown];
@@ -260,38 +247,48 @@
     
     UIView *view                        = [[UIView alloc] initWithFrame:frame];
     view.layer.cornerRadius             = ViewCornerRadius;      // 圆角半径;
-    
     CGFloat x                           = 0 + frame.size.width/4;
     CGRect  textFieldFrame              = CGRectMake(x, 0, frame.size.width - x, frame.size.height);
     
-    UIImageView *imageView              = [[UIImageView alloc] initWithFrame:CGRectMake(x/2.0, frame.size.height * 1.0 / 4.0, x / 5.0 * 4.0, frame.size.height )];
     
+    UITextField* textField = nil;
+    UIImage* image = nil;
+    CGFloat imageViewHeight = 0;
+    CGFloat imageViewY = 0;
+    CGFloat imageViewWidth = 0;
+    CGFloat imageViewX = 0;
+
+    
+    CGFloat cent = 9.0/24.0;
     if ([viewName isEqualToString:@"账号"]) {
-        /* 先设置 textField，并添加到自定义 view 上 */
-        self.userNumberTextField.frame          = textFieldFrame;
-        self.userNumberTextField.placeholder    = @"请输入您的账号";
-        self.userNumberTextField.textColor      = [UIColor whiteColor];
-        [view addSubview:self.userNumberTextField];
+        textField = self.userNumberTextField;
+        image = [UIImage imageNamed:@"zhm"];
+        CGSize imageSize = image.size;
+        // 109*90  h:37, w:38
         
-        /* 然后设置该 view 的标签图片 */
-        imageView.image                         = [UIImage imageNamed:@"zhm"];
-        
+        imageViewHeight = frame.size.height * cent * 90.0/37.0;
+        imageViewY = frame.size.height * (1 - cent)/2.0;
+        imageViewWidth = imageViewHeight * imageSize.width/imageSize.height;
+        imageViewX = x - frame.size.height * 2.0/3.0;
     } else if ([viewName isEqualToString:@"密码" ]) {
-        self.userPasswordTextField.frame        = textFieldFrame;
-        self.userPasswordTextField.placeholder  = @"请输入您的密码";
-        self.userPasswordTextField.textColor    = [UIColor whiteColor];
-        self.userPasswordTextField.secureTextEntry = YES;
-        
-        [view addSubview:self.userPasswordTextField];
-        
-        /* 然后设置该 view 的标签图片 */
-        imageView.image                         = [UIImage imageNamed:@"mm"];
-        
+        textField = self.userPasswordTextField;
+        image = [UIImage imageNamed:@"mm"];
+        CGSize imageSize = image.size;
+
+        // 102*89 h:43, w:34
+        imageViewWidth = frame.size.height * cent * 38.0/37.0 * 0.9 * 102.0/34.0;
+        imageViewHeight = imageViewWidth * imageSize.height/imageSize.width;
+        imageViewY = (frame.size.height - imageViewHeight * 43.0/89.0)/2.0;
+        imageViewX = x - frame.size.height * 2.0/3.0 + 1.5;
     }
+    
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(imageViewX, imageViewY, imageViewWidth, imageViewHeight)];
+    imageView.image = image;
     [view addSubview:imageView];
     
+    textField.frame = textFieldFrame;
+    [view addSubview:textField];
     view.backgroundColor                        = [UIColor colorWithWhite:0.8 alpha:0.5];
-    
     return view;
 }
 
@@ -473,4 +470,37 @@
     [super didReceiveMemoryWarning];
 }
 
+#pragma mask ::: getter & setter 
+// 账号输入框
+- (UITextField *)userNumberTextField {
+    if (_userNumberTextField == nil) {
+        _userNumberTextField = [[UITextField alloc] initWithFrame:CGRectZero];
+        _userNumberTextField.placeholder    = @"请输入您的账号";
+        _userNumberTextField.textColor      = [UIColor whiteColor];
+
+    }
+    return _userNumberTextField;
+}
+// 密码输入框
+- (UITextField *)userPasswordTextField {
+    if (_userPasswordTextField == nil) {
+        _userPasswordTextField = [[UITextField alloc] initWithFrame:CGRectZero];
+        _userPasswordTextField.placeholder  = @"请输入您的密码";
+        _userPasswordTextField.textColor    = [UIColor whiteColor];
+        _userPasswordTextField.secureTextEntry = YES;
+    }
+    return _userPasswordTextField;
+}
+// 登陆按钮
+- (UIButton *)loadButton {
+    if (_loadButton == nil) {
+        _loadButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        _loadButton.backgroundColor     = [UIColor colorWithRed:234.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
+        _loadButton.layer.cornerRadius  = ViewCornerRadius;
+        _loadButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
+        [_loadButton setTitle:@"登陆" forState:UIControlStateNormal];
+
+    }
+    return _loadButton;
+}
 @end

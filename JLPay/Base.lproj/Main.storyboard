@@ -59,7 +59,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZhB-4y-vDe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1643" y="388"/>
+            <point key="canvasLocation" x="-523" y="52"/>
         </scene>
         <!--We Chat Pay View Controller-->
         <scene sceneID="iK5-cr-5Tw">
@@ -93,7 +93,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="75k-Bu-3Bc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1203" y="-342"/>
+            <point key="canvasLocation" x="-83" y="-678"/>
         </scene>
         <!--支付宝支付-->
         <scene sceneID="Vw7-n7-Tbw">
@@ -123,7 +123,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QrP-3R-OZc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-849" y="-342"/>
+            <point key="canvasLocation" x="271" y="-678"/>
         </scene>
         <!--Cust Pay View Controller-->
         <scene sceneID="eaC-D2-oVh">
@@ -138,7 +138,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xiP-pQ-rat" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1203" y="388"/>
+            <point key="canvasLocation" x="-83" y="52"/>
         </scene>
         <!--Brush View Controller-->
         <scene sceneID="CbX-sW-fA8">
@@ -153,7 +153,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4fU-iG-yJp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-776" y="388"/>
+            <point key="canvasLocation" x="344" y="52"/>
         </scene>
         <!--商户管理-->
         <scene sceneID="pSU-mK-gDv">
@@ -303,59 +303,6 @@
             </objects>
             <point key="canvasLocation" x="501" y="2672"/>
         </scene>
-        <!--Password View Controller-->
-        <scene sceneID="MTX-eY-EhS">
-            <objects>
-                <viewController storyboardIdentifier="password" id="FXD-ma-91M" customClass="PasswordViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="w1z-U0-JDc">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" clearsOnBeginEditing="YES" minimumFontSize="17" id="hfd-z7-RFH">
-                                <rect key="frame" x="76" y="105" width="168" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="FXD-ma-91M" id="kzh-U4-BMi"/>
-                                </connections>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Tfo-8W-3Ze">
-                                <rect key="frame" x="76" y="160" width="168" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="确定">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="click:" destination="FXD-ma-91M" eventType="touchUpInside" id="Lso-c1-HsJ"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <connections>
-                        <outlet property="textField" destination="hfd-z7-RFH" id="GVv-eo-iDg"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iW0-76-brW" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-242" y="388"/>
-        </scene>
-        <!--Wait View Controller-->
-        <scene sceneID="SVc-Zt-4Ay">
-            <objects>
-                <viewController storyboardIdentifier="waitview" id="vCL-IC-PA4" customClass="WaitViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5Lh-WY-bE7">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="J9J-vR-h8c" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="144" y="384"/>
-        </scene>
         <!--商户管理-->
         <scene sceneID="fq6-ud-Js9">
             <objects>
@@ -389,7 +336,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EJl-fZ-fBl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1103" y="2986"/>
+            <point key="canvasLocation" x="-495" y="3586"/>
         </scene>
         <!--增值服务-->
         <scene sceneID="du3-CL-xUi">
@@ -404,7 +351,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="46S-Jv-gi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-673" y="2986"/>
+            <point key="canvasLocation" x="-65" y="3586"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="XKI-ww-Kom">

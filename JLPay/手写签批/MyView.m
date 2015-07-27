@@ -179,12 +179,12 @@ static CGPoint MyBeganpoint;
 //    NSNumber *num=[[NSNumber alloc]initWithInt:colorCount];
 //    [colorArray addObject:num];
 //    pointArray=[[NSMutableArray alloc]init];
-    NSLog(@"touches end");
+//    NSLog(@"touches end");
 }
 //电话呼入等事件取消时候发出
 -(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	NSLog(@"touches Canelled");
+//	NSLog(@"touches Canelled");
 }
 //撤销，将当前最后一条信息移动到删除数组里，方便恢复时调用
 -(void)revocation{

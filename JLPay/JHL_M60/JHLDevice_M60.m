@@ -1032,7 +1032,7 @@
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
         SendData[0] =GETTRACKDATA_CMD;
-        SendData[1] =0x01;
+        SendData[1] =0x00;
         SendData[2] =0x01;
         SendData[3] =0x01;
         SendData[4] =TRACK_ENCRY_MODEM;

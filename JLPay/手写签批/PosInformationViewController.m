@@ -523,7 +523,7 @@
                                                                     @"uploadRequestTime", nil]];
     
     [self.uploadRequest setRequestHeaders:headerInfo];
-    NSLog(@"上传的图片大小:[%@]",UIImageJPEGRepresentation(self.scrollAllImg, 1.0));
+//    NSLog(@"上传的图片大小:[%ld]",[UIImageJPEGRepresentation(self.scrollAllImg, 1.0) length]);
     [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
 	[self.uploadRequest startAsynchronous];                           // 同步发送HTTP请求
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -625,7 +625,7 @@
 // 格式化时间成功无任何符号格式
 - (NSString*) formatTime:(NSString*)timestr {
     // 2015-07-10 14:38:52  -> 20150710143852
-    int length = [timestr length] + 1;
+    int length = (int)[timestr length] + 1;
     char* str = (char*)malloc(length);
     char* ctimestr = (char*)malloc(14 + 1);
     memset(str, 0x00, length);
