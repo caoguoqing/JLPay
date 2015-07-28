@@ -458,7 +458,6 @@
                   @"0210",//22
                   @"82",//25
                   @"12",//26
-                  //@"",//14 卡有效期,bcd,(pos获取时存在)
                   //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
                   //35，二磁道数据，asc，不定长37，(pos获取时存在)
                   [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],

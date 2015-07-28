@@ -9,7 +9,7 @@
 #import "settingViewController.h"
 #import "DeviceSettingViewController.h"
 #import <UIKit/UIKitDefines.h>
-#import "TransDetailsTableViewController.h"
+#import "TransDetailsViewController.h"
 #import "Define_Header.h"
 #import "DeviceSignInViewController.h"
 
@@ -186,7 +186,7 @@
             case 1:
                 // 交易管理
             {
-                TransDetailsTableViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"TransDetails"];
+                TransDetailsViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"transDetailsVC"]; // transDetailsVC TransDetails
                 [self.navigationController pushViewController:transDetailsVC animated:YES];
             }
                 break;

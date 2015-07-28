@@ -37,6 +37,15 @@
     }
     return self;
 }
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        self.amountLabel.text = @"0.00";
+        self.cardNumberLabel.text = @"";
+        self.tranTimeLabel.text = @"";
+    }
+    return self;
+}
 
 
 #pragma mask ::: 加载 cell 的子视图
@@ -56,7 +65,6 @@
     
     // label:标示该笔交易的交易类型
     frame.origin.y += frame.size.height;
-//    frame.size.height /= 2.0;
     self.tranTypeLabel.frame = frame;
     [self addSubview:self.tranTypeLabel];
 //    self.tranTypeLabel.backgroundColor = [UIColor redColor];
@@ -141,9 +149,6 @@
         _tranTypeLabel.textAlignment = NSTextAlignmentLeft;
         _tranTypeLabel.textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
         _tranTypeLabel.font = [UIFont systemFontOfSize:OtherFont ];
-//        _tranTypeLabel.layer.cornerRadius = 7.0;
-//        _tranTypeLabel.layer.borderColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0].CGColor;
-//        _tranTypeLabel.layer.borderWidth = 0.5;
     }
     return _tranTypeLabel;
 }

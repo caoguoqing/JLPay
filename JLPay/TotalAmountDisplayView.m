@@ -1,29 +1,20 @@
 //
-//  TotalAmountCell.m
+//  TotalAmountDisplayView.m
 //  JLPay
 //
-//  Created by jielian on 15/6/8.
+//  Created by jielian on 15/7/28.
 //  Copyright (c) 2015年 ShenzhenJielian. All rights reserved.
 //
 
-#import "TotalAmountCell.h"
-@interface TotalAmountCell()
+#import "TotalAmountDisplayView.h"
+
+@interface TotalAmountDisplayView()
 @property (nonatomic, strong) UILabel* totalAmountLabel;
 @property (nonatomic, strong) UILabel* totalRowsLabel;
 @property (nonatomic, strong) UILabel* sucRowsLabel;
 @property (nonatomic, strong) UILabel* revokeRowsLabel;
-//@property (nonatomic, strong) UILabel* flushRowsLabel;
-
 
 @end
-
-
-@implementation TotalAmountCell
-@synthesize totalAmountLabel = _totalAmountLabel;
-@synthesize totalRowsLabel = _totalRowsLabel;
-@synthesize sucRowsLabel = _sucRowsLabel;
-@synthesize revokeRowsLabel = _revokeRowsLabel;
-//@synthesize flushRowsLabel = _flushRowsLabel;
 
 
 #define CellTextColor    [UIColor whiteColor];  // 文字颜色
@@ -34,9 +25,33 @@
 #define LittleFont                  10.0
 #define LeftInset                   10.0
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
+
+@implementation TotalAmountDisplayView
+@synthesize totalAmountLabel = _totalAmountLabel;
+@synthesize totalRowsLabel = _totalRowsLabel;
+@synthesize sucRowsLabel = _sucRowsLabel;
+@synthesize revokeRowsLabel = _revokeRowsLabel;
+
+
+#pragma mask ::: set 属性值
+
+- (void) setTotalAmount: (NSString*)totalAmount {
+    self.totalAmountLabel.text = totalAmount;
+}
+- (void) setTotalRows: (NSString*)totalRows {
+    self.totalRowsLabel.text = totalRows;
+}
+- (void) setSucRows: (NSString*)totalAmount {
+    self.sucRowsLabel.text = totalAmount;
+}
+- (void) setRevokeRows: (NSString*)totalAmount {
+    self.revokeRowsLabel.text = totalAmount;
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self != nil) {
         self.totalAmountLabel.text = @"0.00";
         self.totalRowsLabel.text = @"0";
         self.sucRowsLabel.text = @"0";
@@ -46,33 +61,27 @@
 }
 
 - (void)layoutSubviews {
-    CGFloat modalH = 384.0;
-    
-    CGRect frame = CGRectMake(0,
-                              0,
-                              self.bounds.size.width,
-                              self.bounds.size.height*(232.0/modalH));
-
-    [self addSubview:[self makeView1:frame]];
-    
-    frame.origin.y += frame.size.height;
-    frame.size.height = self.bounds.size.height - frame.size.height;
-    [self addSubview:[self makeView2:frame]];
     [super layoutSubviews];
+    CGRect frame1 = self.bounds;
+    frame1.size.height *= 3.0/5.0;
+    [self addSubview:[self makeView1:frame1]];
+    
+    frame1.origin.y += frame1.size.height;
+    frame1.size.height = self.frame.size.height - frame1.size.height;
+    [self addSubview:[self makeView2:frame1]];
 }
 
 - (UIView*) makeView1: (CGRect)frame {
-    
-    
     UIView* view = [[UIView alloc] initWithFrame:frame];
     view.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:64.0/255.0 blue:59.0/255.0 alpha:1.0];
     CGRect innerFrame = CGRectMake(LeftInset, 0, frame.size.width - LeftInset, frame.size.height / 4.0);
     // 今日交易总额
     UILabel* label = [[UILabel alloc] initWithFrame:innerFrame];
-    label.text = @"今日交易总额 :";
+    label.text = @"交易总额 :";
     label.textAlignment = NSTextAlignmentLeft;
     label.font = [UIFont boldSystemFontOfSize:TextDesFont];
     label.textColor = CellTextColor;
+//    label.backgroundColor = [UIColor purpleColor];
     [view addSubview:label];
     
     // self.totalAmountLabel
@@ -80,6 +89,7 @@
     innerFrame.size.width = frame.size.width / 4.0 * 3.0 - LeftInset;
     innerFrame.size.height = frame.size.height - innerFrame.size.height;
     self.totalAmountLabel.frame = innerFrame;
+//    self.totalAmountLabel.backgroundColor = [UIColor greenColor];
     [view addSubview:self.totalAmountLabel];
     
     // ￥
@@ -92,6 +102,7 @@
     label.textColor = CellTextColor;
     label.text = @"￥";
     label.font = [UIFont boldSystemFontOfSize:AmountFlagFont];
+//    label.backgroundColor = [UIColor orangeColor];
     [view addSubview:label];
     
     return view;
@@ -100,7 +111,6 @@
     UIView* view = [[UIView alloc] initWithFrame:frame];
     view.backgroundColor = [UIColor colorWithRed:249.0/255.0 green:99.0/255.0 blue:91.0/255.0 alpha:1.0];
     CGRect innerframe = CGRectMake(LeftInset, 0, frame.size.width - LeftInset, frame.size.height / 3.0);
-    
     
     // 交易笔数
     UILabel* label = [[UILabel alloc] initWithFrame:innerframe];
@@ -142,33 +152,20 @@
     label.font = [UIFont systemFontOfSize:LittleFont];
     [view addSubview:label];
     
-    // 冲正
-//    innerframe.origin.x += innerframe.size.width;
-//    label = [[UILabel alloc] initWithFrame:innerframe];
-//    label.textAlignment = NSTextAlignmentCenter;
-//    label.textColor = [UIColor whiteColor];
-//    label.text = @"冲正";
-//    label.font = [UIFont systemFontOfSize:LittleFont];
-//    [view addSubview:label];
-
-    // 全部.下面
+    // 全部.值
     innerframe.origin.x = 0;
     innerframe.origin.y += innerframe.size.height;
     innerframe.size.height = curHeight - innerframe.size.height;
     self.totalRowsLabel.frame = innerframe;
     [view addSubview:self.totalRowsLabel];
-    // 成功.下面
+    // 成功.值
     innerframe.origin.x += innerframe.size.width;
     self.sucRowsLabel.frame = innerframe;
     [view addSubview:self.sucRowsLabel];
-    // 撤销.下面
+    // 撤销.值
     innerframe.origin.x += innerframe.size.width;
     self.revokeRowsLabel.frame = innerframe;
     [view addSubview:self.revokeRowsLabel];
-    // 冲正.下面
-//    innerframe.origin.x += innerframe.size.width;
-//    self.flushRowsLabel.frame = innerframe;
-//    [view addSubview:self.flushRowsLabel];
     
     // 分割线
     CGFloat width = innerframe.size.width;
@@ -182,32 +179,11 @@
         [view addSubview:line];
         innerframe.origin.x += width;
     }
-    
     return view;
 }
 
 
-#pragma mask ::: set 属性值
-
-- (void) setTotalAmount: (NSString*)totalAmount {
-    self.totalAmountLabel.text = totalAmount;
-}
-- (void) setTotalRows: (NSString*)totalRows {
-    self.totalRowsLabel.text = totalRows;
-}
-- (void) setSucRows: (NSString*)totalAmount {
-    self.sucRowsLabel.text = totalAmount;
-}
-//- (void) setFlushRows: (NSString*)flushRows {
-//    self.flushRowsLabel.text = flushRows;
-//}
-- (void) setRevokeRows: (NSString*)totalAmount {
-    self.revokeRowsLabel.text = totalAmount;
-}
-
-
-
-#pragma mask ::: getter
+#pragma mask ::: getter & setter
 - (UILabel *)totalAmountLabel {
     if (_totalAmountLabel == nil) {
         _totalAmountLabel = [[UILabel alloc] init];
@@ -244,16 +220,5 @@
     }
     return _revokeRowsLabel;
 }
-//- (UILabel *)flushRowsLabel {
-//    if (_flushRowsLabel == nil) {
-//        _flushRowsLabel = [[UILabel alloc] init];
-//        _flushRowsLabel.textColor = [UIColor whiteColor];
-//        _flushRowsLabel.textAlignment = NSTextAlignmentCenter;
-//        _flushRowsLabel.font = [UIFont boldSystemFontOfSize:NumberFont];
-//    }
-//    return _flushRowsLabel;
-//}
-
-
 
 @end

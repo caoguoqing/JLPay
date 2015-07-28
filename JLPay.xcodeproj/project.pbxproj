@@ -62,8 +62,6 @@
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
 		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
 		5E82B7E21B214B8F00A58751 /* passwordView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7E11B214B8F00A58751 /* passwordView.m */; };
-		5E82B7EA1B2546A400A58751 /* TotalAmountCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7E91B2546A400A58751 /* TotalAmountCell.m */; };
-		5E82B7ED1B25662B00A58751 /* TransDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7EC1B25662B00A58751 /* TransDetailsTableViewController.m */; };
 		5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7EF1B256C6B00A58751 /* DetailsCell.m */; };
 		5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B8241B295F4400A58751 /* RevokeViewController.m */; };
 		5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */; };
@@ -143,6 +141,8 @@
 		5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344361AD8EF910005C890 /* AVFoundation.framework */; };
 		5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */; };
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
+		5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */; };
+		5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */; };
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
@@ -269,10 +269,6 @@
 		5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomIOSAlertView.m; sourceTree = "<group>"; };
 		5E82B7E01B214B8F00A58751 /* passwordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = passwordView.h; sourceTree = "<group>"; };
 		5E82B7E11B214B8F00A58751 /* passwordView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = passwordView.m; sourceTree = "<group>"; };
-		5E82B7E81B2546A400A58751 /* TotalAmountCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalAmountCell.h; sourceTree = "<group>"; };
-		5E82B7E91B2546A400A58751 /* TotalAmountCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalAmountCell.m; sourceTree = "<group>"; };
-		5E82B7EB1B25662B00A58751 /* TransDetailsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransDetailsTableViewController.h; path = ../TransDetailsTableViewController.h; sourceTree = "<group>"; };
-		5E82B7EC1B25662B00A58751 /* TransDetailsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TransDetailsTableViewController.m; path = ../TransDetailsTableViewController.m; sourceTree = "<group>"; };
 		5E82B7EE1B256C6B00A58751 /* DetailsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsCell.h; sourceTree = "<group>"; };
 		5E82B7EF1B256C6B00A58751 /* DetailsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailsCell.m; sourceTree = "<group>"; };
 		5E82B8231B295F4400A58751 /* RevokeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevokeViewController.h; sourceTree = "<group>"; };
@@ -407,6 +403,10 @@
 		5ED344361AD8EF910005C890 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalAmountDisplayView.h; sourceTree = "<group>"; };
+		5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalAmountDisplayView.m; sourceTree = "<group>"; };
+		5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransDetailsViewController.h; sourceTree = "<group>"; };
+		5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransDetailsViewController.m; sourceTree = "<group>"; };
 		5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatPayViewController.h; sourceTree = "<group>"; };
 		5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatPayViewController.m; sourceTree = "<group>"; };
 		5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayViewController.h; sourceTree = "<group>"; };
@@ -629,12 +629,12 @@
 		5E82B7E31B253F5F00A58751 /* 交易管理 */ = {
 			isa = PBXGroup;
 			children = (
-				5E82B7EB1B25662B00A58751 /* TransDetailsTableViewController.h */,
-				5E82B7EC1B25662B00A58751 /* TransDetailsTableViewController.m */,
+				5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */,
+				5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */,
+				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
+				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
 				5E82B8231B295F4400A58751 /* RevokeViewController.h */,
 				5E82B8241B295F4400A58751 /* RevokeViewController.m */,
-				5E82B7E81B2546A400A58751 /* TotalAmountCell.h */,
-				5E82B7E91B2546A400A58751 /* TotalAmountCell.m */,
 				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
 				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
 			);
@@ -1160,6 +1160,7 @@
 				5EBAA8FE1ACD3AFB00E2ABDD /* DesUtil.m in Sources */,
 				5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */,
 				5EBE927E1ACB7FE70096BD72 /* IPSetViewController.m in Sources */,
+				5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */,
 				5E5FA5841B46342600387E69 /* ISBLEDataPath.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
@@ -1168,7 +1169,6 @@
 				5E397B321AD36429004F206F /* ASIFormDataRequest.m in Sources */,
 				5EBE92841ACB95BC0096BD72 /* DeviceSettingViewController.m in Sources */,
 				5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */,
-				5E82B7EA1B2546A400A58751 /* TotalAmountCell.m in Sources */,
 				5EBAA9141ACD3F1B00E2ABDD /* SBJsonWriter.m in Sources */,
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
@@ -1181,6 +1181,7 @@
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
+				5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */,
 				5E08AE761B09BDAA00B8C198 /* FunctionButton.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
 				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,
@@ -1189,7 +1190,6 @@
 				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
-				5E82B7ED1B25662B00A58751 /* TransDetailsTableViewController.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
 				5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */,
 				5E397B371AD36429004F206F /* ASIS3BucketObject.m in Sources */,

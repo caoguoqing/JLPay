@@ -46,6 +46,12 @@ static Unpacking8583 *sharedObj2 = nil;
     NSString  *rebackStr=@"";
     BOOL rebackState=NO;
     NSLog(@"交易名称：[%@]", methodStr);
+    /**********置空配置变量**********/
+    // 授权码
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:AuthNo_38];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    
 #pragma mark---------支付宝支付，(预下订单)
     //saomaOrder
     if ([methodStr isEqualToString:@"saomaOrder"]) {
@@ -2394,9 +2400,6 @@ static Unpacking8583 *sharedObj2 = nil;
                     }else if([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"999"]){
                         //剩下长度
                         NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                        //                    //取两个字节，表示长度
-                        //                    int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-                        //                    length=oneCharLength;
                         if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"type"] isEqualToString: @"bcd"]) {
                             //取两个字节，表示长度
                             int oneCharLength=(([[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]+1)/2*2)+4;
@@ -2419,20 +2422,11 @@ static Unpacking8583 *sharedObj2 = nil;
                     [arr addObject:deleteStr];
                     
                     NSLog(@"methodStr====%@位域====%@,长度=====%@,值====%@",methodStr,[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
-                    
-                    // 保存返回的 55 数据域
-                    //                if ([[sortArr objectAtIndex:c] isEqualToString:@"55"]) {
-                    //                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:BlueIC55_Information];
-                    //                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    //                }
-                    // ExchangeMoney_Type 交易类型 中文
-                    
                     //交易结果
                     if ([[sortArr objectAtIndex:c] isEqualToString:@"39"]) {
                         if ([self IC_exchangeSuccess:deleteStr] ) {
                             rebackStr=@"披上送成功";
                             rebackState=YES;
-//                            [self saveExchangeResultMethod];
                         }else{
                             rebackStr=[self zhifubaoexchangeSuccess:deleteStr];
                             rebackState=NO;
@@ -2737,7 +2731,7 @@ static Unpacking8583 *sharedObj2 = nil;
 
 -(NSString *)zhifubaoexchangeSuccess:(NSString *)result{
     NSString *codeResult=[ErrorType errInfo:[PublicInformation stringFromHexString:result]];
-    codeResult = [NSString stringWithFormat:@"[%@]:%@",result, codeResult];
+    codeResult = [NSString stringWithFormat:@"[%@]:%@",[PublicInformation stringFromHexString:result], codeResult];
     return codeResult;
 }
 
@@ -2745,7 +2739,7 @@ static Unpacking8583 *sharedObj2 = nil;
     //143030E4BAA4E69893E68890E58A9F,00成功
     NSString *theResult=result;
     NSString *codeResult=[ErrorType errInfo:[PublicInformation stringFromHexString:theResult]];
-    codeResult = [NSString stringWithFormat:@"[%@]:%@",result, codeResult];
+    codeResult = [NSString stringWithFormat:@"[%@]:%@",[PublicInformation stringFromHexString:theResult], codeResult];
     return codeResult;
 }
 

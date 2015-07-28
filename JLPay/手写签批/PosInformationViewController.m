@@ -315,9 +315,6 @@
     [scrollVi addSubview:textLabel];
     
     
-    
-    
-    
     // 交易参考号 - 名
     text = @"交易参考号(REFER NO)";
 //    frame.origin.x = inset;
@@ -491,12 +488,6 @@
  *            卡号
  * ***/
 -(void)uploadRequestMethod:(NSString *)url{
-    //起码一张图片
-//    ASIFormDataRequest *uploadRequest=[[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:url]];
-//    [uploadRequest setShouldAttemptPersistentConnection:YES];
-//    [uploadRequest setNumberOfTimesToRetryOnTimeout:2];
-//    [uploadRequest setTimeOutSeconds:30];
-//    uploadRequest.delegate=self;
     [self.uploadRequest setDelegate:self];
     
     /*
@@ -523,7 +514,6 @@
                                                                     @"uploadRequestTime", nil]];
     
     [self.uploadRequest setRequestHeaders:headerInfo];
-//    NSLog(@"上传的图片大小:[%ld]",[UIImageJPEGRepresentation(self.scrollAllImg, 1.0) length]);
     [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
 	[self.uploadRequest startAsynchronous];                           // 同步发送HTTP请求
     dispatch_async(dispatch_get_main_queue(), ^{

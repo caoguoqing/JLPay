@@ -525,6 +525,8 @@
                   [self themoney],//@"000000000001",
                   // 11,流水号 bcd 6
                   liushuihao,
+                  // 14 有效期
+                  [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime],
                   // 22,服务点输入方式码 bcd 3(银联协议)
                   @"0510",
                   // 23,卡片序列号 bcd 3 （pos能判断时存在）
@@ -549,11 +551,11 @@
                   @"2600000000000000",
                   // 55
                   [NSString stringWithFormat:@"%04d%@", (int)info55Data.length/2, info55Data],
-                  // 60,自定义域(60.1,60.2,60.3  交易类型码，批次号,网络管理信息码)压缩成BCD码占两个字节+最大13个字节的数字字符域
+                  // 60,自定义域
                   betweenStr,
                   nil];
     NSLog(@"IC——消费====%@",arr);
-    NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"22",@"23",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"55",@"60",@"64",nil];
+    NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"14",@"22",@"23",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"55",@"60",@"64",nil];
     
     // 上送交易前先保存当前消费的部分字段,用于冲正、撤销、批上送
     [[NSUserDefaults standardUserDefaults] setValue:@"190000" forKey:LastF03_ProcessingCode];
