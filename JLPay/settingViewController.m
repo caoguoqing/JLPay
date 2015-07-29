@@ -76,10 +76,6 @@
 
 /*************************************
  * 功  能 : 设置 tableView 的 section 个数;
- * 参  数 :
- *          (UITableView *)tableView  当前表视图
- * 返  回 :
- *          NSInteger                 section 的个数
  *************************************/
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -87,11 +83,6 @@
 
 /*************************************
  * 功  能 : UITableViewDelegate :numberOfRowsInSection 协议;
- * 参  数 :
- *          (UITableView *)tableView  当前表视图
- *          (NSInteger)section        指定的section部分
- * 返  回 :
- *          NSInteger                 指定 section 中的 cell 的个数
  *************************************/
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.cellNamesAndImages.count;
@@ -100,11 +91,6 @@
 
 /*************************************
  * 功  能 : UITableViewDataSource :heightForRowAtIndexPath 协议:设置行高
- * 参  数 :
- *          (UITableView *)tableView  当前表视图
- *          (NSIndexPath *)indexPath  cell的索引
- * 返  回 :
- *          CGFloat                   指定index的行高
  *************************************/
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
@@ -115,9 +101,6 @@
 
 /*************************************
  * 功  能 : UITableViewDelegate :屏蔽指定cell 的点击高亮效果
- * 参  数 :
- *          (NSIndexPath *)indexPath  cell的索引
- * 返  回 :
  *************************************/
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -160,7 +143,7 @@
 /*************************************
  * 功  能 : 单元格的点击动作实现;
  *          -账号名称及信息
- *          -交易管理
+ *          -交易明细
  *          -绑定机具
  *          -额度查询
  *          -修改密码
@@ -184,7 +167,7 @@
                 // 账号名称
                 break;
             case 1:
-                // 交易管理
+                // 交易明细
             {
                 TransDetailsViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"transDetailsVC"]; // transDetailsVC TransDetails
                 [self.navigationController pushViewController:transDetailsVC animated:YES];
@@ -432,18 +415,18 @@
     // ...................图片名称需要更改
     self.cellNamesAndImages = @{
                                @"账号名称":@"01_01",
-                               @"交易管理":@"01_10",
+                               @"交易明细":@"01_10",
+//                               @"费率选择":@"01_12",
                                @"绑定机具":@"01_14",
-//                               @"参数设置":@"01_22",
                                @"额度查询":@"01_16",
                                @"修改密码":@"01_18",
                                @"意见反馈":@"01_20",
                                @"帮助和关于":@"01_24"};
     // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
-                                                @"交易管理",
+                                                @"交易明细",
+//                                                @"费率选择",
                                                 @"绑定机具",
-//                                                @"参数设置",
                                                 @"额度查询",
                                                 @"修改密码",
                                                 @"意见反馈",

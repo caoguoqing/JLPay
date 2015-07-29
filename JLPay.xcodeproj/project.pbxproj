@@ -143,6 +143,7 @@
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
 		5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */; };
 		5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */; };
+		5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA21B686AE200DCD764 /* DatePickerView.m */; };
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
@@ -407,6 +408,8 @@
 		5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalAmountDisplayView.m; sourceTree = "<group>"; };
 		5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransDetailsViewController.h; sourceTree = "<group>"; };
 		5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransDetailsViewController.m; sourceTree = "<group>"; };
+		5EF3BAA11B686AE200DCD764 /* DatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePickerView.h; sourceTree = "<group>"; };
+		5EF3BAA21B686AE200DCD764 /* DatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatePickerView.m; sourceTree = "<group>"; };
 		5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatPayViewController.h; sourceTree = "<group>"; };
 		5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatPayViewController.m; sourceTree = "<group>"; };
 		5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayViewController.h; sourceTree = "<group>"; };
@@ -631,6 +634,8 @@
 			children = (
 				5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */,
 				5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */,
+				5EF3BAA11B686AE200DCD764 /* DatePickerView.h */,
+				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
 				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
 				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
 				5E82B8231B295F4400A58751 /* RevokeViewController.h */,
@@ -1158,6 +1163,7 @@
 				5EBAA8E71ACD2FA800E2ABDD /* ISOBitmap.m in Sources */,
 				5E397B491AD364A9004F206F /* TcpClientService2.m in Sources */,
 				5EBAA8FE1ACD3AFB00E2ABDD /* DesUtil.m in Sources */,
+				5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */,
 				5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */,
 				5EBE927E1ACB7FE70096BD72 /* IPSetViewController.m in Sources */,
 				5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */,

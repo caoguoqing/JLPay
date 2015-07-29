@@ -679,11 +679,11 @@
     } 
     // 60.2 N6 批次号
     [F60 appendString:[PublicInformation returnSignSort]];
-    // 60.3 N3
+    // 60.3 N3 操作类型
     [F60 appendString:@"000"];
-    // 60.4 N1 磁条:2 , IC : 5
-    [F60 appendString:@"2"];
-    // 60.5 N1
+    // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
+    [F60 appendString:@"1"];
+    // 60.5 N1 费率:
     [F60 appendString:@"0"];
     // 60.6 N4
     [F60 appendString:@"0000"];

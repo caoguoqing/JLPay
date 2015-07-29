@@ -365,6 +365,15 @@
     text = @"持卡人签名(CARDHOLDER SIGNATURE):";
     frame.origin.y += inset + frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
+    // 重置高度:根据文本的长度跟frame.width的比例
+    if ([text sizeWithAttributes:midTextAttri].width > frame.size.width) {
+        CGFloat sizeWidth = [text sizeWithAttributes:midTextAttri].width;
+        int n = (int)(sizeWidth/frame.size.width);
+        frame.size.height *= n;
+//        if (sizeWidth % frame.size.width > 0) {
+//            
+//        }
+    }
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
     // 持卡人签名 - 图片

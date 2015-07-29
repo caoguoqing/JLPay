@@ -13,15 +13,23 @@
 #import "ASIFormDataRequest.h"
 #import "JLActivity.h"
 #import "PublicInformation.h"
+#import "DatePickerView.h"
 
-@interface TransDetailsViewController()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate>
+@interface TransDetailsViewController()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,
+UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
-@property (nonatomic, strong) NSMutableArray* dataArray;            // 保存明细的数组
-@property (nonatomic, strong) JLActivity* activitor;
-@property (nonatomic, strong) NSMutableData* reciveData;
+@property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮:用来切换时间
+@property (nonatomic, strong) UIButton* frushButotn;                // 刷新数据的按钮
+@property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
+@property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
+@property (nonatomic, strong) JLActivity* activitor;                // 转轮
+@property (nonatomic, strong) NSMutableData* reciveData;            // 接收HTTP的返回的数据缓存
 
+@property (nonatomic, strong) NSMutableArray* years;
+@property (nonatomic, strong) NSMutableArray* months;
+@property (nonatomic, strong) NSMutableArray* days;
 @end
 
 
@@ -29,16 +37,21 @@
 @synthesize totalView = _totalView;
 @synthesize tableView = _tableView;
 @synthesize searchButton = _searchButton;
-@synthesize dataArray = _dataArray;
+@synthesize dataArrayDisplay = _dataArrayDisplay;
 @synthesize activitor = _activitor;
 @synthesize reciveData = _reciveData;
+@synthesize dateButton = _dateButton;
+@synthesize frushButotn = _frushButotn;
+@synthesize years = _years;
+@synthesize months = _months;
+@synthesize days = _days;
 
 #pragma mask ------ UITableViewDataSource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.dataArray.count;
+    return self.dataArrayDisplay.count;
 }
 // 加载单元格
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -48,7 +61,7 @@
         cell = [[DetailsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    NSDictionary* dataDic = [self.dataArray objectAtIndex:indexPath.row];
+    NSDictionary* dataDic = [self.dataArrayDisplay objectAtIndex:indexPath.row];
     [cell setCardNum:[dataDic objectForKey:@"pan"]];
     [cell setTime:[dataDic objectForKey:@"instTime"]];
     NSString* trantype = [dataDic objectForKey:@"txnNum"];
@@ -79,10 +92,58 @@
     cell.selected = NO;
 
     RevokeViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"revokeViewController"];
-    viewController.dataDic = [self.dataArray objectAtIndex:indexPath.row];
+    viewController.dataDic = [self.dataArrayDisplay objectAtIndex:indexPath.row];
     [self.navigationController pushViewController:viewController animated:YES];
 
 }
+
+
+
+#pragma mask ------ UIPickerViewDelegate
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    NSString* titleString = nil;
+    switch (component) {
+        case 0:
+            titleString = [self.years objectAtIndex:row];
+            break;
+        case 1:
+            titleString = [self.months objectAtIndex:row];
+            break;
+        case 2:
+            titleString = [self.days objectAtIndex:row];
+            break;
+        default:
+            break;
+    }
+    return titleString;
+}
+#pragma mask ------ UIPickerViewDataSource
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 3;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    NSInteger numberOfRows = 0;
+    switch (component) {
+        case 0:
+            numberOfRows = self.years.count;
+            break;
+        case 1:
+            numberOfRows = self.months.count;
+            break;
+        case 2:
+            numberOfRows = self.days.count;
+            break;
+        default:
+            break;
+    }
+    return numberOfRows;
+}
+
+#pragma mask ------ DatePickerViewDelegate
+- (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
+    [self.dateButton setTitle:choosedDate forState:UIControlStateNormal];
+}
+
 
 #pragma mask ------ UIButton Action
 - (IBAction) touchDown:(id)sender {
@@ -110,6 +171,32 @@
     [alert show];
 
 }
+- (IBAction) touchToChangeDate:(id)sender {
+    UIButton* button = (UIButton*)sender;
+    [UIView animateWithDuration:0.1 animations:^{
+        button.transform = CGAffineTransformIdentity;
+    }];
+
+    NSString* ndate = self.dateButton.titleLabel.text;
+    CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
+    CGRect frame = CGRectMake(0, 0+naviAndStatusHeight, self.view.bounds.size.width, self.view.bounds.size.height - naviAndStatusHeight);
+    DatePickerView* pickerView = [[DatePickerView alloc] initWithFrame:frame andDate:ndate];
+    [pickerView setDelegate: self];
+    [self.view addSubview:pickerView];
+
+}
+- (IBAction) touchToFrushData:(id)sender {
+    UIButton* button = (UIButton*)sender;
+    [UIView animateWithDuration:0.1 animations:^{
+        button.transform = CGAffineTransformIdentity;
+    }];
+    NSString* text = self.dateButton.titleLabel.text;
+    NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
+    [self startToLoadHTTPDataWithDate:dates];
+}
+
+
+
 /*************************************
  * 功  能 : UIAlertView 的点击事件;
  *           执行查询步骤;
@@ -131,8 +218,8 @@
         if (selectedArray.count == 0) {
             [self alertShow:@"未查询到匹配的明细"];
         } else {
-            [self.dataArray removeAllObjects];
-            [self.dataArray addObjectsFromArray:selectedArray];
+            [self.dataArrayDisplay removeAllObjects];
+            [self.dataArrayDisplay addObjectsFromArray:selectedArray];
             // 重载 table 会将总金额也重载掉,所以要将第一个cell拆到tableView外面去
             [self.tableView reloadData];
         }
@@ -143,20 +230,16 @@
 
 #pragma mask ------ Data Source Func
 #pragma mask --------------------------- 异步获取/解析后台交易明细数据
-- (void) requestDataFromURL: (NSString*)urlString {
+- (void) requestDataFromURL:(NSString*)urlString withDate:(NSString*)ndate{
     NSURL* url = [NSURL URLWithString:urlString];
     if (url == nil) return;
     
-    // 取当前日期的年月日
-    NSDateFormatter* dateFomater = [[NSDateFormatter alloc] init];
-    [dateFomater setDateFormat:@"yyyyMMddHHmmss"];
-    NSString* dateStr = [[dateFomater stringFromDate:[NSDate date]] substringToIndex:8];
     // 设置HTTP header参数
     NSMutableDictionary* dicOfHeader = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:
                                                                                    [PublicInformation returnTerminal],
                                                                                    [PublicInformation returnBusiness],
-                                                                                   dateStr,
-                                                                                   dateStr, nil]
+                                                                                   ndate,
+                                                                                   ndate, nil]
                                                                           forKeys:[NSArray arrayWithObjects:
                                                                                    @"termNo",
                                                                                    @"mchntNo",
@@ -167,10 +250,11 @@
     [request setRequestHeaders:dicOfHeader];
     [request startAsynchronous];  // 异步获取数据
     
-#pragma mask ********************** 需要修改:不要用 block ，改用 delegate
+    #pragma mask ********************** 需要修改:不要用 block ，改用 delegate
     __weak ASIFormDataRequest* blockRequest = request;
     // 返回数据的处理 -- 不用 delegate, 改用 block
     [request setCompletionBlock:^{
+        [request clearDelegatesAndCancel];
         [self.reciveData appendData:[blockRequest responseData]];
         [self analysisJSONDataToDisplay];
         if ([self.activitor isAnimating]) [self.activitor stopAnimating];
@@ -178,6 +262,7 @@
     
     // 返回失败的处理
     [request setFailedBlock:^{
+        [request clearDelegatesAndCancel];
         UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alerView show];
         if ([self.activitor isAnimating]) [self.activitor stopAnimating];
@@ -202,12 +287,12 @@
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
     
     NSLog(@"接收到得数据:[%@]", dataDic);
-    //    self.dataArray = [dataDic objectForKey:@"MchntInfoList"];
-    [self.dataArray addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
-    if (self.dataArray.count == 0) {
+    [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
+    if (self.dataArrayDisplay.count == 0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
     } else {
+        self.oldArraySaving = [self.dataArrayDisplay copy];
         // 计算总金额
         [self calculateTotalAmount];
         // 重载数据
@@ -220,8 +305,8 @@
     int tAcount = 0;
     int tSucCount = 0;
     int tRevokeCount = 0;
-    for (int i = 0; i < self.dataArray.count; i++) {
-        NSDictionary* data = [self.dataArray objectAtIndex:i];
+    for (int i = 0; i < self.dataArrayDisplay.count; i++) {
+        NSDictionary* data = [self.dataArrayDisplay objectAtIndex:i];
         if ([[data objectForKey:@"cancelFlag"] isEqualToString:@"1"]) {
             tRevokeCount++;
             tAmount -= [[data objectForKey:@"amtTrans"] floatValue];
@@ -239,6 +324,13 @@
 
 }
 
+// 发起HTTP数据请求,并同步接受响应
+- (void) startToLoadHTTPDataWithDate:(NSString*)ndate {
+    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+    [self requestDataFromURL:urlString withDate:ndate];
+    [self.activitor startAnimating];
+
+}
 
 
 #pragma mask ------ View Controller Load/Appear/DisAppear
@@ -248,22 +340,16 @@
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.searchButton];
+    [self.view addSubview:self.frushButotn];
+    [self.view addSubview:self.dateButton];
     [self.view addSubview:self.activitor];
-    
-    [self.searchButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-    [self.searchButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
-    [self.searchButton addTarget:self action:@selector(touchToSearch:) forControlEvents:UIControlEventTouchUpInside];
-    
     // 从后台异步获取交易明细数据
-    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-    [self requestDataFromURL:urlString];
-    [self.activitor startAnimating];
-
+    [self startToLoadHTTPDataWithDate:[self nowDate]];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.tabBarController.tabBar.hidden = YES;
-    
+    // 总金额显示框
     CGFloat inset = 15;
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     
@@ -273,23 +359,34 @@
                               (self.view.frame.size.height - self.navigationController.navigationBar.bounds.size.height)/4.0);
     self.totalView.frame = frame;
     
-    
+    // 日期选择按钮
     frame.origin.x = inset;
     frame.origin.y += frame.size.height + inset/3.0;
     frame.size.height = 40;
-    frame.size.width = self.view.bounds.size.width - inset*2 - frame.size.height;
-    UILabel* label = [[UILabel alloc] initWithFrame:frame];
-    label.text = @"交易明细";
-    label.font = [UIFont boldSystemFontOfSize:18.0];
-    label.backgroundColor = [UIColor clearColor];
-    label.textAlignment = NSTextAlignmentLeft;
-    label.textColor = [UIColor blackColor];
-    [self.view addSubview:label];
+    frame.size.width = (self.view.bounds.size.width - inset*2)/2.0;
+    self.dateButton.frame = frame;
+    self.dateButton.layer.cornerRadius = self.dateButton.frame.size.height/2.0;
+    self.dateButton.layer.masksToBounds = YES;
+
+    // 刷新按钮
+    frame.origin.x += frame.size.width + 5;
+    CGSize textSize = [self.frushButotn.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.frushButotn.titleLabel.font forKey:NSFontAttributeName]];
+    CGFloat oldHeight = frame.size.height;
+    frame.origin.y += (oldHeight - textSize.height - 10.0)/2.0;
+    frame.size.height = textSize.height + 10;
+    frame.size.width /= 2.0;
+    self.frushButotn.frame = frame;
+    self.frushButotn.layer.cornerRadius = frame.size.height/2.0;
+    self.frushButotn.layer.masksToBounds = YES;
     
-    frame.origin.x += frame.size.width;
+    // 查询按钮
+    frame.origin.y -= (oldHeight - textSize.height - 10.0)/2.0;
+    frame.size.height = oldHeight;
+    frame.origin.x = self.view.bounds.size.width - inset - frame.size.height;
     frame.size.width = frame.size.height;
     self.searchButton.frame = frame;
     
+    // 分割线
     frame.origin.x = 0;
     frame.origin.y += frame.size.height + inset/3.0 - 1;
     frame.size.width = self.view.bounds.size.width;
@@ -298,6 +395,7 @@
     line.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     [self.view addSubview:line];
     
+    // 表视图
     frame.origin.y += 1;
     frame.size.height = self.view.bounds.size.height - frame.origin.y;
     self.tableView.frame = frame;
@@ -327,7 +425,7 @@
  *************************************/
 - (NSArray*) detailsSelectedByCardOrMoney:(NSString*)cardOrMoney {
     NSMutableArray* selectedArray = [[NSMutableArray alloc] init];
-    for (NSDictionary* dataDic in self.dataArray) {
+    for (NSDictionary* dataDic in self.oldArraySaving) {
         NSString* cardNum = [dataDic valueForKey:@"pan"];
         CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
         if ([cardNum isEqualToString:cardOrMoney] || money == [cardOrMoney floatValue]) {
@@ -346,6 +444,15 @@
 }
 
 
+// 获取当前系统日期
+- (NSString*) nowDate {
+    NSString* nDate ;
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    nDate = [dateFormatter stringFromDate:[NSDate date]];
+    nDate = [nDate substringToIndex:8];
+    return nDate;
+}
 
 #pragma mask ::: getter & setter 
 - (TotalAmountDisplayView *)totalView {
@@ -368,8 +475,40 @@
         _searchButton = [[UIButton alloc] initWithFrame:CGRectZero];
         _searchButton.backgroundColor = [UIColor clearColor];
         [_searchButton setBackgroundImage:[UIImage imageNamed:@"search"] forState:UIControlStateNormal];
+        [_searchButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_searchButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+        [_searchButton addTarget:self action:@selector(touchToSearch:) forControlEvents:UIControlEventTouchUpInside];
+
     }
     return _searchButton;
+}
+- (UIButton *)dateButton {
+    if (_dateButton == nil) {
+        _dateButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        _dateButton.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.3];
+        NSString* nDate = [self nowDate];
+        NSString* formateDate = [NSString stringWithFormat:@"%@-%@-%@",[nDate substringToIndex:4],[nDate substringWithRange:NSMakeRange(4, 2)],[nDate substringFromIndex:4+2]];
+        [_dateButton setTitle:formateDate forState:UIControlStateNormal];
+        [_dateButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [_dateButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_dateButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+        [_dateButton addTarget:self action:@selector(touchToChangeDate:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _dateButton;
+}
+- (UIButton *)frushButotn {
+    if (_frushButotn == nil) {
+        _frushButotn = [[UIButton alloc] initWithFrame:CGRectZero];
+        [_frushButotn setTitle:@"刷新" forState:UIControlStateNormal];
+        [_frushButotn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _frushButotn.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:64.0/255.0 blue:59.0/255.0 alpha:1.0];
+        
+        [_frushButotn addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_frushButotn addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchDown];
+        [_frushButotn addTarget:self action:@selector(touchToFrushData:) forControlEvents:UIControlEventTouchDown];
+
+    }
+    return _frushButotn;
 }
 - (JLActivity *)activitor {
     if (_activitor == nil) {
@@ -383,10 +522,40 @@
     }
     return _reciveData;
 }
-- (NSMutableArray *)dataArray {
-    if (_dataArray == nil) {
-        _dataArray = [[NSMutableArray alloc] init];
+- (NSMutableArray *)dataArrayDisplay {
+    if (_dataArrayDisplay == nil) {
+        _dataArrayDisplay = [[NSMutableArray alloc] init];
     }
-    return _dataArray;
+    return _dataArrayDisplay;
 }
+- (NSMutableArray *)years {
+    if (_years == nil) {
+        _years = [[NSMutableArray alloc] init];
+        NSString* nDate = [self nowDate];
+        for (int i = [[nDate substringToIndex:4] intValue]; i >= 2015; i--) {
+            [_years addObject:[NSString stringWithFormat:@"%d",i]];
+        }
+    }
+    return _years;
+}
+- (NSMutableArray *)months {
+    if (_months == nil) {
+        _months = [[NSMutableArray alloc] init];
+        for (int i = 0; i < 12; i++) {
+            [_months addObject:[NSString stringWithFormat:@"%d",i+1]];
+        }
+    }
+    return _months;
+}
+- (NSMutableArray *)days {
+    if (_days == nil) {
+        _days = [[NSMutableArray alloc] init];
+        for (int i = 0; i < 31; i++) {
+            [_days addObject:[NSString stringWithFormat:@"%d",i+1]];
+        }
+    }
+    return _days;
+}
+
+
 @end
