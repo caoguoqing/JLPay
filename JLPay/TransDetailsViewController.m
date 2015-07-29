@@ -30,6 +30,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 @property (nonatomic, strong) NSMutableArray* years;
 @property (nonatomic, strong) NSMutableArray* months;
 @property (nonatomic, strong) NSMutableArray* days;
+@property (nonatomic, retain) ASIHTTPRequest* HTTPRequest;      // HTTP入口
 @end
 
 
@@ -45,6 +46,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 @synthesize years = _years;
 @synthesize months = _months;
 @synthesize days = _days;
+@synthesize HTTPRequest = _HTTPRequest;
 
 #pragma mask ------ UITableViewDataSource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
@@ -190,9 +192,21 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     [UIView animateWithDuration:0.1 animations:^{
         button.transform = CGAffineTransformIdentity;
     }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.dataArrayDisplay removeAllObjects];
+        [self calculateTotalAmount];
+        [self.tableView reloadData];
+    });
+    
     NSString* text = self.dateButton.titleLabel.text;
     NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
-    [self startToLoadHTTPDataWithDate:dates];
+    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dates];
+    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
+    [self.HTTPRequest setDelegate:self];
+//    [self.HTTPRequest buildRequestHeaders];
+    NSLog(@"======= HTTP请求:url[%@],headers[%@]",[self.HTTPRequest url],[self.HTTPRequest requestHeaders]);
+    [self.HTTPRequest startAsynchronous];  // 异步获取数据
+    [self.activitor startAnimating];
 }
 
 
@@ -226,60 +240,39 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     }
 }
 
-
-
-#pragma mask ------ Data Source Func
-#pragma mask --------------------------- 异步获取/解析后台交易明细数据
-- (void) requestDataFromURL:(NSString*)urlString withDate:(NSString*)ndate{
-    NSURL* url = [NSURL URLWithString:urlString];
-    if (url == nil) return;
-    
-    // 设置HTTP header参数
-    NSMutableDictionary* dicOfHeader = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:
-                                                                                   [PublicInformation returnTerminal],
-                                                                                   [PublicInformation returnBusiness],
-                                                                                   ndate,
-                                                                                   ndate, nil]
-                                                                          forKeys:[NSArray arrayWithObjects:
-                                                                                   @"termNo",
-                                                                                   @"mchntNo",
-                                                                                   @"queryBeginTime",
-                                                                                   @"queryEndTime", nil]
-                                        ];
-    ASIFormDataRequest* request = [ASIFormDataRequest requestWithURL:url];
-    [request setRequestHeaders:dicOfHeader];
-    [request startAsynchronous];  // 异步获取数据
-    
-    #pragma mask ********************** 需要修改:不要用 block ，改用 delegate
-    __weak ASIFormDataRequest* blockRequest = request;
-    // 返回数据的处理 -- 不用 delegate, 改用 block
-    [request setCompletionBlock:^{
-        [request clearDelegatesAndCancel];
-        [self.reciveData appendData:[blockRequest responseData]];
+#pragma mask ::: ASIHTTPRequest 的数据接收协议
+//- (void)request:(ASIHTTPRequest *)request didReceiveData:(NSData *)data {
+//    [self.reciveData appendData:data];
+//}
+// HTTP 接收成功
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    [self.reciveData appendData:[request responseData]];
+    [request clearDelegatesAndCancel];
+    dispatch_async(dispatch_get_main_queue(), ^{
         [self analysisJSONDataToDisplay];
         if ([self.activitor isAnimating]) [self.activitor stopAnimating];
-    }];
-    
-    // 返回失败的处理
-    [request setFailedBlock:^{
-        [request clearDelegatesAndCancel];
+//        [[request requestHeaders] removeAllObjects];
+//        [request setRequestHeaders:nil];
+//        
+//        [request clearDelegatesAndCancel];
+        self.HTTPRequest = nil;
+    });
+
+}
+// HTTP 接收失败
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    [request clearDelegatesAndCancel];
+    dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alerView show];
         if ([self.activitor isAnimating]) [self.activitor stopAnimating];
-    }];
-    
-}
+    });
+//    [[request requestHeaders] removeAllObjects];
+//    [request setRequestHeaders:nil];
+//
+//    [request clearDelegatesAndCancel];
+    self.HTTPRequest = nil;
 
-#pragma mask ::: ASIHTTPRequest 的数据接收协议
-- (void)requestFinished:(ASIHTTPRequest *)request {
-    [self.reciveData appendData:[request responseData]];
-    [self analysisJSONDataToDisplay];
-    if ([self.activitor isAnimating]) [self.activitor stopAnimating];
-}
-- (void)requestFailed:(ASIHTTPRequest *)request {
-    UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alerView show];
-    if ([self.activitor isAnimating]) [self.activitor stopAnimating];
 }
 #pragma mask ::: 解析从后台获取的JSON格式明细，并展示到表视图
 - (void) analysisJSONDataToDisplay {
@@ -288,6 +281,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     
     NSLog(@"接收到得数据:[%@]", dataDic);
     [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
+    NSLog(@"shuju数据数组的个数;[%ld]",[self.dataArrayDisplay count]);
     if (self.dataArrayDisplay.count == 0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
@@ -298,6 +292,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
         // 重载数据
         [self.tableView reloadData];
     }
+    self.reciveData = nil;
 }
 // 扫描明细数组,计算总金额，总笔数
 - (void) calculateTotalAmount {
@@ -324,13 +319,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 
 }
 
-// 发起HTTP数据请求,并同步接受响应
-- (void) startToLoadHTTPDataWithDate:(NSString*)ndate {
-    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-    [self requestDataFromURL:urlString withDate:ndate];
-    [self.activitor startAnimating];
-
-}
 
 
 #pragma mask ------ View Controller Load/Appear/DisAppear
@@ -343,8 +331,17 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     [self.view addSubview:self.frushButotn];
     [self.view addSubview:self.dateButton];
     [self.view addSubview:self.activitor];
+    
+    
     // 从后台异步获取交易明细数据
-    [self startToLoadHTTPDataWithDate:[self nowDate]];
+    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
+    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
+//    [self.HTTPRequest buildRequestHeaders];
+    NSLog(@"======= HTTP请求:url[%@],headers[%@]",[self.HTTPRequest url],[self.HTTPRequest requestHeaders]);
+
+    [self.HTTPRequest startAsynchronous];  // 异步获取数据
+    [self.activitor startAnimating];
+
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -555,6 +552,21 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
         }
     }
     return _days;
+}
+- (ASIHTTPRequest *)HTTPRequest {
+    if (_HTTPRequest == nil) {
+        NSLog(@";;;;;;;;;;新建HTTPRequest");
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+        _HTTPRequest = [[ASIHTTPRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+        [_HTTPRequest setUseCookiePersistence:NO];
+        [_HTTPRequest addRequestHeader:@"termNo" value:@"10006059"];
+        [_HTTPRequest addRequestHeader:@"mchntNo" value:@"886584042250001"];
+        //        [_HTTPRequest addRequestHeader:@"termNo" value:[PublicInformation returnTerminal]];
+        //        [_HTTPRequest addRequestHeader:@"mchntNo" value:[PublicInformation returnBusiness]];
+
+        [_HTTPRequest setDelegate:self];
+    }
+    return _HTTPRequest;
 }
 
 

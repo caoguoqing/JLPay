@@ -270,6 +270,8 @@
             ipStr = @"202.104.101.126";
         } else if (TestOrProduce == 5) {
             ipStr = @"192.168.1.50";
+        } else if (TestOrProduce == 9) {
+            ipStr = @"218.18.0.245";
         }
         
     }
@@ -288,6 +290,8 @@
             portStr=@"28088";
         } else if (TestOrProduce == 5) {
             portStr=@"28080";
+        } else if (TestOrProduce == 9) {
+            portStr = @"6280";
         }
     }
     return [portStr intValue];
@@ -312,6 +316,8 @@
             ip = @"202.104.101.126";
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
+        } else if (TestOrProduce == 9) {
+            ip = @"218.18.0.245";
         }
     }
     return ip;
@@ -322,6 +328,9 @@
         port = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_Port"];
     }else{
         port = @"80";
+        if (TestOrProduce == 9) {
+            port = @"6288";
+        }
     }
     return port;
 }
