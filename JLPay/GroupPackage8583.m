@@ -684,7 +684,11 @@
     // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
     [F60 appendString:@"1"];
     // 60.5 N1 费率:
-    [F60 appendString:@"0"];
+    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
+    if (rate == nil || [rate isEqualToString:@""]) {
+        rate = @"0";
+    }
+    [F60 appendString:[rate substringToIndex:1]];
     // 60.6 N4
     [F60 appendString:@"0000"];
     // 60.7 N2

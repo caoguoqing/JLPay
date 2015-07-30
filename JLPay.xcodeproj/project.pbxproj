@@ -144,6 +144,7 @@
 		5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */; };
 		5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */; };
 		5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA21B686AE200DCD764 /* DatePickerView.m */; };
+		5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA61B69C01900DCD764 /* RateViewController.m */; };
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
@@ -410,6 +411,8 @@
 		5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransDetailsViewController.m; sourceTree = "<group>"; };
 		5EF3BAA11B686AE200DCD764 /* DatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePickerView.h; sourceTree = "<group>"; };
 		5EF3BAA21B686AE200DCD764 /* DatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatePickerView.m; sourceTree = "<group>"; };
+		5EF3BAA51B69C01900DCD764 /* RateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateViewController.h; sourceTree = "<group>"; };
+		5EF3BAA61B69C01900DCD764 /* RateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RateViewController.m; sourceTree = "<group>"; };
 		5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatPayViewController.h; sourceTree = "<group>"; };
 		5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatPayViewController.m; sourceTree = "<group>"; };
 		5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayViewController.h; sourceTree = "<group>"; };
@@ -493,6 +496,7 @@
 				5E5FA5891B467A2D00387E69 /* DeviceListSheet.h */,
 				5E5FA58A1B467A2D00387E69 /* DeviceListSheet.m */,
 				5E82B7E31B253F5F00A58751 /* 交易管理 */,
+				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E82B87D1B31610700A58751 /* 连接机具 */,
 				5E82B7E71B25425600A58751 /* 参数设置 */,
 			);
@@ -963,6 +967,15 @@
 			path = ProgressHUD;
 			sourceTree = "<group>";
 		};
+		5EF3BAA41B69BFF600DCD764 /* 费率选择 */ = {
+			isa = PBXGroup;
+			children = (
+				5EF3BAA51B69C01900DCD764 /* RateViewController.h */,
+				5EF3BAA61B69C01900DCD764 /* RateViewController.m */,
+			);
+			name = "费率选择";
+			sourceTree = "<group>";
+		};
 		5EF4C0DD1B1706A300CE3E3F /* 登陆界面 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1171,6 +1184,7 @@
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
+				5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */,
 				5ED3442A1AD8C1DB0005C890 /* ProgressHUD.m in Sources */,
 				5E397B321AD36429004F206F /* ASIFormDataRequest.m in Sources */,
 				5EBE92841ACB95BC0096BD72 /* DeviceSettingViewController.m in Sources */,

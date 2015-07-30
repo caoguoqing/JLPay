@@ -1032,17 +1032,14 @@
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
         SendData[0] =GETTRACKDATA_CMD;
-        SendData[1] =0x01;
+        SendData[1] =0x00;
         SendData[2] =0x01;
         SendData[3] =0x01;
         SendData[4] =TRACK_ENCRY_MODEM;
         SendData[5] =PASSWORD_ENCRY_MODEM;
         SendData[6] =TRACK_ENCRY_DATA;
         SendData[7] =TRACK_ENCRY_DATA;
-//        sprintf((char *)SendData+8, "%012d", MAmount);
         memcpy((char*)SendData+8, [money cStringUsingEncoding:NSUTF8StringEncoding], 12);
-//        sprintf((char *)SendData+8, "%012d", MAmount);
-
         NSString *strDate = [self returnDate];
         NSData* bytesDate =[self StrHexToByte:strDate];
         Byte * ByteDate = (Byte *)[bytesDate bytes];

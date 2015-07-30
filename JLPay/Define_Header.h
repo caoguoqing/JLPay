@@ -29,7 +29,7 @@
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
 // 环境:正式(1),62(0),50(5)
-#define TestOrProduce      9
+#define TestOrProduce      0
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -82,7 +82,7 @@
 // 操作员号
 #define Manager_Number @"001"
 
-// 费率 - key;值为int;
+// 费率 - key; 值为int{0,1,2,3};
 #define Key_RateOfPay   @"Key_RateOfPay"
 
 

@@ -919,7 +919,22 @@
     BOOL trackOrIC = [[NSUserDefaults standardUserDefaults] boolForKey:CardTypeIsTrack];
     return trackOrIC;
 }
+/* app通用ui颜色:
+ *      red
+ *      green
+ *
+ */
++(UIColor*) returnCommonAppColor:(NSString*)color {
+    UIColor* retColor = nil;
+    if ([color isEqualToString:@"red"]) {
+        retColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+    }
+    return retColor;
+}
 
-
+// app状态栏高度
++(CGFloat) returnStatusHeight {
+    return [[UIApplication sharedApplication] statusBarFrame].size.height;
+}
 
 @end

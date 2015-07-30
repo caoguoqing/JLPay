@@ -193,18 +193,17 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
         button.transform = CGAffineTransformIdentity;
     }];
     dispatch_async(dispatch_get_main_queue(), ^{
+        // 刷新前先清空数据
         [self.dataArrayDisplay removeAllObjects];
         [self calculateTotalAmount];
         [self.tableView reloadData];
     });
-    
+
     NSString* text = self.dateButton.titleLabel.text;
     NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
     [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dates];
     [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
     [self.HTTPRequest setDelegate:self];
-//    [self.HTTPRequest buildRequestHeaders];
-    NSLog(@"======= HTTP请求:url[%@],headers[%@]",[self.HTTPRequest url],[self.HTTPRequest requestHeaders]);
     [self.HTTPRequest startAsynchronous];  // 异步获取数据
     [self.activitor startAnimating];
 }
@@ -241,9 +240,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 }
 
 #pragma mask ::: ASIHTTPRequest 的数据接收协议
-//- (void)request:(ASIHTTPRequest *)request didReceiveData:(NSData *)data {
-//    [self.reciveData appendData:data];
-//}
 // HTTP 接收成功
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [self.reciveData appendData:[request responseData]];
@@ -251,10 +247,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     dispatch_async(dispatch_get_main_queue(), ^{
         [self analysisJSONDataToDisplay];
         if ([self.activitor isAnimating]) [self.activitor stopAnimating];
-//        [[request requestHeaders] removeAllObjects];
-//        [request setRequestHeaders:nil];
-//        
-//        [request clearDelegatesAndCancel];
+        // 删掉请求,需要时重建
         self.HTTPRequest = nil;
     });
 
@@ -267,10 +260,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
         [alerView show];
         if ([self.activitor isAnimating]) [self.activitor stopAnimating];
     });
-//    [[request requestHeaders] removeAllObjects];
-//    [request setRequestHeaders:nil];
-//
-//    [request clearDelegatesAndCancel];
     self.HTTPRequest = nil;
 
 }
@@ -278,10 +267,8 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 - (void) analysisJSONDataToDisplay {
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
-    
-    NSLog(@"接收到得数据:[%@]", dataDic);
+
     [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
-    NSLog(@"shuju数据数组的个数;[%ld]",[self.dataArrayDisplay count]);
     if (self.dataArrayDisplay.count == 0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
@@ -336,9 +323,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     // 从后台异步获取交易明细数据
     [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
     [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
-//    [self.HTTPRequest buildRequestHeaders];
-    NSLog(@"======= HTTP请求:url[%@],headers[%@]",[self.HTTPRequest url],[self.HTTPRequest requestHeaders]);
-
     [self.HTTPRequest startAsynchronous];  // 异步获取数据
     [self.activitor startAnimating];
 
@@ -409,8 +393,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
 }
-
-
 
 
 /*************************************
@@ -555,15 +537,11 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 }
 - (ASIHTTPRequest *)HTTPRequest {
     if (_HTTPRequest == nil) {
-        NSLog(@";;;;;;;;;;新建HTTPRequest");
         NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
         _HTTPRequest = [[ASIHTTPRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
         [_HTTPRequest setUseCookiePersistence:NO];
-        [_HTTPRequest addRequestHeader:@"termNo" value:@"10006059"];
-        [_HTTPRequest addRequestHeader:@"mchntNo" value:@"886584042250001"];
-        //        [_HTTPRequest addRequestHeader:@"termNo" value:[PublicInformation returnTerminal]];
-        //        [_HTTPRequest addRequestHeader:@"mchntNo" value:[PublicInformation returnBusiness]];
-
+        [_HTTPRequest addRequestHeader:@"termNo" value:[PublicInformation returnTerminal]];
+        [_HTTPRequest addRequestHeader:@"mchntNo" value:[PublicInformation returnBusiness]];
         [_HTTPRequest setDelegate:self];
     }
     return _HTTPRequest;

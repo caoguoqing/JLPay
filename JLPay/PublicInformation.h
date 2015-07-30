@@ -127,4 +127,13 @@
 // 读卡的方式 : YES(磁条) NO(芯片)
 +(BOOL) returnCardType_Track;
 
+/* app通用ui颜色:
+ *      red 
+ *      green
+ *
+ */
++(UIColor*) returnCommonAppColor:(NSString*)color;
+
+// app状态栏高度
++(CGFloat) returnStatusHeight;
 @end

@@ -12,6 +12,7 @@
 #import "TransDetailsViewController.h"
 #import "Define_Header.h"
 #import "DeviceSignInViewController.h"
+#import "RateViewController.h"
 
 #define LeftInsetOfCellCent             0.1f                    // 单元格元素的左边界距离
 #define ImageViewWidthInCellCent        0.1f                    // 单元格内的imageView.width占宽带比例
@@ -49,17 +50,6 @@
     self.navigationController.navigationBar.titleTextAttributes = dict;
     self.navigationController.navigationBar.tintColor = color;
     
-    // 自定义返回界面的按钮样式 -- 暂不用自定义的,使用系统自带的模式
-//    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@""
-//                                                                 style:UIBarButtonItemStyleBordered
-//                                                                target:self
-//                                                                action:@selector(backToPreVC:)];
-//    UIImage* image = [UIImage imageNamed:@"backItem"];
-//    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
-//                                  forState:UIControlStateNormal
-//                                barMetrics:UIBarMetricsDefault];
-//    self.navigationItem.backBarButtonItem = backItem;
-
     [super viewDidLoad];
     
     // 设备类型数组:后续有厂商对接，需要更新数组
@@ -174,6 +164,13 @@
             }
                 break;
             case 2:
+                // 费率选择
+            {
+                RateViewController* rateViewC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"rateViewController"]; 
+                [self.navigationController pushViewController:rateViewC animated:YES];
+            }
+                break;
+            case 3:
                 // 连接机具
             {
                 // 先弹窗供用户选择设备类型,在选择完了设备类型后才跳转界面
@@ -189,23 +186,21 @@
                 
             }
                 break;
-            case 3:
+            case 4:
                 // 额度查询
                 [self pushViewControllerTo:@"额度查询"];
                 break;
-            case 4:
+            case 5:
                 // 修改密码
                 [self pushViewControllerTo:@"修改密码"];
                 break;
-            case 5:
+            case 6:
                 // 意见反馈
                 [self pushViewControllerTo:@"意见反馈"];
-
                 break;
-            case 6:
+            case 7:
                 // 帮助与关于
                 [self pushViewControllerTo:@"帮助与关于"];
-
                 break;
             default:
                 break;
@@ -318,7 +313,7 @@
 
     [cell addSubview:nameLabel];
     
-    // mailLabel
+    // mailLabel  -- 没用了,用来保存商户号
     frame.origin.y                  += littleHeight;
     frame.size.width                = width;
     UILabel *mailLabel              = [[UILabel alloc] initWithFrame:frame];
@@ -345,20 +340,21 @@
  * 返  回 : 无
  *************************************/
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    BOOL pushView = YES;
-    NSLog(@"=====[%@]", [actionSheet buttonTitleAtIndex:buttonIndex]);
-    if (buttonIndex == 0) { // 取消
-        pushView = NO;
+    if ([actionSheet.title isEqualToString:@"请选择设备类型"]) {
+        BOOL pushView = YES;
+        if (buttonIndex == 0) { // 取消
+            pushView = NO;
+        }
+        if (buttonIndex > 0) {
+            // 设置设备类型到本地配置
+            [[NSUserDefaults standardUserDefaults] setValue:[actionSheet buttonTitleAtIndex:buttonIndex] forKey:DeviceType];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        if (pushView) {
+            DeviceSignInViewController* deviceSigninVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+            [self.navigationController pushViewController:deviceSigninVC animated:YES];
+        }
     }
-    if (buttonIndex > 0) {
-        // 设置设备类型到本地配置
-        [[NSUserDefaults standardUserDefaults] setValue:[actionSheet buttonTitleAtIndex:buttonIndex] forKey:DeviceType];
-    }
-    if (pushView) {
-        DeviceSignInViewController* deviceSigninVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
-        [self.navigationController pushViewController:deviceSigninVC animated:YES];
-    }
-
 }
 
 /*************************************
@@ -416,7 +412,7 @@
     self.cellNamesAndImages = @{
                                @"账号名称":@"01_01",
                                @"交易明细":@"01_10",
-//                               @"费率选择":@"01_12",
+                               @"费率选择":@"01_12",
                                @"绑定机具":@"01_14",
                                @"额度查询":@"01_16",
                                @"修改密码":@"01_18",
@@ -425,7 +421,7 @@
     // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
     self.cellNames = [NSArray arrayWithObjects: @"账号名称",
                                                 @"交易明细",
-//                                                @"费率选择",
+                                                @"费率选择",
                                                 @"绑定机具",
                                                 @"额度查询",
                                                 @"修改密码",
@@ -467,5 +463,7 @@
     viewController.title = title;
     [self.navigationController pushViewController:viewController animated:YES];
 
+    
 }
+#pragma mask ---- getter & setter
 @end

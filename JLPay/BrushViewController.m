@@ -65,6 +65,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 加载子视图
+    self.title = @"刷卡";
     [self addSubViews];
     // 交易超时时间为60秒,后面可以重置
     self.timeOut = TIMEOUT;
@@ -74,9 +75,9 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if (!self.navigationController.navigationBarHidden) {
-        self.navigationController.navigationBarHidden = YES;
-    }
+//    if (!self.navigationController.navigationBarHidden) {
+//        self.navigationController.navigationBarHidden = YES;
+//    }
 }
 
 #pragma mask ::: 界面显示后的事件注册及处理
@@ -364,15 +365,20 @@
     CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
     CGFloat uifont              = 20.0;              // 字体大小
     
-    CGFloat xFrame              = 0 + fleftInset;
-    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
-    CGFloat width               = 40;
-    CGFloat height              = 30;
-    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
-    
     // 背景
     UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
     backImage.image             = [UIImage imageNamed:@"bg"];
+    
+    
+    CGFloat xFrame              = 0 + fleftInset;
+    CGFloat navigationHeight    = self.navigationController.navigationBar.frame.size.height;
+    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
+    CGFloat width               = 40;
+    CGFloat height              = 30;
+    
+    
+    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
+    
     [self.view addSubview:backImage];
     // 金额
     UILabel* jine               = [[UILabel alloc] initWithFrame:frame];

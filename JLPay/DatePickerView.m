@@ -7,6 +7,7 @@
 //
 
 #import "DatePickerView.h"
+#import "PublicInformation.h"
 
 @interface DatePickerView()<UIPickerViewDelegate,UIPickerViewDataSource>
 @property (nonatomic, strong) UIPickerView* pickerView;     // picker
@@ -76,9 +77,6 @@
     NSString* year = [ndate substringToIndex:4];
     NSString* month = [ndate substringWithRange:NSMakeRange(4+1, 2)];
     NSString* day = [ndate substringFromIndex:ndate.length - 2];
-    NSLog(@"---------------------year[%@]",year);
-    NSLog(@"---------------------month[%@]",month);
-    NSLog(@"---------------------day[%@]",day);
 
     [self.pickerView selectRow:[self.years indexOfObject:year] inComponent:0 animated:YES];
     [self.pickerView selectRow:[self.months indexOfObject:month] inComponent:1 animated:YES];
@@ -139,22 +137,30 @@
 // 加载子视图
 - (void)layoutSubviews {
     [super layoutSubviews];
-    CGFloat horizonInset = 15;
+    CGFloat horizonInset = 10;
     CGFloat verticalInset = 10;
     
+    
+    CGRect iFrame = CGRectMake(0,
+                               self.frame.size.height - self.pickerView.frame.size.height,
+                               self.frame.size.width,
+                               self.pickerView.frame.size.height);
+
+    
+    // pickerView
+    self.pickerView.frame = iFrame;
+
     // 年份，月份，日期标签
-    CGRect iFrame = CGRectMake(0, self.frame.size.height/5.0, self.frame.size.width/3.0, 20);
-//    iFrame.origin.x = 0;
-//    iFrame.origin.y += iFrame.size.height + verticalInset;
-//    iFrame.size.width = self.frame.size.width/3.0;
-//    iFrame.size.height = 20;
+    iFrame.origin.y -= 30;
+    iFrame.size.width /= 3.0;
+    iFrame.size.height = 30;
     UILabel* label = [[UILabel alloc] initWithFrame:iFrame];
     label.backgroundColor = [UIColor whiteColor];
     label.text = @"年份";
     label.textColor = [UIColor blackColor];
     label.textAlignment = NSTextAlignmentCenter;
     [self addSubview:label];
-    
+
     iFrame.origin.x += iFrame.size.width;
     label = [[UILabel alloc] initWithFrame:iFrame];
     label.backgroundColor = [UIColor whiteColor];
@@ -170,28 +176,17 @@
     label.textColor = [UIColor blackColor];
     label.textAlignment = NSTextAlignmentCenter;
     [self addSubview:label];
+
     
-    // pickerView
+    // 按钮:取消
     iFrame.origin.x = 0;
-    iFrame.origin.y += iFrame.size.height;
-    iFrame.size.width = self.frame.size.width;
-    iFrame.size.height = self.frame.size.height/4.0;
-    self.pickerView.frame = iFrame;
-    
-    // 取消按钮
-    iFrame.origin.x = horizonInset;
-    iFrame.origin.y += self.pickerView.bounds.size.height + verticalInset;
-    iFrame.size.width = (self.frame.size.width - horizonInset*3)/2.0;
+    iFrame.origin.y -= 45;
+    iFrame.size.width = (self.frame.size.width /*- horizonInset*3*/)/2.0;
     iFrame.size.height = 45;
     self.cancelButton.frame = iFrame;
-    self.cancelButton.layer.cornerRadius = self.cancelButton.frame.size.height/2.0;
-    self.cancelButton.layer.masksToBounds = YES;
     // 确定按钮
-    iFrame.origin.x += horizonInset + iFrame.size.width;
+    iFrame.origin.x +=  iFrame.size.width;
     self.sureButton.frame = iFrame;
-    self.sureButton.layer.cornerRadius = self.cancelButton.frame.size.height/2.0;
-    self.sureButton.layer.masksToBounds = YES;
-
 }
 
 
@@ -212,7 +207,7 @@
         _sureButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_sureButton setTitle:@"确定" forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _sureButton.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:64.0/255.0 blue:59.0/255.0 alpha:1.0];
+        _sureButton.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
         
         [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_sureButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];

@@ -552,7 +552,8 @@
                   // 55
                   [NSString stringWithFormat:@"%04d%@", (int)info55Data.length/2, info55Data],
                   // 60,自定义域
-                  betweenStr,
+//                  betweenStr,
+                  [self makeF60],
                   nil];
     NSLog(@"IC——消费====%@",arr);
     NSArray *bitmapArr=[NSArray arrayWithObjects:@"2",@"3",@"4",@"11",@"14",@"22",@"23",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"55",@"60",@"64",nil];
@@ -797,6 +798,35 @@
 
 }
 
++ (NSString*) makeF60 {
+    NSMutableString* F60 = [[NSMutableString alloc] initWithString:@"0019"];
+    NSString* tranType = [PublicInformation returnTranType];
+    // 60.1 N2 交易类型
+    if ([tranType isEqualToString:TranType_Consume]) {
+        [F60 appendString:@"22"];
+    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
+        [F60 appendString:@"23"];
+    }
+    // 60.2 N6 批次号
+    [F60 appendString:[PublicInformation returnSignSort]];
+    // 60.3 N3 操作类型
+    [F60 appendString:@"000"];
+    // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
+    [F60 appendString:@"1"];
+    // 60.5 N1 费率:
+    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
+    if (rate == nil || [rate isEqualToString:@""]) {
+        rate = @"0";
+    }
+    [F60 appendString:[rate substringToIndex:1]];
+    // 60.6 N4
+    [F60 appendString:@"0000"];
+    // 60.7 N2
+    [F60 appendString:@"00"];
+    // 补齐整数位
+    [F60 appendString:@"0"];
+    return F60;
+}
 
 
 @end
