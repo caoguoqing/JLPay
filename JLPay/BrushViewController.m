@@ -64,6 +64,9 @@
  *************************************/
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationController.navigationBarHidden = NO;
+    [self.navigationController.navigationBar.backItem setTitle:@"返回"];
+    [self.navigationController.navigationBar setTintColor:[UIColor redColor]];
     // 加载子视图
     self.title = @"刷卡";
     [self addSubViews];
@@ -74,10 +77,11 @@
 #pragma mask ::: 子视图的属性设置
 -(void)viewWillAppear:(BOOL)animated
 {
+    [self.activity startAnimating];
     [super viewWillAppear:animated];
-//    if (!self.navigationController.navigationBarHidden) {
-//        self.navigationController.navigationBarHidden = YES;
-//    }
+    if (self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = NO;
+    }
 }
 
 #pragma mask ::: 界面显示后的事件注册及处理
@@ -101,9 +105,8 @@
     }
     // 先在主线程打开activitor 和 提示信息
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self setWaitingLabelText:@"设备识别中..."];
         [self.activity startAnimating];
-        self.timeOut = 20; // 扫描设备的超时时间为20
+        self.timeOut = 30; // 扫描设备的超时时间为30
         self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(openDeviceInTimer) userInfo:nil repeats:YES];
     });
     
@@ -122,6 +125,7 @@
     // 移除定时器
     if (self.waitingTimer.valid) {
         [self.waitingTimer invalidate];
+        self.waitingTimer = nil;
     }
     self.waitingTimer = nil;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -132,16 +136,16 @@
     });
 }
 // 隐藏状态栏
-- (BOOL)prefersStatusBarHidden {
-    return YES;
-}
+//- (BOOL)prefersStatusBarHidden {
+//    return YES;
+//}
 
 
 #pragma mask ----------------------- 刷卡结果的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
     dispatch_async(dispatch_get_main_queue(), ^{
         // 先停止计时器
-        if (self.waitingTimer.valid) {
+        if ([self.waitingTimer isValid]) {
             [self.waitingTimer invalidate];
             self.waitingTimer = nil;
         }
@@ -207,24 +211,23 @@
  * 返  回 : 无
  *************************************/
 - (void) beginToSwipe {
-    self.timeOut = TIMEOUT; // 超时时间改为 60
+    self.timeOut = 0; // 超时从0开始计数
     dispatch_async(dispatch_get_main_queue(), ^{
         // 加载定时器
         if (![self.activity isAnimating]) {
             [self.activity startAnimating];
         }
-        [self setWaitingLabelText:@"刷卡中..."];
         // 注册定时器:刷卡的超时等待定时器
-        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:self.timeOut target:self selector:@selector(swipeTimingOut) userInfo:nil repeats:NO];
+        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(swipeTimingOut) userInfo:nil repeats:YES];
+
     });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         // 刷卡:刷卡回调中要注销定时器
         NSLog(@";;;';';;';开始刷卡");
         NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
         NSString* money = [PublicInformation returnMoney];
-        CGFloat moneyFloat = [money floatValue]* 100.0;
-        NSString* cstringMoney = [NSString stringWithFormat:@"%012d",(int)moneyFloat];
-        [[DeviceManager sharedInstance] cardSwipeWithMoney:cstringMoney yesOrNot:NO onSNVersion:SNVersion];
+        NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
+        [[DeviceManager sharedInstance] cardSwipeWithMoney:newMoney yesOrNot:NO onSNVersion:SNVersion];
     });
 }
 
@@ -237,7 +240,7 @@
 - (void) toCust: (NSNotification*)notification {
     // 密码
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self setWaitingLabelText:@"交易处理中..."];
+//        [self.waitingLabel setText:@"交易处理中"];
         if (![self.activity isAnimating]) {
             [self.activity startAnimating];
         }
@@ -265,11 +268,18 @@
         methodStr = @"cousume";
     } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
         orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
-                                              liushui:[PublicInformation returnConsumerSort]  // 原系统流水号  Consumer_Get_Sort  returnConsumerSort  returnLiushuiHao
+                                              liushui:[PublicInformation returnConsumerSort]  // 原系统流水号
                                                 money:[PublicInformation returnConsumerMoney]]; // 原消费金额
 
         methodStr = @"consumeRepeal";
     }
+    
+    self.timeOut = 0;
+    // 调起交易超时计时器
+    self.waitingTimer = nil;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(custInTiming) userInfo:nil repeats:YES];
+    });
     // 异步发送消费报文 -- 报文发送需要放在主线程
     dispatch_async(dispatch_get_main_queue(), ^{
         [[TcpClientService getInstance] sendOrderMethod:orderMethod
@@ -277,11 +287,16 @@
                                                    PORT:Current_Port
                                                Delegate:self
                                                  method:methodStr];
+        
     });
 }
 
 #pragma mask ::: ------ 消费报文上送的接收协议 walldelegate
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
+    if ([self.waitingTimer isValid]) {
+        [self.waitingTimer invalidate];
+        self.waitingTimer = nil;
+    }
     if ([data length] > 0) {
         if ([str isEqualToString:@"cousume"]) {
             NSLog(@"消费响应数据:[%@]", data);
@@ -298,6 +313,10 @@
 
 }
 - (void)falseReceiveGetDataMethod:(NSString *)str {
+    if ([self.waitingTimer isValid]) {
+        [self.waitingTimer invalidate];
+        self.waitingTimer = nil;
+    }
     // 批上送交易失败不做任何操作
     if ([str isEqualToString:@"batchUpload"]) {
         // 交易成功，跳转到签名界面
@@ -306,7 +325,6 @@
         }
         QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
         [qianpi qianpiType:1];
-//        [qianpi getCurretnLiushui:[PublicInformation returnLiushuiHao]];
         [qianpi getCurretnLiushui:[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number]];
         [qianpi leftTitle:[PublicInformation returnMoney]];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -316,9 +334,18 @@
     }
     [self alertForFailedMessage:@"网络异常，请检查网络"];
 }
+//- (void)didStartedWaitingForReadInTime:(int)otimeOut {
+//    // 已建立连接:开始监控超时
+//    self.timeOut = otimeOut;
+//    NSLog(@";;;;;;;;;;;;;; 交易处理中,超时时间:[%d]",otimeOut);
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(custInTiming) userInfo:nil repeats:YES];
+//    });
+//}
 
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
+    
     if (state) {
         // 需要判断是否芯片交易
         if (![PublicInformation returnCardType_Track]) {     // 芯片卡交易
@@ -342,6 +369,19 @@
             [self.navigationController pushViewController:qianpi animated:YES];
         });
     } else {
+        if ([metStr isEqualToString:@"batchUpload"]) {
+            if ([self.activity isAnimating]) {
+                [self.activity stopAnimating];
+            }
+            QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
+            [qianpi qianpiType:1];
+            [qianpi getCurretnLiushui:[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number]];
+            [qianpi leftTitle:[PublicInformation returnMoney]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationController pushViewController:qianpi animated:YES];
+            });
+            return;
+        }
         [self alertForFailedMessage:type];
     }
 }
@@ -361,83 +401,57 @@
 - (void) addSubViews {
     CGFloat topInset            = 15;                // 子视图公用变量: 上边界
     CGFloat fleftInset          = 15;                // 左边界
-    CGFloat rightInset          = 15;                // 右边界
-    CGFloat inset               = 60;                // 上部分视图跟下部分视图的间隔
+    CGFloat inset               = 40;                // 上部分视图跟下部分视图的间隔
     CGFloat uifont              = 20.0;              // 字体大小
+    CGSize fontSize             = [@"刷卡" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:uifont] forKey:NSFontAttributeName]];
     
     // 背景
     UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
     backImage.image             = [UIImage imageNamed:@"bg"];
-    
+    [self.view addSubview:backImage];
     
     CGFloat xFrame              = 0 + fleftInset;
     CGFloat navigationHeight    = self.navigationController.navigationBar.frame.size.height;
-    CGFloat yFrame              = [[UIApplication sharedApplication] statusBarFrame].size.height + topInset;
-    CGFloat width               = 40;
-    CGFloat height              = 30;
-    
-    
+    CGFloat yFrame              = [PublicInformation returnStatusHeight] + navigationHeight + topInset;
+    CGFloat width               = fontSize.height;
+    CGFloat height              = fontSize.height;
     CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
     
-    [self.view addSubview:backImage];
-    // 金额
-    UILabel* jine               = [[UILabel alloc] initWithFrame:frame];
-    jine.text                   = @"金额";
-    jine.font                   = [UIFont boldSystemFontOfSize:uifont];
-    jine.textAlignment          = NSTextAlignmentCenter;
-    [self.view addSubview:jine];
-    self.leftInset              = frame.origin.x + frame.size.width;
-    // 符号图片
-    frame.origin.x              += width;
-    frame.size.width            = frame.size.height;
-    UIImageView* jineImage      = [[UIImageView alloc] initWithFrame:frame];
-    jineImage.image             = [UIImage imageNamed:@"jine"];
-    [self.view addSubview:jineImage];
-    self.leftInset              += frame.size.width;
-    // 金额数值
-    frame.origin.x              += frame.size.width;
-    frame.size.width            = width * 3.0;
-    UILabel* money              = [[UILabel alloc] initWithFrame:frame];
-    money.font                   = [UIFont boldSystemFontOfSize:uifont];
-    money.textAlignment         = NSTextAlignmentLeft;
-    money.text                  = [[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money] stringByAppendingString:@"元"];
-    [self.view addSubview:money];
-    self.leftInset              += frame.size.width;
-    // 请刷卡...
-    frame.size.width            = 80.0;
-    frame.origin.x              = self.view.bounds.size.width - rightInset - frame.size.width;
-    self.waitingLabel.frame     = frame;
-    self.waitingLabel.textAlignment        = NSTextAlignmentLeft;
-    self.waitingLabel.font                   = [UIFont boldSystemFontOfSize:uifont];
-    self.waitingLabel.text                 = @"请刷卡...";
-    [self.view addSubview:self.waitingLabel];
-    // 动态滚动图
-    frame.origin.x              -= frame.size.height;
-    frame.size.width            = frame.size.height;
+    // 动态滚轮
     self.activity.frame         = frame;
     [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [self.view addSubview:self.activity];
-    if (![self.activity isAnimating]) {
-        [self.activity startAnimating];
-    }
+
+    // 提示信息标签 Label
+    frame.origin.x += frame.size.width + 4;
+    frame.size.width = self.view.frame.size.width - leftInset*2 - frame.size.width - 4;
+    self.waitingLabel.frame = frame;
+    self.waitingLabel.textAlignment = NSTextAlignmentLeft;
+    self.waitingLabel.font = [UIFont boldSystemFontOfSize:uifont];
+    self.waitingLabel.text = @"请刷卡...";
+    [self.view addSubview:self.waitingLabel];
+    
     // 图片1
-    frame.origin.y              += frame.size.height + inset;
-    fleftInset                   = self.view.bounds.size.width / 6.0;
-    rightInset                  *= 2;
-    frame.origin.x              = fleftInset;
-    frame.size.width            = self.view.bounds.size.width - fleftInset - rightInset;
-    frame.size.height           = frame.size.width * 0.8;
+    UIImage* image = [UIImage imageNamed:@"shuaka"];
+    CGSize imageSize = [image size];
+    frame.origin.y              += frame.size.height + inset/2.0;
+    frame.size.height           = (self.view.frame.size.height - frame.origin.y - inset)/2.0;
+    frame.size.width            = frame.size.height * imageSize.width/imageSize.height;
+    if (frame.size.width > self.view.bounds.size.width - fleftInset) {
+        frame.size.width = self.view.bounds.size.width - fleftInset;
+        frame.size.height = frame.size.width * imageSize.height/imageSize.width;
+    }
+    frame.origin.x = self.view.bounds.size.width - fleftInset - frame.size.width;
     UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage.image           = [UIImage imageNamed:@"shuaka"];
+    shuakaImage.image           = image;
     [self.view addSubview:shuakaImage];
     
     // 图片2
-    frame.origin.x              = 0 + rightInset;
+    frame.origin.x              = 0 + fleftInset;
     frame.origin.y              += frame.size.height;
     UIImageView* shuakaImage1   = [[UIImageView alloc] initWithFrame:frame];
     shuakaImage1.image          = [UIImage imageNamed:@"shuaka1"];
     [self.view addSubview:shuakaImage1];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -495,7 +509,7 @@
  * 返  回 : 无
  *************************************/
 - (void) waitingForSwipe {
-    [self setWaitingLabelText:[NSString stringWithFormat:@"请刷卡:%02d秒",timeOut]];
+    [self.waitingLabel setText:[NSString stringWithFormat:@"请刷卡:%02d秒",timeOut]];
     NSLog(@"定时器:[%d]", self.timeOut);
     if (self.timeOut == 0) {
         // 超时了
@@ -529,6 +543,7 @@
         // 就可以退出了
         return;
     }
+    [self.waitingLabel setText:[NSString stringWithFormat:@"设备识别中... %02d秒",self.timeOut]];
     if (connected == 1) { // 已连接
         // 注销定时器
         [self.waitingTimer invalidate];
@@ -542,17 +557,34 @@
 
 /*************************************
  * 功  能 : 刷卡超时的处理;
- *          - 注销定时器
- *          - 停止转轮
- *          - 弹错误框
  * 参  数 : 无
  * 返  回 : 无
  *************************************/
 - (void) swipeTimingOut {
-    [self.waitingTimer invalidate];
-    self.waitingTimer = nil;
-    [self alertForFailedMessage:@"设备刷卡超时!"];
+    if (self.timeOut >= TIMEOUT) {
+        [self.waitingTimer invalidate];
+        self.waitingTimer = nil;
+        [self alertForFailedMessage:@"刷卡超时!"]; // 点击确定就会退出场景
+        // 就可以退出了
+        return;
+    }
+    [self.waitingLabel setText:[NSString stringWithFormat:@"刷卡中...%02d秒",self.timeOut]];
+    self.timeOut++;
 }
+/*************************************
+ * 功  能 : 等待交易返回的计数器方法;
+ * 参  数 : 无
+ * 返  回 : 无
+ *************************************/
+- (void) custInTiming {
+    NSLog(@"<><><><><><><><><><><");
+    [self.waitingLabel setText:[NSString stringWithFormat:@"交易处理中...%02d秒",self.timeOut]];
+    self.timeOut++;
+
+}
+
+
+
 
 
 
@@ -579,8 +611,6 @@
 }
 // 刷卡超时定时器
 - (NSTimer *)waitingTimer {
-    if (_waitingTimer == nil) {
-    }
     return _waitingTimer;
 }
 // 交易类型

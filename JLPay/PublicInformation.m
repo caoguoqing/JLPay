@@ -271,7 +271,7 @@
         } else if (TestOrProduce == 5) {
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ipStr = @"218.18.0.245";
+            ipStr = @"192.188.8.118";
         }
         
     }
@@ -317,7 +317,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"218.18.0.245";
+            ip = @"192.188.8.118";
         }
     }
     return ip;
@@ -329,7 +329,7 @@
     }else{
         port = @"80";
         if (TestOrProduce == 9) {
-            port = @"6288";
+            port = @"8080";
         }
     }
     return port;
@@ -935,6 +935,33 @@
 // app状态栏高度
 +(CGFloat) returnStatusHeight {
     return [[UIApplication sharedApplication] statusBarFrame].size.height;
+}
+
+
+
+// 将获取到的c字符串金额重新封装成12位的 NSString 格式
++ (NSString*) moneyStringWithCString:(char*)cstring {
+    char* newString = (char*)malloc(12+1);
+    memset(newString, 0x00, 12+1);
+    memset(newString, '0', 12);
+    int len = (int)strlen(cstring);
+    int setIndex = 12 - 1;
+    char* tmp = cstring + len - 1;
+    while (1) {
+        if (tmp == cstring) {
+            newString[setIndex] = *tmp;
+            break;
+        }
+        if (*tmp != '.') {
+            newString[setIndex] = *tmp;
+            setIndex--;
+        }
+        tmp--;
+    }
+    
+    NSString* moneyString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
+    free(newString);
+    return moneyString;
 }
 
 @end

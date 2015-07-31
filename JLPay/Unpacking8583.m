@@ -1082,7 +1082,7 @@ static Unpacking8583 *sharedObj2 = nil;
                 if (([[sortArr objectAtIndex:c] isEqualToString:@"4"])) {
                     float money=[deleteStr floatValue]/100;
                     NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
-                    [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SuccessConsumerMoney];
+//                    [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SuccessConsumerMoney];
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"12"]) {
                     // hhmmss 时间

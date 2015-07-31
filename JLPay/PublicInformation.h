@@ -136,4 +136,8 @@
 
 // app状态栏高度
 +(CGFloat) returnStatusHeight;
+
+// 将获取到的c字符串金额重新封装成12位的 NSString 格式
++ (NSString*) moneyStringWithCString:(char*)cstring ;
+
 @end

@@ -62,6 +62,10 @@
     // 登陆按钮
     [self addSubViews];
     [self EndEdit];
+    // 设置版本号
+    NSString* appVersion            = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
+    NSLog(@"app版本号:V%@",appVersion);
+    
     
     // 如果有登陆过，就显示账号
     NSString* userID = [[NSUserDefaults standardUserDefaults] objectForKey:UserID];
@@ -302,7 +306,9 @@
  *************************************/
 - (IBAction)touchDownLoad: (UIButton*)sender {
     // 添加动画效果: 缩小
-    sender.transform                      = CGAffineTransformMakeScale(0.98, 0.98);
+    [UIView animateWithDuration:0.3 animations:^{
+        sender.transform                      = CGAffineTransformMakeScale(0.95, 0.95);
+    }];
     [sender setEnabled:NO];
 }
 - (IBAction)touchOutLoad: (UIButton*)sender {
@@ -369,8 +375,15 @@
     NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
     ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
     request.delegate = self;
+    // 账号参数
     [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
+    // 密码参数
     [request addPostValue:pin forKey:@"passWord"];
+    // 版本号参数
+    NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
+    NSString* versionNum = [NSString stringWithFormat:@"%@%@%@",[versionString substringToIndex:1],[versionString substringWithRange:NSMakeRange(2, 1)],[versionString substringFromIndex:versionString.length - 1]];
+    NSLog(@"---转换为整型的版本号为:[%@]", versionNum);
+    [request addPostValue:versionNum forKey:@"versionNum"];
     [request startAsynchronous];
 }
 

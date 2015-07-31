@@ -447,18 +447,74 @@
 +(NSString *)consume:(NSString *)pin{
     //流水号
     NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];//[PublicInformation exchangeNumber];
-//    [[NSUserDefaults standardUserDefaults] setValue:liushuiStr forKey:Last_Exchange_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    NSString* money = [PublicInformation returnMoney];
+    NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
+    
+    
+    NSMutableArray* dataArray = [[NSMutableArray alloc] init];
+    NSMutableArray* macMapArray = [[NSMutableArray alloc] init];
+    // F03
+    [dataArray addObject:@"190000"];
+    [macMapArray addObject:@"3"];
+    // F04
+    [dataArray addObject:newMoney];
+    [macMapArray addObject:@"4"];
+
+    // F11
+    [dataArray addObject:liushuiStr];
+    [macMapArray addObject:@"11"];
+    // F14
+    [dataArray addObject:[[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime]];
+    [macMapArray addObject:@"14"];
+    // F22
+    [dataArray addObject:@"0210"];
+    [macMapArray addObject:@"22"];
+    // F25
+    [dataArray addObject:@"82"];
+    [macMapArray addObject:@"25"];
+    // F26
+    [dataArray addObject:@"12"];
+    [macMapArray addObject:@"26"];
+    // F35
+    [dataArray addObject:[NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]]];
+    [macMapArray addObject:@"35"];
+    // F41
+    [dataArray addObject:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
+    [macMapArray addObject:@"41"];
+    // F42
+    [dataArray addObject:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
+    [macMapArray addObject:@"42"];
+    // F49
+    [dataArray addObject:[EncodeString encodeASC:@"156"]];
+    [macMapArray addObject:@"49"];
+    if (pin != nil || [pin isEqualToString:@""]) {
+        // F52
+        [dataArray addObject:pin];
+        [macMapArray addObject:@"53"];
+        // F53
+        [dataArray addObject:@"2600000000000000"];
+        [macMapArray addObject:@"53"];
+    }
+    // F60
+    [dataArray addObject:[self makeF60]];
+    [macMapArray addObject:@"60"];
+    // F63
+    [dataArray addObject:[NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]]];
+    [macMapArray addObject:@"63"];
+    [macMapArray addObject:@"64"];
+
+    
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   @"190000",//3
-                  [self themoney],//4 金额，bcd，定长12
+                  //4 金额，bcd，定长12
+                  newMoney,
                   liushuiStr,//@"000027",//11 流水号,bcd,定长6
                   [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime],// 14 有效期
                   @"0210",//22
                   @"82",//25
                   @"12",//26
-                  //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
                   //35，二磁道数据，asc，不定长37，(pos获取时存在)
                   [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
                   //36，三磁道数据，asc，不定长104，(pos获取时存在)
@@ -478,15 +534,19 @@
                   [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
                    nil];
     NSLog(@"pin======%@",pin);
-    NSLog(@"消费数据=====%@",arr);
     //二进制报文数据
     NSArray *bitmapArr=[NSArray arrayWithObjects:@"3",@"4",@"11",@"14",@"22",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"60",@"63",@"64", nil];
-    NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
+    NSString *binaryDataStr=[HeaderString receiveArr:macMapArray
                                                 Tpdu:TPDU
                                               Header:HEADER
                                         ExchangeType:@"0200"
-                                             DataArr:[self getNewPinAndMac:arr exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmapArr]]];
-    NSLog(@"binaryDataStr=====%@",binaryDataStr);
+                                             DataArr:[self getNewPinAndMac:dataArray exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmapArr]]];
+
+//    NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
+//                                                Tpdu:TPDU
+//                                              Header:HEADER
+//                                        ExchangeType:@"0200"
+//                                             DataArr:[self getNewPinAndMac:arr exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmapArr]]];
     return binaryDataStr;
 }
 

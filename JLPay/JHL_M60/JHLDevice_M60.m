@@ -375,11 +375,6 @@
                 NSLog(@"======开始打开设备[%@]",[[dataPath peripheral] identifier].UUIDString);
                 [self.manager connectDevice:dataPath];
             }
-            // 已连接但未读SN号的就读SN号
-//            else if (self.needOpenDevices && [dataPath state] == CBPeripheralStateConnected && (SNVersion == nil || [SNVersion isEqualToString:@""])) {
-//                NSLog(@"======开始读取已经打开但未读取[%@]",[[dataPath peripheral] identifier].UUIDString);
-//                [self readSNNoWithAccessory:dataPath];
-//            }
         }
     }
 }
@@ -492,11 +487,9 @@
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
         if (oDataPath.peripheral == innerDataPath.peripheral) {
-//            if (![[dataDic valueForKey:@"SNVersion"] isEqualToString:SNNum]) {
-                [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
-                // 刷新SN号列表给外部协议
-                [self renewSNVersionNumbers];
-//            }
+            [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
+            // 刷新SN号列表给外部协议
+            [self renewSNVersionNumbers];
             break;
         }
     }
@@ -1032,13 +1025,14 @@
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
         SendData[0] =GETTRACKDATA_CMD;
-        SendData[1] =0x00;
-        SendData[2] =0x01;
+        SendData[1] =0x00;  // 不输金额
+        SendData[2] =0x01;  // 输密码
         SendData[3] =0x01;
         SendData[4] =TRACK_ENCRY_MODEM;
         SendData[5] =PASSWORD_ENCRY_MODEM;
         SendData[6] =TRACK_ENCRY_DATA;
         SendData[7] =TRACK_ENCRY_DATA;
+        NSLog(@"========== 金额:[%s]",[money cStringUsingEncoding:NSUTF8StringEncoding]);
         memcpy((char*)SendData+8, [money cStringUsingEncoding:NSUTF8StringEncoding], 12);
         NSString *strDate = [self returnDate];
         NSData* bytesDate =[self StrHexToByte:strDate];
@@ -1064,7 +1058,7 @@
 - (BOOL)writeMposData:(NSData *)data withAccessory:(ISDataPath *)accessory
 {
     Byte* dataBytes = (Byte*)[data bytes];
-    NSLog(@"设备交互类型:[[[[[[[[[[[[[[%x]",dataBytes[0]);
+//    NSLog(@"设备交互类型:[[[[[[[[[[[[[[%x]",dataBytes[0]);
     NSUInteger nlen =0,dwWriteBytes =0,dwCopyBytes =0;
     Byte templen[2]={0};
     Byte szSendBlock[BLUE_MAX_PACKET_SIZE_EP]={0x00};
@@ -1207,6 +1201,8 @@
     Byte  ByteData[512] ={0x00};
     Byte  szTrack2[80] ={0x00};
     memcpy(ByteData, (Byte *)[TrackData bytes], [TrackData length]);
+    
+    NSLog(@"\n-=-=-=-=-=-=-=-=-=\n读到的卡数据=[%@]\n-=-=-=-=-=-=-=-=-=-=",TrackData);
     
     
     if  (TRACK_ENCRY_DATA==0x01)

@@ -64,7 +64,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [self senMessage];
     // 发送数据并等待返回:带参数超时
     [sock readDataWithTimeout:readTimeOut tag:0];
-
 }
 
 //读取数据
@@ -82,7 +81,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [sock writeData:aData withTimeout:readTimeOut tag:1];
     [sock readDataWithTimeout:readTimeOut tag:0];
 
-//    NSLog(@"读取数据");
 }
 
 //

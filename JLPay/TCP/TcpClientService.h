@@ -20,6 +20,9 @@
 
 -(void)falseReceiveGetDataMethod:(NSString *)str;
 
+#pragma mask : add by fjl 20150731 #启动连接请求的回调:用来在外部开启超时功能
+- (void) didStartedWaitingForReadInTime:(int)otimeOut;
+
 @optional
 
 @end

@@ -514,15 +514,18 @@
     NSString *betweenStr =[NSString stringWithFormat:@"001922%@000500000000", [PublicInformation returnSignSort]];
     NSLog(@"消费60域数据=====%@",betweenStr);
     NSString* liushuihao = [[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];
-//    NSString* liushuihao = [PublicInformation exchangeNumber];
-    
+    // F04
+    NSString* money = [PublicInformation returnMoney];
+    NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
+
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   // 2,卡号
                   [PublicInformation returnCard:[PublicInformation returnposCard]],
                   // 3,交易处理码 bcd 6(银联协议)
                   @"190000",
                   // 4,交易金额 bcd 12
-                  [self themoney],//@"000000000001",
+                  newMoney,
+//                  [self themoney],//@"000000000001",
                   // 11,流水号 bcd 6
                   liushuihao,
                   // 14 有效期
@@ -750,19 +753,24 @@
  *          IC卡交易成功返回后，都要做一次批上传
  **********************/
 +(NSString *)uploadBatchTransOfICC { 
-    //55域
+    // F55域
     NSString *info55Data=[[NSUserDefaults standardUserDefaults] valueForKey:BlueIC55_Information];
     NSString* oldF60 = [[NSUserDefaults standardUserDefaults] valueForKey:LastF60_Reserved];
-    //60,   60.3 改为 203 // 0019 22 000000 000 500000000   Reserved Private
+    // F60,   60.3 改为 203 // 0019 22 000000 000 500000000   Reserved Private
     NSString* newF60 = [[oldF60 substringToIndex:12] stringByAppendingString:@"203"];
     newF60 = [newF60 stringByAppendingString:[oldF60 substringFromIndex:15]];
+    // F04
+    NSString* money = [PublicInformation returnMoney];
+    NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
+    
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   //2,卡号
                   [PublicInformation returnCard:[PublicInformation returnposCard]],
                   //3,交易处理码                 -- 跟上一笔交易保持一致  Processing Code
                   [[NSUserDefaults standardUserDefaults] valueForKey:LastF03_ProcessingCode],
                   //4,交易金额 bcd 12
-                  [self themoney],//@"000000000001",
+//                  [self themoney],//@"000000000001",
+                  newMoney,
                   //11,流水号 bcd 6           -- 跟上一笔交易保持一致    System Trace
                   [[NSUserDefaults standardUserDefaults] valueForKey:LastF11_SystemTrace],
                   //22,服务点输入方式码         -- 跟上一笔交易保持一致    Service Entry Code

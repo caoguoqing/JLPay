@@ -437,7 +437,7 @@
 #pragma mask --- setter & getter
 - (MoneyCalculated *)moneyCalculated {
     if (_moneyCalculated == nil) {
-        _moneyCalculated = [[MoneyCalculated alloc] initWithLimit:5];   // 金额限制在5位
+        _moneyCalculated = [[MoneyCalculated alloc] initWithLimit:6];   // 金额限制在6位
     }
     return _moneyCalculated;
 }
