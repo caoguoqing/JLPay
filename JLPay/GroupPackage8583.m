@@ -450,7 +450,8 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     NSString* money = [PublicInformation returnMoney];
     NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
-    
+    // 22域:是否输入密码
+    NSString* f22 = @"0210";
     
     NSMutableArray* dataArray = [[NSMutableArray alloc] init];
     NSMutableArray* macMapArray = [[NSMutableArray alloc] init];
@@ -468,7 +469,7 @@
     [dataArray addObject:[[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime]];
     [macMapArray addObject:@"14"];
     // F22
-    [dataArray addObject:@"0210"];
+    [dataArray addObject:f22];
     [macMapArray addObject:@"22"];
     // F25
     [dataArray addObject:@"82"];
@@ -488,14 +489,20 @@
     // F49
     [dataArray addObject:[EncodeString encodeASC:@"156"]];
     [macMapArray addObject:@"49"];
-    if (pin != nil || [pin isEqualToString:@""]) {
+    
+    // F52 & F53
+    if ([[f22 substringWithRange:NSMakeRange(2, 1)] isEqualToString:@"1"]) {
         // F52
         [dataArray addObject:pin];
-        [macMapArray addObject:@"53"];
+        [macMapArray addObject:@"52"];
         // F53
         [dataArray addObject:@"2600000000000000"];
-        [macMapArray addObject:@"53"];
+    } else {
+        // F53
+        [dataArray addObject:@"0600000000000000"];
     }
+    [macMapArray addObject:@"53"];
+
     // F60
     [dataArray addObject:[self makeF60]];
     [macMapArray addObject:@"60"];
