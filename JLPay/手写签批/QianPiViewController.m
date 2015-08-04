@@ -14,7 +14,7 @@
 #import "Define_Header.h"
 #import "PublicInformation.h"
 
-@interface QianPiViewController ()
+@interface QianPiViewController ()<UIAlertViewDelegate>
 @property (strong,nonatomic)  MyView *drawView;
 @property (assign,nonatomic)  BOOL buttonHidden;
 @property (assign,nonatomic)  BOOL widthHidden;
@@ -59,7 +59,6 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-//    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
     //隐藏navigationController
     [self.navigationController setNavigationBarHidden:YES animated:NO];
     //隐藏状态栏
@@ -67,18 +66,7 @@
 
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
-//    if (isHiddenType == 0) {
-//        [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-        self.navigationController.navigationBar.hidden=NO;
-        //显示状态栏
-        //显示navigationController
-//    }else{
-////        [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-//        [self.navigationController setNavigationBarHidden:NO animated:YES];
-//        //显示状态栏
-//        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-//    }
-    
+    self.navigationController.navigationBar.hidden=NO;
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -93,8 +81,6 @@ static NSMutableArray *colors;
     
     isHiddenType=0;
     
-//    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"parenttabbar.png"] forBarMetrics:UIBarMetricsDefault];
-//    self.view.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
     self.view.backgroundColor = [UIColor whiteColor];
     appdeletate=(AppDelegate *)[UIApplication sharedApplication].delegate;
     
@@ -154,11 +140,6 @@ static NSMutableArray *colors;
     signLab.backgroundColor=[UIColor clearColor];
     [titleView  addSubview:signLab];
     
-    //横线
-//    UILabel *lineLab=[[UILabel alloc] initWithFrame:CGRectMake(0, 48, Screen_Width, 2)];
-//    lineLab.backgroundColor=[UIColor colorWithRed:0.98 green:0.54 blue:0.04 alpha:1.0];
-    
-    
     // 签名有效范围
     returnView=[[UIView alloc] initWithFrame:CGRectMake(10, 50, Screen_Width-20, Screen_Height- 50 - 40 - 20)];
     returnView.backgroundColor = [UIColor clearColor];
@@ -172,7 +153,6 @@ static NSMutableArray *colors;
     
     // 签名视图
     self.drawView=[[MyView alloc]initWithFrame:CGRectMake(0, 0, returnView.frame.size.width, returnView.frame.size.height)];
-//    self.drawView.backgroundColor = [UIColor colorWithRed:111.0/255.0 green:159.0/255.0 blue:104.0/255.0 alpha:1.0];
     self.drawView.backgroundColor = [UIColor whiteColor];
     [returnView addSubview: self.drawView];
     // Do any additional setup after loading the view, typically from a nib.
@@ -226,8 +206,38 @@ static NSMutableArray *colors;
     [self.labelForSigning removeFromSuperview];
     //先截图
     self.uploadImage=[self getNormalImage:returnView];
-    [self exchange];
-    //[self chatUploadImage];
+//    [self exchange];
+    
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"签名成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert setBackgroundColor:[UIColor colorWithWhite:0.8 alpha:0.2]];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.message isEqualToString:@"签名成功"]) {
+        //状态栏旋转
+        [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
+        isHiddenType=1;
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+        
+        PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
+        posInformationVc.posImg=self.uploadImage;
+        NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyyMMddHHmmss"];
+        NSString* transDateAndTime = [formatter stringFromDate:[NSDate date]];
+        NSString* trantime = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Time_12];
+        NSString* trandate = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Date_13];
+        transDateAndTime = [NSString stringWithFormat:@"%@/%@/%@ %@:%@:%@",
+                            [transDateAndTime substringToIndex:4],[trandate substringToIndex:2],[trandate substringFromIndex:2],
+                            [trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]
+                            ];
+        [posInformationVc liushuiNum:self.currentLiushuiStr time:transDateAndTime lastliushuinum:self.lastLiushuiStr];
+        
+        // 跳转到小票界面
+        [self.navigationController pushViewController:posInformationVc animated:YES];
+
+    }
 }
 
 #pragma mark ----------------屏幕截图
@@ -249,13 +259,11 @@ static NSMutableArray *colors;
 #pragma mark ------------签名成功
 -(void)exchange{
     [appdeletate.window addSubview:newVersionVi];
-//    [self newVersionMethod];
 }
 
 -(void)newVersionMethod{
 
     [newVersionVi removeFromSuperview];
-    //[self.view removeFromSuperview];
     //状态栏旋转
     [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
     isHiddenType=1;
@@ -290,7 +298,7 @@ static NSMutableArray *colors;
 // 请在绿色区域签名
 - (UILabel *)labelForSigning {
     if (labelForSigning == nil) {
-        labelForSigning = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 200, 30)];
+        labelForSigning = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
         labelForSigning.text = @"请在空白区域内签名";
         labelForSigning.textColor = [UIColor blackColor];
         labelForSigning.backgroundColor = [UIColor clearColor];

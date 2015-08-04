@@ -62,6 +62,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
 //建立连接
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port{
     [self senMessage];
+    NSLog(@"。。。。。。。。已经建立socket连接");
     // 发送数据并等待返回:带参数超时
     [sock readDataWithTimeout:readTimeOut tag:0];
 }
@@ -70,16 +71,16 @@ static int readTimeOut = 60;    // 超时时间统一60s
 -(void) onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     NSString* aStr = [PublicInformation stringWithHexBytes2:data];
     self.returnAllData=aStr;
-    if ([delegate respondsToSelector:@selector(receiveGetData: method:)]) {
-        [sock disconnect];
-        [sock setDelegate:nil];
-        sock=nil;
+    [sock setDelegate:nil];
+    [sock disconnect];
+    sock=nil;
+    if (delegate !=nil && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
         [delegate receiveGetData:aStr method:self.tcpMethodStr];
     }
     
-    NSData* aData= [aStr dataUsingEncoding: NSUTF8StringEncoding];
-    [sock writeData:aData withTimeout:readTimeOut tag:1];
-    [sock readDataWithTimeout:readTimeOut tag:0];
+//    NSData* aData= [aStr dataUsingEncoding: NSUTF8StringEncoding];
+//    [sock writeData:aData withTimeout:readTimeOut tag:1];
+//    [sock readDataWithTimeout:readTimeOut tag:0];
 
 }
 
@@ -94,14 +95,12 @@ static int readTimeOut = 60;    // 超时时间统一60s
  * 错误处理的方法
  **/
 - (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err
-{
-    //NSLog(@"err=====%@",[err localizedDescription]);
-    
+{    
     // 错误处理方法:
-    if ([delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
-        [sock disconnect];
-        [sock setDelegate:nil];
-        sock=nil;
+    [sock setDelegate:nil];
+    [sock disconnect];
+    sock=nil;
+    if (delegate && [delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
         [delegate falseReceiveGetDataMethod:self.tcpMethodStr];
     }
 
@@ -109,7 +108,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
 }
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock
 {
-    
     //断开连接了
     NSLog(@"onSocketDidDisconnect:%p", sock);
 }
@@ -138,7 +136,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
         NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         [asyncSocket connectToHost:ip onPort:port error:&err];
-        
     }
 }
 

@@ -1463,7 +1463,9 @@ Failed:
 
 - (BOOL)connectToHost:(NSString*)hostname onPort:(UInt16)port error:(NSError **)errPtr
 {
-	return [self connectToHost:hostname onPort:port withTimeout:-1 error:errPtr];
+	return [self connectToHost:hostname onPort:port withTimeout:60 error:errPtr];
+//    return [self connectToHost:hostname onPort:port withTimeout:-1 error:errPtr];
+
 }
 
 /**

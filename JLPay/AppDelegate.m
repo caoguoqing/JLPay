@@ -31,8 +31,17 @@
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
 
-    // 进入的初始界面为第一个
-    tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
+    /* 进入的初始界前要先判断是否绑定设备：
+     *    如果绑定了:就跳转到金额输入界面
+     *    如果没有绑定:就跳转到绑定设备界面
+     */
+    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+    if (identifier == nil) {
+        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
+    } else {
+        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
+    }
+    
     
     self.window.rootViewController      = tabBarController;
     

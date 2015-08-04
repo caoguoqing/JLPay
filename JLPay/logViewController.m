@@ -24,7 +24,7 @@
 #pragma mask    ---- 常量设置区 ----
 #define ViewCornerRadius 6.0                                        // 各个 view 的圆角半径值
 #define leftLeave        30.0                                       // view 的左边距
-#define ImageForBrand   @"logo"                                   // 商标图片
+#define ImageForBrand   @"logo"                                     // 商标图片
 
 
 @interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
@@ -34,8 +34,8 @@
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
 @property (nonatomic, strong) UIButton    *loadButton;              // 登陆按钮
 
-//@property (nonatomic, strong) UIButton    *signInButton;            // 注册按钮
-//@property (nonatomic, strong) UIButton    *pinChangeButton;         // 密码修改按钮
+//@property (nonatomic, strong) UIButton    *signInButton;          // 注册按钮
+//@property (nonatomic, strong) UIButton    *pinChangeButton;       // 密码修改按钮
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
 
@@ -382,21 +382,25 @@
     // 版本号参数
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     NSString* versionNum = [NSString stringWithFormat:@"%@%@%@",[versionString substringToIndex:1],[versionString substringWithRange:NSMakeRange(2, 1)],[versionString substringFromIndex:versionString.length - 1]];
-    NSLog(@"---转换为整型的版本号为:[%@]", versionNum);
+    // 发起HTTP请求
+//    versionNum = @"99"; // test for 低版本登陆校验
     [request addPostValue:versionNum forKey:@"versionNum"];
     [request startAsynchronous];
 }
 
 #pragma mask ::: HTTP响应协议
 -(void)requestFinished:(ASIHTTPRequest *)request {
-    NSLog(@"登陆响应数据[%@]", [request responseString]);
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
     NSString* retcode = [dataDic objectForKey:@"code"];
     NSString* retMsg = [dataDic objectForKey:@"message"];
     if ([retcode intValue] != 0) {      // 登陆失败
-        [self alertShow:retMsg];
+        if ([retcode isEqualToString:@"701"]) { // 当前版本过低
+            [self alertShow:[retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."]];
+        } else {
+            [self alertShow:retMsg];
+        }
     } else {                            // 登陆成功
         // 解析响应数据
         [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
@@ -404,7 +408,6 @@
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
-
         
         int termCount = [[dataDic objectForKey:@"termCount"] intValue];
         if (termCount == 0) {
@@ -475,11 +478,16 @@
 
 #pragma mask ::: 弹出提示框
 - (void) alertShow: (NSString*) message {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
+
+    // 如果是版本过低的提示，点击了确定要跳转到下载网址
+    if ([alertView.message hasPrefix:@"当前版本过低"]) {
+        
+    }
 }
 
 

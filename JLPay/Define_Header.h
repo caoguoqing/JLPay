@@ -19,6 +19,8 @@
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
 
+// 日志打印选项: 打印(1);不打印(0);
+#define NeedPrintLog                    1
 
 // 8583报文配置
 #define TPDU @"6000060000"
@@ -55,6 +57,7 @@
 #define TranType_Consume            @"TranType_Consume"                 // 消费
 #define TranType_ConsumeRepeal      @"TranType_ConsumeRepeal"           // 消费撤销
 #define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
+#define TranType_TuiHuo             @"TranType_TuiHuo"                  // 退货交易
 #define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
 #define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
 
@@ -81,7 +84,6 @@
 #define Business_Email @"commEmail"
 // 操作员号
 #define Manager_Number @"001"
-
 // 费率 - key; 值为int{0,1,2,3};
 #define Key_RateOfPay   @"Key_RateOfPay"
 
@@ -93,7 +95,7 @@
 // 锦宏霖音频A60
 #define DeviceType_JHL_A60          @"音频刷卡头A60"
 // 锦宏霖蓝牙M60
-#define DeviceType_JHL_M60          @"手持(蓝牙)刷卡器M60"
+#define DeviceType_JHL_M60          @"M60手持蓝牙刷卡器"
 // 已绑定的设备de ID
 #define DeviceIDOfBinded            @"DeviceIDOfBinded"
 // 选择设备连接的终端号配置的key   -- useless
@@ -166,6 +168,8 @@
 #define Trans_Date_13      @"Trans_Date_13_"
 // F14:   卡片有效期
 #define EXP_DATE_14     @"EXP_DATE_14_"
+// F22:   服务点输入方式
+#define Service_Entry_22    @"Service_Entry_22_"
 // F23:   芯片卡序列号
 #define ICCardSeq_23    @"ICCardSeq_23_"
 // F35:   二磁道数据

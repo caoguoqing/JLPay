@@ -22,25 +22,19 @@
 
 
 
-@interface settingViewController ()<UIActionSheetDelegate,UIAlertViewDelegate>
+@interface settingViewController ()<UIAlertViewDelegate>
 @property (nonatomic, strong) NSArray *cellNames;           // 单元格对应的功能名称
-@property (nonatomic, strong) NSDictionary *cellNamesAndImages; // 单元格表示的数据字典
-@property (nonatomic, strong) NSArray* deviceTypeArray;
+@property (nonatomic, strong) NSMutableDictionary *cellNamesAndImages; // 单元格表示的数据字典
 @end
 
 
 @implementation settingViewController
-//@synthesize imageNames = _imageNames;
 @synthesize cellNames  = _cellNames;
 @synthesize cellNamesAndImages      = _cellNamesAndImages;
-@synthesize deviceTypeArray;
 
 
 
 - (void)viewDidLoad {
-    // 初始化 cells 的 datas: cellNames, images
-    [self makeDataIntoCellNamesAndImages];
-    
     self.tableView.rowHeight        = 50.f;                               // 设置cell的行高
     self.tableView.separatorInset   = UIEdgeInsetsMake(0, 0, 0, 0);       // 设置cell的间隔线的左边距
     
@@ -52,11 +46,16 @@
     
     [super viewDidLoad];
     
-    // 设备类型数组:后续有厂商对接，需要更新数组
-    self.deviceTypeArray = [NSArray arrayWithObjects:
-//                            DeviceType_JHL_A60,       // 先屏蔽音频设备
-                            DeviceType_JHL_M60, nil];
     [self setExtraCellLineHidden:self.tableView];
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+    if (identifier == nil) {
+        UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+        [self.navigationController pushViewController:viewController animated:YES];
+
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -75,7 +74,7 @@
  * 功  能 : UITableViewDelegate :numberOfRowsInSection 协议;
  *************************************/
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.cellNamesAndImages.count;
+    return self.cellNames.count;
 }
 
 
@@ -92,7 +91,6 @@
 /*************************************
  * 功  能 : UITableViewDelegate :屏蔽指定cell 的点击高亮效果
  *************************************/
-
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 0) {
         return NO;
@@ -109,7 +107,6 @@
  *          UITableViewCell*          新创建或被复用的cell
  *************************************/
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     static NSString * cellIdentifier    = @"cellWithIdentifier";
     UITableViewCell * cell              = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
@@ -119,13 +116,10 @@
     // 下面是 cell 的装载
     if (indexPath.row == 0) {
         [self loadFirstCell:cell inTabelView:tableView];
-        
     } else {
         [self loadCell:cell atIndex:indexPath.row];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
-    
-    
     return cell;
 }
 
@@ -147,68 +141,34 @@
  *************************************/
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell   = [tableView cellForRowAtIndexPath:indexPath];
-    cell.selected           = NO;
-    if (indexPath.section == 0 ) {
-        // 不要用 switch 分支,改到指定的方法模块中去实现
-        // 在模块中，根据索引 indexPath.row 来匹配 dataSource 跟对应方法，以减少
-        switch (indexPath.row) {
-            case 0:
-                // 账号名称
-                break;
-            case 1:
-                // 交易明细
-            {
-                TransDetailsViewController* transDetailsVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"transDetailsVC"]; // transDetailsVC TransDetails
-                [self.navigationController pushViewController:transDetailsVC animated:YES];
-            }
-                break;
-            case 2:
-                // 费率选择
-            {
-                RateViewController* rateViewC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"rateViewController"]; 
-                [self.navigationController pushViewController:rateViewC animated:YES];
-            }
-                break;
-            case 3:
-                // 连接机具
-            {
-                // 先弹窗供用户选择设备类型,在选择完了设备类型后才跳转界面
-                UIActionSheet* deviceTypeListSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型"
-                                                                                 delegate:self
-                                                                        cancelButtonTitle:@"取消"
-                                                                   destructiveButtonTitle:nil
-                                                                        otherButtonTitles:nil,nil];
-                for(int i = 0; i < self.deviceTypeArray.count; i++) { // 如果后续有厂商对接，只需要更新array和宏就可以
-                    [deviceTypeListSheet addButtonWithTitle:[self.deviceTypeArray objectAtIndex:i]];
-                }
-                [deviceTypeListSheet showFromToolbar:self.navigationController.toolbar];
-                
-            }
-                break;
-            case 4:
-                // 额度查询
-                [self pushViewControllerTo:@"额度查询"];
-                break;
-            case 5:
-                // 修改密码
-                [self pushViewControllerTo:@"修改密码"];
-                break;
-            case 6:
-                // 意见反馈
-                [self pushViewControllerTo:@"意见反馈"];
-                break;
-            case 7:
-                // 帮助与关于
-                [self pushViewControllerTo:@"帮助与关于"];
-                break;
-            default:
-                break;
-        }
-    }
-
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selected = NO;
+    NSString* cellName = [self.cellNames objectAtIndex:indexPath.row];
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* viewController = nil;
     
+    if ([cellName isEqualToString:@"交易明细"]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
+    }
+    else if ([cellName isEqualToString:@"绑定机具"]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+    }
+    else if ([cellName isEqualToString:@"修改密码"]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"weChatPay"];
+        [viewController setTitle:cellName];
+    }
+    else if ([cellName isEqualToString:@"帮助和关于"]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"weChatPay"];
+        [viewController setTitle:cellName];
+    }
+    else if ([cellName isEqualToString:@"费率选择"]) {
+    }
+    if (viewController) {
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
 }
+
+
 
 /*************************************
  * 功  能 : 给指定序号的cell进行自定义装载;
@@ -331,105 +291,6 @@
 }
 
 
-
-/*************************************
- * 功  能 : actionSheet的点击并退出回调;
- *          要设置设备类型到本地，
- *          并跳转到设备选择界面
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if ([actionSheet.title isEqualToString:@"请选择设备类型"]) {
-        BOOL pushView = YES;
-        if (buttonIndex == 0) { // 取消
-            pushView = NO;
-        }
-        if (buttonIndex > 0) {
-            // 设置设备类型到本地配置
-            [[NSUserDefaults standardUserDefaults] setValue:[actionSheet buttonTitleAtIndex:buttonIndex] forKey:DeviceType];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
-        if (pushView) {
-            DeviceSignInViewController* deviceSigninVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
-            [self.navigationController pushViewController:deviceSigninVC animated:YES];
-        }
-    }
-}
-
-/*************************************
- * 功  能 : 操作员登陆弹窗的按钮点击事件;
- *          确认后进行发送操作员登陆申请，
- *          在登陆的回调中跳转到设备参数设置界面
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 0) {             // 取消
-        
-    } else if (buttonIndex == 1) {      // 确定
-        UITextField* loginName = [alertView textFieldAtIndex:0];    // 操作员账号
-        UITextField* loginPassword = [alertView textFieldAtIndex:1];    // 操作员密码
-
-        // 操作员登陆
-        if (![loginName.text isEqualToString:[PublicInformation returnOperatorNum]]) {
-            [self alertForMessage:@"操作员编号错误"];
-            return;
-        }
-        if (![loginPassword.text isEqualToString:[PublicInformation returnOperatorPassword]]) {
-            [self alertForMessage:@"操作员密码错误"];
-            return;
-        }
-        
-        // 校验成功才跳转界面
-        UIStoryboard* board = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        DeviceSettingViewController* viewContr  = [board instantiateViewControllerWithIdentifier:@"terminalSettingVC"];
-        [self.navigationController pushViewController:viewContr animated:YES];
-    }
-}
-
-
-
-#pragma mask ::: 自定义返回上层界面按钮的功能
-- (IBAction) backToPreVC :(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-// 错误提示
-- (void) alertForMessage:(NSString*)message {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
-}
-
-/*************************************
- * 功  能 : 初始化 cellNamesAndImages 字典数据;
- *          版本更新功能时需要更新本模块；
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) makeDataIntoCellNamesAndImages {
-    // ...................图片名称需要更改
-    self.cellNamesAndImages = @{
-                               @"账号名称":@"01_01",
-                               @"交易明细":@"01_10",
-                               @"费率选择":@"01_12",
-                               @"绑定机具":@"01_14",
-                               @"额度查询":@"01_16",
-                               @"修改密码":@"01_18",
-                               @"意见反馈":@"01_20",
-                               @"帮助和关于":@"01_24"};
-    // 注意: 一旦“商户管理”板块添加了新功能，这里字典跟数组都要同步更新，包括它们对应的功能图标
-    self.cellNames = [NSArray arrayWithObjects: @"账号名称",
-                                                @"交易明细",
-                                                @"费率选择",
-                                                @"绑定机具",
-                                                @"额度查询",
-                                                @"修改密码",
-                                                @"意见反馈",
-                                                @"帮助和关于", nil];
-
-}
-
 /*************************************
  * 功  能 : 重置图片的大小;
  *          新的比例通过传入的新的 width 来计算；
@@ -456,14 +317,37 @@
     [tableView setTableFooterView:view];
 }
 
-// 未实现功能的界面跳转
-- (void) pushViewControllerTo:(NSString*)title {
-    UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
-    viewController.title = title;
-    [self.navigationController pushViewController:viewController animated:YES];
 
-    
-}
 #pragma mask ---- getter & setter
+// 功能名称:cell名
+- (NSArray *)cellNames {
+    if (_cellNames == nil) {
+        _cellNames = [NSArray arrayWithObjects:
+                      @"账号名称",
+                      @"交易明细",
+                      // @"费率选择",
+                      @"绑定机具",
+                      // @"额度查询",
+                      @"修改密码",
+                      // @"意见反馈",
+                      @"帮助和关于", nil];
+    }
+    return _cellNames;
+}
+- (NSMutableDictionary *)cellNamesAndImages {
+    if (_cellNamesAndImages == nil) {
+        _cellNamesAndImages = [[NSMutableDictionary alloc] init];
+        [_cellNamesAndImages setValue:@"01_01" forKey:@"账号名称"];
+        [_cellNamesAndImages setValue:@"01_10" forKey:@"交易明细"];
+        [_cellNamesAndImages setValue:@"01_14" forKey:@"绑定机具"];
+        [_cellNamesAndImages setValue:@"01_18" forKey:@"修改密码"];
+        [_cellNamesAndImages setValue:@"01_24" forKey:@"帮助和关于"];
+        // @"费率选择":@"01_12",
+        // @"额度查询":@"01_16",
+        // @"意见反馈":@"01_20",
+    }
+    return _cellNamesAndImages;
+}
+
+
 @end

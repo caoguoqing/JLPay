@@ -16,7 +16,7 @@
 #import "DeviceManager.h"
 
 @interface DeviceSignInViewController()<wallDelegate,managerToCard,DeviceManagerDelegate,UITableViewDataSource,UITableViewDelegate
-                                        /*,UIPickerViewDataSource, UIPickerViewDelegate*/>
+                                        ,UIActionSheetDelegate,UIAlertViewDelegate/*,UIPickerViewDataSource, UIPickerViewDelegate*/>
 @property (nonatomic, strong) NSArray* SNVersionNums;                // SN号列表
 @property (nonatomic, strong) NSArray* terminalNums;                // 终端号列表
 @property (nonatomic, strong) JLActivity* activitor;                // 捷联通商标转轮
@@ -82,6 +82,11 @@
     [[NSUserDefaults standardUserDefaults] setObject:nil forKey:DeviceIDOfBinded];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    
+    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
+    [actionSheet showFromTabBar:self.tabBarController.tabBar];
+    
     [self.tableView reloadData];
 }
 - (void) viewDidAppear:(BOOL)animated {
@@ -89,12 +94,6 @@
     [self.sureButton addTarget:self action:@selector(buttonTouchDown:) forControlEvents:UIControlEventTouchDown];
     [self.sureButton addTarget:self action:@selector(buttonTouchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
     [self.sureButton addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
-    // 重新打开所有设备
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [[DeviceManager sharedInstance] setOpenAutomaticaly:YES]; // 开启自动打开标记
-        [[DeviceManager sharedInstance] startScanningDevices];
-    });
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -103,8 +102,6 @@
         [[NSUserDefaults standardUserDefaults] setValue:self.oldIdentifier forKey:DeviceIDOfBinded];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
-    
-    
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [[DeviceManager sharedInstance] setDelegate:nil];
@@ -117,19 +114,8 @@
         self.waitingTimer = nil;
     }
 }
-//- (void)viewDidDisappear:(BOOL)animated {
-//    [super viewDidDisappear:animated];
-//    // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        [[DeviceManager sharedInstance] stopScanningDevices];
-//        [[DeviceManager sharedInstance] closeAllDevices];
-//    });
-//    if ([self.waitingTimer isValid]) {
-//        [self.waitingTimer invalidate];
-//        self.waitingTimer = nil;
-//    }
-//
-//}
+
+
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
 
@@ -366,6 +352,22 @@
     }
 }
 
+#pragma mask ::: UIActionSheetDelegate 点击事件
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    [[NSUserDefaults standardUserDefaults] setValue:title forKey:DeviceType];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    if ([title isEqualToString:DeviceType_JHL_M60]) {
+        // 重新打开所有设备
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [[DeviceManager sharedInstance] setOpenAutomaticaly:YES]; // 开启自动打开标记
+            [[DeviceManager sharedInstance] startScanningDevices];
+        });
+
+    }
+}
+
 
 #pragma mask ::: 确定按钮 的点击事件 --
 /*
@@ -410,20 +412,6 @@
     }
     
 }
-/*
- * 1.打开所有已识别但未打开的设备
- */
-//- (IBAction) buttonClickedToRefresh:(id)sender {
-//    UIButton* button = (UIButton*)sender;
-//    button.highlighted = NO;
-//    button.transform = CGAffineTransformIdentity;
-//
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//        });
-//    });
-//}
-
 
 // 按钮按下事件
 - (IBAction) buttonTouchDown:(id)sender {
@@ -443,6 +431,19 @@
 - (void) alertForMessage: (NSString*) messageStr {
     UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.message isEqualToString:@"绑定设备成功!"]) {
+        // 绑定成功后就跳转到金额输入界面
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIView animateWithDuration:0.5 delay:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+                [self.navigationController popViewControllerAnimated:YES];
+            } completion:nil];
+        });
+        [UIView animateWithDuration:0.5 delay:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+            [self.tabBarController setSelectedViewController:[[self.tabBarController viewControllers] objectAtIndex:0]];
+        } completion:nil];
+    }
 }
 
 // pragma mask ::: 去掉多余的单元格的分割线
@@ -509,6 +510,8 @@
     [self.waitingTimer invalidate];
     self.waitingTimer = nil;
 }
+
+
 
 #pragma mask ::: getter & setter
 - (NSArray *)SNVersionNums {

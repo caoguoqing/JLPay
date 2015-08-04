@@ -128,6 +128,10 @@
         self.waitingTimer = nil;
     }
     self.waitingTimer = nil;
+    
+    TcpClientService* tcpSocket = [TcpClientService getInstance];
+    [tcpSocket setDelegate:nil];
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [[DeviceManager sharedInstance] setDelegate:nil];
         [[DeviceManager sharedInstance] setOpenAutomaticaly:NO];     // 关闭自动打开标记
@@ -135,10 +139,7 @@
         [[DeviceManager sharedInstance] closeAllDevices];
     });
 }
-// 隐藏状态栏
-//- (BOOL)prefersStatusBarHidden {
-//    return YES;
-//}
+
 
 
 #pragma mask ----------------------- 刷卡结果的回调
@@ -240,7 +241,6 @@
 - (void) toCust: (NSNotification*)notification {
     // 密码
     dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.waitingLabel setText:@"交易处理中"];
         if (![self.activity isAnimating]) {
             [self.activity startAnimating];
         }
@@ -334,14 +334,7 @@
     }
     [self alertForFailedMessage:@"网络异常，请检查网络"];
 }
-//- (void)didStartedWaitingForReadInTime:(int)otimeOut {
-//    // 已建立连接:开始监控超时
-//    self.timeOut = otimeOut;
-//    NSLog(@";;;;;;;;;;;;;; 交易处理中,超时时间:[%d]",otimeOut);
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(custInTiming) userInfo:nil repeats:YES];
-//    });
-//}
+
 
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
@@ -404,6 +397,10 @@
     CGFloat inset               = 40;                // 上部分视图跟下部分视图的间隔
     CGFloat uifont              = 20.0;              // 字体大小
     CGSize fontSize             = [@"刷卡" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:uifont] forKey:NSFontAttributeName]];
+    
+    
+    // 右标签:显示金额
+    
     
     // 背景
     UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
@@ -561,14 +558,14 @@
  * 返  回 : 无
  *************************************/
 - (void) swipeTimingOut {
-    if (self.timeOut >= TIMEOUT) {
-        [self.waitingTimer invalidate];
-        self.waitingTimer = nil;
-        [self alertForFailedMessage:@"刷卡超时!"]; // 点击确定就会退出场景
-        // 就可以退出了
-        return;
-    }
-    [self.waitingLabel setText:[NSString stringWithFormat:@"刷卡中...%02d秒",self.timeOut]];
+//    if (self.timeOut >= TIMEOUT) {
+//        [self.waitingTimer invalidate];
+//        self.waitingTimer = nil;
+//        [self alertForFailedMessage:@"刷卡超时!"]; // 点击确定就会退出场景
+//        // 就可以退出了
+//        return;
+//    }
+    [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,刷卡中...%02d秒",self.timeOut]];
     self.timeOut++;
 }
 /*************************************

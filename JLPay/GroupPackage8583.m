@@ -447,7 +447,6 @@
 +(NSString *)consume:(NSString *)pin{
     //流水号
     NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];//[PublicInformation exchangeNumber];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     NSString* money = [PublicInformation returnMoney];
     NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
     // 22域:是否输入密码
@@ -461,7 +460,6 @@
     // F04
     [dataArray addObject:newMoney];
     [macMapArray addObject:@"4"];
-
     // F11
     [dataArray addObject:liushuiStr];
     [macMapArray addObject:@"11"];
@@ -511,49 +509,11 @@
     [macMapArray addObject:@"63"];
     [macMapArray addObject:@"64"];
 
-    
-    
-    NSArray *arr=[[NSArray alloc] initWithObjects:
-                  @"190000",//3
-                  //4 金额，bcd，定长12
-                  newMoney,
-                  liushuiStr,//@"000027",//11 流水号,bcd,定长6
-                  [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime],// 14 有效期
-                  @"0210",//22
-                  @"82",//25
-                  @"12",//26
-                  //35，二磁道数据，asc，不定长37，(pos获取时存在)
-                  [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
-                  //36，三磁道数据，asc，不定长104，(pos获取时存在)
-                  //41,终端号，asc，定长8
-                  [EncodeString encodeASC:[PublicInformation returnTerminal]],
-                  //42，商户号，asc，定长15
-                  [EncodeString encodeASC:[PublicInformation returnBusiness]],
-                  //49，货币代码，asc，定长3，（人民币156）
-                  [EncodeString encodeASC:@"156"],
-                  //52 个人识别码，PIN，定长8，(参照附录2)//byte[] byte52 = { 0x5B, 0x59, (byte) 0xEE, (byte) 0xC0, 0x0D, (byte) 0xD5, (byte) 0x86, (byte) 0xBE, };
-                  pin,
-                  //53
-                  @"2600000000000000",
-                  //60
-                  [self makeF60],
-                  //63,操作员号，asc，不定长999，3字节
-                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]],
-                   nil];
-    NSLog(@"pin======%@",pin);
-    //二进制报文数据
-    NSArray *bitmapArr=[NSArray arrayWithObjects:@"3",@"4",@"11",@"14",@"22",@"25",@"26",@"35",@"41",@"42",@"49",@"52",@"53",@"60",@"63",@"64", nil];
     NSString *binaryDataStr=[HeaderString receiveArr:macMapArray
                                                 Tpdu:TPDU
                                               Header:HEADER
                                         ExchangeType:@"0200"
-                                             DataArr:[self getNewPinAndMac:dataArray exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmapArr]]];
-
-//    NSString *binaryDataStr=[HeaderString receiveArr:bitmapArr
-//                                                Tpdu:TPDU
-//                                              Header:HEADER
-//                                        ExchangeType:@"0200"
-//                                             DataArr:[self getNewPinAndMac:arr exchange:@"0200" bitmap:[HeaderString returnBitmap:bitmapArr]]];
+                                             DataArr:[self getNewPinAndMac:dataArray exchange:@"0200" bitmap:[HeaderString returnBitmap:macMapArray]]];
     return binaryDataStr;
 }
 
@@ -734,6 +694,8 @@
                                              DataArr:arr];
     return binaryDataStr;
 }
+
+
 
 + (NSString*) makeF60 {
     NSMutableString* F60 = [[NSMutableString alloc] initWithString:@"0019"];

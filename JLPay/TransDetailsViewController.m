@@ -169,7 +169,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     // 用卡号+金额查询流水明细
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"明细查询" message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查询", nil];
     [alert setAlertViewStyle:UIAlertViewStylePlainTextInput];
-    [[alert textFieldAtIndex:0] setPlaceholder:@"请输入需要查询的卡号或金额"];
+    [[alert textFieldAtIndex:0] setPlaceholder:@"请输入需要查询的后4位卡号或金额"];
     [alert show];
 
 }
@@ -389,6 +389,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.tabBarController.tabBar.hidden = NO;
+    [self.HTTPRequest clearDelegatesAndCancel];
 }
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -407,7 +408,9 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     for (NSDictionary* dataDic in self.oldArraySaving) {
         NSString* cardNum = [dataDic valueForKey:@"pan"];
         CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
-        if ([cardNum isEqualToString:cardOrMoney] || money == [cardOrMoney floatValue]) {
+        // 金额或卡号后4位能匹配上
+        if ([cardNum hasSuffix:cardOrMoney] ||
+            money == [cardOrMoney floatValue]) {
             [selectedArray addObject:[dataDic copy]];
         }
     }

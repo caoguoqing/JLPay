@@ -136,11 +136,7 @@
 
 // 加载子视图
 - (void)layoutSubviews {
-    [super layoutSubviews];
-    CGFloat horizonInset = 10;
-    CGFloat verticalInset = 10;
-    
-    
+    [super layoutSubviews];    
     CGRect iFrame = CGRectMake(0,
                                self.frame.size.height - self.pickerView.frame.size.height,
                                self.frame.size.width,
