@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RevokeViewController : UITableViewController
+@interface RevokeViewController : UIViewController
 @property (nonatomic, strong) NSDictionary* dataDic;
 
 @end

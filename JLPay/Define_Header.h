@@ -31,7 +31,7 @@
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
 // 环境:正式(1),62(0),50(5)
-#define TestOrProduce      1
+#define TestOrProduce      0
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"

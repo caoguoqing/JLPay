@@ -14,13 +14,14 @@
 #import "JLActivity.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
+#import "SelectIndicatorView.h"
 
 @interface TransDetailsViewController()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,
-UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
+UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicatorViewDelegate>
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
-@property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮:用来切换时间
+@property (nonatomic, strong) UILabel* dateLabel;                   // 日期显示标签:
 @property (nonatomic, strong) UIButton* frushButotn;                // 刷新数据的按钮
 @property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
 @property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
@@ -41,7 +42,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 @synthesize dataArrayDisplay = _dataArrayDisplay;
 @synthesize activitor = _activitor;
 @synthesize reciveData = _reciveData;
-@synthesize dateButton = _dateButton;
+@synthesize dateLabel = _dateLabel;
 @synthesize frushButotn = _frushButotn;
 @synthesize years = _years;
 @synthesize months = _months;
@@ -93,7 +94,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
 
-    RevokeViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"revokeViewController"];
+    RevokeViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"revokeVC"];
     viewController.dataDic = [self.dataArrayDisplay objectAtIndex:indexPath.row];
     [self.navigationController pushViewController:viewController animated:YES];
 
@@ -143,9 +144,21 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 
 #pragma mask ------ DatePickerViewDelegate
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
-    [self.dateButton setTitle:choosedDate forState:UIControlStateNormal];
+    [self.dateLabel setText:choosedDate];
 }
 
+
+#pragma mask ------ SelectIndicatorViewDelegate : 日期选择自定义按钮的点击事件
+- (void)didTouchedInSelectIndicator {
+    NSLog(@"点击了日期选择按钮");
+    NSString* ndate = self.dateLabel.text;
+    CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
+    CGRect frame = CGRectMake(0, 0+naviAndStatusHeight, self.view.bounds.size.width, self.view.bounds.size.height - naviAndStatusHeight);
+    DatePickerView* pickerView = [[DatePickerView alloc] initWithFrame:frame andDate:ndate];
+    [pickerView setDelegate: self];
+    [self.view addSubview:pickerView];
+
+}
 
 #pragma mask ------ UIButton Action
 - (IBAction) touchDown:(id)sender {
@@ -173,20 +186,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     [alert show];
 
 }
-- (IBAction) touchToChangeDate:(id)sender {
-    UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.1 animations:^{
-        button.transform = CGAffineTransformIdentity;
-    }];
-
-    NSString* ndate = self.dateButton.titleLabel.text;
-    CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    CGRect frame = CGRectMake(0, 0+naviAndStatusHeight, self.view.bounds.size.width, self.view.bounds.size.height - naviAndStatusHeight);
-    DatePickerView* pickerView = [[DatePickerView alloc] initWithFrame:frame andDate:ndate];
-    [pickerView setDelegate: self];
-    [self.view addSubview:pickerView];
-
-}
 - (IBAction) touchToFrushData:(id)sender {
     UIButton* button = (UIButton*)sender;
     [UIView animateWithDuration:0.1 animations:^{
@@ -199,7 +198,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
         [self.tableView reloadData];
     });
 
-    NSString* text = self.dateButton.titleLabel.text;
+    NSString* text = self.dateLabel.text;
     NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
     [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dates];
     [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
@@ -316,11 +315,10 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.searchButton];
     [self.view addSubview:self.frushButotn];
-    [self.view addSubview:self.dateButton];
+    [self.view addSubview:self.dateLabel];
     [self.view addSubview:self.activitor];
     
-    
-    // 从后台异步获取交易明细数据
+    // 从后台异步获取交易明细数据:只创建界面的时候加载一次
     [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
     [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
     [self.HTTPRequest startAsynchronous];  // 异步获取数据
@@ -329,7 +327,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.tabBarController.tabBar.hidden = YES;
     // 总金额显示框
     CGFloat inset = 15;
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
@@ -340,22 +337,28 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
                               (self.view.frame.size.height - self.navigationController.navigationBar.bounds.size.height)/4.0);
     self.totalView.frame = frame;
     
-    // 日期选择按钮
+    // 日期标签
     frame.origin.x = inset;
     frame.origin.y += frame.size.height + inset/3.0;
     frame.size.height = 40;
-    frame.size.width = (self.view.bounds.size.width - inset*2)/2.0;
-    self.dateButton.frame = frame;
-    self.dateButton.layer.cornerRadius = self.dateButton.frame.size.height/2.0;
-    self.dateButton.layer.masksToBounds = YES;
-
-    // 刷新按钮
-    frame.origin.x += frame.size.width + 5;
-    CGSize textSize = [self.frushButotn.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.frushButotn.titleLabel.font forKey:NSFontAttributeName]];
+    CGSize textSize = [self.dateLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.dateLabel.font forKey:NSFontAttributeName]];
+    frame.size.width = textSize.width + 10;
+    self.dateLabel.frame = frame;
+    
+    // 日期选择自定义按钮
+    frame.origin.x += frame.size.width + 5.0;
     CGFloat oldHeight = frame.size.height;
     frame.origin.y += (oldHeight - textSize.height - 10.0)/2.0;
     frame.size.height = textSize.height + 10;
-    frame.size.width /= 2.0;
+    SelectIndicatorView* selectedView = [[SelectIndicatorView alloc] initWithFrame:frame andViewColor:[PublicInformation returnCommonAppColor:@"red"]];
+    [selectedView setDelegate:self];
+    [self.view addSubview:selectedView];
+
+    frame.size.width = selectedView.frame.size.width;
+    // 刷新按钮
+    frame.origin.x += frame.size.width + inset*2.0;
+    textSize = [self.frushButotn.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.frushButotn.titleLabel.font forKey:NSFontAttributeName]];
+    frame.size.width = textSize.width * 2;
     self.frushButotn.frame = frame;
     self.frushButotn.layer.cornerRadius = frame.size.height/2.0;
     self.frushButotn.layer.masksToBounds = YES;
@@ -378,7 +381,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     
     // 表视图
     frame.origin.y += 1;
-    frame.size.height = self.view.bounds.size.height - frame.origin.y;
+    frame.size.height = self.view.bounds.size.height - frame.origin.y - self.tabBarController.tabBar.bounds.size.height;
     self.tableView.frame = frame;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -388,7 +391,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.tabBarController.tabBar.hidden = NO;
     [self.HTTPRequest clearDelegatesAndCancel];
 }
 - (void)viewDidDisappear:(BOOL)animated {
@@ -464,26 +466,23 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate>
     }
     return _searchButton;
 }
-- (UIButton *)dateButton {
-    if (_dateButton == nil) {
-        _dateButton = [[UIButton alloc] initWithFrame:CGRectZero];
-        _dateButton.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.3];
+- (UILabel *)dateLabel {
+    if (_dateLabel == nil) {
+        _dateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         NSString* nDate = [self nowDate];
         NSString* formateDate = [NSString stringWithFormat:@"%@-%@-%@",[nDate substringToIndex:4],[nDate substringWithRange:NSMakeRange(4, 2)],[nDate substringFromIndex:4+2]];
-        [_dateButton setTitle:formateDate forState:UIControlStateNormal];
-        [_dateButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [_dateButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-        [_dateButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
-        [_dateButton addTarget:self action:@selector(touchToChangeDate:) forControlEvents:UIControlEventTouchUpInside];
+        _dateLabel.text = formateDate;
+        _dateLabel.textColor = [UIColor blackColor];
+        _dateLabel.textAlignment = NSTextAlignmentCenter;
     }
-    return _dateButton;
+    return _dateLabel;
 }
 - (UIButton *)frushButotn {
     if (_frushButotn == nil) {
         _frushButotn = [[UIButton alloc] initWithFrame:CGRectZero];
         [_frushButotn setTitle:@"刷新" forState:UIControlStateNormal];
         [_frushButotn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _frushButotn.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:64.0/255.0 blue:59.0/255.0 alpha:1.0];
+        _frushButotn.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
         
         [_frushButotn addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_frushButotn addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchDown];
