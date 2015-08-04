@@ -10,104 +10,150 @@
 /* ### 增值服务界面 ### */
 
 #import "AdditionalServicesViewController.h"
+#import "PublicInformation.h"
+#import "myCollectionCell.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
 
 
-@interface AdditionalServicesViewController ()
-@property (nonatomic, strong) UIScrollView *contentScrollView;
-@property (nonatomic, strong) UIScrollView *dynamicScrollView;
+@interface AdditionalServicesViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
+@property (nonatomic, strong) UICollectionView* collectionView;
+@property (nonatomic, strong) NSMutableDictionary* imageNamesDict;
+@property (nonatomic, strong) NSMutableArray* titlesArray;
 @end
 
-@implementation AdditionalServicesViewController
 
-@synthesize contentScrollView       = _contentScrollView;
-@synthesize dynamicScrollView       = _dynamicScrollView;
+NSString* cellIdentifier = @"cellIdentifier";
+NSString* headerIdentifier = @"headerIdentifier";
+
+@implementation AdditionalServicesViewController
+@synthesize collectionView = _collectionView;
+@synthesize imageNamesDict = _imageNamesDict;
+@synthesize titlesArray = _titlesArray;
+
+
+
+#pragma mask ------ UICollectionViewDataSource
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.titlesArray.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    myCollectionCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
+    if (cell == nil) {
+        return nil;
+    }
+    NSString* key = [self.titlesArray objectAtIndex:indexPath.row];
+    [cell setImage:[UIImage imageNamed:[self.imageNamesDict valueForKey:key]]];
+    [cell setText:key];
+    return cell;
+}
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    UICollectionReusableView* headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+                                                                              withReuseIdentifier:headerIdentifier
+                                                                                     forIndexPath:indexPath];
+    CGFloat headerHeight = self.view.bounds.size.width * 305.0/712.0;
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, headerHeight)];
+    imageView.image = [UIImage imageNamed:@"01_03"];
+    [headerView addSubview:imageView];
+    return headerView;
+}
+
+#pragma mask ------ UICollectionViewDelegateFlowLayout
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat width = (self.view.bounds.size.width - 0.5*6)/3.0;
+    return CGSizeMake(width, width);
+}
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(0.5, 0.5, 0.5, 0);
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 0;
+}
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    return 0.5*2;
+}
+
+#pragma mask ------ UICollectionViewDelegate
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"点击了单元格..........");
+}
+
+
+
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // 加载主界面视图的 scrollView
-    [self initContentScrollView];
-    
-    
     // 标题颜色设置为红色
-    self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor redColor] forKey:UITextAttributeTextColor];
+    self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName];
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    [self.view addSubview:self.collectionView];
+}
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    CGFloat naviAndStatusHeight = [PublicInformation heightOfNavigationAndStatusInVC:self];
+    CGFloat tabBarHeight = self.tabBarController.tabBar.frame.size.height;
+    self.collectionView.frame = CGRectMake(0, naviAndStatusHeight, self.view.bounds.size.width, self.view.bounds.size.height - naviAndStatusHeight - tabBarHeight);
+
+    [self.collectionView setDataSource:self];
+    [self.collectionView setDelegate:self];
     
+
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
 
 
-- (void) initContentScrollView {
-    CGFloat visibalHeight           = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height;   // 可视区域的高度
-    CGFloat cellHeight              = visibalHeight / 4.3;                      // 按钮组的单元格高度
-    CGFloat cellWidth               = self.view.bounds.size.width / 3.0;        // 按钮组的单元格宽度
-    CGFloat y_subViews              = 0;                                        // subViews 的起始y左边点
-    CGFloat x_subViews              = 0;                                        // subViews 的起始x左边点
-    
-    CGRect frame                    = CGRectMake(0, 0, self.view.bounds.size.width, visibalHeight);
-    self.contentScrollView          = [[UIScrollView alloc] initWithFrame:frame];
-    
-    
-    // 初始 scrollView 的 size ，后续动态增加了 subviews 后需要更新
-    self.contentScrollView.contentSize  = CGSizeMake(self.view.bounds.size.width, 0);
-    
-    
-    // 在 contentScrollView 中添加子 scrollView.....
-    //      子 scrollView 里面的图片都是从服务器获取的，包括数据，所以，最好给对应的每个功能以加载网页的方式实现
-    self.dynamicScrollView          = [[DynamicScrollView alloc] initWithFrame:CGRectMake(x_subViews, y_subViews, self.view.bounds.size.width, cellHeight * 1.3)];
-    [self.contentScrollView addSubview:self.dynamicScrollView];
-    // update contentSize.height after adding dynamicScrollView
-    self.contentScrollView.contentSize  = CGSizeMake(self.contentScrollView.contentSize.width, self.contentScrollView.contentSize.height + cellHeight * 1.3);
-    
-    
-    y_subViews += cellHeight * 1.3 + InsetOfSubViews + 0.3;
-    // 添加 功能按钮组.....
-    // 功能用 userDefault 保存,实现动态的维护,包括删除、添加
-    
-    
-    /////////////////////////////////////   1---- 临时添加 按钮组的  方法，后续要扩展为动态添加
-    NSArray * imageNames            = [NSArray arrayWithObjects:@"03_07", @"03_12", @"03_09", @"03_18", @"03_20", @"03_23", @"03_28", @"03_29", nil];
-    NSArray * buttonNames           = [NSArray arrayWithObjects:@"信用卡还款",
-                                                                @"余额查询",
-                                                                @"转账汇款",
-                                                                @"手机充值",
-                                                                @"支付宝充值",
-                                                                @"财付通充值",
-                                                                @"游戏点卡充值",
-                                                                @"交通罚款", nil];
-    self.contentScrollView.contentSize  = CGSizeMake(self.contentScrollView.contentSize.width, self.contentScrollView.contentSize.height + cellHeight);
-    for (int i = 0; i<imageNames.count; i++) {
-        FunctionButton *button          = [[FunctionButton alloc] initWithFrame:CGRectMake(x_subViews, y_subViews, cellWidth, cellHeight)];
-        [button setImageViewWith:[imageNames objectAtIndex:i]];
-        [button setLabelNameWith:[buttonNames objectAtIndex:i]];
-        [self.contentScrollView addSubview:button];
-        
-        
-        if (x_subViews >= cellWidth * 2.0) {
-            x_subViews                  = 0;
-            y_subViews                  += cellHeight;
-            self.contentScrollView.contentSize  = CGSizeMake(self.contentScrollView.contentSize.width, self.contentScrollView.contentSize.height + cellHeight);
-        } else {
-            x_subViews                  += cellWidth;
-        }
-        
-        
+#pragma mask ::: getter & setter 
+- (UICollectionView *)collectionView {
+    if (_collectionView == nil) {
+        CGFloat headerHeight = self.view.bounds.size.width * 305.0/712.0;
+        UICollectionViewFlowLayout* flowLayout = [[UICollectionViewFlowLayout alloc] init];
+        [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        flowLayout.headerReferenceSize = CGSizeMake(self.view.bounds.size.width, headerHeight + 8.0);
+        _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:flowLayout];
+        [_collectionView registerClass:[myCollectionCell class] forCellWithReuseIdentifier:cellIdentifier];
+        [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerIdentifier];
+        [_collectionView setBackgroundColor:[UIColor whiteColor]];
     }
-    ///////                                  2 -- 添加完了功能按钮后要添加 "+" 按钮
-
-    AdditionalButton* addButton         = [[AdditionalButton alloc] initWithFrame:CGRectMake(x_subViews, y_subViews, cellWidth, cellHeight)];
-    [self.contentScrollView addSubview:addButton];
-    /////////////////////////////////////
-    
-    
-    
-    [self.view addSubview:self.contentScrollView];
+    return _collectionView;
 }
-
-
-
+- (NSMutableArray *)titlesArray {
+    if (_titlesArray == nil) {
+        _titlesArray = [[NSMutableArray alloc] init];
+        [_titlesArray addObject:@"信用卡还款"];
+        [_titlesArray addObject:@"余额查询"];
+        [_titlesArray addObject:@"转账汇款"];
+        [_titlesArray addObject:@"手机充值"];
+        [_titlesArray addObject:@"支付宝充值"];
+        [_titlesArray addObject:@"财付通充值"];
+        [_titlesArray addObject:@"游戏点卡充值"];
+        [_titlesArray addObject:@"交通罚款"];
+    }
+    return _titlesArray;
+}
+- (NSMutableDictionary *)imageNamesDict {
+    if (_imageNamesDict == nil) {
+        _imageNamesDict = [[NSMutableDictionary alloc] init];
+        [_imageNamesDict setValue:@"03_07" forKey:@"信用卡还款"];
+        [_imageNamesDict setValue:@"03_12" forKey:@"余额查询"];
+        [_imageNamesDict setValue:@"03_09" forKey:@"转账汇款"];
+        [_imageNamesDict setValue:@"03_18" forKey:@"手机充值"];
+        [_imageNamesDict setValue:@"03_20" forKey:@"支付宝充值"];
+        [_imageNamesDict setValue:@"03_23" forKey:@"财付通充值"];
+        [_imageNamesDict setValue:@"03_28" forKey:@"游戏点卡充值"];
+        [_imageNamesDict setValue:@"03_29" forKey:@"交通罚款"];
+    }
+    return _imageNamesDict;
+}
 
 @end

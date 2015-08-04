@@ -202,8 +202,12 @@
             label.text = [NSString stringWithFormat:@"%@******%@",
                           [cardNo substringToIndex:6],
                           [cardNo substringFromIndex:[cardNo length] - 1 - 4]];
-        } else {
+        }
+        else {
             label.text = [self.dataDic objectForKey:key];
+            if ([key isEqualToString:@"txnNum"] && ![label.text isEqualToString:@"消费"]) {
+                label.textColor = [UIColor redColor];
+            }
         }
     }
     

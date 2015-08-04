@@ -45,6 +45,7 @@
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
 		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
 		5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */; };
+		5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353F1B70BC4300560C0A /* myCollectionCell.m */; };
 		5E5E5FBB1B12CB3D002F421D /* AdditionalButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */; };
 		5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */; };
 		5E5FA57F1B46342600387E69 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56E1B46342600387E69 /* .gitignore */; };
@@ -240,6 +241,8 @@
 		5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoneyCalculated.m; sourceTree = "<group>"; };
 		5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectIndicatorView.h; sourceTree = "<group>"; };
 		5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectIndicatorView.m; sourceTree = "<group>"; };
+		5E5E353E1B70BC4300560C0A /* myCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myCollectionCell.h; sourceTree = "<group>"; };
+		5E5E353F1B70BC4300560C0A /* myCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myCollectionCell.m; sourceTree = "<group>"; };
 		5E5E5FB91B12CB3D002F421D /* AdditionalButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalButton.h; sourceTree = "<group>"; };
 		5E5E5FBA1B12CB3D002F421D /* AdditionalButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalButton.m; sourceTree = "<group>"; };
 		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
@@ -458,6 +461,8 @@
 			children = (
 				5E08AE6D1B0989B100B8C198 /* AdditionalServicesViewController.h */,
 				5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */,
+				5E5E353E1B70BC4300560C0A /* myCollectionCell.h */,
+				5E5E353F1B70BC4300560C0A /* myCollectionCell.m */,
 				5E08AE711B09949200B8C198 /* DynamicScrollView.h */,
 				5E08AE721B09949200B8C198 /* DynamicScrollView.m */,
 				5E08AE741B09BDAA00B8C198 /* FunctionButton.h */,
@@ -1146,6 +1151,7 @@
 				5EBAA8EA1ACD2FA800E2ABDD /* HeaderString.m in Sources */,
 				5E397B3C1AD36429004F206F /* ASIWebPageRequest.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
+				5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */,
 				5E5FA5851B46342600387E69 /* ISControlManager.m in Sources */,
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,

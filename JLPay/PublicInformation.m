@@ -964,5 +964,13 @@
     return moneyString;
 }
 
+// app的状态栏高度+控制栏高度
++ (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController *)viewController {
+    CGFloat height = 0.0;
+    height += [[UIApplication sharedApplication] statusBarFrame].size.height;
+    height += viewController.navigationController.navigationBar.bounds.size.height;
+    return height;
+}
+
 
 @end

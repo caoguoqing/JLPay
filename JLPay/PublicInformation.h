@@ -139,5 +139,6 @@
 
 // 将获取到的c字符串金额重新封装成12位的 NSString 格式
 + (NSString*) moneyStringWithCString:(char*)cstring ;
-
+// app的状态栏高度+控制栏高度
++ (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController*)viewController;
 @end
