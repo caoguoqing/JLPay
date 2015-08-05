@@ -156,7 +156,7 @@
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
     }
     else if ([cellName isEqualToString:@"修改密码"]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"weChatPay"];
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"帮助和关于"]) {

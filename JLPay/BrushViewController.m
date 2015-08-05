@@ -27,6 +27,7 @@
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
+@property (nonatomic, strong) UILabel* moneyLabel;                          // 金额显示框
 @property (nonatomic, assign) CGFloat leftInset;                            // 动态文本区域的左边静态文本区域的右边界长度
 @property (nonatomic, assign) int timeOut;                                  // 交易超时时间
 @property (nonatomic, strong) NSTimer* waitingTimer;                        // 控制定时器
@@ -53,6 +54,7 @@
 @synthesize timeOut;
 @synthesize waitingTimer = _waitingTimer;
 @synthesize stringOfTranType = _stringOfTranType;
+@synthesize moneyLabel = _moneyLabel;
 
 /*************************************
  * 功  能 : 界面的初始化;
@@ -398,10 +400,6 @@
     CGFloat uifont              = 20.0;              // 字体大小
     CGSize fontSize             = [@"刷卡" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:uifont] forKey:NSFontAttributeName]];
     
-    
-    // 右标签:显示金额
-    
-    
     // 背景
     UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
     backImage.image             = [UIImage imageNamed:@"bg"];
@@ -414,7 +412,21 @@
     CGFloat height              = fontSize.height;
     CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
     
+    // 金额图片
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:frame];
+    imageView.image = [UIImage imageNamed:@"jine"];
+    [self.view addSubview:imageView];
+    // 刷卡金额: 0.00 元
+    frame.origin.x += frame.size.width + 4;
+    frame.size.width =  self.view.frame.size.width - fleftInset*2 - frame.size.width - 4;
+    self.moneyLabel.frame = frame;
+    self.moneyLabel.font = [UIFont boldSystemFontOfSize:uifont];
+    [self.view addSubview:self.moneyLabel];
+    
     // 动态滚轮
+    frame.origin.x = fleftInset;
+    frame.origin.y += frame.size.height + 4;
+    frame.size.width = frame.size.height;
     self.activity.frame         = frame;
     [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [self.view addSubview:self.activity];
@@ -558,13 +570,6 @@
  * 返  回 : 无
  *************************************/
 - (void) swipeTimingOut {
-//    if (self.timeOut >= TIMEOUT) {
-//        [self.waitingTimer invalidate];
-//        self.waitingTimer = nil;
-//        [self alertForFailedMessage:@"刷卡超时!"]; // 点击确定就会退出场景
-//        // 就可以退出了
-//        return;
-//    }
     [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,刷卡中...%02d秒",self.timeOut]];
     self.timeOut++;
 }
@@ -579,10 +584,6 @@
     self.timeOut++;
 
 }
-
-
-
-
 
 
 #pragma mask ::: getter
@@ -605,6 +606,14 @@
         _waitingLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     }
     return _waitingLabel;
+}
+- (UILabel *)moneyLabel {
+    if (_moneyLabel == nil) {
+        _moneyLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        NSString* money = [PublicInformation returnMoney];
+        _moneyLabel.text = [NSString stringWithFormat:@"金额: %@ 元",money];
+    }
+    return _moneyLabel;
 }
 // 刷卡超时定时器
 - (NSTimer *)waitingTimer {

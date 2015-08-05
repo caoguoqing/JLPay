@@ -50,6 +50,12 @@
     self.tableView.delegate = self;
     [self setExtraCellLineHidden:self.tableView];
     [self.view addSubview:self.activitor];
+    
+    // 不要放在 viewWillAppear 中
+    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
+    [actionSheet showFromTabBar:self.tabBarController.tabBar];
+
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -83,9 +89,6 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     
-    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
-    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
-    [actionSheet showFromTabBar:self.tabBarController.tabBar];
     
     [self.tableView reloadData];
 }
@@ -438,14 +441,12 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([alertView.message isEqualToString:@"绑定设备成功!"]) {
         // 绑定成功后就跳转到金额输入界面
+//        [self.navigationController popViewControllerAnimated:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             [UIView animateWithDuration:0.5 delay:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
-                [self.navigationController popViewControllerAnimated:YES];
+                [self.tabBarController setSelectedViewController:[[self.tabBarController viewControllers] objectAtIndex:0]];
             } completion:nil];
         });
-        [UIView animateWithDuration:0.5 delay:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
-            [self.tabBarController setSelectedViewController:[[self.tabBarController viewControllers] objectAtIndex:0]];
-        } completion:nil];
     }
 }
 

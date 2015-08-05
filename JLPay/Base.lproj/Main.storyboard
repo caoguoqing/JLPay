@@ -242,6 +242,20 @@
             </objects>
             <point key="canvasLocation" x="529" y="2360"/>
         </scene>
+        <!--Change Pin View Controller-->
+        <scene sceneID="pqA-R7-zmF">
+            <objects>
+                <viewController storyboardIdentifier="changePinVC" id="oe8-dk-9c9" customClass="ChangePinViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="iuc-Xb-rBt">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NFN-sY-AyL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="599" y="2640"/>
+        </scene>
         <!--Terminal Param Set View Controller-->
         <scene sceneID="fMU-rk-W8N">
             <objects>
