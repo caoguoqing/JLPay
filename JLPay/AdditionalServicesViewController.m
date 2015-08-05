@@ -18,6 +18,7 @@
 
 @interface AdditionalServicesViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
 @property (nonatomic, strong) UICollectionView* collectionView;
+
 @property (nonatomic, strong) NSMutableDictionary* imageNamesDict;
 @property (nonatomic, strong) NSMutableArray* titlesArray;
 @end
@@ -50,7 +51,11 @@ NSString* headerIdentifier = @"headerIdentifier";
     }
     NSString* key = [self.titlesArray objectAtIndex:indexPath.row];
     [cell setImage:[UIImage imageNamed:[self.imageNamesDict valueForKey:key]]];
-    [cell setText:key];
+    if (![key isEqualToString:@"添加"]) {
+        [cell setText:key];
+    } else {
+        [cell setText:nil];
+    }
     return cell;
 }
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
@@ -84,7 +89,12 @@ NSString* headerIdentifier = @"headerIdentifier";
     return YES;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"点击了单元格..........");
+    UICollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];
+    [UIView animateWithDuration:0.1 animations:^{
+//        cell.transform = CGAffineTransformMakeScale(0.95, 0.95);
+    }];
+    NSLog(@"点击了单元格..........[%@]",[self.titlesArray objectAtIndex:indexPath.row]);
+    
 }
 
 
@@ -138,6 +148,8 @@ NSString* headerIdentifier = @"headerIdentifier";
         [_titlesArray addObject:@"财付通充值"];
         [_titlesArray addObject:@"游戏点卡充值"];
         [_titlesArray addObject:@"交通罚款"];
+        [_titlesArray addObject:@"添加"];
+
     }
     return _titlesArray;
 }
@@ -152,6 +164,8 @@ NSString* headerIdentifier = @"headerIdentifier";
         [_imageNamesDict setValue:@"03_23" forKey:@"财付通充值"];
         [_imageNamesDict setValue:@"03_28" forKey:@"游戏点卡充值"];
         [_imageNamesDict setValue:@"03_29" forKey:@"交通罚款"];
+        [_imageNamesDict setValue:@"jia" forKey:@"添加"];
+
     }
     return _imageNamesDict;
 }

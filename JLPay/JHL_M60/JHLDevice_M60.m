@@ -253,11 +253,7 @@
 - (void)accessoryDidConnect:(ISDataPath *)accessory{
     // 读取终端号,并更新已连接设备中设备的终端号(在读取数据的回调中)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        NSString* indentifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
-        // 绑定设备id为空才读取SN，否则没必要读取
-//        if (indentifier == nil) {
-            [self readSNNoWithAccessory:accessory];
-//        }
+        [self readSNNoWithAccessory:accessory];
     });
     // 连接设备成功的回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(didOpenDeviceSucOrFail:withError:)]) {

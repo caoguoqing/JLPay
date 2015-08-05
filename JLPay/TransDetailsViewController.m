@@ -71,11 +71,11 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     UIColor* textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
     if ([trantype isEqualToString:@"消费"]) {
         if ([[dataDic valueForKey:@"revsal_flag"] isEqualToString:@"1"]) {
-            trantype = @"已冲正";
+            trantype = @"消费,已冲正";
             textColor = [UIColor redColor];
         }
         else if ([[dataDic valueForKey:@"cancelFlag"] isEqualToString:@"1"]) {
-            trantype = @"已撤销";
+            trantype = @"消费,已撤销";
             textColor = [UIColor redColor];
         }
         else {
@@ -150,10 +150,12 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 
 #pragma mask ------ SelectIndicatorViewDelegate : 日期选择自定义按钮的点击事件
 - (void)didTouchedInSelectIndicator {
-    NSLog(@"点击了日期选择按钮");
     NSString* ndate = self.dateLabel.text;
     CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    CGRect frame = CGRectMake(0, 0+naviAndStatusHeight, self.view.bounds.size.width, self.view.bounds.size.height - naviAndStatusHeight);
+    CGRect frame = CGRectMake(0,
+                              0+naviAndStatusHeight,
+                              self.view.bounds.size.width,
+                              self.view.bounds.size.height - naviAndStatusHeight - self.tabBarController.tabBar.bounds.size.height);
     DatePickerView* pickerView = [[DatePickerView alloc] initWithFrame:frame andDate:ndate];
     [pickerView setDelegate: self];
     [self.view addSubview:pickerView];

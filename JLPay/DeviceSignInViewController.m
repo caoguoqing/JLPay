@@ -354,6 +354,9 @@
 
 #pragma mask ::: UIActionSheetDelegate 点击事件
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        return;
+    }
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     [[NSUserDefaults standardUserDefaults] setValue:title forKey:DeviceType];
     [[NSUserDefaults standardUserDefaults] synchronize];

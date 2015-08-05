@@ -69,6 +69,7 @@
         [[_dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"] &&
         [[_dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
         self.revokeButton.enabled = YES;
+        [self.revokeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     NSLog(@"明细:[%@]",_dataDic);
 }
@@ -240,7 +241,7 @@
     if (_revokeButton == nil) {
         _revokeButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_revokeButton setTitle:@"撤销" forState:UIControlStateNormal];
-        [_revokeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_revokeButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         [_revokeButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
         _revokeButton.layer.cornerRadius = 8.0;
         _revokeButton.layer.masksToBounds = YES;

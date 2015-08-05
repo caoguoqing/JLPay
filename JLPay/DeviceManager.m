@@ -246,6 +246,7 @@ static DeviceManager* _sharedDeviceManager = nil;
 // pragma mask : 开始扫描设备
 - (void) startScanningDevices {
     NSString* ideviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    NSLog(@"-------设备类型[%@]",ideviceType);
     if ([ideviceType isEqualToString:DeviceType_JHL_A60]) {          // 锦宏霖音频设备
         
     }

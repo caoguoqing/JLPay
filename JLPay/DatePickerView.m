@@ -136,7 +136,7 @@
 
 // 加载子视图
 - (void)layoutSubviews {
-    [super layoutSubviews];    
+    [super layoutSubviews];
     CGRect iFrame = CGRectMake(0,
                                self.frame.size.height - self.pickerView.frame.size.height,
                                self.frame.size.width,
@@ -146,6 +146,13 @@
     // pickerView
     self.pickerView.frame = iFrame;
 
+    // 分割线
+    iFrame.origin.y -= 0.5;
+    iFrame.size.height = 0.5;
+    UIView* lineView = [[UIView alloc] initWithFrame:iFrame];
+    lineView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
+    [self addSubview:lineView];
+    
     // 年份，月份，日期标签
     iFrame.origin.y -= 30;
     iFrame.size.width /= 3.0;
