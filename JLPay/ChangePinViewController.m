@@ -8,12 +8,18 @@
 
 #import "ChangePinViewController.h"
 #import "PublicInformation.h"
+#import "asi-http/ASIFormDataRequest.h"
+#import "JLActivity.h"
+#import "EncodeString.h"
+#import "ThreeDesUtil.h"
 
-@interface ChangePinViewController()
+@interface ChangePinViewController()<ASIHTTPRequestDelegate>
 @property (nonatomic, strong) UITextField* userNumberField;
 @property (nonatomic, strong) UITextField* userOldPwdField;
 @property (nonatomic, strong) UITextField* userNewPwdField;
 @property (nonatomic, strong) UIButton* sureButton;
+@property (nonatomic, strong) JLActivity* activitor;
+@property (nonatomic, strong) ASIFormDataRequest* httpRequest;
 @end
 
 
@@ -22,7 +28,56 @@
 @synthesize userOldPwdField = _userOldPwdField;
 @synthesize userNewPwdField = _userNewPwdField;
 @synthesize sureButton = _sureButton;
+@synthesize activitor = _activitor;
+@synthesize httpRequest = _httpRequest;
 
+/******************************
+ * 函  数: requestForChangingPin
+ * 功  能: 发送修改密码请求
+ *         1.HTTP协议
+ * 返  回:
+ ******************************/
+- (void) requestForChangingPin {
+    [self.httpRequest addPostValue:self.userNumberField.text forKey:@"userName"];
+    [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
+    [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.httpRequest startAsynchronous];
+        [self.activitor startAnimating];
+    });
+}
+
+- (NSString*) encryptBy3DESForPin:(NSString*)pin {
+    NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
+    NSString* sourceStr = [EncodeString encodeASC:pin] ;
+    // 开始加密
+    NSString* newPin = [ThreeDesUtil encryptUse3DES:sourceStr key:keyStr];
+    return newPin;
+}
+#pragma mask --- ASIHTTPRequestDelegate
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activitor stopAnimating];
+    });
+    NSData* data = [self.httpRequest responseData];
+    [self.httpRequest clearDelegatesAndCancel];
+    NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    NSLog(@"----修改密码的结果:%@",dataDict);
+    if ([[dataDict valueForKey:@"code"] intValue] == 0) {
+        [self alertViewWithMessage:@"修改密码成功!"];
+    } else {
+        [self alertViewWithMessage:[NSString stringWithFormat:@"修改密码失败:%@",[dataDict valueForKey:@"message"]]];
+    }
+    self.httpRequest = nil;
+}
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    [self.httpRequest clearDelegatesAndCancel];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activitor stopAnimating];
+        [self alertViewWithMessage:@"网络异常,请检查网络"];
+    });
+    self.httpRequest = nil;
+}
 
 
 
@@ -44,6 +99,9 @@
     }];
 
     // 上送修改密码请求
+    if ([self checkInPut]) {
+        [self requestForChangingPin];
+    }
 }
 
 #pragma mask ---- 界面声明周期
@@ -58,6 +116,7 @@
     [self.view addSubview:self.userOldPwdField];
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.sureButton];
+    [self.view addSubview:self.activitor];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -91,6 +150,7 @@
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self.httpRequest clearDelegatesAndCancel];
 }
 
 // 给textField生成的左边的描述label
@@ -107,6 +167,40 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
     [self.view endEditing:YES];
+}
+
+/******************************
+ * 函  数: checkInPut
+ * 功  能: 检查输入是否有效
+ *         1.是否输入为空
+ *         2.新旧密码是否不一致
+ * 返  回:
+ *         (BOOL) 校验通过返回YES,否则返回NO;
+ ******************************/
+- (BOOL) checkInPut {
+    BOOL valid = YES;
+    if (self.userNumberField.text == nil) {
+        [self alertViewWithMessage:@"账号不能为空"];
+        valid = NO;
+    } else if (self.userOldPwdField.text == nil) {
+        [self alertViewWithMessage:@"旧密码不能为空"];
+        valid = NO;
+    } else if (self.userNewPwdField.text == nil) {
+        [self alertViewWithMessage:@"新密码不能为空"];
+        valid = NO;
+    } else if ([self.userOldPwdField.text isEqualToString:self.userNewPwdField.text]) {
+        [self alertViewWithMessage:@"新密码不能跟旧密码一样"];
+        valid = NO;
+    } else if (self.userNewPwdField.text.length > 8) {
+        [self alertViewWithMessage:@"密码长度不能大于8位"];
+        valid = NO;
+    }
+    return valid;
+}
+
+- (void) alertViewWithMessage:(NSString*)msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
 }
 
 #pragma mask ---- getter & setter
@@ -129,10 +223,10 @@
         _userOldPwdField = [[UITextField alloc] initWithFrame:CGRectZero];
         _userOldPwdField.layer.cornerRadius = 8.0;
         _userOldPwdField.layer.masksToBounds = YES;
-        _userOldPwdField.placeholder = @"请输入旧密码";
+        _userOldPwdField.placeholder = @"请输入8位旧密码";
         _userOldPwdField.layer.borderWidth = 0.5;
         _userOldPwdField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
-        _userOldPwdField.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.8];
+        _userOldPwdField.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
         _userOldPwdField.secureTextEntry = YES;
         _userOldPwdField.textColor = [UIColor whiteColor];
     }
@@ -143,10 +237,10 @@
         _userNewPwdField = [[UITextField alloc] initWithFrame:CGRectZero];
         _userNewPwdField.layer.cornerRadius = 8.0;
         _userNewPwdField.layer.masksToBounds = YES;
-        _userNewPwdField.placeholder = @"请输入新密码";
+        _userNewPwdField.placeholder = @"请输入8位新密码";
         _userNewPwdField.layer.borderWidth = 0.5;
         _userNewPwdField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
-        _userNewPwdField.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.7];
+        _userNewPwdField.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
         _userNewPwdField.secureTextEntry = YES;
         _userNewPwdField.textColor = [UIColor whiteColor];
 
@@ -167,5 +261,20 @@
         [_sureButton addTarget:self action:@selector(touchToChangePin:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _sureButton;
+}
+- (JLActivity *)activitor {
+    if (_activitor == nil) {
+        _activitor = [[JLActivity alloc] init];
+    }
+    return _activitor;
+}
+- (ASIFormDataRequest *)httpRequest {
+    if (_httpRequest == nil) {
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ModifyPassword",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSURL* url = [NSURL URLWithString:urlString];
+        _httpRequest = [ASIFormDataRequest requestWithURL:url];
+        [_httpRequest setDelegate:self];
+    }
+    return _httpRequest;
 }
 @end
