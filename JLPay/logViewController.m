@@ -34,8 +34,8 @@
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
 @property (nonatomic, strong) UIButton    *loadButton;              // 登陆按钮
 
-//@property (nonatomic, strong) UIButton    *signInButton;          // 注册按钮
-//@property (nonatomic, strong) UIButton    *pinChangeButton;       // 密码修改按钮
+@property (nonatomic, strong) UIButton    *signInButton;          // 注册按钮
+@property (nonatomic, strong) UIButton    *pinChangeButton;       // 密码修改按钮
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
 
@@ -48,8 +48,8 @@
 @synthesize userNumberTextField     = _userNumberTextField;
 @synthesize userPasswordTextField   = _userPasswordTextField;
 @synthesize loadButton              = _loadButton;
-//@synthesize signInButton            = _signInButton;
-//@synthesize pinChangeButton         = _pinChangeButton;
+@synthesize signInButton            = _signInButton;
+@synthesize pinChangeButton         = _pinChangeButton;
 @synthesize moveHeightByWindow      = _moveHeightByWindow;
 
 /*****************************/
@@ -199,41 +199,41 @@
     [self.loadButton addTarget:self action:@selector(touchDownLoad:) forControlEvents:UIControlEventTouchDown];
     [self.loadButton addTarget:self action:@selector(loadToMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.loadButton addTarget:self action:@selector(touchOutLoad:) forControlEvents:UIControlEventTouchUpOutside];
-    
+    frame.origin.y += frame.size.height;
     
     
     /* 注册按钮：UIButton */
 //    y += (iconViewHeight + 30);
-//    CGFloat midViewLeave                = 6.0;
-//    CGFloat signInViewHeight            = iconViewHeight / 5.0 * 2.0;
-//    CGFloat signInViewWidth             = signInViewHeight * 4.0;
-//    
-//    CGFloat midInset                    = (self.view.bounds.size.width - leftLeave * 2 - midViewLeave - signInViewWidth * 2)/4.0;
-//    CGRect signInFrame                  = CGRectMake(leftLeave + midInset + signInViewWidth * 0.1, y, signInViewWidth * 0.9, signInViewHeight);
-    /*
-     *   注册按钮修改:
-     *      1.新建一个自定义 OtherSignButton : UIButton
-     */
-//    self.signInButton.frame             = signInFrame;
-//    [self.signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
-    /* 给注册按钮添加 action */
-//    [self.signInButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:self.signInButton];
+    y = frame.origin.y + inset*2;
+    CGFloat midViewLeave                = 6.0;
+    CGFloat signInViewHeight            = iconViewHeight / 5.0 * 2.0;
+    CGFloat signInViewWidth             = signInViewHeight * 137.0/42.0;
+    CGFloat pinChangeViewWidth          = signInViewHeight * 154.0/42.0;
+    CGFloat midInset                    = (self.view.bounds.size.width - leftLeave * 2 - midViewLeave - signInViewWidth - pinChangeViewWidth)/4.0;
+    CGRect signInFrame                  = CGRectMake(leftLeave + midInset + signInViewWidth * 0.1,
+                                                     y,
+                                                     signInViewWidth * 0.9,
+                                                     signInViewHeight);
+    self.signInButton.frame             = signInFrame;
+    [self.signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
+    // 给注册按钮添加 action
+    [self.signInButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.signInButton];
     
-    /* 间隔图标 */
-//    signInFrame.origin.x   += signInViewWidth * 0.9 + midInset;
-//    signInFrame.size.width              = midViewLeave;
-//    UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
-//    midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
-//    [self.view addSubview:midLeaveView];
+    // 间隔图标
+    signInFrame.origin.x   += signInViewWidth * 0.9 + midInset;
+    signInFrame.size.width              = midViewLeave;
+    UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
+    midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
+    [self.view addSubview:midLeaveView];
     
-    /* 修改密码按钮：UIButton */
-//    signInFrame.origin.x                += midViewLeave + midInset;
-//    signInFrame.size.width              = signInViewWidth;
-//    self.pinChangeButton.frame          = signInFrame;
-//    [self.pinChangeButton setImage:[UIImage imageNamed:@"wmm"] forState:UIControlStateNormal];
-//    
-//    [self.view addSubview:self.pinChangeButton];
+    // 修改密码按钮：UIButton
+    signInFrame.origin.x                += midViewLeave + midInset;
+    signInFrame.size.width              = signInViewWidth;
+    self.pinChangeButton.frame          = signInFrame;
+    [self.pinChangeButton setImage:[UIImage imageNamed:@"wmm"] forState:UIControlStateNormal];
+    [self.pinChangeButton addTarget:self action:@selector(changePin:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.pinChangeButton];
     
     
     
@@ -527,5 +527,17 @@
 
     }
     return _loadButton;
+}
+- (UIButton *)signInButton {
+    if (_signInButton == nil) {
+        _signInButton = [[UIButton alloc] initWithFrame:CGRectZero];
+    }
+    return _signInButton;
+}
+- (UIButton *)pinChangeButton {
+    if (_pinChangeButton == nil) {
+        _pinChangeButton = [[UIButton alloc] initWithFrame:CGRectZero];
+    }
+    return _pinChangeButton;
 }
 @end
