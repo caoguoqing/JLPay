@@ -1,31 +1,31 @@
 //
-//  ChangePinViewController.m
+//  ForgetPinViewConroller.m
 //  JLPay
 //
-//  Created by jielian on 15/8/5.
+//  Created by jielian on 15/8/6.
 //  Copyright (c) 2015年 ShenzhenJielian. All rights reserved.
 //
 
-#import "ChangePinViewController.h"
+#import "ForgetPinViewConroller.h"
 #import "PublicInformation.h"
 #import "asi-http/ASIFormDataRequest.h"
 #import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 
-@interface ChangePinViewController()<ASIHTTPRequestDelegate>
+@interface ForgetPinViewConroller()<ASIHTTPRequestDelegate,UIAlertViewDelegate>
 @property (nonatomic, strong) UITextField* userNumberField;
-@property (nonatomic, strong) UITextField* userOldPwdField;
+@property (nonatomic, strong) UITextField* userIDField;
 @property (nonatomic, strong) UITextField* userNewPwdField;
 @property (nonatomic, strong) UIButton* sureButton;
 @property (nonatomic, strong) JLActivity* activitor;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
+
 @end
 
-
-@implementation ChangePinViewController
+@implementation ForgetPinViewConroller
 @synthesize userNumberField = _userNumberField;
-@synthesize userOldPwdField = _userOldPwdField;
+@synthesize userIDField = _userIDField;
 @synthesize userNewPwdField = _userNewPwdField;
 @synthesize sureButton = _sureButton;
 @synthesize activitor = _activitor;
@@ -39,7 +39,7 @@
  ******************************/
 - (void) requestForChangingPin {
     [self.httpRequest addPostValue:self.userNumberField.text forKey:@"userName"];
-    [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
+    [self.httpRequest addPostValue:self.userIDField.text forKey:@"identityNo"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.httpRequest startAsynchronous];
@@ -90,13 +90,13 @@
     [UIView animateWithDuration:0.2 animations:^{
         sender.transform = CGAffineTransformIdentity;
     }];
-
+    
 }
 - (IBAction) touchToChangePin:(UIButton*)sender {
     [UIView animateWithDuration:0.2 animations:^{
         sender.transform = CGAffineTransformIdentity;
     }];
-
+    
     // 上送修改密码请求
     if ([self checkInPut]) {
         [self requestForChangingPin];
@@ -110,15 +110,19 @@
     UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
     bgImageView.image = [UIImage imageNamed:@"bg"];
     [self.view addSubview:bgImageView];
-
+    
     [self.view addSubview:self.userNumberField];
-    [self.view addSubview:self.userOldPwdField];
+    [self.view addSubview:self.userIDField];
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.activitor];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    if (self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = NO;
+    }
+    
     CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
     CGFloat tabBarHeight = self.tabBarController.tabBar.bounds.size.height;
     CGFloat verticalInset = 15;
@@ -135,9 +139,9 @@
     [self.userNumberField setLeftViewMode:UITextFieldViewModeAlways];
     // 旧密码
     frame.origin.y += frame.size.height + verticalInset;
-    self.userOldPwdField.frame = frame;
-    [self.userOldPwdField setLeftView:[self newLabelWithText:@"旧密码:" andFrame:frame]];
-    [self.userOldPwdField setLeftViewMode:UITextFieldViewModeAlways];
+    self.userIDField.frame = frame;
+    [self.userIDField setLeftView:[self newLabelWithText:@"身份证:" andFrame:frame]];
+    [self.userIDField setLeftViewMode:UITextFieldViewModeAlways];
     // 新密码
     frame.origin.y += frame.size.height + verticalInset;
     self.userNewPwdField.frame = frame;
@@ -181,14 +185,11 @@
     if ([self.userNumberField.text length] == 0) {
         [self alertViewWithMessage:@"账号不能为空"];
         valid = NO;
-    } else if ([self.userOldPwdField.text length] == 0) {
-        [self alertViewWithMessage:@"旧密码不能为空"];
+    } else if ([self.userIDField.text length] == 0) {
+        [self alertViewWithMessage:@"身份证号码不能为空"];
         valid = NO;
     } else if ([self.userNewPwdField.text length] == 0) {
         [self alertViewWithMessage:@"新密码不能为空"];
-        valid = NO;
-    } else if ([self.userOldPwdField.text isEqualToString:self.userNewPwdField.text]) {
-        [self alertViewWithMessage:@"新密码不能跟旧密码一样"];
         valid = NO;
     } else if (self.userNewPwdField.text.length > 8) {
         [self alertViewWithMessage:@"密码长度不能大于8位"];
@@ -200,6 +201,12 @@
 - (void) alertViewWithMessage:(NSString*)msg {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0 && [alertView.message isEqualToString:@"修改密码成功!"]) {
+        // 密码修改成功:跳转出界面
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mask ---- getter & setter
@@ -213,23 +220,22 @@
         _userNumberField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         _userNumberField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
         _userNumberField.textColor = [UIColor whiteColor];
-
+        
     }
     return _userNumberField;
 }
-- (UITextField *)userOldPwdField {
-    if (_userOldPwdField == nil) {
-        _userOldPwdField = [[UITextField alloc] initWithFrame:CGRectZero];
-        _userOldPwdField.layer.cornerRadius = 8.0;
-        _userOldPwdField.layer.masksToBounds = YES;
-        _userOldPwdField.placeholder = @"请输入8位旧密码";
-        _userOldPwdField.layer.borderWidth = 0.5;
-        _userOldPwdField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
-        _userOldPwdField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
-        _userOldPwdField.secureTextEntry = YES;
-        _userOldPwdField.textColor = [UIColor whiteColor];
+- (UITextField *)userIDField {
+    if (_userIDField == nil) {
+        _userIDField = [[UITextField alloc] initWithFrame:CGRectZero];
+        _userIDField.layer.cornerRadius = 8.0;
+        _userIDField.layer.masksToBounds = YES;
+        _userIDField.placeholder = @"请输入身份证号码";
+        _userIDField.layer.borderWidth = 0.5;
+        _userIDField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
+        _userIDField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+        _userIDField.textColor = [UIColor whiteColor];
     }
-    return _userOldPwdField;
+    return _userIDField;
 }
 - (UITextField *)userNewPwdField {
     if (_userNewPwdField == nil) {
@@ -242,7 +248,7 @@
         _userNewPwdField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
         _userNewPwdField.secureTextEntry = YES;
         _userNewPwdField.textColor = [UIColor whiteColor];
-
+        
     }
     return _userNewPwdField;
 }
@@ -254,7 +260,7 @@
         [_sureButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
         _sureButton.layer.cornerRadius = 8.0;
         _sureButton.layer.masksToBounds = YES;
-    
+        
         [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_sureButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
         [_sureButton addTarget:self action:@selector(touchToChangePin:) forControlEvents:UIControlEventTouchUpInside];
@@ -269,11 +275,12 @@
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ModifyPassword",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ForgetPassword",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
         NSURL* url = [NSURL URLWithString:urlString];
         _httpRequest = [ASIFormDataRequest requestWithURL:url];
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
 }
+
 @end

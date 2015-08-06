@@ -1080,8 +1080,8 @@ static Unpacking8583 *sharedObj2 = nil;
                 
                 //保存消费成功的交易金额
                 if (([[sortArr objectAtIndex:c] isEqualToString:@"4"])) {
-                    float money=[deleteStr floatValue]/100;
-                    NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
+//                    float money=[deleteStr floatValue]/100;
+//                    NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
 //                    [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SuccessConsumerMoney];
                 }
                 else if ([[sortArr objectAtIndex:c] isEqualToString:@"12"]) {

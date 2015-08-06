@@ -365,7 +365,6 @@
     } else {
         for (NSDictionary* dataDic in self.knownDeviceList) {
             ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
-            NSString* SNVersion = [dataDic valueForKey:@"SNVersion"];
             // 未连接就建立连接,先判断自动打开标记
             if (self.needOpenDevices && [dataPath state] == CBPeripheralStateDisconnected) {
                 NSLog(@"======开始打开设备[%@]",[[dataPath peripheral] identifier].UUIDString);
@@ -1053,7 +1052,6 @@
  */
 - (BOOL)writeMposData:(NSData *)data withAccessory:(ISDataPath *)accessory
 {
-    Byte* dataBytes = (Byte*)[data bytes];
 //    NSLog(@"设备交互类型:[[[[[[[[[[[[[[%x]",dataBytes[0]);
     NSUInteger nlen =0,dwWriteBytes =0,dwCopyBytes =0;
     Byte templen[2]={0};

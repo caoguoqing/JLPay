@@ -46,6 +46,7 @@
 		5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */; };
 		5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353F1B70BC4300560C0A /* myCollectionCell.m */; };
 		5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35461B71E93700560C0A /* ChangePinViewController.m */; };
+		5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */; };
 		5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */; };
 		5E5FA57F1B46342600387E69 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56E1B46342600387E69 /* .gitignore */; };
 		5E5FA5801B46342600387E69 /* alertBkg.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56F1B46342600387E69 /* alertBkg.png */; };
@@ -241,6 +242,8 @@
 		5E5E353F1B70BC4300560C0A /* myCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myCollectionCell.m; sourceTree = "<group>"; };
 		5E5E35451B71E93700560C0A /* ChangePinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePinViewController.h; sourceTree = "<group>"; };
 		5E5E35461B71E93700560C0A /* ChangePinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangePinViewController.m; sourceTree = "<group>"; };
+		5E5E354A1B735B1100560C0A /* ForgetPinViewConroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForgetPinViewConroller.h; sourceTree = "<group>"; };
+		5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgetPinViewConroller.m; sourceTree = "<group>"; };
 		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
 		5E5FA5691B413E2F00387E69 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
 		5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
@@ -581,6 +584,22 @@
 				5E5E35461B71E93700560C0A /* ChangePinViewController.m */,
 			);
 			name = "修改密码";
+			sourceTree = "<group>";
+		};
+		5E5E35481B735A6300560C0A /* 忘记密码 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E354A1B735B1100560C0A /* ForgetPinViewConroller.h */,
+				5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */,
+			);
+			name = "忘记密码";
+			sourceTree = "<group>";
+		};
+		5E5E35491B735A6F00560C0A /* 注册用户 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "注册用户";
 			sourceTree = "<group>";
 		};
 		5E5FA56C1B46342600387E69 /* JHL_M60 */ = {
@@ -991,6 +1010,8 @@
 				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
 				5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */,
 				5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */,
+				5E5E35491B735A6F00560C0A /* 注册用户 */,
+				5E5E35481B735A6300560C0A /* 忘记密码 */,
 			);
 			name = "登陆界面";
 			sourceTree = "<group>";
@@ -1157,6 +1178,7 @@
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
 				5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */,
+				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
 				5ED344301AD8EB130005C890 /* JHNconnect.m in Sources */,
 				5E5FA5861B46342600387E69 /* ISDataPath.m in Sources */,

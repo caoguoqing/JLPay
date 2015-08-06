@@ -72,6 +72,12 @@
     if ([userID length] > 0) {
         self.userNumberTextField.text = userID;
     }
+    
+    // 设置 title 的字体颜色
+    UIColor *color                  = [UIColor redColor];
+    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
+    self.navigationController.navigationBar.titleTextAttributes = dict;
+    self.navigationController.navigationBar.tintColor = color;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -195,33 +201,25 @@
     frame.origin.y                      += frame.size.height + inset * 2.0;
     self.loadButton.frame               = frame;
     [self.view addSubview:self.loadButton];
-    /* 给“登陆”按钮绑定一个登陆的 action */
-    [self.loadButton addTarget:self action:@selector(touchDownLoad:) forControlEvents:UIControlEventTouchDown];
-    [self.loadButton addTarget:self action:@selector(loadToMainView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.loadButton addTarget:self action:@selector(touchOutLoad:) forControlEvents:UIControlEventTouchUpOutside];
     frame.origin.y += frame.size.height;
     
     
     /* 注册按钮：UIButton */
-//    y += (iconViewHeight + 30);
     y = frame.origin.y + inset*2;
-    CGFloat midViewLeave                = 6.0;
     CGFloat signInViewHeight            = iconViewHeight / 5.0 * 2.0;
     CGFloat signInViewWidth             = signInViewHeight * 137.0/42.0;
     CGFloat pinChangeViewWidth          = signInViewHeight * 154.0/42.0;
-    CGFloat midInset                    = (self.view.bounds.size.width - leftLeave * 2 - midViewLeave - signInViewWidth - pinChangeViewWidth)/4.0;
-    CGRect signInFrame                  = CGRectMake(leftLeave + midInset + signInViewWidth * 0.1,
+    CGFloat midViewLeave                = signInViewHeight * 15.0/51.0;
+    CGFloat midInset                    = signInViewWidth/2.0;
+    CGRect signInFrame                  = CGRectMake((self.view.bounds.size.width - signInViewWidth - pinChangeViewWidth - midInset*2 - midViewLeave)/2.0,
                                                      y,
-                                                     signInViewWidth * 0.9,
+                                                     signInViewWidth,
                                                      signInViewHeight);
     self.signInButton.frame             = signInFrame;
-    [self.signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
-    // 给注册按钮添加 action
-    [self.signInButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.signInButton];
     
     // 间隔图标
-    signInFrame.origin.x   += signInViewWidth * 0.9 + midInset;
+    signInFrame.origin.x                += signInViewWidth + midInset;
     signInFrame.size.width              = midViewLeave;
     UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
     midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
@@ -229,14 +227,9 @@
     
     // 修改密码按钮：UIButton
     signInFrame.origin.x                += midViewLeave + midInset;
-    signInFrame.size.width              = signInViewWidth;
+    signInFrame.size.width              = pinChangeViewWidth;
     self.pinChangeButton.frame          = signInFrame;
-    [self.pinChangeButton setImage:[UIImage imageNamed:@"wmm"] forState:UIControlStateNormal];
-    [self.pinChangeButton addTarget:self action:@selector(changePin:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.pinChangeButton];
-    
-    
-    
 }
 
 
@@ -292,7 +285,8 @@
     
     textField.frame = textFieldFrame;
     [view addSubview:textField];
-    view.backgroundColor                        = [UIColor colorWithWhite:0.8 alpha:0.5];
+//    view.backgroundColor                        = [UIColor colorWithWhite:0.8 alpha:0.5];
+    view.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
     return view;
 }
 
@@ -368,6 +362,9 @@
  *************************************/
 - (IBAction)changePin: (id)sender {
     NSLog(@"修改密码的功能实现。。。。。。。");
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"forgetPinVC"];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 #pragma mask ::: 上送登陆报文
@@ -393,6 +390,7 @@
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    [request clearDelegatesAndCancel];
     NSString* retcode = [dataDic objectForKey:@"code"];
     NSString* retMsg = [dataDic objectForKey:@"message"];
     if ([retcode intValue] != 0) {      // 登陆失败
@@ -433,6 +431,7 @@
     
 }
 -(void)requestFailed:(ASIHTTPRequest *)request {
+    [request clearDelegatesAndCancel];
     [self alertShow:@"网络异常，请检查网络"];
 }
 
@@ -525,18 +524,30 @@
         _loadButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
         [_loadButton setTitle:@"登陆" forState:UIControlStateNormal];
 
+        /* 给“登陆”按钮绑定一个登陆的 action */
+        [_loadButton addTarget:self action:@selector(touchDownLoad:) forControlEvents:UIControlEventTouchDown];
+        [_loadButton addTarget:self action:@selector(loadToMainView:) forControlEvents:UIControlEventTouchUpInside];
+        [_loadButton addTarget:self action:@selector(touchOutLoad:) forControlEvents:UIControlEventTouchUpOutside];
+
     }
     return _loadButton;
 }
 - (UIButton *)signInButton {
     if (_signInButton == nil) {
         _signInButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [_signInButton setImage:[UIImage imageNamed:@"zc"] forState:UIControlStateNormal];
+        // 给注册按钮添加 action
+        [_signInButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
+
     }
     return _signInButton;
 }
 - (UIButton *)pinChangeButton {
     if (_pinChangeButton == nil) {
         _pinChangeButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [_pinChangeButton setImage:[UIImage imageNamed:@"wmm"] forState:UIControlStateNormal];
+        [_pinChangeButton addTarget:self action:@selector(changePin:) forControlEvents:UIControlEventTouchUpInside];
+
     }
     return _pinChangeButton;
 }

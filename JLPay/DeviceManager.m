@@ -40,7 +40,7 @@
 @synthesize SNVersionArray = _SNVersionArray;
 
 
-static long timeOut = 60*1000;
+//static long timeOut = 60*1000;
 static DeviceManager* _sharedDeviceManager = nil;
 
 #pragma mask --------------------------[Public Interface]--------------------------

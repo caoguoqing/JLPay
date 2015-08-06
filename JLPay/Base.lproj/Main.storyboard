@@ -18,7 +18,21 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RbZ-fH-daV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1599" y="1881"/>
+            <point key="canvasLocation" x="-1999" y="1881"/>
+        </scene>
+        <!--忘记密码-->
+        <scene sceneID="Irf-Ya-Tix">
+            <objects>
+                <viewController storyboardIdentifier="forgetPinVC" title="忘记密码" id="ygt-Pp-aNb" customClass="ForgetPinViewConroller" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8Go-vb-9IO">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4W0-X5-3lj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2011" y="2652"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="mqF-op-VjK">
@@ -228,10 +242,10 @@
             </objects>
             <point key="canvasLocation" x="895" y="1168"/>
         </scene>
-        <!--Rate View Controller-->
+        <!--费率选择-->
         <scene sceneID="nbC-PC-HiT">
             <objects>
-                <viewController storyboardIdentifier="rateViewController" id="rQp-uL-j7o" customClass="RateViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="rateViewController" title="费率选择" id="rQp-uL-j7o" customClass="RateViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="luf-Qo-B1f">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -242,10 +256,10 @@
             </objects>
             <point key="canvasLocation" x="529" y="2360"/>
         </scene>
-        <!--Change Pin View Controller-->
+        <!--修改密码-->
         <scene sceneID="pqA-R7-zmF">
             <objects>
-                <viewController storyboardIdentifier="changePinVC" id="oe8-dk-9c9" customClass="ChangePinViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="changePinVC" title="修改密码" id="oe8-dk-9c9" customClass="ChangePinViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="iuc-Xb-rBt">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -337,7 +351,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6zP-bA-cIy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2131" y="1881"/>
+            <point key="canvasLocation" x="-2531" y="1881"/>
         </scene>
     </scenes>
     <resources>

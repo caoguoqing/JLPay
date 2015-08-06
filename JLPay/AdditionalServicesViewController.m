@@ -89,7 +89,7 @@ NSString* headerIdentifier = @"headerIdentifier";
     return YES;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];
+//    UICollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];
     [UIView animateWithDuration:0.1 animations:^{
 //        cell.transform = CGAffineTransformMakeScale(0.95, 0.95);
     }];
