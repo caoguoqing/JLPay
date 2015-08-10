@@ -34,6 +34,20 @@
             </objects>
             <point key="canvasLocation" x="-2011" y="2652"/>
         </scene>
+        <!--商户注册-->
+        <scene sceneID="xYJ-rb-LbQ">
+            <objects>
+                <viewController storyboardIdentifier="userRegisterVC" title="商户注册" id="U2x-gO-mqC" customClass="UserRegisterViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="xw6-mz-WrW">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NCg-b2-Pvc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1873" y="2772"/>
+        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="mqF-op-VjK">
             <objects>

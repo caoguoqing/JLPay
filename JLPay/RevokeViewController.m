@@ -152,6 +152,9 @@
         [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
         // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
         [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number];
+        // 保存原始交易的终端号\商户号
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpTermId"] forKey:LastF41_TerminalNo];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpId"] forKey:LastF42_BussinessNo];
         // 注册交易类型到本地配置
         [[NSUserDefaults standardUserDefaults] setValue:TranType_ConsumeRepeal forKey:TranType];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -242,6 +245,8 @@
         _revokeButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_revokeButton setTitle:@"撤销" forState:UIControlStateNormal];
         [_revokeButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [_revokeButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_revokeButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
         [_revokeButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
         _revokeButton.layer.cornerRadius = 8.0;
         _revokeButton.layer.masksToBounds = YES;

@@ -17,7 +17,7 @@
 
 @interface DeviceSignInViewController()<wallDelegate,managerToCard,DeviceManagerDelegate,UITableViewDataSource,UITableViewDelegate
                                         ,UIActionSheetDelegate,UIAlertViewDelegate/*,UIPickerViewDataSource, UIPickerViewDelegate*/>
-@property (nonatomic, strong) NSArray* SNVersionNums;                // SN号列表
+@property (nonatomic, strong) NSArray* SNVersionNums;               // SN号列表
 @property (nonatomic, strong) NSArray* terminalNums;                // 终端号列表
 @property (nonatomic, strong) JLActivity* activitor;                // 捷联通商标转轮
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 已选择的终端号:设置到本地,交易时读取
@@ -248,7 +248,7 @@
                 [self.waitingTimer invalidate];
                 self.waitingTimer = nil;
             }
-            [self.activitor stopAnimating];
+//            [self.activitor stopAnimating];
         }
         [self.tableView reloadData];
     });
@@ -540,6 +540,7 @@
     if (_sureButton == nil) {
         _sureButton = [[UIButton alloc] init];
         [_sureButton setTitle:@"绑定" forState:UIControlStateNormal];
+        
         _sureButton.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
         _sureButton.layer.cornerRadius = 8.0;
     }

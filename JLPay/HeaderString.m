@@ -30,16 +30,10 @@
 +(NSString *)receiveArr:(NSArray *)arr  Tpdu:(NSString *)tpdu Header:(NSString *)header ExchangeType:(NSString *)exchangetype DataArr:(NSArray *)dataarr{
 
     NSString *bitmapStr=[self returnBitmap:arr];
-    NSLog(@"位图======%@",bitmapStr);
-    
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];
-    NSLog(@"componentsJoinedByString处理过的上送数据:---[%@]---", allStr);
-    NSLog(@"--------上送数据de的长度:[%d]", (int)[allStr length]/2);
-    NSLog(@"--------16进制上送数据de的长度:[%@]", [self ToBHex:(int)[allStr length]/2]);
-
-
-    NSLog(@"%@  %@ %@ %@ %@ %@",[self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
+    NSLog(@"length[%@],TPDU[%@],Header[%@],Exchangetype[%@],BitMap[%@],data[%@]",
+          [self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
     return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)[allStr length]/2],allStr];
 }
 

@@ -1125,22 +1125,34 @@
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
     NSLog(@"^^^^^^^^^^^ 卡片有效期:[%s]",(char*)TransData.CardValid);
     
-    // 2磁道加密数据
+    // 22 服务码输入方式
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szEntryMode :2];
+    NSLog(@"22域:[%s]", dataStr);
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Service_Entry_22];
+    
+    // 23 IC卡序列号
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.CardSeq :2];
+    NSLog(@"23域:[%s]", dataStr);
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
+    
+    // 35 2磁道加密数据
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
     NSLog(@"2磁数据:[%s]", dataStr);
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
     
-    // 2磁道数据
+    // 35 2磁道数据
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.szTrack2 :TransData.nTrack2Len];
 
-    // PINBLOCK -- 密文密码
+    // 52 PINBLOCK -- 密文密码
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Sign_in_PinKey];
     
-    // 芯片数据55域信息
+    // 55 芯片数据55域信息
     if (TransData.IccdataLen > 0) {
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];  // 设置读卡方式:芯片
         memset(dataStr, 0, 512);
@@ -1153,10 +1165,9 @@
     // 芯片序列号23域值
     memset(dataStr, 0, 512);
     strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
     
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
-    
-    // 卡号
+    // 2 卡号
     memset(dataStr, 0, 512);
     NSString *strData ;
     strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];

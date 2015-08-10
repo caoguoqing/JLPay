@@ -109,7 +109,7 @@
     // 背景图
     UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
     bgImageView.image = [UIImage imageNamed:@"bg"];
-    [self.view addSubview:bgImageView];
+//    [self.view addSubview:bgImageView];
     
     [self.view addSubview:self.userNumberField];
     [self.view addSubview:self.userIDField];
@@ -135,7 +135,7 @@
                               viewHeight);
     // 账号
     self.userNumberField.frame = frame;
-    [self.userNumberField setLeftView:[self newLabelWithText:@"账    号:" andFrame:frame]];
+    [self.userNumberField setLeftView:[self newLabelWithText:@"账   号:" andFrame:frame]];
     [self.userNumberField setLeftViewMode:UITextFieldViewModeAlways];
     // 旧密码
     frame.origin.y += frame.size.height + verticalInset;
@@ -160,7 +160,7 @@
 - (UILabel*)newLabelWithText:(NSString*)text andFrame:(CGRect)frame {
     UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width/4.0, frame.size.height)];
     label.text = text;
-    label.textAlignment = NSTextAlignmentRight;
+    label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     return label;
 }
@@ -220,7 +220,7 @@
         _userNumberField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         _userNumberField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
         _userNumberField.textColor = [UIColor whiteColor];
-        
+        _userNumberField.clearButtonMode = UITextFieldViewModeWhileEditing;
     }
     return _userNumberField;
 }
@@ -234,6 +234,7 @@
         _userIDField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         _userIDField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
         _userIDField.textColor = [UIColor whiteColor];
+        _userIDField.clearButtonMode = UITextFieldViewModeWhileEditing;
     }
     return _userIDField;
 }
@@ -248,7 +249,7 @@
         _userNewPwdField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
         _userNewPwdField.secureTextEntry = YES;
         _userNewPwdField.textColor = [UIColor whiteColor];
-        
+        _userNewPwdField.clearButtonMode = UITextFieldViewModeWhileEditing;
     }
     return _userNewPwdField;
 }

@@ -93,7 +93,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
-
 /*************************************
  * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
  * 参  数 : 无
@@ -351,7 +350,9 @@
  * 返  回 : 无
  *************************************/
 - (IBAction)signIn: (id)sender {
-    NSLog(@"注册按钮的功能实现。。。。。。。");
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 /*************************************
@@ -361,7 +362,6 @@
  * 返  回 : 无
  *************************************/
 - (IBAction)changePin: (id)sender {
-    NSLog(@"修改密码的功能实现。。。。。。。");
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"forgetPinVC"];
     [self.navigationController pushViewController:viewController animated:YES];
@@ -423,7 +423,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"登陆成功"];
         });
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             [DeviceManager sharedInstance];
         });
         [app_delegate signInSuccessToLogin:1];  // 切换到主场景
@@ -523,6 +523,8 @@
         _loadButton.layer.cornerRadius  = ViewCornerRadius;
         _loadButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
         [_loadButton setTitle:@"登陆" forState:UIControlStateNormal];
+        [_loadButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_loadButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
 
         /* 给“登陆”按钮绑定一个登陆的 action */
         [_loadButton addTarget:self action:@selector(touchDownLoad:) forControlEvents:UIControlEventTouchDown];

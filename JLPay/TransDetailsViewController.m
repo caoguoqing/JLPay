@@ -484,6 +484,9 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
         _frushButotn = [[UIButton alloc] initWithFrame:CGRectZero];
         [_frushButotn setTitle:@"刷新" forState:UIControlStateNormal];
         [_frushButotn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_frushButotn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_frushButotn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+
         _frushButotn.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
         
         [_frushButotn addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];

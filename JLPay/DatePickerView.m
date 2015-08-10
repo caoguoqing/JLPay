@@ -210,6 +210,9 @@
         _sureButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_sureButton setTitle:@"确定" forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+
         _sureButton.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
         
         [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];

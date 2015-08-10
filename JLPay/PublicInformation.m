@@ -271,7 +271,7 @@
         } else if (TestOrProduce == 5) {
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ipStr = @"192.188.8.118";
+            ipStr = @"183.16.188.122";
         }
         
     }
@@ -317,7 +317,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"192.188.8.118";
+            ip = @"183.16.188.122";
         }
     }
     return ip;

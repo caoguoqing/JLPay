@@ -809,6 +809,7 @@
 + (NSString*) makeF60 {
     NSMutableString* F60 = [[NSMutableString alloc] initWithString:@"0019"];
     NSString* tranType = [PublicInformation returnTranType];
+    
     // 60.1 N2 交易类型
     if ([tranType isEqualToString:TranType_Consume]) {
         [F60 appendString:@"22"];
@@ -820,6 +821,7 @@
     // 60.3 N3 操作类型
     [F60 appendString:@"000"];
     // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
+    
     [F60 appendString:@"1"];
     // 60.5 N1 费率:
     NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];

@@ -31,7 +31,7 @@
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
 // 环境:正式(1),62(0),50(5)
-#define TestOrProduce      0
+#define TestOrProduce                   0
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -136,17 +136,21 @@
 
 /*************[保存的 原交易信息]**************/
 
-//消费成功的金额,方便撤销支付
+// 消费成功的金额,方便撤销支付
 #define  SuccessConsumerMoney       @"successmoney"
-//原交易流水号,消费交易的流水号
+// 原交易流水号,消费交易的流水号
 #define  Last_Exchange_Number       @"lastnumber"
-//3,交易处理码                 -- 跟上一笔交易保持一致  Processing Code
+// 3,交易处理码                 -- 跟上一笔交易保持一致  Processing Code
 #define  LastF03_ProcessingCode     @"LastProcessingCode_F03__"
-//11,流水号 bcd 6           -- 跟上一笔交易保持一致    System Trace
+// 11,流水号 bcd 6           -- 跟上一笔交易保持一致    System Trace
 #define  LastF11_SystemTrace        @"LastSystemTrace_F11__"
-//22,服务点输入方式码         -- 跟上一笔交易保持一致    Service Entry Code
+// 22,服务点输入方式码         -- 跟上一笔交易保持一致    Service Entry Code
 #define  LastF22_ServiceEntryCode   @"LastServiceEntryCode_F22__"
-//60,                         -- 跟上一笔交易保持一致   Reserved Private
+// 41 终端号
+#define  LastF41_TerminalNo         @"LastF41_TerminalNo__"
+// 42 商户号
+#define  LastF42_BussinessNo        @"LastF42_BussinessNo__"
+// 60,                         -- 跟上一笔交易保持一致   Reserved Private
 #define  LastF60_Reserved           @"LastReserved_F60__"
 
 

@@ -412,6 +412,9 @@
     brushButton.backgroundColor         = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
     [brushButton setTitle:@"开始刷卡" forState:UIControlStateNormal];
     [brushButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [brushButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [brushButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+    
     brushButton.titleLabel.font         = [UIFont boldSystemFontOfSize:32];
     // 添加 action
     [brushButton addTarget:self action:@selector(beginBrush:) forControlEvents:UIControlEventTouchDown];

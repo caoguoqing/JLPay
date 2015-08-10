@@ -421,8 +421,10 @@
     [requireBtn setBackgroundImage:[PublicInformation createImageWithColor:[UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0]] forState:UIControlStateNormal];
     [requireBtn addTarget:self action:@selector(requireMethod) forControlEvents:UIControlEventTouchUpInside];
     [requireBtn setTitle:@"确定" forState:UIControlStateNormal];
+    [requireBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [requireBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [requireBtn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
     requireBtn.titleLabel.font = bigFont;
-    requireBtn.titleLabel.textColor=[UIColor whiteColor];
     [self.view addSubview:requireBtn];
     
     // 将滚动视图的内容装填成图片.jpg

@@ -184,6 +184,9 @@ static NSMutableArray *colors;
     requireBtn.layer.cornerRadius = 8.0;
     [requireBtn setTitle:@"确认" forState:UIControlStateNormal];
     [requireBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [requireBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [requireBtn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+
     [requireBtn addTarget:self action:@selector(requireSignMethod) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:requireBtn];
     
