@@ -31,7 +31,7 @@
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
 // 环境:正式(1),62(0),50(5)
-#define TestOrProduce                   0
+#define TestOrProduce                   1
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -60,6 +60,9 @@
 #define TranType_TuiHuo             @"TranType_TuiHuo"                  // 退货交易
 #define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
 #define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
+
+#define TranType_Repay              @"TranType_Repay_"                  // 信用卡还款
+#define TranType_Transfer           @"TranType_Transfer_"               // 转账汇款
 
 /*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/
 #define CardTypeIsTrack             @"CardTypeIsTrack"                  // 值:YES(磁条)/NO(芯片)

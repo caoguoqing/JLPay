@@ -454,6 +454,9 @@
     
     NSMutableArray* dataArray = [[NSMutableArray alloc] init];
     NSMutableArray* macMapArray = [[NSMutableArray alloc] init];
+    // F02,卡号
+    [dataArray addObject:[PublicInformation returnCard:[PublicInformation returnposCard]]];
+    [macMapArray addObject:@"2"];
     // F03
     [dataArray addObject:@"190000"];
     [macMapArray addObject:@"3"];
@@ -597,43 +600,6 @@
     [arr addObject:betweenStr]; // 61
 
     
-//    arr=[[NSArray alloc] initWithObjects:
-//         // 2 卡号 bcd（不定长19）
-//         [PublicInformation returnCard:[PublicInformation returnposCard]],
-//         // 3 交易类型:280000
-//         @"280000",
-//         // 4 金额，bcd，定长12
-//         moneyStr,
-//         // 11 bcd,定长6
-//         currentLiushuiStr,
-//         // 14 有效期
-//         [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime],
-//         // 22 输入模式,bcd,m,定长3
-//         [[NSUserDefaults standardUserDefaults] valueForKey:Service_Entry_22],
-//         // 25,条件代码,bcd,定长2
-//         @"82",
-//         // 26
-//         @"12",
-//         // 35，二磁道数据，asc，不定长37，(pos获取时存在)
-//         [NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]],
-//         // 37, 搜索参考号
-//         [EncodeString encodeASC: liushuiStr],
-//         // 41, 终端号，asc，定长8
-////         [EncodeString encodeASC:[PublicInformation returnTerminal]],
-//         [EncodeString encodeASC:[[NSUserDefaults standardUserDefaults] valueForKey:LastF41_TerminalNo]],
-//         // 42，商户号，asc，定长15
-////         [EncodeString encodeASC:[PublicInformation returnBusiness]],
-//         [EncodeString encodeASC:[[NSUserDefaults standardUserDefaults] valueForKey:LastF42_BussinessNo]],
-//         // 49，货币代码，asc，定长3，（人民币156）
-//         [EncodeString encodeASC:@"156"],
-//         // 52，个人识别码，PIN，定长8
-//         pin,
-//         // 53
-//         @"2600000000000000",
-//         // 60
-//         [self makeF60],
-//         // 61 (消费的批次号和流水号)61,61.1,61.2,原交易信息，原交易批次号，原交易流水号
-//         betweenStr,  nil];
     
     //二进制报文数据
     if ([F22 hasPrefix:@"05"]) {

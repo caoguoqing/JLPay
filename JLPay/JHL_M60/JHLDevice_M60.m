@@ -1133,9 +1133,10 @@
     
     // 23 IC卡序列号
     memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.CardSeq :2];
-    NSLog(@"23域:[%s]", dataStr);
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
+    [self BcdToAsc:dataStr :TransData.CardSeq :1];
+    NSString* f23 = [NSString stringWithFormat:@"%04d", atoi((const char*)dataStr)];
+    NSLog(@"23域:[%@]", f23);
+    [[NSUserDefaults standardUserDefaults] setValue:f23 forKey:ICCardSeq_23];
     
     // 35 2磁道加密数据
     memset(dataStr, 0, 512);
@@ -1161,12 +1162,7 @@
     } else {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];  // 设置读卡方式:磁条
     }
-    
-    // 芯片序列号23域值
-    memset(dataStr, 0, 512);
-    strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
-//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
-    
+        
     // 2 卡号
     memset(dataStr, 0, 512);
     NSString *strData ;

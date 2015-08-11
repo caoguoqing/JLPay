@@ -168,6 +168,13 @@
 
 #pragma mask ::: 加载明细详情单元格
 - (void) loadDetailCell: (UITableViewCell*)cell atIndexPath: (NSIndexPath*)indexPath{
+    // 先去掉cell 的所有子视图，然后加载
+    for (UIView* view in cell.subviews) {
+        if ([view class] == [UILabel class]) {
+            [view removeFromSuperview];
+        }
+    }
+    
     CGFloat leftWidth = cell.bounds.size.width / 4.0;
     NSString* cellName = [self.cellNames objectAtIndex:indexPath.row];
     // key
@@ -262,10 +269,12 @@
         [_cellNames addObject:@"交易类型"];
         [_cellNames addObject:@"交易金额"];
         [_cellNames addObject:@"交易卡号"];
+        [_cellNames addObject:@"交易日期"];
         [_cellNames addObject:@"交易时间"];
         [_cellNames addObject:@"交易状态"];
         [_cellNames addObject:@"订单编号"];
         [_cellNames addObject:@"商户编号"];
+        [_cellNames addObject:@"商户名称"];
         [_cellNames addObject:@"终端编号"];
     }
     return _cellNames;
@@ -276,10 +285,12 @@
         _detailNameIndex = [[NSMutableDictionary alloc] init];
         [_detailNameIndex setValue:@"txnNum" forKey:@"交易类型"];
         [_detailNameIndex setValue:@"cardAccpId" forKey:@"商户编号"];
+        [_detailNameIndex setValue:@"cardAccpName" forKey:@"商户名称"];
         [_detailNameIndex setValue:@"retrivlRef" forKey:@"订单编号"];
         [_detailNameIndex setValue:@"cardAccpTermId" forKey:@"终端编号"];
         [_detailNameIndex setValue:@"pan" forKey:@"交易卡号"];
         [_detailNameIndex setValue:@"instTime" forKey:@"交易时间"];
+        [_detailNameIndex setValue:@"instDate" forKey:@"交易日期"];
         [_detailNameIndex setValue:@"amtTrans" forKey:@"交易金额"];
     }
     return _detailNameIndex;
