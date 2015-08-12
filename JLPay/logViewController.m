@@ -66,7 +66,6 @@
     NSString* appVersion            = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     NSLog(@"app版本号:V%@",appVersion);
     
-    
     // 如果有登陆过，就显示账号
     NSString* userID = [[NSUserDefaults standardUserDefaults] objectForKey:UserID];
     if ([userID length] > 0) {
@@ -485,7 +484,8 @@
 
     // 如果是版本过低的提示，点击了确定要跳转到下载网址
     if ([alertView.message hasPrefix:@"当前版本过低"]) {
-        
+        NSString* urlString = @"http://www.cccpay.cn/center.html";
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
     }
 }
 

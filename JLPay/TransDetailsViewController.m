@@ -202,11 +202,13 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 
     NSString* text = self.dateLabel.text;
     NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
-    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dates];
-    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
-    [self.HTTPRequest setDelegate:self];
-    [self.HTTPRequest startAsynchronous];  // 异步获取数据
-    [self.activitor startAnimating];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dates];
+        [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
+        [self.HTTPRequest setDelegate:self];
+        [self.HTTPRequest startAsynchronous];  // 异步获取数据
+        [self.activitor startAnimating];
+    });
 }
 
 
@@ -289,16 +291,19 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     int tSucCount = 0;
     int tRevokeCount = 0;
     for (int i = 0; i < self.dataArrayDisplay.count; i++) {
+        // 总金额 = 总消费金额 仅限成功的 (退货等交易的没有加进来)
         NSDictionary* data = [self.dataArrayDisplay objectAtIndex:i];
-        if ([[data objectForKey:@"cancelFlag"] isEqualToString:@"1"]) {
+        if ([[data valueForKey:@"txnNum"] isEqualToString:@"消费"]) {
+            tSucCount++;
+            if ([[data objectForKey:@"cancelFlag"] isEqualToString:@"0"] &&
+                [[data objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
+                tAmount += [[data objectForKey:@"amtTrans"] floatValue];
+            }
+        } else if ([[data valueForKey:@"txnNum"] isEqualToString:@"消费撤销"]) {
             tRevokeCount++;
-            tAmount -= [[data objectForKey:@"amtTrans"] floatValue];
-        } else {
-            tAmount += [[data objectForKey:@"amtTrans"] floatValue];
         }
         tAcount++;
     }
-    tSucCount = tAcount - tRevokeCount;
     tAmount /= 100.0;
     [self.totalView setTotalAmount:[NSString stringWithFormat:@"%.02f", tAmount]];
     [self.totalView setTotalRows:[NSString stringWithFormat:@"%d", tAcount]];
@@ -387,13 +392,25 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     self.tableView.frame = frame;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    
+    // 从后台异步获取交易明细数据:只创建界面的时候加载一次
+    if (self.HTTPRequest == nil) {
+        [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
+        [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
+        [self.HTTPRequest startAsynchronous];  // 异步获取数据
+        [self.activitor startAnimating];
+    }
+
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.HTTPRequest clearDelegatesAndCancel];
+    if (self.HTTPRequest != nil) {        
+        [self.HTTPRequest clearDelegatesAndCancel];
+        self.HTTPRequest = nil;
+    }
 }
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];

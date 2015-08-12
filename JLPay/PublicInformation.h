@@ -113,7 +113,8 @@
 
 +(BOOL)isCurrentToday:(NSString *)dateStr;
 
-
+// 获取当前系统日期
++ (NSString*) nowDate ;
 //判断两个日期是否是同一天
 +(BOOL)isSameDay:(NSDate*)date1 date2:(NSDate*)date2;
 

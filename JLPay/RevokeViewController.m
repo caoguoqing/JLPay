@@ -56,22 +56,22 @@
     frame.origin.x = 0;
     frame.origin.y += inset + frame.size.height;
     frame.size.width = self.view.bounds.size.width;
-    frame.size.height = self.view.bounds.size.height - frame.origin.y - inset*2.0 - buttonHeight - self.tabBarController.tabBar.bounds.size.height;
+    frame.size.height = self.view.bounds.size.height - frame.origin.y - /*inset*2.0 - buttonHeight -*/ self.tabBarController.tabBar.bounds.size.height;
     [self.tableView setDataSource:self];
     [self.tableView setDelegate:self];
     self.tableView.frame = frame;
-    // 撤销按钮
-    frame.origin.y += frame.size.height + inset;
-    frame.size.height = buttonHeight;
-    self.revokeButton.frame = frame;
-    self.revokeButton.enabled = NO;
-    if ([[_dataDic objectForKey:@"txnNum"] isEqualToString:@"消费"] &&
-        [[_dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"] &&
-        [[_dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
-        self.revokeButton.enabled = YES;
-        [self.revokeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    }
-    NSLog(@"明细:[%@]",_dataDic);
+    // 撤销按钮 -- 暂时取消撤销按钮
+//    frame.origin.y += frame.size.height + inset;
+//    frame.size.height = buttonHeight;
+//    self.revokeButton.frame = frame;
+//    self.revokeButton.enabled = NO;
+//    if ([[_dataDic objectForKey:@"txnNum"] isEqualToString:@"消费"] &&
+//        [[_dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"] &&
+//        [[_dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"] &&
+//        [[_dataDic objectForKey:@"instDate"] isEqualToString:[PublicInformation nowDate]]) {
+//        self.revokeButton.enabled = YES;
+//        [self.revokeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    }
 }
 
 

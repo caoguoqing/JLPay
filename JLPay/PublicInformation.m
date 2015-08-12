@@ -748,6 +748,16 @@
     
 }
 
+// 获取当前系统日期
++ (NSString*) nowDate {
+    NSString* nDate ;
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    nDate = [dateFormatter stringFromDate:[NSDate date]];
+    nDate = [nDate substringToIndex:8];
+    return nDate;
+}
+
 
 +(NSString *)formatDate{
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
