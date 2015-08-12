@@ -375,6 +375,8 @@
     [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
     // 密码参数
     [request addPostValue:pin forKey:@"passWord"];
+    // 操作系统版本 0:IOS, 1:Android
+    [request addPostValue:@"0" forKey:@"sysFlag"];
     // 版本号参数
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     NSString* versionNum = [NSString stringWithFormat:@"%@%@%@",[versionString substringToIndex:1],[versionString substringWithRange:NSMakeRange(2, 1)],[versionString substringFromIndex:versionString.length - 1]];
