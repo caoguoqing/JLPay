@@ -18,6 +18,9 @@
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
+// 数据库文件 - 全国地名及代码
+#define DBFILENAME                      @"test.db"
+
 
 // 日志打印选项: 打印(1);不打印(0);
 #define NeedPrintLog                    1
@@ -30,8 +33,8 @@
 #define Screen_Width  [UIScreen mainScreen].bounds.size.width
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
-// 环境:正式(1),62(0),50(5)
-#define TestOrProduce                   1
+// 环境: 正式(1), 62(0), 50(5)
+#define TestOrProduce                   0
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"

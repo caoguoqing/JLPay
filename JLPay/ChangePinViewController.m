@@ -107,9 +107,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 背景图
-    UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    bgImageView.image = [UIImage imageNamed:@"bg"];
-    [self.view addSubview:bgImageView];
+//    UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+//    bgImageView.image = [UIImage imageNamed:@"bg"];
+//    [self.view addSubview:bgImageView];
 
     [self.view addSubview:self.userNumberField];
     [self.view addSubview:self.userOldPwdField];
@@ -156,7 +156,8 @@
 - (UILabel*)newLabelWithText:(NSString*)text andFrame:(CGRect)frame {
     UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width/4.0, frame.size.height)];
     label.text = text;
-    label.textAlignment = NSTextAlignmentRight;
+    label.textColor = [UIColor whiteColor];
+    label.textAlignment = NSTextAlignmentCenter;
     label.backgroundColor = [UIColor clearColor];
     return label;
 }
@@ -209,9 +210,7 @@
         _userNumberField.layer.cornerRadius = 8.0;
         _userNumberField.layer.masksToBounds = YES;
         _userNumberField.placeholder = @"请输入账号";
-        _userNumberField.layer.borderWidth = 0.5;
-        _userNumberField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
-        _userNumberField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+        _userNumberField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
         _userNumberField.textColor = [UIColor whiteColor];
 
     }
@@ -223,9 +222,7 @@
         _userOldPwdField.layer.cornerRadius = 8.0;
         _userOldPwdField.layer.masksToBounds = YES;
         _userOldPwdField.placeholder = @"请输入8位旧密码";
-        _userOldPwdField.layer.borderWidth = 0.5;
-        _userOldPwdField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
-        _userOldPwdField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+        _userOldPwdField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
         _userOldPwdField.secureTextEntry = YES;
         _userOldPwdField.textColor = [UIColor whiteColor];
     }
@@ -237,9 +234,7 @@
         _userNewPwdField.layer.cornerRadius = 8.0;
         _userNewPwdField.layer.masksToBounds = YES;
         _userNewPwdField.placeholder = @"请输入8位新密码";
-        _userNewPwdField.layer.borderWidth = 0.5;
-        _userNewPwdField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
-        _userNewPwdField.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+        _userNewPwdField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
         _userNewPwdField.secureTextEntry = YES;
         _userNewPwdField.textColor = [UIColor whiteColor];
 

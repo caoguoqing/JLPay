@@ -214,20 +214,20 @@
                                                      signInViewWidth,
                                                      signInViewHeight);
     self.signInButton.frame             = signInFrame;
-//    [self.view addSubview:self.signInButton];
+    [self.view addSubview:self.signInButton];
     
     // 间隔图标
     signInFrame.origin.x                += signInViewWidth + midInset;
     signInFrame.size.width              = midViewLeave;
     UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
     midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
-//    [self.view addSubview:midLeaveView];
+    [self.view addSubview:midLeaveView];
     
     // 修改密码按钮：UIButton
     signInFrame.origin.x                += midViewLeave + midInset;
     signInFrame.size.width              = pinChangeViewWidth;
     self.pinChangeButton.frame          = signInFrame;
-//    [self.view addSubview:self.pinChangeButton];
+    [self.view addSubview:self.pinChangeButton];
 }
 
 
@@ -283,8 +283,9 @@
     
     textField.frame = textFieldFrame;
     [view addSubview:textField];
-//    view.backgroundColor                        = [UIColor colorWithWhite:0.8 alpha:0.5];
-    view.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+    view.backgroundColor                        = [UIColor colorWithWhite:0.9 alpha:0.5];
+//    view.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
+//    view.backgroundColor = [UIColor whiteColor];
     return view;
 }
 
@@ -383,6 +384,7 @@
     // 发起HTTP请求
 //    versionNum = @"99"; // test for 低版本登陆校验
     [request addPostValue:versionNum forKey:@"versionNum"];
+    NSLog(@"httprequest = [%@]",request);
     [request startAsynchronous];
 }
 

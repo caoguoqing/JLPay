@@ -48,6 +48,10 @@
 		5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35461B71E93700560C0A /* ChangePinViewController.m */; };
 		5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */; };
 		5E5E354F1B7380DB00560C0A /* UserRegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */; };
+		5E5E35A21B7C79E200560C0A /* MySQLiteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */; };
+		5E5E35A51B7C79EF00560C0A /* AreaDataSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */; };
+		5E5E35A71B7C7A0B00560C0A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */; };
+		5E5E35A91B7C7A3200560C0A /* test.db in Resources */ = {isa = PBXBuildFile; fileRef = 5E5E35A81B7C7A3200560C0A /* test.db */; };
 		5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */; };
 		5E5FA57F1B46342600387E69 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56E1B46342600387E69 /* .gitignore */; };
 		5E5FA5801B46342600387E69 /* alertBkg.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56F1B46342600387E69 /* alertBkg.png */; };
@@ -247,6 +251,12 @@
 		5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgetPinViewConroller.m; sourceTree = "<group>"; };
 		5E5E354D1B7380DB00560C0A /* UserRegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserRegisterViewController.h; sourceTree = "<group>"; };
 		5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserRegisterViewController.m; sourceTree = "<group>"; };
+		5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MySQLiteManager.h; sourceTree = "<group>"; };
+		5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MySQLiteManager.m; sourceTree = "<group>"; };
+		5E5E35A31B7C79EF00560C0A /* AreaDataSourceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AreaDataSourceViewController.h; sourceTree = "<group>"; };
+		5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AreaDataSourceViewController.m; sourceTree = "<group>"; };
+		5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		5E5E35A81B7C7A3200560C0A /* test.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.db; sourceTree = "<group>"; };
 		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
 		5E5FA5691B413E2F00387E69 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
 		5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
@@ -432,6 +442,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E5E35A71B7C7A0B00560C0A /* libsqlite3.dylib in Frameworks */,
 				5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */,
 				5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */,
 				5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */,
@@ -603,6 +614,10 @@
 			children = (
 				5E5E354D1B7380DB00560C0A /* UserRegisterViewController.h */,
 				5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */,
+				5E5E35A31B7C79EF00560C0A /* AreaDataSourceViewController.h */,
+				5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */,
+				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
+				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
 			);
 			name = "注册用户";
 			sourceTree = "<group>";
@@ -728,6 +743,7 @@
 		5EB6F9731AC8DD1C00E47AB5 = {
 			isa = PBXGroup;
 			children = (
+				5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */,
 				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
 				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
 				5E397B4B1AD3677E004F206F /* libxml2.dylib */,
@@ -773,6 +789,7 @@
 		5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				5E5E35A81B7C7A3200560C0A /* test.db */,
 				5EBE92851ACBE9FE0096BD72 /* Default-568h@2x.png */,
 				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
 				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
@@ -1111,6 +1128,7 @@
 				5E5FA5811B46342600387E69 /* alertBkg@2x.png in Resources */,
 				5ED344291AD8C1DB0005C890 /* ProgressHUD.bundle in Resources */,
 				5E5FA5801B46342600387E69 /* alertBkg.png in Resources */,
+				5E5E35A91B7C7A3200560C0A /* test.db in Resources */,
 				5E5FA57F1B46342600387E69 /* .gitignore in Resources */,
 				5EB6F98B1AC8DD1C00E47AB5 /* Main.storyboard in Resources */,
 				5E82B8771B310AF000A58751 /* activitor07.png in Resources */,
@@ -1170,6 +1188,7 @@
 				5EB6F9881AC8DD1C00E47AB5 /* logViewController.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
 				5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */,
+				5E5E35A21B7C79E200560C0A /* MySQLiteManager.m in Sources */,
 				5E397B311AD36429004F206F /* ASIDownloadCache.m in Sources */,
 				5E397B381AD36429004F206F /* ASIS3BucketRequest.m in Sources */,
 				5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */,
@@ -1231,6 +1250,7 @@
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
 				5EBAA8EE1ACD2FA800E2ABDD /* GroupPackage8583.m in Sources */,
+				5E5E35A51B7C79EF00560C0A /* AreaDataSourceViewController.m in Sources */,
 				5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */,
 				5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */,
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,
@@ -1377,8 +1397,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1400,7 +1420,7 @@
 					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
+				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1409,8 +1429,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1432,7 +1452,7 @@
 					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
+				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

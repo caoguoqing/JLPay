@@ -33,7 +33,7 @@
 - (instancetype)initWithFrame:(CGRect)frame andDate:(NSString *)date {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
+        self.backgroundColor = [UIColor colorWithWhite:0.3 alpha:0.5];
         [self addSubview:self.pickerView];
         [self addSubview:self.sureButton];
         [self addSubview:self.cancelButton];
@@ -152,43 +152,28 @@
     UIView* lineView = [[UIView alloc] initWithFrame:iFrame];
     lineView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     [self addSubview:lineView];
-    
-    // 年份，月份，日期标签
-    iFrame.origin.y -= 30;
-    iFrame.size.width /= 3.0;
-    iFrame.size.height = 30;
-    UILabel* label = [[UILabel alloc] initWithFrame:iFrame];
-    label.backgroundColor = [UIColor whiteColor];
-    label.text = @"年份";
-    label.textColor = [UIColor blackColor];
-    label.textAlignment = NSTextAlignmentCenter;
-    [self addSubview:label];
 
-    iFrame.origin.x += iFrame.size.width;
-    label = [[UILabel alloc] initWithFrame:iFrame];
-    label.backgroundColor = [UIColor whiteColor];
-    label.text = @"月份";
-    label.textColor = [UIColor blackColor];
-    label.textAlignment = NSTextAlignmentCenter;
-    [self addSubview:label];
-    
-    iFrame.origin.x += iFrame.size.width;
-    label = [[UILabel alloc] initWithFrame:iFrame];
-    label.backgroundColor = [UIColor whiteColor];
-    label.text = @"日期";
-    label.textColor = [UIColor blackColor];
-    label.textAlignment = NSTextAlignmentCenter;
-    [self addSubview:label];
-
+    CGFloat cancelBtnWidth = [self.cancelButton.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.cancelButton.titleLabel.font forKey:NSFontAttributeName]].width + 8*2;
+    CGFloat sureBtnWidth = [self.sureButton.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.sureButton.titleLabel.font forKey:NSFontAttributeName]].width + 8*2;
+    CGFloat midLeaveViewWidth = self.bounds.size.width - cancelBtnWidth - sureBtnWidth;
     
     // 按钮:取消
     iFrame.origin.x = 0;
-    iFrame.origin.y -= 45;
-    iFrame.size.width = (self.frame.size.width /*- horizonInset*3*/)/2.0;
-    iFrame.size.height = 45;
+    iFrame.origin.y -= 40;
+    iFrame.size.width = cancelBtnWidth;
+    iFrame.size.height = 40;
     self.cancelButton.frame = iFrame;
+    
+    // 空白视图
+    iFrame.origin.x += iFrame.size.width;
+    iFrame.size.width = midLeaveViewWidth;
+    UIView* view = [[UIView alloc] initWithFrame:iFrame];
+    view.backgroundColor = self.cancelButton.backgroundColor;
+    [self addSubview:view];
+    
     // 确定按钮
     iFrame.origin.x +=  iFrame.size.width;
+    iFrame.size.width = sureBtnWidth;
     self.sureButton.frame = iFrame;
 }
 
@@ -209,14 +194,11 @@
     if (_sureButton == nil) {
         _sureButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_sureButton setTitle:@"确定" forState:UIControlStateNormal];
-        [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_sureButton.titleLabel setTextAlignment:NSTextAlignmentRight];
+        [_sureButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-
-        _sureButton.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
-        
-        [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-        [_sureButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+        [_sureButton setBackgroundColor:[UIColor whiteColor]];
         [_sureButton addTarget:self action:@selector(touchToBeSure:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _sureButton;
@@ -225,11 +207,9 @@
     if (_cancelButton == nil) {
         _cancelButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_cancelButton setTitle:@"取消" forState:UIControlStateNormal];
-        [_cancelButton setTitleColor:[UIColor colorWithWhite:0.8 alpha:1] forState:UIControlStateNormal];
-        _cancelButton.backgroundColor = [UIColor grayColor];
-        
-        [_cancelButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-        [_cancelButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+        [_cancelButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
+        [_cancelButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        _cancelButton.backgroundColor = [UIColor whiteColor];
         [_cancelButton addTarget:self action:@selector(touchToCancel:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _cancelButton;

@@ -7,12 +7,15 @@
 //
 
 #import "UserRegisterViewController.h"
-#import "ASIFormDataRequest.h"
+#import "asi-http/ASIFormDataRequest.h"
+#import "SBJsonWriter.h"
 #import "JLActivity.h"
 #import "PublicInformation.h"
+#import "EncodeString.h"
+#import "ThreeDesUtil.h"
 
 
-@interface UserRegisterViewController()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+@interface UserRegisterViewController()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,ASIHTTPRequestDelegate>
 @property (nonatomic, strong) UIScrollView* scrollView;             // 滚动视图
 @property (nonatomic, strong) UITextField* userMchntField;          // 商户名称
 @property (nonatomic, strong) UITextField* userNameField;           // 用户登陆名
@@ -24,7 +27,9 @@
 @property (nonatomic, strong) UITextField* userSettleNameField;     // 结算账户名
 @property (nonatomic, strong) UITextField* userMailField;           // 邮箱
 @property (nonatomic, strong) UITextField* userAgeName;             // 所属代理商名称(可为空)
-@property (nonatomic, strong) UITextView* userAddrTextView;           // 通信地址
+@property (nonatomic, strong) UITextView* userAddrTextView;         // 通信地址
+
+@property (nonatomic, strong) UIButton* btnSearchData;              // 进行地名查询的按钮
 
 @property (nonatomic, strong) UIButton* btnIDForce;                 // 身份证正面照片选择按钮
 @property (nonatomic, strong) UIButton* btnIDBackground;            // 身份证背面照片选择按钮
@@ -40,9 +45,10 @@
 @property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // HTTP访问入口
 @property (nonatomic, strong) JLActivity* activitor;
 
-@property (nonatomic, strong) UIImageView* neededLoadImageView;       // 当前需要被加载的图片视图
+@property (nonatomic, strong) UIImageView* neededLoadImageView;     // 当前需要被加载的图片视图
 
 @property (nonatomic, assign) CGFloat offsetHeightWithKeyboardHiddenView; // 用来计算键盘遮蔽视图的差距的
+@property (nonatomic, assign) BOOL keyboardIsShow;
 @end
 
 
@@ -71,6 +77,77 @@
 @synthesize userAgeName = _userAgeName;
 @synthesize httpRequest = _httpRequest;
 @synthesize activitor = _activitor;
+@synthesize areaLabel = _areaLabel;
+@synthesize btnSearchData = _btnSearchData;
+@synthesize keyboardIsShow;
+
+
+#pragma mask ------ HTTP 交互部分
+// 组包
+- (BOOL) HTTPPacking {
+    // 商户名称
+    [self.httpRequest setPostValue:self.userMchntField.text forKey:@"mchntNm"];
+    // 商户登陆用户名
+    [self.httpRequest setPostValue:self.userNameField.text forKey:@"userName"];
+    // 登陆密码
+    [self.httpRequest setPostValue:self.userPwdField.text forKey:@"passWord"];
+    // 身份证号码
+    [self.httpRequest setPostValue:self.userIDField.text forKey:@"identifyNo"];
+    // 手机号码
+    [self.httpRequest setPostValue:self.userPhoneField.text forKey:@"telNo"];
+    // 开户银行
+    [self.httpRequest setPostValue:self.userSpeSettleDsField.text forKey:@"speSettleDs"];
+    // 结算账号
+    [self.httpRequest setPostValue:self.userSettleAcctField.text forKey:@"settleAcct"];
+    // 结算账户名
+    [self.httpRequest setPostValue:self.userSettleNameField.text forKey:@"settleAcctNm"];
+    // 地区代码 -- 截取代码值
+    NSString* areaCode = [self.areaLabel.text substringWithRange:NSMakeRange([self.areaLabel.text rangeOfString:@"("].location + 1, 4)];
+    if (areaCode == nil) {
+        [self alertShowWithMessage:@"地区代码为空"];
+        return NO;
+    }
+    [self.httpRequest setPostValue:areaCode forKey:@"areaNo"];
+    // 商户地址信息
+    [self.httpRequest setPostValue:self.userAddrTextView.text forKey:@"addr"];
+    // 所属代理商用户名
+    [self.httpRequest setPostValue:self.userAgeName.text forKey:@"ageUserName"];
+    // 邮箱
+    [self.httpRequest setPostValue:self.userMailField.text forKey:@"mail"];
+    // 身份证正面照 -- 打包成data
+    NSData* imgData = UIImagePNGRepresentation(self.imgViewIDForce.image);
+    [self.httpRequest setData:imgData forKey:@"03"];
+    // 身份证背面照 -- 打包成data
+    imgData = UIImagePNGRepresentation(self.imgViewIDBackground.image);
+    [self.httpRequest setData:imgData forKey:@"06"];
+    // 手持身份证照 -- 打包成data
+    imgData = UIImagePNGRepresentation(self.imgViewIDHanding.image);
+    [self.httpRequest setData:imgData forKey:@"08"];
+    // 银行卡正面照 -- 打包成data
+    imgData = UIImagePNGRepresentation(self.imgViewCardForce.image);
+    [self.httpRequest setData:imgData forKey:@"09"];
+    return YES;
+}
+#pragma mask ------ ASIHTTP 响应协议
+// HTTP协议:成功接收响应数据
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    [self.activitor stopAnimating];
+    NSData* data = [request responseData];
+    NSDictionary* retDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+    if ([[retDict valueForKey:@"code"] intValue] == 0) {
+        [self alertShowWithMessage:@"注册成功"];
+    } else {
+        [self alertShowWithMessage:[NSString stringWithFormat:@"注册失败:[%@]",[retDict valueForKey:@"message"]]];
+    }
+    [self freeHTTPRequest];
+}
+// HTTP协议:接收响应数据失败
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    [self.activitor stopAnimating];
+    [self alertShowWithMessage:@"注册失败:网络异常"];
+    [self freeHTTPRequest];
+}
+
 
 
 #pragma mask ------ 按钮的点击事件
@@ -105,8 +182,70 @@
     
     [imageSheet showInView:self.view];
 }
+/*****************************
+ * 功能: 查询地名数据
+ *          跳转到新页面进行查询;
+ *****************************/
+- (IBAction) touchToSearchData:(UIButton*)sender {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController* vc = [storyBoard instantiateViewControllerWithIdentifier:@"areaDataSourceVC"];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 - (IBAction) touchToRegister:(UIButton*)sender {
     // 发送http请求
+    // 先校验字段是否为空
+    NSString* checkResult = [self checkInputsIsNullOrNot];
+    if (checkResult) {
+        [self alertShowWithMessage:checkResult];
+        return;
+    }
+    // 然后打包，并发送http请求
+    [self HTTPPacking];
+    NSLog(@"http :[%@]",self.httpRequest);
+    [self.activitor startAnimating];
+    [self.httpRequest startAsynchronous];
+    NSError* error = [self.httpRequest error];
+    if (error != nil) {
+        NSLog(@"HTTP请求失败:[%@]",error);
+    }
+}
+
+- (NSString*) checkInputsIsNullOrNot {
+    NSString* errorString = nil;
+    if (self.userMchntField.text.length == 0) {
+        errorString = @"商户名称不能为空";
+    } else if (self.userNameField.text.length == 0) {
+        errorString = @"账号不能为空";
+    } else if (self.userPwdField.text.length == 0) {
+        errorString = @"密码不能为空";
+    } else if (self.userIDField.text.length == 0) {
+        errorString = @"身份证号码不能为空";
+    } else if (self.userPhoneField.text.length == 0) {
+        errorString = @"手机号不能为空";
+    } else if (self.userSpeSettleDsField.text.length == 0) {
+        errorString = @"开户银行名称不能为空";
+    } else if (self.userSettleAcctField.text.length == 0) {
+        errorString = @"结算账户号不能为空";
+    } else if (self.userSettleNameField.text.length == 0) {
+        errorString = @"结算账户名称不能为空";
+    } else if (self.userMailField.text.length == 0) {
+        errorString = @"邮箱不能为空";
+    } else if (self.userAgeName.text.length == 0) {
+        errorString = @"所属代理商不能为空";
+    } else if (self.userAddrTextView.text.length == 0) {
+        errorString = @"商户通信地址不能为空";
+    } else if ([self.areaLabel.text isEqualToString:@"-"]) {
+        errorString = @"商户所在地未选择，请选择";
+    } else if (self.imgViewIDForce.image == nil) {
+        errorString = @"未选择身份证正面照";
+    } else if (self.imgViewIDBackground.image == nil) {
+        errorString = @"未选择身份证背面照";
+    } else if (self.imgViewIDHanding.image == nil) {
+        errorString = @"未选择手持身份证正面照";
+    } else if (self.imgViewCardForce.image == nil) {
+        errorString = @"未选择商户结算账号银行卡正面照";
+    }
+    return errorString;
 }
 
 #pragma mask ------ UIActionSheetDelegate: 点击事件
@@ -146,8 +285,44 @@
     UIImage* selectedImage = [info valueForKey:UIImagePickerControllerOriginalImage];
     if (self.neededLoadImageView != nil) {
         self.neededLoadImageView.image = selectedImage;
+        // 重置 imageView 的 frame
+        /*
+         * 如果大于 iv 的高度，就调整宽度
+         * 如果大于 iv 的宽度，就调整高度
+         */
+        self.neededLoadImageView.image = [self newImageOfFrame:self.neededLoadImageView.frame withImage:selectedImage];
     }
+}
+- (UIImage*) newImageOfFrame:(CGRect)lastFrame withImage:(UIImage*)image {
+    CGRect reSizeFrame = lastFrame;
+    CGSize size = image.size;
+    int flagAtWithOrHeight = 0;   // 0:高度, 1:宽度
+    flagAtWithOrHeight = (size.height > size.width)?(0):(1);
+    if (flagAtWithOrHeight == 0) {
+        reSizeFrame.size.width = reSizeFrame.size.height * size.width/size.height;
+        reSizeFrame.origin.x = (lastFrame.size.width - reSizeFrame.size.width)/2.0;
+        reSizeFrame.origin.y = 0;
+    } else {
+        reSizeFrame.size.height = reSizeFrame.size.width * size.height/size.width;
+        reSizeFrame.origin.y = (lastFrame.size.height - reSizeFrame.size.height)/2.0;
+        reSizeFrame.origin.x = 0;
+    }
+    NSLog(@"照片大小%lf,%lf",size.width,size.height);
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:reSizeFrame];
+    imageView.image = image;
+    UIView* view = [[UIView alloc] initWithFrame:lastFrame];
+    [view addSubview:imageView];
+    UIImage* newImage;
     
+    // UIView -> UIImage
+    UIGraphicsBeginImageContext(view.bounds.size);
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, [UIScreen mainScreen].scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [view.layer renderInContext:context];
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
 }
 
 
@@ -155,7 +330,10 @@
 - (void) keyboardWillApear:(NSNotification*)notification {
     NSDictionary* info = [notification userInfo];
     CGFloat keyboardHeight = [[info valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    
+    if (self.keyboardIsShow) {
+        [self changeViewFrameWithHeight:0 - self.offsetHeightWithKeyboardHiddenView];
+        self.offsetHeightWithKeyboardHiddenView = 0.0;
+    }
     UIView* firstResView = nil;
     for (UIView* view in self.scrollView.subviews) {
         if ([view isFirstResponder] && ([view class] == [UITextField class] || [view class] == [UITextView class])) {
@@ -163,24 +341,32 @@
         }
     }
     if (firstResView) {
-        NSLog(@"触发键盘的view:[%@]",firstResView);
         CGFloat factOriginYInRootView = self.view.bounds.size.height - (self.scrollView.frame.origin.y + (firstResView.frame.origin.y - self.scrollView.contentOffset.y) + firstResView.frame.size.height);
         if (factOriginYInRootView - keyboardHeight < 0) {
-            self.offsetHeightWithKeyboardHiddenView += keyboardHeight - factOriginYInRootView;
-            CGRect frame = self.view.frame;
-            frame.origin.y -= self.offsetHeightWithKeyboardHiddenView;
-            self.view.frame = frame;
+            self.offsetHeightWithKeyboardHiddenView += factOriginYInRootView - keyboardHeight;
+            [self changeViewFrameWithHeight:self.offsetHeightWithKeyboardHiddenView];
         }
     }
-    
+    self.keyboardIsShow = YES;
 }
-- (void) keyboardWillHidden:(NSNotification*)notification {
-    if (self.offsetHeightWithKeyboardHiddenView > 0.000001) {
-        CGRect frame = self.view.frame;
-        frame.origin.y += self.offsetHeightWithKeyboardHiddenView;
-        self.view.frame = frame;
+- (void) keyboardChangeFrame:(NSNotification*)notification {
+    if (self.offsetHeightWithKeyboardHiddenView > 0.000001 || self.offsetHeightWithKeyboardHiddenView < -0.000001) {
+        [self changeViewFrameWithHeight:0 - self.offsetHeightWithKeyboardHiddenView];
         self.offsetHeightWithKeyboardHiddenView = 0.0;
     }
+}
+
+- (void) keyboardWillHidden:(NSNotification*)notification {
+    if (self.offsetHeightWithKeyboardHiddenView > 0.000001 || self.offsetHeightWithKeyboardHiddenView < -0.000001) {
+        [self changeViewFrameWithHeight:0 - self.offsetHeightWithKeyboardHiddenView];
+        self.offsetHeightWithKeyboardHiddenView = 0.0;
+    }
+    self.keyboardIsShow = NO;
+}
+- (void) changeViewFrameWithHeight:(CGFloat)height {
+    CGRect frame = self.view.frame;
+    frame.origin.y += height;
+    self.view.frame = frame;
 }
 
 #pragma mask ------ 界面声明周期
@@ -198,6 +384,8 @@
     [self.scrollView addSubview:self.userMailField];
     [self.scrollView addSubview:self.userAddrTextView];
     [self.scrollView addSubview:self.userAgeName];
+    [self.scrollView addSubview:self.areaLabel];
+    [self.scrollView addSubview:self.btnSearchData];
     [self.scrollView addSubview:self.btnIDForce];
     [self.scrollView addSubview:self.btnIDBackground];
     [self.scrollView addSubview:self.btnIDHanding];
@@ -211,21 +399,23 @@
     [self.view addSubview:self.activitor];
     // 注册隐藏键盘的手势事件
     UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingWithTextField)];
+    gesture.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:gesture];
 
     self.offsetHeightWithKeyboardHiddenView = 0.0;
+    self.keyboardIsShow = NO;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     if (self.navigationController.navigationBarHidden) {
         self.navigationController.navigationBarHidden = NO;
     }
-    self.view.backgroundColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1];
+    self.view.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1];
     self.automaticallyAdjustsScrollViewInsets = NO;
 
     CGFloat inset = 10;
-    CGFloat bottomInset = 30;
-    CGFloat buttonHeight = 50;
+    CGFloat bottomInset = 10;
+    CGFloat buttonHeight = 40;
     CGFloat naviAndStatusHeight = [[UIApplication sharedApplication] statusBarFrame].size.height + self.navigationController.navigationBar.bounds.size.height;
     CGRect scrollFrame = CGRectMake(0,
                                     naviAndStatusHeight,
@@ -249,9 +439,16 @@
     // 注册键盘的出现、消失事件
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillApear:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self freeHTTPRequest];
+}
+- (void) freeHTTPRequest {
+    [self.httpRequest clearDelegatesAndCancel];
+    self.httpRequest = nil;
 }
 // 给 scrollView 加载子视图
 - (void) layoutSubviewsInScrollView {
@@ -262,28 +459,30 @@
     
     CGRect frame = CGRectMake(horizontalInset, verticalInset, flagLabelWidth, 30);
     
-    frame = [self newFrameAfterAddTextFiled:self.userMchntField withFrame:frame andTitle:@"商户名称"];
+    frame = [self newFrameAfterAddTextFiled:self.userMchntField withFrame:frame andTitle:@"商户名称" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userNameField withFrame:frame andTitle:@"账号名称"];
+    frame = [self newFrameAfterAddTextFiled:self.userNameField withFrame:frame andTitle:@"账号名称" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userPwdField withFrame:frame andTitle:@"登陆密码"];
+    frame = [self newFrameAfterAddTextFiled:self.userPwdField withFrame:frame andTitle:@"登陆密码" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userIDField withFrame:frame andTitle:@"身份证号码"];
+    frame = [self newFrameAfterAddTextFiled:self.userIDField withFrame:frame andTitle:@"身份证号码" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userPhoneField withFrame:frame andTitle:@"手机号码"];
+    frame = [self newFrameAfterAddTextFiled:self.userPhoneField withFrame:frame andTitle:@"手机号码" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userSpeSettleDsField withFrame:frame andTitle:@"开户银行名称"];
+    frame = [self newFrameAfterAddTextFiled:self.userSpeSettleDsField withFrame:frame andTitle:@"开户银行名称" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userSettleAcctField withFrame:frame andTitle:@"结算账户号"];
+    frame = [self newFrameAfterAddTextFiled:self.userSettleAcctField withFrame:frame andTitle:@"结算账户号" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userSettleNameField withFrame:frame andTitle:@"结算账户名称"];
+    frame = [self newFrameAfterAddTextFiled:self.userSettleNameField withFrame:frame andTitle:@"结算账户名称" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userMailField withFrame:frame andTitle:@"邮箱"];
+    frame = [self newFrameAfterAddTextFiled:self.userMailField withFrame:frame andTitle:@"邮箱" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userAgeName withFrame:frame andTitle:@"所属代理商用户名"];
+    frame = [self newFrameAfterAddTextFiled:self.userAgeName withFrame:frame andTitle:@"所属代理商用户名" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userAddrTextView withFrame:frame andTitle:@"商户通信地址"];
-
+    frame = [self newFrameAfterAddTextFiled:self.userAddrTextView withFrame:frame andTitle:@"商户通信地址" withNeededFlag:YES];
+    
+    frame.origin.y += verticalInset;
+    frame = [self newFrameAfterAddButton:self.btnSearchData andImageView:self.areaLabel inFrame:frame];
     frame.origin.y += verticalInset*2;
     frame = [self newFrameAfterAddButton:self.btnIDForce andImageView:self.imgViewIDForce inFrame:frame];
     frame.origin.y += verticalInset;
@@ -296,11 +495,13 @@
     
     CGFloat contentHeight = frame.origin.y + 10.0;
     self.scrollView.contentSize = CGSizeMake(self.scrollView.bounds.size.width, contentHeight);
+    
 }
 // 简化代码: 组合 textFiled + * + title
 - (CGRect) newFrameAfterAddTextFiled:(UIView*)textField
                            withFrame:(CGRect)frame
                             andTitle:(NSString*)title
+                      withNeededFlag:(BOOL)flag
 {
     CGFloat horizontalInset = 15.0;
     CGFloat flagLabelWidth = 10;
@@ -314,7 +515,7 @@
     
     // 星号
     UILabel* flagLabel = [[UILabel alloc] initWithFrame:frame];
-    if (![title isEqualToString:@"所属代理商用户名"]) {
+    if (flag) {
         flagLabel.text = @"*";
     }
     flagLabel.textColor = [UIColor redColor];
@@ -344,7 +545,7 @@
 }
 // 简化代码: 组合 * + 按钮 + imageView
 - (CGRect) newFrameAfterAddButton:(UIButton*)button
-                     andImageView:(UIImageView*)imageView
+                     andImageView:(UIView*)imageView
                           inFrame:(CGRect)frame
 {
     CGFloat horizontalInset = 15.0;
@@ -370,10 +571,13 @@
     button.frame = frame;
     
     // 图片视图
-//    frame.origin.x -= savedWidth;
     frame.origin.y += frame.size.height + verticalInset;
-    frame.size.width = (self.scrollView.bounds.size.width - frame.origin.x * 2)/2.0;
-    frame.size.height = frame.size.width;
+    if ([imageView class] == [UIImageView class]) {
+        frame.size.height = frame.size.width;
+    } else {
+        frame.size.width = self.scrollView.bounds.size.width - frame.origin.x * 2;
+        frame.size.height = savedHeight;
+    }
     imageView.frame = frame;
     
     frame.origin.x = horizontalInset;
@@ -423,14 +627,14 @@
     button.layer.cornerRadius = 5.0;
     button.layer.masksToBounds = YES;
     [button setBackgroundColor:[UIColor colorWithRed:38.0/255.0 green:124.0/255.0 blue:231.0/255.0 alpha:1]];
-    button.layer.shadowOffset = CGSizeMake(3, 3);
-    
-    [button addTarget:self action:@selector(touchToLoadImageByButton:) forControlEvents:UIControlEventTouchUpInside];
-
     return button;
 }
-// 先创建一个空的 UIImageView ,图片在后面加载
 
+// 简化代码:
+- (void) alertShowWithMessage:(NSString*)msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
 
 #pragma mask ------ setter && getter
 - (UIScrollView *)scrollView {
@@ -515,24 +719,28 @@
 - (UIButton *)btnIDForce {
     if (_btnIDForce == nil) {
         _btnIDForce = [self newButtonWithTitle:@"点击上传身份证正面照"];
+        [_btnIDForce addTarget:self action:@selector(touchToLoadImageByButton:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnIDForce;
 }
 - (UIButton *)btnIDBackground {
     if (_btnIDBackground == nil) {
         _btnIDBackground = [self newButtonWithTitle:@"点击上传身份证背面照"];
+        [_btnIDBackground addTarget:self action:@selector(touchToLoadImageByButton:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnIDBackground;
 }
 - (UIButton *)btnIDHanding {
     if (_btnIDHanding == nil) {
         _btnIDHanding = [self newButtonWithTitle:@"点击上传手持身份证照"];
+        [_btnIDHanding addTarget:self action:@selector(touchToLoadImageByButton:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnIDHanding;
 }
 - (UIButton *)btnCardForce {
     if (_btnCardForce == nil) {
         _btnCardForce = [self newButtonWithTitle:@"点击上传银行卡正面照"];
+        [_btnCardForce addTarget:self action:@selector(touchToLoadImageByButton:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnCardForce;
 }
@@ -545,8 +753,6 @@
         _btnUserRegistering.layer.cornerRadius = 8.0;
         _btnUserRegistering.layer.masksToBounds = YES;
         [_btnUserRegistering setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        _btnUserRegistering.layer.shadowOffset = CGSizeMake(-3, -3);
-        _btnUserRegistering.layer.shadowColor = [UIColor grayColor].CGColor;
         [_btnUserRegistering addTarget:self action:@selector(touchToRegister:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnUserRegistering;
@@ -586,6 +792,11 @@
     if (_httpRequest == nil) {
         NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@:%@/jlagent/MchntRegister", [PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]]];
         _httpRequest = [ASIFormDataRequest requestWithURL:url];
+        [_httpRequest setPostFormat:ASIMultipartFormDataPostFormat];
+        [_httpRequest addRequestHeader:@"Content-Type" value:@"application/json; encoding=utf-8"];
+        [_httpRequest addRequestHeader:@"Accept" value:@"application/json"];
+        [_httpRequest setRequestMethod:@"POST"];
+        [_httpRequest setShouldStreamPostDataFromDisk:NO];
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
@@ -595,6 +806,24 @@
         _activitor = [[JLActivity alloc] init];
     }
     return _activitor;
+}
+- (UILabel *)areaLabel {
+    if (_areaLabel == nil) {
+        _areaLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _areaLabel.text = @"-";
+        _areaLabel.textAlignment = NSTextAlignmentCenter;
+        _areaLabel.layer.cornerRadius = 5.0;
+        _areaLabel.layer.masksToBounds = YES;
+        _areaLabel.backgroundColor = [UIColor whiteColor];
+    }
+    return _areaLabel;
+}
+- (UIButton *)btnSearchData {
+    if (_btnSearchData == nil) {
+        _btnSearchData = [self newButtonWithTitle:@"点击选择所在地名"];
+        [_btnSearchData addTarget:self action:@selector(touchToSearchData:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _btnSearchData;
 }
 
 @end

@@ -10,4 +10,6 @@
 
 @interface UserRegisterViewController : UIViewController
 
+@property (nonatomic, strong) UILabel* areaLabel;                   // 显示地名的标签
+
 @end

@@ -87,7 +87,7 @@
         //Byte* bb = (Byte*)[data bytes];
         cleartext = [self stringWithHexBytes2:data];//[ConverUtil parseByteArray2HexString:bb];
     }else{
-        //NSLog(@"DES解密失败");
+        NSLog(@"DES解密失败");
     }
     return cleartext;
 }
