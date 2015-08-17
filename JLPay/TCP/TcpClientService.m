@@ -62,7 +62,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
 //建立连接
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port{
     [self senMessage];
-    NSLog(@"。。。。。。。。已经建立socket连接");
+//    NSLog(@"。。。。。。。。已经建立socket连接");
     // 发送数据并等待返回:带参数超时
     [sock readDataWithTimeout:readTimeOut tag:0];
 }
@@ -104,7 +104,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
         [delegate falseReceiveGetDataMethod:self.tcpMethodStr];
     }
 
-    NSLog(@"onSocket:%p willDisconnectWithError:%@====tcp错误方法%@", sock, err,self.tcpMethodStr);
+//    NSLog(@"onSocket:%p willDisconnectWithError:%@====tcp错误方法%@", sock, err,self.tcpMethodStr);
 }
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock
 {
@@ -116,7 +116,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
 -(void)senMessage{
     //设备匹配指令
     NSData *data = [self.orderInfoStr hexToBytes];
-    NSLog(@"发送data====%@",data);
+//    NSLog(@"发送data====%@",data);
     [asyncSocket writeData:data withTimeout:readTimeOut tag:1];
 }
 
@@ -134,7 +134,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
     NSError *err = nil;
     
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
-        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
+//        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         [asyncSocket connectToHost:ip onPort:port error:&err];
     }
 }
@@ -153,7 +153,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
     NSError *err = nil;
     
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
-        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
+//        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         if ([asyncSocket connectToHost:ip onPort:port error:&err]) {
             // 发送成功后就关闭连接
             [asyncSocket setDelegate:nil];

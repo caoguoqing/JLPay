@@ -52,6 +52,12 @@
 		5E5E35A51B7C79EF00560C0A /* AreaDataSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */; };
 		5E5E35A71B7C7A0B00560C0A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */; };
 		5E5E35A91B7C7A3200560C0A /* test.db in Resources */ = {isa = PBXBuildFile; fileRef = 5E5E35A81B7C7A3200560C0A /* test.db */; };
+		5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35AC1B7DD39B00560C0A /* HelperAndAboutTableViewController.m */; };
+		5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35CF1B7DD7E400560C0A /* BangdingViewController.m */; };
+		5E5E35D31B806D0A00560C0A /* ShuakaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35D21B806D0A00560C0A /* ShuakaViewController.m */; };
+		5E5E35D61B806F9C00560C0A /* JiaoyimingxiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35D51B806F9C00560C0A /* JiaoyimingxiViewController.m */; };
+		5E5E35D91B80732200560C0A /* ZengzhifuwuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35D81B80732200560C0A /* ZengzhifuwuViewController.m */; };
+		5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35DC1B80746500560C0A /* GuanyuViewController.m */; };
 		5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */; };
 		5E5FA57F1B46342600387E69 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56E1B46342600387E69 /* .gitignore */; };
 		5E5FA5801B46342600387E69 /* alertBkg.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56F1B46342600387E69 /* alertBkg.png */; };
@@ -257,6 +263,18 @@
 		5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AreaDataSourceViewController.m; sourceTree = "<group>"; };
 		5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		5E5E35A81B7C7A3200560C0A /* test.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.db; sourceTree = "<group>"; };
+		5E5E35AB1B7DD39B00560C0A /* HelperAndAboutTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperAndAboutTableViewController.h; sourceTree = "<group>"; };
+		5E5E35AC1B7DD39B00560C0A /* HelperAndAboutTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelperAndAboutTableViewController.m; sourceTree = "<group>"; };
+		5E5E35CE1B7DD7E400560C0A /* BangdingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BangdingViewController.h; sourceTree = "<group>"; };
+		5E5E35CF1B7DD7E400560C0A /* BangdingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BangdingViewController.m; sourceTree = "<group>"; };
+		5E5E35D11B806D0A00560C0A /* ShuakaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShuakaViewController.h; sourceTree = "<group>"; };
+		5E5E35D21B806D0A00560C0A /* ShuakaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShuakaViewController.m; sourceTree = "<group>"; };
+		5E5E35D41B806F9C00560C0A /* JiaoyimingxiViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JiaoyimingxiViewController.h; sourceTree = "<group>"; };
+		5E5E35D51B806F9C00560C0A /* JiaoyimingxiViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JiaoyimingxiViewController.m; sourceTree = "<group>"; };
+		5E5E35D71B80732200560C0A /* ZengzhifuwuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZengzhifuwuViewController.h; sourceTree = "<group>"; };
+		5E5E35D81B80732200560C0A /* ZengzhifuwuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZengzhifuwuViewController.m; sourceTree = "<group>"; };
+		5E5E35DB1B80746500560C0A /* GuanyuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuanyuViewController.h; sourceTree = "<group>"; };
+		5E5E35DC1B80746500560C0A /* GuanyuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuanyuViewController.m; sourceTree = "<group>"; };
 		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
 		5E5FA5691B413E2F00387E69 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
 		5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
@@ -513,6 +531,7 @@
 				5E82B87D1B31610700A58751 /* 连接机具 */,
 				5E5E35441B71E90400560C0A /* 修改密码 */,
 				5E82B7E71B25425600A58751 /* 参数设置 */,
+				5E5E35AA1B7DD33800560C0A /* 帮助与关于 */,
 			);
 			name = "商户设置界面";
 			sourceTree = "<group>";
@@ -620,6 +639,65 @@
 				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
 			);
 			name = "注册用户";
+			sourceTree = "<group>";
+		};
+		5E5E35AA1B7DD33800560C0A /* 帮助与关于 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35AB1B7DD39B00560C0A /* HelperAndAboutTableViewController.h */,
+				5E5E35AC1B7DD39B00560C0A /* HelperAndAboutTableViewController.m */,
+				5E5E35DA1B8073DD00560C0A /* 关于我们 */,
+				5E5E35AE1B7DD70700560C0A /* 描述_绑定设备 */,
+				5E5E35B71B7DD74200560C0A /* 描述_刷卡 */,
+				5E5E35B81B7DD74D00560C0A /* 描述_交易明细 */,
+				5E5E35B91B7DD75700560C0A /* 描述_增值服务 */,
+			);
+			name = "帮助与关于";
+			sourceTree = "<group>";
+		};
+		5E5E35AE1B7DD70700560C0A /* 描述_绑定设备 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35CE1B7DD7E400560C0A /* BangdingViewController.h */,
+				5E5E35CF1B7DD7E400560C0A /* BangdingViewController.m */,
+			);
+			name = "描述_绑定设备";
+			sourceTree = "<group>";
+		};
+		5E5E35B71B7DD74200560C0A /* 描述_刷卡 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35D11B806D0A00560C0A /* ShuakaViewController.h */,
+				5E5E35D21B806D0A00560C0A /* ShuakaViewController.m */,
+			);
+			name = "描述_刷卡";
+			sourceTree = "<group>";
+		};
+		5E5E35B81B7DD74D00560C0A /* 描述_交易明细 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35D41B806F9C00560C0A /* JiaoyimingxiViewController.h */,
+				5E5E35D51B806F9C00560C0A /* JiaoyimingxiViewController.m */,
+			);
+			name = "描述_交易明细";
+			sourceTree = "<group>";
+		};
+		5E5E35B91B7DD75700560C0A /* 描述_增值服务 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35D71B80732200560C0A /* ZengzhifuwuViewController.h */,
+				5E5E35D81B80732200560C0A /* ZengzhifuwuViewController.m */,
+			);
+			name = "描述_增值服务";
+			sourceTree = "<group>";
+		};
+		5E5E35DA1B8073DD00560C0A /* 关于我们 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35DB1B80746500560C0A /* GuanyuViewController.h */,
+				5E5E35DC1B80746500560C0A /* GuanyuViewController.m */,
+			);
+			name = "关于我们";
 			sourceTree = "<group>";
 		};
 		5E5FA56C1B46342600387E69 /* JHL_M60 */ = {
@@ -1166,12 +1244,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */,
 				5EBE92811ACB80FD0096BD72 /* TerminalParamSetViewController.m in Sources */,
 				5EBAA9111ACD3F1B00E2ABDD /* SBJsonBase.m in Sources */,
 				5E5E354F1B7380DB00560C0A /* UserRegisterViewController.m in Sources */,
 				5E397B341AD36429004F206F /* ASIInputStream.m in Sources */,
 				5EBAA8EB1ACD2FA800E2ABDD /* ErrorType.m in Sources */,
 				5E397B3D1AD36429004F206F /* Reachability.m in Sources */,
+				5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */,
 				5EBAA9121ACD3F1B00E2ABDD /* SBJsonParser.m in Sources */,
 				5EBAA8E61ACD2FA800E2ABDD /* ISOHelper.m in Sources */,
 				5EB9B1B51AD7D6D900A73190 /* settingViewController.m in Sources */,
@@ -1200,6 +1280,7 @@
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
+				5E5E35D61B806F9C00560C0A /* JiaoyimingxiViewController.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
 				5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */,
@@ -1210,6 +1291,7 @@
 				5EBAA9101ACD3F1B00E2ABDD /* NSString+SBJSON.m in Sources */,
 				5EBA40F61AEA366000F270C0 /* PosInformationViewController.m in Sources */,
 				5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */,
+				5E5E35D31B806D0A00560C0A /* ShuakaViewController.m in Sources */,
 				5E82B8641B310AAD00A58751 /* JLActivity.m in Sources */,
 				5E5FA5871B46342600387E69 /* ISMFiDataPath.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
@@ -1226,6 +1308,7 @@
 				5EBA40FA1AEA37AC00F270C0 /* NewVersionView.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
+				5E5E35D91B80732200560C0A /* ZengzhifuwuViewController.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
 				5E5FA5831B46342600387E69 /* README.md in Sources */,
 				5EBAA8E71ACD2FA800E2ABDD /* ISOBitmap.m in Sources */,
@@ -1263,6 +1346,7 @@
 				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,
 				5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
+				5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */,
 				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,

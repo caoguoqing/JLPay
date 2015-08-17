@@ -18,6 +18,7 @@
 #import "ThreeDesUtil.h"
 #import "ASIFormDataRequest.h"
 #import "AppDelegate.h"
+#import "UserRegisterViewController.h"
 
 
 
@@ -38,7 +39,8 @@
 @property (nonatomic, strong) UIButton    *pinChangeButton;       // 密码修改按钮
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
-
+@property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // http请求
+@property (nonatomic, retain) NSDictionary* dictLastRegisterInfo;   // 审核未通过的注册信息
 @end
 
 
@@ -51,6 +53,8 @@
 @synthesize signInButton            = _signInButton;
 @synthesize pinChangeButton         = _pinChangeButton;
 @synthesize moveHeightByWindow      = _moveHeightByWindow;
+@synthesize httpRequest = _httpRequest;
+@synthesize dictLastRegisterInfo ;
 
 /*****************************/
 - (void)viewDidLoad {
@@ -77,6 +81,8 @@
     NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = dict;
     self.navigationController.navigationBar.tintColor = color;
+    
+    self.dictLastRegisterInfo = nil;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -90,6 +96,12 @@
     // 注册键盘的弹出跟隐藏事件
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.httpRequest clearDelegatesAndCancel];
+    self.httpRequest = nil;
+    [self.loadButton setEnabled:YES];
 }
 
 /*************************************
@@ -284,8 +296,6 @@
     textField.frame = textFieldFrame;
     [view addSubview:textField];
     view.backgroundColor                        = [UIColor colorWithWhite:0.9 alpha:0.5];
-//    view.backgroundColor = [UIColor colorWithRed:160.0/255.0 green:170.0/255.0 blue:170.0/255.0 alpha:1];
-//    view.backgroundColor = [UIColor whiteColor];
     return view;
 }
 
@@ -326,8 +336,9 @@
         [self alertShow:@"请输入密码"];
         return;
     }
+    
     // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
-    [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
+//    [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
     // 3des 加密
     // 原始 key
     NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
@@ -351,7 +362,7 @@
  *************************************/
 - (IBAction)signIn: (id)sender {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -369,23 +380,19 @@
 
 #pragma mask ::: 上送登陆报文
 - (void)logInWithPin: (NSString*)pin {
-    NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-    ASIFormDataRequest* request = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
-    request.delegate = self;
     // 账号参数
-    [request addPostValue:self.userNumberTextField.text forKey:@"userName"];
+    [self.httpRequest addPostValue:self.userNumberTextField.text forKey:@"userName"];
     // 密码参数
-    [request addPostValue:pin forKey:@"passWord"];
+    [self.httpRequest addPostValue:pin forKey:@"passWord"];
     // 操作系统版本 0:IOS, 1:Android
-    [request addPostValue:@"0" forKey:@"sysFlag"];
+    [self.httpRequest addPostValue:@"0" forKey:@"sysFlag"];
     // 版本号参数
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     NSString* versionNum = [NSString stringWithFormat:@"%@%@%@",[versionString substringToIndex:1],[versionString substringWithRange:NSMakeRange(2, 1)],[versionString substringFromIndex:versionString.length - 1]];
     // 发起HTTP请求
 //    versionNum = @"99"; // test for 低版本登陆校验
-    [request addPostValue:versionNum forKey:@"versionNum"];
-    NSLog(@"httprequest = [%@]",request);
-    [request startAsynchronous];
+    [self.httpRequest addPostValue:versionNum forKey:@"versionNum"];
+    [self.httpRequest startAsynchronous];
 }
 
 #pragma mask ::: HTTP响应协议
@@ -394,15 +401,19 @@
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
     [request clearDelegatesAndCancel];
+    self.httpRequest = nil;
     NSString* retcode = [dataDic objectForKey:@"code"];
-    NSString* retMsg = [dataDic objectForKey:@"message"];
+    NSString* retMsg = [retcode stringByAppendingString:[dataDic objectForKey:@"message"]];
     if ([retcode intValue] != 0) {      // 登陆失败
         if ([retcode isEqualToString:@"701"]) { // 当前版本过低
-            [self alertShow:[retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."]];
-        } else {
-            [self alertShow:retMsg];
+            retMsg = [retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
+        } else if ([retcode isEqualToString:@"802"]) {
+            self.dictLastRegisterInfo = [dataDic copy];
         }
+        [self alertShow:retMsg];
     } else {                            // 登陆成功
+        // 校验是否切换了账号
+        [self checkoutCustSwitch];
         // 解析响应数据
         [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
@@ -435,8 +446,20 @@
 }
 -(void)requestFailed:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
+    self.httpRequest = nil;
     [self alertShow:@"网络异常，请检查网络"];
 }
+// 校验是否切换了账号:如果切换,清空配置
+- (void) checkoutCustSwitch {
+    NSString* lastUserID = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+    if (![lastUserID isEqualToString:self.userNumberTextField.text]) {
+        [[NSUserDefaults standardUserDefaults] setValue:nil forKey:DeviceIDOfBinded];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
+
+
+
 
 #pragma mask ::: 分隔终端号字符串
 - (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
@@ -480,16 +503,36 @@
 
 #pragma mask ::: 弹出提示框
 - (void) alertShow: (NSString*) message {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    UIAlertView* alert;
+    if ([message hasPrefix:@"802"]) {
+        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    } else {
+        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    }
     [alert show];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
-
+    if (buttonIndex == 0) {
+        return;
+    }
+    
     // 如果是版本过低的提示，点击了确定要跳转到下载网址
-    if ([alertView.message hasPrefix:@"当前版本过低"]) {
+    if ([alertView.message hasPrefix:@"701"]) {
         NSString* urlString = @"http://www.cccpay.cn/center.html";
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+    }
+    // 注册审核不通过,需要修改信息
+    else if ([alertView.message hasPrefix:@"802"]) {
+        if (self.dictLastRegisterInfo == nil) {
+            return;
+        }
+        NSLog(@"%@",alertView.message);
+        UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+        viewController.packageType = 1; // 0:新增注册, 1:修改注册, 2:修改信息
+        [self.navigationController pushViewController:viewController animated:YES];
+
     }
 }
 
@@ -505,7 +548,7 @@
         _userNumberTextField = [[UITextField alloc] initWithFrame:CGRectZero];
         _userNumberTextField.placeholder    = @"请输入您的账号";
         _userNumberTextField.textColor      = [UIColor whiteColor];
-
+        _userNumberTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
     }
     return _userNumberTextField;
 }
@@ -556,5 +599,13 @@
 
     }
     return _pinChangeButton;
+}
+- (ASIFormDataRequest *)httpRequest {
+    if (_httpRequest == nil) {
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+        _httpRequest = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+        [_httpRequest setDelegate:self];
+    }
+    return _httpRequest;
 }
 @end

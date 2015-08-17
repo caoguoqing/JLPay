@@ -142,4 +142,7 @@
 + (NSString*) moneyStringWithCString:(char*)cstring ;
 // app的状态栏高度+控制栏高度
 + (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController*)viewController;
+// 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
++ (NSString*) clearSpaceCharAtLastOfString:(NSString*)string ;
+
 @end

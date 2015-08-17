@@ -180,27 +180,8 @@ int tagOfCity = 14;
     [self.navigationController popViewControllerAnimated:YES];
     UserRegisterViewController* viewCs = (UserRegisterViewController*)self.navigationController.topViewController;
     // 传之前要将尾空白字符去掉
-    self.selectedCity = [self clearSpaceCharAtLastOfString:self.selectedCity];
+    self.selectedCity = [PublicInformation clearSpaceCharAtLastOfString:self.selectedCity];
     viewCs.areaLabel.text = [NSString stringWithFormat:@"%@(%@)",self.selectedCity,self.selectedCityKey];
-}
-- (NSString*) clearSpaceCharAtLastOfString:(NSString*)string {
-    const char* originString = [string cStringUsingEncoding:NSUTF8StringEncoding];
-    char* newString = (char*)malloc(strlen(originString) + 1);
-    memset(newString, 0x00, strlen(originString) + 1);
-    int copylen = (int)strlen(originString);
-    char* tmp = (char*)(originString + copylen - 1);
-    while (1) {
-        if (isspace(*tmp)) {
-            tmp--;
-            copylen--;
-        } else {
-            break;
-        }
-    }
-    memcpy(newString, originString, copylen);
-    NSString* retString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
-    free(newString);
-    return retString;
 }
 
 

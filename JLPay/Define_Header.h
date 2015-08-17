@@ -294,4 +294,22 @@
 #define Card_DeadLineTime @"deadline"
 
 
+/*************[注册审核未通过:响应配置信息]**************/
+#define  RESIGN_mchntNm                 @"RESIGN_mchntNm"
+#define  RESIGN_userName                @"RESIGN_userName"
+#define  RESIGN_passWord                @"RESIGN_passWord"
+#define  RESIGN_identifyNo              @"RESIGN_identifyNo"
+#define  RESIGN_telNo                   @"RESIGN_telNo"
+#define  RESIGN_speSettleDs             @"RESIGN_speSettleDs"
+#define  RESIGN_settleAcct              @"RESIGN_settleAcct"
+#define  RESIGN_settleAcctNm            @"RESIGN_settleAcct"
+#define  RESIGN_areaNo                  @"RESIGN_areaNo"
+#define  RESIGN_addr                    @"RESIGN_addr"
+#define  RESIGN_ageUserName             @"RESIGN_ageUserName"
+#define  RESIGN_mail                    @"RESIGN_mail"
+#define  RESIGN_03                      @"RESIGN_03"
+#define  RESIGN_06                      @"RESIGN_06"
+#define  RESIGN_08                      @"RESIGN_08"
+#define  RESIGN_09                      @"RESIGN_09"
+
 #endif

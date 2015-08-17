@@ -271,7 +271,7 @@
         } else if (TestOrProduce == 5) {
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ipStr = @"183.16.188.122";
+            ipStr = @"113.88.197.213";
         }
         
     }
@@ -317,7 +317,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"183.16.188.122";
+            ip = @"113.88.197.213";
         }
     }
     return ip;
@@ -982,5 +982,25 @@
     return height;
 }
 
+// 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
++ (NSString*) clearSpaceCharAtLastOfString:(NSString*)string {
+    const char* originString = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    char* newString = (char*)malloc(strlen(originString) + 1);
+    memset(newString, 0x00, strlen(originString) + 1);
+    int copylen = (int)strlen(originString);
+    char* tmp = (char*)(originString + copylen - 1);
+    while (1) {
+        if (isspace(*tmp)) {
+            tmp--;
+            copylen--;
+        } else {
+            break;
+        }
+    }
+    memcpy(newString, originString, copylen);
+    NSString* retString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
+    free(newString);
+    return retString;
+}
 
 @end

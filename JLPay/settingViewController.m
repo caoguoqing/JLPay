@@ -160,7 +160,7 @@
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"帮助和关于"]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"weChatPay"];
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"helperAndAboutVC"];
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"费率选择"]) {

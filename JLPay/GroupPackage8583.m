@@ -268,7 +268,7 @@
     //NSLog(@"原始数据====%@",arr);
     //mac校验数据
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@",typestr,bitstr,[arr componentsJoinedByString:@""]];
-    NSLog(@"allStr====%@,=====%d",allStr,(int)[allStr length]);
+//    NSLog(@"allStr====%@,=====%d",allStr,(int)[allStr length]);
     int len = (int)allStr.length;
     int other = len % 16;
     
@@ -279,10 +279,10 @@
         }
     }
     NSString *newAllStr=[NSString stringWithFormat:@"%@%@",allStr,[numArr componentsJoinedByString:@""]];
-    NSLog(@"newAllStr=====%@=====%d",newAllStr,(int)[newAllStr length]);
+//    NSLog(@"newAllStr=====%@=====%d",newAllStr,(int)[newAllStr length]);
     
     NSData *btData=[PublicInformation NewhexStrToNSData:newAllStr];
-    NSLog(@"btData====%@",btData);
+//    NSLog(@"btData====%@",btData);
     Byte *bt=(Byte *)[btData bytes];
     
     Byte mac[8];
@@ -298,7 +298,7 @@
             for (int j = 0; j < 8; j++) {
                 mac[j] = (Byte) (mac[j] ^ temp[j]);
             }
-            NSLog(@"mac===========%@",[[NSData alloc] initWithBytes:mac length:sizeof(mac)]);
+//            NSLog(@"mac===========%@",[[NSData alloc] initWithBytes:mac length:sizeof(mac)]);
             z = 0;
             memset(&temp, 0, sizeof(temp));
         }
@@ -308,10 +308,10 @@
     }
     
     NSData *newData = [[NSData alloc] initWithBytes:mac length:sizeof(mac)];
-    NSLog(@"newData====%@",newData);
+//    NSLog(@"newData====%@",newData);
     
     NSString *newStr=[EncodeString encodeASC:[PublicInformation stringWithHexBytes2:newData]];
-    NSLog(@"newStr====%@",newStr);
+//    NSLog(@"newStr====%@",newStr);
     
     NSString *leftString=[newStr substringWithRange:NSMakeRange(0, 16)];
     NSString *rightString=[newStr substringWithRange:NSMakeRange(16, [newStr length]-16)];
@@ -341,7 +341,7 @@
     NSString *macStr=[EncodeString encodeASC:[str substringWithRange:NSMakeRange(0, 8)]];
     NSMutableArray *newArr=[[NSMutableArray alloc] initWithArray:arr];
     [newArr addObject:macStr];
-    NSLog(@"添加mac校验64域====%@",newArr);
+//    NSLog(@"添加mac校验64域====%@",newArr);
     for (int i=0; i<[newArr count]; i++) {
         //NSLog(@"aaaaa=%@",[newArr objectAtIndex:i]);
     }

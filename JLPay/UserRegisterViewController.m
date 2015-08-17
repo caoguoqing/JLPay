@@ -13,6 +13,8 @@
 #import "PublicInformation.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
+#import "Define_Header.h"
+#import "MySQLiteManager.h"
 
 
 @interface UserRegisterViewController()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,ASIHTTPRequestDelegate>
@@ -80,6 +82,7 @@
 @synthesize areaLabel = _areaLabel;
 @synthesize btnSearchData = _btnSearchData;
 @synthesize keyboardIsShow;
+@synthesize packageType;
 
 
 #pragma mask ------ HTTP 交互部分
@@ -169,7 +172,6 @@
 
     }else if ([buttonTitle isEqualToString:@"点击上传银行卡正面照"]) {
         self.neededLoadImageView = self.imgViewCardForce;
-
     }
     
     UIActionSheet* imageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
@@ -201,7 +203,6 @@
     }
     // 然后打包，并发送http请求
     [self HTTPPacking];
-    NSLog(@"http :[%@]",self.httpRequest);
     [self.activitor startAnimating];
     [self.httpRequest startAsynchronous];
     NSError* error = [self.httpRequest error];
@@ -307,7 +308,6 @@
         reSizeFrame.origin.y = (lastFrame.size.height - reSizeFrame.size.height)/2.0;
         reSizeFrame.origin.x = 0;
     }
-    NSLog(@"照片大小%lf,%lf",size.width,size.height);
     UIImageView* imageView = [[UIImageView alloc] initWithFrame:reSizeFrame];
     imageView.image = image;
     UIView* view = [[UIView alloc] initWithFrame:lastFrame];
@@ -316,6 +316,7 @@
     
     // UIView -> UIImage
     UIGraphicsBeginImageContext(view.bounds.size);
+    // 用option调整图片清晰度
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];
@@ -372,6 +373,7 @@
 #pragma mask ------ 界面声明周期
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     [self.view addSubview:self.scrollView];
     [self.scrollView addSubview:self.userMchntField];
     [self.scrollView addSubview:self.userNameField];
@@ -431,11 +433,12 @@
     scrollFrame.size.height = buttonHeight;
     self.btnUserRegistering.frame = scrollFrame;
     
-    
-    
+    // 根据打包类型修改标题或按钮名字
+    [self handleWithPackType];
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
     // 注册键盘的出现、消失事件
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillApear:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
@@ -446,16 +449,13 @@
     [super viewWillDisappear:animated];
     [self freeHTTPRequest];
 }
-- (void) freeHTTPRequest {
-    [self.httpRequest clearDelegatesAndCancel];
-    self.httpRequest = nil;
-}
+
+
 // 给 scrollView 加载子视图
 - (void) layoutSubviewsInScrollView {
     CGFloat verticalInset = 10.0;
     CGFloat horizontalInset = 15.0;
     CGFloat flagLabelWidth = 10;
-    
     
     CGRect frame = CGRectMake(horizontalInset, verticalInset, flagLabelWidth, 30);
     
@@ -491,7 +491,6 @@
     frame = [self newFrameAfterAddButton:self.btnIDHanding andImageView:self.imgViewIDHanding inFrame:frame];
     frame.origin.y += verticalInset;
     frame = [self newFrameAfterAddButton:self.btnCardForce andImageView:self.imgViewCardForce inFrame:frame];
-
     
     CGFloat contentHeight = frame.origin.y + 10.0;
     self.scrollView.contentSize = CGSizeMake(self.scrollView.bounds.size.width, contentHeight);
@@ -516,7 +515,7 @@
     // 星号
     UILabel* flagLabel = [[UILabel alloc] initWithFrame:frame];
     if (flag) {
-        flagLabel.text = @"*";
+        flagLabel.text = flagText;
     }
     flagLabel.textColor = [UIColor redColor];
     [self.scrollView addSubview:flagLabel];
@@ -596,6 +595,44 @@
 }
 
 #pragma mask ------ 私有接口:
+- (void) freeHTTPRequest {
+    [self.httpRequest clearDelegatesAndCancel];
+    self.httpRequest = nil;
+}
+// 根据注册类型，修改界面标题和按钮标题;并加载默认信息
+- (void) handleWithPackType {
+    if (self.packageType == 2) {
+        [self setTitle:@"修改商户信息"];
+        [self.btnUserRegistering setTitle:@"修改" forState:UIControlStateNormal];
+    } else if (self.packageType == 1) {
+        // 加载默认信息
+        [self reloadResignInfos];
+    }
+}
+// 重载需要手动输入的文本信息
+- (void) reloadResignInfos {
+    [self.userMchntField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_mchntNm]];
+    [self.userNameField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_userName]];
+//    [self.userPwdField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_passWord]];
+    [self.userIDField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_identifyNo]];
+    [self.userPhoneField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_telNo]];
+    [self.userSpeSettleDsField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_speSettleDs]];
+    [self.userSettleAcctField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_settleAcct]];
+    [self.userSettleNameField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_settleAcctNm]];
+    [self.userAddrTextView setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_addr]];
+    [self.userAgeName setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_ageUserName]];
+    [self.userMailField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_mail]];
+    // 从数据库查询出地区代码对应的地名
+    NSString* areaKey = [[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_areaNo];
+    MySQLiteManager* sqlManager = [MySQLiteManager SQLiteManagerWithDBFile:@"test.db"];
+    NSString* selectString = [NSString stringWithFormat:@"select value from cst_sys_param where key = '%@'",areaKey];
+    NSArray* selectedDatas = [sqlManager selectedDatasWithSQLString:selectString];
+    if (selectedDatas.count == 1) {
+        NSString* areaName = [[selectedDatas objectAtIndex:0] valueForKey:@"VALUE"];
+        areaName = [PublicInformation clearSpaceCharAtLastOfString:areaName];
+        [self.areaLabel setText:[NSString stringWithFormat:@"%@(%@)",areaName,areaKey]];
+    }
+}
 
 // 创建一个 UITextField
 - (UITextField*) newTextFieldWithPlaceHolder:(NSString*)placeHolder {
@@ -635,6 +672,8 @@
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
 }
+
+
 
 #pragma mask ------ setter && getter
 - (UIScrollView *)scrollView {
@@ -790,7 +829,14 @@
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@:%@/jlagent/MchntRegister", [PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]]];
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/", [PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        // MchntRegister MchntModify
+        if (self.packageType != 0) {
+            urlString = [urlString stringByAppendingString:@"MchntModify"];
+        } else {
+            urlString = [urlString stringByAppendingString:@"MchntRegister"];
+        }
+        NSURL* url = [NSURL URLWithString:urlString];
         _httpRequest = [ASIFormDataRequest requestWithURL:url];
         [_httpRequest setPostFormat:ASIMultipartFormDataPostFormat];
         [_httpRequest addRequestHeader:@"Content-Type" value:@"application/json; encoding=utf-8"];
