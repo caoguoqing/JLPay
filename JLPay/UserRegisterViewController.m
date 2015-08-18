@@ -45,6 +45,7 @@
 @property (nonatomic, strong) UIImageView* imgViewCardForce;        // 银行卡正面照
 
 @property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // HTTP访问入口
+@property (nonatomic, retain) NSMutableURLRequest* URLRequest;
 @property (nonatomic, strong) JLActivity* activitor;
 
 @property (nonatomic, strong) UIImageView* neededLoadImageView;     // 当前需要被加载的图片视图
@@ -81,6 +82,7 @@
 @synthesize activitor = _activitor;
 @synthesize areaLabel = _areaLabel;
 @synthesize btnSearchData = _btnSearchData;
+@synthesize URLRequest = _URLRequest;
 @synthesize keyboardIsShow;
 @synthesize packageType;
 
@@ -231,9 +233,9 @@
         errorString = @"结算账户名称不能为空";
     } else if (self.userMailField.text.length == 0) {
         errorString = @"邮箱不能为空";
-    } else if (self.userAgeName.text.length == 0) {
+    } /*else if (self.userAgeName.text.length == 0) {
         errorString = @"所属代理商不能为空";
-    } else if (self.userAddrTextView.text.length == 0) {
+    }*/ else if (self.userAddrTextView.text.length == 0) {
         errorString = @"商户通信地址不能为空";
     } else if ([self.areaLabel.text isEqualToString:@"-"]) {
         errorString = @"商户所在地未选择，请选择";
@@ -870,6 +872,20 @@
         [_btnSearchData addTarget:self action:@selector(touchToSearchData:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnSearchData;
+}
+- (NSMutableURLRequest *)URLRequest {
+    if (_URLRequest == nil) {
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/", [PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        // MchntRegister MchntModify
+        if (self.packageType != 0) {
+            urlString = [urlString stringByAppendingString:@"MchntModify"];
+        } else {
+            urlString = [urlString stringByAppendingString:@"MchntRegister"];
+        }
+        NSURL* url = [NSURL URLWithString:urlString];
+        _URLRequest = [[NSMutableURLRequest alloc] initWithURL:url];
+    }
+    return _URLRequest;
 }
 
 @end

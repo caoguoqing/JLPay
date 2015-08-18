@@ -693,6 +693,236 @@
 
 
 
+
+
+
+#pragma mask ---- 重写8583报文打包函数
++ (NSString*) dictPacked8583 {
+    NSString* data;
+    NSMutableDictionary* dataPack = [[NSMutableDictionary alloc] init];
+    [dataPack setValue:[self makeF02] forKey:@"2"];
+    [dataPack setValue:[self makeF03] forKey:@"3"];
+    [dataPack setValue:[self makeF04] forKey:@"4"];
+    [dataPack setValue:[self makeF11] forKey:@"11"];
+    [dataPack setValue:[self makeF14] forKey:@"14"];
+    [dataPack setValue:[self makeF22] forKey:@"22"];
+    [dataPack setValue:[self makeF23] forKey:@"23"];
+    [dataPack setValue:[self makeF25] forKey:@"25"];
+    [dataPack setValue:[self makeF26] forKey:@"26"];
+    [dataPack setValue:[self makeF35] forKey:@"35"];
+    [dataPack setValue:[self makeF37] forKey:@"37"];
+    [dataPack setValue:[self makeF41] forKey:@"41"];
+    [dataPack setValue:[self makeF42] forKey:@"42"];
+    [dataPack setValue:[self makeF49] forKey:@"49"];
+    [dataPack setValue:[self makeF52] forKey:@"52"];
+    [dataPack setValue:[self makeF53] forKey:@"53"];
+    [dataPack setValue:[self makeF55] forKey:@"55"];
+    [dataPack setValue:[self makeF60] forKey:@"60"];
+    [dataPack setValue:[self makeF61] forKey:@"61"];
+    [dataPack setValue:[self makeF62] forKey:@"62"];
+    [dataPack setValue:[self makeF63] forKey:@"63"];
+    data = [HeaderString stringPacking8583WithBitmapArray:[self arrayBitMap]
+                                                     tpdu:TPDU
+                                                   header:HEADER
+                                             ExchangeType:[self exchangeType8583]
+                                           dataDictionary:dataPack];
+    return data;
+}
+// 位图信息数组
++ (NSArray*) arrayBitMap {
+    NSMutableArray* array = [[NSMutableArray alloc] init];
+    NSString* f22 = [[NSUserDefaults standardUserDefaults] valueForKey:Service_Entry_22];
+    NSString* tranType = [PublicInformation returnTranType];
+    if ([tranType isEqualToString:TranType_Consume]){
+        [array addObject:@"2"];
+        [array addObject:@"3"];
+        [array addObject:@"4"];
+        [array addObject:@"11"];
+        [array addObject:@"14"];
+        [array addObject:@"22"];
+        if ([f22 hasPrefix:@"05"]) {
+            [array addObject:@"23"];
+        }
+        [array addObject:@"25"];
+        [array addObject:@"26"];
+        [array addObject:@"35"];
+        [array addObject:@"41"];
+        [array addObject:@"42"];
+        [array addObject:@"49"];
+        if ([f22 hasSuffix:@"10"]) {
+            [array addObject:@"52"];
+        }
+        [array addObject:@"53"];
+        if ([f22 hasPrefix:@"05"]) {
+            [array addObject:@"55"];
+        }
+        [array addObject:@"60"];
+        [array addObject:@"64"];
+    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
+        [array addObject:@"2"];
+        [array addObject:@"3"];
+        [array addObject:@"4"];
+        [array addObject:@"11"];
+        [array addObject:@"14"];
+        [array addObject:@"22"];
+        if ([f22 hasPrefix:@"05"]) {
+            [array addObject:@"23"];
+        }
+        [array addObject:@"25"];
+        [array addObject:@"26"];
+        [array addObject:@"35"];
+        [array addObject:@"37"];
+        [array addObject:@"41"];
+        [array addObject:@"42"];
+        [array addObject:@"49"];
+        if ([f22 hasSuffix:@"10"]) {
+            [array addObject:@"52"];
+        }
+        [array addObject:@"53"];
+        [array addObject:@"60"];
+        [array addObject:@"61"];
+        [array addObject:@"64"];
+    } else if ([tranType isEqualToString:TranType_Chongzheng]) {
+    } else if ([tranType isEqualToString:TranType_BatchUpload]) {
+        
+    } else if ([tranType isEqualToString:TranType_DownMainKey]){
+        [array addObject:@"11"];
+        [array addObject:@"41"];
+        [array addObject:@"42"];
+        [array addObject:@"60"];
+        [array addObject:@"62"];
+        [array addObject:@"63"];
+    } else if ([tranType isEqualToString:TranType_DownWorkKey]) {
+        [array addObject:@"11"];
+        [array addObject:@"41"];
+        [array addObject:@"42"];
+        [array addObject:@"60"];
+        [array addObject:@"63"];
+    }
+    return array;
+}
+// 交易类型
++ (NSString*) exchangeType8583 {
+    NSString* exchangeType = nil;
+    NSString* tranType = [PublicInformation returnTranType];
+    if ([tranType isEqualToString:TranType_Consume] ||
+        [tranType isEqualToString:TranType_ConsumeRepeal]) {
+        exchangeType = @"0200";
+    } else if ([tranType isEqualToString:TranType_Chongzheng]) {
+        exchangeType = @"0400";
+    } else if ([tranType isEqualToString:TranType_BatchUpload]) {
+        exchangeType = @"0320";
+    } else if ([tranType isEqualToString:TranType_DownMainKey] ||
+               [tranType isEqualToString:TranType_DownWorkKey]) {
+        exchangeType = @"0800";
+    }
+    return exchangeType;
+}
+
+
+
+// -- F02
++ (NSString*) makeF02 {
+    return [PublicInformation returnCard:[PublicInformation returnposCard]];
+}
+// -- F03
++ (NSString*) makeF03 {
+    NSString* f03 = nil;
+    NSString* tranType = [PublicInformation returnTranType];
+    if ([tranType isEqualToString:TranType_Consume]) {
+        f03 = @"190000";
+    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
+        f03 = @"280000";
+    } else if ([tranType isEqualToString:TranType_BatchUpload]) {
+        f03 = [[NSUserDefaults standardUserDefaults] valueForKey:LastF03_ProcessingCode];
+    }
+    return f03;
+}
+// -- F04
++ (NSString*) makeF04 {
+    NSString* f04 = nil;
+    NSString* tranType = [PublicInformation returnTranType];
+    if ([tranType isEqualToString:TranType_Consume] ||
+        [tranType isEqualToString:TranType_Repay]   ||
+        [tranType isEqualToString:TranType_Transfer]) {
+        f04 = [PublicInformation returnMoney];
+    } else {
+        f04 = [PublicInformation returnConsumerMoney];
+    }
+    return f04;
+}
+// -- F11
++ (NSString*) makeF11 {
+    NSString* f11 = [PublicInformation exchangeNumber];
+    return f11;
+}
+// -- F14
++ (NSString*) makeF14 {
+    NSString* f14 = nil;
+    f14 = [[NSUserDefaults standardUserDefaults] valueForKey:EXP_DATE_14];
+    return f14;
+}
+// -- F22
++ (NSString*) makeF22 {
+    return [[NSUserDefaults standardUserDefaults] valueForKey:Service_Entry_22];
+}
+// -- F23
++ (NSString*) makeF23 {
+    return [[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23];
+}
+// -- F25
++ (NSString*) makeF25 {
+    return @"82";
+}
+// -- F26
++ (NSString*) makeF26 {
+    return @"12";
+}
+// -- F35
++ (NSString*) makeF35 {
+    NSMutableString* f35 = [[NSMutableString alloc] init];
+    NSString* card2Track = [PublicInformation returnTwoTrack];
+    [f35 appendFormat:@"%d%@",(int)card2Track.length/2,card2Track];
+    return f35;
+}
+// -- F37
++ (NSString*) makeF37 {
+    return [[NSUserDefaults standardUserDefaults] valueForKey:LastF37_ReferenceNum];
+}
+// -- F41
++ (NSString*) makeF41 {
+    return [EncodeString encodeASC:[PublicInformation returnTerminal]];
+}
+// -- F42
++ (NSString*) makeF42 {
+    return [EncodeString encodeASC:[PublicInformation returnBusiness]];
+}
+// -- F49
++ (NSString*) makeF49 {
+    return [EncodeString encodeASC:@"156"];
+}
+// -- F52
++ (NSString*) makeF52 {
+    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
+}
+// -- F53
++ (NSString*) makeF53 {
+    NSString* f53 = @"600000000000000";
+    NSString* f22 = [[NSUserDefaults standardUserDefaults] valueForKey:Service_Entry_22];
+    if ([f22 hasSuffix:@"10"]) {
+        f53 = [@"2" stringByAppendingString:f53];
+    } else {
+        f53 = [@"0" stringByAppendingString:f53];
+    }
+    return f53;
+}
+// -- F55
++ (NSString*) makeF55 {
+    NSString* ICData = [[NSUserDefaults standardUserDefaults] valueForKey:BlueIC55_Information];
+    NSString* f55 = [NSString stringWithFormat:@"%04d%@",(int)ICData.length/2,ICData];
+    return f55;
+}
+// -- F60
 + (NSString*) makeF60 {
     NSMutableString* F60 = [[NSMutableString alloc] initWithString:@"0019"];
     NSString* tranType = [PublicInformation returnTranType];
@@ -701,11 +931,15 @@
         [F60 appendString:@"22"];
     } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
         [F60 appendString:@"23"];
-    } 
+    } else if ([tranType isEqualToString:TranType_DownMainKey]) {
+        [F60 appendString:@"99"];
+    } else if ([tranType isEqualToString:TranType_DownWorkKey]) {
+        [F60 appendString:@"00"];
+    }
     // 60.2 N6 批次号
     [F60 appendString:[PublicInformation returnSignSort]];
     // 60.3 N3 操作类型
-    [F60 appendString:@"000"];
+    [F60 appendString:@"003"];
     // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
     [F60 appendString:@"1"];
     // 60.5 N1 费率:
@@ -720,7 +954,24 @@
     [F60 appendString:@"00"];
     // 补齐整数位
     [F60 appendString:@"0"];
-    return F60;
+    return F60;}
+// -- F61
++ (NSString*) makeF61 {
+    NSMutableString* f61 = [[NSMutableString alloc] init];
+    [f61 appendString:[PublicInformation returnFdReserved]];
+    [f61 appendString:[PublicInformation returnLiushuiHao]];
+    return [NSString stringWithFormat:@"%04d%@",(int)f61.length,f61];
 }
+// -- F62
++ (NSString*) makeF62 {
+    return @"01449F0605DF000000049F220101DF9981804ff32b878be48f71335aa4a3f3c54bcfc574020b9bc8d28692ff54523db6e57f3a865c4460963d59a3f6fc5c82d366a2cb95655e92224e204afd1b7d22cd2fb012013208970cbb24d22a9072e734acc13afe128191cfaf97e0969bbf2f1658b092398f8f0446421daca0862e93d9ad174e85e2a68eac8ec9897328ca5b5fa4e6";
+}
+// -- F63
++ (NSString*) makeF63 {
+    NSString* f63 = [EncodeString encodeASC:Manager_Number];
+    f63 = [NSString stringWithFormat:@"%02d%@",(int)f63.length/2,f63];
+    return [EncodeString encodeASC:[PublicInformation returnBusiness]];
+}
+
 
 @end

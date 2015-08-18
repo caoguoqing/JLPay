@@ -22,20 +22,47 @@
             [newArr replaceObjectAtIndex:[[arr objectAtIndex:c] intValue]-1 withObject:@"1"];
         }
     }
-//    NSLog(@"newArr====%@",newArr);
     NSString *bitmapStr=[ISOHelper binaryToHexAsString:[newArr componentsJoinedByString:@""]];
     return bitmapStr;
 }
 
-+(NSString *)receiveArr:(NSArray *)arr  Tpdu:(NSString *)tpdu Header:(NSString *)header ExchangeType:(NSString *)exchangetype DataArr:(NSArray *)dataarr{
-
++(NSString *)receiveArr:(NSArray *)arr
+                   Tpdu:(NSString *)tpdu
+                 Header:(NSString *)header
+           ExchangeType:(NSString *)exchangetype
+                DataArr:(NSArray *)dataarr
+{
     NSString *bitmapStr=[self returnBitmap:arr];
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];
-//    NSLog(@"length[%@],TPDU[%@],Header[%@],Exchangetype[%@],BitMap[%@],data[%@]",
-//          [self ToBHex:(int)[allStr length]/2],tpdu,header,exchangetype,bitmapStr,dataStr);
     return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)[allStr length]/2],allStr];
 }
+
+
+///////////////////////////////////
+/*
+ * 8583打包函数:
+ *  1.域值打包在字典中传入
+ *  2.根据传入的map数组到字典中取对应的 value
+ */
++(NSString*) stringPacking8583WithBitmapArray:(NSArray*)mapArray
+                                        tpdu:(NSString*)tpdu
+                                       header:(NSString*)header
+                                 ExchangeType:(NSString*)exchangeType
+                               dataDictionary:(NSDictionary*)dict
+{
+    NSMutableString* packedString = [[NSMutableString alloc] init];
+    [packedString appendString:tpdu];
+    [packedString appendString:header];
+    [packedString appendString:exchangeType];
+    [packedString appendString:[self returnBitmap:mapArray]];
+    for (NSString* key in mapArray) {
+        [packedString appendString:[dict valueForKey:key]];
+    }
+    return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)packedString.length/2],packedString];
+}
+///////////////////////////////////
+
 
 
 +(NSString *)IC_receiveArr:(NSArray *)arr  Tpdu:(NSString *)tpdu Header:(NSString *)header ExchangeType:(NSString *)exchangetype DataArr:(NSArray *)dataarr{
@@ -52,8 +79,6 @@
 //十进制转16进制
 
 +(NSString *)ToBHex:(int)tmpid{
-    //NSLog(@"tmpid=====%d",tmpid);
-
     NSString *endtmp=@"";
     int yushu = 0;
     int chushu = 0;
@@ -79,77 +104,7 @@
     }
     return endtmp;
 }
-//+(NSString *)ToBHex:(int)tmpid{
-//    //NSLog(@"tmpid=====%d",tmpid);
-//    NSString *endtmp=@"";
-//    NSString *nLetterValue;
-//    NSString *nStrat;
-//    NSLog(@"==============tmpid=[%d]",tmpid);
-//    
-//    int ttmpig=tmpid%16;
-//    NSLog(@"==============ttmpig=[%d]",ttmpig);
-//    
-//    int tmp=tmpid/16;
-//    NSLog(@"==============tmp=[%d]",tmp);
-//    
-//    switch (ttmpig)
-//    {
-//        case 10:
-//            nLetterValue =@"A";break;
-//        case 11:
-//            nLetterValue =@"B";break;
-//        case 12:
-//            nLetterValue =@"C";break;
-//        case 13:
-//            nLetterValue =@"D";break;
-//        case 14:
-//            nLetterValue =@"E";break;
-//        case 15:
-//            nLetterValue =@"F";break;
-//        default:nLetterValue=[[NSString alloc]initWithFormat:@"%i",ttmpig];
-//            
-//    }
-//    NSLog(@"==============nLetterValue=[%@]",nLetterValue);
-//    
-//    switch (tmp)
-//    {
-//        case 10:
-//            nStrat =@"A";break;
-//        case 11:
-//            nStrat =@"B";break;
-//        case 12:
-//            nStrat =@"C";break;
-//        case 13:
-//            nStrat =@"D";break;
-//        case 14:
-//            nStrat =@"E";break;
-//        case 15:
-//            nStrat =@"F";break;
-//        default:nStrat=[[NSString alloc]initWithFormat:@"%i",tmp];
-//            
-//    }
-//    NSLog(@"==============nStrat=[%@]",nStrat);
-//    
-//    endtmp=[[NSString alloc]initWithFormat:@"%@%@",nStrat,nLetterValue];
-//    NSLog(@"==============endtmp=[%@]",endtmp);
-//    
-//    NSString *str=@"";
-//    if([endtmp length]<4)
-//    {
-//        for (int x=[endtmp length]; x<4; x++) {
-//            str=[str stringByAppendingString:@"0"];
-//        }
-//        endtmp=[[NSString alloc]initWithFormat:@"%@%@",str,endtmp];
-//    }
-//    NSLog(@"==============endtmp=[%@]",endtmp);
-//    
-//    return endtmp;
-//}
 
-
-
-//(DL_UINT8)((DL_ASCHEX_2_NIBBLE(dataPtr[0]) << 4) |
-//DL_ASCHEX_2_NIBBLE(dataPtr[1])         )
 
 
 
@@ -158,8 +113,6 @@ char uniteBytes(char a,char b)
     char c1 = (a-'0') << 4;
     char c2 =b-'0';
     return c1+c2;
-//    char c = (int(a-'0') << 4)+ b-'0';
-//    return c;
 }
 
 /**
@@ -195,7 +148,7 @@ void getHPin(char* pin, char* encode)
  */
 char* getHAccno(char* accno,char* encode)
 {
-    int len = strlen(accno);
+    int len = (int)strlen(accno);
     int beginPos = len < 13 ? 0 : len - 13;
     char arrTemp[13] = {0};
     memcpy(arrTemp, accno+beginPos, len-beginPos-1);
@@ -250,53 +203,7 @@ void binary2char(char* charArray, const unsigned char* binArray, int binLen)
 }
 
 
-/*
--(void)getHPin:(char *)pin code:(char *)encode{
-    encode[0] = 6;
-    encode[1] = uniteBytes(pin[0], pin[1]);
-    encode[2] = uniteBytes(pin[2], pin[3]);
-    encode[3] = uniteBytes(pin[4], pin[5]);
-    encode[4] = 255;
-    encode[5] = 255;
-    encode[6] = 255;
-    encode[7] = 255;
-}
 
--(char *)getHAccno:(char *)accno code:(char *)encode{
-    int len = strlen(accno);
-    int beginPos = len < 13 ? 0 : len - 13;
-    char arrTemp[13] = {0};
-    memcpy(arrTemp, accno+beginPos, len-beginPos-1);
-    char arrAccno[12];
-    for(int i=0; i<12; i++)
-    {
-        arrAccno[i] = (i <= strlen(arrTemp) ? arrTemp[i] : 0);
-    }
-    
-    encode[0] = 0;
-    encode[1] = 0;
-    encode[2] = uniteBytes(arrAccno[0], arrAccno[1]);
-    encode[3] = uniteBytes(arrAccno[2], arrAccno[3]);
-    encode[4] = uniteBytes(arrAccno[4], arrAccno[5]);
-    encode[5] = uniteBytes(arrAccno[6], arrAccno[7]);
-    encode[6] = uniteBytes(arrAccno[8], arrAccno[9]);
-    encode[7] = uniteBytes(arrAccno[10], arrAccno[11]);
-    return encode;
-}
-
--(void)process:(char *)pin acc:(char *)accno ret:(char *)pHexRet{
-    char arrAccno[128]={0};
-    getHAccno(accno,arrAccno);
-    char arrPin[128]={0};
-    getHPin(pin, arrPin);
-    unsigned char arrRet[8]={0};
-    for(int i=0; i<8; i++){
-        arrRet[i] = (unsigned char)(arrPin[i] ^ arrAccno[i]);
-    }
-    
-    binary2char(pHexRet, arrRet, 8);
-}
- */
 
 
 

@@ -33,7 +33,13 @@
 #define Screen_Width  [UIScreen mainScreen].bounds.size.width
 #define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
-// 环境: 正式(1), 62(0), 50(5)
+/* 
+ * 环境: 
+ * 1: 生产环境(1),
+ * 0: 内网测试62,
+ * 5: 内网测试50
+ * 9: 外网测试62
+ */
 #define TestOrProduce                   0
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
@@ -63,7 +69,7 @@
 #define TranType_TuiHuo             @"TranType_TuiHuo"                  // 退货交易
 #define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
 #define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
-
+#define TranType_BatchUpload        @"TranType_BatchUpload"             // 披上送，IC卡交易完成后上送
 #define TranType_Repay              @"TranType_Repay_"                  // 信用卡还款
 #define TranType_Transfer           @"TranType_Transfer_"               // 转账汇款
 
@@ -152,6 +158,8 @@
 #define  LastF11_SystemTrace        @"LastSystemTrace_F11__"
 // 22,服务点输入方式码         -- 跟上一笔交易保持一致    Service Entry Code
 #define  LastF22_ServiceEntryCode   @"LastServiceEntryCode_F22__"
+// 37,原交易参考号
+#define  LastF37_ReferenceNum       @"LastF37_ReferenceNum__"
 // 41 终端号
 #define  LastF41_TerminalNo         @"LastF41_TerminalNo__"
 // 42 商户号
@@ -184,6 +192,8 @@
 #define ICCardSeq_23    @"ICCardSeq_23_"
 // F35:   二磁道数据
 #define Two_Track_Data @"trackdata"
+// F37:   检索参考号
+#define Reference_Number_37 @"Reference_Number_37_"
 // F38:   授权码:AUTH NO
 #define AuthNo_38       @"AuthNo_38_"
 // F44.1:   发卡行标识

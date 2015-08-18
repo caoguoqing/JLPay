@@ -632,8 +632,6 @@
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
     NSLog(@"------字符串=======[%@]",unicodeString);
     return unicodeString;
-    
-    
 }
 
 + (NSString*)stringWithHexBytes2:(NSData *)theData {

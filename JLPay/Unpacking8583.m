@@ -32,11 +32,11 @@ static Unpacking8583 *sharedObj2 = nil;
 
 /*
 //1.（2字节包长）
-//2.(5 字节 TPDU)
-//3.(6 字节报文头)
-//4.(4 字节交易类型)
-//5.(8 字节 BITMAP 位图)
-//6.(实际交易数据)
+//2. (5 字节 TPDU)
+//3. (6 字节报文头)
+//4. (4 字节交易类型)
+//5. (8 字节 BITMAP 位图)
+//6. (实际交易数据)
 
 */
 
@@ -65,7 +65,8 @@ static Unpacking8583 *sharedObj2 = nil;
                 NSString *bitStr=[bitmapArr objectAtIndex:i];
                 for (int a=0; a<[[allElementDic allKeys] count]; a++) {
                     if ([bitStr isEqualToString:[[allElementDic allKeys] objectAtIndex:a]]) {
-                        [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:[[allElementDic allKeys] objectAtIndex:a]] forKey:[[allElementDic allKeys] objectAtIndex:a]]];
+                        [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:[[allElementDic allKeys] objectAtIndex:a]]
+                                                                                     forKey:[[allElementDic allKeys] objectAtIndex:a]]];
                     }
                 }
             }

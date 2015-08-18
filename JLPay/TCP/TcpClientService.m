@@ -70,6 +70,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
 //读取数据
 -(void) onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     NSString* aStr = [PublicInformation stringWithHexBytes2:data];
+    NSLog(@"-----\n8583响应数据原始串:[%@]",aStr);
     self.returnAllData=aStr;
     [sock setDelegate:nil];
     [sock disconnect];
