@@ -755,6 +755,14 @@
     nDate = [nDate substringToIndex:8];
     return nDate;
 }
++ (NSString*) nowTime {
+    NSString* nDate ;
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    nDate = [dateFormatter stringFromDate:[NSDate date]];
+    nDate = [nDate substringToIndex:14];
+    return nDate;
+}
 
 
 +(NSString *)formatDate{

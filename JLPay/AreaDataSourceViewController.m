@@ -176,6 +176,10 @@ int tagOfCity = 14;
 
 #pragma mask ---- UIBarButtonItem 确定 的点击事件
 - (void) popToRegisterView {
+    if (!self.selectedCity || self.selectedCity.length == 0) {
+        [self alertShowWithMessage:@"请先选择城市"];
+        return;
+    }
     // 获取上层界面,并将 城市-城市代码 传给它 ...
     [self.navigationController popViewControllerAnimated:YES];
     UserRegisterViewController* viewCs = (UserRegisterViewController*)self.navigationController.topViewController;

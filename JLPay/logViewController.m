@@ -37,6 +37,8 @@
 
 @property (nonatomic, strong) UIButton    *signInButton;          // 注册按钮
 @property (nonatomic, strong) UIButton    *pinChangeButton;       // 密码修改按钮
+@property (nonatomic, strong) UISwitch*    switchSavePin;
+@property (nonatomic, strong) UISwitch*    switchSecurity;
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
 @property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // http请求
@@ -54,6 +56,8 @@
 @synthesize pinChangeButton         = _pinChangeButton;
 @synthesize moveHeightByWindow      = _moveHeightByWindow;
 @synthesize httpRequest = _httpRequest;
+@synthesize switchSavePin = _switchSavePin;
+@synthesize switchSecurity = _switchSecurity;
 @synthesize dictLastRegisterInfo ;
 
 /*****************************/
@@ -70,11 +74,6 @@
     NSString* appVersion            = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     NSLog(@"app版本号:V%@",appVersion);
     
-    // 如果有登陆过，就显示账号
-    NSString* userID = [[NSUserDefaults standardUserDefaults] objectForKey:UserID];
-    if ([userID length] > 0) {
-        self.userNumberTextField.text = userID;
-    }
     
     // 设置 title 的字体颜色
     UIColor *color                  = [UIColor redColor];
@@ -103,6 +102,20 @@
     self.httpRequest = nil;
     [self.loadButton setEnabled:YES];
 }
+
+#pragma mask ---- 密码文本框的编辑事件
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    if (textField == self.userPasswordTextField) {
+        if ([self.switchSecurity isOn]) {
+            [textField setSecureTextEntry:NO];
+        } else {
+            [textField setSecureTextEntry:YES];
+        }
+    }
+    
+    return YES;
+}
+
 
 /*************************************
  * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
@@ -186,7 +199,7 @@
     CGFloat      iconViewWidth          = self.view.bounds.size.width / 2.0;
     CGFloat      iconViewHeight         = iconViewWidth * iconSize.height/iconSize.width;
     CGFloat      x                      = 0 + (self.view.bounds.size.width - iconViewWidth)/2.0;
-    CGFloat      y                      = (self.view.bounds.size.height - iconViewHeight*5 - inset*3)/2.0;
+    CGFloat      y                      = (self.view.bounds.size.height - iconViewHeight*5 - inset*3 - inset - self.switchSecurity.frame.size.height)/2.0;
     CGRect       frame                  = CGRectMake(x, y, iconViewWidth, iconViewHeight);
     iconImageView                       = [[UIImageView alloc] initWithFrame:frame];
     iconImageView.image                 = iconImage;
@@ -196,7 +209,7 @@
     
     /* 账号：textField ; width=view.bounds.width - 50*2 ; height = iconViewHeight; */
     frame.origin.x                      = leftLeave;
-    frame.origin.y                      += iconViewHeight * 2;
+    frame.origin.y                      += iconViewHeight * (1 + 0.8);
     frame.size.width                    = self.view.bounds.size.width - leftLeave*2.0;
     userNumberView                      = [self userInputViewForName:@"账号" inRect:frame];
     [self.view addSubview:userNumberView];
@@ -206,9 +219,44 @@
     userPasswordView                    = [self userInputViewForName:@"密码" inRect:frame];
     [self.view addSubview:userPasswordView];
     
+    /* 是否保存密码 */
+    frame.origin.y += frame.size.height + inset;
+    frame.size.width = (frame.size.width - self.switchSecurity.frame.size.width*2 - inset)/2.0;
+    frame.size.height = self.switchSecurity.frame.size.height;
+    UILabel* label = [[UILabel alloc] initWithFrame:frame];
+    label.text = @"保存密码";
+    label.textColor = [UIColor whiteColor];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = [UIFont systemFontOfSize:15.0];
+    [self.view addSubview:label];
+    
+    /* switch */
+    frame.origin.x += frame.size.width;
+    self.switchSavePin.frame = frame;
+    [self.view addSubview:self.switchSavePin];
+    
+    /* 是否显示密码 */
+    frame.origin.x += self.switchSavePin.frame.size.width + inset;
+    label = [[UILabel alloc] initWithFrame:frame];
+    label.text = @"显示密码";
+    label.textColor = [UIColor whiteColor];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = [UIFont systemFontOfSize:15.0];
+    [self.view addSubview:label];
+    
+    /* switch */
+    frame.origin.x += frame.size.width ;
+    self.switchSecurity.frame = frame;
+    [self.view addSubview:self.switchSecurity];
+
+    
+    
     
     /* 登陆按钮：UIButton */
+    frame.origin.x                      = leftLeave;
     frame.origin.y                      += frame.size.height + inset * 2.0;
+    frame.size.width                    = self.view.bounds.size.width - leftLeave*2.0;
+    frame.size.height                   = iconViewHeight;
     self.loadButton.frame               = frame;
     [self.view addSubview:self.loadButton];
     frame.origin.y += frame.size.height;
@@ -337,8 +385,15 @@
         return;
     }
     
-    // 不是发签到了，而是登陆: 登陆要上送账号跟密码，明文用 3des 加密成密文
-//    [[NSUserDefaults standardUserDefaults] setValue:self.userNumberTextField.text forKey:UserID];
+    // 保存历史信息
+    [[NSUserDefaults standardUserDefaults] setBool:self.switchSavePin.on forKey:NeedSavingUserPW];
+    [[NSUserDefaults standardUserDefaults] setBool:self.switchSecurity.on forKey:NeedDisplayUserPW];
+    if ([self.switchSavePin isOn]) {
+        [[NSUserDefaults standardUserDefaults] setValue:self.userPasswordTextField.text forKey:UserPW];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    
     // 3des 加密
     // 原始 key
     NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
@@ -549,6 +604,10 @@
         _userNumberTextField.placeholder    = @"请输入您的账号";
         _userNumberTextField.textColor      = [UIColor whiteColor];
         _userNumberTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+        if (textPrepare && textPrepare.length > 0) {
+            _userNumberTextField.text = textPrepare;
+        }
     }
     return _userNumberTextField;
 }
@@ -558,7 +617,20 @@
         _userPasswordTextField = [[UITextField alloc] initWithFrame:CGRectZero];
         _userPasswordTextField.placeholder  = @"请输入您的密码";
         _userPasswordTextField.textColor    = [UIColor whiteColor];
-        _userPasswordTextField.secureTextEntry = YES;
+        if ([self.switchSecurity isOn]) {
+            _userPasswordTextField.secureTextEntry = NO;
+        } else {
+            _userPasswordTextField.secureTextEntry = YES;
+        }
+        _userPasswordTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        [_userPasswordTextField setDelegate:self];
+        if ([self.switchSavePin isOn]) {
+            NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
+            if (textPrepare && textPrepare.length > 0) {
+                _userPasswordTextField.text = textPrepare;
+            }
+        }
+
     }
     return _userPasswordTextField;
 }
@@ -607,5 +679,19 @@
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
+}
+- (UISwitch *)switchSavePin {
+    if (_switchSavePin == nil) {
+        _switchSavePin = [[UISwitch alloc] initWithFrame:CGRectZero];
+        [_switchSavePin setOn:[[NSUserDefaults standardUserDefaults] boolForKey:NeedSavingUserPW]];
+    }
+    return _switchSavePin;
+}
+- (UISwitch *)switchSecurity {
+    if (_switchSecurity == nil) {
+        _switchSecurity = [[UISwitch alloc] initWithFrame:CGRectZero];
+        [_switchSecurity setOn:[[NSUserDefaults standardUserDefaults] boolForKey:NeedDisplayUserPW]];
+    }
+    return _switchSecurity;
 }
 @end

@@ -24,17 +24,21 @@
 }
 
 + (NSString *)encodeASC:(NSString *)ascStr{
+    int logInt = 0;
+    NSLog(@"[%s]%02d:原始串:%@",__func__,logInt++,ascStr);
     NSData* aData = [ascStr dataUsingEncoding: NSASCIIStringEncoding];
+    NSLog(@"[%s]%02d:封装成ASC data:%@",__func__,logInt++,aData);
     Byte *aaa = (Byte *)[aData bytes];
     NSMutableString * str_tmp = [[NSMutableString alloc]init];
     NSString * ccc = @"0123456789ABCDEF";
     for (int i=0; i<aData.length; i++) {
+        NSLog(@"[%s]%02d:aaa[%d]:%x",__func__,logInt++,i,aaa[i]);
         str_tmp = (NSMutableString *)[str_tmp stringByAppendingFormat:@"%c",(char )[ccc characterAtIndex:((aaa[i] & 0xf0) >> 4)]];
+        NSLog(@"[%s]%02d:str_tmp:%@",__func__,logInt++,str_tmp);
         str_tmp = (NSMutableString *)[str_tmp stringByAppendingFormat:@"%c",(char )[ccc characterAtIndex:((aaa[i] & 0xf) >> 0)]];
+        NSLog(@"[%s]%02d:str_tmp:%@",__func__,logInt++,str_tmp);
     }
     return str_tmp;
-    //return [[ASCIIString alloc] initWithData:aData];
-    
 }
 
 

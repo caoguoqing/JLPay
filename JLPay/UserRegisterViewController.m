@@ -43,9 +43,9 @@
 @property (nonatomic, strong) UIImageView* imgViewIDBackground;     // 身份证背面照
 @property (nonatomic, strong) UIImageView* imgViewIDHanding;        // 手持身份证照
 @property (nonatomic, strong) UIImageView* imgViewCardForce;        // 银行卡正面照
+@property (nonatomic, strong) NSMutableDictionary* dictImageAndURL; // 保存图片组跟它的url
 
 @property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // HTTP访问入口
-@property (nonatomic, retain) NSMutableURLRequest* URLRequest;
 @property (nonatomic, strong) JLActivity* activitor;
 
 @property (nonatomic, strong) UIImageView* neededLoadImageView;     // 当前需要被加载的图片视图
@@ -82,7 +82,7 @@
 @synthesize activitor = _activitor;
 @synthesize areaLabel = _areaLabel;
 @synthesize btnSearchData = _btnSearchData;
-@synthesize URLRequest = _URLRequest;
+@synthesize dictImageAndURL = _dictImageAndURL;
 @synthesize keyboardIsShow;
 @synthesize packageType;
 
@@ -121,16 +121,18 @@
     [self.httpRequest setPostValue:self.userMailField.text forKey:@"mail"];
     // 身份证正面照 -- 打包成data
     NSData* imgData = UIImagePNGRepresentation(self.imgViewIDForce.image);
-    [self.httpRequest setData:imgData forKey:@"03"];
+    [self.httpRequest setData:imgData withFileName:[self urlForImageView:self.imgViewIDForce] andContentType:@"image/png" forKey:@"03"];
     // 身份证背面照 -- 打包成data
     imgData = UIImagePNGRepresentation(self.imgViewIDBackground.image);
-    [self.httpRequest setData:imgData forKey:@"06"];
+    [self.httpRequest setData:imgData withFileName:[self urlForImageView:self.imgViewIDBackground] andContentType:@"image/png" forKey:@"06"];
     // 手持身份证照 -- 打包成data
     imgData = UIImagePNGRepresentation(self.imgViewIDHanding.image);
-    [self.httpRequest setData:imgData forKey:@"08"];
+    [self.httpRequest setData:imgData withFileName:[self urlForImageView:self.imgViewIDHanding] andContentType:@"image/png" forKey:@"08"];
     // 银行卡正面照 -- 打包成data
     imgData = UIImagePNGRepresentation(self.imgViewCardForce.image);
-    [self.httpRequest setData:imgData forKey:@"09"];
+    [self.httpRequest setData:imgData withFileName:[self urlForImageView:self.imgViewCardForce] andContentType:@"image/png" forKey:@"09"];
+    
+    [self.httpRequest buildPostBody];
     return YES;
 }
 #pragma mask ------ ASIHTTP 响应协议
@@ -151,6 +153,18 @@
     [self.activitor stopAnimating];
     [self alertShowWithMessage:@"注册失败:网络异常"];
     [self freeHTTPRequest];
+}
+// 扫描保存的图片组字典，取出匹配的 url
+- (NSString*) urlForImageView:(UIImageView*)imageView {
+    NSString* imageURL = nil;
+    for (NSString* url in [self.dictImageAndURL allKeys]) {
+        UIImageView* innerImageView = [self.dictImageAndURL objectForKey:url];
+        if (innerImageView == imageView) {
+            imageURL = url;
+            break;
+        }
+    }
+    return imageURL;
 }
 
 
@@ -207,6 +221,7 @@
     [self HTTPPacking];
     [self.activitor startAnimating];
     [self.httpRequest startAsynchronous];
+    NSLog(@"\n---http=[%@]",self.httpRequest);
     NSError* error = [self.httpRequest error];
     if (error != nil) {
         NSLog(@"HTTP请求失败:[%@]",error);
@@ -287,6 +302,22 @@
     
     UIImage* selectedImage = [info valueForKey:UIImagePickerControllerOriginalImage];
     if (self.neededLoadImageView != nil) {
+        // 保存图片跟图片名字到字典
+        NSString* key = nil;
+        if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+            key = [NSString stringWithFormat:@"IMG%@.png",[PublicInformation nowTime]];
+        } else {
+            NSURL* imageURL = [info valueForKey:UIImagePickerControllerReferenceURL] ;
+            NSString* urlString = imageURL.absoluteString;
+            NSLog(@"图片URL:[%@]",urlString);
+            NSRange range = [urlString rangeOfString:@"id="];
+            key = [urlString substringFromIndex:range.location + range.length];
+            key = [key substringToIndex:[key rangeOfString:@"&"].location];
+            key = [key stringByAppendingString:@".png"];
+        }
+        
+        [self.dictImageAndURL setObject:self.neededLoadImageView forKey:key];
+        
         self.neededLoadImageView.image = selectedImage;
         // 重置 imageView 的 frame
         /*
@@ -294,6 +325,8 @@
          * 如果大于 iv 的宽度，就调整高度
          */
         self.neededLoadImageView.image = [self newImageOfFrame:self.neededLoadImageView.frame withImage:selectedImage];
+    } else {
+        NSLog(@"注册上传图片:没有获取到图片");
     }
 }
 - (UIImage*) newImageOfFrame:(CGRect)lastFrame withImage:(UIImage*)image {
@@ -479,7 +512,7 @@
     frame.origin.y += verticalInset;
     frame = [self newFrameAfterAddTextFiled:self.userMailField withFrame:frame andTitle:@"邮箱" withNeededFlag:YES];
     frame.origin.y += verticalInset;
-    frame = [self newFrameAfterAddTextFiled:self.userAgeName withFrame:frame andTitle:@"所属代理商用户名" withNeededFlag:YES];
+    frame = [self newFrameAfterAddTextFiled:self.userAgeName withFrame:frame andTitle:@"所属代理商用户名" withNeededFlag:NO];
     frame.origin.y += verticalInset;
     frame = [self newFrameAfterAddTextFiled:self.userAddrTextView withFrame:frame andTitle:@"商户通信地址" withNeededFlag:YES];
     
@@ -841,10 +874,7 @@
         NSURL* url = [NSURL URLWithString:urlString];
         _httpRequest = [ASIFormDataRequest requestWithURL:url];
         [_httpRequest setPostFormat:ASIMultipartFormDataPostFormat];
-        [_httpRequest addRequestHeader:@"Content-Type" value:@"application/json; encoding=utf-8"];
-        [_httpRequest addRequestHeader:@"Accept" value:@"application/json"];
         [_httpRequest setRequestMethod:@"POST"];
-        [_httpRequest setShouldStreamPostDataFromDisk:NO];
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
@@ -873,19 +903,11 @@
     }
     return _btnSearchData;
 }
-- (NSMutableURLRequest *)URLRequest {
-    if (_URLRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/", [PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
-        // MchntRegister MchntModify
-        if (self.packageType != 0) {
-            urlString = [urlString stringByAppendingString:@"MchntModify"];
-        } else {
-            urlString = [urlString stringByAppendingString:@"MchntRegister"];
-        }
-        NSURL* url = [NSURL URLWithString:urlString];
-        _URLRequest = [[NSMutableURLRequest alloc] initWithURL:url];
+- (NSMutableDictionary *)dictImageAndURL {
+    if (_dictImageAndURL == nil) {
+        _dictImageAndURL = [[NSMutableDictionary alloc] init];
     }
-    return _URLRequest;
+    return _dictImageAndURL;
 }
 
 @end

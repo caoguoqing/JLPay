@@ -57,6 +57,7 @@
     [packedString appendString:exchangeType];
     [packedString appendString:[self returnBitmap:mapArray]];
     for (NSString* key in mapArray) {
+        NSLog(@"key = [%@], value = [%@]",key, [dict valueForKey:key]);
         [packedString appendString:[dict valueForKey:key]];
     }
     return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)packedString.length/2],packedString];

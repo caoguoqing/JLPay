@@ -258,6 +258,7 @@
     NSString* methodStr;
     
     // -- 注意::::::要区分IC卡和磁条卡交易
+//    orderMethod = [GroupPackage8583 stringPacking8583];
     if ([self.stringOfTranType isEqualToString:TranType_Consume]) {                 // 消费
         // 磁条
         if ([PublicInformation returnCardType_Track]) {
@@ -269,10 +270,9 @@
         }
         methodStr = @"cousume";
     } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
-        orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
-                                              liushui:[PublicInformation returnConsumerSort]  // 原系统流水号
-                                                money:[PublicInformation returnConsumerMoney]]; // 原消费金额
-
+//        orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
+//                                              liushui:[PublicInformation returnConsumerSort]  // 原系统流水号
+//                                                money:[PublicInformation returnConsumerMoney]]; // 原消费金额
         methodStr = @"consumeRepeal";
     }
     

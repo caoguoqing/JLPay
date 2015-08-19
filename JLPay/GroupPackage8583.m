@@ -264,7 +264,9 @@
 /************************
  *  mac校验证
  *************************/
-+(NSArray *)getNewPinAndMac:(NSArray *)arr exchange:(NSString *)typestr bitmap:(NSString *)bitstr{
++(NSArray *)getNewPinAndMac:(NSArray *)arr
+                   exchange:(NSString *)typestr
+                     bitmap:(NSString *)bitstr{
     //NSLog(@"原始数据====%@",arr);
     //mac校验数据
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@",typestr,bitstr,[arr componentsJoinedByString:@""]];
@@ -298,7 +300,7 @@
             for (int j = 0; j < 8; j++) {
                 mac[j] = (Byte) (mac[j] ^ temp[j]);
             }
-//            NSLog(@"mac===========%@",[[NSData alloc] initWithBytes:mac length:sizeof(mac)]);
+            NSLog(@"mac===========%@",[[NSData alloc] initWithBytes:mac length:sizeof(mac)]);
             z = 0;
             memset(&temp, 0, sizeof(temp));
         }
@@ -311,14 +313,14 @@
 //    NSLog(@"newData====%@",newData);
     
     NSString *newStr=[EncodeString encodeASC:[PublicInformation stringWithHexBytes2:newData]];
-//    NSLog(@"newStr====%@",newStr);
+    NSLog(@"newStr====%@",newStr);
     
     NSString *leftString=[newStr substringWithRange:NSMakeRange(0, 16)];
     NSString *rightString=[newStr substringWithRange:NSMakeRange(16, [newStr length]-16)];
     //mack签到明文
     //双倍des加密
     NSString *left3descryptStr=[[Unpacking8583 getInstance] threeDesEncrypt:leftString keyValue:[PublicInformation signinMac]];
-    //NSLog(@"left3descryptStr====%@",left3descryptStr);
+    NSLog(@"left3descryptStr====%@",left3descryptStr);
     
     //异或运算,rightString,left3descryptStr
     
@@ -332,18 +334,18 @@
     
     NSData *theData = [[NSData alloc] initWithBytes:pwdPlaintext length:sizeof(pwdPlaintext)];
     NSString *resultStr=[PublicInformation stringWithHexBytes2:theData];
-    //NSLog(@"异或结果%@",resultStr);
+    NSLog(@"异或结果%@",resultStr);
     
     //双倍des加密
     NSString *str=[[Unpacking8583 getInstance] threeDesEncrypt:resultStr keyValue:[PublicInformation signinMac]];
-    //NSLog(@"3des====%@",str);
-    //NSLog(@"mac======%@",[str substringWithRange:NSMakeRange(0, 8)]);
+    NSLog(@"3des====%@",str);
+    NSLog(@"mac======%@",[str substringWithRange:NSMakeRange(0, 8)]);
     NSString *macStr=[EncodeString encodeASC:[str substringWithRange:NSMakeRange(0, 8)]];
     NSMutableArray *newArr=[[NSMutableArray alloc] initWithArray:arr];
     [newArr addObject:macStr];
-//    NSLog(@"添加mac校验64域====%@",newArr);
+    NSLog(@"添加mac校验64域====%@",newArr);
     for (int i=0; i<[newArr count]; i++) {
-        //NSLog(@"aaaaa=%@",[newArr objectAtIndex:i]);
+        NSLog(@"aaaaa=%@",[newArr objectAtIndex:i]);
     }
     return newArr;
 }
@@ -697,8 +699,8 @@
 
 
 #pragma mask ---- 重写8583报文打包函数
-+ (NSString*) dictPacked8583 {
-    NSString* data;
++ (NSString*) stringPacking8583 {
+    NSString* string;
     NSMutableDictionary* dataPack = [[NSMutableDictionary alloc] init];
     [dataPack setValue:[self makeF02] forKey:@"2"];
     [dataPack setValue:[self makeF03] forKey:@"3"];
@@ -721,12 +723,13 @@
     [dataPack setValue:[self makeF61] forKey:@"61"];
     [dataPack setValue:[self makeF62] forKey:@"62"];
     [dataPack setValue:[self makeF63] forKey:@"63"];
-    data = [HeaderString stringPacking8583WithBitmapArray:[self arrayBitMap]
-                                                     tpdu:TPDU
-                                                   header:HEADER
-                                             ExchangeType:[self exchangeType8583]
-                                           dataDictionary:dataPack];
-    return data;
+    string = [HeaderString stringPacking8583WithBitmapArray:[self arrayBitMap]
+                                                       tpdu:TPDU
+                                                     header:HEADER
+                                               ExchangeType:[self exchangeType8583]
+                                             dataDictionary:dataPack];
+    [self logDataInDictionay:dataPack forKeyArray:[self arrayBitMap]];
+    return string;
 }
 // 位图信息数组
 + (NSArray*) arrayBitMap {
@@ -973,5 +976,16 @@
     return [EncodeString encodeASC:[PublicInformation returnBusiness]];
 }
 
+
+////////
++ (void) logDataInDictionay:(NSDictionary*)dataDictionary forKeyArray:(NSArray*)keyArray {
+    if (!dataDictionary || !keyArray || dataDictionary.count == 0 || keyArray.count == 0) {
+        return;
+    }
+    for (NSString* key in keyArray) {
+        NSString* value = [dataDictionary valueForKey:key];
+        NSLog(@"KEY[%02d]:VALUE[%@]",(int)[key intValue],value);
+    }
+}
 
 @end

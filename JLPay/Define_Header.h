@@ -90,8 +90,14 @@
 #define Terminal_Numbers @"terminals"
 // 账号
 #define UserID  @"userID"
+// 账号 -- 保存标记
+#define NeedSavingUserID @"NeedSavingUserID"
 // 密码
 #define UserPW  @"userPW"
+// 密码 -- 保存标记
+#define NeedSavingUserPW @"NeedSavingUserPW"
+// 密码 -- 显示全文本标记
+#define NeedDisplayUserPW @"NeedDisplayUserPW"
 // 邮箱
 #define Business_Email @"commEmail"
 // 操作员号
@@ -237,10 +243,6 @@
 
 // 下载的工作密钥
 #define WorkKey @"workkey"
-
-// 签到获取的pinkey
-#define Sign_in_PinKey @"pinkey"
-#define Sign_in_MacKey @"mackey"
 
 // 签到标志
 #define DeviceBeingSignedIn   @"DeviceBeingSignedIn"

@@ -10,6 +10,10 @@
 
 @interface GroupPackage8583 : NSObject
 
+#pragma mask ---- 重写8583报文打包函数
++ (NSString*) stringPacking8583;
+
+
 //支付宝
 //支付宝二维码消费预下订单
 +(NSString *)saomaAndOrderMoney:(NSString *)money;
