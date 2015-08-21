@@ -314,7 +314,7 @@
 #define  RESIGN_telNo                   @"RESIGN_telNo"
 #define  RESIGN_speSettleDs             @"RESIGN_speSettleDs"
 #define  RESIGN_settleAcct              @"RESIGN_settleAcct"
-#define  RESIGN_settleAcctNm            @"RESIGN_settleAcct"
+#define  RESIGN_settleAcctNm            @"RESIGN_settleAcctNm"
 #define  RESIGN_areaNo                  @"RESIGN_areaNo"
 #define  RESIGN_addr                    @"RESIGN_addr"
 #define  RESIGN_ageUserName             @"RESIGN_ageUserName"

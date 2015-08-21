@@ -18,4 +18,6 @@
  *  2: 修改信息(已审核通过的)
  */
 @property (nonatomic, assign) int packageType;
+// 默认数据字典: 当注册类型为1时带回
+//@property (nonatomic, retain) NSDictionary* defaultInfo;
 @end

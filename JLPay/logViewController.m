@@ -386,6 +386,7 @@
     }
     
     // 保存历史信息
+    [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
     [[NSUserDefaults standardUserDefaults] setBool:self.switchSavePin.on forKey:NeedSavingUserPW];
     [[NSUserDefaults standardUserDefaults] setBool:self.switchSecurity.on forKey:NeedDisplayUserPW];
     if ([self.switchSavePin isOn]) {
@@ -463,14 +464,13 @@
         if ([retcode isEqualToString:@"701"]) { // 当前版本过低
             retMsg = [retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
         } else if ([retcode isEqualToString:@"802"]) {
-            self.dictLastRegisterInfo = [dataDic copy];
+            self.dictLastRegisterInfo = [dataDic objectForKey:@"registerInfoList"];
         }
         [self alertShow:retMsg];
     } else {                            // 登陆成功
         // 校验是否切换了账号
         [self checkoutCustSwitch];
         // 解析响应数据
-        [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
@@ -560,7 +560,7 @@
 - (void) alertShow: (NSString*) message {
     UIAlertView* alert;
     if ([message hasPrefix:@"802"]) {
-        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"修改注册", nil];
     } else {
         alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     }
@@ -583,9 +583,24 @@
             return;
         }
         NSLog(@"%@",alertView.message);
+        NSLog(@"放回信息:[%@]",self.dictLastRegisterInfo);
         UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-        viewController.packageType = 1; // 0:新增注册, 1:修改注册, 2:修改信息
+        [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
+//        [viewController setDefaultInfo:self.dictLastRegisterInfo];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"identifyNo"] forKey:RESIGN_identifyNo];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"telNo"] forKey:RESIGN_telNo];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"speSettleDs"] forKey:RESIGN_speSettleDs];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcct"] forKey:RESIGN_settleAcct];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcctNm"] forKey:RESIGN_settleAcctNm];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mail"] forKey:RESIGN_mail];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"ageUserName"] forKey:RESIGN_ageUserName];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"addr"] forKey:RESIGN_addr];
+        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         [self.navigationController pushViewController:viewController animated:YES];
 
     }

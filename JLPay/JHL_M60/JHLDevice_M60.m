@@ -1140,8 +1140,9 @@
     
     // 35 2磁道加密数据
     memset(dataStr, 0, 512);
+    NSLog(@"2磁加密数据:[%s]",TransData.szEncryTrack2);
     [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
-    NSLog(@"2磁数据:[%s]", dataStr);
+    NSLog(@"2磁加密数据:[%s]", dataStr);
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
     
     // 35 2磁道数据

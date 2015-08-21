@@ -37,7 +37,7 @@
         <!--商户注册-->
         <scene sceneID="xYJ-rb-LbQ">
             <objects>
-                <viewController storyboardIdentifier="userRegisterVC" title="商户注册" id="U2x-gO-mqC" customClass="UserRegisterViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="userRegisterVC" title="商户注册" id="U2x-gO-mqC" customClass="RegisterViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xw6-mz-WrW">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

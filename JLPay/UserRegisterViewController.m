@@ -85,6 +85,7 @@
 @synthesize dictImageAndURL = _dictImageAndURL;
 @synthesize keyboardIsShow;
 @synthesize packageType;
+//@synthesize defaultInfo;
 
 
 #pragma mask ------ HTTP 交互部分
@@ -279,8 +280,8 @@
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
             imgPickerSourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         } else {
+            imgPickerSourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
         }
-        imgPickerSourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     }
     
     UIImagePickerController* imgPickerController = [[UIImagePickerController alloc] init];
@@ -434,10 +435,6 @@
     [self.view addSubview:self.btnUserRegistering];
     
     [self.view addSubview:self.activitor];
-    // 注册隐藏键盘的手势事件
-    UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingWithTextField)];
-    gesture.cancelsTouchesInView = NO;
-    [self.view addGestureRecognizer:gesture];
 
     self.offsetHeightWithKeyboardHiddenView = 0.0;
     self.keyboardIsShow = NO;
@@ -474,6 +471,11 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
+    // 注册隐藏键盘的手势事件
+    UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingWithTextField)];
+    gesture.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:gesture];
+
     // 注册键盘的出现、消失事件
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillApear:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
@@ -484,6 +486,7 @@
     [super viewWillDisappear:animated];
     [self freeHTTPRequest];
 }
+
 
 
 // 给 scrollView 加载子视图
@@ -648,7 +651,6 @@
 - (void) reloadResignInfos {
     [self.userMchntField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_mchntNm]];
     [self.userNameField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_userName]];
-//    [self.userPwdField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_passWord]];
     [self.userIDField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_identifyNo]];
     [self.userPhoneField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_telNo]];
     [self.userSpeSettleDsField setText:[[NSUserDefaults standardUserDefaults] valueForKey:RESIGN_speSettleDs]];
@@ -662,11 +664,19 @@
     MySQLiteManager* sqlManager = [MySQLiteManager SQLiteManagerWithDBFile:@"test.db"];
     NSString* selectString = [NSString stringWithFormat:@"select value from cst_sys_param where key = '%@'",areaKey];
     NSArray* selectedDatas = [sqlManager selectedDatasWithSQLString:selectString];
-    if (selectedDatas.count == 1) {
+    NSLog(@"查询语句:[%@],结果集条数[%d]",selectString,selectedDatas.count);
+    if (selectedDatas.count != 0) {
+        for (NSDictionary* dict in selectedDatas) {
+            for (NSString* key in [dict allKeys]) {
+                NSLog(@"[%d]:[%@]:[%@]",[[dict allKeys] indexOfObject:key],key,[dict objectForKey:key] );
+            }
+        }
+    }
+//    if (selectedDatas.count == 1) {
         NSString* areaName = [[selectedDatas objectAtIndex:0] valueForKey:@"VALUE"];
         areaName = [PublicInformation clearSpaceCharAtLastOfString:areaName];
         [self.areaLabel setText:[NSString stringWithFormat:@"%@(%@)",areaName,areaKey]];
-    }
+//    }
 }
 
 // 创建一个 UITextField

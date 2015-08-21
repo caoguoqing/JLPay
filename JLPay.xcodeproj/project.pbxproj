@@ -58,6 +58,11 @@
 		5E5E35D61B806F9C00560C0A /* JiaoyimingxiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35D51B806F9C00560C0A /* JiaoyimingxiViewController.m */; };
 		5E5E35D91B80732200560C0A /* ZengzhifuwuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35D81B80732200560C0A /* ZengzhifuwuViewController.m */; };
 		5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35DC1B80746500560C0A /* GuanyuViewController.m */; };
+		5E5E36281B8703F900560C0A /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E36211B8703F900560C0A /* RegisterViewController.m */; };
+		5E5E36291B8703F900560C0A /* RgAddrTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E36231B8703F900560C0A /* RgAddrTableViewCell.m */; };
+		5E5E362A1B8703F900560C0A /* RgBasicInfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E36251B8703F900560C0A /* RgBasicInfoTableViewCell.m */; };
+		5E5E362B1B8703F900560C0A /* RgImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E36271B8703F900560C0A /* RgImageTableViewCell.m */; };
+		5E5E36321B87082F00560C0A /* CustomPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E36311B87082F00560C0A /* CustomPickerView.m */; };
 		5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */; };
 		5E5FA57F1B46342600387E69 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56E1B46342600387E69 /* .gitignore */; };
 		5E5FA5801B46342600387E69 /* alertBkg.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E5FA56F1B46342600387E69 /* alertBkg.png */; };
@@ -275,6 +280,16 @@
 		5E5E35D81B80732200560C0A /* ZengzhifuwuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZengzhifuwuViewController.m; sourceTree = "<group>"; };
 		5E5E35DB1B80746500560C0A /* GuanyuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuanyuViewController.h; sourceTree = "<group>"; };
 		5E5E35DC1B80746500560C0A /* GuanyuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuanyuViewController.m; sourceTree = "<group>"; };
+		5E5E36201B8703F900560C0A /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
+		5E5E36211B8703F900560C0A /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		5E5E36221B8703F900560C0A /* RgAddrTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RgAddrTableViewCell.h; sourceTree = "<group>"; };
+		5E5E36231B8703F900560C0A /* RgAddrTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RgAddrTableViewCell.m; sourceTree = "<group>"; };
+		5E5E36241B8703F900560C0A /* RgBasicInfoTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RgBasicInfoTableViewCell.h; sourceTree = "<group>"; };
+		5E5E36251B8703F900560C0A /* RgBasicInfoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RgBasicInfoTableViewCell.m; sourceTree = "<group>"; };
+		5E5E36261B8703F900560C0A /* RgImageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RgImageTableViewCell.h; sourceTree = "<group>"; };
+		5E5E36271B8703F900560C0A /* RgImageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RgImageTableViewCell.m; sourceTree = "<group>"; };
+		5E5E36301B87082F00560C0A /* CustomPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomPickerView.h; path = CustomPickerView/CustomPickerView.h; sourceTree = "<group>"; };
+		5E5E36311B87082F00560C0A /* CustomPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomPickerView.m; path = CustomPickerView/CustomPickerView.m; sourceTree = "<group>"; };
 		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
 		5E5FA5691B413E2F00387E69 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
 		5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
@@ -635,8 +650,6 @@
 				5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */,
 				5E5E35A31B7C79EF00560C0A /* AreaDataSourceViewController.h */,
 				5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */,
-				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
-				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
 			);
 			name = "注册用户";
 			sourceTree = "<group>";
@@ -698,6 +711,32 @@
 				5E5E35DC1B80746500560C0A /* GuanyuViewController.m */,
 			);
 			name = "关于我们";
+			sourceTree = "<group>";
+		};
+		5E5E361F1B87036C00560C0A /* 注册 */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E36201B8703F900560C0A /* RegisterViewController.h */,
+				5E5E36211B8703F900560C0A /* RegisterViewController.m */,
+				5E5E36221B8703F900560C0A /* RgAddrTableViewCell.h */,
+				5E5E36231B8703F900560C0A /* RgAddrTableViewCell.m */,
+				5E5E36241B8703F900560C0A /* RgBasicInfoTableViewCell.h */,
+				5E5E36251B8703F900560C0A /* RgBasicInfoTableViewCell.m */,
+				5E5E36261B8703F900560C0A /* RgImageTableViewCell.h */,
+				5E5E36271B8703F900560C0A /* RgImageTableViewCell.m */,
+				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
+				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
+			);
+			name = "注册";
+			sourceTree = "<group>";
+		};
+		5E5E362C1B87076200560C0A /* CustomPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E36301B87082F00560C0A /* CustomPickerView.h */,
+				5E5E36311B87082F00560C0A /* CustomPickerView.m */,
+			);
+			name = CustomPickerView;
 			sourceTree = "<group>";
 		};
 		5E5FA56C1B46342600387E69 /* JHL_M60 */ = {
@@ -1008,6 +1047,7 @@
 				5EBAA9151ACD3F2400E2ABDD /* json */,
 				5E397AF31AD36429004F206F /* asi-http */,
 				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
+				5E5E362C1B87076200560C0A /* CustomPickerView */,
 				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
 				5ED344251AD8C1DB0005C890 /* ProgressHUD */,
 			);
@@ -1110,6 +1150,7 @@
 				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
 				5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */,
 				5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */,
+				5E5E361F1B87036C00560C0A /* 注册 */,
 				5E5E35491B735A6F00560C0A /* 注册用户 */,
 				5E5E35481B735A6300560C0A /* 忘记密码 */,
 			);
@@ -1283,6 +1324,7 @@
 				5E5E35D61B806F9C00560C0A /* JiaoyimingxiViewController.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
+				5E5E36291B8703F900560C0A /* RgAddrTableViewCell.m in Sources */,
 				5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */,
 				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
@@ -1313,6 +1355,8 @@
 				5E5FA5831B46342600387E69 /* README.md in Sources */,
 				5EBAA8E71ACD2FA800E2ABDD /* ISOBitmap.m in Sources */,
 				5E397B491AD364A9004F206F /* TcpClientService2.m in Sources */,
+				5E5E36321B87082F00560C0A /* CustomPickerView.m in Sources */,
+				5E5E362B1B8703F900560C0A /* RgImageTableViewCell.m in Sources */,
 				5EBAA8FE1ACD3AFB00E2ABDD /* DesUtil.m in Sources */,
 				5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */,
 				5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */,
@@ -1320,6 +1364,7 @@
 				5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */,
 				5E5FA5841B46342600387E69 /* ISBLEDataPath.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
+				5E5E36281B8703F900560C0A /* RegisterViewController.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
 				5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */,
@@ -1349,6 +1394,7 @@
 				5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */,
 				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
 				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
+				5E5E362A1B8703F900560C0A /* RgBasicInfoTableViewCell.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
 				5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */,
