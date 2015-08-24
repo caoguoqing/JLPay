@@ -56,12 +56,16 @@
     }
 
 }
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+- (void) backToLastViewController {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

@@ -302,6 +302,9 @@
     [picker dismissViewControllerAnimated:YES completion:^{}];
     
     UIImage* selectedImage = [info valueForKey:UIImagePickerControllerOriginalImage];
+    NSData* imageData = UIImagePNGRepresentation(selectedImage);
+    
+    NSLog(@"图片:[%@]\n大小:[%ud]",selectedImage, imageData.length);
     if (self.neededLoadImageView != nil) {
         // 保存图片跟图片名字到字典
         NSString* key = nil;

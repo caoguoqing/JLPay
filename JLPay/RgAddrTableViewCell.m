@@ -45,6 +45,9 @@
     [self.btnProvince setTitle:province forState:UIControlStateNormal];
 }
 - (NSString *)province {
+    if ([self.btnProvince.titleLabel.text isEqualToString:@"省份"]) {
+        return nil;
+    }
     return self.btnProvince.titleLabel.text;
 }
 // 设置市
@@ -52,6 +55,9 @@
     [self.btnCity setTitle:city forState:UIControlStateNormal];
 }
 - (NSString *)city {
+    if ([self.btnCity.titleLabel.text isEqualToString:@"市"]) {
+        return nil;
+    }
     return self.btnCity.titleLabel.text;
 }
 // 设置区/县
@@ -59,9 +65,15 @@
     [self.btnAreaOrCountry setTitle:area forState:UIControlStateNormal];
 }
 - (NSString *)area {
+    if ([self.btnAreaOrCountry.titleLabel.text isEqualToString:@"区/县"]) {
+        return nil;
+    }
     return self.btnAreaOrCountry.titleLabel.text;
 }
-
+// 详细地址
+- (NSString*) detailPlace {
+    return self.txtViewDetailAddr.text;
+}
 
 - (IBAction) touchToChoosePlace:(UIButton*)sender {
     if (self.delegate && [self.delegate respondsToSelector:@selector(addrCell:choosePlaceInType:)]) {

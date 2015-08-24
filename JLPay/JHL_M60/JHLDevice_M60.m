@@ -1226,13 +1226,15 @@
     memcpy(&TransData.szTrack2, ByteData+nIndex+1, TransData.nTrack2Len);
     nIndex +=1;
     nIndex +=TransData.nTrack2Len;
+    NSLog(@"2磁道数据:[%s]",TransData.szTrack2);
     
     //2磁道加密数据
     TransData.nEncryTrack2Len =ByteData[nIndex];
     memcpy(&TransData.szEncryTrack2, ByteData+nIndex+1, TransData.nEncryTrack2Len);
     nIndex +=1;
     nIndex +=TransData.nEncryTrack2Len;
-    
+    NSLog(@"2磁道加密数据:[%s]",TransData.szEncryTrack2);
+
     
     //3磁道数据
     TransData.nTrack3Len =ByteData[nIndex];

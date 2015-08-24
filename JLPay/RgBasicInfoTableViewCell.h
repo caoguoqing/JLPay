@@ -35,6 +35,10 @@
 - (void) setTitleText:(NSString*)text;
 // 设置文本输入框提示信息
 - (void) setTextPlaceholder:(NSString*)placeholder;
+// 设置密码模式
+- (void) setSecureEntry:(BOOL)yesOrNo;
+
+
 
 // 判断是否正在输入
 - (BOOL) isTextEditing;

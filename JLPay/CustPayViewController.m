@@ -39,7 +39,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self addSubViews];
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
 }
+- (void) backToLastViewController {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 
 -(void)viewWillAppear:(BOOL)animated
 {

@@ -13,18 +13,23 @@
 #import "CustomPickerView/CustomPickerView.h"
 #import "MySQLiteManager.h"
 #import "PublicInformation.h"
+#import "ASIFormDataRequest.h"
+#import "JLActivitor.h"
 
 
 @interface RegisterViewController ()<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate,
                                      UINavigationControllerDelegate,
+                                     ASIHTTPRequestDelegate,
                                      RgBasicInfoTableViewCellDelegate, RgImageTableViewCellDelegate, RgAddrTableViewCellDelegate,
                                      CustomPickerViewDelegate>
-@property (nonatomic, strong) UITableView* tableView;
+@property (nonatomic, retain) ASIFormDataRequest* httpRequest;
 @property (nonatomic, strong) NSMutableArray* cellTitles;
 @property (nonatomic, strong) NSMutableArray* textCellDataAttri;
 @property (nonatomic, strong) NSMutableArray* imageCellDataAttri;
-@property (nonatomic, strong) UIButton* btnRegister;
 @property (nonatomic, strong) NSMutableDictionary* dictDetailPlace;     // keys: province,city,area,detail
+
+@property (nonatomic, strong) UITableView* tableView;
+@property (nonatomic, strong) UIButton* btnRegister;
 @property (nonatomic) int placeType;                                    // 0:province,1:city,2:area,3:detail
 @property (nonatomic, strong) RgImageTableViewCell* cellBeingLoading;
 @property (nonatomic, strong) RgAddrTableViewCell* cellAddr;
@@ -33,6 +38,7 @@
 @end
 
 @implementation RegisterViewController
+@synthesize httpRequest = _httpRequest;
 @synthesize tableView = _tableView;
 @synthesize cellTitles = _cellTitles;
 @synthesize textCellDataAttri = _textCellDataAttri;
@@ -43,6 +49,151 @@
 @synthesize cellAddr;
 @synthesize logCount;
 @synthesize cellBeingLoading;
+
+#pragma mask ---- ASIFormDataRequest function & delegate
+// http 接收成功
+- (void) requestFinished:(ASIHTTPRequest *)request {
+    [[JLActivitor sharedInstance] stopAnimating];
+    NSLog(@"http响应结果:[%@]",[request responseString]);
+    NSData* data = [request responseData];
+    NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+    NSString* code = [dict valueForKey:@"code"];
+    NSString* msg = [dict valueForKey:@"message"];
+    if ([code intValue] == 0) {
+        [self alertShowForMessage:@"注册成功!"];
+    }
+    else {
+        [self alertShowForMessage:[NSString stringWithFormat:@"注册失败[%@]:%@",code,msg]];
+    }
+    [self requestClear];
+}
+// http 接收失败
+- (void) requestFailed:(ASIHTTPRequest *)request {
+    [[JLActivitor sharedInstance] stopAnimating];
+    [self requestClear];
+    [self alertShowForMessage:@"网络异常,请检查网络"];
+}
+// 填充 post body
+- (void) requestPacking {
+    // basic info
+    [self packingBasicInfo];
+    // addr info
+    [self packingAddrInfo];
+    // image info
+    [self packingImageInfo];
+    [self.httpRequest buildPostBody];
+}
+// 发起 request 请求
+- (void) requestStart {
+    NSLog(@"http 请求:[%@]",[self.httpRequest requestHeaders]);
+    [self.httpRequest startAsynchronous];
+}
+// 释放 request
+- (void) requestClear {
+    [self.httpRequest clearDelegatesAndCancel];
+    self.httpRequest = nil;
+}
+// 校验输入的信息是否合法
+- (BOOL) packingChecking {
+    NSString* password = nil;
+    NSString* checkPwd = nil;
+    // 检查textField的项是否为空
+    for (NSDictionary* dict in self.textCellDataAttri) {
+        NSString* flag = [dict valueForKey:@"needInputFlag"];
+        NSString* input = [dict valueForKey:@"textInputed"];
+        if ([flag isEqualToString:@"YES"] && (!input || input.length == 0)) {
+            [self alertShowForMessage:[NSString stringWithFormat:@"%@不能为空",[dict valueForKey:@"title"]]];
+            return NO;
+        }
+        if ([[dict valueForKey:@"title"] isEqualToString:@"登陆密码"]) {
+            password = input;
+        }
+        if ([[dict valueForKey:@"title"] isEqualToString:@"确认密码"]) {
+            checkPwd = input;
+        }
+    }
+    // 密码是否一致
+    if (![password isEqualToString:checkPwd]) {
+        [self alertShowForMessage:@"密码输入不一致"];
+        return NO;
+    }
+    // 地址信息是否为空
+    NSString* sProvince = [self.dictDetailPlace valueForKey:@"province"];
+    NSString* sCity = [self.dictDetailPlace valueForKey:@"city"];
+    NSString* detailPlace = [self.dictDetailPlace valueForKey:@"detail"];
+    if (!sProvince || sProvince.length == 0) {
+        [self alertShowForMessage:@"地址输入错误:省份不能为空"];
+        return NO;
+    }
+    if (!sCity || sCity.length == 0) {
+        [self alertShowForMessage:@"地址输入错误:市不能为空"];
+        return NO;
+    }
+    if (!detailPlace || detailPlace.length == 0) {
+        [self alertShowForMessage:@"地址输入错误:详细地址不能为空"];
+        return NO;
+    }
+    // 图片是否为空
+    for (NSDictionary* dict in self.imageCellDataAttri) {
+        NSString* loaded = [dict valueForKey:@"loaded"];
+        NSData* imageData = [dict objectForKey:@"uploadImage"];
+        NSString* imageName = [dict valueForKey:@"title"];
+        if (![loaded isEqualToString:@"YES"] || !imageData) {
+            [self alertShowForMessage:[NSString stringWithFormat:@"%@图片未选择",imageName]];
+            return NO;
+        }
+    }
+    return YES;
+}
+// 提取基本信息 basic info:有可选跟必选的区别
+- (void) packingBasicInfo {
+    for (NSDictionary* dict in self.textCellDataAttri) {
+        NSString* textValue = [dict valueForKey:@"textInputed"];
+        if ([[dict valueForKey:@"title"] isEqualToString:@"确认密码"]) {
+            // 确认密码不输入
+        } else {
+            if (textValue && textValue.length > 0) {                
+                NSLog(@"打包[%@]:[%@]",[dict valueForKey:@"title"],textValue);
+                [self.httpRequest setPostValue:textValue forKey:[dict valueForKey:@"textKey"]];
+            }
+        }
+    }
+}
+// 提取基本信息 image info:必选
+- (void) packingImageInfo {
+    for (NSDictionary* dict in self.imageCellDataAttri) {
+        [self.httpRequest setData:[dict objectForKey:@"uploadImage"]
+                     withFileName:[NSString stringWithFormat:@"%@.png",[dict valueForKey:@"imageKey"]]
+                   andContentType:@"image/png"
+                           forKey:[dict valueForKey:@"imageKey"]];
+    }
+}
+// 提取基本信息 addr info:区县可选
+- (void) packingAddrInfo {
+    /*
+    [ forKey:@"province"];
+    [ forKey:@"city"];
+    [ forKey:@"area"];
+    [ forKey:@"provinceCode"];
+    [ forKey:@"cityCode"];
+    [ forKey:@"areaCode"];
+    [ forKey:@"detail"];
+     */
+    NSMutableString* detailPlaces = [[NSMutableString alloc] init];
+    NSString* sProvince = [self.dictDetailPlace valueForKey:@"province"];
+    NSString* sCity = [self.dictDetailPlace valueForKey:@"city"];
+    NSString* sArea = [self.dictDetailPlace valueForKey:@"area"];
+    NSString* detailPlace = [self.dictDetailPlace valueForKey:@"detail"];
+    [detailPlaces appendString:sProvince];
+    [detailPlaces appendString:sCity];
+    if (sArea && sArea.length > 0) {
+        [detailPlaces appendString:sArea];
+    }
+    [detailPlaces appendString:detailPlace];
+    [self.httpRequest setPostValue:detailPlaces forKey:@"addr"];
+    [self.httpRequest setPostValue:[self.dictDetailPlace valueForKey:@"cityCode"] forKey:@"addr"];
+    NSLog(@"详细地址[%@]为:%@",[self.dictDetailPlace valueForKey:@"cityCode"],detailPlaces);
+}
 
 #pragma mask ---- CustomPickerViewDelegate
 - (void)pickerViewDidChooseDatas:(NSDictionary *)dataDictionary {
@@ -81,7 +232,25 @@
     }
 }
 
+#pragma mask ---- RgImageTableViewCellDelegate
+- (void)imageCell:(RgImageTableViewCell *)imageCell loadingImageAtCellTitle:(NSString *)textTitle {
+    self.cellBeingLoading = imageCell;
+    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+    [actionSheet addButtonWithTitle:@"拍摄"];
+    [actionSheet addButtonWithTitle:@"从相册选择"];
+    [actionSheet showFromToolbar:nil];
+    
+}
 
+#pragma mask ---- RgBasicInfoTableViewCellDelegate
+- (void)textBeInputedInCellTitle:(NSString *)textTitle inputedText:(NSString *)text{
+    for (NSDictionary* dict in self.textCellDataAttri) {
+        if ([[dict valueForKey:@"title"] isEqualToString:textTitle]) {
+            [dict setValue:text forKey:@"textInputed"];
+        }
+    }
+//    NSLog(@"textCellDataAttri=[%@]",self.textCellDataAttri);
+}
 #pragma mask ---- RgAddrTableViewCellDelegate
 - (void)addrCell:(RgAddrTableViewCell *)addrCell choosePlaceInType:(int)placeType {
     if (self.cellAddr != addrCell) {
@@ -97,7 +266,7 @@
     } else if (placeType == 2) {
         sqlString = [NSString stringWithFormat:@"select value,key from cst_sys_param where owner = 'AREA' and descr = '%@'",[self.dictDetailPlace valueForKey:@"cityCode"]];
     }
-    NSLog(@"sql查询语句[%@]",sqlString);
+//    NSLog(@"sql查询语句[%@]",sqlString);
     NSArray* selectedDatas = [[MySQLiteManager SQLiteManagerWithDBFile:@"test.db"] selectedDatasWithSQLString:sqlString];
     NSMutableDictionary* dataDict = [[NSMutableDictionary alloc] init];
     NSMutableArray* datas = [[NSMutableArray alloc] init];
@@ -106,7 +275,19 @@
         [datas addObject:string];
     }
     [dataDict setObject:datas forKey:@"array0"];
-    [self.pickerView showWithData:dataDict];
+    if (datas.count > 0) {
+        [self.pickerView showWithData:dataDict];
+    } else {
+        NSString* placeString = nil;
+        if (placeType == 0) {
+            placeString = @"省份";
+        } else if (placeType == 1) {
+            placeString = @"城市";
+        } else if (placeType == 2) {
+            placeString = @"区县";
+        }
+        [self alertShowForMessage:[NSString stringWithFormat:@"%@数据为空",placeString]];
+    }
 }
 - (void)addrCell:(RgAddrTableViewCell *)addrCell inputedDetailPlace:(NSString *)detailPlace {
     [self.dictDetailPlace setValue:detailPlace forKey:@"detail"];
@@ -118,11 +299,19 @@
     [picker dismissViewControllerAnimated:YES completion:^{}];
     // 获取图片
     UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    NSLog(@"图片大小:%lf,%lf",image.size.width,image.size.height);
+    image = [PublicInformation imageScaledBySourceImage:image withWidthScale:0.1 andHeightScale:0.1];
+    NSLog(@"图片大小:%lf,%lf",image.size.width,image.size.height);
+
     // 保存image到字典
     for (NSMutableDictionary* dict in self.imageCellDataAttri) {
         if ([[dict objectForKey:@"title"] isEqualToString:[self.cellBeingLoading labelTitle]]) {
             [dict setObject:@"YES" forKey:@"loaded"];
-            [dict setObject:image forKey:@"uploadImage"];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                NSData* imageData = UIImagePNGRepresentation(image);
+                NSLog(@"图片[%@]大小为[%u]",[dict valueForKey:@"title"],imageData.length);
+                [dict setObject:imageData forKey:@"uploadImage"];
+            });
             break;
         }
     }
@@ -144,27 +333,6 @@
     }
     [self presentViewController:imagePicker animated:YES completion:^{}];
 }
-
-#pragma mask ---- RgImageTableViewCellDelegate
-- (void)imageCell:(RgImageTableViewCell *)imageCell loadingImageAtCellTitle:(NSString *)textTitle {
-    self.cellBeingLoading = imageCell;
-    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
-    [actionSheet addButtonWithTitle:@"拍摄"];
-    [actionSheet addButtonWithTitle:@"从相册选择"];
-    [actionSheet showFromToolbar:nil];
-    
-}
-
-#pragma mask ---- RgBasicInfoTableViewCellDelegate 
-- (void)textBeInputedInCellTitle:(NSString *)textTitle inputedText:(NSString *)text{
-    for (NSDictionary* dict in self.textCellDataAttri) {
-        if ([[dict valueForKey:@"title"] isEqualToString:textTitle]) {
-            [dict setValue:text forKey:@"textInputed"];
-        }
-    }
-    NSLog(@"textCellDataAttri=[%@]",self.textCellDataAttri);
-}
-
 
 
 
@@ -220,6 +388,7 @@
         [cell setCellDelegate:self];
     }
     NSDictionary* dataDict = nil;
+    // 根据cell 的标题获取对应的数据字典
     for (NSDictionary* dict in self.textCellDataAttri) {
         NSString* dictTitle = [dict valueForKey:@"title"];
         if ([dictTitle isEqualToString:cellTitle]) {
@@ -227,6 +396,7 @@
             break;
         }
     }
+    // 根据字典的值设置cell 的部分属性值
     if (dataDict) {
         [cell setTitleText:cellTitle];
         if ([[dataDict objectForKey:@"needInputFlag"] isEqualToString:@"YES"]) {
@@ -235,6 +405,10 @@
             cell.mustBeInputed = NO;
         }
         [cell setTextPlaceholder:[dataDict objectForKey:@"textPlaceholder"]];
+        // 登陆密码要设置密码遮蔽模式
+        if ([cellTitle isEqualToString:@"登陆密码"] || [cellTitle isEqualToString:@"确认密码"]) {
+            [cell setSecureEntry:YES];
+        }
     } else {
         NSLog(@"datadict 为空");
     }
@@ -283,6 +457,12 @@
 - (IBAction) touchToRegister:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
     NSLog(@"按钮事件结束");
+    
+    if([self packingChecking]) {
+        [self requestPacking];
+        [[JLActivitor sharedInstance] startAnimating];
+        [self requestStart];
+    }
 }
 
 
@@ -305,6 +485,7 @@
                               navigationHeight,
                               self.view.bounds.size.width,
                               self.view.bounds.size.height - navigationHeight - inset*2 - btnheight);
+    // 列表视图
     self.tableView.frame = frame;
     // 注册按钮
     frame.origin.x = inset;
@@ -312,22 +493,28 @@
     frame.size.width = self.view.bounds.size.width - inset*2;
     frame.size.height = btnheight;
     self.btnRegister.frame = frame;
-    
-    if (self.navigationController.navigationBarHidden) {
-        self.navigationController.navigationBarHidden = NO;
-        self.title = @"商户注册";
-    }
     // pickerView
     frame.origin.x = 0;
     frame.origin.y = navigationHeight;
     frame.size.width = self.view.bounds.size.width;
     frame.size.height = self.view.bounds.size.height - navigationHeight;
     self.pickerView.frame = frame;
+    // 界面标题
+    if (self.navigationController.navigationBarHidden) {
+        self.navigationController.navigationBarHidden = NO;
+        self.title = @"商户注册";
+    }
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     UITapGestureRecognizer* recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endingCellEditing)];
     [self.view addGestureRecognizer:recognizer];
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    if (self.httpRequest != nil) {
+        [self requestClear];
+    }
 }
 
 
@@ -392,8 +579,24 @@
 }
 
 
+// 简化代码
+- (void) alertShowForMessage:(NSString*)msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
 
 #pragma mask ---- getter & setter
+- (ASIFormDataRequest *)httpRequest {
+    if (_httpRequest == nil) {
+        NSString* URLString = [NSString stringWithFormat:@"http://%@:%@/jlagent/",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        URLString = [URLString stringByAppendingString:@"MchntRegister"];
+        _httpRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:URLString]];
+        [_httpRequest setDelegate:self];
+        [_httpRequest setPostFormat:ASIMultipartFormDataPostFormat];
+        [_httpRequest setStringEncoding:NSUTF8StringEncoding];
+    }
+    return _httpRequest;
+}
 - (UITableView *)tableView {
     if (_tableView == nil) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -429,6 +632,7 @@
         [_cellTitles addObject:@"商户名称"];
         [_cellTitles addObject:@"登陆账号"];
         [_cellTitles addObject:@"登陆密码"];
+        [_cellTitles addObject:@"确认密码"];
         [_cellTitles addObject:@"身份证号"];
         [_cellTitles addObject:@"手机号码"];
         [_cellTitles addObject:@"开户行名称"];
@@ -452,6 +656,7 @@
         [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"商户名称" needInputFlag:@"YES" textPlaceholder:@"不超过40位字符" textKey:@"mchntNm"]];
         [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"登陆账号" needInputFlag:@"YES" textPlaceholder:@"不超过40位字母或数字字符" textKey:@"userName"]];
         [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"登陆密码" needInputFlag:@"YES" textPlaceholder:@"请输入8位字母或数字" textKey:@"passWord"]];
+        [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"确认密码" needInputFlag:@"YES" textPlaceholder:@"请重新输入登陆密码" textKey:@"checkingPWD"]];
         [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"身份证号" needInputFlag:@"YES" textPlaceholder:@"请输入二代身份证号码" textKey:@"identifyNo"]];
         [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"手机号码" needInputFlag:@"YES" textPlaceholder:@"请输入手机号" textKey:@"telNo"]];
         [_textCellDataAttri addObject:[self newDictionaryWithTitle:@"开户行名称" needInputFlag:@"YES" textPlaceholder:@"不超过40位字符" textKey:@"speSettleDs"]];

@@ -12,6 +12,8 @@
 @property (nonatomic, strong) UIPickerView* pickerView;
 @property (nonatomic, strong) UIButton* btnCancel;
 @property (nonatomic, strong) UIButton* btnDone;
+@property (nonatomic, strong) UIView* lineView;
+@property (nonatomic, strong) UIView* midLeaveView;
 @property (nonatomic, strong) NSDictionary* dataDict;   // keys: array0,array1,array2...
 @property (nonatomic, strong) id<CustomPickerViewDelegate>delegate;
 
@@ -78,9 +80,10 @@
         self.hidden = YES;
         self.delegate = idelegate;
         [self addSubview:self.pickerView];
+        [self addSubview:self.lineView];
         [self addSubview:self.btnCancel];
+        [self addSubview:self.midLeaveView];
         [self addSubview:self.btnDone];
-        
         self.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.7];
     }
     return self;
@@ -93,14 +96,12 @@
     CGFloat btnCancelWidth = [self.btnCancel.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.btnCancel.titleLabel.font forKey:NSFontAttributeName]].width + inset*2;
     CGFloat btnDoneWidth = [self.btnDone.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.btnDone.titleLabel.font forKey:NSFontAttributeName]].width + inset*2;
     // pickerView
-    CGRect frame = CGRectMake(0, self.frame.size.height - pickerHeight, self.frame.size.width, pickerHeight);
+    CGRect frame = CGRectMake(0, self.bounds.size.height - pickerHeight, self.bounds.size.width, pickerHeight);
     [self.pickerView setFrame:frame];
     // 分割线
     frame.origin.y -= 0.5;
     frame.size.height = 0.5;
-    UIView* line = [[UIView alloc] initWithFrame:frame];
-    line.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
-    [self addSubview:line];
+    self.lineView.frame = frame;
     // 取消按钮
     frame.origin.y -= btnHeight;
     frame.size.width = btnCancelWidth;
@@ -109,9 +110,7 @@
     // 间隔空白视图
     frame.origin.x += frame.size.width;
     frame.size.width = self.frame.size.width - btnCancelWidth - btnDoneWidth;
-    UIView* midView = [[UIView alloc] initWithFrame:frame];
-    midView.backgroundColor = [UIColor whiteColor];
-    [self addSubview:midView];
+    self.midLeaveView.frame = frame;
     // 确定按钮
     frame.origin.x += frame.size.width;
     frame.size.width = btnDoneWidth;
@@ -148,5 +147,19 @@
         [_btnCancel addTarget:self action:@selector(touchTo:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnCancel;
+}
+- (UIView *)lineView {
+    if (_lineView == nil) {
+        _lineView = [[UIView alloc] initWithFrame:CGRectZero];
+        [_lineView setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.5]];
+    }
+    return _lineView;
+}
+- (UIView *)midLeaveView {
+    if (_midLeaveView == nil) {
+        _midLeaveView = [[UIView alloc] initWithFrame:CGRectZero];
+        [_midLeaveView setBackgroundColor: [UIColor whiteColor]];
+    }
+    return _midLeaveView;
 }
 @end

@@ -32,11 +32,11 @@
 // 设置市
 - (void) setCity:(NSString*)city;
 - (NSString*) city;
-
 // 设置区/县
 - (void) setArea:(NSString*)area;
 - (NSString*) area;
 
-
+// 详细地址
+- (NSString*) detailPlace;
 
 @end

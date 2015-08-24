@@ -27,11 +27,25 @@
 
 #pragma mask ---- UITextFieldDelegate
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    if (textField.text && textField.text.length > 0) {
+//    if (textField.text && textField.text.length > 0) {
         if (self.cellDelegate && [self.cellDelegate respondsToSelector:@selector(textBeInputedInCellTitle:inputedText:)]) {
             [self.cellDelegate textBeInputedInCellTitle:self.titleLabel.text inputedText:textField.text];
         }
+//    }
+}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    /*
+     * 只有立马显示在文本框中的字符才会引发这个方法
+     * 中文是不会引发的
+     */
+    NSString* newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (textField.secureTextEntry) {
+        if ([newString length] > 8) {
+            textField.text = [newString substringToIndex:8];
+            return NO;
+        }
     }
+    return YES;
 }
 
 // 获取输入的值
@@ -47,7 +61,10 @@
 - (void) setTextPlaceholder:(NSString*)placeholder {
     [self.textField setPlaceholder:placeholder];
 }
-
+// 设置密码模式
+- (void) setSecureEntry:(BOOL)yesOrNo {
+    [self.textField setSecureTextEntry:yesOrNo];
+}
 
 // 判断是否正在输入
 - (BOOL) isTextEditing {
@@ -125,6 +142,7 @@
     if (_textField == nil) {
         _textField = [[UITextField alloc] initWithFrame:CGRectZero];
         _textField.backgroundColor = [UIColor whiteColor];
+        [_textField setClearButtonMode:UITextFieldViewModeWhileEditing];
         _textField.layer.cornerRadius = 5.0;
         _textField.layer.masksToBounds = YES;
         _textField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;

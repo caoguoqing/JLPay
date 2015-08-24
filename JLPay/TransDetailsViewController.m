@@ -330,8 +330,15 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
     [self.HTTPRequest startAsynchronous];  // 异步获取数据
     [self.activitor startAnimating];
-
+    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
+    [self.navigationItem setBackBarButtonItem:backItem];
 }
+- (void) backToLastViewController {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     // 总金额显示框
@@ -400,7 +407,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
         [self.HTTPRequest startAsynchronous];  // 异步获取数据
         [self.activitor startAnimating];
     }
-
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];

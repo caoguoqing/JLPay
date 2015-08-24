@@ -80,6 +80,9 @@
     NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = dict;
     self.navigationController.navigationBar.tintColor = color;
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
+
     
     self.dictLastRegisterInfo = nil;
 }
@@ -102,6 +105,10 @@
     self.httpRequest = nil;
     [self.loadButton setEnabled:YES];
 }
+- (void) backToLastViewController {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 
 #pragma mask ---- 密码文本框的编辑事件
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
@@ -116,6 +123,16 @@
     return YES;
 }
 
+
+#pragma mask ---- UITextFieldDelegate
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSString* newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (newString.length > 8) {
+        textField.text = [newString substringToIndex:8];
+        return NO;
+    }
+    return YES;
+}
 
 /*************************************
  * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
@@ -205,8 +222,6 @@
     iconImageView.image                 = iconImage;
     [self.view addSubview:iconImageView];
     
-    
-    
     /* 账号：textField ; width=view.bounds.width - 50*2 ; height = iconViewHeight; */
     frame.origin.x                      = leftLeave;
     frame.origin.y                      += iconViewHeight * (1 + 0.8);
@@ -248,9 +263,6 @@
     frame.origin.x += frame.size.width ;
     self.switchSecurity.frame = frame;
     [self.view addSubview:self.switchSecurity];
-
-    
-    
     
     /* 登陆按钮：UIButton */
     frame.origin.x                      = leftLeave;
@@ -305,14 +317,12 @@
     CGFloat x                           = 0 + frame.size.width/4;
     CGRect  textFieldFrame              = CGRectMake(x, 0, frame.size.width - x, frame.size.height);
     
-    
     UITextField* textField = nil;
     UIImage* image = nil;
     CGFloat imageViewHeight = 0;
     CGFloat imageViewY = 0;
     CGFloat imageViewWidth = 0;
     CGFloat imageViewX = 0;
-
     
     CGFloat cent = 9.0/24.0;
     if ([viewName isEqualToString:@"账号"]) {
@@ -360,7 +370,6 @@
     [UIView animateWithDuration:0.3 animations:^{
         sender.transform                      = CGAffineTransformMakeScale(0.95, 0.95);
     }];
-    [sender setEnabled:NO];
 }
 - (IBAction)touchOutLoad: (UIButton*)sender {
     // 添加动画效果: 恢复原大小
@@ -587,7 +596,6 @@
         UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
         [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
-//        [viewController setDefaultInfo:self.dictLastRegisterInfo];
         [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
         [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
         [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
@@ -602,7 +610,6 @@
         [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self.navigationController pushViewController:viewController animated:YES];
-
     }
 }
 
@@ -645,7 +652,7 @@
                 _userPasswordTextField.text = textPrepare;
             }
         }
-
+        [_userPasswordTextField setDelegate:self];
     }
     return _userPasswordTextField;
 }

@@ -271,7 +271,7 @@
         } else if (TestOrProduce == 5) {
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ipStr = @"113.88.197.213";
+            ipStr = @"174.128.255.231";
         }
         
     }
@@ -317,7 +317,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"113.88.197.213";
+            ip = @"174.128.255.231";
         }
     }
     return ip;
@@ -1009,4 +1009,17 @@
     return retString;
 }
 
+// 缩放图片
++ (UIImage*) imageScaledBySourceImage:(UIImage*)image
+                       withWidthScale:(CGFloat)wScale
+                       andHeightScale:(CGFloat)hScale
+{
+    CGRect newRect = CGRectMake(0, 0, image.size.width*wScale, image.size.height*hScale);
+    UIGraphicsBeginImageContext(newRect.size);
+//    UIGraphicsBeginImageContextWithOptions(newRect.size, NO, [UIScreen mainScreen].scale);
+    [image drawInRect:newRect];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
 @end

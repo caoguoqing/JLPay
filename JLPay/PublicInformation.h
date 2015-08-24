@@ -146,4 +146,10 @@
 // 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
 + (NSString*) clearSpaceCharAtLastOfString:(NSString*)string ;
 
+
+// 缩放图片
++ (UIImage*) imageScaledBySourceImage:(UIImage*)image
+                       withWidthScale:(CGFloat)wScale
+                       andHeightScale:(CGFloat)hScale;
+
 @end
