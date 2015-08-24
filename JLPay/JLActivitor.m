@@ -60,7 +60,9 @@ static JLActivitor* _JLactivitor = nil;
 }
 
 #pragma mask ::: 开始转动
-- (void) startAnimating {
+- (void) startAnimatingInFrame:(CGRect)frame{
+    self.frame = frame;
+    self.acounting = 0;
     if (self.hidden) {
         self.hidden = NO;
         [self.superview bringSubviewToFront:self];
@@ -70,7 +72,7 @@ static JLActivitor* _JLactivitor = nil;
     [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:@"NSDefaultRunLoopMode"];
 }
 #pragma mask ::: 停止转动
-- (void) stopAnimating {
+- (void) stopAnimating{
     self.animate = NO;
     // 关闭定时器，停止转动
     [self.timer invalidate];

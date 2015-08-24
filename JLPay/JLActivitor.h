@@ -11,6 +11,6 @@
 @interface JLActivitor : UIView
 + (JLActivitor*) sharedInstance ;
 - (BOOL) isAnimating;
-- (void) startAnimating;
+- (void) startAnimatingInFrame:(CGRect)frame;
 - (void) stopAnimating;
 @end

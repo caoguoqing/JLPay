@@ -11,7 +11,7 @@
 #import "DetailsCell.h"
 #import "RevokeViewController.h"
 #import "ASIFormDataRequest.h"
-#import "JLActivity.h"
+#import "JLActivitor.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
 #import "SelectIndicatorView.h"
@@ -25,13 +25,14 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 @property (nonatomic, strong) UIButton* frushButotn;                // 刷新数据的按钮
 @property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
 @property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
-@property (nonatomic, strong) JLActivity* activitor;                // 转轮
 @property (nonatomic, strong) NSMutableData* reciveData;            // 接收HTTP的返回的数据缓存
 
 @property (nonatomic, strong) NSMutableArray* years;
 @property (nonatomic, strong) NSMutableArray* months;
 @property (nonatomic, strong) NSMutableArray* days;
 @property (nonatomic, retain) ASIHTTPRequest* HTTPRequest;      // HTTP入口
+
+@property (nonatomic) CGRect activitorFrame;
 @end
 
 
@@ -40,7 +41,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 @synthesize tableView = _tableView;
 @synthesize searchButton = _searchButton;
 @synthesize dataArrayDisplay = _dataArrayDisplay;
-@synthesize activitor = _activitor;
 @synthesize reciveData = _reciveData;
 @synthesize dateLabel = _dateLabel;
 @synthesize frushButotn = _frushButotn;
@@ -48,6 +48,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 @synthesize months = _months;
 @synthesize days = _days;
 @synthesize HTTPRequest = _HTTPRequest;
+@synthesize activitorFrame;
 
 #pragma mask ------ UITableViewDataSource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
@@ -207,7 +208,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
         [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
         [self.HTTPRequest setDelegate:self];
         [self.HTTPRequest startAsynchronous];  // 异步获取数据
-        [self.activitor startAnimating];
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     });
 }
 
@@ -249,7 +250,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     [request clearDelegatesAndCancel];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self analysisJSONDataToDisplay];
-        if ([self.activitor isAnimating]) [self.activitor stopAnimating];
+        [[JLActivitor sharedInstance] stopAnimating];
         // 删掉请求,需要时重建
         self.HTTPRequest = nil;
     });
@@ -261,7 +262,8 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alerView show];
-        if ([self.activitor isAnimating]) [self.activitor stopAnimating];
+        [[JLActivitor sharedInstance] stopAnimating];
+
     });
     self.HTTPRequest = nil;
 
@@ -323,13 +325,18 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     [self.view addSubview:self.searchButton];
     [self.view addSubview:self.frushButotn];
     [self.view addSubview:self.dateLabel];
-    [self.view addSubview:self.activitor];
+    CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
+    self.activitorFrame = CGRectMake(0,
+                                     naviAndState,
+                                     self.view.bounds.size.width,
+                                     self.view.bounds.size.height - naviAndState - self.tabBarController.tabBar.bounds.size.height);
     
     // 从后台异步获取交易明细数据:只创建界面的时候加载一次
     [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
     [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
     [self.HTTPRequest startAsynchronous];  // 异步获取数据
-    [self.activitor startAnimating];
+    [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backItem];
 }
@@ -405,7 +412,8 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
         [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
         [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
         [self.HTTPRequest startAsynchronous];  // 异步获取数据
-        [self.activitor startAnimating];
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+
     }
 }
 - (void)viewDidAppear:(BOOL)animated {
@@ -413,6 +421,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [[JLActivitor sharedInstance] stopAnimating];
     if (self.HTTPRequest != nil) {        
         [self.HTTPRequest clearDelegatesAndCancel];
         self.HTTPRequest = nil;
@@ -519,12 +528,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     }
     return _frushButotn;
 }
-- (JLActivity *)activitor {
-    if (_activitor == nil) {
-        _activitor = [[JLActivity alloc] init];
-    }
-    return _activitor;
-}
+
 - (NSMutableData *)reciveData {
     if (_reciveData == nil) {
         _reciveData = [[NSMutableData alloc] init];

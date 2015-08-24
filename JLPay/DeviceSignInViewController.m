@@ -13,13 +13,13 @@
 #import "GroupPackage8583.h"
 #import "Toast+UIView.h"
 #import "JLActivity.h"
+#import "JLActivitor.h"
 #import "DeviceManager.h"
 
 @interface DeviceSignInViewController()<wallDelegate,managerToCard,DeviceManagerDelegate,UITableViewDataSource,UITableViewDelegate
                                         ,UIActionSheetDelegate,UIAlertViewDelegate/*,UIPickerViewDataSource, UIPickerViewDelegate*/>
 @property (nonatomic, strong) NSArray* SNVersionNums;               // SN号列表
 @property (nonatomic, strong) NSArray* terminalNums;                // 终端号列表
-@property (nonatomic, strong) JLActivity* activitor;                // 捷联通商标转轮
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 已选择的终端号:设置到本地,交易时读取
 @property (nonatomic, strong) NSString* selectedSNVersionNum;       // 已选择的设备SN号
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
@@ -27,18 +27,19 @@
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
 @property (nonatomic, strong) NSString* oldIdentifier;              // 用来保存旧的id
+@property (nonatomic) CGRect activitorFrame;
 @end
 
 
 @implementation DeviceSignInViewController
 
 @synthesize SNVersionNums = _SNVersionNums;
-@synthesize activitor = _activitor;
 @synthesize tableView = _tableView;
 @synthesize sureButton = _sureButton;
 //@synthesize refreshButton = _refreshButton;
 @synthesize waitingTimer;
 @synthesize selectedTerminalNum;
+@synthesize activitorFrame;
 
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
@@ -49,7 +50,6 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self setExtraCellLineHidden:self.tableView];
-    [self.view addSubview:self.activitor];
     
     // 不要放在 viewWillAppear 中
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
@@ -65,6 +65,10 @@
     CGFloat tabBarHeignth = self.tabBarController.tabBar.bounds.size.height;
     CGFloat buttonHeight = 50;
     CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight - inset*4;
+    self.activitorFrame = CGRectMake(0,
+                                     navigationBarHeight + statusBarHeight,
+                                     self.view.bounds.size.width,
+                                     self.view.bounds.size.height - navigationBarHeight - statusBarHeight - tabBarHeignth);
     // 表视图
     CGRect frame = CGRectMake(0,
                               statusBarHeight + navigationBarHeight,
@@ -100,6 +104,7 @@
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [[JLActivitor sharedInstance] stopAnimating];
     NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
     if (identifier == nil) {
         [[NSUserDefaults standardUserDefaults] setValue:self.oldIdentifier forKey:DeviceIDOfBinded];
@@ -195,6 +200,16 @@
     }
     return headerTitle;
 }
+// pragma mask ::: 设置section 尾
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    NSString* headerTitle = @"";
+    if (section == 0) {
+        headerTitle = [NSString stringWithFormat:@"已选择终端号:%@",[PublicInformation returnTerminal]];
+    } else if (section == 1) {
+        headerTitle = @"已选择设备 SN:";
+    }
+    return headerTitle;
+}
 
 
 /*
@@ -251,7 +266,6 @@
                 [self.waitingTimer invalidate];
                 self.waitingTimer = nil;
             }
-//            [self.activitor stopAnimating];
         }
         [self.tableView reloadData];
     });
@@ -267,7 +281,7 @@
                                                    Delegate:self
                                                      method:@"tcpsignin"];
             } else {
-                [self.activitor stopAnimating];
+                [[JLActivitor sharedInstance] stopAnimating];
                 [self alertForMessage:@"绑定设备失败!"];
             }
         });
@@ -276,7 +290,8 @@
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
     // 停止等待转轮
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
+        [[JLActivitor sharedInstance] stopAnimating];
+        return;
     });
     if (yesOrNot) {
         // 保存已绑定设备的信息到本地列表
@@ -300,7 +315,7 @@
         [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.activitor stopAnimating];
+            [[JLActivitor sharedInstance] stopAnimating];
             [self alertForMessage:@"连接设备失败:签到失败"];
         });
     }
@@ -308,7 +323,7 @@
 // 接收数据失败
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
+        [[JLActivitor sharedInstance] stopAnimating];
     });
     [self alertForMessage:@"连接设备失败:签到失败"];
 }
@@ -342,7 +357,7 @@
                 });
             }
         } else {
-            [self.activitor stopAnimating];
+            [[JLActivitor sharedInstance] stopAnimating];
             [self alertForMessage:@"设备未连接"];
             if (connectedState == 0) { // 如果设备已识别，但未连接，进行连接
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -352,7 +367,7 @@
         }
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.activitor stopAnimating];
+            [[JLActivitor sharedInstance] stopAnimating];
         });
         [self alertForMessage:@"连接设备失败:签到报文解析失败"];
     }
@@ -414,7 +429,7 @@
                                                        PORT:Current_Port
                                                    Delegate:self
                                                      method:@"downloadMainKey"];
-            [self.activitor startAnimating];
+            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
         });
     } else {
         [self alertForMessage:@"设备未连接"];
@@ -444,7 +459,6 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([alertView.message isEqualToString:@"绑定设备成功!"]) {
         // 绑定成功后就跳转到金额输入界面
-//        [self.navigationController popViewControllerAnimated:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             [UIView animateWithDuration:0.5 delay:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
                 [self.tabBarController setSelectedViewController:[[self.tabBarController viewControllers] objectAtIndex:0]];
@@ -510,9 +524,7 @@
 
 // 超时后解除转轮，并输出错误信息
 - (void) waitingTimeoutWithMsg {
-    if ([self.activitor isAnimating]) {
-        [self.activitor stopAnimating];
-    }
+    [[JLActivitor sharedInstance] stopAnimating];
     [self alertForMessage:@"设备连接超时"];
     [self.waitingTimer invalidate];
     self.waitingTimer = nil;
@@ -532,12 +544,6 @@
         _terminalNums = [[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Numbers];
     }
     return _terminalNums;
-}
-- (JLActivity *)activitor {
-    if (_activitor == nil) {
-        _activitor = [[JLActivity alloc] init];
-    }
-    return _activitor;
 }
 - (UIButton *)sureButton {
     if (_sureButton == nil) {

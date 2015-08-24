@@ -460,7 +460,7 @@
     
     if([self packingChecking]) {
         [self requestPacking];
-        [[JLActivitor sharedInstance] startAnimating];
+//        [[JLActivitor sharedInstance] startAnimating];
         [self requestStart];
     }
 }
