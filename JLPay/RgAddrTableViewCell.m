@@ -16,6 +16,7 @@
 @property (nonatomic, strong) UIButton* btnAreaOrCountry;   // 区/县
 @property (nonatomic, strong) UITextView* txtViewDetailAddr;    // 详细地址
 @property (nonatomic, strong) UILabel* labTitle;        // 标题
+@property (nonatomic, strong) UIView* line;
 @property (nonatomic) CGFloat fontSize;
 @property (nonatomic) int tagProvince;
 @property (nonatomic) int tagCity;
@@ -30,6 +31,7 @@
 @synthesize btnAreaOrCountry = _btnAreaOrCountry;
 @synthesize txtViewDetailAddr = _txtViewDetailAddr;
 @synthesize labTitle = _labTitle;
+@synthesize line = _line;
 
 #pragma mask ---- public interface
 // 判断是否正在输入
@@ -71,6 +73,12 @@
     return self.btnAreaOrCountry.titleLabel.text;
 }
 // 详细地址
+- (void) setDetailPlace:(NSString*)detailPlace {
+    if (detailPlace && detailPlace.length > 0) {
+        [self.txtViewDetailAddr setText:detailPlace];
+    }
+}
+
 - (NSString*) detailPlace {
     return self.txtViewDetailAddr.text;
 }
@@ -114,11 +122,12 @@
         self.tagProvince = 23;
         self.tagCity = 43;
         self.tagArea = 11;
-        [self.contentView addSubview:self.btnProvince];
-        [self.contentView addSubview:self.btnCity];
-        [self.contentView addSubview:self.btnAreaOrCountry];
-        [self.contentView addSubview:self.txtViewDetailAddr];
-        [self.contentView addSubview:self.labTitle];
+        [self addSubview:self.btnProvince];
+        [self addSubview:self.btnCity];
+        [self addSubview:self.btnAreaOrCountry];
+        [self addSubview:self.txtViewDetailAddr];
+        [self addSubview:self.labTitle];
+        [self addSubview:self.line];
     }
     return self;
 }
@@ -126,6 +135,7 @@
     CGFloat inset = 5.0;
     CGFloat midInset = inset * 3;
     CGFloat rightInset = inset * 2;
+    CGFloat lineHeight = 0.5;
     CGFloat widthBtn = (self.frame.size.width - inset - inset*2 * 3 - rightInset - inset*2)/3.0;
     
     // 标记 *
@@ -146,7 +156,7 @@
     // 标记 *
     frame.origin.x += frame.size.width + inset;
     frame.size.width = inset*2;
-    [self.contentView addSubview:[self newLabelInputFlagWithFrame:frame]];
+    [self.contentView addSubview:[[UIView alloc] initWithFrame:frame]];
     // 区/县按钮
     frame.origin.x += frame.size.width;
     frame.size.width = widthBtn;
@@ -165,6 +175,12 @@
     frame.origin.x += frame.size.width + midInset;
     frame.size.width = self.frame.size.width - frame.origin.x - rightInset;
     self.txtViewDetailAddr.frame = frame;
+    // line
+    frame.origin.x = inset*3;
+    frame.origin.y = self.frame.size.height - lineHeight;
+    frame.size.width = self.frame.size.width - inset*3;
+    frame.size.height = lineHeight;
+    self.line.frame = frame;
 }
 // 新建一个 * label
 - (UILabel*) newLabelInputFlagWithFrame:(CGRect)frame {
@@ -237,7 +253,6 @@
         _txtViewDetailAddr.layer.borderWidth = 0.5;
         _txtViewDetailAddr.font = [UIFont systemFontOfSize:self.fontSize];
         [_txtViewDetailAddr setDelegate:self];
-
     }
     return _txtViewDetailAddr;
 }
@@ -248,6 +263,13 @@
         _labTitle.text = @"详细地址";
     }
     return _labTitle;
+}
+- (UIView *)line {
+    if (_line == nil) {
+        _line = [[UIView alloc] initWithFrame:CGRectZero];
+        [_line setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.5]];
+    }
+    return _line;
 }
 
 @end

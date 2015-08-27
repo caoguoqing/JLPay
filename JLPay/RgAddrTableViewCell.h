@@ -37,6 +37,7 @@
 - (NSString*) area;
 
 // 详细地址
+- (void) setDetailPlace:(NSString*)detailPlace;
 - (NSString*) detailPlace;
 
 @end

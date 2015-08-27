@@ -47,8 +47,8 @@ static JLActivitor* _JLactivitor = nil;
         self.frame = [UIScreen mainScreen].bounds;
         [self addSubview:self.imageView];
         self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.4];
-        AppDelegate* appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [appDelegate.window addSubview:self];
+//        UIWindow* keywindow = [[UIApplication sharedApplication] keyWindow];
+//        [keywindow addSubview:self];
     }
     return self;
 }
@@ -61,7 +61,9 @@ static JLActivitor* _JLactivitor = nil;
 
 #pragma mask ::: 开始转动
 - (void) startAnimatingInFrame:(CGRect)frame{
+    [[[UIApplication sharedApplication] keyWindow] addSubview:self];
     self.frame = frame;
+    
     self.acounting = 0;
     if (self.hidden) {
         self.hidden = NO;
@@ -74,6 +76,7 @@ static JLActivitor* _JLactivitor = nil;
 #pragma mask ::: 停止转动
 - (void) stopAnimating{
     self.animate = NO;
+    [self removeFromSuperview];
     // 关闭定时器，停止转动
     [self.timer invalidate];
     self.timer = nil;

@@ -14,6 +14,7 @@
 @property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) UITextField* textField;
 @property (nonatomic) CGFloat fontSize;
+@property (nonatomic,strong) UIView* line;
 @end
 
 
@@ -22,16 +23,15 @@
 @synthesize flagInputLabel = _flagInputLabel;
 @synthesize titleLabel = _titleLabel;
 @synthesize textField = _textField;
+@synthesize line = _line;
 @synthesize mustBeInputed;
 
 
 #pragma mask ---- UITextFieldDelegate
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-//    if (textField.text && textField.text.length > 0) {
-        if (self.cellDelegate && [self.cellDelegate respondsToSelector:@selector(textBeInputedInCellTitle:inputedText:)]) {
-            [self.cellDelegate textBeInputedInCellTitle:self.titleLabel.text inputedText:textField.text];
-        }
-//    }
+    if (self.cellDelegate && [self.cellDelegate respondsToSelector:@selector(textBeInputedInCellTitle:inputedText:)]) {
+        [self.cellDelegate textBeInputedInCellTitle:self.titleLabel.text inputedText:textField.text];
+    }
 }
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     /*
@@ -65,6 +65,10 @@
 - (void) setSecureEntry:(BOOL)yesOrNo {
     [self.textField setSecureTextEntry:yesOrNo];
 }
+// 设置文本框的值
+- (void) setText:(NSString*)text {
+    [self.textField setText:text];
+}
 
 // 判断是否正在输入
 - (BOOL) isTextEditing {
@@ -85,9 +89,10 @@
     if (self) {
         self.fontSize = 15.0;
         self.mustBeInputed = flag;
-        [self.contentView addSubview:self.flagInputLabel];
-        [self.contentView addSubview:self.titleLabel];
-        [self.contentView addSubview:self.textField];
+        [self addSubview:self.flagInputLabel];
+        [self addSubview:self.titleLabel];
+        [self addSubview:self.textField];
+        [self addSubview:self.line];
     }
     return self;
 }
@@ -98,6 +103,7 @@
     CGFloat inset = 5;
     CGFloat midInset = inset*3;
     CGFloat rightInset = inset*2;
+    CGFloat lineHeight = 0.5;
     CGRect iFrame = CGRectMake(inset, 0, inset* 2, self.frame.size.height);
     self.flagInputLabel.frame = iFrame;
     if (self.mustBeInputed) {
@@ -115,7 +121,12 @@
     iFrame.size.width = self.frame.size.width - iFrame.origin.x - rightInset;
     iFrame.size.height = self.frame.size.height - inset*2;
     self.textField.frame = iFrame;
-
+    // line
+    iFrame.origin.x = inset*3;
+    iFrame.origin.y = self.frame.size.height - lineHeight;
+    iFrame.size.width = self.frame.size.width - inset*3;
+    iFrame.size.height = lineHeight;
+    self.line.frame = iFrame;
 }
 
 #pragma mask ---- getter & setter
@@ -154,6 +165,13 @@
         [_textField setDelegate:self];
     }
     return _textField;
+}
+- (UIView *)line {
+    if (_line == nil) {
+        _line = [[UIView alloc] initWithFrame:CGRectZero];
+        [_line setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.5]];
+    }
+    return _line;
 }
 
 @end

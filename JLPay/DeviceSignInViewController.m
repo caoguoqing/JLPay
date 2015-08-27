@@ -126,11 +126,9 @@
 
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
 }
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rows;
     if (section == 0) {
@@ -149,7 +147,6 @@
     }
     return rows;
 }
-
 // pragma mask ::: 装载终端编号单元格
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* identifier = @"tableViewCell";
@@ -201,15 +198,15 @@
     return headerTitle;
 }
 // pragma mask ::: 设置section 尾
-- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    NSString* headerTitle = @"";
-    if (section == 0) {
-        headerTitle = [NSString stringWithFormat:@"已选择终端号:%@",[PublicInformation returnTerminal]];
-    } else if (section == 1) {
-        headerTitle = @"已选择设备 SN:";
-    }
-    return headerTitle;
-}
+//- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+//    NSString* headerTitle = @"";
+//    if (section == 0) {
+//        headerTitle = [NSString stringWithFormat:@"已选择终端号:%@",[PublicInformation returnTerminal]];
+//    } else if (section == 1) {
+//        headerTitle = @"已选择设备 SN:";
+//    }
+//    return headerTitle;
+//}
 
 
 /*

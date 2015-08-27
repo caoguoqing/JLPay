@@ -37,7 +37,8 @@
 - (void) setTextPlaceholder:(NSString*)placeholder;
 // 设置密码模式
 - (void) setSecureEntry:(BOOL)yesOrNo;
-
+// 设置文本框的值
+- (void) setText:(NSString*)text;
 
 
 // 判断是否正在输入

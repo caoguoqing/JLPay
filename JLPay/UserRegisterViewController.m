@@ -871,7 +871,6 @@
     if (_imgViewCardForce == nil) {
         _imgViewCardForce = [[UIImageView alloc] initWithFrame:CGRectZero];
         _imgViewCardForce.backgroundColor = [UIColor whiteColor];
-
     }
     return _imgViewCardForce;
 }

@@ -271,7 +271,7 @@
         } else if (TestOrProduce == 5) {
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ipStr = @"174.128.255.231";
+            ipStr = @"192.188.8.120";
         }
         
     }
@@ -317,7 +317,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"174.128.255.231";
+            ip = @"192.188.8.120";
         }
     }
     return ip;
@@ -329,7 +329,7 @@
     }else{
         port = @"80";
         if (TestOrProduce == 9) {
-            port = @"8080";
+            port = @"80";
         }
     }
     return port;
@@ -1015,8 +1015,7 @@
                        andHeightScale:(CGFloat)hScale
 {
     CGRect newRect = CGRectMake(0, 0, image.size.width*wScale, image.size.height*hScale);
-    UIGraphicsBeginImageContext(newRect.size);
-//    UIGraphicsBeginImageContextWithOptions(newRect.size, NO, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(newRect.size, NO, [UIScreen mainScreen].scale);
     [image drawInRect:newRect];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

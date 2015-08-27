@@ -12,6 +12,7 @@
 @property (nonatomic, strong) UILabel* labTitle;
 @property (nonatomic, strong) UIButton* btnImage;
 @property (nonatomic, strong) UIImage* btnBackImage;
+@property (nonatomic, strong) UIView* line;
 @property (nonatomic) BOOL addedImage;
 @property (nonatomic) CGFloat fontSize;
 @end
@@ -19,6 +20,7 @@
 @implementation RgImageTableViewCell
 @synthesize labTitle = _labTitle;
 @synthesize btnImage = _btnImage;
+@synthesize line = _line;
 @synthesize addedImage;
 @synthesize fontSize;
 
@@ -111,13 +113,15 @@
     if (self) {
         self.addedImage = NO;
         self.fontSize = 15.0;
-        [self.contentView addSubview:self.labTitle];
-        [self.contentView addSubview:self.btnImage];
+        [self addSubview:self.labTitle];
+        [self addSubview:self.btnImage];
+        [self addSubview:self.line];
     }
     return self;
 }
 - (void)layoutSubviews {
     CGFloat inset = 5.0;
+    CGFloat lineHeight = 0.5;
     CGRect frame = CGRectMake(inset, inset, inset*2, self.frame.size.height - inset*2);
     [self.contentView addSubview:[self labelNeedInputInFrame:frame]];
     
@@ -131,6 +135,12 @@
     if ([self.btnImage backgroundImageForState:UIControlStateNormal] == nil ) {
         [self.btnImage setBackgroundImage:[self newOriginImageForFrame:self.btnImage.bounds withOImage:[UIImage imageNamed:@"camera"]] forState:UIControlStateNormal];
     }
+    // line
+    frame.origin.x = inset*3;
+    frame.origin.y = self.frame.size.height - lineHeight;
+    frame.size.width = self.frame.size.width - inset*3;
+    frame.size.height = lineHeight;
+    self.line.frame = frame;
 }
 // 生成星号label
 - (UILabel*) labelNeedInputInFrame:(CGRect)frame {
@@ -160,5 +170,11 @@
     }
     return _btnImage;
 }
-
+- (UIView *)line {
+    if (_line == nil) {
+        _line = [[UIView alloc] initWithFrame:CGRectZero];
+        [_line setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.5]];
+    }
+    return _line;
+}
 @end

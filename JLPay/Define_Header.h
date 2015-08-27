@@ -20,6 +20,7 @@
 #define CustomKeyboardHeight            216.0
 // 数据库文件 - 全国地名及代码
 #define DBFILENAME                      @"test.db"
+#define DBFILENAME_AREACODE             @"test.db"
 
 
 // 日志打印选项: 打印(1);不打印(0);

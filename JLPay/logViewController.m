@@ -18,7 +18,7 @@
 #import "ThreeDesUtil.h"
 #import "ASIFormDataRequest.h"
 #import "AppDelegate.h"
-#import "UserRegisterViewController.h"
+#import "RegisterViewController.h"
 
 
 
@@ -427,7 +427,8 @@
  *************************************/
 - (IBAction)signIn: (id)sender {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    [viewController setPackageType:0];// 注册
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -594,7 +595,7 @@
         NSLog(@"%@",alertView.message);
         NSLog(@"放回信息:[%@]",self.dictLastRegisterInfo);
         UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+        RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
         [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
         [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
         [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
