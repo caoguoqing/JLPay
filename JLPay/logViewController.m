@@ -393,9 +393,8 @@
         [self alertShow:@"请输入密码"];
         return;
     }
-    
+
     // 保存历史信息
-    [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
     [[NSUserDefaults standardUserDefaults] setBool:self.switchSavePin.on forKey:NeedSavingUserPW];
     [[NSUserDefaults standardUserDefaults] setBool:self.switchSecurity.on forKey:NeedDisplayUserPW];
     if ([self.switchSavePin isOn]) {
@@ -480,7 +479,9 @@
     } else {                            // 登陆成功
         // 校验是否切换了账号
         [self checkoutCustSwitch];
+
         // 解析响应数据
+        [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱

@@ -698,7 +698,7 @@
 
 
 
-#pragma mask ---- 重写8583报文打包函数
+#pragma mask ---- 重写8583报文打包函数 -----------------------------------------------------------
 + (NSString*) stringPacking8583 {
     NSString* string;
     NSMutableDictionary* dataPack = [[NSMutableDictionary alloc] init];
@@ -723,6 +723,9 @@
     [dataPack setValue:[self makeF61] forKey:@"61"];
     [dataPack setValue:[self makeF62] forKey:@"62"];
     [dataPack setValue:[self makeF63] forKey:@"63"];
+    
+//    NSArray* newDataArray = [self getNewPinAndMac:<#(NSArray *)#> exchange:<#(NSString *)#> bitmap:<#(NSString *)#>];
+    
     string = [HeaderString stringPacking8583WithBitmapArray:[self arrayBitMap]
                                                        tpdu:TPDU
                                                      header:HEADER

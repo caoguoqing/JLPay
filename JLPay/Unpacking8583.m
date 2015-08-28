@@ -2044,211 +2044,7 @@ static Unpacking8583 *sharedObj2 = nil;
         
     }
 
-#pragma mark----blue IC签到
-    else if ([methodStr isEqualToString:@"blue_signinic"]){
-        @try {
-            NSArray *bitmapArr=[[Unpacking8583 getInstance] bitmapArr:[PublicInformation getBinaryByhex:[signin substringWithRange:NSMakeRange(30, 16)]]];//11,12,13,13....
-            NSLog(@"位图====%@",bitmapArr);
-            NSString *pathToConfigFile = [[NSBundle mainBundle] pathForResource:@"newisoconfig" ofType:@"plist"];
-            NSDictionary *allElementDic = [NSDictionary dictionaryWithContentsOfFile:pathToConfigFile];
-            NSMutableDictionary *bitDic=[[NSMutableDictionary alloc] init];
-            for (int i=0; i<[bitmapArr count]; i++) {
-                NSString *bitStr=[bitmapArr objectAtIndex:i];
-                for (int a=0; a<[[allElementDic allKeys] count]; a++) {
-                    if ([bitStr isEqualToString:[[allElementDic allKeys] objectAtIndex:a]]) {
-                        [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:[[allElementDic allKeys] objectAtIndex:a]] forKey:[[allElementDic allKeys] objectAtIndex:a]]];
-                    }
-                }
-            }
-            NSArray* sortArr = [[NSArray alloc] initWithArray:bitmapArr];
-//            NSLog(@"签到=======%@",sortArr);
-            //数据包
-            NSMutableString *dataStr=(NSMutableString *)[signin substringWithRange:NSMakeRange(46, ([signin length]-46))];
-            NSLog(@"数据包长度====%d,数据=====%@",[dataStr length],dataStr);
-            NSMutableArray *arr=[[NSMutableArray alloc] init];
-            
-            int location=0;
-            int length=0;
-            NSString *deleteStr=@"";
-            for (int c=0; c<[sortArr count]; c++) {
-                
-                if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"99"]) {
-                    //剩下长度
-                    NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                    //取一个字节，表示长度
-                    int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]*2+2;
-                    length=oneCharLength;
-                }else if([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"999"]){
-                    //剩下长度
-                    NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                    //取两个字节，表示长度
-                    int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-                    length=oneCharLength;
-                }else{
-                    length=[[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"] intValue];
-                }
-                NSLog(@"location   :   %d   length:  %d",location,length);
-                NSLog(@"位域====%@,长度=====%@,值====%@",[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
-                deleteStr=[dataStr substringWithRange:NSMakeRange(location, length)];
-                location += length;
-                [arr addObject:deleteStr];
 
-                
-                if ([[sortArr objectAtIndex:c] isEqualToString:@"56"]) {
-                    NSLog(@"deleteStr====%@",deleteStr);
-                    [[NSUserDefaults standardUserDefaults] setValue:deleteStr forKey:Get_Sort_Number];//[arr objectAtIndex:7]
-                    NSLog(@"签到返回的批次号====%@",[[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number]);
-                }
-                
-                if ([[sortArr objectAtIndex:c] isEqualToString:@"62"]) {
-                    NSString *reallyLengthStr=[deleteStr substringWithRange:NSMakeRange(4, 80)];//[arr objectAtIndex:9]
-                    //62域工作秘钥
-                    //(1),获取秘钥明文（3des解密）(pin秘钥密文和工作秘钥)
-                    NSString *pinresult=[reallyLengthStr substringWithRange:NSMakeRange(32, 8)];
-                    NSString *pinString=[self threeDESdecrypt:[reallyLengthStr substringWithRange:NSMakeRange(0, 32)] keyValue:Main_Work_key];
-                    NSLog(@"pin明文====%@",pinString);
-                    
-                    [[NSUserDefaults standardUserDefaults] setValue:pinString forKey:Sign_in_PinKey];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    
-                    NSString *pinEncryptVlaue=[self threeDesEncrypt:@"0000000000000000" keyValue:pinString];
-                    NSString *pinvalue=[pinEncryptVlaue substringWithRange:NSMakeRange(0, 8)];
-                    NSLog(@"pinresult====%@,pinvalue====%@",pinresult,pinvalue);
-                    
-                    //mac验证数据
-                    
-                    NSString *macresult=[reallyLengthStr substringWithRange:NSMakeRange(72, 8)];
-                    NSString *macString=[self threeDESdecrypt:[reallyLengthStr substringWithRange:NSMakeRange(40, 32)] keyValue:Main_Work_key];
-                    NSLog(@"mac明文====%@",macString);
-                    
-                    [[NSUserDefaults standardUserDefaults] setValue:macString forKey:Sign_in_MacKey];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    
-                    NSString *macEncryptVlaue=[DesUtil encryptUseDES:@"0000000000000000" key:macString];
-                    NSString *macvalue=[macEncryptVlaue substringWithRange:NSMakeRange(0, 8)];
-                    NSLog(@"macresult====%@,macString====%@",macresult,macvalue);
-                    
-                }
-                //交易结果
-                if ([[sortArr objectAtIndex:c] isEqualToString:@"59"]) {
-                    //59域00，pin校验，mac校验
-                    //if ([self exchangeSuccess:deleteStr] && [pinresult isEqualToString:pinvalue] && [macresult isEqualToString:macvalue]) {//[arr objectAtIndex:8]
-                    if ([self exchangeSuccess:deleteStr]){
-                        rebackStr=@"签到成功";
-                        rebackState=YES;
-                    }else{
-                        rebackStr=[self exchangeResult:deleteStr];
-                        rebackState=NO;
-                    }
-                }
-            }
-            NSLog(@"arr=====+%@",arr);
-            [self.delegate managerToCardState:rebackStr isSuccess:rebackState method:methodStr];
-        }
-        @catch (NSException *exception) {
-            NSLog(@"%@", exception.reason);
-            rebackStr=@"签到失败";
-            [self.delegate managerToCardState:rebackStr isSuccess:NO method:methodStr];
-        }
-        @finally {
-            
-        }
-        
-    }
-#pragma mark----blue IC余额查询
-    else if ([methodStr isEqualToString:@"blue_searchMoneyic"]){
-        {
-            @try {
-                NSArray *bitmapArr=[[Unpacking8583 getInstance] bitmapArr:[PublicInformation getBinaryByhex:[signin substringWithRange:NSMakeRange(30, 16)]]];//11,12,13,13....
-                NSLog(@"位图====%@",bitmapArr);
-                NSString *pathToConfigFile = [[NSBundle mainBundle] pathForResource:@"newisoconfig" ofType:@"plist"];
-                NSDictionary *allElementDic = [NSDictionary dictionaryWithContentsOfFile:pathToConfigFile];
-                NSMutableDictionary *bitDic=[[NSMutableDictionary alloc] init];
-                for (int i=0; i<[bitmapArr count]; i++) {
-                    NSString *bitStr=[bitmapArr objectAtIndex:i];
-                    for (int a=0; a<[[allElementDic allKeys] count]; a++) {
-                        if ([bitStr isEqualToString:[[allElementDic allKeys] objectAtIndex:a]]) {
-                            [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:[[allElementDic allKeys] objectAtIndex:a]] forKey:[[allElementDic allKeys] objectAtIndex:a]]];
-                        }
-                    }
-                }
-                NSArray* sortArr = [[NSArray alloc] initWithArray:bitmapArr];
-                //数据包
-                NSMutableString *dataStr=(NSMutableString *)[signin substringWithRange:NSMakeRange(46, ([signin length]-46))];
-                NSLog(@"数据包长度====%d,数据=====%@",[dataStr length],dataStr);
-                NSMutableArray *arr=[[NSMutableArray alloc] init];
-                
-                int location=0;
-                int length=0;
-                NSString *deleteStr=@"";
-                for (int c=0; c<[sortArr count]; c++) {
-
-                    if (([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"bcd99"])) {
-                        //剩下长度
-                        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                        //取一个字节，表示长度
-                        int otherLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]+2;
-                        if (otherLength%2 > 0) {
-                            otherLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]+2+1;
-                        }
-                        length=otherLength;
-                    }
-                    else if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"99"]) {
-                        //剩下长度
-                        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                        //取一个字节，表示长度
-                        int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]*2+2;
-                        length=oneCharLength;
-                    }else if([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"999"]){
-                        //剩下长度
-                        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-                        //取两个字节，表示长度
-                        int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-                        length=oneCharLength;
-                    }else{
-                        length=[[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"] intValue];
-                    }
-
-                    //NSLog(@"location===%d,length====%d",location,length);
-                    deleteStr=[dataStr substringWithRange:NSMakeRange(location, length)];
-                    location += length;
-                    [arr addObject:deleteStr];
-                    
-                    if ([[sortArr objectAtIndex:c] isEqualToString:@"54"]) {
-                        
-                        double money = [[deleteStr substringWithRange:NSMakeRange([deleteStr length]-12, 12)] doubleValue]*0.01;
-                        NSString *newDeleteStr=[NSString stringWithFormat:@"%0.2f",money];
-                        NSLog(@"money=====%.2f",money);
-                        [[NSUserDefaults standardUserDefaults] setValue:newDeleteStr forKey:SearchCard_Money];
-                        [[NSUserDefaults standardUserDefaults] synchronize];
-                    }
-                    //59域00，pin校验，mac校验
-                    if ([[sortArr objectAtIndex:c] isEqualToString:@"59"]) {
-                        if ([self exchangeSuccess:deleteStr] ) {
-                            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:Is_Or_Consumer];
-                            [[NSUserDefaults standardUserDefaults] synchronize];
-                            rebackStr=@"查询成功";
-                            rebackState=YES;
-                        }else{
-                            rebackStr=[self exchangeResult:deleteStr];
-                            rebackState=NO;
-                        }
-                    }
-                    NSLog(@"位域====%@,长度=====%@,值====%@",[sortArr objectAtIndex:c],[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"],deleteStr);
-                }
-                NSLog(@"arr=====+%@",arr);
-                [self.delegate managerToCardState:rebackStr isSuccess:rebackState method:methodStr];
-            }
-            @catch (NSException *exception) {
-                NSLog(@"%@", exception.reason);
-                rebackStr=@"查询失败";
-                [self.delegate managerToCardState:rebackStr isSuccess:NO method:methodStr];
-            }
-            @finally {
-                
-            }
-        }
-    }
 #pragma mark---- 商户登陆
     else if ([methodStr isEqualToString:@"loadIn"]){
         {
@@ -2355,6 +2151,8 @@ static Unpacking8583 *sharedObj2 = nil;
             @try {
                 NSArray *bitmapArr=[[Unpacking8583 getInstance] bitmapArr:[PublicInformation getBinaryByhex:[signin substringWithRange:NSMakeRange(30, 16)]]];//11,12,13,13....
                 NSLog(@"位图====%@",bitmapArr);
+                
+                
                 NSString *pathToConfigFile = [[NSBundle mainBundle] pathForResource:@"newisoconfig" ofType:@"plist"];
                 NSDictionary *allElementDic = [NSDictionary dictionaryWithContentsOfFile:pathToConfigFile];
                 NSMutableDictionary *bitDic=[[NSMutableDictionary alloc] init];
@@ -2451,6 +2249,111 @@ static Unpacking8583 *sharedObj2 = nil;
         }
     }
 }
+
+
+
+
+#pragma mask ---- 重写8583报文解包函数 -----------------------------------------------------------
+/*
+ //1.（2字节包长）
+ //2. (5 字节 TPDU)
+ //3. (6 字节报文头)
+ //4. (4 字节交易类型)
+ //5. (8 字节 BITMAP 位图)
+ //6. (实际交易数据)
+ */
+
+-(void)unpacking8583:(NSString *)responseString withDelegate:(id<Unpacking8583Delegate>)sdelegate {
+    self.stateDelegate = sdelegate;
+    NSString* rebackStr = nil;
+    BOOL rebackState = YES;
+    @try {
+        // map数组: bitmap串(16进制) -> 二进制串 -> 取串中'1'的位置
+        NSArray *bitmapArr=[self bitmapArr:[PublicInformation getBinaryByhex:[responseString substringWithRange:NSMakeRange(30, 16)]]];
+        NSLog(@"位图:[%@]",[bitmapArr componentsJoinedByString:@" "]);
+        // 8583域类型: 保存在 newisoconfig.plist 文件中
+        NSString *pathToConfigFile = [[NSBundle mainBundle] pathForResource:@"newisoconfig" ofType:@"plist"];
+        NSDictionary *allElementDic = [NSDictionary dictionaryWithContentsOfFile:pathToConfigFile];
+        NSMutableDictionary *bitDic=[[NSMutableDictionary alloc] init];
+        for (NSString* key in bitmapArr) {
+            [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:key] forKey:key]];
+        }
+        // 拆包: 根据位图跟域类型字典拆出对应的域; 并打包到字典 delegate 带出;
+        NSString *dataStr = [responseString substringWithRange:NSMakeRange(46, [responseString length] - 46)];
+        int location=0;
+        NSMutableDictionary* dictFields = [[NSMutableDictionary alloc] init];
+        for (int i = 0; i < bitmapArr.count; i++) {
+            NSString* bitKey = [bitmapArr objectAtIndex:i];
+            NSLog(@"%@",bitKey);
+            NSDictionary* bitDict = [bitDic objectForKey:bitKey];
+            NSString* special = [bitDict valueForKey:@"special"];
+            NSString* type = [bitDict valueForKey:@"type"];
+            NSString* length = [bitDict valueForKey:@"length"];
+            // 按配置中的每个域的类型计算要取位的长度
+            int bitLength = 0;
+            int actrueLength = 0;
+            if ([special isEqualToString:@"99"]) {
+                // 取当前第一个字节[2位]为长度
+                actrueLength = bitLength = [[dataStr substringWithRange:NSMakeRange(location, 2)] intValue];
+                location += 2;
+                // bcd码前面长度为实际值，后面值的长度必须是偶数
+                if ([type isEqualToString:@"bcd"]) {
+                    if (bitLength%2 > 0) {
+                        bitLength += 1;
+                    }
+                }
+                // 其他编码格式的为实际长度
+                else {
+                    actrueLength = bitLength *= 2;
+                }
+            } else if ([special isEqualToString:@"999"]) {
+                // 取当前第一、二个字节[4位]为长度
+                actrueLength = bitLength = [[dataStr substringWithRange:NSMakeRange(location, 4)] intValue];
+                location += 4;
+                if ([type isEqualToString:@"bcd"]) {
+                    if (bitLength%2 > 0) {
+                        bitLength += 1;
+                    }
+                } else {
+                    actrueLength = bitLength *= 2;
+                }
+            } else {
+                actrueLength = bitLength = [length intValue];
+            }
+            // 截取对应的域
+            NSString* bitData = [dataStr substringWithRange:NSMakeRange(location, actrueLength)];
+            
+            // 域名跟域值保存到字典中: @{@"F02":@"6222444466668888"}
+            [dictFields setValue:bitData forKey:[NSString stringWithFormat:@"F%02d",[bitKey intValue]]];
+            
+            location += bitLength;
+        }
+        
+        // 根据39域值,解析错误类型消息;
+        NSString* responseCode = [dictFields valueForKey:@"F39"];
+        responseCode = [PublicInformation stringFromHexString:responseCode];
+        rebackStr = [NSString stringWithFormat:@"[%@]:%@",responseCode, [ErrorType errInfo:responseCode]];
+        if (![responseCode isEqualToString:@"00"]) {
+            rebackState = NO;
+        }
+        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackOnState:withMessage:)]) {
+            [self.stateDelegate didUnpackDatas:dictFields onState:rebackState withErrorMsg:rebackStr];
+        }
+        
+    }
+    @catch (NSException *exception) {
+        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackOnState:withMessage:)]) {
+            [self.stateDelegate didUnpackDatas:nil onState:NO withErrorMsg:exception.reason];
+        }
+    }
+    @finally {}
+}
+
+
+
+
+
+
 
 -(int)getlength:(NSMutableDictionary *)bitDic :(NSArray *)sortArr :(int)c :(NSMutableString * )dataStr :(int)location :(int)length
 {

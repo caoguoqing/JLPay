@@ -615,15 +615,8 @@
 		5E397B3E1AD364A9004F206F /* TCP */ = {
 			isa = PBXGroup;
 			children = (
+				5EDA83D81B8FF0510096391B /* TcpSocket */,
 				5EBAA8F21ACD2FDC00E2ABDD /* 8583 */,
-				5E397B3F1AD364A9004F206F /* AsyncSocket.h */,
-				5E397B401AD364A9004F206F /* AsyncSocket.m */,
-				5E397B411AD364A9004F206F /* TcpClientService.h */,
-				5E397B421AD364A9004F206F /* TcpClientService.m */,
-				5E397B431AD364A9004F206F /* TcpClientService2.h */,
-				5E397B441AD364A9004F206F /* TcpClientService2.m */,
-				5E397B451AD364A9004F206F /* TcpClientService3.h */,
-				5E397B461AD364A9004F206F /* TcpClientService3.m */,
 			);
 			path = TCP;
 			sourceTree = "<group>";
@@ -1001,10 +994,6 @@
 		5EBAA8F11ACD2FCB00E2ABDD /* 磁条卡 */ = {
 			isa = PBXGroup;
 			children = (
-				5EBAA8E21ACD2FA800E2ABDD /* GroupPackage8583.h */,
-				5EBAA8E31ACD2FA800E2ABDD /* GroupPackage8583.m */,
-				5EBAA8E41ACD2FA800E2ABDD /* Unpacking8583.h */,
-				5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */,
 			);
 			name = "磁条卡";
 			sourceTree = "<group>";
@@ -1012,6 +1001,10 @@
 		5EBAA8F21ACD2FDC00E2ABDD /* 8583 */ = {
 			isa = PBXGroup;
 			children = (
+				5EBAA8E21ACD2FA800E2ABDD /* GroupPackage8583.h */,
+				5EBAA8E31ACD2FA800E2ABDD /* GroupPackage8583.m */,
+				5EBAA8E41ACD2FA800E2ABDD /* Unpacking8583.h */,
+				5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */,
 				5EBAA8D21ACD2FA800E2ABDD /* ISOHelper.h */,
 				5EBAA8D31ACD2FA800E2ABDD /* ISOHelper.m */,
 				5EBAA8D41ACD2FA800E2ABDD /* ISOBitmap.h */,
@@ -1137,6 +1130,21 @@
 				5ED3442C1AD8E10D0005C890 /* MBProgressHUD.m */,
 			);
 			path = ProgressHUD;
+			sourceTree = "<group>";
+		};
+		5EDA83D81B8FF0510096391B /* TcpSocket */ = {
+			isa = PBXGroup;
+			children = (
+				5E397B3F1AD364A9004F206F /* AsyncSocket.h */,
+				5E397B401AD364A9004F206F /* AsyncSocket.m */,
+				5E397B411AD364A9004F206F /* TcpClientService.h */,
+				5E397B421AD364A9004F206F /* TcpClientService.m */,
+				5E397B431AD364A9004F206F /* TcpClientService2.h */,
+				5E397B441AD364A9004F206F /* TcpClientService2.m */,
+				5E397B451AD364A9004F206F /* TcpClientService3.h */,
+				5E397B461AD364A9004F206F /* TcpClientService3.m */,
+			);
+			name = TcpSocket;
 			sourceTree = "<group>";
 		};
 		5EF3BAA41B69BFF600DCD764 /* 费率选择 */ = {

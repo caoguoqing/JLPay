@@ -192,7 +192,7 @@
         ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
         if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
             inList = YES;
-            NSLog(@"-00000000000   设备连接状态[%d]", [dataPath state]);
+            NSLog(@"-00000000000   设备连接状态[%d]", (int)[dataPath state]);
             if ([dataPath state] == CBPeripheralStateConnected/* || [dataPath state] == CBPeripheralStateConnecting*/) {
                 result = YES;
             }
@@ -1140,14 +1140,20 @@
     
     // 35 2磁道加密数据
     memset(dataStr, 0, 512);
-    NSLog(@"2磁加密数据:[%s]",TransData.szEncryTrack2);
     [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
     NSLog(@"2磁加密数据:[%s]", dataStr);
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
     
+    // 36 3磁道加密数据
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szEncryTrack3 :TransData.nEncryTrack3Len];
+    NSLog(@"3磁加密数据:[%s]", dataStr);
+
     // 35 2磁道数据
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.szTrack2 :TransData.nTrack2Len];
+    NSLog(@"2磁数据:[%s]",dataStr);
+
 
     // 52 PINBLOCK -- 密文密码
     memset(dataStr, 0, 512);
@@ -1226,15 +1232,12 @@
     memcpy(&TransData.szTrack2, ByteData+nIndex+1, TransData.nTrack2Len);
     nIndex +=1;
     nIndex +=TransData.nTrack2Len;
-    NSLog(@"2磁道数据:[%s]",TransData.szTrack2);
     
     //2磁道加密数据
     TransData.nEncryTrack2Len =ByteData[nIndex];
     memcpy(&TransData.szEncryTrack2, ByteData+nIndex+1, TransData.nEncryTrack2Len);
     nIndex +=1;
     nIndex +=TransData.nEncryTrack2Len;
-    NSLog(@"2磁道加密数据:[%s]",TransData.szEncryTrack2);
-
     
     //3磁道数据
     TransData.nTrack3Len =ByteData[nIndex];

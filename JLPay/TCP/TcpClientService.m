@@ -78,11 +78,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     if (delegate !=nil && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
         [delegate receiveGetData:aStr method:self.tcpMethodStr];
     }
-    
-//    NSData* aData= [aStr dataUsingEncoding: NSUTF8StringEncoding];
-//    [sock writeData:aData withTimeout:readTimeOut tag:1];
-//    [sock readDataWithTimeout:readTimeOut tag:0];
-
 }
 
 //
@@ -104,7 +99,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     if (delegate && [delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
         [delegate falseReceiveGetDataMethod:self.tcpMethodStr];
     }
-
 //    NSLog(@"onSocket:%p willDisconnectWithError:%@====tcp错误方法%@", sock, err,self.tcpMethodStr);
 }
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock

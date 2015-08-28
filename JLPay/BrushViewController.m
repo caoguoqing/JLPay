@@ -23,7 +23,15 @@
 
 
 
-@interface BrushViewController()<CustomIOSAlertViewDelegate,wallDelegate,managerToCard,UIAlertViewDelegate,DeviceManagerDelegate>
+@interface BrushViewController()
+<
+    CustomIOSAlertViewDelegate,
+    wallDelegate,
+    Unpacking8583Delegate,
+    managerToCard,
+    UIAlertViewDelegate,
+    DeviceManagerDelegate
+>
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
@@ -44,6 +52,7 @@
 
 
 #define TIMEOUT 60                      // 超时时间:统一60s
+#define INTERFACE8583   0               // 0:旧接口, 1:新接口
  
  
 @implementation BrushViewController
@@ -257,24 +266,34 @@
     NSString* orderMethod;
     NSString* methodStr;
     
-    // -- 注意::::::要区分IC卡和磁条卡交易
-//    orderMethod = [GroupPackage8583 stringPacking8583];
-    if ([self.stringOfTranType isEqualToString:TranType_Consume]) {                 // 消费
-        // 磁条
-        if ([PublicInformation returnCardType_Track]) {
-            orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
-        }
-        // 芯片
-        else {
-            orderMethod = [IC_GroupPackage8583 blue_consumer_IC:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
-        }
-        methodStr = @"cousume";
-    } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
-//        orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
-//                                              liushui:[PublicInformation returnConsumerSort]  // 原系统流水号
-//                                                money:[PublicInformation returnConsumerMoney]]; // 原消费金额
-        methodStr = @"consumeRepeal";
+    // 金融交易8583报文打包
+    //    注意::::::要区分IC卡和磁条卡交易
+    
+    /*--------------- NEW interface -----------------*/
+    if (INTERFACE8583 == 1) {
+        orderMethod = [GroupPackage8583 stringPacking8583];
     }
+    /*--------------- OLD interface -----------------*/
+    else if (INTERFACE8583 == 0) {
+        if ([self.stringOfTranType isEqualToString:TranType_Consume]) {                 // 消费
+            // 磁条
+            if ([PublicInformation returnCardType_Track]) {
+                orderMethod = [GroupPackage8583 consume:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
+            }
+            // 芯片
+            else {
+                orderMethod = [IC_GroupPackage8583 blue_consumer_IC:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
+            }
+            methodStr = @"cousume";
+        } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
+            orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
+                                                  liushui:[PublicInformation returnConsumerSort]  // 原系统流水号
+                                                    money:[PublicInformation returnConsumerMoney]]; // 原消费金额
+            methodStr = @"consumeRepeal";
+        }
+    }
+    
+
     
     self.timeOut = 0;
     // 调起交易超时计时器
@@ -282,7 +301,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(custInTiming) userInfo:nil repeats:YES];
     });
-    // 异步发送消费报文 -- 报文发送需要放在主线程
+    // Socket 异步发送消费报文 -- 报文发送需要放在主线程
     dispatch_async(dispatch_get_main_queue(), ^{
         [[TcpClientService getInstance] sendOrderMethod:orderMethod
                                                      IP:Current_IP
@@ -308,7 +327,16 @@
             NSLog(@"披上送响应数据:[%@]",data);
         }
         // 拆包
-        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
+        /*--------------- NEW interface -----------------*/
+        if (INTERFACE8583 == 1) {
+            [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
+        }
+        /*--------------- OLD interface -----------------*/
+        else if (INTERFACE8583 == 0) {
+            [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
+        }
+
+
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
     }
@@ -338,7 +366,16 @@
 }
 
 
+#pragma mask ::: ------ 拆包结果的处理协议
+/*--------------- NEW interface -----------------*/
+- (void)didUnpackDatas:(NSDictionary *)dataDict onState:(BOOL)state withErrorMsg:(NSString *)message {
+    NSLog(@"拆包结果:[%@]",message);
+    [self alertForFailedMessage:message];
+}
+/*--------------- NEW interface -----------------*/
+
 #pragma mask ::: ------ 拆包结果的处理协议    managerToCard
+/*--------------- OLD interface -----------------*/
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     
     if (state) {
@@ -380,6 +417,8 @@
         [self alertForFailedMessage:type];
     }
 }
+/*--------------- OLD interface -----------------*/
+
 
 
 
