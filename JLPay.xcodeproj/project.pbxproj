@@ -159,6 +159,8 @@
 		5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344361AD8EF910005C890 /* AVFoundation.framework */; };
 		5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */; };
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
+		5EDA83E61B9050FE0096391B /* RFDevice_BB01.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA83E51B9050FE0096391B /* RFDevice_BB01.m */; };
+		5EDA83EA1B90567D0096391B /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDA83E91B90567D0096391B /* iMagPay.framework */; };
 		5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */; };
 		5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */; };
 		5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA21B686AE200DCD764 /* DatePickerView.m */; };
@@ -452,11 +454,14 @@
 		5ED344281AD8C1DB0005C890 /* ProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressHUD.m; sourceTree = "<group>"; };
 		5ED3442B1AD8E10D0005C890 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = ../MBProgressHUD.h; sourceTree = "<group>"; };
 		5ED3442C1AD8E10D0005C890 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = ../MBProgressHUD.m; sourceTree = "<group>"; };
-		5ED3442E1AD8EB130005C890 /* JHNconnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHNconnect.h; sourceTree = "<group>"; };
-		5ED3442F1AD8EB130005C890 /* JHNconnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHNconnect.m; sourceTree = "<group>"; };
+		5ED3442E1AD8EB130005C890 /* JHNconnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHNconnect.h; path = ../JHNconnect.h; sourceTree = "<group>"; };
+		5ED3442F1AD8EB130005C890 /* JHNconnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JHNconnect.m; path = ../JHNconnect.m; sourceTree = "<group>"; };
 		5ED344361AD8EF910005C890 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		5EDA83E41B9050FE0096391B /* RFDevice_BB01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RFDevice_BB01.h; path = RF_BB01/RFDevice_BB01.h; sourceTree = "<group>"; };
+		5EDA83E51B9050FE0096391B /* RFDevice_BB01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RFDevice_BB01.m; path = RF_BB01/RFDevice_BB01.m; sourceTree = "<group>"; };
+		5EDA83E91B90567D0096391B /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
 		5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalAmountDisplayView.h; sourceTree = "<group>"; };
 		5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalAmountDisplayView.m; sourceTree = "<group>"; };
 		5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransDetailsViewController.h; sourceTree = "<group>"; };
@@ -484,6 +489,7 @@
 				5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */,
 				5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */,
 				5E5FA5881B46342600387E69 /* libReliableBurstData_arm64.a in Frameworks */,
+				5EDA83EA1B90567D0096391B /* iMagPay.framework in Frameworks */,
 				5EB9B1401AD79F7600A73190 /* libstdc++.dylib in Frameworks */,
 				5EB9B13E1AD79F6A00A73190 /* CoreBluetooth.framework in Frameworks */,
 				5EB9B13C1AD79EC600A73190 /* libMisPos.a in Frameworks */,
@@ -776,6 +782,7 @@
 				5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */,
 				5EBF82841ADDFC3D005F7E15 /* JHL */,
 				5E5FA56C1B46342600387E69 /* JHL_M60 */,
+				5EDA83E31B90507A0096391B /* RF_BB01 */,
 			);
 			name = "设备管理";
 			sourceTree = "<group>";
@@ -862,6 +869,7 @@
 				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
 				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
 				5E397B4B1AD3677E004F206F /* libxml2.dylib */,
+				5EDA83E91B90567D0096391B /* iMagPay.framework */,
 				5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */,
 				5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */,
 				5ED344361AD8EF910005C890 /* AVFoundation.framework */,
@@ -1027,17 +1035,10 @@
 		5EBAA8F91ACD38A600E2ABDD /* public */ = {
 			isa = PBXGroup;
 			children = (
-				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
-				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
-				5ED3442E1AD8EB130005C890 /* JHNconnect.h */,
-				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
-				5EBAA8F31ACD389D00E2ABDD /* JsonToString.h */,
-				5EBAA8F41ACD389D00E2ABDD /* JsonToString.m */,
+				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
 				5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */,
-				5EBA40FB1AEA3A3200F270C0 /* Photo.h */,
-				5EBA40FC1AEA3A3200F270C0 /* Photo.m */,
-				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
+				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */,
 				5EB9B1371AD79EC600A73190 /* SDK */,
 				5EBF3C401AD3B5BB00091F83 /* Toast */,
@@ -1068,6 +1069,8 @@
 		5EBAA9151ACD3F2400E2ABDD /* json */ = {
 			isa = PBXGroup;
 			children = (
+				5EBAA8F31ACD389D00E2ABDD /* JsonToString.h */,
+				5EBAA8F41ACD389D00E2ABDD /* JsonToString.m */,
 				5EBAA9011ACD3F1B00E2ABDD /* JSON.h */,
 				5EBAA9021ACD3F1B00E2ABDD /* NSObject+SBJSON.h */,
 				5EBAA9031ACD3F1B00E2ABDD /* NSObject+SBJSON.m */,
@@ -1111,6 +1114,8 @@
 		5EBF82841ADDFC3D005F7E15 /* JHL */ = {
 			isa = PBXGroup;
 			children = (
+				5ED3442E1AD8EB130005C890 /* JHNconnect.h */,
+				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
 				5E82B78E1B1BFCC200A58751 /* JHLDevice.h */,
 				5E82B78F1B1BFCC200A58751 /* JHLDevice.m */,
 				5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */,
@@ -1145,6 +1150,26 @@
 				5E397B461AD364A9004F206F /* TcpClientService3.m */,
 			);
 			name = TcpSocket;
+			sourceTree = "<group>";
+		};
+		5EDA83DD1B9047AF0096391B /* 自定义控件 */ = {
+			isa = PBXGroup;
+			children = (
+				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
+				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
+				5EBA40FB1AEA3A3200F270C0 /* Photo.h */,
+				5EBA40FC1AEA3A3200F270C0 /* Photo.m */,
+			);
+			name = "自定义控件";
+			sourceTree = "<group>";
+		};
+		5EDA83E31B90507A0096391B /* RF_BB01 */ = {
+			isa = PBXGroup;
+			children = (
+				5EDA83E41B9050FE0096391B /* RFDevice_BB01.h */,
+				5EDA83E51B9050FE0096391B /* RFDevice_BB01.m */,
+			);
+			name = RF_BB01;
 			sourceTree = "<group>";
 		};
 		5EF3BAA41B69BFF600DCD764 /* 费率选择 */ = {
@@ -1396,6 +1421,7 @@
 				5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */,
 				5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */,
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,
+				5EDA83E61B9050FE0096391B /* RFDevice_BB01.m in Sources */,
 				5E397B2A1AD36429004F206F /* ASICloudFilesContainerRequest.m in Sources */,
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
@@ -1544,6 +1570,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"/Users/jielian/Desktop/04_厂商设备接口资料/02_睿付",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1576,6 +1607,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"/Users/jielian/Desktop/04_厂商设备接口资料/02_睿付",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,

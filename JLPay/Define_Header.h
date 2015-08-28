@@ -80,7 +80,6 @@
 
 
 /*************[商户相关的参数:]**************/
-
 // 终端号，商户号,商户名称
 #define Terminal_Number @"terminal"
 #define Business_Number @"business"
@@ -108,7 +107,6 @@
 
 
 /*************[设备操作相关的参数:]**************/
-
 // 厂商设备类型
 #define DeviceType                  @"DeviceType"               
 // 锦宏霖音频A60

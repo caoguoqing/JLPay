@@ -52,7 +52,7 @@
 
 
 #define TIMEOUT 60                      // 超时时间:统一60s
-#define INTERFACE8583   0               // 0:旧接口, 1:新接口
+#define INTERFACE8583   0               // 8583打包解包接口类型:  0:旧接口, 1:新接口
  
  
 @implementation BrushViewController

@@ -47,39 +47,41 @@
 - (void) setOpenAutomaticaly:(BOOL)yesOrNo;
 // pragma mask : 打开所有设备
 - (void) openAllDevices;
+// pragma mask : 断开所有设备
 - (void) closeAllDevices;
+// pragma mask : 读取所有已连接设备的SN号
 - (void) readSNVersions;
 // 打开指定SNVersion号的设备
+- (void) openDeviceWithIdentifier:(NSString*)identifier;    // 特别给蓝牙设备使用
 - (void) openDevice:(NSString*)SNVersion;
-- (void) openDeviceWithIdentifier:(NSString*)identifier;    // 特别给M60使用
 - (void) closeDevice:(NSString*)SNVersion;
 // pragma mask : 开始扫描设备
 - (void) startScanningDevices;
 // pragma mask : 停止扫描设备
 - (void) stopScanningDevices;
+// pragma mask : 判断指定SN号的设备是否已连接  *  0:已打开，未连接  1:已连接  -1:未打开
+- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
+// pragma mask : 判断指定设备ID的设备是否已连接 *  0:已打开，未连接  1:已连接  -1:未打开
+- (int) isConnectedOnIdentifier:(NSString*)identifier;
+// pragma mask : 主密钥设置(指定设备的SN号)
+- (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
+// pragma mask : 工作密钥设置(指定设备的SN号)
+- (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion;
+// pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
+- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion;
+// pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
+- (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
+
 // pragma mask : 读取所有设备的终端号 -- useless
 - (NSArray*) terminalNumArrayOfReading;
 // pragma mask : 仅保留指定终端号的设备 -- useless
 - (void) retainDeviceWithTerminalNum:(NSString*)terminalNum;
 // pragma mask : 判断指定终端号的设备是否已连接
 - (BOOL) isConnectedOnTerminalNum:(NSString*)terminalNum;
-// pragma mask : 判断指定SN号的设备是否已连接
-- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
-// pragma mask : 判断指定设备ID的设备是否已连接
-- (int)isConnectedOnIdentifier:(NSString*)identifier;
-// pragma mask : 设置设备的终端号+商户号(指定设备的SN号)
-- (void) writeTerminalNum:(NSString*)terminalNumAndBusinessNum onSNVersion:(NSString*)SNVersion;
-// pragma mask : 设置设备主密钥(指定设备的SN号)
-- (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
 // pragma mask : 设置设备工作密钥(指定设备的终端号)
 - (void) writeWorkKey:(NSString*)workKey onTerminal:(NSString*)terminalNum;
-// pragma mask : 设置设备工作密钥(指定设备的SN号)
-- (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion;
 // pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onTerminal:(NSString*)terminalNum;
-// pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
-- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion;
-
 @end
 
 
