@@ -40,6 +40,7 @@
 @property (nonatomic, assign) int timeOut;                                  // 交易超时时间
 @property (nonatomic, strong) NSTimer* waitingTimer;                        // 控制定时器
 @property (nonatomic, strong) NSTimer* timeCountingTimer;                   // 计时器的定时器
+@property (nonatomic, retain) TcpClientService* tcpHander;                  // Socket
 @end
 
 /*************************************
@@ -64,6 +65,7 @@
 @synthesize waitingTimer = _waitingTimer;
 @synthesize stringOfTranType = _stringOfTranType;
 @synthesize moneyLabel = _moneyLabel;
+@synthesize tcpHander = _tcpHander;
 
 /*************************************
  * 功  能 : 界面的初始化;
@@ -93,6 +95,11 @@
     if (self.navigationController.navigationBarHidden) {
         self.navigationController.navigationBarHidden = NO;
     }
+}
+#pragma mask ::: 释放资源
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.tcpHander clearDelegateAndClose];
 }
 
 #pragma mask ::: 界面显示后的事件注册及处理
@@ -145,7 +152,7 @@
     }
     self.waitingTimer = nil;
     // 取消对 TCP 响应的协议
-    [[TcpClientService getInstance] setDelegate:nil];
+    [self.tcpHander setDelegate:nil];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[DeviceManager sharedInstance] clearAndCloseAllDevices];
@@ -284,12 +291,14 @@
             else {
                 orderMethod = [IC_GroupPackage8583 blue_consumer_IC:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey]];
             }
-            methodStr = @"cousume";
+//            methodStr = @"cousume";
+            methodStr = self.stringOfTranType;
         } else if ([self.stringOfTranType isEqualToString:TranType_ConsumeRepeal]) {    // 消费撤销
             orderMethod = [GroupPackage8583 consumeRepeal:[[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey] // 密文密码
                                                   liushui:[PublicInformation returnConsumerSort]  // 原系统流水号
                                                     money:[PublicInformation returnConsumerMoney]]; // 原消费金额
-            methodStr = @"consumeRepeal";
+//            methodStr = @"consumeRepeal";
+            methodStr = self.stringOfTranType;
         }
     }
     
@@ -303,11 +312,11 @@
     });
     // Socket 异步发送消费报文 -- 报文发送需要放在主线程
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[TcpClientService getInstance] sendOrderMethod:orderMethod
-                                                     IP:Current_IP
-                                                   PORT:Current_Port
-                                               Delegate:self
-                                                 method:methodStr];
+        [self.tcpHander sendOrderMethod:orderMethod
+                                     IP:Current_IP
+                                   PORT:Current_Port
+                               Delegate:self
+                                 method:methodStr];
         
     });
 }
@@ -319,11 +328,11 @@
         self.waitingTimer = nil;
     }
     if ([data length] > 0) {
-        if ([str isEqualToString:@"cousume"]) {
+        if ([str isEqualToString:TranType_Consume]) { // cousume
             NSLog(@"消费响应数据:[%@]", data);
-        } else if ([str isEqualToString:@"consumeRepeal"]) {
+        } else if ([str isEqualToString:TranType_ConsumeRepeal]) { //consumeRepeal
             NSLog(@"消费撤销响应数据:[%@]", data);
-        } else if ([str isEqualToString:@"batchUpload"]) {
+        } else if ([str isEqualToString:TranType_BatchUpload]) { // batchUpload
             NSLog(@"披上送响应数据:[%@]",data);
         }
         // 拆包
@@ -335,8 +344,6 @@
         else if (INTERFACE8583 == 0) {
             [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
         }
-
-
     } else {
         [self alertForFailedMessage:@"网络异常，请检查网络"];
     }
@@ -348,7 +355,7 @@
         self.waitingTimer = nil;
     }
     // 批上送交易失败不做任何操作
-    if ([str isEqualToString:@"batchUpload"]) {
+    if ([str isEqualToString:TranType_BatchUpload]) { // batchUpload
         // 交易成功，跳转到签名界面
         if ([self.activity isAnimating]) {
             [self.activity stopAnimating];
@@ -362,7 +369,8 @@
         });
         return;
     }
-    [self alertForFailedMessage:@"网络异常，请检查网络"];
+    [self alertForFailedMessage:[NSString stringWithFormat:@"交易失败:%@",str]];
+//    [self alertForFailedMessage:@"网络异常，请检查网络"];
 }
 
 
@@ -381,10 +389,10 @@
     if (state) {
         // 需要判断是否芯片交易
         if (![PublicInformation returnCardType_Track]) {     // 芯片卡交易
-            if ([metStr isEqualToString:@"cousume"] ||          // 消费、消费撤销要继续批上送
-                [metStr isEqualToString:@"consumeRepeal"]) {
+            if ([metStr isEqualToString:TranType_Consume] ||          // 消费、消费撤销要继续批上送
+                [metStr isEqualToString:TranType_ConsumeRepeal]) {
                 // 继续发起批上送........
-                [[TcpClientService getInstance] sendOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC] IP:Current_IP PORT:Current_Port Delegate:self method:@"batchUpload"];
+                [self.tcpHander sendOrderMethod:[IC_GroupPackage8583 uploadBatchTransOfICC] IP:Current_IP PORT:Current_Port Delegate:self method:TranType_BatchUpload];
                 return;
             }
             // 如果是披上送交易，也可以跳转到签名界面了
@@ -401,7 +409,7 @@
             [self.navigationController pushViewController:qianpi animated:YES];
         });
     } else {
-        if ([metStr isEqualToString:@"batchUpload"]) {
+        if ([metStr isEqualToString:TranType_BatchUpload]) {
             if ([self.activity isAnimating]) {
                 [self.activity stopAnimating];
             }
@@ -695,6 +703,12 @@
     frame.origin.x -= addLength;
     self.activity.frame = frame;
 }
-
+#pragma mask ::: getter
+- (TcpClientService *)tcpHander {
+    if (_tcpHander == nil) {
+        _tcpHander = [TcpClientService getInstance];
+    }
+    return _tcpHander;
+}
 
 @end

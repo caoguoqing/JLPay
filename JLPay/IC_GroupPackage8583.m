@@ -75,7 +75,7 @@
     NSString *str=@"";
     if([endtmp length]<4)
     {
-        for (int x=[endtmp length]; x<4; x++) {
+        for (int x=(int)[endtmp length]; x<4; x++) {
             str=[str stringByAppendingString:@"0"];
         }
         endtmp=[[NSString alloc]initWithFormat:@"%@%@",str,endtmp];
@@ -103,9 +103,9 @@
     
     NSString *newStr=@"";
     if ([frontStr length] %2 > 0) {//奇数
-       newStr=[NSString stringWithFormat:@"0%d%@0",[frontStr length]/2+1,frontStr];
+       newStr=[NSString stringWithFormat:@"0%ld%@0",[frontStr length]/2+1,frontStr];
     }else{//偶数
-        newStr=[NSString stringWithFormat:@"0%d%@",[frontStr length]/2,frontStr];
+        newStr=[NSString stringWithFormat:@"0%ld%@",[frontStr length]/2,frontStr];
     }
     
     return newStr;//[NSString stringWithFormat:@"0%d%@",[frontStr length]/2,frontStr];
@@ -171,8 +171,8 @@
     //NSLog(@"原始数据====%@",arr);
     //mac校验数据
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@",typestr,bitstr,[arr componentsJoinedByString:@""]];
-    NSLog(@"allStr====%@,=====%d",allStr,[allStr length]);
-    int len = allStr.length;
+    NSLog(@"allStr====%@,=====%d",allStr,(int)[allStr length]);
+    int len = (int)allStr.length;
     int other = len % 16;
     
     NSMutableArray *numArr=[[NSMutableArray alloc] init];
@@ -182,7 +182,7 @@
         }
     }
     NSString *newAllStr=[NSString stringWithFormat:@"%@%@",allStr,[numArr componentsJoinedByString:@""]];
-    NSLog(@"newAllStr=====%@=====%d",newAllStr,[newAllStr length]);
+    NSLog(@"newAllStr=====%@=====%d",newAllStr,(int)[newAllStr length]);
     
     NSData *btData=[PublicInformation NewhexStrToNSData:newAllStr];
     NSLog(@"btData====%@",btData);
@@ -353,7 +353,7 @@
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   [PublicInformation exchangeNumber],//11受卡方系统跟踪号(流水号)
                   Blue_IC_PiciNmuber,//56,批次号bcd 6
-                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:[terminalStr length]],[EncodeString encodeASC:terminalStr]],//61,pos序列号 asc 不定长999
+                  [NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:(int)[terminalStr length]],[EncodeString encodeASC:terminalStr]],//61,pos序列号 asc 不定长999
                   nil];
     NSLog(@"参数更新=====%@",arr);
     //二进制报文数据
@@ -380,14 +380,14 @@
 //60域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"00"],[EncodeString encodeASC:Blue_IC_PiciNmuber],[EncodeString encodeASC:sendType]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%d%@",(int)[ascStr length]/2,ascStr];
     NSLog(@"60域数据=====%@",betweenStr);
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],//41终端号asc
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],//42商户号asc
                   betweenStr,//60,自定义域(60.1,60.2,60.3  交易类型码，批次号,网络管理信息码)压缩成BCD码占两个字节+最大13个字节的数字字符域
-                  [NSString stringWithFormat:@"000%d%@",[[EncodeString encodeASC:@"100"] length]/2,[EncodeString encodeASC:@"100"]], nil];//62终端状态信息(BCD码表示的2个字节的长度值+数据域)
+                  [NSString stringWithFormat:@"000%d%@",(int)[[EncodeString encodeASC:@"100"] length]/2,[EncodeString encodeASC:@"100"]], nil];//62终端状态信息(BCD码表示的2个字节的长度值+数据域)
     NSLog(@"pos状态上送====%@",arr);
     
     //二进制报文数据
@@ -415,7 +415,7 @@
     //60域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"00"],[EncodeString encodeASC:Blue_IC_PiciNmuber],[EncodeString encodeASC:sendType]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%ld%@",[ascStr length]/2,ascStr];
     NSLog(@"60域数据=====%@",betweenStr);
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
@@ -448,7 +448,7 @@
 //60域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"00"],[EncodeString encodeASC:Blue_IC_PiciNmuber],[EncodeString encodeASC:sendType]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%ld%@",[ascStr length]/2,ascStr];
     NSLog(@"60域数据=====%@",betweenStr);
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
@@ -473,11 +473,11 @@
     //60域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"00"],[EncodeString encodeASC:Blue_IC_PiciNmuber],[EncodeString encodeASC:@"003"]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%ld%@",[ascStr length]/2,ascStr];
     NSLog(@"60域数据=====%@",betweenStr);
     //63域
     NSString *productNumStr=[NSString stringWithFormat:@"%@",[EncodeString encodeASC:Manager_Number]];
-    productNumStr=[NSString stringWithFormat:@"00%d%@",[productNumStr length]/2,productNumStr];
+    productNumStr=[NSString stringWithFormat:@"00%ld%@",[productNumStr length]/2,productNumStr];
     NSLog(@"63域数据=====%@",productNumStr);
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
@@ -589,7 +589,7 @@
     //60域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"01"],[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:@"00560"]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%ld%@",[ascStr length]/2,ascStr];
     //betweenStr=@"0013 3031 303030303031 3030353630";
     NSLog(@"余额查询60域=====%@",betweenStr);
     //2卡号
@@ -610,7 +610,7 @@
                   cardSN,//23,卡片序列号 bcd 3 （pos能判断时存在）
                   @"00",//25,服务点条件码
                   @"12",//26,服务点pin获取码 bcd 2
-                  [NSString stringWithFormat:@"%d%@",[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,[EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35,二磁道数据，asc，不定长37，(pos获取时存在)
+                  [NSString stringWithFormat:@"%ld%@",[[EncodeString encodeASC:[PublicInformation returnTwoTrack]] length]/2,[EncodeString encodeASC:[PublicInformation returnTwoTrack]]],//35,二磁道数据，asc，不定长37，(pos获取时存在)
                   [EncodeString encodeASC:[PublicInformation returnTerminal]],//41终端号asc
                   [EncodeString encodeASC:[PublicInformation returnBusiness]],//42商户号asc
                   [EncodeString encodeASC:@"156"],//49，货币代码，asc，定长3，（人民币156）
@@ -641,12 +641,12 @@
     //60域数据
     NSString *betweenStr11;
     NSString *ascStr11=[NSString stringWithFormat:@"%@%@%@",[EncodeString encodeASC:@"23"],[EncodeString encodeASC:Blue_IC_PiciNmuber],[EncodeString encodeASC:@"000500"]];
-    betweenStr11=[NSString stringWithFormat:@"00%d%@",[ascStr11 length]/2,ascStr11];
+    betweenStr11=[NSString stringWithFormat:@"00%ld%@",[ascStr11 length]/2,ascStr11];
     //betweenStr=23000001000500;
     NSLog(@"撤销支付60域=====%@",betweenStr11);
     //63域
     NSString *productNumStr=[NSString stringWithFormat:@"%@",[EncodeString encodeASC:Manager_Number]];
-    productNumStr=[NSString stringWithFormat:@"00%d%@",[productNumStr length]/2,productNumStr];
+    productNumStr=[NSString stringWithFormat:@"00%ld%@",[productNumStr length]/2,productNumStr];
     NSLog(@"63域数据=====%@",productNumStr);
     
     //当前流水号
@@ -658,7 +658,7 @@
     //61域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@",[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:liushuiStr]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%ld%@",[ascStr length]/2,ascStr];
     NSLog(@"61域数据=====%@",betweenStr);
     
     //卡序列号
@@ -682,7 +682,7 @@
          @"00",//25,服务点条件码 bcd 2
          //@"12",//26,服务点pin获取码 bcd 2
          //@"",//34,一磁道数据，asc，不定长76，(pos获取时存在)
-         [NSString stringWithFormat:@"%d%@",
+         [NSString stringWithFormat:@"%ld%@",
                         [[PublicInformation returnTwoTrack] length]/2,
                         [PublicInformation returnTwoTrack]],//35，二磁道数据，asc，不定长37，(pos获取时存在)
          //@"",//36，三磁道数据，asc，不定长104，(pos获取时存在)
@@ -718,7 +718,7 @@
     //61域数据
     NSString *betweenStr;
     NSString *ascStr=[NSString stringWithFormat:@"%@%@",[EncodeString encodeASC:[PublicInformation returnSignSort]],[EncodeString encodeASC:liushuiStr]];
-    betweenStr=[NSString stringWithFormat:@"00%d%@",[ascStr length]/2,ascStr];
+    betweenStr=[NSString stringWithFormat:@"00%ld%@",[ascStr length]/2,ascStr];
     
     NSArray *arr=[[NSArray alloc] initWithObjects:
                   [PublicInformation returnCard:[PublicInformation returnposCard]],//2 卡号 bcd（不定长19）

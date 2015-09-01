@@ -96,8 +96,13 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [sock setDelegate:nil];
     [sock disconnect];
     sock=nil;
+    NSString* errMessage = [err.userInfo valueForKey:NSLocalizedFailureReasonErrorKey];
+    if (!errMessage) {
+        errMessage = @"通讯超时!";
+    }
     if (delegate && [delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
-        [delegate falseReceiveGetDataMethod:self.tcpMethodStr];
+//        [delegate falseReceiveGetDataMethod:self.tcpMethodStr];
+        [delegate falseReceiveGetDataMethod:errMessage];
     }
 //    NSLog(@"onSocket:%p willDisconnectWithError:%@====tcp错误方法%@", sock, err,self.tcpMethodStr);
 }
@@ -162,6 +167,13 @@ static int readTimeOut = 60;    // 超时时间统一60s
     }
 }
 
-
+// 释放socket
+- (void) clearDelegateAndClose {
+    [self setDelegate:nil];
+    [asyncSocket setDelegate:nil];
+    [asyncSocket disconnect];
+    [asyncSocket release];
+    asyncSocket = nil;
+}
 
 @end

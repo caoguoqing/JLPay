@@ -61,6 +61,11 @@
         NSLog(@"打开设备[%@]", [[dataPath peripheral] identifier].UUIDString);
         if ([dataPath state] == CBPeripheralStateDisconnected) {
             [self.manager connectDevice:dataPath];
+        } else if (dataPath.state == CBPeripheralStateConnected &&
+                   (![dataDic valueForKey:@"SNVersion"] || [[dataDic valueForKey:@"SNVersion"] isEqualToString: @""])) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [self readSNNoWithAccessory:dataPath];
+            });
         }
     }
 }

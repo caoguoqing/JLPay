@@ -33,7 +33,7 @@
 @property (assign) id<RFDevice_BB01Delegate> delegate;
 
 # pragma mask : 初始化
-- (instancetype)initWithDelegate:(id<JHLDevice_M60_Delegate>)deviceDelegate ;
+- (instancetype)initWithDelegate:(id<RFDevice_BB01Delegate>)deviceDelegate ;
 
 # pragma mask : 开始扫描设备
 - (void) startScanningDevices;

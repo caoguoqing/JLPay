@@ -283,7 +283,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
-    [self.SNVersionNums addObject:SNVersion];
+    if (![self.SNVersionNums containsObject:SNVersion]) {
+        [self.SNVersionNums addObject:SNVersion];
+    }
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView reloadData];
@@ -487,7 +489,11 @@ UIActionSheetDelegate,UIAlertViewDelegate
     UIButton* button = (UIButton*)sender;
     button.transform = CGAffineTransformIdentity;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[DeviceManager sharedInstance] startScanningDevices];
+    });
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSLog(@"打开设备");
+        sleep(1);
         [[DeviceManager sharedInstance] openAllDevices];
     });
 }
@@ -520,6 +526,11 @@ UIActionSheetDelegate,UIAlertViewDelegate
             } completion:nil];
         });
     }
+//    else if ([alertView.message hasPrefix:@"手机蓝牙未打开"]) {
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            [[DeviceManager sharedInstance] startScanningDevices];
+//        });
+//    }
 }
 
 // pragma mask ::: 去掉多余的单元格的分割线
