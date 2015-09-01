@@ -94,10 +94,8 @@ __strong static id _sharedObject = nil;
         }
         // 没有就检查这个外设是不是需要的，是得话就插入到已连接设备列表
         for (NSString *protocol in MFi_SPP_Protocol) {
-//            NSLog(@"[obtainAccessoryForProtocol]111 protocolStr: %@", [obj protocolStrings]);
             if ([[obj protocolStrings] containsObject:protocol]) {
                 accessory = obj;
-//                NSLog(@"[obtainAccessoryForProtocol] protocolStr: %@", [obj protocolStrings]);
                 ISMFiDataPath *dataPath = [[ISMFiDataPath alloc] init];
                 dataPath.delegate = self;
                 [dataPath setProtocolString:protocol withAccessory:obj];
@@ -178,7 +176,6 @@ __strong static id _sharedObject = nil;
             else {
                 // 如果设备不能立即断开连接，要先等待数据交互完成或等待10s后断开
                 dispatch_async(dispatch_queue_create("temp", NULL), ^{
-//                    NSLog(@"[CBController] disconnectDevice : Wait for data clear");
                     int timer_count = 0;
                     while (![mDataPath.transmit canDisconnect]) {
                         //[NSThread sleepForTimeInterval:0.1];
@@ -234,34 +231,29 @@ __strong static id _sharedObject = nil;
     switch ([manager state])
     {
         case CBCentralManagerStateUnsupported:
-//            state = @"蓝牙设备电量过低,请先充电.";
-//            break;
         case CBCentralManagerStateUnauthorized:
             state = @"手机蓝牙不支持刷卡器.";
-//            state = @"The app is not authorized to use Bluetooth Low Energy.";
-
             break;
         case CBCentralManagerStatePoweredOff:
             state = @"手机蓝牙未打开,请先打开手机蓝牙.";
             break;
         case CBCentralManagerStatePoweredOn:
-//            NSLog(@"手机蓝牙已开启");
             return TRUE;
         case CBCentralManagerStateUnknown:
         default:
             return FALSE;
             
     }
-    
-//    NSLog(@"Central manager state: %@", state);
-    
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"蓝牙提示"  message:state delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-    [alertView show];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alertView show];
+    });
     return FALSE;
 }
 
 - (void)addDiscoverPeripheral:(CBPeripheral *)aPeripheral advName:(NSString *)advName{
     BOOL find = NO;
+//    NSLog(@"%s,发现设备:%@",__func__,advName);
     for (ISDataPath *dataPath in devices) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath *mDataPath = (ISBLEDataPath *)dataPath;
@@ -275,10 +267,11 @@ __strong static id _sharedObject = nil;
     }
     // 只有新识别的没在已识别列表中得设备才会进入已识别列表
     if (!find) {
+
         ISBLEDataPath *dataPath = [[ISBLEDataPath alloc] init];
         [dataPath setPeripheral:aPeripheral withAdvName:advName];
         [devices addObject:dataPath];
-//        if (aPeripheral.isConnected) {
+//        NSLog(@"%s,添加了设备:%@",__func__,dataPath);
         if ([aPeripheral state] == CBPeripheralStateConnected) {
             [_connectedAccessory addObject:dataPath];
             dataPath.delegate = self;
@@ -288,15 +281,12 @@ __strong static id _sharedObject = nil;
             // 调用者的回调:::获取完了各个设备列表后的处理
             [_deviceList didGetDeviceList:devices andConnected:_connectedAccessory];
         }
-//        NSLog(@"deviceList = %@",[devices description]);
     }
 }
 
 #pragma mark - EAAccessory Notifications
 
 - (void)accessoryDidConnect:(NSNotification *)notification {
-//    NSLog(@"[MFiDataPath] accessoryDidConnect");
-//    NSLog(@"%@",[[notification userInfo] description]);
     EAAccessory *accessory = [[notification userInfo] objectForKey:@"EAAccessoryKey"];
     if (accessory) {
          BOOL haveAccessory = NO;
@@ -337,7 +327,6 @@ __strong static id _sharedObject = nil;
 }
 
 - (void) centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary *)dict {
-//    NSLog(@"%@",[dict description]);
     if (dict[@"kCBRestoredPeripherals"]) {
         for (CBPeripheral *peripheral in dict[@"kCBRestoredPeripherals"]) {
             [self addDiscoverPeripheral:peripheral advName:peripheral.name];
@@ -348,17 +337,11 @@ __strong static id _sharedObject = nil;
 /*
  Invoked when the central discovers heart rate peripheral while scanning.
  */
-- (void) centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)aPeripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
+- (void) centralManager:(CBCentralManager *)central
+  didDiscoverPeripheral:(CBPeripheral *)aPeripheral
+      advertisementData:(NSDictionary *)advertisementData
+                   RSSI:(NSNumber *)RSSI
 {
-//    NSLog(@"<---------\n[CBController] didDiscoverPeripheral, %@, count=%u, RSSI=%d , %@", aPeripheral.UUID, [advertisementData count], [RSSI intValue], [aPeripheral description]);
-//    NSArray *advDataArray = [advertisementData allValues];
-//    NSArray *advValueArray = [advertisementData allKeys];
-//    
-//    for (int i=0; i < [advertisementData count]; i++)
-//    {
-//        NSLog(@"adv data=%@, %@ ", [advDataArray objectAtIndex:i], [advValueArray objectAtIndex:i]);
-//    }
-//    NSLog(@"-------->");
     [self addDiscoverPeripheral:aPeripheral advName:[advertisementData valueForKey:CBAdvertisementDataLocalNameKey]];
 }
 
@@ -368,10 +351,9 @@ __strong static id _sharedObject = nil;
  */
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
 {
-//    NSLog(@"Retrieved peripheral: %u - %@", [peripherals count], peripherals);
     if([peripherals count] >=1)
     {
-        //[self connectDevice:[peripherals objectAtIndex:0]];
+        [self connectDevice:[peripherals objectAtIndex:0]];
     }
 }
 
@@ -381,7 +363,6 @@ __strong static id _sharedObject = nil;
  */
 - (void) centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)aPeripheral
 {
-//    NSLog(@"[CBController] didConnectPeripheral, uuid=%@", aPeripheral.UUID);
     for (ISDataPath *dataPath in devices) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath *mDataPath = (ISBLEDataPath *)dataPath;
@@ -405,7 +386,6 @@ __strong static id _sharedObject = nil;
  */
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)aPeripheral error:(NSError *)error
 {
-//    NSLog(@"[CBController] didDisonnectPeripheral uuid = %@, error msg:%d, %@, %@", aPeripheral.UUID, error.code ,[error localizedFailureReason], [error localizedDescription]);
     NSMutableArray *objToRemove = [NSMutableArray array];
     for (ISDataPath *dataPath in _connectedAccessory) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -429,7 +409,6 @@ __strong static id _sharedObject = nil;
  */
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)aPeripheral error:(NSError *)error
 {
-//    NSLog(@"[CBController] Fail to connect to peripheral: %@ with error = %@", aPeripheral, [error localizedDescription]);
     NSMutableArray *objToRemove = [NSMutableArray array];
     for (ISDataPath *dataPath in _connectedAccessory) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
@@ -458,14 +437,10 @@ __strong static id _sharedObject = nil;
     }
 }
 - (void)accessoryDidDisconnect:(ISDataPath *)dataPath {
-    //[dataPath closeSession];
     [_connectedAccessory removeObject:dataPath];
     if ([_connectedAccessory count] == 0) {
         _connect = NO;
     }
-//    if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidDisconnect)]) {
-//        [_delegate accessoryDidDisconnect];
-//    }
     if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidDisconnect:)]) {
         [_delegate accessoryDidDisconnect:dataPath];
     }
@@ -475,7 +450,6 @@ __strong static id _sharedObject = nil;
     if ([dataPath isKindOfClass:[ISMFiDataPath class]]) {
         [dataPath openSession];
     }
-//    NSLog(@"%@",dataPath.name);
     _connect = YES;
     if (_delegate && [_delegate respondsToSelector:@selector(accessoryDidConnect:)]) {
         [_delegate accessoryDidConnect:dataPath];

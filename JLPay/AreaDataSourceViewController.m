@@ -192,7 +192,7 @@ int tagOfCity = 14;
 #pragma mask ---- 界面生命周期
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _sqliteManager = [MySQLiteManager SQLiteManagerWithDBFile:DBFILENAME];
+    _sqliteManager = [MySQLiteManager SQLiteManagerWithDBFile:DBFILENAME_AREACODE];
     [self.view addSubview:self.provinceTableView];
     [self.view addSubview:self.cityTableView];
     [self.view addSubview:self.searchTextField];

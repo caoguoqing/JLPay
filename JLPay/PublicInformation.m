@@ -23,10 +23,8 @@
      NSString *masterKey=@"CED0505457484395C6FAB0358A9E6E65";
      NSString *rightKey =@"C0C0C0C000000000C0C0C0C000000000";
     NSString *csnStr=[[NSUserDefaults standardUserDefaults] valueForKey:The_terminal_Number];//@"01100000000030070000000000000000";//@"0110000000003007";//
-    NSLog(@"bbpos===csnStr====%@",csnStr);
      //3des加密
      NSString *firstStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:masterKey];
-     NSLog(@"firstStr======%@",firstStr);
      //异或运算
      Byte *left=(Byte *)[[PublicInformation NewhexStrToNSData:masterKey] bytes];
      Byte *right=(Byte *)[[PublicInformation NewhexStrToNSData:rightKey] bytes];
@@ -38,14 +36,11 @@
      
      NSData *theData = [[NSData alloc] initWithBytes:pwdPlaintext length:sizeof(pwdPlaintext)];
      NSString *resultStr=[PublicInformation stringWithHexBytes2:theData];
-     NSLog(@"resultStr======%@",resultStr);
-     
+    
      //再次3des加密
      NSString *secondStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:resultStr];
-     NSLog(@"secondStr======%@",secondStr);
      //工作秘钥拼接
      NSString *workKeyStr=[NSString stringWithFormat:@"%@%@",[firstStr substringWithRange:NSMakeRange(0, 16)],[secondStr substringWithRange:NSMakeRange(0, 16)]];
-     NSLog(@"workKeyStr======%@",workKeyStr);
     return workKeyStr;
 }
 
@@ -76,14 +71,12 @@
     }else{
         mainkey=@"EF2AE9F834BFCDD5260B974A70AD1A4A";
     }
-    NSLog(@"主秘钥内容======%@",mainkey);
     return mainkey;
 }
 
 //原交易流水号,消费交易的流水号
 +(NSString *)returnLiushuiHao{
     NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number];
-    NSLog(@"liushuiStr====%@",liushuiStr);
     if (liushuiStr && ![liushuiStr isEqualToString:@""] && ![liushuiStr isEqualToString:@"(null)"]) {
         liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number];
     }else{
@@ -95,7 +88,6 @@
 //消费成功的搜索参考号
 +(NSString *)returnConsumerSort{
     NSString *consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
-    NSLog(@"consumerStr====%@",consumerStr);
     if (consumerStr && ![consumerStr isEqualToString:@""] && ![consumerStr isEqualToString:@"(null)"]) {
         consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
     }else{
@@ -119,7 +111,6 @@
 //签到批次号
 +(NSString *)returnSignSort{
     NSString *sortStr=[[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
-    NSLog(@"sortStr====%@",sortStr);
     if (sortStr && ![sortStr isEqualToString:@""] && ![sortStr isEqualToString:@"(null)"]) {
         sortStr=[[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
     }else{
@@ -131,7 +122,6 @@
 //原交易批次号,用于撤销时获取
 +(NSString *)returnFdReserved{
     NSString *FdReserved=[[NSUserDefaults standardUserDefaults] valueForKey:Last_FldReserved_Number];
-    NSLog(@"FdReserved ====%@",FdReserved);
     if (FdReserved && ![FdReserved isEqualToString:@""] && ![FdReserved isEqualToString:@"(null)"]) {
         FdReserved=[[NSUserDefaults standardUserDefaults] valueForKey:Last_FldReserved_Number];
     }else{
@@ -165,8 +155,6 @@
 //刷卡金额
 +(NSString *)returnMoney{
     NSString *moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-    NSLog(@"liushuiStr====%@",moneyStr);
-
     if (moneyStr && ![moneyStr isEqualToString:@"0.00"] && ![moneyStr isEqualToString:@"(null)"]) {
         moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
     }else{
@@ -189,7 +177,6 @@
     }
     [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d",number] forKeyPath:Exchange_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    NSLog(@"流水号======%@",[NSString stringWithFormat:@"%06d",number]);
     return [NSString stringWithFormat:@"%06d",number];
 }
 
@@ -257,21 +244,19 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Ip]) {
         ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
     }else{
-//        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";// 28080
-//        ipStr   = @"202.104.101.126";  // 75环境 9088 测试1 // 28099
-//        ipStr   = @"183.16.188.39"; // 62 环境外网 6280、6288 ping szjl2014.eicp.net获取
-//        ipStr   = @"192.168.1.62";  // 62环境; 28080/80 886584000000001/10006057 捷联测试/00000000
-//        ipStr = @"202.104.101.126";  // 生产环境 28088
         if (TestOrProduce == 0) {
-            // 测试
+            //
+            //  测试   ipStr   = @"192.168.1.62";  // 62环境; 28080/80 886584000000001/10006057 捷联测试/00000000
             ipStr   = @"192.168.1.62";
         } else if (TestOrProduce == 1) {
-            // 正式
+            //  生产   ipStr = @"202.104.101.126";  // 生产环境 28088
             ipStr = @"202.104.101.126";
         } else if (TestOrProduce == 5) {
+            //        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";// 28080
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ipStr = @"192.188.8.120";
+            //        ipStr   = @"183.16.188.39"; // 62 环境外网 6280、6288 ping szjl2014.eicp.net获取
+            ipStr = @"183.16.190.61";
         }
         
     }
@@ -317,7 +302,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"192.188.8.120";
+            ip = @"183.16.190.61";
         }
     }
     return ip;
@@ -329,7 +314,7 @@
     }else{
         port = @"80";
         if (TestOrProduce == 9) {
-            port = @"80";
+            port = @"6288";
         }
     }
     return port;
@@ -366,7 +351,6 @@
         rage.length = 1;
         rage.location = i;
         NSString *key = [hex substringWithRange:rage];
-//        binaryString = [NSString stringWithFormat:@"%@%@",binaryString,[NSString stringWithFormat:@"%@",[hexDic objectForKey:key]]];
         [binaryString appendString:[hexDic valueForKey:key]];
     }
     return binaryString;
@@ -417,15 +401,12 @@
         [newArr addObject:[newStr substringWithRange:NSMakeRange(a, 4)]];
         a=a+4;
     }
-    //NSLog(@"newArr=======%@",newArr);
     
     NSMutableString *resultStr=[NSMutableString new];
-    
     for (int c=0; c<[newArr count]; c++) {
         
         for (int d=0; d<[[hexDic allKeys] count]; d++) {
             if ([[newArr objectAtIndex:c] isEqualToString:[[hexDic allKeys] objectAtIndex:d]]) {
-                //NSLog(@"key=======%@,object======%@",[newArr objectAtIndex:c],[hexDic objectForKey:[newArr objectAtIndex:c]]);
                 [resultStr appendString:[hexDic objectForKey:[newArr objectAtIndex:c]]];
             }
         }
@@ -445,8 +426,6 @@
         [arr addObject:[newStr substringWithRange:NSMakeRange(a, 1)]];
         a++;
     }
-    //NSLog(@"arr=====%@,======%d",arr,[arr count]);
-    
     for (int b=0; b<[arr count]; b++) {
         if ([[arr objectAtIndex:b] isEqualToString:@"0"]) {
             [arr replaceObjectAtIndex:b withObject:@"1"];
@@ -454,7 +433,6 @@
             [arr replaceObjectAtIndex:b withObject:@"0"];
         }
     }
-    //NSLog(@"newarr=======%@=====%d",arr,[arr count]);
     NSString *thenewStr=[arr componentsJoinedByString:@""];
     return thenewStr;
 }
@@ -490,15 +468,11 @@
     
     int_ch = int_ch1+int_ch2;
     
-    //NSLog(@"int========%d",int_ch);
-    
     return int_ch;
 }
 
 //十进制转16进制
 +(NSString *)ToBHex:(int)tmpid{
-    //NSLog(@"tmpid=====%d",tmpid);
-    
     NSString *endtmp=@"";
     int yushu = 0;
     int chushu = 0;
@@ -525,69 +499,6 @@
     return endtmp;
 }
 
-//+(NSString *)ToBHex:(int)tmpid{
-//    NSString *endtmp=@"";
-//    NSString *nLetterValue;
-//    NSString *nStrat;
-//    NSLog(@"==============tmpid=[%d]",tmpid);
-//    int ttmpig=tmpid%16;
-//    NSLog(@"==============ttmpig=[%d]",ttmpig);
-//    int tmp=tmpid/16;
-//    NSLog(@"==============tmp=[%d]",tmp);
-//
-//    switch (ttmpig)
-//    {
-//        case 10:
-//            nLetterValue =@"A";break;
-//        case 11:
-//            nLetterValue =@"B";break;
-//        case 12:
-//            nLetterValue =@"C";break;
-//        case 13:
-//            nLetterValue =@"D";break;
-//        case 14:
-//            nLetterValue =@"E";break;
-//        case 15:
-//            nLetterValue =@"F";break;
-//        default:nLetterValue=[[NSString alloc]initWithFormat:@"%i",ttmpig];
-//            
-//    }
-//    NSLog(@"==============nLetterValue=[%@]",nLetterValue);
-//
-//    switch (tmp)
-//    {
-//        case 10:
-//            nStrat =@"A";break;
-//        case 11:
-//            nStrat =@"B";break;
-//        case 12:
-//            nStrat =@"C";break;
-//        case 13:
-//            nStrat =@"D";break;
-//        case 14:
-//            nStrat =@"E";break;
-//        case 15:
-//            nStrat =@"F";break;
-//        default:nStrat=[[NSString alloc]initWithFormat:@"%i",tmp];
-//            
-//    }
-//    NSLog(@"==============nStrat=[%@]",nStrat);
-//
-//    endtmp=[[NSString alloc]initWithFormat:@"%@%@",nStrat,nLetterValue];
-//    NSLog(@"==============endtmp=[%@]",endtmp);
-//
-//    NSString *str=@"";
-//    if([endtmp length]<4)
-//    {
-//        for (int x=[endtmp length]; x<4; x++) {
-//            str=[str stringByAppendingString:@"0"];
-//        }
-//        endtmp=[[NSString alloc]initWithFormat:@"%@%@",str,endtmp];
-//    }
-//    NSLog(@"==============endtmp=[%@]",endtmp);
-//
-//    return endtmp;
-//}
 
 //16进制转字符串（ascii）
 +(NSString *)stringFromHexString:(NSString *)hexString { //
@@ -602,7 +513,6 @@
         myBuffer[i / 2] = (char)anInt;
     }
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
-    NSLog(@"------字符串=======[%@]",unicodeString);
     return unicodeString;
 }
 
@@ -760,7 +670,6 @@
     yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
     NSString * todayString = [[today description] substringToIndex:10];
     NSString *dateString;
-    NSLog(@"时间比较dateStr====%@,todayString====%@",dateStr,todayString);
     if (dateStr.length > 10) {
         dateString=[dateStr substringToIndex:10];
     }else{
@@ -803,17 +712,12 @@
     if (cha/3600<1) {
         timeString = [NSString stringWithFormat:@"%f", cha/60];
         timeString = [timeString substringToIndex:timeString.length-7];
-        //timeString=[NSString stringWithFormat:@"%@分钟前", timeString];
         timeString=@"今天";
     }
     
     if (cha/3600>1&&cha/86400<1) {
-        //        timeString = [NSString stringWithFormat:@"%f", cha/3600];
-        //        timeString = [timeString substringToIndex:timeString.length-7];
-        //        timeString=[NSString stringWithFormat:@"%@小时前", timeString];
         NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
         [dateformatter setDateFormat:@"HH:mm"];
-        //timeString = [NSString stringWithFormat:@"今天 %@",[dateformatter stringFromDate:d]];
         timeString = [NSString stringWithFormat:@"今天"];
     }
     
@@ -821,11 +725,7 @@
     {
         timeString = [NSString stringWithFormat:@"%f", cha/86400];
         timeString = [timeString substringToIndex:timeString.length-7];
-        //timeString=[NSString stringWithFormat:@"%@天前", timeString];
         timeString=[NSString stringWithFormat:@"%@", timeString];
-        //        NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
-        //        [dateformatter setDateFormat:@"YY-MM-dd HH:mm"];
-        //        timeString = [NSString stringWithFormat:@"%@",[dateformatter stringFromDate:d]];
     }
     return timeString;
 }
@@ -839,9 +739,6 @@
     [dateFormatter setTimeZone:GTMzone];
     NSDate *bdate = [dateFormatter dateFromString:time];
     NSDate *day = [NSDate dateWithTimeInterval:(3600 + [localzone secondsFromGMT]) sinceDate:bdate];
-    
-    NSString *text = [dateFormatter stringFromDate:day];
-    NSLog(@"text======%@====%@====%@",text,day,bdate);
     return bdate;
 }
 
@@ -852,13 +749,11 @@
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     [dateFormatter setTimeZone:GTMzone];
     NSDate *day = [NSDate dateWithTimeInterval:(3600 + [localzone secondsFromGMT]) sinceDate:[NSDate date]];
-    NSLog(@"day=====%@",day);
     return day;
 }
 
 
 +(NSString *) NEWreturnUploadTime:(NSString  *)timeStr{
-    NSLog(@"timeStr====%@",timeStr);
     NSDate *d=[self settingTime:timeStr];
     NSTimeInterval late=[d timeIntervalSince1970]*1;
     
@@ -871,17 +766,6 @@
     timeString = [NSString stringWithFormat:@"%f", cha/86400];
     timeString = [timeString substringToIndex:timeString.length-7];
     return timeString;
-    /*
-     NSDate * startDate1 = [self settingTime:timeStr];
-     NSLog(@"startDate1=======%@",startDate1);
-     NSDate *startDate2=[self getCurrentDate];
-     NSLog(@"startDate2===%@",startDate2);
-     NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
-     NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
-     NSDateComponents *cps = [ chineseClendar components:unitFlags fromDate:startDate1  toDate:startDate2  options:0];
-     NSLog(@"间隔天数======%d",[cps day]);
-     return [NSString stringWithFormat:@"%d",[cps day]];
-     */
 }
 
 

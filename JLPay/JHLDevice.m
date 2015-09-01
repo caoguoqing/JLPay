@@ -163,14 +163,14 @@ static FieldTrackData TransData;
             if (!ByteDate[1])   // 成功
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡成功");
-                NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Success object:nil];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
+//                NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Success object:nil];
+//                [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
             else                // 失败
             {
                 NSLog(@"%s,result:%@",__func__,@"刷卡失败");
-                NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Fail object:nil];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
+//                NSNotification* notification    = [NSNotification notificationWithName:Noti_CardSwiped_Fail object:nil];
+//                [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
             break;
         // 消费:获取卡数据
@@ -180,21 +180,21 @@ static FieldTrackData TransData;
                 [self GetCard:data];    // 解析卡数据到缓存
                 [self cardDataUserDefult];
                 // 从缓存中读取密码密文
-                NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Success object:nil];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];   // test for reading card data,not trans
+//                NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Success object:nil];
+//                [[NSNotificationCenter defaultCenter] postNotification:notification];   // test for reading card data,not trans
             }
             else
             {
-                NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Fail object:nil];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
+//                NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Fail object:nil];
+//                [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
             break;
         // 写工作密钥
         case WORKKEY_CMD:
             if (!ByteDate[1]) { // 写成功
-                [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Success object:nil];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Success object:nil];
             } else {            // 写失败
-                [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Fail object:nil];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:Noti_WorkKeyWriting_Fail object:nil];
             }
             break;
         // 读取设备电量

@@ -7,7 +7,6 @@
 //
 
 #import "settingViewController.h"
-#import "DeviceSettingViewController.h"
 #import <UIKit/UIKitDefines.h>
 #import "TransDetailsViewController.h"
 #import "Define_Header.h"
@@ -48,9 +47,9 @@
     
     [self setExtraCellLineHidden:self.tableView];
     
-    // 只校验一次
-    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
-    if (identifier == nil) {
+    // 只校验一次: 如果未绑定设备就直接跳转到设备绑定界面
+    NSDictionary* infoDict = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if (infoDict == nil) {
         UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:viewController animated:YES];
     }

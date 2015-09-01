@@ -480,7 +480,7 @@
         // 校验是否切换了账号
         [self checkoutCustSwitch];
 
-        // 解析响应数据
+        // 保存商户信息: 解析响应数据
         [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
@@ -488,25 +488,22 @@
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
         
         int termCount = [[dataDic objectForKey:@"termCount"] intValue];
-        if (termCount == 0) {
-            // 没有终端号
-            [[NSUserDefaults standardUserDefaults] setObject:nil forKey:Terminal_Numbers];
-        }
-        else {                        // 终端编号组的编号
+        if (termCount > 0) {
+            // 终端编号组的编号
             NSString* terminalNumbersString = [dataDic objectForKey:@"TermNoList"];
             // 将终端号列表字符串拆成数组保存到 Terminal_Numbers
             NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
             [[NSUserDefaults standardUserDefaults] setObject:array forKey:Terminal_Numbers];
+        } else {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:Terminal_Numbers];
         }
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"登陆成功"];
         });
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [DeviceManager sharedInstance];
-        });
-        [app_delegate signInSuccessToLogin:1];  // 切换到主场景
+        // 切换到主场景
+        [app_delegate signInSuccessToLogin:1];
     }
     
 }
@@ -517,10 +514,12 @@
 }
 // 校验是否切换了账号:如果切换,清空配置
 - (void) checkoutCustSwitch {
-    NSString* lastUserID = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+    NSString* lastUserID = [userDefault valueForKey:UserID];
+    
     if (![lastUserID isEqualToString:self.userNumberTextField.text]) {
-        [[NSUserDefaults standardUserDefaults] setValue:nil forKey:DeviceIDOfBinded];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        [userDefault removeObjectForKey:KeyInfoDictOfBinded];
+        [userDefault synchronize];
     }
 }
 

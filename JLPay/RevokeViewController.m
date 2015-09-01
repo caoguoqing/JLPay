@@ -213,6 +213,9 @@
             label.text = [NSString stringWithFormat:@"%@******%@",
                           [cardNo substringToIndex:6],
                           [cardNo substringFromIndex:[cardNo length] - 1 - 4]];
+        } else if ([key isEqualToString:@"instTime"]) {
+            NSString* trantime = [self.dataDic valueForKey:key];
+            label.text = [NSString stringWithFormat:@"%@:%@:%@",[trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]];
         }
         else {
             label.text = [self.dataDic objectForKey:key];

@@ -25,7 +25,7 @@
 
 @interface BrushViewController()
 <
-    CustomIOSAlertViewDelegate,
+//    CustomIOSAlertViewDelegate,
     wallDelegate,
     Unpacking8583Delegate,
     managerToCard,
@@ -108,9 +108,9 @@
  *************************************/
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
+    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     // 先检查是否绑定设备
-    if (identifier == nil) {
+    if (infoBinded == nil) {
         [self alertForFailedMessage:@"未绑定设备,请先绑定设备!"];
         return;
     }
@@ -122,12 +122,17 @@
     });
     
     // 再在后台线程扫描并打开设备 - 在回调中进行定时器的取消，并刷卡；并注册新的定时器
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        DeviceManager* device = [DeviceManager sharedInstance];
-        [device setDelegate:self];
-        [device setOpenAutomaticaly:YES];   // 设置自动打开设备标记
-        [device startScanningDevices];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[DeviceManager sharedInstance] setDelegate:self];
     });
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        sleep(1);
+        [[DeviceManager sharedInstance] startScanningDevices];
+    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        sleep(2);
+//        [[DeviceManager sharedInstance] openDeviceWithIdentifier:[infoBinded valueForKey:KeyInfoDictOfBindedDeviceIdentifier]];
+//    });
 }
 
 // 界面消失的资源回收
@@ -139,15 +144,11 @@
         self.waitingTimer = nil;
     }
     self.waitingTimer = nil;
+    // 取消对 TCP 响应的协议
+    [[TcpClientService getInstance] setDelegate:nil];
     
-    TcpClientService* tcpSocket = [TcpClientService getInstance];
-    [tcpSocket setDelegate:nil];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [[DeviceManager sharedInstance] setDelegate:nil];
-        [[DeviceManager sharedInstance] setOpenAutomaticaly:NO];     // 关闭自动打开标记
-        [[DeviceManager sharedInstance] stopScanningDevices];
-        [[DeviceManager sharedInstance] closeAllDevices];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[DeviceManager sharedInstance] clearAndCloseAllDevices];
     });
 }
 
@@ -183,7 +184,7 @@
 #pragma mask ::: 初始化并加载密码输入提示框
 - (void) makePasswordAlertView {
     // innerView 放在 alertView 中创建
-    self.passwordAlertView.delegate = self;
+//    self.passwordAlertView.delegate = self;
     [self.passwordAlertView setUseMotionEffects:YES];
     [self.passwordAlertView setButtonTitles:[NSArray arrayWithObjects:@"取消", @"确定", nil]];
     [self.passwordAlertView show];
@@ -193,24 +194,24 @@
 
 
 #pragma mask ::: 密码输入提示框的按钮点击事件
-- (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    CustomIOSAlertView* alertV = (CustomIOSAlertView*)alertView;
-    [alertV close];
-
-    if (buttonIndex == 0) { // 取消
-        // 弹出刷卡界面,回到上层界面
-        [self.navigationController popViewControllerAnimated:YES];
-    } else {                // 确定-开始设备加密
-        // 读磁道信息或芯片信息
-        long money = [self themoney] ;
-        // 这里的密码 password 用 alertView.password
-        long timeout = self.timeOut * 1000;
-        [[DeviceManager sharedInstance] TRANS_Sale:timeout // 60s
-                                           nAmount:money
-                                      nPasswordlen:(int)self.passwordAlertView.password.length
-                                          bPassKey:self.passwordAlertView.password];
-    }
-}
+//- (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+//    CustomIOSAlertView* alertV = (CustomIOSAlertView*)alertView;
+//    [alertV close];
+//
+//    if (buttonIndex == 0) { // 取消
+//        // 弹出刷卡界面,回到上层界面
+//        [self.navigationController popViewControllerAnimated:YES];
+//    } else {                // 确定-开始设备加密
+//        // 读磁道信息或芯片信息
+//        long money = [self themoney] ;
+//        // 这里的密码 password 用 alertView.password
+//        long timeout = self.timeOut * 1000;
+////        [[DeviceManager sharedInstance] TRANS_Sale:timeout // 60s
+////                                           nAmount:money
+////                                      nPasswordlen:(int)self.passwordAlertView.password.length
+////                                          bPassKey:self.passwordAlertView.password];
+//    }
+//}
 
 #pragma mask ::: 进行刷卡
 /*************************************
@@ -233,10 +234,9 @@
         self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(swipeTimingOut) userInfo:nil repeats:YES];
 
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // 刷卡:刷卡回调中要注销定时器
-        NSLog(@";;;';';;';开始刷卡");
-        NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+        NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
         NSString* money = [PublicInformation returnMoney];
         NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
         [[DeviceManager sharedInstance] cardSwipeWithMoney:newMoney yesOrNot:NO onSNVersion:SNVersion];
@@ -582,7 +582,7 @@
  *************************************/
 - (void) openDeviceInTimer {
     DeviceManager* device = [DeviceManager sharedInstance];
-    NSString* SNVersion = [[NSUserDefaults standardUserDefaults] valueForKey:SelectedSNVersionNum];
+    NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
     int connected = [device isConnectedOnSNVersionNum:SNVersion];
     if (self.timeOut < 0) { // 超时了
         [self.waitingTimer invalidate];
@@ -599,6 +599,9 @@
         // 继续刷卡
         [self beginToSwipe];
         return;
+    } else if (connected == -1) {
+        NSString* identifier = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceIdentifier];
+        [device openDeviceWithIdentifier:identifier];
     }
     self.timeOut--;
 }
@@ -618,7 +621,6 @@
  * 返  回 : 无
  *************************************/
 - (void) custInTiming {
-    NSLog(@"<><><><><><><><><><><");
     [self.waitingLabel setText:[NSString stringWithFormat:@"交易处理中...%02d秒",self.timeOut]];
     self.timeOut++;
 

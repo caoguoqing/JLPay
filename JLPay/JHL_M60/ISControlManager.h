@@ -23,8 +23,6 @@ typedef enum {
 #define PIN_KEY_ID   0x02
 #define TRACK_KEY_ID 0x03
 #define MACK_KEY_ID  0x04
-#define TRACK_ENCRY_MODEM  0x01  //加密模式
-
 #define GETCARD_CMD  0x12
 #define GETTRACK_CMD 0x20
 #define GETTRACKDATA_CMD 0x22  //0xE1  用户取消  0xE2 超时退出 E3 IC卡数据处理失败 0xE4 无IC卡参数 0xE5 交易终止 0xE6 操作失败,请重试

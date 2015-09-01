@@ -14,21 +14,18 @@
 
 
 //上传电子单的接口
-#define kServerNewURL @"http://122.0.64.115:8080/pos/"//@"http://192.168.1.106:8080/pos/"//@"http://122.0.64.115:8080/pos/"//@"http://122.0.64.115/pos/"
+//#define kServerNewURL @"http://122.0.64.115:8080/pos/"//@"http://192.168.1.106:8080/pos/"//@"http://122.0.64.115:8080/pos/"//@"http://122.0.64.115/pos/"
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
 // 数据库文件 - 全国地名及代码
-#define DBFILENAME                      @"test.db"
+//#define DBFILENAME                      @"test.db"
 #define DBFILENAME_AREACODE             @"test.db"
 
 
 // 日志打印选项: 打印(1);不打印(0);
 #define NeedPrintLog                    1
 
-// 8583报文配置
-#define TPDU @"6000060000"
-#define HEADER @"600100310000"
 
 #define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
 #define Screen_Width  [UIScreen mainScreen].bounds.size.width
@@ -48,19 +45,19 @@
 // 环境:8585报文上送的环境
 #define Current_IP    [PublicInformation settingIp]
 #define Current_Port  [PublicInformation settingPort]//8182//9182    ,测试ip：211.90.22.167；9181
-// HTTP协议的ip配置
+// 环境:HTTP协议的ip配置
 #define Tcp_IP  @"tcpip"
 #define Tcp_Port @"tcpport"
 
 
 
 /*************[Notification 变量声明区]**************/
-#define Noti_CardSwiped_Success         @"Noti_CardSwiped_Success"      // 读卡
-#define Noti_CardSwiped_Fail            @"Noti_CardSwiped_Fail"
-#define Noti_TransSale_Success          @"Noti_TransSale_Success"       // 刷卡消费
-#define Noti_TransSale_Fail             @"Noti_TransSale_Fail"
-#define Noti_WorkKeyWriting_Success     @"Noti_WorkKeyWriting_Success"  // 写工作密钥
-#define Noti_WorkKeyWriting_Fail        @"Noti_WorkKeyWriting_Fail"
+//#define Noti_CardSwiped_Success         @"Noti_CardSwiped_Success"      // 读卡
+//#define Noti_CardSwiped_Fail            @"Noti_CardSwiped_Fail"
+//#define Noti_TransSale_Success          @"Noti_TransSale_Success"       // 刷卡消费
+//#define Noti_TransSale_Fail             @"Noti_TransSale_Fail"
+//#define Noti_WorkKeyWriting_Success     @"Noti_WorkKeyWriting_Success"  // 写工作密钥
+//#define Noti_WorkKeyWriting_Fail        @"Noti_WorkKeyWriting_Fail"
 
 /*************[交易类型]**************/
 #define TranType                    @"TranType"
@@ -109,10 +106,10 @@
 /*************[设备操作相关的参数:]**************/
 // 厂商设备类型
 #define DeviceType                  @"DeviceType"               
-// 锦宏霖音频A60
-#define DeviceType_JHL_A60          @"音频刷卡头A60"
-// 锦宏霖蓝牙M60
+#define DeviceType_JHL_A60          @"A60音频刷卡头A"
 #define DeviceType_JHL_M60          @"M60手持蓝牙刷卡器"
+#define DeviceType_RF_BB01          @"RFBB蓝牙刷卡器"
+
 // 已绑定的设备de ID
 #define DeviceIDOfBinded            @"DeviceIDOfBinded"
 // 选择设备连接的终端号配置的key   -- useless
@@ -127,6 +124,22 @@
  *      identifier
  */
 #define BindedDeviceList            @"BindedDeviceList"
+
+/* ------------------------------ 信息字典: 商户绑定设备的信息
+ *  KeyInfoDictOfBindedDeviceType           - 设备类型
+ *  KeyInfoDictOfBindedDeviceIdentifier     - 设备id
+ *  KeyInfoDictOfBindedDeviceSNVersion      - 设备SN
+ *  KeyInfoDictOfBindedTerminalNum          - 终端号
+ *  KeyInfoDictOfBindedBussinessNum         - 商户号
+   ------------------------------*/
+#define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"
+#define KeyInfoDictOfBindedDeviceType           @"KeyInfoDictOfBindedDeviceType"
+#define KeyInfoDictOfBindedDeviceIdentifier     @"KeyInfoDictOfBindedDeviceIdentifier"
+#define KeyInfoDictOfBindedDeviceSNVersion      @"KeyInfoDictOfBindedDeviceSNVersion"
+#define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
+#define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
+
+
 // 设备操作的等待超时时间
 #define DeviceWaitingTime           20                          
 
@@ -216,7 +229,7 @@
 #define DECRYPT_KEY @"31313131313131313232323232323232"
 
 // ----- 暂时没用到 :主密钥
-#define Main_Work_key [PublicInformation getMainSecret]
+//#define Main_Work_key [PublicInformation getMainSecret]
 
 #define IsOrRefresh_MainKey @"refreshkey"
 #define Refresh_Later_MainKey @"laterkey"
@@ -262,7 +275,9 @@
 #define Save_All_NonCardInfo @"allcardinfo"
 
 
-
+// 8583报文配置
+#define TPDU @"6000060000"
+#define HEADER @"600100310000"
 
 
 

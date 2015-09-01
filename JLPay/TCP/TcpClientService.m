@@ -105,6 +105,9 @@ static int readTimeOut = 60;    // 超时时间统一60s
 {
     //断开连接了
     NSLog(@"onSocketDidDisconnect:%p", sock);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
+        [self.delegate falseReceiveGetDataMethod:@"网络连接失败!"];
+    }
 }
 
 
