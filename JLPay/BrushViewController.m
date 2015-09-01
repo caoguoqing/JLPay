@@ -129,13 +129,13 @@
     });
     
     // 再在后台线程扫描并打开设备 - 在回调中进行定时器的取消，并刷卡；并注册新的定时器
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[DeviceManager sharedInstance] setDelegate:self];
-    });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        sleep(1);
-        [[DeviceManager sharedInstance] startScanningDevices];
-    });
+    [[DeviceManager sharedInstance] setDelegate:self];
+    [[DeviceManager sharedInstance] startScanningDevices];
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        sleep(1);
+//    });
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 //        sleep(2);
 //        [[DeviceManager sharedInstance] openDeviceWithIdentifier:[infoBinded valueForKey:KeyInfoDictOfBindedDeviceIdentifier]];
@@ -154,9 +154,9 @@
     // 取消对 TCP 响应的协议
     [self.tcpHander setDelegate:nil];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[DeviceManager sharedInstance] clearAndCloseAllDevices];
-    });
+    [[DeviceManager sharedInstance] clearAndCloseAllDevices];
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//    });
 }
 
 
@@ -241,13 +241,13 @@
         self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(swipeTimingOut) userInfo:nil repeats:YES];
 
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // 刷卡:刷卡回调中要注销定时器
         NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
         NSString* money = [PublicInformation returnMoney];
         NSString* newMoney = [PublicInformation moneyStringWithCString:(char*)[money cStringUsingEncoding:NSUTF8StringEncoding]];
         [[DeviceManager sharedInstance] cardSwipeWithMoney:newMoney yesOrNot:NO onSNVersion:SNVersion];
-    });
+//    });
 }
 
 

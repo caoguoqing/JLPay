@@ -11,6 +11,8 @@
 
 @protocol RFDevice_BB01Delegate<NSObject>
 @optional
+# pragma mask : ID号扫描成功
+- (void) didDiscoverDeviceOnID:(NSString*)identifier;
 # pragma mask : 连接设备de结果回调
 - (void) didOpenDeviceSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 # pragma mask : SN号读取成功

@@ -65,6 +65,9 @@
 
 @optional
 
+# pragma mask :  * ID号扫描成功
+- (void) didDiscoverDeviceOnID:(NSString*)identifier;
+
 # pragma mask :  * 打开设备成功/失败的回调
 - (void) deviceManager:(DeviceManager*)deviceManager didOpenSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
 

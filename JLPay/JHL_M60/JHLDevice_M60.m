@@ -38,6 +38,15 @@
 @synthesize needOpenDevices;
 
 
+/* ----------------
+ * 设备信息列表节点值的 KEY:
+ * ---------------- */
+#define KeyDataPathNodeDataPath         @"KeyDataPathNodeDataPath"      // 设备dataPath
+#define KeyDataPathNodeIdentifier       @"KeyDataPathNodeIdentifier"    // 设备ID
+#define KeyDataPathNodeSNVersion        @"KeyDataPathNodeSNVersion"     // 设备SN号
+
+
+
 #pragma mask ===================== [Public interface]
 
 // pragma mask : 设置自动标记:是否自动打开设备
@@ -57,12 +66,12 @@
  */
 - (void)openAllDevices {
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
         NSLog(@"打开设备[%@]", [[dataPath peripheral] identifier].UUIDString);
         if ([dataPath state] == CBPeripheralStateDisconnected) {
             [self.manager connectDevice:dataPath];
         } else if (dataPath.state == CBPeripheralStateConnected &&
-                   (![dataDic valueForKey:@"SNVersion"] || [[dataDic valueForKey:@"SNVersion"] isEqualToString: @""])) {
+                   (![dataDic valueForKey:KeyDataPathNodeSNVersion] || [[dataDic valueForKey:KeyDataPathNodeSNVersion] isEqualToString: @""])) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 [self readSNNoWithAccessory:dataPath];
             });
@@ -77,9 +86,9 @@
     NSLog(@"%s,读取SN号",__func__);
 
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
         if ([dataPath state] == CBPeripheralStateConnected &&
-            ([dataDic valueForKey:@"SNVersion"] == nil || [[dataDic valueForKey:@"SNVersion"] isEqualToString:@""])
+            ([dataDic valueForKey:KeyDataPathNodeSNVersion] == nil || [[dataDic valueForKey:KeyDataPathNodeSNVersion] isEqualToString:@""])
             ) {
             [self readSNNoWithAccessory:dataPath];
         }
@@ -89,8 +98,8 @@
 - (NSString*) identifierOnDeviceSN:(NSString*)SNVersion {
     NSString* identifier = nil;
     for (NSDictionary* dict in self.knownDeviceList) {
-        if ([SNVersion isEqualToString:[dict valueForKey:@"SNVersion"]]) {
-            identifier = [dict valueForKey:@"identifier"];
+        if ([SNVersion isEqualToString:[dict valueForKey:KeyDataPathNodeSNVersion]]) {
+            identifier = [dict valueForKey:KeyDataPathNodeIdentifier];
             break;
         }
     }
@@ -100,15 +109,15 @@
 // 打开指定SNVersion号的设备
 - (void) openDevice:(NSString*)SNVersion {
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
-            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[dataDic valueForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
+            ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
             [self.manager connectDevice:dataPath];
         }
     }
 }
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
         if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
             if ([dataPath state] == CBPeripheralStateDisconnected) {
                 [self.manager connectDevice:dataPath];
@@ -118,8 +127,8 @@
 }
 - (void) closeDevice:(NSString *)SNVersion {
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
-            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        if ([[dataDic valueForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
+            ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
             [self.manager disconnectDevice:dataPath];
         }
     }
@@ -160,9 +169,9 @@
     BOOL result = NO;
     BOOL inList = NO;
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        if ([[dataDic valueForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+        if ([[dataDic valueForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
             inList = YES;
-            ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+            ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
             if ([dataPath state] == CBPeripheralStateConnected/* || [dataPath state] == CBPeripheralStateConnecting*/) {
                 result = YES;
             }
@@ -184,7 +193,7 @@
     BOOL result = NO;
     BOOL inList = NO;
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
         if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:identifier]) {
             inList = YES;
             if ([dataPath state] == CBPeripheralStateConnected/* || [dataPath state] == CBPeripheralStateConnecting*/) {
@@ -250,12 +259,12 @@
     NSString* oIdentifier = [[mDataPath peripheral] identifier].UUIDString;
     NSMutableArray* objDel = [[NSMutableArray alloc] init];
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* dataPath = [dataDic objectForKey:@"dataPath"];
+        ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
         if ([[[dataPath peripheral] identifier].UUIDString isEqualToString:oIdentifier]) {
             [objDel addObject:dataPath];
             
             if (self.delegate && [self.delegate respondsToSelector:@selector(deviceDisconnectOnSNVersion:)]) {
-                [self.delegate deviceDisconnectOnSNVersion:[dataDic valueForKey:@"SNVersion"]];
+                [self.delegate deviceDisconnectOnSNVersion:[dataDic valueForKey:KeyDataPathNodeSNVersion]];
             }
         }
     }
@@ -334,23 +343,26 @@
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
     for (ISBLEDataPath* dataPath in devices) {
         NSString* deviceName = [dataPath advName];
-//        NSLog(@"扫描到设备:[%@][%@]",deviceName,dataPath.UUID.UUIDString);
         if (!deviceName || ![deviceName hasPrefix:@"JHLM60"]) {
             continue;
         }
         BOOL isExist = NO;
         for (NSDictionary* curDeviceDict in self.knownDeviceList) {
-            ISBLEDataPath* curDataPath = [curDeviceDict objectForKey:@"dataPath"];
+            ISBLEDataPath* curDataPath = [curDeviceDict objectForKey:KeyDataPathNodeDataPath];
             if ([dataPath.UUID.UUIDString isEqualToString:curDataPath.UUID.UUIDString]) {
                 isExist = YES;
                 break;
             }
         }
         if (isExist == NO) {
+            // 新扫描到的设备要添加到设备列表:并回调出ID
             NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:3];
-            [dict setObject:dataPath forKey:@"dataPath"];
-            [dict setValue:dataPath.UUID.UUIDString forKey:@"identifier"];
+            [dict setObject:dataPath forKey:KeyDataPathNodeDataPath];
+            [dict setValue:dataPath.UUID.UUIDString forKey:KeyDataPathNodeIdentifier];
             [self.knownDeviceList addObject:dict];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didDiscoverDeviceOnID:)]) {
+                [self.delegate didDiscoverDeviceOnID:dataPath.UUID.UUIDString];
+            }
         }
     }
 }
@@ -370,9 +382,9 @@
 //- (void) updateConnetedListOnDevice:(ISDataPath*)dataPath bySNNum:(NSString*)SNNum {
 //    ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
 //    for (NSDictionary* dataDic in self.knownDeviceList) {
-//        ISBLEDataPath* innerDataPath = [dataDic valueForKey:@"dataPath"];
+//        ISBLEDataPath* innerDataPath = [dataDic valueForKey:KeyDataPathNodeDataPath];
 //        if (oDataPath.peripheral == innerDataPath.peripheral) {
-//            [dataDic setValue:SNNum forKeyPath:@"SNVersion"];
+//            [dataDic setValue:SNNum forKeyPath:KeyDataPathNodeSNVersion];
 //            // 刷新SN号列表给外部协议
 //            [self renewSNVersionNumbers];
 //            break;
@@ -395,15 +407,15 @@
 //- (void) renewSNVersionNumbers {
 //    NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
 //    for (NSDictionary* dic in self.knownDeviceList) {
-//        NSString* SNVersion = [dic valueForKey:@"SNVersion"];
+//        NSString* SNVersion = [dic valueForKey:KeyDataPathNodeSNVersion];
 //        // 如果sn号不为空
 //        if (SNVersion != nil && ![SNVersion isEqualToString: @""]) {
-//            ISBLEDataPath* dataPath = [dic objectForKey:@"dataPath"];
+//            ISBLEDataPath* dataPath = [dic objectForKey:KeyDataPathNodeDataPath];
 //            // 取出设备的 identifier
 //            NSString* identifier = [[dataPath peripheral] identifier].UUIDString;
 //            NSMutableDictionary* newDic = [[NSMutableDictionary alloc] init];
-//            [newDic setValue:SNVersion forKey:@"SNVersion"];
-//            [newDic setValue:identifier forKey:@"identifier"];
+//            [newDic setValue:SNVersion forKey:KeyDataPathNodeSNVersion];
+//            [newDic setValue:identifier forKey:KeyDataPathNodeIdentifier];
 //            // 封装 sn+identifier 并追加到回调的数组中
 //            [SNVersionArray addObject:newDic];
 //        }
@@ -513,9 +525,9 @@
                 // 更新已连接设备列表的sn号
                 ISBLEDataPath* oDataPath = (ISBLEDataPath*)accessory;
                 for (NSDictionary* dict in self.knownDeviceList) {
-                    ISBLEDataPath* dataPath = [dict objectForKey:@"dataPath"];
+                    ISBLEDataPath* dataPath = [dict objectForKey:KeyDataPathNodeDataPath];
                     if ([dataPath.peripheral.identifier.UUIDString isEqualToString:oDataPath.peripheral.identifier.UUIDString]) {
-                        [dict setValue:strSN forKey:@"SNVersion"];
+                        [dict setValue:strSN forKey:KeyDataPathNodeSNVersion];
                     }
                 }
                 // SN号读取结果回调
@@ -589,8 +601,8 @@
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
-        if ([[dataDic objectForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+        ISBLEDataPath* iDataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
+        if ([[dataDic objectForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
             dataPath = iDataPath;
         }
     }
@@ -610,8 +622,8 @@
 - (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
-        if ([[dataDic objectForKey:@"SNVersion"] hasPrefix:SNVersion]) {
+        ISBLEDataPath* iDataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
+        if ([[dataDic objectForKey:KeyDataPathNodeSNVersion] hasPrefix:SNVersion]) {
             dataPath = iDataPath;
         }
     }
@@ -634,8 +646,8 @@
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
     ISBLEDataPath* dataPath = nil;
     for (NSDictionary* dataDic in self.knownDeviceList) {
-        ISBLEDataPath* iDataPath = [dataDic objectForKey:@"dataPath"];
-        if ([[dataDic objectForKey:@"SNVersion"] isEqualToString:SNVersion]) {
+        ISBLEDataPath* iDataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
+        if ([[dataDic objectForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
             dataPath = iDataPath;
         }
     }

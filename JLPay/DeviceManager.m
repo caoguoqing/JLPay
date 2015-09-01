@@ -28,7 +28,7 @@ JHLDevice_M60_Delegate
 //@property (nonatomic, strong) JHLDevice_M60*    JHL_M60_manager;    // 蓝牙设备管理器 锦宏霖
 
 @property (nonatomic, strong) NSString*         deviceType;
-@property (nonatomic, strong) id                device;
+@property (nonatomic, retain) id                device;
 @end
 
 
@@ -292,6 +292,14 @@ static DeviceManager* _sharedDeviceManager = nil;
 
 
 #pragma mask ------------------------------------------------------------- JHLDevice_M60_Delegate
+
+#pragma mask : ID号扫描成功
+- (void) didDiscoverDeviceOnID:(NSString*)identifier {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didDiscoverDeviceOnID:)]) {
+        [self.delegate didDiscoverDeviceOnID:identifier];
+    }
+}
+
 
 #pragma mask : 连接设备结果的回调
 - (void)didOpenDeviceSucOrFail:(BOOL)yesOrNo withError:(NSString *)error {

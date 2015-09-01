@@ -11,4 +11,11 @@
 
 @implementation RFDevice_BB01
 
+
+#define KeyDataPathNodeDataPath         @"KeyDataPathNodeDataPath"      // 设备dataPath
+#define KeyDataPathNodeIdentifier       @"KeyDataPathNodeIdentifier"    // 设备ID
+#define KeyDataPathNodeSNVersion        @"KeyDataPathNodeSNVersion"     // 设备SN号
+
+
+
 @end
