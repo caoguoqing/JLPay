@@ -108,14 +108,14 @@
 #define DeviceType                  @"DeviceType"               
 #define DeviceType_JHL_A60          @"A60音频刷卡头A"
 #define DeviceType_JHL_M60          @"M60手持蓝牙刷卡器"
-#define DeviceType_RF_BB01          @"RFBB蓝牙刷卡器"
+#define DeviceType_RF_BB01          @"BB01手持蓝牙刷卡器"
 
 // 已绑定的设备de ID
-#define DeviceIDOfBinded            @"DeviceIDOfBinded"
-// 选择设备连接的终端号配置的key   -- useless
-#define SelectedTerminalNum         @"SelectedTerminalNum"      
-// 选择设备连接的SN号的key       -- useless
-#define SelectedSNVersionNum        @"SelectedSNVersionNum"     
+//#define DeviceIDOfBinded            @"DeviceIDOfBinded"
+//// 选择设备连接的终端号配置的key   -- useless
+//#define SelectedTerminalNum         @"SelectedTerminalNum"      
+//// 选择设备连接的SN号的key       -- useless
+//#define SelectedSNVersionNum        @"SelectedSNVersionNum"     
 /*
  * 绑定de设备信息列表:
  *      deviceType
@@ -123,7 +123,7 @@
  *      SNVersion
  *      identifier
  */
-#define BindedDeviceList            @"BindedDeviceList"
+//#define BindedDeviceList            @"BindedDeviceList"
 
 /* ------------------------------ 信息字典: 商户绑定设备的信息
  *  KeyInfoDictOfBindedDeviceType           - 设备类型
@@ -210,6 +210,9 @@
 #define ICCardSeq_23    @"ICCardSeq_23_"
 // F35:   二磁道数据
 #define Two_Track_Data @"trackdata"
+// F36:   三磁道数据
+#define F36_ThreeTrackData      @"F36_ThreeTrackData_"
+
 // F37:   检索参考号
 #define Reference_Number_37 @"Reference_Number_37_"
 // F38:   授权码:AUTH NO

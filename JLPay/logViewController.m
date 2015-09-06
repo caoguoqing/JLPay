@@ -370,10 +370,12 @@
     [UIView animateWithDuration:0.3 animations:^{
         sender.transform                      = CGAffineTransformMakeScale(0.95, 0.95);
     }];
+    [sender setEnabled:NO];
 }
 - (IBAction)touchOutLoad: (UIButton*)sender {
     // 添加动画效果: 恢复原大小
     sender.transform                      = CGAffineTransformIdentity;
+    [sender setEnabled:YES];
 }
 /*************************************
  * 功  能 : 登陆按钮的登陆功能实现;
@@ -462,6 +464,7 @@
 
 #pragma mask ::: HTTP响应协议
 -(void)requestFinished:(ASIHTTPRequest *)request {
+    [self.loadButton setEnabled:YES];
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
@@ -508,6 +511,7 @@
     
 }
 -(void)requestFailed:(ASIHTTPRequest *)request {
+    [self.loadButton setEnabled:YES];
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     [self alertShow:@"网络异常，请检查网络"];

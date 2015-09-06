@@ -286,6 +286,7 @@
     mailLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
     // 设置 maillabel 的自适应大小
     CGSize autoSize                 = [mailLabel.text sizeWithFont:mailLabel.font constrainedToSize:frame.size lineBreakMode:NSLineBreakByWordWrapping];
+    
     frame                           = CGRectMake(frame.origin.x, frame.origin.y, autoSize.width, frame.size.height);
     mailLabel.frame                 = frame;
     // 设置 maillabel 的自适应大小

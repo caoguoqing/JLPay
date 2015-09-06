@@ -59,6 +59,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 不要放在 viewWillAppear 中
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
+    [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
     
 }
@@ -275,6 +276,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask : -------------  DeviceManagerDelegate
 // ID号读取
 - (void)didDiscoverDeviceOnID:(NSString *)identifier {
+    [[DeviceManager sharedInstance] stopScanningDevices];
     [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
 }
 // SN号读取结果
@@ -459,7 +461,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     
     // 保存已选择的终端号/SN号到本地
-    [[NSUserDefaults standardUserDefaults] setObject:self.selectedSNVersionNum forKey:SelectedSNVersionNum];
+//    [[NSUserDefaults standardUserDefaults] setObject:self.selectedSNVersionNum forKey:SelectedSNVersionNum];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     // 下载主密钥 -- 需要判断设备是否连接

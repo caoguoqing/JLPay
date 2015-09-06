@@ -143,10 +143,14 @@
 + (NSString*) moneyStringWithCString:(char*)cstring ;
 // app的状态栏高度+控制栏高度
 + (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController*)viewController;
+
+#pragma mask ::: 字符串相关
 // 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
 + (NSString*) clearSpaceCharAtLastOfString:(NSString*)string ;
+// 去掉字符串中间的空白字符
++ (NSString*) clearSpaceCharAtContentOfString:(NSString*)string ;
 
-
+#pragma mask ::: 图片相关
 // 缩放图片
 + (UIImage*) imageScaledBySourceImage:(UIImage*)image
                        withWidthScale:(CGFloat)wScale

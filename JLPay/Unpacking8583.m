@@ -142,7 +142,7 @@ static Unpacking8583 *sharedObj2 = nil;
                                 [workStr appendString:str];
                             }
                         }
-                    } else if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
+                    } else /*if ([deviceType isEqualToString:DeviceType_JHL_M60]) */{
                         [workStr appendString:str1];
                     }
                     

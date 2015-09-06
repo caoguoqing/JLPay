@@ -256,7 +256,7 @@
             ipStr = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
             //        ipStr   = @"183.16.188.39"; // 62 环境外网 6280、6288 ping szjl2014.eicp.net获取
-            ipStr = @"183.16.190.61";
+            ipStr = @"183.16.198.55";
         }
         
     }
@@ -302,7 +302,7 @@
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
         } else if (TestOrProduce == 9) {
-            ip = @"183.16.190.61";
+            ip = @"183.16.198.55";
         }
     }
     return ip;
@@ -846,6 +846,9 @@
 
 // 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
 + (NSString*) clearSpaceCharAtLastOfString:(NSString*)string {
+    if (!string || string.length == 0) {
+        return nil;
+    }
     const char* originString = [string cStringUsingEncoding:NSUTF8StringEncoding];
     char* newString = (char*)malloc(strlen(originString) + 1);
     memset(newString, 0x00, strlen(originString) + 1);
@@ -864,6 +867,32 @@
     free(newString);
     return retString;
 }
+
+// 去掉字符串中间的空白字符
++ (NSString*) clearSpaceCharAtContentOfString:(NSString*)string {
+    if (!string || string.length == 0) {
+        return nil;
+    }
+    const char* originString = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    char* newString = (char*)malloc(strlen(originString) + 1);
+    memset(newString, 0x00, strlen(originString) + 1);
+
+    char* temp = newString;
+    for (char* origin = (char*)originString; *origin != 0; origin++) {
+        if (!isspace(*origin)) {
+            *temp = *origin;
+            temp++;
+        }
+    }
+    
+    
+    
+    NSString* retString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
+    free(newString);
+    return retString;
+}
+
+
 
 // 缩放图片
 + (UIImage*) imageScaledBySourceImage:(UIImage*)image
