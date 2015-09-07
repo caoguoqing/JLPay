@@ -245,17 +245,20 @@
         ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
     }else{
         if (TestOrProduce == 0) {
-            //
-            //  测试   ipStr   = @"192.168.1.62";  // 62环境; 28080/80 886584000000001/10006057 捷联测试/00000000
+            // 62环境: TCP[192.168.1.62/28080]  HTTP[192.168.1.62/80]
             ipStr   = @"192.168.1.62";
         } else if (TestOrProduce == 1) {
-            //  生产   ipStr = @"202.104.101.126";  // 生产环境 28088
+            // 生产环境: TCP[202.104.101.126/28088]  HTTP[202.104.101.126/80]
             ipStr = @"202.104.101.126";
         } else if (TestOrProduce == 5) {
-            //        ipStr=@"192.168.1.50";//122.0.64.19@"211.90.22.167";// 28080
+            // 50环境: TCP[192.168.1.62/28080]  HTTP[192.168.1.62/80]
             ipStr = @"192.168.1.50";
-        } else if (TestOrProduce == 9) {
-            //        ipStr   = @"183.16.188.39"; // 62 环境外网 6280、6288 ping szjl2014.eicp.net获取
+        } else if (TestOrProduce == 7) {
+            // 72环境: TCP[202.104.101.126/9088]  HTTP[202.104.101.126/80]
+            ipStr = @"202.104.101.126";
+        }
+        else if (TestOrProduce == 9) {
+            // 外网环境: TCP[.../6280]  HTTP[.../6288]  ping  szjl2014.eicp.net
             ipStr = @"183.16.198.55";
         }
         
@@ -268,13 +271,13 @@
         portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
     }else{
         if (TestOrProduce == 0) {
-            // 测试
-            portStr=@"28080";
+            portStr = @"28080";
         } else if (TestOrProduce == 1) {
-            // 正式
-            portStr=@"28088";
+            portStr = @"28088";
         } else if (TestOrProduce == 5) {
-            portStr=@"28080";
+            portStr = @"28080";
+        } else if (TestOrProduce == 7) {
+            portStr = @"9088";
         } else if (TestOrProduce == 9) {
             portStr = @"6280";
         }
@@ -288,19 +291,14 @@
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"Setting_Ip"]) {
         ip = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_IP"];
     } else {
-//        ip = @"192.188.8.112"; // 8083
-//        ip   = @"202.104.101.126";  // 9088 测试1 // 8099
-//        ip = @"192.168.1.50";//122.0.64.19@"211.90.22.167";//
-//        ip   = @"192.168.1.62";  // 62环境; 80
-//        ip = @"202.104.101.126";  // 生产环境 80
         if (TestOrProduce == 0) {
-            // 测试
-            ip   = @"192.168.1.62";
+            ip = @"192.168.1.62";
         } else if (TestOrProduce == 1) {
-            // 正式
             ip = @"202.104.101.126";
         } else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
+        } else if (TestOrProduce == 7) {
+            ip = @"202.104.101.126";
         } else if (TestOrProduce == 9) {
             ip = @"183.16.198.55";
         }

@@ -469,8 +469,11 @@
     [dataArray addObject:liushuiStr];
     [macMapArray addObject:@"11"];
     // F14
-    [dataArray addObject:[[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime]];
-    [macMapArray addObject:@"14"];
+    NSString* effectdate = [[NSUserDefaults standardUserDefaults] valueForKey:Card_DeadLineTime];
+    if (effectdate && effectdate.length > 0) {
+        [dataArray addObject:effectdate];
+        [macMapArray addObject:@"14"];
+    }
     // F22
     [dataArray addObject:f22];
     [macMapArray addObject:@"22"];

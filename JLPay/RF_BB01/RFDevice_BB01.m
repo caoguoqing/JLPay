@@ -240,7 +240,7 @@ SwipeListener
                 }
             }
         } else {
-            NSLog(@"等待刷卡....");
+            NSLog(@"等待刷卡或插卡....");
         }
     });
 }
@@ -344,8 +344,6 @@ SwipeListener
     [ss appendString:@"\n"];
     [ss appendString:@"final(10)=> "];
     [ss appendString:[StringUtils hex_to_str:[event getValue]]];
-    
-//    NSLog(@"%@",ss);
 }
 
 
@@ -361,23 +359,34 @@ SwipeListener
                 sleep(0.1);
             }
             swiped = [self getICCardDataWithMoney:100];
+            // 刷卡回调
+            if (swiped) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+                }
+            } else {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
+                }
+            }
+
         });
     } else if (type == EVENT_TYPE_IC_REMOVED) {
         NSLog(@"IC卡已拔出...");
     } else if (type == EVENT_TYPE_MAG_SWIPED) {
         swiped = [self getTrackCardData];
+        // 刷卡回调
+        if (swiped) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+                [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+            }
+        } else {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+                [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
+            }
+        }
     }
     
-    // 刷卡回调
-    if (swiped) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-            [self.delegate didCardSwipedSucOrFail:YES withError:nil];
-        }
-    } else {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-            [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
-        }
-    }
 }
 
 
@@ -414,6 +423,9 @@ SwipeListener
     // 数据 - IC序列号
     NSString* icSeq = [self.deviceManager getIcSeq];
     if (icSeq && icSeq.length > 0) {
+        while (icSeq.length < 4) {
+            icSeq = [@"0" stringByAppendingString:icSeq];
+        }
         [[NSUserDefaults standardUserDefaults] setValue:icSeq forKey:ICCardSeq_23];
     }
     // 数据 - IC卡55域
@@ -427,11 +439,10 @@ SwipeListener
         [[NSUserDefaults standardUserDefaults] setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:Two_Track_Data];
     }
     // 数据 - 有效期
-    NSString* expDate = [self.deviceManager getIcEffDate];
+    NSString* expDate = [self.deviceManager getIcExpDate];
     if (expDate && expDate.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:expDate forKey:Card_DeadLineTime];
+        [[NSUserDefaults standardUserDefaults] setValue:[expDate substringToIndex:4] forKey:Card_DeadLineTime];
     }
-    // 数据 - 失效期
     
     // IC卡片标志
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];
