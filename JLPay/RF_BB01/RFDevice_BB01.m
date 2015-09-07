@@ -67,9 +67,9 @@ SwipeListener
 
 # pragma mask : 开始扫描设备
 - (void) startScanningDevices {
-    [self.deviceManager stopScan];
+//    [self.deviceManager stopScan];
     [self.deviceList removeAllObjects];
-    [self.deviceManager cancelConect];
+//    [self.deviceManager cancelConect];
     [self.deviceManager scanPeripheral];
 }
 # pragma mask : 关闭所有蓝牙设备
@@ -245,7 +245,34 @@ SwipeListener
     });
 }
 
-
+#pragma mask : PIN加密
+- (void) pinEncryptBySource:(NSString*)source withPan:(NSString*)pan onSNVersion:(NSString*)SNVersion {
+    CBPeripheral* peripheral = nil;
+    for (NSDictionary* dict in self.deviceList) {
+        if ([SNVersion isEqualToString:[dict valueForKey:KeyDataPathNodeSNVersion]]) {
+            peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
+        }
+    }
+    if (!peripheral) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+            [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"PIN加密失败:设备未连接"];
+        }
+    } else {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSString* pin;
+            NSLog(@"加密[%@]的原始明文串:[%@]",pan,source);
+            while (![self.deviceManager sendDataEnable]) {
+                sleep(0.1);
+            }
+            pin = [self.deviceSetter getEncryptedPIN:SLC :pan :source];
+            NSLog(@"加密后的密文串:[%@]",pin);
+            pin = [PublicInformation clearSpaceCharAtContentOfString:pin];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+                [self.delegate didEncryptPinSucOrFail:YES pin:[pin uppercaseString] withError:nil];
+            }
+        });
+    }
+}
 
 
 
@@ -309,7 +336,7 @@ SwipeListener
 
 #pragma mask : 解析数据
 -(void)onParseData:(SwipeEvent*)event{
-//    NSLog(@"onParseData -> %@",[event getValue]);
+    NSLog(@"onParseData -> %@",[event getValue]);
     
     NSMutableString *ss = [[NSMutableString alloc]init];
     [ss appendString:@"final(16)=> "];
@@ -397,7 +424,7 @@ SwipeListener
     // 数据 - 二磁加密数据
     NSString* track2 = [self.deviceManager getICEncryptedTrack2Data];
     if (track2 && track2.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:track2 forKey:Two_Track_Data];
+        [[NSUserDefaults standardUserDefaults] setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:Two_Track_Data];
     }
     // 数据 - 有效期
     NSString* expDate = [self.deviceManager getIcEffDate];
@@ -429,12 +456,12 @@ SwipeListener
     // 二磁加密数据
     NSString* track2 = [self.deviceManager getTrack2Data];
     if (track2 && track2.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:track2 forKey:Two_Track_Data];
+        [[NSUserDefaults standardUserDefaults] setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:Two_Track_Data];
     }
     // 三磁加密数据
     NSString* track3 = [self.deviceManager getTrack3Data];
     if (track3 && track3.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:track3 forKey:F36_ThreeTrackData];
+        [[NSUserDefaults standardUserDefaults] setValue:[[track3 substringFromIndex:4] uppercaseString] forKey:F36_ThreeTrackData];
     }
     // 有效期
     NSString* expDate = [self.deviceManager getMagExpDate];

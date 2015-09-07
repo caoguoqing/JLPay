@@ -53,7 +53,7 @@
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion;
 
 # pragma mask : 密码加密 - 不支持输入密码的设备使用本接口加密
-- (NSString*) pinEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion;
+- (void) pinEncryptBySource:(NSString*)source withPan:(NSString*)pan onSNVersion:(NSString*)SNVersion;
 
 
 
@@ -68,7 +68,7 @@
 # pragma mask :  * ID号扫描成功
 - (void) didDiscoverDeviceOnID:(NSString*)identifier;
 
-# pragma mask :  * 打开设备成功/失败的回调
+# pragma mask :  * 打开设备成功/失败的回调 -- 暂时未用到
 - (void) deviceManager:(DeviceManager*)deviceManager didOpenSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
 
 # pragma mask :  * 丢失设备连接: SN
@@ -92,6 +92,9 @@
 
 # pragma mask :  * 刷卡结果:
 - (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
+
+# pragma mask : PIN加密回调
+- (void) didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString*)pin withError:(NSString*)error;
 
 
 @end

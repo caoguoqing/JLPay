@@ -343,6 +343,8 @@
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
     for (ISBLEDataPath* dataPath in devices) {
         NSString* deviceName = [dataPath advName];
+        NSLog(@"扫描到设备%@:%@",deviceName,dataPath.UUID.UUIDString);
+
         if (!deviceName || ![deviceName hasPrefix:@"JHLM60"]) {
             continue;
         }
@@ -356,6 +358,7 @@
         }
         if (isExist == NO) {
             // 新扫描到的设备要添加到设备列表:并回调出ID
+            NSLog(@"扫描到设备%@:%@",deviceName,dataPath.UUID.UUIDString);
             NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:3];
             [dict setObject:dataPath forKey:KeyDataPathNodeDataPath];
             [dict setValue:dataPath.UUID.UUIDString forKey:KeyDataPathNodeIdentifier];

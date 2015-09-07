@@ -152,9 +152,10 @@ static DeviceManager* _sharedDeviceManager = nil;
     [self.device cardSwipeWithMoney:money yesOrNot:yesOrNot onSNVersion:SNVersion];
 }
 #pragma mask : PIN加密
-- (NSString *)pinEncryptBySource:(NSString *)source onSNVersion:(NSString *)SNVersion {
-    NSString* pin;
-    return pin;
+- (void) pinEncryptBySource:(NSString*)source withPan:(NSString*)pan onSNVersion:(NSString*)SNVersion {
+    if ([self.device respondsToSelector:@selector(pinEncryptBySource:withPan:onSNVersion:)]) {
+        [self.device pinEncryptBySource:source withPan:pan onSNVersion:SNVersion];
+    }
 }
 
 
@@ -162,7 +163,7 @@ static DeviceManager* _sharedDeviceManager = nil;
 
 
 
-#pragma mask ------------------------------------------------------------- JHLDevice_M60_Delegate
+#pragma mask ------------------------------------------------------------- JHLDevice_M60_Delegate & RFDevice_BB01Delegate
 
 #pragma mask : ID号扫描成功
 - (void) didDiscoverDeviceOnID:(NSString*)identifier {
@@ -211,6 +212,20 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.delegate deviceManager:self didSwipeSuccessOrNot:yesOrNo withMessage:error];
     }
 }
+
+
+
+
+#pragma mask ------------------------------------------------------------- RFDevice_BB01Delegate
+
+# pragma mask : PIN加密回调
+- (void) didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString*)pin withError:(NSString*)error {
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+        [self.delegate didEncryptPinSucOrFail:yesOrNo pin:pin withError:error];
+    }
+}
+
+
 
 
 #pragma mask --------------------------[Private Interface]--------------------------
