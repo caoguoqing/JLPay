@@ -16,6 +16,9 @@
 # pragma mask : 设备管理器公共入口获取或创建
 +(DeviceManager*) sharedInstance;
 
+#pragma mask : 设置并创建指定的设备入口
+- (void) makeDeviceEntryWithType:(NSString*)devitype ;
+
 # pragma mask : 开始扫描设备
 - (void) startScanningDevices;
 # pragma mask : 停止扫描设备

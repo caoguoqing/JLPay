@@ -45,28 +45,9 @@ static DeviceManager* _sharedDeviceManager = nil;
     dispatch_once(&desp, ^{
         _sharedDeviceManager = [[DeviceManager alloc] init];
     });
-    
-    NSString* type = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
-    if (!type) {
-        return _sharedDeviceManager;
-    }
-    // 设备类型属性跟配置不一致就重置，并置空设备入口
-    if (![type isEqualToString:_sharedDeviceManager.deviceType]) {
-        _sharedDeviceManager.deviceType = type;
-        _sharedDeviceManager.device = nil;
-    }
-    
-    // 厂商设备入口创建   
-    if (!_sharedDeviceManager.device) {
-        if ([type isEqualToString:DeviceType_JHL_M60]) {
-            NSLog(@"创建M60设备入口");
-            _sharedDeviceManager.device = [[JHLDevice_M60 alloc] initWithDelegate:_sharedDeviceManager];
-        } else if ([type isEqualToString:DeviceType_RF_BB01]) {
-            NSLog(@"创建RF_BB01设备入口");
-            _sharedDeviceManager.device = [[RFDevice_BB01 alloc] initWithDelegate:_sharedDeviceManager];
-        } else if ([type isEqualToString:DeviceType_JHL_A60]) {
-            
-        }
+    // 如果已经选择过设备就直接创建设备入口
+    if (_sharedDeviceManager.device == nil && _sharedDeviceManager.deviceType != nil) {
+        [_sharedDeviceManager makeDeviceEntryWithType:_sharedDeviceManager.deviceType];
     }
     return _sharedDeviceManager;
 }
@@ -235,6 +216,20 @@ static DeviceManager* _sharedDeviceManager = nil;
 - (instancetype)init {
     self = [super init];
     return self;
+}
+
+#pragma mask : 设置并创建指定的设备入口
+- (void) makeDeviceEntryWithType:(NSString*)devitype {
+    self.deviceType = devitype;
+    if (self.device) {
+        self.device = nil;
+    }
+    if ([devitype isEqualToString:DeviceType_JHL_M60]) {
+        self.device = [[JHLDevice_M60 alloc] initWithDelegate:self];
+    }
+    else if ([devitype isEqualToString:DeviceType_RF_BB01]) {
+        self.device = [[RFDevice_BB01 alloc] initWithDelegate:self];
+    }
 }
 
 

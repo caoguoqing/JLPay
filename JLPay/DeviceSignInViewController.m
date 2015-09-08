@@ -62,6 +62,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
     
+    [[DeviceManager sharedInstance] setDelegate:self];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -109,12 +110,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    NSLog(@"%s",__func__);
     [[JLActivitor sharedInstance] stopAnimating];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//    });
     if ([self.waitingTimer isValid]) {
         [self.waitingTimer invalidate];
         self.waitingTimer = nil;
@@ -200,8 +198,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         button.layer.cornerRadius = button.frame.size.height/2.0;
         button.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
-//        [button addTarget:self action:@selector(buttonTouchDown:) forControlEvents:UIControlEventTouchDown];
-//        [button addTarget:self action:@selector(buttonTouchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
         [button addTarget:self action:@selector(buttonTouchToOpenDevices:) forControlEvents:UIControlEventTouchUpInside];
         
         [headerView addSubview:button];
@@ -302,9 +298,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (SNVersion && [self.SNVersionNums containsObject:SNVersion]) {
         [self.SNVersionNums removeObject:SNVersion];
     }
-    if ([self.selectedSNVersionNum isEqualToString:SNVersion]) {
-//        self.selectedSNVersionNum = nil;
-    }
     if (self.SNVersionNums.count == 0) {
         [self.SNVersionNums addObject:@"无"];
     }
@@ -379,15 +372,12 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 // 拆包结果的回调方法
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
-//    if (![metStr isEqualToString:@"tcpsignin"] && ![metStr isEqualToString:@"downloadMainKey"]) return;
     if (state) {    // 成功
         // 先判断设备是否连接
         int connectedState = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
         if (connectedState == 1) { // 已连接
             if ([metStr isEqualToString:TranType_DownMainKey]) {  // 下载主密钥
                 [[DeviceManager sharedInstance] writeMainKey:[PublicInformation signinPin] onSNVersion:self.selectedSNVersionNum];
-//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//                });
             }
             else if ([metStr isEqualToString:TranType_DownWorkKey]) {   // 下载工作密钥
                 // 更新批次号 returnSignSort -> Get_Sort_Number
@@ -403,16 +393,12 @@ UIActionSheetDelegate,UIAlertViewDelegate
                 NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
                 NSLog(@"工作密钥: [%@]", workStr);
                 [[DeviceManager sharedInstance] writeWorkKey:workStr onSNVersion:self.selectedSNVersionNum];
-//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//                });
             }
         } else {
             [[JLActivitor sharedInstance] stopAnimating];
             [self alertForMessage:@"设备未连接"];
             if (connectedState == 0) { // 如果设备已识别，但未连接，进行连接
                 [[DeviceManager sharedInstance] openDevice:self.selectedSNVersionNum];
-//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//                });
             }
         }
     } else { // 失败
@@ -432,8 +418,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     [[NSUserDefaults standardUserDefaults] setValue:title forKey:DeviceType];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    [[DeviceManager sharedInstance] setDelegate:self];
+    [[DeviceManager sharedInstance] makeDeviceEntryWithType:title];
+}
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     [[DeviceManager sharedInstance] startScanningDevices];
 }
 
@@ -461,7 +448,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     
     // 保存已选择的终端号/SN号到本地
-//    [[NSUserDefaults standardUserDefaults] setObject:self.selectedSNVersionNum forKey:SelectedSNVersionNum];
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
     [[NSUserDefaults standardUserDefaults] synchronize];
     // 下载主密钥 -- 需要判断设备是否连接
@@ -519,11 +505,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
             } completion:nil];
         });
     }
-//    else if ([alertView.message hasPrefix:@"手机蓝牙未打开"]) {
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            [[DeviceManager sharedInstance] startScanningDevices];
-//        });
-//    }
 }
 
 // pragma mask ::: 去掉多余的单元格的分割线

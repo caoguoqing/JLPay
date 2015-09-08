@@ -341,13 +341,14 @@
  *      - 扫描到设备后仅仅添加到设备列表;
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
+    NSLog(@"-------");
     for (ISBLEDataPath* dataPath in devices) {
         NSString* deviceName = [dataPath advName];
-        NSLog(@"扫描到设备%@:%@",deviceName,dataPath.UUID.UUIDString);
 
         if (!deviceName || ![deviceName hasPrefix:@"JHLM60"]) {
             continue;
         }
+        NSLog(@"扫描到设备%@:%@",deviceName,dataPath.UUID.UUIDString);
         BOOL isExist = NO;
         for (NSDictionary* curDeviceDict in self.knownDeviceList) {
             ISBLEDataPath* curDataPath = [curDeviceDict objectForKey:KeyDataPathNodeDataPath];

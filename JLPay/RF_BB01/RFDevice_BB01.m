@@ -20,6 +20,7 @@ SwipeListener
 @property (nonatomic, strong) BluetoothHandler* deviceManager;
 @property (nonatomic, strong) Settings* deviceSetter;
 @property (nonatomic, strong) NSMutableArray* deviceList;
+@property (nonatomic, strong) NSString* connectedIdentifier;
 @end
 
 
@@ -27,6 +28,7 @@ SwipeListener
 @synthesize deviceManager = _deviceManager;
 @synthesize deviceSetter = _deviceSetter;
 @synthesize deviceList = _deviceList;
+@synthesize connectedIdentifier;
 
 #define KeyDataPathNodeDataPath         @"KeyDataPathNodeDataPath"      // 设备dataPath
 #define KeyDataPathNodeIdentifier       @"KeyDataPathNodeIdentifier"    // 设备ID
@@ -55,6 +57,7 @@ SwipeListener
         self.delegate = deviceDelegate;
         [self.deviceManager setShowAPDU:YES];
         [self.deviceSetter setSwipeHandler:self.deviceManager];
+        self.connectedIdentifier = nil;
     }
     return self;
 }
@@ -90,6 +93,7 @@ SwipeListener
     for (NSDictionary* dict in self.deviceList) {
         if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
             NSLog(@"连接设备:%@",identifier);
+            self.connectedIdentifier = identifier;
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
                 [self.deviceManager conectDiscoverPeripheral:[dict objectForKey:KeyDataPathNodeDataPath]];
             });
@@ -322,12 +326,18 @@ SwipeListener
             return;
         }
         // 待修改: 目前SDK只支持一个设备,后面要改为多设备
-        NSMutableDictionary* dict = [self.deviceList objectAtIndex:0];
-        [dict setValue:SNVersion forKey:KeyDataPathNodeSNVersion];
-        
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
-            [self.delegate didReadSNVersion:SNVersion sucOrFail:YES withError:nil];
+        for (NSDictionary* dict in self.deviceList) {
+            if ([self.connectedIdentifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
+                [dict setValue:SNVersion forKey:KeyDataPathNodeSNVersion];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
+                    [self.delegate didReadSNVersion:SNVersion sucOrFail:YES withError:nil];
+                }
+                break;
+            }
         }
+//        NSMutableDictionary* dict = [self.deviceList objectAtIndex:0];
+//        [dict setValue:SNVersion forKey:KeyDataPathNodeSNVersion];
+        
     });
 }
 

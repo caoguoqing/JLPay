@@ -253,7 +253,10 @@ __strong static id _sharedObject = nil;
 
 - (void)addDiscoverPeripheral:(CBPeripheral *)aPeripheral advName:(NSString *)advName{
     BOOL find = NO;
-//    NSLog(@"%s,发现设备:%@",__func__,advName);
+    if (![advName isEqualToString:@"JHLM60"]) {
+        return;
+    }
+    NSLog(@"%s,发现设备:%@",__func__,advName);
     for (ISDataPath *dataPath in devices) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath *mDataPath = (ISBLEDataPath *)dataPath;
@@ -267,11 +270,9 @@ __strong static id _sharedObject = nil;
     }
     // 只有新识别的没在已识别列表中得设备才会进入已识别列表
     if (!find) {
-
         ISBLEDataPath *dataPath = [[ISBLEDataPath alloc] init];
         [dataPath setPeripheral:aPeripheral withAdvName:advName];
         [devices addObject:dataPath];
-//        NSLog(@"%s,添加了设备:%@",__func__,dataPath);
         if ([aPeripheral state] == CBPeripheralStateConnected) {
             [_connectedAccessory addObject:dataPath];
             dataPath.delegate = self;
