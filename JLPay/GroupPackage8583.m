@@ -267,13 +267,12 @@
 +(NSArray *)getNewPinAndMac:(NSArray *)arr
                    exchange:(NSString *)typestr
                      bitmap:(NSString *)bitstr{
-    //NSLog(@"原始数据====%@",arr);
     //mac校验数据
+    // 交易类型+map+所有域的值组成字符串
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@",typestr,bitstr,[arr componentsJoinedByString:@""]];
-//    NSLog(@"allStr====%@,=====%d",allStr,(int)[allStr length]);
     int len = (int)allStr.length;
     int other = len % 16;
-    
+    // 如不为16的倍数,补零
     NSMutableArray *numArr=[[NSMutableArray alloc] init];
     if (other != 0) {
         for (int i=0; i< (16-other); i++) {
@@ -281,20 +280,18 @@
         }
     }
     NSString *newAllStr=[NSString stringWithFormat:@"%@%@",allStr,[numArr componentsJoinedByString:@""]];
-//    NSLog(@"newAllStr=====%@=====%d",newAllStr,(int)[newAllStr length]);
-    
+    // 域值所有串转为data
     NSData *btData=[PublicInformation NewhexStrToNSData:newAllStr];
-//    NSLog(@"btData====%@",btData);
     Byte *bt=(Byte *)[btData bytes];
     
     Byte mac[8];
     Byte temp[8];
     int z = 0;
-    
+    // 取前8个字节串
     for (int i = 0; i < 8; i++) {
         mac[i] = bt[i];
     }
-    // 循环异或
+    // 然后跟后面每8个字节进行异或运算
     for (int i = 8; i <= [btData length]; i++, z++) {
         if ((i != 8) && (i % 8 == 0)) {
             for (int j = 0; j < 8; j++) {
@@ -308,40 +305,39 @@
             temp[z] = bt[i];
         }
     }
-    
     NSData *newData = [[NSData alloc] initWithBytes:mac length:sizeof(mac)];
-//    NSLog(@"newData====%@",newData);
     
+    // 最终的运算结果数据转换成ASC字符串
     NSString *newStr=[EncodeString encodeASC:[PublicInformation stringWithHexBytes2:newData]];
     NSLog(@"newStr====%@",newStr);
     
+    // 取前16位跟后16位
     NSString *leftString=[newStr substringWithRange:NSMakeRange(0, 16)];
     NSString *rightString=[newStr substringWithRange:NSMakeRange(16, [newStr length]-16)];
-    //mack签到明文
-    //双倍des加密
+    
+    //双倍des加密 前16位
     NSString *left3descryptStr=[[Unpacking8583 getInstance] threeDesEncrypt:leftString keyValue:[PublicInformation signinMac]];
     NSLog(@"left3descryptStr====%@",left3descryptStr);
     
-    //异或运算,rightString,left3descryptStr
-    
+    // 加密的数据跟后16位进行异或
     Byte *left=(Byte *)[[PublicInformation NewhexStrToNSData:left3descryptStr] bytes];
     Byte *right=(Byte *)[[PublicInformation NewhexStrToNSData:rightString] bytes];
-    
     Byte pwdPlaintext[8];
     for (int i = 0; i < 8; i++) {
         pwdPlaintext[i] = (Byte)(left[i] ^ right[i]);
     }
-    
     NSData *theData = [[NSData alloc] initWithBytes:pwdPlaintext length:sizeof(pwdPlaintext)];
     NSString *resultStr=[PublicInformation stringWithHexBytes2:theData];
     NSLog(@"异或结果%@",resultStr);
     
-    //双倍des加密
+    // 异或运算后的结果再次进行双倍DES加密
     NSString *str=[[Unpacking8583 getInstance] threeDesEncrypt:resultStr keyValue:[PublicInformation signinMac]];
     NSLog(@"3des====%@",str);
     NSLog(@"mac======%@",[str substringWithRange:NSMakeRange(0, 8)]);
     NSString *macStr=[EncodeString encodeASC:[str substringWithRange:NSMakeRange(0, 8)]];
     NSMutableArray *newArr=[[NSMutableArray alloc] initWithArray:arr];
+    
+    // 将最后加密后的数据转换成ASC串打包到报文数组
     [newArr addObject:macStr];
     NSLog(@"添加mac校验64域====%@",newArr);
     for (int i=0; i<[newArr count]; i++) {

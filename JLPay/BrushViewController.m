@@ -161,19 +161,23 @@
             return;
         }
         
-        // 成功就继续
+        // 成功就继续,输入密码或直接发起交易
         NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
         if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
             // 直接发起消费交易
             [self toCust:nil];
-        } else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
+        }
+        else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
             // 打开密码输入提示框
             [self makePasswordAlertView];
-        } else if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
-            NSLog(@"刷卡成功,开始输入密码");
+        }
+        else if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
             // 打开密码输入提示框
             [self makePasswordAlertView];
 
+        }
+        else if ([deviceType isEqualToString:DeviceType_JLpay_TY01]) {
+            [self toCust:nil];
         }
     });
 }

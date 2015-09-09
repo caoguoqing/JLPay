@@ -58,8 +58,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     
     // 不要放在 viewWillAppear 中
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
-    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
+    [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
     [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
+    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
     
     [[DeviceManager sharedInstance] setDelegate:self];
@@ -324,6 +325,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
+    NSLog(@"工作密钥设置结果");
     // 停止等待转轮
     dispatch_async(dispatch_get_main_queue(), ^{
         [[JLActivitor sharedInstance] stopAnimating];
@@ -335,11 +337,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 更新tool显示
         self.terminalNumBinded = self.selectedTerminalNum;
         self.SNVersionNumBinded = self.selectedSNVersionNum;
+        NSLog(@"准备弹窗");
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
-        
+        NSLog(@"开始弹窗");
         [self alertForMessage:@"绑定设备成功!"];
+        NSLog(@"弹窗完毕");
     } else {
         [self alertForMessage:@"绑定设备失败!"];
     }

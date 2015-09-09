@@ -77,7 +77,6 @@ SwipeListener
 }
 # pragma mask : 关闭所有蓝牙设备
 - (void) closeAllDevices {
-//    [self stopScanningDevices];
 //    [self.deviceManager setMyDelegate:nil];
 //    [self.deviceManager setMSwipeListener:nil];
     [self.deviceManager cancelConect];
@@ -501,7 +500,6 @@ SwipeListener
 - (BluetoothHandler *)deviceManager {
     if (_deviceManager == nil) {
         _deviceManager = [[BluetoothHandler alloc] init];
-//        _deviceManager = [BluetoothHandler sharedInstance];
         [_deviceManager setMyDelegate:self];
         [_deviceManager setMSwipeListener:self];
     }
@@ -510,7 +508,6 @@ SwipeListener
 - (Settings *)deviceSetter {
     if (_deviceSetter == nil) {
         _deviceSetter = [[Settings alloc] init];
-//        _deviceSetter = [Settings sharedInstance];
     }
     return _deviceSetter;
 }

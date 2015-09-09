@@ -12,6 +12,7 @@
 #import "JHL_M60/ISControlManager.h"
 #import "JHL_M60/JHLDevice_M60.h"
 #import "RF_BB01/RFDevice_BB01.h"
+#import "JLPayDevice_TY01.h"
 
 /*
  *  厂商设备添加流程:
@@ -22,7 +23,8 @@
 @interface DeviceManager()
 < /* delegate */
 JHLDevice_M60_Delegate,
-RFDevice_BB01Delegate
+RFDevice_BB01Delegate,
+JLPayDevice_TY01_Delegate
 >
 @property (nonatomic, strong) NSString*         deviceType;
 @property (nonatomic, retain) id                device;
@@ -229,6 +231,9 @@ static DeviceManager* _sharedDeviceManager = nil;
     }
     else if ([devitype isEqualToString:DeviceType_RF_BB01]) {
         self.device = [[RFDevice_BB01 alloc] initWithDelegate:self];
+    }
+    else if ([devitype isEqualToString:DeviceType_JLpay_TY01]) {
+        self.device = [[JLPayDevice_TY01 alloc] initWithDelegate:self];
     }
 }
 
