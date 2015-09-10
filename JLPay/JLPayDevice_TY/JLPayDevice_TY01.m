@@ -64,9 +64,13 @@ TYJieLianDelegate
 
 #pragma mask : 扫描设备
 - (void)startScanningDevices {
-    [self.deviceManager stopScanning];
-    [self.deviceList removeAllObjects];
-    [self.deviceManager StartScanning];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // 防止断开设备未完成，先等待0.5秒
+        [NSThread sleepForTimeInterval:0.5];
+        [self.deviceManager stopScanning];
+        [self.deviceList removeAllObjects];
+        [self.deviceManager StartScanning];
+    });
 }
 
 #pragma mask : 扫描停止
@@ -79,11 +83,6 @@ TYJieLianDelegate
     [self.deviceManager disConnectDevice];
 }
 
-//# pragma mask : 清空设备入口以及 delegate
-//- (void) clearAndCloseAllDevices {
-//    [self closeAllDevices];
-//    [self.deviceManager setDelegate:nil];
-//}
 
 - (void)readSNVersions {}
 - (void)closeDevice:(NSString *)SNVersion{}
@@ -278,7 +277,6 @@ TYJieLianDelegate
             }
         }
             break;
-            
         case MAINKEY_CMD:
             if (!result) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteMainKeySucOrFail:withError:)]) {
