@@ -66,6 +66,7 @@
 # pragma mask : 关闭指定 SNVersion 号的设备
 - (void) closeDevice:(NSString*)SNVersion;
 
+
 # pragma mask : 判断指定SN号的设备是否已连接
 - (int) isConnectedOnSNVersionNum:(NSString*)SNVersion;
 # pragma mask : 判断指定设备ID的设备是否已连接

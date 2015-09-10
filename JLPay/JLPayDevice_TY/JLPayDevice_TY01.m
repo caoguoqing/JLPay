@@ -14,6 +14,9 @@
 <
 TYJieLianDelegate
 >
+{
+    BOOL cardSwipedSuccess;
+}
 
 @property (nonatomic, retain) JieLianService* deviceManager;
 @property (nonatomic, strong) NSMutableArray* deviceList;
@@ -53,6 +56,11 @@ TYJieLianDelegate
     }
     return self;
 }
+- (void)dealloc {
+    [self setDelegate:nil];
+    [self.deviceManager setDelegate:nil];
+    self.deviceManager = nil;
+}
 
 #pragma mask : 扫描设备
 - (void)startScanningDevices {
@@ -71,6 +79,11 @@ TYJieLianDelegate
     [self.deviceManager disConnectDevice];
 }
 
+//# pragma mask : 清空设备入口以及 delegate
+//- (void) clearAndCloseAllDevices {
+//    [self closeAllDevices];
+//    [self.deviceManager setDelegate:nil];
+//}
 
 - (void)readSNVersions {}
 - (void)closeDevice:(NSString *)SNVersion{}
@@ -91,11 +104,9 @@ TYJieLianDelegate
             } else {
                 connected = -1;
             }
-            NSLog(@"设备连接状态:%d",peripheral.state);
             break;
         }
     }
-    NSLog(@"设备连接状态:%d",connected);
     return connected;
 }
 #pragma mask : 判断设备连接:SN
@@ -150,9 +161,7 @@ TYJieLianDelegate
 - (void)writeWorkKey:(NSString *)workKey onSNVersion:(NSString *)SNVersion {
     CBPeripheral* peripheral = [self peripheralOnSNVersion:SNVersion];
     if (peripheral) {
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self.deviceManager WriteWorkKey:60 :workKey];
-//        });
+        [self.deviceManager WriteWorkKey:60 :workKey];
     }
 }
 
@@ -161,7 +170,7 @@ TYJieLianDelegate
     NSLog(@"刷卡金额:%@",money);
     CBPeripheral* peripheral = [self peripheralOnSNVersion:SNVersion];
     if (peripheral) {
-        [self.deviceManager MagnAmountPasswordCardAmount:money TimeOut:60*1000];
+        [self.deviceManager MagnAmountPasswordCardAmount:money TimeOut:20];
     } else {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
             [self.delegate didCardSwipedSucOrFail:NO withError:@"设备未连接"];
@@ -298,7 +307,10 @@ TYJieLianDelegate
             break;
         case GETTRACKDATA_CMD:
             if (!result) {
+                cardSwipedSuccess = YES;
             } else {
+                cardSwipedSuccess = NO;
+                NSLog(@"刷卡失败");
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
                     [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
                 }
@@ -312,6 +324,9 @@ TYJieLianDelegate
 
 #pragma mask : 刷卡的回调
 - (void)accessoryDidReadData:(NSDictionary *)data {
+    if (!cardSwipedSuccess) {
+        return;
+    }
     NSString* cardType = [data valueForKey:@"cardType"];
     NSLog(@"卡类型:%@",cardType);
     BOOL trackCardType = YES;

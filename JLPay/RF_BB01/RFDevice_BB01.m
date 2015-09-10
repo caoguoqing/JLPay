@@ -62,6 +62,7 @@ SwipeListener
     return self;
 }
 - (void)dealloc {
+    [self setDelegate:nil];
     [self.deviceSetter setSwipeHandler:nil];
     [self.deviceManager setMyDelegate:nil];
     [self.deviceManager setMSwipeListener:nil];
@@ -70,16 +71,15 @@ SwipeListener
 
 # pragma mask : 开始扫描设备
 - (void) startScanningDevices {
-//    [self.deviceManager stopScan];
+    [self.deviceManager stopScan];
     [self.deviceList removeAllObjects];
-//    [self.deviceManager cancelConect];
     [self.deviceManager scanPeripheral];
 }
 # pragma mask : 关闭所有蓝牙设备
 - (void) closeAllDevices {
-//    [self.deviceManager setMyDelegate:nil];
-//    [self.deviceManager setMSwipeListener:nil];
-    [self.deviceManager cancelConect];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.deviceManager cancelConect];
+    });
 }
 
 # pragma mask : 停止扫描设备
@@ -91,7 +91,7 @@ SwipeListener
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
     for (NSDictionary* dict in self.deviceList) {
         if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
-            NSLog(@"连接设备:%@",identifier);
+            NSLog(@"正在连接设备:%@",identifier);
             self.connectedIdentifier = identifier;
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
                 [self.deviceManager conectDiscoverPeripheral:[dict objectForKey:KeyDataPathNodeDataPath]];
@@ -121,13 +121,9 @@ SwipeListener
     for (NSDictionary* dict in self.deviceList) {
         if ([SNVersion isEqualToString:[dict valueForKey:KeyDataPathNodeSNVersion]]) {
             isExist = YES;
-//            CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
             if ([self.deviceManager isConnected]) {
                 isConnect = YES;
             }
-//            if (peripheral.state == CBPeripheralStateConnected) {
-//                isConnect = YES;
-//            }
             break;
         }
     }
@@ -144,14 +140,9 @@ SwipeListener
     for (NSDictionary* dict in self.deviceList) {
         if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
             isExist = YES;
-//            CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeIdentifier];
-//            if (peripheral.state == CBPeripheralStateConnected) {
-//                isConnect = YES;
-//            }
             if ([self.deviceManager isConnected]) {
                 isConnect = YES;
             }
-
             break;
         }
     }
@@ -226,8 +217,15 @@ SwipeListener
 # pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
 - (void)cardSwipeWithMoney:(NSString *)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString *)SNVersion {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        int breakout = 0;
         while (![self.deviceManager sendDataEnable]) {
-            sleep(0.1);
+            if (breakout++ > 30 * 10) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败:设备连接异常"];
+                }
+                return ;
+            }
+            [NSThread sleepForTimeInterval:0.1];
         }
         NSString* detect = [self.deviceSetter writeDetectCard];
         if (detect && [detect hasPrefix:@"00"]) {
@@ -264,8 +262,15 @@ SwipeListener
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSString* pin;
             NSLog(@"加密[%@]的原始明文串:[%@]",pan,source);
+            int breakout = 0;
             while (![self.deviceManager sendDataEnable]) {
-                sleep(0.1);
+                if (breakout++ > 30*10) {
+                    if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+                        [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"PIN加密失败:设备连接异常"];
+                    }
+                    return ;
+                }
+                [NSThread sleepForTimeInterval:0.1];
             }
             pin = [self.deviceSetter getEncryptedPIN:SLC :pan :source];
             NSLog(@"加密后的密文串:[%@]",pin);
@@ -308,10 +313,16 @@ SwipeListener
 #pragma mask : 连接设备成功
 - (void)conectPeripheralSuccess {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        int breakout = 0;
         NSLog(@"设备连接成功");
         while (![self.deviceManager sendDataEnable]) {
-            sleep(0.1);
+            if (breakout++ > 30 * 10) { // 30秒后要退出
+                NSLog(@"while超时了[%d]",breakout);
+                return;
+            }
+            [NSThread sleepForTimeInterval:0.1];
         }
+        NSLog(@"设备连接成功");
         // 读取SN号:连接成功之后,且状态为可操作的
         NSString* SNVersion = [self.deviceSetter getSN];
         // SN号格式处理:转换大写、去掉后面FF...字符串
@@ -334,9 +345,6 @@ SwipeListener
                 break;
             }
         }
-//        NSMutableDictionary* dict = [self.deviceList objectAtIndex:0];
-//        [dict setValue:SNVersion forKey:KeyDataPathNodeSNVersion];
-        
     });
 }
 
@@ -345,7 +353,7 @@ SwipeListener
 
 #pragma mask : 解析数据
 -(void)onParseData:(SwipeEvent*)event{
-    NSLog(@"onParseData -> %@",[event getValue]);
+    NSLog(@"onParseData:[%@]",[event getValue]);
     
     NSMutableString *ss = [[NSMutableString alloc]init];
     [ss appendString:@"final(16)=> "];
@@ -361,11 +369,14 @@ SwipeListener
     BOOL __block swiped = NO;
     int type = [event getType];
     if (type == EVENT_TYPE_IC_INSERTED) {
-        sleep(1);
         NSLog(@"检测到IC卡,正在读取数据中...");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            int breakout = 0;
             while (![self.deviceManager sendDataEnable]) {
-                sleep(0.1);
+                if (breakout++ > 30 * 10) {
+                    return ;
+                }
+                [NSThread sleepForTimeInterval:0.1];
             }
             swiped = [self getICCardDataWithMoney:100];
             // 刷卡回调
@@ -378,7 +389,6 @@ SwipeListener
                     [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
                 }
             }
-
         });
     } else if (type == EVENT_TYPE_IC_REMOVED) {
         NSLog(@"IC卡已拔出...");

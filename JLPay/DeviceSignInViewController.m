@@ -32,6 +32,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
 @property (nonatomic) CGRect activitorFrame;
+@property (nonatomic, strong) NSString* selectedDevice;             // 已选取的设备类型
 @end
 
 
@@ -45,6 +46,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @synthesize activitorFrame;
 @synthesize terminalNumBinded;
 @synthesize SNVersionNumBinded;
+@synthesize selectedDevice;
 
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
@@ -278,11 +280,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 // SN号读取结果
 - (void)didReadSNVersion:(NSString *)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
-    NSLog(@"%s, DeviceSignInViewC didReadSNVersion:%@",__func__, SNVersion);
     if (!yesOrNo) {
         [self alertForMessage:error];
         return;
     }
+    [self stopDeviceTimer];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] stopAnimating];
+    });
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
@@ -413,19 +418,29 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
 }
 
-#pragma mask ::: UIActionSheetDelegate 点击事件
+#pragma mask -------------------------------- UIActionSheetDelegate 点击事件
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0) {
         return;
     }
     // 保存选择的设备类型
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    self.selectedDevice = title;
     [[NSUserDefaults standardUserDefaults] setValue:title forKey:DeviceType];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [[DeviceManager sharedInstance] makeDeviceEntryWithType:title];
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    [[DeviceManager sharedInstance] startScanningDevices];
+    if (buttonIndex != 0) {
+        // 启动设备扫描
+        [[DeviceManager sharedInstance] startScanningDevices];
+        // 异步启动等待视图
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+        });
+        // 异步启动等待定时器
+        [self startDeviceTimer];
+    }
 }
 
 
@@ -476,6 +491,15 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self.SNVersionNums removeAllObjects];
         [self.SNVersionNums addObject:@"无"];
         [self.tableView reloadData];
+    });
+    if (self.selectedDevice == nil) {
+        return;
+    }
+    // 异步调起等待定时器
+    [self startDeviceTimer];
+    // 异步打开等待视图
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     });
     [[DeviceManager sharedInstance] closeAllDevices];
     [[DeviceManager sharedInstance] startScanningDevices];
@@ -544,12 +568,27 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [userDefault synchronize];
 }
 
+
+// 启动设备等待定时器
+- (void) startDeviceTimer {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
+    });
+}
+// 关闭设备定时器
+- (void) stopDeviceTimer {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.waitingTimer isValid]) {
+            [self.waitingTimer invalidate];
+            self.waitingTimer = nil;
+        }
+    });
+}
 // 超时后解除转轮，并输出错误信息
 - (void) waitingTimeoutWithMsg {
     [[JLActivitor sharedInstance] stopAnimating];
+    [self stopDeviceTimer];
     [self alertForMessage:@"设备连接超时"];
-    [self.waitingTimer invalidate];
-    self.waitingTimer = nil;
 }
 
 
