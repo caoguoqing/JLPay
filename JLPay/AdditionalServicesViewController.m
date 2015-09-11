@@ -12,6 +12,7 @@
 #import "AdditionalServicesViewController.h"
 #import "PublicInformation.h"
 #import "myCollectionCell.h"
+#import "Toast+UIView.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
 
@@ -94,6 +95,7 @@ NSString* headerIdentifier = @"headerIdentifier";
 //        cell.transform = CGAffineTransformMakeScale(0.95, 0.95);
     }];
     NSLog(@"点击了单元格..........[%@]",[self.titlesArray objectAtIndex:indexPath.row]);
+    [self.view makeToast:@"功能正在建设中,请关注版本更新..."];
     
 }
 
