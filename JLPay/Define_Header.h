@@ -13,13 +13,10 @@
 #import "PublicInformation.h"
 
 
-//上传电子单的接口
-//#define kServerNewURL @"http://122.0.64.115:8080/pos/"//@"http://192.168.1.106:8080/pos/"//@"http://122.0.64.115:8080/pos/"//@"http://122.0.64.115/pos/"
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
 // 数据库文件 - 全国地名及代码
-//#define DBFILENAME                      @"test.db"
 #define DBFILENAME_AREACODE             @"test.db"
 
 
@@ -38,7 +35,7 @@
  * 5: 内网测试50
  * 9: 外网测试62
  */
-#define TestOrProduce                   7
+#define TestOrProduce                   1
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -49,15 +46,6 @@
 #define Tcp_IP  @"tcpip"
 #define Tcp_Port @"tcpport"
 
-
-
-/*************[Notification 变量声明区]**************/
-//#define Noti_CardSwiped_Success         @"Noti_CardSwiped_Success"      // 读卡
-//#define Noti_CardSwiped_Fail            @"Noti_CardSwiped_Fail"
-//#define Noti_TransSale_Success          @"Noti_TransSale_Success"       // 刷卡消费
-//#define Noti_TransSale_Fail             @"Noti_TransSale_Fail"
-//#define Noti_WorkKeyWriting_Success     @"Noti_WorkKeyWriting_Success"  // 写工作密钥
-//#define Noti_WorkKeyWriting_Fail        @"Noti_WorkKeyWriting_Fail"
 
 /*************[交易类型]**************/
 #define TranType                    @"TranType"
@@ -111,20 +99,6 @@
 #define DeviceType_RF_BB01          @"BB01手持蓝牙刷卡器"
 #define DeviceType_JLpay_TY01       @"JLpay手持蓝牙刷卡器"
 
-// 已绑定的设备de ID
-//#define DeviceIDOfBinded            @"DeviceIDOfBinded"
-//// 选择设备连接的终端号配置的key   -- useless
-//#define SelectedTerminalNum         @"SelectedTerminalNum"      
-//// 选择设备连接的SN号的key       -- useless
-//#define SelectedSNVersionNum        @"SelectedSNVersionNum"     
-/*
- * 绑定de设备信息列表:
- *      deviceType
- *      terminalNum
- *      SNVersion
- *      identifier
- */
-//#define BindedDeviceList            @"BindedDeviceList"
 
 /* ------------------------------ 信息字典: 商户绑定设备的信息
  *  KeyInfoDictOfBindedDeviceType           - 设备类型
@@ -145,7 +119,7 @@
 #define DeviceWaitingTime           20                          
 
 //IC卡 SN序列号
-#define Blue_Device_SN @"4800006472"//@"4800006472"//csn=====@"0800040270000023"//
+#define Blue_Device_SN @"4800006472"
 
 //蓝牙卡头 CSN
 #define Blue_Device_CSN @"bluecsn"

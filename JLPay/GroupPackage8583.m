@@ -316,6 +316,7 @@
     NSString *rightString=[newStr substringWithRange:NSMakeRange(16, [newStr length]-16)];
     
     //双倍des加密 前16位
+    NSLog(@"MAC密钥:%@",[PublicInformation signinMac]);
     NSString *left3descryptStr=[[Unpacking8583 getInstance] threeDesEncrypt:leftString keyValue:[PublicInformation signinMac]];
     NSLog(@"left3descryptStr====%@",left3descryptStr);
     
