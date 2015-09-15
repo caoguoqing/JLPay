@@ -24,16 +24,12 @@
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
-//@property (nonatomic, strong) NSArray*          deviceList;                 // 设备列表
-//@property (nonatomic, strong) NSString*         selectedSNVersion;          // 选择的SN号
 @end
 
 @implementation CustPayViewController
 @synthesize acountOfMoney               = _acountOfMoney;
 @synthesize money                       = _money;
 @synthesize moneyCalculated             = _moneyCalculated;
-//@synthesize deviceList;
-//@synthesize selectedSNVersion;
 
 
 - (void)viewDidLoad {
@@ -56,13 +52,6 @@
     NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = textAttri;
     
-    // 自定义返回界面的按钮样式 -- 改为使用系统自带的样式
-//    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToPreVC:)];
-//    UIImage* image = [UIImage imageNamed:@"backItem"];
-//    [backItem setBackButtonBackgroundImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)]
-//                                  forState:UIControlStateNormal
-//                                barMetrics:UIBarMetricsDefault];
-//    self.navigationItem.backBarButtonItem = backItem;
     
     // 重置金额
     self.money = @"0.00";
@@ -170,29 +159,6 @@
 - (IBAction) touchOutSimple:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
 }
-
-
-#pragma mark   -----微信支付的跳转
-- (IBAction) clickToWeChat:(UIButton*)sender {
-    sender.transform                    = CGAffineTransformIdentity;
-    UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
-    viewController.title = @"微信支付";
-    [self.navigationController pushViewController:viewController animated:YES];
-    
-}
-
-
-#pragma mark   -----支付宝支付跳转
-- (IBAction) clickToWeAlipay:(UIButton*)sender {
-    sender.transform                    = CGAffineTransformIdentity;
-    UIStoryboard* storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"alipayPay"];
-    UIViewController* viewController    = [storyboard instantiateViewControllerWithIdentifier:@"weChatPay"];
-    viewController.title = @"支付宝支付";
-    [self.navigationController pushViewController:viewController animated:YES];
-}
-
 
 
 
@@ -380,35 +346,8 @@
     [self drawLineInRect:numbersFrame];
     
     
-    // 支付宝按钮   3/8/3.3
-//    frame.origin.x                      = 0 + bornerWith;
-//    frame.origin.y                      += bornerWith * 4.0;
-//    frame.size.width                    = self.view.bounds.size.width/2.0 - bornerWith*2;
-//    frame.size.height                   = littleHeight - bornerWith*2;
-//    OtherPayButton *alipayButton        = [[OtherPayButton alloc] initWithFrame:frame];
-//    // 添加 action
-//    [alipayButton addTarget:self action:@selector(clickToWeAlipay:) forControlEvents:UIControlEventTouchUpInside];
-//    [alipayButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
-//    [alipayButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
-//    
-//    [alipayButton setImageViewWithName:@"zfb"];
-//    [alipayButton setLabelNameWithName:@"支付宝支付"];
-//    [self.view addSubview:alipayButton];
-//    
-//    // 微信按钮
-//    frame.origin.x                      += self.view.bounds.size.width/2.0;
-//    OtherPayButton *weChatButton        = [[OtherPayButton alloc] initWithFrame:frame];
-//    // 添加 action
-//    [weChatButton setImageViewWithName:@"wx"];
-//    [weChatButton setLabelNameWithName:@"微信支付"];
-//    [weChatButton addTarget:self action:@selector(clickToWeChat:) forControlEvents:UIControlEventTouchUpInside];
-//    [weChatButton addTarget:self action:@selector(touchDownSimple:) forControlEvents:UIControlEventTouchDown];
-//    [weChatButton addTarget:self action:@selector(touchOutSimple:) forControlEvents:UIControlEventTouchUpOutside];
-//    
-//    [self.view addSubview:weChatButton];
     
     // 刷卡按钮       3/8/3.3 * 1.3
-//    CGFloat newBornerWith               = 2.0;
     frame.origin.x                      = 0 + inset;
     frame.origin.y                      += (visibleHeight - frame.origin.y + statusBarHeight - swipeBtnHeight)/2.0;
     frame.size.width                    = self.view.bounds.size.width - inset*2;

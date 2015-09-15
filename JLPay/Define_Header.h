@@ -35,7 +35,7 @@
  * 5: 内网测试50
  * 9: 外网测试62
  */
-#define TestOrProduce                   1
+#define TestOrProduce                   7
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -95,9 +95,9 @@
 // 厂商设备类型
 #define DeviceType                  @"DeviceType"               
 #define DeviceType_JHL_A60          @"A60音频刷卡头A"
-#define DeviceType_JHL_M60          @"M60手持蓝牙刷卡器"
-#define DeviceType_RF_BB01          @"BB01手持蓝牙刷卡器"
-#define DeviceType_JLpay_TY01       @"JLpay手持蓝牙刷卡器"
+#define DeviceType_JHL_M60          @"M60蓝牙刷卡器"
+#define DeviceType_RF_BB01          @"蓝牙刷卡头"
+#define DeviceType_JLpay_TY01       @"JLpay蓝牙刷卡器"
 
 
 /* ------------------------------ 信息字典: 商户绑定设备的信息
