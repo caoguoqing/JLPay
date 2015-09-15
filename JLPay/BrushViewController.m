@@ -483,7 +483,12 @@
  * 返  回 : 无
  *************************************/
 - (void) waitingForDeviceSwiping {
-    [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,请刷卡...%02d秒",self.timeOut++]];
+    if (self.timeOut > 30) {
+        [self stopTimer:self.waitingTimer];
+        [self alertForFailedMessage:@"设备刷卡超时"]; // 点击确定就会退出场景
+    } else {
+        [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,请刷卡...%02d秒",self.timeOut++]];
+    }
 }
 /*************************************
  * 功  能 : 等待交易返回的计数器;
@@ -522,7 +527,7 @@
 - (void) addSubViews {
     CGFloat topInset            = 15;                // 子视图公用变量: 上边界
     CGFloat fleftInset          = 15;                // 左边界
-    CGFloat inset               = 40;                // 上部分视图跟下部分视图的间隔
+    CGFloat inset               = 30;                // 上部分视图跟下部分视图的间隔
     CGFloat uifont              = 20.0;              // 字体大小
     CGSize fontSize             = [@"刷卡" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:uifont] forKey:NSFontAttributeName]];
     
@@ -566,27 +571,19 @@
     self.waitingLabel.text = @"请刷卡...";
     [self.view addSubview:self.waitingLabel];
     
-    // 图片1
-    UIImage* image = [UIImage imageNamed:@"shuaka"];
+    // 刷卡背景图
+    UIImage* image = [UIImage imageNamed:@"swipeBlack"];
     CGSize imageSize = [image size];
-    frame.origin.y              += frame.size.height + inset/2.0;
-    frame.size.height           = (self.view.frame.size.height - frame.origin.y - inset)/2.0;
+    frame.origin.y              += frame.size.height + inset;
+    frame.size.height           = self.view.frame.size.height - frame.origin.y - inset*2;
     frame.size.width            = frame.size.height * imageSize.width/imageSize.height;
-    if (frame.size.width > self.view.bounds.size.width - fleftInset) {
-        frame.size.width = self.view.bounds.size.width - fleftInset;
-        frame.size.height = frame.size.width * imageSize.height/imageSize.width;
-    }
-    frame.origin.x = self.view.bounds.size.width - fleftInset - frame.size.width;
+    frame.origin.x = (self.view.bounds.size.width - frame.size.width)/2.0;
+    
+    
+    
     UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
     shuakaImage.image           = image;
     [self.view addSubview:shuakaImage];
-    
-    // 图片2
-    frame.origin.x              = 0 + fleftInset;
-    frame.origin.y              += frame.size.height;
-    UIImageView* shuakaImage1   = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage1.image          = [UIImage imageNamed:@"shuaka1"];
-    [self.view addSubview:shuakaImage1];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -148,7 +148,7 @@ CGFloat cellHeight = 40.0;
     if (_cellTextArray == nil) {
         _cellTextArray = [[NSMutableArray alloc] init];
         [_cellTextArray addObject:@"版本信息"];
-        [_cellTextArray addObject:@"联系方式"];
+//        [_cellTextArray addObject:@"联系方式"];
         [_cellTextArray addObject:@"官方网址"];
     }
     return _cellTextArray;
@@ -157,7 +157,7 @@ CGFloat cellHeight = 40.0;
     if (_dataSourceDict == nil) {
         NSMutableArray* values = [[NSMutableArray alloc] init];
         [values addObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
-        [values addObject:@"0755-865329999"];
+//        [values addObject:@"0755-865329999"];
         [values addObject:@"www.cccpay.cn"];
         _dataSourceDict = [NSDictionary dictionaryWithObjects:values forKeys:self.cellTextArray];
     }
