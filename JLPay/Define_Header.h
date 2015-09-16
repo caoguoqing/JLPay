@@ -36,7 +36,7 @@
  * 7: 内网测试72
  * 9: 外网测试62
  */
-#define TestOrProduce                   7
+#define TestOrProduce                   1
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
