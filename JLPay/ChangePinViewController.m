@@ -12,9 +12,10 @@
 #import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
+#import "Define_Header.h"
 
 @interface ChangePinViewController()<ASIHTTPRequestDelegate>
-@property (nonatomic, strong) UITextField* userNumberField;
+@property (nonatomic, strong) UILabel* userNumberLabel;
 @property (nonatomic, strong) UITextField* userOldPwdField;
 @property (nonatomic, strong) UITextField* userNewPwdField;
 @property (nonatomic, strong) UIButton* sureButton;
@@ -24,12 +25,12 @@
 
 
 @implementation ChangePinViewController
-@synthesize userNumberField = _userNumberField;
 @synthesize userOldPwdField = _userOldPwdField;
 @synthesize userNewPwdField = _userNewPwdField;
 @synthesize sureButton = _sureButton;
 @synthesize activitor = _activitor;
 @synthesize httpRequest = _httpRequest;
+@synthesize userNumberLabel = _userNumberLabel;
 
 /******************************
  * 函  数: requestForChangingPin
@@ -38,7 +39,7 @@
  * 返  回:
  ******************************/
 - (void) requestForChangingPin {
-    [self.httpRequest addPostValue:self.userNumberField.text forKey:@"userName"];
+    [self.httpRequest addPostValue:[[NSUserDefaults standardUserDefaults] valueForKey:UserID] forKey:@"userName"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -107,11 +108,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 背景图
-//    UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-//    bgImageView.image = [UIImage imageNamed:@"bg"];
-//    [self.view addSubview:bgImageView];
 
-    [self.view addSubview:self.userNumberField];
+    [self.view addSubview:self.userNumberLabel];
     [self.view addSubview:self.userOldPwdField];
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.sureButton];
@@ -130,9 +128,7 @@
                               self.view.bounds.size.width - horizontalInset*2.0,
                               viewHeight);
     // 账号
-    self.userNumberField.frame = frame;
-    [self.userNumberField setLeftView:[self newLabelWithText:@"账    号:" andFrame:frame]];
-    [self.userNumberField setLeftViewMode:UITextFieldViewModeAlways];
+    [self.userNumberLabel setFrame:frame];
     // 旧密码
     frame.origin.y += frame.size.height + verticalInset;
     self.userOldPwdField.frame = frame;
@@ -179,10 +175,7 @@
  ******************************/
 - (BOOL) checkInPut {
     BOOL valid = YES;
-    if ([self.userNumberField.text length] == 0) {
-        [self alertViewWithMessage:@"账号不能为空"];
-        valid = NO;
-    } else if ([self.userOldPwdField.text length] == 0) {
+    if ([self.userOldPwdField.text length] == 0) {
         [self alertViewWithMessage:@"旧密码不能为空"];
         valid = NO;
     } else if ([self.userNewPwdField.text length] == 0) {
@@ -204,17 +197,20 @@
 }
 
 #pragma mask ---- getter & setter
-- (UITextField *)userNumberField {
-    if (_userNumberField == nil) {
-        _userNumberField = [[UITextField alloc] initWithFrame:CGRectZero];
-        _userNumberField.layer.cornerRadius = 8.0;
-        _userNumberField.layer.masksToBounds = YES;
-        _userNumberField.placeholder = @"请输入账号";
-        _userNumberField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
-        _userNumberField.textColor = [UIColor whiteColor];
+- (UILabel *)userNumberLabel {
+    if (_userNumberLabel == nil) {
+        _userNumberLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _userNumberLabel.layer.cornerRadius = 8.0;
+        _userNumberLabel.layer.masksToBounds = YES;
 
+        _userNumberLabel.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
+        _userNumberLabel.textColor = [UIColor whiteColor];
+        
+        _userNumberLabel.text = [NSString stringWithFormat:@"  账    号: %@",[[NSUserDefaults standardUserDefaults] valueForKey:UserID]];
+        _userNumberLabel.textAlignment = NSTextAlignmentLeft;
+        
     }
-    return _userNumberField;
+    return _userNumberLabel;
 }
 - (UITextField *)userOldPwdField {
     if (_userOldPwdField == nil) {

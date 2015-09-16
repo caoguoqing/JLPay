@@ -33,9 +33,10 @@
  * 1: 生产环境(1),
  * 0: 内网测试62,
  * 5: 内网测试50
+ * 7: 内网测试72
  * 9: 外网测试62
  */
-#define TestOrProduce                   0
+#define TestOrProduce                   7
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -107,7 +108,7 @@
  *  KeyInfoDictOfBindedTerminalNum          - 终端号
  *  KeyInfoDictOfBindedBussinessNum         - 商户号
    ------------------------------*/
-#define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"
+#define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"          // 字典
 #define KeyInfoDictOfBindedDeviceType           @"KeyInfoDictOfBindedDeviceType"
 #define KeyInfoDictOfBindedDeviceIdentifier     @"KeyInfoDictOfBindedDeviceIdentifier"
 #define KeyInfoDictOfBindedDeviceSNVersion      @"KeyInfoDictOfBindedDeviceSNVersion"

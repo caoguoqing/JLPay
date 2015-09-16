@@ -16,7 +16,8 @@
 #import "DatePickerView.h"
 #import "SelectIndicatorView.h"
 
-@interface TransDetailsViewController()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,
+@interface TransDetailsViewController()
+<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,
 UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicatorViewDelegate>
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图

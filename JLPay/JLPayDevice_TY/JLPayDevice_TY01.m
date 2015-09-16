@@ -343,6 +343,9 @@ TYJieLianDelegate
             // 卡号
             if ([key isEqualToString:@"cardNumber"]) {
                 [[NSUserDefaults standardUserDefaults] setValue:value forKey:Card_Number];
+                NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[value substringToIndex:6],[value substringFromIndex:value.length - 4]];
+                [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
+
             }
             // 二磁道
             else if ([key isEqualToString:@"encTrack2Ex"]) {
@@ -364,6 +367,8 @@ TYJieLianDelegate
             // 卡号
             if ([key isEqualToString:@"cardNumber"]) {
                 [[NSUserDefaults standardUserDefaults] setValue:value forKey:Card_Number];
+                NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[value substringToIndex:6],[value substringFromIndex:value.length - 4]];
+                [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
             }
             // 二磁道
             else if ([key isEqualToString:@"track2Data"]) {

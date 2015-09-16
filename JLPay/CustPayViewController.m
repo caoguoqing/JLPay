@@ -53,9 +53,6 @@
     self.navigationController.navigationBar.titleTextAttributes = textAttri;
     
     
-    // 重置金额
-    self.money = @"0.00";
-    self.moneyCalculated = nil;
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -182,6 +179,10 @@
     [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self.navigationController pushViewController:viewcon animated:YES];
+    
+    // 重置金额
+    self.money = @"0.00";
+    self.moneyCalculated = nil;
 }
 
 

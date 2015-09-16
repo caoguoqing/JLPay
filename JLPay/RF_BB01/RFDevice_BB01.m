@@ -438,6 +438,8 @@ SwipeListener
     NSString* panStr = [self.deviceManager getIcPan];
     if (panStr && panStr.length > 0) {
         [[NSUserDefaults standardUserDefaults] setValue:panStr forKey:Card_Number];
+        NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[panStr substringToIndex:6],[panStr substringFromIndex:panStr.length - 4]];
+        [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
     }
     // 数据 - IC序列号
     NSString* icSeq = [self.deviceManager getIcSeq];
@@ -482,6 +484,9 @@ SwipeListener
     NSString* pan = [self.deviceManager getMagPan];
     if (pan && pan.length > 0) {
         [[NSUserDefaults standardUserDefaults] setValue:pan forKey:Card_Number];
+        NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[pan substringToIndex:6],[pan substringFromIndex:pan.length - 4]];
+        [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
+
     }
     // 二磁加密数据
     NSString* track2 = [self.deviceManager getTrack2Data];
