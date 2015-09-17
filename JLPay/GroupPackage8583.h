@@ -14,33 +14,11 @@
 + (NSString*) stringPacking8583;
 
 
-//支付宝
-//支付宝二维码消费预下订单
-+(NSString *)saomaAndOrderMoney:(NSString *)money;
-
-//支付宝条形码消费(下订单并支付)
-+(NSString *)tiaoxingmaConsumer:(NSString *)money tiaoxingmaId:(NSString *)maid;
-
-//支付宝查询
-+(NSString *)zhifubaoSearchOrderNum:(NSString *)num;
-
-//支付宝撤销
-+(NSString *)zhifubaoReplaceDingdanNum:(NSString *)num;
-
-//支付宝退款
-+(NSString *)zhifubaoRebateMoney:(NSString *)money tuikuanDingdanNum:(NSString *)num;
-
-
-
-
-
-
 //签到
 +(NSString *)signIn;
 
 // 商户登陆
 +(NSString *)loadIn;
-
 
 //公钥下发
 +(NSString *)downloadPublicKey;
@@ -60,15 +38,10 @@
 //余额查询
 +(NSString *)balanceSearch:(NSString *)pin;
 
-
-
-//参数更新
-
 +(NSString *)deviceRefreshData:(NSString *)serialStr;
 
 //回响测试//(终端号：99999986，商户号：999999999999999)
 +(NSString *)returnTest;
-
 
 
 @end

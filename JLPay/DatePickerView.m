@@ -95,7 +95,7 @@
         NSString* year = [self.years objectAtIndex:[self.pickerView selectedRowInComponent:0]];
         NSString* month = [self.months objectAtIndex:[self.pickerView selectedRowInComponent:1]];
         NSString* day = [self.days objectAtIndex:[self.pickerView selectedRowInComponent:2]];
-        [self.delegate datePickerView:self didChoosedDate:[NSString stringWithFormat:@"%@-%@-%@",year,month,day]];
+        [self.delegate datePickerView:self didChoosedDate:[NSString stringWithFormat:@"%@%@%@",year,month,day]];
     }
     [self removeFromSuperview];
     

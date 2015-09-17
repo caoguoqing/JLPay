@@ -474,7 +474,9 @@
                 [self GetCard:data];
                 [self cardDataUserDefult];
                 // 保存读到的数据到本地
-                [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+                }
             }
             else
             {
@@ -922,7 +924,7 @@
         strncpy(TransData.TrackPAN,(char *)szTrack2, nIndexlen);
         strncpy((char*)TransData.CardValid, (char *)szTrack2+nIndexlen + 1, 4);
         strncpy(TransData.szServiceCode, (char *)szTrack2+nIndexlen + 5, 3);	//服务代码
-        if((TransData.szServiceCode[0] == '2') ||(TransData.szServiceCode[0] == '6'))
+        if((TransData.szServiceCode[0] == '2') || (TransData.szServiceCode[0] == '6'))
             TransData.iCardtype =1;
         else
             TransData.iCardtype =0;

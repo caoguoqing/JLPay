@@ -18,6 +18,10 @@
 #import "Define_Header.h"
 
 
+#import "Packing8583.h"
+
+
+
 @implementation GroupPackage8583
 
 +(NSString *)apilyMoney:(NSString *)mon{
@@ -205,6 +209,19 @@
                   
                   nil];
     
+    
+    // 封装的8583打包
+//    Packing8583* packingHolder = [Packing8583 sharedInstance];
+//    [packingHolder setFieldValue:liushuiStr atIndex:11];
+//    [packingHolder setFieldValue:[EncodeString encodeASC:[PublicInformation returnTerminal]] atIndex:41];
+//    [packingHolder setFieldValue:[EncodeString encodeASC:[PublicInformation returnBusiness]] atIndex:42];
+//    [packingHolder setFieldValue:@"001399000000003100" atIndex:60];
+//    [packingHolder setFieldValue:@"01449F0605DF000000049F220101DF9981804ff32b878be48f71335aa4a3f3c54bcfc574020b9bc8d28692ff54523db6e57f3a865c4460963d59a3f6fc5c82d366a2cb95655e92224e204afd1b7d22cd2fb012013208970cbb24d22a9072e734acc13afe128191cfaf97e0969bbf2f1658b092398f8f0446421daca0862e93d9ad174e85e2a68eac8ec9897328ca5b5fa4e6" atIndex:62];
+//    [packingHolder setFieldValue:@"00113030313030303030303030" atIndex:63];
+//    
+//    NSLog(@"打包的请求串:[%@]",[packingHolder stringPackingWithType:@"0800"]);
+
+    
 
     //二进制报文数据
     NSArray *bitmapArr=[NSArray arrayWithObjects:@"11",@"41",@"42",@"60",@"62",@"63", nil];
@@ -231,9 +248,13 @@
     
     NSMutableArray* dataArray = [[NSMutableArray alloc] init];
     NSMutableArray* macMapArray = [[NSMutableArray alloc] init];
+    
+    
+    
     // F02,卡号
     [dataArray addObject:[PublicInformation returnCard:[PublicInformation returnposCard]]];
     [macMapArray addObject:@"2"];
+    
     // F03
     [dataArray addObject:@"190000"];
     [macMapArray addObject:@"3"];
@@ -291,12 +312,49 @@
     [dataArray addObject:[NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]]];
     [macMapArray addObject:@"63"];
     [macMapArray addObject:@"64"];
+    
+//    Packing8583* packingHolder = [Packing8583 sharedInstance];
+//    [packingHolder cleanAllFields];
+//    [packingHolder setFieldValue:[PublicInformation returnCard:[PublicInformation returnposCard]] atIndex:2];
+//    [packingHolder setFieldValue:@"190000" atIndex:3];
+//    [packingHolder setFieldValue:newMoney atIndex:4];
+//    [packingHolder setFieldValue:liushuiStr atIndex:11];
+//    if (effectdate && effectdate.length > 0) {
+//        [packingHolder setFieldValue:effectdate atIndex:14];
+//    }
+//    [packingHolder setFieldValue:f22 atIndex:22];
+//    [packingHolder setFieldValue:@"82" atIndex:25];
+//    [packingHolder setFieldValue:@"12" atIndex:26];
+//    [packingHolder setFieldValue:[NSString stringWithFormat:@"%d%@",(int)[[PublicInformation returnTwoTrack] length]/2,[PublicInformation returnTwoTrack]] atIndex:35];
+//    [packingHolder setFieldValue:[EncodeString encodeASC:[PublicInformation returnTerminal]] atIndex:41];
+//    [packingHolder setFieldValue:[EncodeString encodeASC:[PublicInformation returnBusiness]] atIndex:42];
+//    [packingHolder setFieldValue:[EncodeString encodeASC:@"156"] atIndex:49];
+//    if ([[f22 substringWithRange:NSMakeRange(2, 1)] isEqualToString:@"1"]) {
+//        // F52
+//        [packingHolder setFieldValue:pin atIndex:52];
+//        // F53
+//        [packingHolder setFieldValue:@"2600000000000000" atIndex:53];
+//    } else {
+//        // F53
+//        [packingHolder setFieldValue:@"0600000000000000" atIndex:53];
+//    }
+//
+//    [packingHolder setFieldValue:[self makeF60] atIndex:60];
+//    [packingHolder setFieldValue:[NSString stringWithFormat:@"%@%@",[PublicInformation ToBHex:3],[EncodeString encodeASC:Manager_Number]] atIndex:63];
+//    [packingHolder setFieldValue:@"0000000000000000" atIndex:64];
+
+//    NSLog(@"新版本8583打包串:[%@]",[packingHolder stringPackingWithType:@"0200"]);
+    
 
     NSString *binaryDataStr=[HeaderString receiveArr:macMapArray
                                                 Tpdu:TPDU
                                               Header:HEADER
                                         ExchangeType:@"0200"
                                              DataArr:[self getNewPinAndMac:dataArray exchange:@"0200" bitmap:[HeaderString returnBitmap:macMapArray]]];
+    
+    NSLog(@"旧版本8583打包串:[%@]",binaryDataStr);
+    
+//    binaryDataStr = [packingHolder stringPackingWithType:@"0200"];
     return binaryDataStr;
 }
 

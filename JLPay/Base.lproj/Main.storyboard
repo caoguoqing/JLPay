@@ -310,10 +310,10 @@
             </objects>
             <point key="canvasLocation" x="711" y="2944"/>
         </scene>
-        <!--绑定设备流程-->
+        <!--帮助通用界面-->
         <scene sceneID="q9p-UP-Lwz">
             <objects>
-                <viewController storyboardIdentifier="1.绑定设备" title="绑定设备流程" id="sYg-iq-I95" customClass="BangdingViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="帮助界面" title="帮助通用界面" id="sYg-iq-I95" customClass="BangdingViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8Ze-eK-3G4">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -322,7 +322,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="A3i-68-Vwu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1411" y="2944"/>
+            <point key="canvasLocation" x="1401" y="2944"/>
         </scene>
         <!--关于我们-->
         <scene sceneID="yET-zN-pMu">
@@ -337,48 +337,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Atc-h8-Ies" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1063" y="2944"/>
-        </scene>
-        <!--增值服务流程-->
-        <scene sceneID="dr9-tZ-JqT">
-            <objects>
-                <viewController storyboardIdentifier="4.增值服务" title="增值服务流程" id="gIb-wl-Y6n" customClass="ZengzhifuwuViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1pB-Wx-nWP">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Fe4-1W-GVn" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2407" y="2944"/>
-        </scene>
-        <!--明细查看流程-->
-        <scene sceneID="VSR-xS-kzP">
-            <objects>
-                <viewController storyboardIdentifier="3.查看交易明细" title="明细查看流程" id="oRf-3a-1v4" customClass="JiaoyimingxiViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="ehy-ug-Jgu">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OOY-d6-YPA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2071" y="2944"/>
-        </scene>
-        <!--刷卡流程-->
-        <scene sceneID="pLG-pq-ZkL">
-            <objects>
-                <viewController storyboardIdentifier="2.刷卡" title="刷卡流程" id="G3W-nW-KeL" customClass="ShuakaViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="sbg-3S-1Wk">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Qwh-R7-ZOk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1739" y="2944"/>
         </scene>
         <!--修改密码-->
         <scene sceneID="pqA-R7-zmF">

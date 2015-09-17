@@ -133,7 +133,7 @@
  * 功  能 : 单元格的点击动作实现;
  *          -账号名称及信息
  *          -交易明细
- *          -绑定机具
+ *          -绑定设备
  *          -额度查询
  *          -修改密码
  *          -意见反馈
@@ -155,7 +155,7 @@
     if ([cellName isEqualToString:@"交易明细"]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
     }
-    else if ([cellName isEqualToString:@"绑定机具"]) {
+    else if ([cellName isEqualToString:@"绑定设备"]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
     }
     else if ([cellName isEqualToString:@"修改密码"]) {
@@ -332,7 +332,7 @@
                       @"账号名称",
                       @"交易明细",
                       // @"费率选择",
-                      @"绑定机具",
+                      @"绑定设备",
                       // @"额度查询",
                       @"修改密码",
                       // @"意见反馈",
@@ -345,7 +345,7 @@
         _cellNamesAndImages = [[NSMutableDictionary alloc] init];
         [_cellNamesAndImages setValue:@"01_01" forKey:@"账号名称"];
         [_cellNamesAndImages setValue:@"01_10" forKey:@"交易明细"];
-        [_cellNamesAndImages setValue:@"01_14" forKey:@"绑定机具"];
+        [_cellNamesAndImages setValue:@"01_14" forKey:@"绑定设备"];
         [_cellNamesAndImages setValue:@"01_18" forKey:@"修改密码"];
         [_cellNamesAndImages setValue:@"01_24" forKey:@"帮助和关于"];
         // @"费率选择":@"01_12",

@@ -313,6 +313,8 @@
         port = @"80";
         if (TestOrProduce == 9) {
             port = @"6288";
+        } else if (TestOrProduce == 7) {
+            port = @"8088";
         }
     }
     return port;

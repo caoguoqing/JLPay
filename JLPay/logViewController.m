@@ -266,7 +266,7 @@
     
     /* 登陆按钮：UIButton */
     frame.origin.x                      = leftLeave;
-    frame.origin.y                      += frame.size.height + inset * 2.0;
+    frame.origin.y                      += frame.size.height*2 + inset * 2.0;
     frame.size.width                    = self.view.bounds.size.width - leftLeave*2.0;
     frame.size.height                   = iconViewHeight;
     self.loadButton.frame               = frame;

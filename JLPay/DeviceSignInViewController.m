@@ -51,7 +51,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"绑定机具";
+    self.title = @"绑定设备";
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.tableView];
     self.tableView.dataSource = self;
@@ -196,7 +196,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [headerView addSubview:label];
         // 按钮
         UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(frame.size.width - 15 - frame.size.width/4.0, inset, frame.size.width/4.0, frame.size.height - inset*2)];
-        [button setTitle:@"重新搜索" forState:UIControlStateNormal];
+        [button setTitle:@"搜索" forState:UIControlStateNormal];
         button.titleLabel.font = cell.textLabel.font;
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         button.layer.cornerRadius = button.frame.size.height/2.0;
@@ -414,7 +414,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
         dispatch_async(dispatch_get_main_queue(), ^{
             [[JLActivitor sharedInstance] stopAnimating];
         });
-        [self alertForMessage:@"连接设备失败:签到报文解析失败"];
+        NSString* errorMessage = [NSString stringWithFormat:@"连接设备失败:%@",type];
+        [self alertForMessage:errorMessage];
     }
 }
 

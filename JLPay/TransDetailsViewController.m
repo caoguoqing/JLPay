@@ -146,7 +146,19 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 
 #pragma mask ------ DatePickerViewDelegate
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
-    [self.dateLabel setText:choosedDate];
+    NSMutableString* formatDate = [[NSMutableString alloc] init];
+    [formatDate appendString:[choosedDate substringToIndex:4]];
+    [formatDate appendString:@"-"];
+    [formatDate appendString:[choosedDate substringWithRange:NSMakeRange(4, 2)]];
+    [formatDate appendString:@"-"];
+    [formatDate appendString:[choosedDate substringFromIndex:6]];
+
+    [self.dateLabel setText:formatDate];
+    
+    // 清空列表
+    [self cleanTranDetailsList];
+    // 重新获取列表信息
+    [self requestDataOnDate:choosedDate];
 }
 
 
@@ -195,24 +207,33 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     [UIView animateWithDuration:0.1 animations:^{
         button.transform = CGAffineTransformIdentity;
     }];
+    // 清空列表
+    [self cleanTranDetailsList];
+
+    NSString* text = self.dateLabel.text;
+    NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
+    // 重新获取数据
+    [self requestDataOnDate:dates];
+}
+
+// 清空交易明细列表数据
+- (void)cleanTranDetailsList {
     dispatch_async(dispatch_get_main_queue(), ^{
         // 刷新前先清空数据
         [self.dataArrayDisplay removeAllObjects];
         [self calculateTotalAmount];
         [self.tableView reloadData];
     });
-
-    NSString* text = self.dateLabel.text;
-    NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
+}
+- (void) requestDataOnDate:(NSString*)dateString {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dates];
-        [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dates];
+        [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dateString];
+        [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dateString];
         [self.HTTPRequest setDelegate:self];
         [self.HTTPRequest startAsynchronous];  // 异步获取数据
         [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     });
 }
-
 
 
 /*************************************
@@ -324,19 +345,13 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.searchButton];
-    [self.view addSubview:self.frushButotn];
+//    [self.view addSubview:self.frushButotn];
     [self.view addSubview:self.dateLabel];
     CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
     self.activitorFrame = CGRectMake(0,
                                      naviAndState,
                                      self.view.bounds.size.width,
                                      self.view.bounds.size.height - naviAndState - self.tabBarController.tabBar.bounds.size.height);
-    
-    // 从后台异步获取交易明细数据:只创建界面的时候加载一次
-    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
-    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
-    [self.HTTPRequest startAsynchronous];  // 异步获取数据
-    [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
 
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backItem];
@@ -407,18 +422,11 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     self.tableView.frame = frame;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    
-    // 从后台异步获取交易明细数据:只创建界面的时候加载一次
-    if (self.HTTPRequest == nil) {
-        [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:[self nowDate]];
-        [self.HTTPRequest addRequestHeader:@"queryEndTime" value:[self nowDate]];
-        [self.HTTPRequest startAsynchronous];  // 异步获取数据
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-
-    }
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    // 请求数据
+    [self requestDataOnDate:[self nowDate]];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];

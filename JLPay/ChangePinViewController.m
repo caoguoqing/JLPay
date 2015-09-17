@@ -14,13 +14,18 @@
 #import "ThreeDesUtil.h"
 #import "Define_Header.h"
 
-@interface ChangePinViewController()<ASIHTTPRequestDelegate>
-@property (nonatomic, strong) UILabel* userNumberLabel;
+@interface ChangePinViewController()<ASIHTTPRequestDelegate> {
+    CGFloat textFontSize;
+}
 @property (nonatomic, strong) UITextField* userOldPwdField;
 @property (nonatomic, strong) UITextField* userNewPwdField;
+@property (nonatomic, strong) UITextField* userResureNewPwdField;
+
 @property (nonatomic, strong) UIButton* sureButton;
 @property (nonatomic, strong) JLActivity* activitor;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
+
+
 @end
 
 
@@ -30,7 +35,7 @@
 @synthesize sureButton = _sureButton;
 @synthesize activitor = _activitor;
 @synthesize httpRequest = _httpRequest;
-@synthesize userNumberLabel = _userNumberLabel;
+@synthesize userResureNewPwdField = _userResureNewPwdField;
 
 /******************************
  * 函  数: requestForChangingPin
@@ -108,39 +113,83 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 背景图
-
-    [self.view addSubview:self.userNumberLabel];
     [self.view addSubview:self.userOldPwdField];
     [self.view addSubview:self.userNewPwdField];
+    [self.view addSubview:self.userResureNewPwdField];
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.activitor];
+    textFontSize = 15;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    CGFloat tabBarHeight = self.tabBarController.tabBar.bounds.size.height;
-    CGFloat verticalInset = 15;
     CGFloat horizontalInset = 20;
-    CGFloat viewHeight = 50;
+    CGFloat btnHeight = 50;
     
-    CGRect frame = CGRectMake(horizontalInset,
-                              naviAndStatusHeight + viewHeight*2,
-                              self.view.bounds.size.width - horizontalInset*2.0,
-                              viewHeight);
-    // 账号
-    [self.userNumberLabel setFrame:frame];
+    CGFloat lineHeight = 0.5;
+    CGFloat lineWidth = self.view.frame.size.width - horizontalInset * 2;
+    
+    CGFloat labelWidth = self.view.frame.size.width/3.0;
+    
+    CGFloat fieldWith = self.view.frame.size.width* 2.0/3.0 - horizontalInset * 2;
+    CGFloat fieldHeight = 45;
+
+    
+    CGRect frame = CGRectMake(0,
+                              naviAndStatusHeight + horizontalInset,
+                              self.view.bounds.size.width/3.0,
+                              fieldHeight);
     // 旧密码
-    frame.origin.y += frame.size.height + verticalInset;
+    [self.view addSubview:[self newLabelWithText:@"原密码:" andFrame:frame]];
+    frame.origin.x += frame.size.width + horizontalInset;
+    frame.size.width = fieldWith;
     self.userOldPwdField.frame = frame;
-    [self.userOldPwdField setLeftView:[self newLabelWithText:@"旧密码:" andFrame:frame]];
-    [self.userOldPwdField setLeftViewMode:UITextFieldViewModeAlways];
+    // ------
+    frame.origin.x = horizontalInset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = lineHeight;
+    frame.size.width = lineWidth;
+    [self.view addSubview:[self newLineViewInFrame:frame]];
+    
     // 新密码
-    frame.origin.y += frame.size.height + verticalInset;
+    frame.origin.x = 0;
+    frame.origin.y += frame.size.height;
+    frame.size.width = labelWidth;
+    frame.size.height = fieldHeight;
+    [self.view addSubview:[self newLabelWithText:@"新密码:" andFrame:frame]];
+    frame.origin.x += frame.size.width + horizontalInset ;
+    frame.size.width = fieldWith;
     self.userNewPwdField.frame = frame;
-    [self.userNewPwdField setLeftView:[self newLabelWithText:@"新密码:" andFrame:frame]];
-    [self.userNewPwdField setLeftViewMode:UITextFieldViewModeAlways];
+    // ------
+    frame.origin.x = horizontalInset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = lineHeight;
+    frame.size.width = lineWidth;
+    [self.view addSubview:[self newLineViewInFrame:frame]];
+
+
+    // 确认密码
+    frame.origin.x = 0;
+    frame.origin.y += frame.size.height;
+    frame.size.width = labelWidth;
+    frame.size.height = fieldHeight;
+    [self.view addSubview:[self newLabelWithText:@"确认密码:" andFrame:frame]];
+    frame.origin.x += frame.size.width + horizontalInset ;
+    frame.size.width = fieldWith;
+    self.userResureNewPwdField.frame = frame;
+    // ------
+    frame.origin.x = horizontalInset;
+    frame.origin.y += frame.size.height;
+    frame.size.height = lineHeight;
+    frame.size.width = lineWidth;
+    [self.view addSubview:[self newLineViewInFrame:frame]];
+
+
     // 修改按钮
-    frame.origin.y = self.view.bounds.size.height - tabBarHeight - viewHeight*2.0;
+    frame.origin.x = horizontalInset;
+    frame.origin.y += frame.size.height + fieldHeight;
+    frame.size.width = lineWidth;
+    frame.size.height = btnHeight;
     self.sureButton.frame = frame;
 }
 - (void)viewWillDisappear:(BOOL)animated {
@@ -150,14 +199,20 @@
 
 // 给textField生成的左边的描述label
 - (UILabel*)newLabelWithText:(NSString*)text andFrame:(CGRect)frame {
-    UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width/4.0, frame.size.height)];
+    UILabel* label = [[UILabel alloc] initWithFrame:frame];
     label.text = text;
-    label.textColor = [UIColor whiteColor];
-    label.textAlignment = NSTextAlignmentCenter;
+    [label setFont:[UIFont systemFontOfSize:textFontSize]];
+    label.textColor = [UIColor blackColor];
+    label.textAlignment = NSTextAlignmentRight;
     label.backgroundColor = [UIColor clearColor];
     return label;
 }
-
+// 生成一个分割线视图
+- (UIView*) newLineViewInFrame:(CGRect)frame {
+    UIView* lineView = [[UIView alloc] initWithFrame:frame];
+    [lineView setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.3]];
+    return lineView;
+}
 
 #pragma mask ---- 隐藏键盘
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -187,6 +242,9 @@
     } else if (self.userNewPwdField.text.length > 8) {
         [self alertViewWithMessage:@"密码长度不能大于8位"];
         valid = NO;
+    } else if (![self.userNewPwdField.text isEqualToString:self.userResureNewPwdField.text]) {
+        [self alertViewWithMessage:@"确认密码有误,跟新密码不一致"];
+        valid = NO;
     }
     return valid;
 }
@@ -197,30 +255,17 @@
 }
 
 #pragma mask ---- getter & setter
-- (UILabel *)userNumberLabel {
-    if (_userNumberLabel == nil) {
-        _userNumberLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        _userNumberLabel.layer.cornerRadius = 8.0;
-        _userNumberLabel.layer.masksToBounds = YES;
 
-        _userNumberLabel.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
-        _userNumberLabel.textColor = [UIColor whiteColor];
-        
-        _userNumberLabel.text = [NSString stringWithFormat:@"  账    号: %@",[[NSUserDefaults standardUserDefaults] valueForKey:UserID]];
-        _userNumberLabel.textAlignment = NSTextAlignmentLeft;
-        
-    }
-    return _userNumberLabel;
-}
 - (UITextField *)userOldPwdField {
     if (_userOldPwdField == nil) {
         _userOldPwdField = [[UITextField alloc] initWithFrame:CGRectZero];
         _userOldPwdField.layer.cornerRadius = 8.0;
         _userOldPwdField.layer.masksToBounds = YES;
-        _userOldPwdField.placeholder = @"请输入8位旧密码";
-        _userOldPwdField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
+        _userOldPwdField.placeholder = @"请输入原登陆密码";
         _userOldPwdField.secureTextEntry = YES;
-        _userOldPwdField.textColor = [UIColor whiteColor];
+        _userOldPwdField.textColor = [UIColor blackColor];
+        [_userOldPwdField setClearButtonMode:UITextFieldViewModeWhileEditing];
+
     }
     return _userOldPwdField;
 }
@@ -230,12 +275,24 @@
         _userNewPwdField.layer.cornerRadius = 8.0;
         _userNewPwdField.layer.masksToBounds = YES;
         _userNewPwdField.placeholder = @"请输入8位新密码";
-        _userNewPwdField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
         _userNewPwdField.secureTextEntry = YES;
-        _userNewPwdField.textColor = [UIColor whiteColor];
-
+        _userNewPwdField.textColor = [UIColor blackColor];
+        [_userNewPwdField setClearButtonMode:UITextFieldViewModeWhileEditing];
     }
     return _userNewPwdField;
+}
+- (UITextField *)userResureNewPwdField {
+    if (_userResureNewPwdField == nil) {
+        _userResureNewPwdField = [[UITextField alloc] initWithFrame:CGRectZero];
+        _userResureNewPwdField.layer.cornerRadius = 8.0;
+        _userResureNewPwdField.layer.masksToBounds = YES;
+        _userResureNewPwdField.placeholder = @"请重新输入新密码";
+        _userResureNewPwdField.secureTextEntry = YES;
+        _userResureNewPwdField.textColor = [UIColor blackColor];
+        [_userResureNewPwdField setClearButtonMode:UITextFieldViewModeWhileEditing];
+
+    }
+    return _userResureNewPwdField;
 }
 - (UIButton *)sureButton {
     if (_sureButton == nil) {
@@ -252,6 +309,8 @@
     }
     return _sureButton;
 }
+
+
 - (JLActivity *)activitor {
     if (_activitor == nil) {
         _activitor = [[JLActivity alloc] init];

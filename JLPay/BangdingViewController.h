@@ -10,4 +10,7 @@
 
 @interface BangdingViewController : UIViewController
 
+@property (nonatomic, strong) NSArray* arrayTitles;
+@property (nonatomic, strong) NSDictionary* dictTitlesAndDesc;
+
 @end
