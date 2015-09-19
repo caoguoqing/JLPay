@@ -15,6 +15,9 @@
 #import "PublicInformation.h"
 #import "DatePickerView.h"
 #import "SelectIndicatorView.h"
+#import "DoubleLayerButton.h"
+#import "Toast+UIView.h"
+#import "Define_Header.h"
 
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,
@@ -22,8 +25,10 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
-@property (nonatomic, strong) UILabel* dateLabel;                   // 日期显示标签:
-@property (nonatomic, strong) UIButton* frushButotn;                // 刷新数据的按钮
+
+@property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮
+
+
 @property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
 @property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
 @property (nonatomic, strong) NSMutableData* reciveData;            // 接收HTTP的返回的数据缓存
@@ -43,12 +48,11 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 @synthesize searchButton = _searchButton;
 @synthesize dataArrayDisplay = _dataArrayDisplay;
 @synthesize reciveData = _reciveData;
-@synthesize dateLabel = _dateLabel;
-@synthesize frushButotn = _frushButotn;
 @synthesize years = _years;
 @synthesize months = _months;
 @synthesize days = _days;
 @synthesize HTTPRequest = _HTTPRequest;
+@synthesize dateButton = _dateButton;
 @synthesize activitorFrame;
 
 #pragma mask ------ UITableViewDataSource
@@ -146,54 +150,29 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 
 #pragma mask ------ DatePickerViewDelegate
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
-    NSMutableString* formatDate = [[NSMutableString alloc] init];
-    [formatDate appendString:[choosedDate substringToIndex:4]];
-    [formatDate appendString:@"-"];
-    [formatDate appendString:[choosedDate substringWithRange:NSMakeRange(4, 2)]];
-    [formatDate appendString:@"-"];
-    [formatDate appendString:[choosedDate substringFromIndex:6]];
+    // 设置按钮日期
+    [self dateButtonSetTitle:choosedDate];
 
-    [self.dateLabel setText:formatDate];
-    
     // 清空列表
     [self cleanTranDetailsList];
+    
     // 重新获取列表信息
     [self requestDataOnDate:choosedDate];
 }
 
 
-#pragma mask ------ SelectIndicatorViewDelegate : 日期选择自定义按钮的点击事件
-- (void)didTouchedInSelectIndicator {
-    NSString* ndate = self.dateLabel.text;
-    CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    CGRect frame = CGRectMake(0,
-                              0+naviAndStatusHeight,
-                              self.view.bounds.size.width,
-                              self.view.bounds.size.height - naviAndStatusHeight - self.tabBarController.tabBar.bounds.size.height);
-    DatePickerView* pickerView = [[DatePickerView alloc] initWithFrame:frame andDate:ndate];
-    [pickerView setDelegate: self];
-    [self.view addSubview:pickerView];
-
-}
-
 #pragma mask ------ UIButton Action
 - (IBAction) touchDown:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.2 animations:^{
-        button.transform = CGAffineTransformMakeScale(0.95, 0.95);
-    }];
+    button.transform = CGAffineTransformMakeScale(0.95, 0.95);
 }
 - (IBAction) touchUpOutSide:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.1 animations:^{
-        button.transform = CGAffineTransformIdentity;
-    }];
+    button.transform = CGAffineTransformIdentity;
 }
 - (IBAction) touchToSearch:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.1 animations:^{
-        button.transform = CGAffineTransformIdentity;
-    }];
+    button.transform = CGAffineTransformIdentity;
     
     // 用卡号+金额查询流水明细
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"明细查询" message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查询", nil];
@@ -204,20 +183,28 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 }
 - (IBAction) touchToFrushData:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.1 animations:^{
-        button.transform = CGAffineTransformIdentity;
-    }];
-    // 清空列表
-    [self cleanTranDetailsList];
+    button.transform = CGAffineTransformIdentity;
 
-    NSString* text = self.dateLabel.text;
-    NSString* dates = [NSString stringWithFormat:@"%@%@%@",[text substringToIndex:4],[text substringWithRange:NSMakeRange(4+1, 2)],[text substringFromIndex:text.length - 2]];
-    // 重新获取数据
-    [self requestDataOnDate:dates];
+    CGRect frame = CGRectMake(0,
+                              self.navigationController.navigationBar.bounds.size.height + [UIApplication sharedApplication].statusBarFrame.size.height,
+                              self.view.frame.size.width,
+                              self.view.frame.size.height - self.navigationController.navigationBar.bounds.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.tabBarController.tabBar.frame.size.height);
+    
+    NSMutableString* datestring = [[NSMutableString alloc] init];
+    [datestring appendString:[button.titleLabel.text substringToIndex:4]];
+    [datestring appendString:[button.titleLabel.text substringWithRange:NSMakeRange(4+1, 2)]];
+    [datestring appendString:[button.titleLabel.text substringFromIndex:button.titleLabel.text.length - 2]];
+
+    DatePickerView* pickerView = [[DatePickerView alloc] initWithFrame:frame andDate:datestring];
+    [pickerView setDelegate: self];
+    [self.view addSubview:pickerView];
 }
 
 // 清空交易明细列表数据
 - (void)cleanTranDetailsList {
+    if (self.dataArrayDisplay.count == 0) {
+        return;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         // 刷新前先清空数据
         [self.dataArrayDisplay removeAllObjects];
@@ -226,10 +213,13 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     });
 }
 - (void) requestDataOnDate:(NSString*)dateString {
+    NSDictionary* dictInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dateString];
+    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dateString];
+    [_HTTPRequest addRequestHeader:@"termNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedTerminalNum]];
+    [_HTTPRequest addRequestHeader:@"mchntNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedBussinessNum]];
+    [self.HTTPRequest setDelegate:self];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dateString];
-        [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dateString];
-        [self.HTTPRequest setDelegate:self];
         [self.HTTPRequest startAsynchronous];  // 异步获取数据
         [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     });
@@ -243,25 +233,28 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
  * 返  回 :
  *************************************/
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (![alertView.title isEqualToString:@"明细查询"]) {
-        return;
+    if ([alertView.title isEqualToString:@"明细查询"]) {
+        if (buttonIndex == 1) { // 查询
+            UITextField* textField = [alertView textFieldAtIndex:0];
+            if (textField.text == nil || [textField.text length] == 0) {
+                [self alertShow:@"查询条件为空,请输入卡号或金额"];
+                return;
+            }
+            
+            NSArray* selectedArray = [self detailsSelectedByCardOrMoney:textField.text];
+            if (selectedArray.count == 0) {
+                [self alertShow:@"未查询到匹配的明细"];
+            } else {
+                [self.view makeToast:@"查询成功"];
+                [self.dataArrayDisplay removeAllObjects];
+                [self.dataArrayDisplay addObjectsFromArray:selectedArray];
+                // 重载 table 会将总金额也重载掉,所以要将第一个cell拆到tableView外面去
+                [self.tableView reloadData];
+            }
+        }
     }
-    if (buttonIndex == 1) { // 查询
-        UITextField* textField = [alertView textFieldAtIndex:0];
-        if (textField.text == nil || [textField.text length] == 0) {
-            [self alertShow:@"查询条件为空,请输入卡号或金额"];
-            return;
-        }
-        
-        NSArray* selectedArray = [self detailsSelectedByCardOrMoney:textField.text];
-        if (selectedArray.count == 0) {
-            [self alertShow:@"未查询到匹配的明细"];
-        } else {
-            [self.dataArrayDisplay removeAllObjects];
-            [self.dataArrayDisplay addObjectsFromArray:selectedArray];
-            // 重载 table 会将总金额也重载掉,所以要将第一个cell拆到tableView外面去
-            [self.tableView reloadData];
-        }
+    else if ([alertView.message hasPrefix:@"未绑定设备"]) {
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 
@@ -344,9 +337,8 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     self.title = @"交易明细";
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.dateButton];
     [self.view addSubview:self.searchButton];
-//    [self.view addSubview:self.frushButotn];
-    [self.view addSubview:self.dateLabel];
     CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
     self.activitorFrame = CGRectMake(0,
                                      naviAndState,
@@ -355,6 +347,15 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backItem];
+    
+    // 先校验是否绑定了
+    if ([self deviceBinded]) {
+        // 请求数据
+        [self requestDataOnDate:[self nowDate]];
+    } else {
+        [self alertShow:@"未绑定设备,请先绑定设备"];
+    }
+
 }
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
@@ -374,36 +375,18 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
                               (self.view.frame.size.height - self.navigationController.navigationBar.bounds.size.height)/4.0);
     self.totalView.frame = frame;
     
-    // 日期标签
+    // 日期按钮
     frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset/3.0;
+    frame.origin.y += frame.size.height + inset/3.0 + inset/3.0;
     frame.size.height = 40;
-    CGSize textSize = [self.dateLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.dateLabel.font forKey:NSFontAttributeName]];
-    frame.size.width = textSize.width + 10;
-    self.dateLabel.frame = frame;
-    
-    // 日期选择自定义按钮
-    frame.origin.x += frame.size.width + 5.0;
-    CGFloat oldHeight = frame.size.height;
-    frame.origin.y += (oldHeight - textSize.height - 10.0)/2.0;
-    frame.size.height = textSize.height + 10;
-    SelectIndicatorView* selectedView = [[SelectIndicatorView alloc] initWithFrame:frame andViewColor:[PublicInformation returnCommonAppColor:@"red"]];
-    [selectedView setDelegate:self];
-    [self.view addSubview:selectedView];
+    frame.size.width = 120;
+    [self.dateButton setFrame:frame];
+    [self dateButtonSetTitle:[self nowDate]];
 
-    frame.size.width = selectedView.frame.size.width;
-    // 刷新按钮
-    frame.origin.x += frame.size.width + inset*2.0;
-    textSize = [self.frushButotn.titleLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:self.frushButotn.titleLabel.font forKey:NSFontAttributeName]];
-    frame.size.width = textSize.width * 2;
-    self.frushButotn.frame = frame;
-    self.frushButotn.layer.cornerRadius = frame.size.height/2.0;
-    self.frushButotn.layer.masksToBounds = YES;
     
     // 查询按钮
-    frame.origin.y -= (oldHeight - textSize.height - 10.0)/2.0;
-    frame.size.height = oldHeight;
     frame.origin.x = self.view.bounds.size.width - inset - frame.size.height;
+    frame.origin.y -= inset/3.0 ;
     frame.size.width = frame.size.height;
     self.searchButton.frame = frame;
     
@@ -425,8 +408,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    // 请求数据
-    [self requestDataOnDate:[self nowDate]];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -454,9 +435,15 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
         NSString* cardNum = [dataDic valueForKey:@"pan"];
         CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
         // 金额或卡号后4位能匹配上
-        if ([cardNum hasSuffix:cardOrMoney] ||
-            money == [cardOrMoney floatValue]) {
-            [selectedArray addObject:[dataDic copy]];
+        if (cardOrMoney.length == 4) {
+            if ([cardNum hasSuffix:cardOrMoney] || money == cardOrMoney.floatValue) {
+                [selectedArray addObject:[dataDic copy]];
+            }
+        }
+        else {
+            if (money == cardOrMoney.floatValue) {
+                [selectedArray addObject:[dataDic copy]];
+            }
         }
     }
     return selectedArray;
@@ -480,6 +467,32 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     nDate = [nDate substringToIndex:8];
     return nDate;
 }
+
+
+// 给日期按钮设置日期
+- (void) dateButtonSetTitle:(NSString*)dateString {
+    NSString* year = [dateString substringToIndex:4];
+    NSString* month = [dateString substringWithRange:NSMakeRange(4, 2)];
+    NSString* day = [dateString substringFromIndex:4+2];
+    NSString* fortmatString = [NSString stringWithFormat:@"%@-%@-%@",year,month,day];
+    [self.dateButton setTitle:fortmatString forState:UIControlStateNormal];
+    
+    // titleLabel 文字添加下划线
+    NSMutableAttributedString* sublineString = [[NSMutableAttributedString alloc] initWithString:fortmatString];
+    [sublineString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, fortmatString.length)];
+    [self.dateButton.titleLabel setAttributedText:sublineString];
+}
+
+// 检查是否绑定了设备
+- (BOOL) deviceBinded {
+    BOOL binded = YES;
+    NSDictionary* bindedInfos = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if (bindedInfos == nil) {
+        binded = NO;
+    }
+    return binded;
+}
+
 
 #pragma mask ::: getter & setter 
 - (TotalAmountDisplayView *)totalView {
@@ -509,33 +522,17 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     }
     return _searchButton;
 }
-- (UILabel *)dateLabel {
-    if (_dateLabel == nil) {
-        _dateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        NSString* nDate = [self nowDate];
-        NSString* formateDate = [NSString stringWithFormat:@"%@-%@-%@",[nDate substringToIndex:4],[nDate substringWithRange:NSMakeRange(4, 2)],[nDate substringFromIndex:4+2]];
-        _dateLabel.text = formateDate;
-        _dateLabel.textColor = [UIColor blackColor];
-        _dateLabel.textAlignment = NSTextAlignmentCenter;
-    }
-    return _dateLabel;
-}
-- (UIButton *)frushButotn {
-    if (_frushButotn == nil) {
-        _frushButotn = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_frushButotn setTitle:@"刷新" forState:UIControlStateNormal];
-        [_frushButotn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_frushButotn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_frushButotn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-
-        _frushButotn.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
+- (UIButton *)dateButton {
+    if (_dateButton == nil) {
+        _dateButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        _dateButton.layer.cornerRadius = 5.0;
+        [_dateButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         
-        [_frushButotn addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-        [_frushButotn addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchDown];
-        [_frushButotn addTarget:self action:@selector(touchToFrushData:) forControlEvents:UIControlEventTouchDown];
-
+        [_dateButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_dateButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+        [_dateButton addTarget:self action:@selector(touchToFrushData:) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _frushButotn;
+    return _dateButton;
 }
 
 - (NSMutableData *)reciveData {
@@ -583,8 +580,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
         NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
         _HTTPRequest = [[ASIHTTPRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
         [_HTTPRequest setUseCookiePersistence:NO];
-        [_HTTPRequest addRequestHeader:@"termNo" value:[PublicInformation returnTerminal]];
-        [_HTTPRequest addRequestHeader:@"mchntNo" value:[PublicInformation returnBusiness]];
         [_HTTPRequest setDelegate:self];
     }
     return _HTTPRequest;

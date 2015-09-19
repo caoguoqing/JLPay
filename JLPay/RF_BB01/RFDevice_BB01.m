@@ -274,9 +274,15 @@ SwipeListener
             }
             pin = [self.deviceSetter getEncryptedPIN:SLC :pan :source];
             NSLog(@"加密后的密文串:[%@]",pin);
-            pin = [PublicInformation clearSpaceCharAtContentOfString:pin];
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
-                [self.delegate didEncryptPinSucOrFail:YES pin:[pin uppercaseString] withError:nil];
+            if (!pin || pin.length == 0) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+                    [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"密码加密失败"];
+                }
+            } else {
+                pin = [PublicInformation clearSpaceCharAtContentOfString:pin];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+                    [self.delegate didEncryptPinSucOrFail:YES pin:[pin uppercaseString] withError:nil];
+                }
             }
         });
     }

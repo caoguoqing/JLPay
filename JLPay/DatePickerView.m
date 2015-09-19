@@ -73,9 +73,9 @@
 }
 
 - (void) initialPickerDataWithDate:(NSString*)ndate {
-    // date formatter 2015-07-29
+    // date formatter 20150729
     NSString* year = [ndate substringToIndex:4];
-    NSString* month = [ndate substringWithRange:NSMakeRange(4+1, 2)];
+    NSString* month = [ndate substringWithRange:NSMakeRange(4, 2)];
     NSString* day = [ndate substringFromIndex:ndate.length - 2];
 
     [self.pickerView selectRow:[self.years indexOfObject:year] inComponent:0 animated:YES];

@@ -67,22 +67,16 @@
 #pragma mask --- 按钮事件
 - (IBAction) touchDown:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.2 animations:^{
-        button.transform = CGAffineTransformMakeScale(0.95, 0.95);
-    }];
+    button.transform = CGAffineTransformMakeScale(0.95, 0.95);
 }
 - (IBAction) touchUpOutSide:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.2 animations:^{
-        button.transform = CGAffineTransformIdentity;
-    }];
+    button.transform = CGAffineTransformIdentity;
 
 }
 - (IBAction) touchToSaveRate:(id)sender {
     UIButton* button = (UIButton*)sender;
-    [UIView animateWithDuration:0.2 animations:^{
-        button.transform = CGAffineTransformIdentity;
-    }];
+    button.transform = CGAffineTransformIdentity;
 
     NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
     if (![rate isEqualToString:self.selectedRate]) {

@@ -157,7 +157,7 @@ CGFloat cellHeight = 40.0;
     if (_dataSourceDict == nil) {
         NSMutableArray* values = [[NSMutableArray alloc] init];
         [values addObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
-        [values addObject:@"0755-865329999"];
+        [values addObject:@"0755-86532999"];
         [values addObject:@"www.cccpay.cn"];
         _dataSourceDict = [NSDictionary dictionaryWithObjects:values forKeys:self.cellTextArray];
     }

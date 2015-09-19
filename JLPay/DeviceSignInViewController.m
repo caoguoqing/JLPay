@@ -59,11 +59,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [self setExtraCellLineHidden:self.tableView];
     
     // 不要放在 viewWillAppear 中
-    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
-    [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
-    [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
-    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
-    [actionSheet showFromTabBar:self.tabBarController.tabBar];
+    [self actionSheetShowForSelectingDevice];
     
     [[DeviceManager sharedInstance] setDelegate:self];
 }
@@ -422,6 +418,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask -------------------------------- UIActionSheetDelegate 点击事件
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0) {
+        self.selectedDevice = nil;
         return;
     }
     // 保存选择的设备类型
@@ -494,16 +491,17 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self.tableView reloadData];
     });
     if (self.selectedDevice == nil) {
-        return;
+        [self actionSheetShowForSelectingDevice];
+    } else {
+        // 异步调起等待定时器
+        [self startDeviceTimer];
+        // 异步打开等待视图
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+        });
+        [[DeviceManager sharedInstance] closeAllDevices];
+        [[DeviceManager sharedInstance] startScanningDevices];
     }
-    // 异步调起等待定时器
-    [self startDeviceTimer];
-    // 异步打开等待视图
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-    });
-    [[DeviceManager sharedInstance] closeAllDevices];
-    [[DeviceManager sharedInstance] startScanningDevices];
 }
 // 按钮按下事件
 - (IBAction) buttonTouchDown:(id)sender {
@@ -519,6 +517,17 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 
 #pragma mask --------- private interface
+
+
+// 弹出设备类型选择框
+- (void) actionSheetShowForSelectingDevice {
+    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+    [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
+    [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
+    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
+    
+    [actionSheet showFromTabBar:self.tabBarController.tabBar];
+}
 
 // 小工具: 为简化弹窗代码
 - (void) alertForMessage: (NSString*) messageStr {
