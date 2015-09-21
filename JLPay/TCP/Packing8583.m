@@ -9,6 +9,7 @@
 #import "Packing8583.h"
 #import "ISOHelper.h"
 #import "PublicInformation.h"
+#import "ISOFieldFormation.h"
 
 @interface Packing8583() {
     NSString* tpdu;
@@ -16,12 +17,12 @@
     NSString* exchangeType;
 }
 
-@property (nonatomic, strong) NSMutableArray* arrayFieldNamesAndValues;
+@property (nonatomic, strong) NSMutableDictionary* dictionaryFieldNamesAndValues;
 
 @end
 
 @implementation Packing8583
-@synthesize arrayFieldNamesAndValues = _arrayFieldNamesAndValues;
+@synthesize dictionaryFieldNamesAndValues = _dictionaryFieldNamesAndValues;
 
 
 #pragma mask : 公共入口
@@ -46,41 +47,26 @@
 
 #pragma mask : 域值设置:需要打包的
 - (void) setFieldAtIndex:(int)index withValue:(NSString*)value {
-    NSString* keyIndex = [NSString stringWithFormat:@"%d",index];
-    NSDictionary* dictHasIndex = nil;
-    for (NSDictionary* dict in self.arrayFieldNamesAndValues) {
-        NSString* key = [[dict allKeys] objectAtIndex:0];
-        if ([key isEqualToString:keyIndex]) {
-            dictHasIndex = dict;
-            break;
-        }
-    }
-    if (!dictHasIndex) {
-        NSDictionary* dict = [NSDictionary dictionaryWithObject:value forKey:keyIndex];
-        [self.arrayFieldNamesAndValues addObject:dict];
-    } else {
-        [dictHasIndex setValue:value forKey:keyIndex];
-    }
+    [self.dictionaryFieldNamesAndValues setValue:value forKey:[NSString stringWithFormat:@"%d",index]];
 }
 
 
 #pragma mask : 打包结果串获取
 -(NSString*) stringPackingWithType:(NSString*)type {
-    // 位图添加64
-//    [self.arrayFieldNamesAndValues addObject:[NSDictionary dictionaryWithObject:@"0000000000000000" forKey:@"64"]];
-    // 排序位图
-    NSArray* sortedArray = [self arraySortBySourceArray:self.arrayFieldNamesAndValues];
-    NSLog(@"排序后的域数组:[%@]",sortedArray);
-    // 然后组包
     exchangeType = type;
+    // 根据plist配置格式化所有的域值
+    [self resetFormatValueOfFieldsDictionary];
+    // 组包
     NSString* stringPackage = [self stringPacking];
+    // 清空字典数据
+    [self cleanAllFields];
     return stringPackage;
 }
 
 #pragma mask : 清空数据
 -(void) cleanAllFields {
-    [self.arrayFieldNamesAndValues removeAllObjects];
-    self.arrayFieldNamesAndValues = nil;
+    [self.dictionaryFieldNamesAndValues removeAllObjects];
+    self.dictionaryFieldNamesAndValues = nil;
 }
 
 
@@ -90,20 +76,12 @@
 // 执行排序
 - (NSArray*) arraySortBySourceArray:(NSArray*)array {
     if (array.count < 2) {
-        return nil;
+        return array;
     }
-    NSArray* sortedArray = [array sortedArrayUsingComparator:^NSComparisonResult(id compare1, id compare2){
-        return [self compareDictionary:compare1 withAnotherDictionary:compare2];
+    NSArray* sortedArray = [array sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [obj1 compare:obj2];
     }];
     return sortedArray;
-}
-// 比较字典类型
-- (NSComparisonResult) compareDictionary:(NSDictionary*)dictionary
-                   withAnotherDictionary:(NSDictionary*)anotherDictionary
-{
-    NSString* keySource = [[dictionary allKeys] objectAtIndex:0];
-    NSString* keyTarget = [[anotherDictionary allKeys] objectAtIndex:0];
-    return [keySource compare:keyTarget];
 }
 
 // 打包
@@ -121,21 +99,15 @@
 
 // 生成MAP位图串:16进制
 - (NSString*) bitMapHexString {
-    NSMutableArray* bitMapArray = [[NSMutableArray alloc] init];
-    // 组map数组
-    for (NSDictionary* dict in self.arrayFieldNamesAndValues) {
-        [bitMapArray addObject:[[dict allKeys] objectAtIndex:0]];
-    }
     // 生成二进制字符串
     NSMutableString* binaryString = [NSMutableString stringWithCapacity:64];
     for (int i = 0; i < 64; i++) {
         [binaryString appendString:@"0"];
     }
-    for (NSString* abit in bitMapArray) {
+    // 置换所有域的bit位值
+    for (NSString* abit in self.dictionaryFieldNamesAndValues.allKeys) {
         [binaryString replaceCharactersInRange:NSMakeRange(abit.intValue - 1, 1) withString:@"1"];
     }
-    NSLog(@"位图数组:[%@]",bitMapArray);
-    NSLog(@"二进制位图串:%@",binaryString);
     // 二进制转HEX
     return [ISOHelper binaryToHexAsString:binaryString];
 }
@@ -143,18 +115,32 @@
 // 取数据字典中所有值,打包成串
 - (NSString*) allDataString {
     NSMutableString* dataString = [[NSMutableString alloc] init];
-    for (NSDictionary* dict in self.arrayFieldNamesAndValues) {
-        NSString* key = [[dict allKeys] objectAtIndex:0];
-        [dataString appendString:[dict valueForKey:key]];
+    // 排序位图数组
+    NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];
+    // 按排序好的顺序组字符串
+    for (NSString* fieldKey in mapArray) {
+        [dataString appendString:[self.dictionaryFieldNamesAndValues valueForKey:fieldKey]];
     }
     return dataString;
 }
 
-#pragma mask -------------- getter & setter
-- (NSMutableArray *)arrayFieldNamesAndValues {
-    if (_arrayFieldNamesAndValues == nil) {
-        _arrayFieldNamesAndValues = [[NSMutableArray alloc] init];
+// 重新整理所有域值的格式:根据plist
+- (void) resetFormatValueOfFieldsDictionary {
+    for (NSString* key in self.dictionaryFieldNamesAndValues.allKeys) {
+        NSString* value = [self.dictionaryFieldNamesAndValues valueForKey:key];
+        NSString* formationValue = [[ISOFieldFormation sharedInstance] formatStringWithSource:value atIndex:key.intValue];
+        if (![formationValue isEqualToString:value]) {
+            [self.dictionaryFieldNamesAndValues setValue:formationValue forKey:key];
+        }
     }
-    return _arrayFieldNamesAndValues;
+}
+
+
+#pragma mask -------------- getter & setter
+- (NSMutableDictionary *)dictionaryFieldNamesAndValues {
+    if (_dictionaryFieldNamesAndValues == nil) {
+        _dictionaryFieldNamesAndValues = [[NSMutableDictionary alloc] init];
+    }
+    return _dictionaryFieldNamesAndValues;
 }
 @end

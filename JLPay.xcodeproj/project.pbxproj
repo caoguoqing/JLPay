@@ -95,6 +95,7 @@
 		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
+		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -341,6 +342,8 @@
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Packing8583.m; path = TCP/Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
 		5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleLayerButton.m; sourceTree = "<group>"; };
+		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ISOFieldFormation.h; path = TCP/ISOFieldFormation.h; sourceTree = "<group>"; };
+		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ISOFieldFormation.m; path = TCP/ISOFieldFormation.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -830,6 +833,8 @@
 			children = (
 				5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */,
 				5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */,
+				5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */,
+				5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */,
 			);
 			name = "新版接口";
 			sourceTree = "<group>";
@@ -1408,6 +1413,7 @@
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
+				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
 				5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
 				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,

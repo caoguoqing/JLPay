@@ -346,11 +346,10 @@
     [hexDic setObject:@"1111" forKey:@"F"];
     
     NSMutableString *binaryString= [[NSMutableString alloc] init];
+    NSRange range = NSMakeRange(0, 1);
     for (int i=0; i<[hex length]; i++) {
-        NSRange rage;
-        rage.length = 1;
-        rage.location = i;
-        NSString *key = [hex substringWithRange:rage];
+        range.location = i;
+        NSString *key = [hex substringWithRange:range];
         [binaryString appendString:[hexDic valueForKey:key]];
     }
     return binaryString;

@@ -8,6 +8,9 @@
 
 #import "Unpacking8583.h"
 #import "PublicInformation.h"
+#import "ISOFieldFormation.h"
+
+
 #import "DesUtil.h"
 #import "ErrorType.h"
 #import "Define_Header.h"
@@ -24,7 +27,6 @@ static Unpacking8583 *sharedObj2 = nil;
     @synchronized([Unpacking8583 class]){
         if(sharedObj2 ==nil){
             sharedObj2 = [[self alloc] init];
-            
         }
     }
     return sharedObj2;
@@ -808,7 +810,7 @@ static Unpacking8583 *sharedObj2 = nil;
 
 #pragma mask ---- 重写8583报文解包函数 -----------------------------------------------------------
 /*
- //1.（2字节包长）
+ //1. (2 字节包长)
  //2. (5 字节 TPDU)
  //3. (6 字节报文头)
  //4. (4 字节交易类型)
@@ -818,84 +820,39 @@ static Unpacking8583 *sharedObj2 = nil;
 
 -(void)unpacking8583:(NSString *)responseString withDelegate:(id<Unpacking8583Delegate>)sdelegate {
     self.stateDelegate = sdelegate;
+    
     NSString* rebackStr = nil;
     BOOL rebackState = YES;
     @try {
         // map数组: bitmap串(16进制) -> 二进制串 -> 取串中'1'的位置
         NSArray *bitmapArr=[self bitmapArr:[PublicInformation getBinaryByhex:[responseString substringWithRange:NSMakeRange(30, 16)]]];
         NSLog(@"位图:[%@]",[bitmapArr componentsJoinedByString:@" "]);
-        // 8583域类型: 保存在 newisoconfig.plist 文件中
-        NSString *pathToConfigFile = [[NSBundle mainBundle] pathForResource:@"newisoconfig" ofType:@"plist"];
-        NSDictionary *allElementDic = [NSDictionary dictionaryWithContentsOfFile:pathToConfigFile];
-        NSMutableDictionary *bitDic=[[NSMutableDictionary alloc] init];
-        for (NSString* key in bitmapArr) {
-            [bitDic addEntriesFromDictionary:[NSDictionary dictionaryWithObject:[allElementDic objectForKey:key] forKey:key]];
-        }
-        // 拆包: 根据位图跟域类型字典拆出对应的域; 并打包到字典 delegate 带出;
-        NSString *dataStr = [responseString substringWithRange:NSMakeRange(46, [responseString length] - 46)];
-        int location=0;
-        NSMutableDictionary* dictFields = [[NSMutableDictionary alloc] init];
-        for (int i = 0; i < bitmapArr.count; i++) {
-            NSString* bitKey = [bitmapArr objectAtIndex:i];
-            NSLog(@"%@",bitKey);
-            NSDictionary* bitDict = [bitDic objectForKey:bitKey];
-            NSString* special = [bitDict valueForKey:@"special"];
-            NSString* type = [bitDict valueForKey:@"type"];
-            NSString* length = [bitDict valueForKey:@"length"];
-            // 按配置中的每个域的类型计算要取位的长度
-            int bitLength = 0;
-            int actrueLength = 0;
-            if ([special isEqualToString:@"99"]) {
-                // 取当前第一个字节[2位]为长度
-                actrueLength = bitLength = [[dataStr substringWithRange:NSMakeRange(location, 2)] intValue];
-                location += 2;
-                // bcd码前面长度为实际值，后面值的长度必须是偶数
-                if ([type isEqualToString:@"bcd"]) {
-                    if (bitLength%2 > 0) {
-                        bitLength += 1;
-                    }
-                }
-                // 其他编码格式的为实际长度
-                else {
-                    actrueLength = bitLength *= 2;
-                }
-            } else if ([special isEqualToString:@"999"]) {
-                // 取当前第一、二个字节[4位]为长度
-                actrueLength = bitLength = [[dataStr substringWithRange:NSMakeRange(location, 4)] intValue];
-                location += 4;
-                if ([type isEqualToString:@"bcd"]) {
-                    if (bitLength%2 > 0) {
-                        bitLength += 1;
-                    }
-                } else {
-                    actrueLength = bitLength *= 2;
-                }
-            } else {
-                actrueLength = bitLength = [length intValue];
-            }
-            // 截取对应的域
-            NSString* bitData = [dataStr substringWithRange:NSMakeRange(location, actrueLength)];
-            
-            // 域名跟域值保存到字典中: @{@"F02":@"6222444466668888"}
-            [dictFields setValue:bitData forKey:[NSString stringWithFormat:@"F%02d",[bitKey intValue]]];
-            
-            location += bitLength;
+        
+        // 截取纯域值串
+        NSMutableString* dataString = [[NSMutableString alloc] initWithString:[responseString substringFromIndex:4+10+12+8+16]];
+        
+        // 根据位图信息循环拆包
+        NSMutableDictionary* dictFields = [NSMutableDictionary dictionaryWithCapacity:bitmapArr.count];
+        for (NSString* bitIndex in bitmapArr) {
+            // 并将拆包数据打包到字典
+            NSString* content = [[ISOFieldFormation sharedInstance] unformatStringWithFormation:dataString atIndex:bitIndex.intValue];
+            [dictFields setValue:content forKey:bitIndex];
         }
         
-        // 根据39域值,解析错误类型消息;
-        NSString* responseCode = [dictFields valueForKey:@"F39"];
+        // 组合响应信息
+        NSString* responseCode = [dictFields valueForKey:@"39"];
         responseCode = [PublicInformation stringFromHexString:responseCode];
-        rebackStr = [NSString stringWithFormat:@"[%@]:%@",responseCode, [ErrorType errInfo:responseCode]];
-        if (![responseCode isEqualToString:@"00"]) {
-            rebackState = NO;
-        }
-        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackOnState:withMessage:)]) {
+        rebackStr = [ErrorType errInfo:responseCode];
+        rebackStr = [NSString stringWithFormat:@"[%@]%@",responseCode, rebackStr];
+        
+        // 根据39域值,解析错误类型消息;
+        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {
             [self.stateDelegate didUnpackDatas:dictFields onState:rebackState withErrorMsg:rebackStr];
         }
         
     }
     @catch (NSException *exception) {
-        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackOnState:withMessage:)]) {
+        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {
             [self.stateDelegate didUnpackDatas:nil onState:NO withErrorMsg:exception.reason];
         }
     }
@@ -905,228 +862,6 @@ static Unpacking8583 *sharedObj2 = nil;
 
 
 
-
-
-
--(int)getlength:(NSMutableDictionary *)bitDic :(NSArray *)sortArr :(int)c :(NSMutableString * )dataStr :(int)location :(int)length
-{
-    
-    if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"99"]) {
-        
-        //剩下长度
-        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-        
-        
-        if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"type"] isEqualToString: @"bcd"]) {
-            //取一个字节，表示长度
-            int oneCharLength=(([[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]+1)/2 *2)+2;
-            length=oneCharLength;
-            
-        }else
-        {
-            //取一个字节，表示长度
-            int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 2)] intValue]*2+2;
-            length=oneCharLength;
-        }
-        
-    }else if([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"special"] isEqualToString:@"999"]){
-        //剩下长度
-        NSString *remainStr=[dataStr substringWithRange:NSMakeRange(location, [dataStr length]-location)];
-        //                    //取两个字节，表示长度
-        //                    int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-        //                    length=oneCharLength;
-        if ([[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"type"] isEqualToString: @"bcd"]) {
-            //取两个字节，表示长度
-            int oneCharLength=(([[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]+1)/2*2)+4;
-            length=oneCharLength;
-            
-        }else
-        {
-            //取两个字节，表示长度
-            int oneCharLength=[[remainStr substringWithRange:NSMakeRange(0, 4)] intValue]*2+4;
-            
-            length=oneCharLength;
-        }
-        NSLog(@"--------------remainstr%@    length%d",[remainStr substringWithRange:NSMakeRange(0, 4)],length);
-    }else{
-        length=[[[bitDic objectForKey:[sortArr objectAtIndex:c]] objectForKey:@"length"] intValue];
-    }
-    return length;
-
-}
-
-//支付宝扫码\条码支付成功，缓存,
--(void)zhifubaoSaomaSaveMethod{
-    NSString *zhifubaoliushui=[[NSUserDefaults standardUserDefaults] valueForKey:Zhifubao_search_liushui];
-    NSString *zhifubaoNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Zhifubao_Number];
-    NSString *zhifubaoMoney=[[NSUserDefaults standardUserDefaults] valueForKey:ZhifubaoSaomaMoney];
-    NSString *zhifubaoDingdanNum=[[NSUserDefaults standardUserDefaults] valueForKey:Zhifubao_Search_Order];
-
-    NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:ZhifubaoTiaomaRecord]];
-    NSDictionary *dic=[[NSDictionary alloc] initWithObjectsAndKeys:
-                       zhifubaoliushui,@"liushui",
-                       zhifubaoNumber,@"card",
-                       @"zhifubao",@"cardtype",
-                       [NSString stringWithFormat:@"%0.2f",[zhifubaoMoney floatValue]*100],@"money",
-                       [PublicInformation formatCompareDate],@"time",
-                       zhifubaoDingdanNum,@"dingdan",
-                       @"",@"noncard",
-                       @"1",@"success",nil];
-    NSLog(@"已经成功的订单zhifubaoDingdanNum======%@",zhifubaoDingdanNum);
-    
-//订单号，缓存支付信息
-    [[NSUserDefaults standardUserDefaults] setObject:dic forKey:zhifubaoDingdanNum];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    if ([resultArr count] > 0) {
-        [resultArr insertObject:dic atIndex:0];
-    }else{
-        [resultArr addObject:dic];
-    }
-    
-    NSMutableArray *newRecordArray=[[NSMutableArray alloc] initWithArray:resultArr];
-    //-------------刷卡记录，保留7天
-    for (int i=0; i<[resultArr count]; i++) {
-        NSString *time=[PublicInformation NEWreturnUploadTime:[[resultArr objectAtIndex:i] objectForKey:@"time"]];
-        NSLog(@"time====%@",time);
-        if ([time isEqualToString:@"今天"]) {
-        }else{
-            if ([time integerValue] >= 7) {
-                [newRecordArray removeObject:[resultArr objectAtIndex:i]];
-            }else{
-            }
-        }
-    }
-    NSLog(@"newRecordArray===%d===%@",[newRecordArray count],newRecordArray);
-    [[NSUserDefaults standardUserDefaults] setObject:newRecordArray forKey:ZhifubaoTiaomaRecord];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-
-//支付宝撤销、退款成功，缓存,
--(void)zhifubaoReturnMoneySaveMethod:(int)state{
-//支付宝撤销、退款流水号,state=2,撤销成功；state=3，退款成功;
-    
-    NSString *zhifubaochexiaoliushui=[[NSUserDefaults standardUserDefaults] valueForKey:ZhifubaoChexiaoLiushui];
-    NSString *zhifubaochexiaoNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Zhifubao_Number];
-    NSString *zhifubaochexiaoMoney=[[NSUserDefaults standardUserDefaults] valueForKey:ZhifubaoChexiaoMoney];
-    NSString *zhifubaochexiaoDingdanNum=[[NSUserDefaults standardUserDefaults] valueForKey:ZhifubaoChexiaoDingdanNum];
-    
-    NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:ZhifubaoTiaomaRecord]];
-    NSDictionary *dic=[[NSDictionary alloc] initWithObjectsAndKeys:
-                       zhifubaochexiaoliushui,@"liushui",
-                       zhifubaochexiaoNumber,@"card",
-                       @"zhifubao",@"cardtype",
-                       [NSString stringWithFormat:@"%0.2f",[zhifubaochexiaoMoney floatValue]*100],@"money",
-                       [PublicInformation formatCompareDate],@"time",
-                       zhifubaochexiaoDingdanNum,@"dingdan",
-                       @"",@"noncard",
-                       [NSString stringWithFormat:@"%d",state],@"success",nil];
-    
-    if ([resultArr count] > 0) {
-        [resultArr insertObject:dic atIndex:0];
-    }else{
-        [resultArr addObject:dic];
-    }
-    
-    NSMutableArray *newRecordArray=[[NSMutableArray alloc] initWithArray:resultArr];
-    //-------------刷卡记录，保留7天
-    for (int i=0; i<[resultArr count]; i++) {
-        NSString *time=[PublicInformation NEWreturnUploadTime:[[resultArr objectAtIndex:i] objectForKey:@"time"]];
-        NSLog(@"time====%@",time);
-        if ([time isEqualToString:@"今天"]) {
-        }else{
-            if ([time integerValue] >= 7) {
-                [newRecordArray removeObject:[resultArr objectAtIndex:i]];
-            }else{
-            }
-        }
-    }
-    NSLog(@"newRecordArray===%d===%@",[newRecordArray count],newRecordArray);
-    [[NSUserDefaults standardUserDefaults] setObject:newRecordArray forKey:ZhifubaoTiaomaRecord];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-
-//保存消费刷卡记录(全部7天)
--(void)saveExchangeResultMethod{
-    NSLog(@"stringFromHexString===%@",[PublicInformation stringFromHexString:[PublicInformation returnConsumerMoney]]);
-    NSLog(@"PublicInformation===%@",[PublicInformation returnConsumerMoney]);
-    NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:TheCarcd_Record]];
-    NSDictionary *dic=[[NSDictionary alloc] initWithObjectsAndKeys:
-                       [PublicInformation returnLiushuiHao],@"liushui",
-                       [PublicInformation returnposCard],@"card",
-                       @"yinhangka",@"cardtype",
-                       [NSString stringWithFormat:@"%0.2f",[[PublicInformation returnConsumerMoney] floatValue]*100],@"money",
-                       [PublicInformation formatCompareDate],@"time",
-                       [[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll],@"noncard",
-                       @"1",@"success",nil];
-    if ([resultArr count] > 0) {
-        [resultArr insertObject:dic atIndex:0];
-    }else{
-        [resultArr addObject:dic];
-    }
-    
-    NSMutableArray *newRecordArray=[[NSMutableArray alloc] initWithArray:resultArr];
-//-------------刷卡记录，保留7天
-    for (int i=0; i<[resultArr count]; i++) {
-        NSString *time=[PublicInformation NEWreturnUploadTime:[[resultArr objectAtIndex:i] objectForKey:@"time"]];
-        NSLog(@"time====%@",time);
-        if ([time isEqualToString:@"今天"]) {
-        }else{
-            if ([time integerValue] >= 7) {
-                [newRecordArray removeObject:[resultArr objectAtIndex:i]];
-            }else{
-            }
-        }
-    }
-    NSLog(@"newRecordArray===%d===%@",[newRecordArray count],newRecordArray);
-    [[NSUserDefaults standardUserDefaults] setObject:newRecordArray forKey:TheCarcd_Record];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-//保存消费撤销刷卡记录(全部7天)
--(void)saveExchangeReturnMethod{
-    NSLog(@"stringFromHexString===%@",[PublicInformation stringFromHexString:[PublicInformation returnConsumerMoney]]);
-    NSLog(@"PublicInformation===%@",[PublicInformation returnConsumerMoney]);
-    //保留当天数据
-    NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:TheCarcd_Record]];
-//本次刷卡撤销的流水号
-     NSString *currentLiushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number];
-//撤销的金额
-    NSString *chexiaoMoneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Save_Return_Money];
-    
-    NSDictionary *dic=[[NSDictionary alloc] initWithObjectsAndKeys:
-                       currentLiushuiStr,@"liushui",
-                       [PublicInformation returnposCard],@"card",
-                       @"yinhangka",@"cardtype",
-                       chexiaoMoneyStr,@"money",
-                       [PublicInformation formatCompareDate],@"time",
-                       [[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll],@"noncard",
-                       @"0",@"success",nil];
-    if ([resultArr count] > 0) {
-        [resultArr insertObject:dic atIndex:0];
-    }else{
-        [resultArr addObject:dic];
-    }
-    
-    NSMutableArray *newRecordArray=[[NSMutableArray alloc] initWithArray:resultArr];
-    //-------------刷卡记录，保留7天
-    for (int i=0; i<[resultArr count]; i++) {
-        NSString *time=[PublicInformation NEWreturnUploadTime:[[resultArr objectAtIndex:i] objectForKey:@"time"]];
-        NSLog(@"time====%@",time);
-        if ([time isEqualToString:@"今天"]) {
-        }else{
-            if ([time integerValue] >= 7) {
-                [newRecordArray removeObject:[resultArr objectAtIndex:i]];
-            }else{
-            }
-        }
-    }
-    NSLog(@"newRecordArray===%d===%@",[newRecordArray count],newRecordArray);
-    [[NSUserDefaults standardUserDefaults] setObject:newRecordArray forKey:TheCarcd_Record];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
 
 
 
@@ -1210,15 +945,15 @@ static Unpacking8583 *sharedObj2 = nil;
 }
 
 
-#pragma mark ----------位图计算
+#pragma mark ::: 位图计算
 -(NSArray *)bitmapArr:(NSString *)bitmapStr{
-//0000000000111000000000000000000000001010110000000000000100100110
+    //0000000000111000000000000000000000001010110000000000000100100110
     NSMutableArray *bitmapMuArr=[[NSMutableArray alloc] init];
-        for (int i=0; i<([bitmapStr length]+0); i++) {
-            if ([[bitmapStr substringWithRange:NSMakeRange(i, 1)] isEqualToString:@"1"]) {
-                [bitmapMuArr addObject:[NSString stringWithFormat:@"%d",i+1]];
-            }
+    for (int i=0; i<([bitmapStr length]+0); i++) {
+        if ([[bitmapStr substringWithRange:NSMakeRange(i, 1)] isEqualToString:@"1"]) {
+            [bitmapMuArr addObject:[NSString stringWithFormat:@"%d",i+1]];
         }
+    }
     return bitmapMuArr;
 }
 
