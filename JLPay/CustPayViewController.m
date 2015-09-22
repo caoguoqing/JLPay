@@ -174,16 +174,24 @@
     
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-    // 保存的是字符串型的金额
+    [viewcon setStringOfTranType:TranType_Consume];
+    [viewcon setSFloatMoney:self.money];
+    [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.money]];
+    
+    
+    // 保存的是字符串型的金额 ----- 暂时无用了
     [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
     [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // 跳转
     [self.navigationController pushViewController:viewcon animated:YES];
     
     // 重置金额
     self.money = @"0.00";
     self.moneyCalculated = nil;
 }
+
 
 
 #pragma mask ::: 自定义返回上层界面按钮的功能
@@ -382,6 +390,15 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
+
+// 小数点型金额转换为整型金额
+- (NSString*) sIntMoneyOfFloatMoney:(NSString*)floatMoney {
+    NSString* sIntMoney = nil;
+    sIntMoney = [NSString stringWithFormat:@"%012d",(int)([floatMoney floatValue]*100)];
+    return sIntMoney;
+}
+
+
 
 #pragma mask --- setter & getter
 - (MoneyCalculated *)moneyCalculated {

@@ -473,9 +473,13 @@
                 // 解析读到的卡得数据
                 [self GetCard:data];
                 [self cardDataUserDefult];
+                NSDictionary* cardInfo = [self cardInfoOfReading];
                 // 保存读到的数据到本地
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+//                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+//                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+//                }
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
                 }
             }
             else
@@ -753,6 +757,64 @@
 
 
 #pragma mask -------------------------- 数据处理工具:私有
+
+- (NSDictionary*) cardInfoOfReading {
+    NSMutableDictionary* cardInfo = [[NSMutableDictionary alloc] init];
+    Byte dataStr[512] = {0x00};
+    
+    // 2 卡号
+    memset(dataStr, 0, 512);
+    NSString* cardNum = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
+    [cardInfo setValue:cardNum forKey:@"2"];
+    
+    // 14 卡片有效期 Card_DeadLineTime
+    memset(dataStr, 0, 512);
+    [cardInfo setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:@"14"];
+    
+    // 22 服务码输入方式
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szEntryMode :2];
+    NSString* f22 = [NSString stringWithFormat:@"%s",dataStr];
+    [cardInfo setValue:f22 forKey:@"22"];
+    
+    // 35 2磁道加密数据
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
+    [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"35"];
+    
+    // 36 3磁道加密数据
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.szEncryTrack3 :TransData.nEncryTrack3Len];
+    if (strlen((char*)dataStr) > 0) {
+        [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"36"];
+    }
+    
+    // 52 PINBLOCK -- 密文密码
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
+    [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"52"];
+    if (strlen((char*)dataStr) > 0) {
+        [cardInfo setValue:@"2600000000000000" forKey:@"53"];
+    }
+    
+    // 23 IC卡序列号
+    memset(dataStr, 0, 512);
+    [self BcdToAsc:dataStr :TransData.CardSeq :1];
+    NSString* f23 = [NSString stringWithFormat:@"%04d", atoi((const char*)dataStr)];
+    if ([f22 hasPrefix:@"05"]) {
+        [cardInfo setValue:f23 forKey:@"23"];
+    }
+    
+    // 55 芯片数据55域信息
+    if (TransData.IccdataLen > 0) {
+        memset(dataStr, 0, 512);
+        [self BcdToAsc:dataStr :TransData.Field55Iccdata :TransData.IccdataLen];
+        [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"55"];
+    }
+    
+    return cardInfo;
+}
+
 // 将读到的卡数据保存到本地
 - (void) cardDataUserDefult {
     Byte dataStr[512] = {0x00};

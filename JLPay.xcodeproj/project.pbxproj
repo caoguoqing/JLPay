@@ -50,7 +50,6 @@
 		5E5E354F1B7380DB00560C0A /* UserRegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */; };
 		5E5E35A21B7C79E200560C0A /* MySQLiteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */; };
 		5E5E35A51B7C79EF00560C0A /* AreaDataSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35A41B7C79EF00560C0A /* AreaDataSourceViewController.m */; };
-		5E5E35A71B7C7A0B00560C0A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */; };
 		5E5E35A91B7C7A3200560C0A /* test.db in Resources */ = {isa = PBXBuildFile; fileRef = 5E5E35A81B7C7A3200560C0A /* test.db */; };
 		5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35AC1B7DD39B00560C0A /* HelperAndAboutTableViewController.m */; };
 		5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35CF1B7DD7E400560C0A /* BangdingViewController.m */; };
@@ -93,6 +92,9 @@
 		5E82B87A1B310AF000A58751 /* activitor10.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86E1B310AF000A58751 /* activitor10.png */; };
 		5E82B87B1B310AF000A58751 /* activitor11.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86F1B310AF000A58751 /* activitor11.png */; };
 		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
+		5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D001BB0051400FD461A /* libsqlite3.tbd */; };
+		5E8B0D0F1BB0255100FD461A /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D0E1BB0255100FD461A /* iMagPay.framework */; settings = {ASSET_TAGS = (); }; };
+		5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D101BB0E61800FD461A /* libJieLianService.a */; settings = {ASSET_TAGS = (); }; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -157,9 +159,7 @@
 		5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */; };
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
 		5EDA83E61B9050FE0096391B /* RFDevice_BB01.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA83E51B9050FE0096391B /* RFDevice_BB01.m */; };
-		5EDA84391B9EBF570096391B /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDA84381B9EBF570096391B /* iMagPay.framework */; };
 		5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */; };
-		5EDA845A1BA12E500096391B /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDA84591BA12E500096391B /* libJieLianService.a */; };
 		5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */; };
 		5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */; };
 		5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA21B686AE200DCD764 /* DatePickerView.m */; };
@@ -338,6 +338,9 @@
 		5E82B86E1B310AF000A58751 /* activitor10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor10.png; sourceTree = "<group>"; };
 		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor11.png; sourceTree = "<group>"; };
 		5E82B8701B310AF000A58751 /* activitor12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor12.png; sourceTree = "<group>"; };
+		5E8B0D001BB0051400FD461A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		5E8B0D0E1BB0255100FD461A /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
+		5E8B0D101BB0E61800FD461A /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libJieLianService.a; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Packing8583.h; path = TCP/Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Packing8583.m; path = TCP/Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -454,12 +457,10 @@
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		5EDA83E41B9050FE0096391B /* RFDevice_BB01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RFDevice_BB01.h; path = RF_BB01/RFDevice_BB01.h; sourceTree = "<group>"; };
 		5EDA83E51B9050FE0096391B /* RFDevice_BB01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RFDevice_BB01.m; path = RF_BB01/RFDevice_BB01.m; sourceTree = "<group>"; };
-		5EDA84381B9EBF570096391B /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iMagPay.framework; path = "../../Desktop/04_厂商设备接口资料/02_睿付/iMagPay.framework"; sourceTree = "<group>"; };
 		5EDA843A1B9EC36A0096391B /* Define_8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define_8583.h; sourceTree = "<group>"; };
 		5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JLPayDevice_TY01.h; path = JLPayDevice_TY/JLPayDevice_TY01.h; sourceTree = "<group>"; };
 		5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLPayDevice_TY01.m; path = JLPayDevice_TY/JLPayDevice_TY01.m; sourceTree = "<group>"; };
 		5EDA84451B9ED3670096391B /* JieLianService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JieLianService.h; sourceTree = "<group>"; };
-		5EDA84591BA12E500096391B /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libJieLianService.a; sourceTree = "<group>"; };
 		5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalAmountDisplayView.h; sourceTree = "<group>"; };
 		5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalAmountDisplayView.m; sourceTree = "<group>"; };
 		5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransDetailsViewController.h; sourceTree = "<group>"; };
@@ -481,20 +482,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EDA845A1BA12E500096391B /* libJieLianService.a in Frameworks */,
-				5EDA84391B9EBF570096391B /* iMagPay.framework in Frameworks */,
-				5E5E35A71B7C7A0B00560C0A /* libsqlite3.dylib in Frameworks */,
+				5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */,
+				5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */,
+				5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */,
+				5E8B0D0F1BB0255100FD461A /* iMagPay.framework in Frameworks */,
+				5EB9B1401AD79F7600A73190 /* libstdc++.dylib in Frameworks */,
+				5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */,
 				5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */,
 				5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */,
 				5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */,
 				5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */,
 				5E5FA5881B46342600387E69 /* libReliableBurstData_arm64.a in Frameworks */,
-				5EB9B1401AD79F7600A73190 /* libstdc++.dylib in Frameworks */,
 				5EB9B13E1AD79F6A00A73190 /* CoreBluetooth.framework in Frameworks */,
 				5EB9B13C1AD79EC600A73190 /* libMisPos.a in Frameworks */,
 				5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */,
-				5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */,
-				5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -833,6 +834,8 @@
 			children = (
 				5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */,
 				5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */,
+				5EBAA8E41ACD2FA800E2ABDD /* Unpacking8583.h */,
+				5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */,
 				5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */,
 				5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */,
 			);
@@ -842,11 +845,12 @@
 		5EB6F9731AC8DD1C00E47AB5 = {
 			isa = PBXGroup;
 			children = (
+				5E8B0D001BB0051400FD461A /* libsqlite3.tbd */,
 				5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */,
 				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
 				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
 				5E397B4B1AD3677E004F206F /* libxml2.dylib */,
-				5EDA84381B9EBF570096391B /* iMagPay.framework */,
+				5E8B0D0E1BB0255100FD461A /* iMagPay.framework */,
 				5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */,
 				5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */,
 				5ED344361AD8EF910005C890 /* AVFoundation.framework */,
@@ -986,11 +990,9 @@
 		5EBAA8F21ACD2FDC00E2ABDD /* 8583 */ = {
 			isa = PBXGroup;
 			children = (
-				5E9D9BA11BA904AE00A7E8CC /* 新版接口 */,
 				5EBAA8E21ACD2FA800E2ABDD /* GroupPackage8583.h */,
 				5EBAA8E31ACD2FA800E2ABDD /* GroupPackage8583.m */,
-				5EBAA8E41ACD2FA800E2ABDD /* Unpacking8583.h */,
-				5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */,
+				5E9D9BA11BA904AE00A7E8CC /* 新版接口 */,
 				5EBAA8D21ACD2FA800E2ABDD /* ISOHelper.h */,
 				5EBAA8D31ACD2FA800E2ABDD /* ISOHelper.m */,
 				5EBAA8D41ACD2FA800E2ABDD /* ISOBitmap.h */,
@@ -1157,7 +1159,7 @@
 				5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */,
 				5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */,
 				5EDA84451B9ED3670096391B /* JieLianService.h */,
-				5EDA84591BA12E500096391B /* libJieLianService.a */,
+				5E8B0D101BB0E61800FD461A /* libJieLianService.a */,
 			);
 			name = JLPayDevice_TY;
 			sourceTree = "<group>";
@@ -1558,6 +1560,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1578,14 +1581,17 @@
 					"$(PROJECT_DIR)/JLPay/JHL_M60",
 					"$(PROJECT_DIR)/JLPay",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-force_load",
+					"$(PROJECT_DIR)/JLPay/libJieLianService.a",
 					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
@@ -1596,6 +1602,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1616,14 +1623,17 @@
 					"$(PROJECT_DIR)/JLPay/JHL_M60",
 					"$(PROJECT_DIR)/JLPay",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-force_load",
+					"$(PROJECT_DIR)/JLPay/libJieLianService.a",
 					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};

@@ -94,7 +94,12 @@
 - (void) deviceManager:(DeviceManager*)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot;
 
 # pragma mask :  * 刷卡结果:
-- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;
+- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;  // -- 无用了
+- (void) deviceManager:(DeviceManager*)deviceManager
+  didSwipeSuccessOrNot:(BOOL)yesOrNot
+           withMessage:(NSString*)msg
+           andCardInfo:(NSDictionary*)cardInfo;
+
 
 # pragma mask : PIN加密回调
 - (void) didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString*)pin withError:(NSString*)error;

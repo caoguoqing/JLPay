@@ -66,13 +66,17 @@ const NSString* kFieldLength = @"length";
     NSString* length = [infoDictionary valueForKey:(NSString*)kFieldLength];
     NSString* type  = [infoDictionary valueForKey:(NSString*)kFieldType];
 
+    NSLog(@"拆包前:[%@]",formationString);
     int actureLen = length.intValue;
     if ([special isEqualToString:@"99"] || [special isEqualToString:@"999"]) {
         actureLen = [self lengthOfFormation:formationString special:special];
         unformationString = [self unpackingStrOfFormation:formationString type:type inLength:actureLen];
     } else {
         unformationString = [formationString substringToIndex:actureLen];
+        [formationString deleteCharactersInRange:NSMakeRange(0, actureLen)];
     }
+    NSLog(@"拆包后:[%@]",formationString);
+    NSLog(@"拆出域[%@]:%@",infoKey,unformationString);
     return unformationString;
 }
 
@@ -139,8 +143,8 @@ const NSString* kFieldLength = @"length";
         }
     }
     unpacking = [formation substringToIndex:unpackingLen];
-    if (length%2 > 0) {
-        unpacking = [unpacking substringToIndex:length - 1];
+    if ([type isEqualToString:@"bcd"] && length%2 > 0) {
+        unpacking = [unpacking substringToIndex:length];
     }
     [formation deleteCharactersInRange:NSMakeRange(0, unpackingLen)];
     return unpacking;

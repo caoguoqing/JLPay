@@ -13,6 +13,9 @@
 
 #pragma mask : 公共入口
 +(Packing8583*) sharedInstance;
+#pragma mask : 生成F60
++ (NSString*) makeF60OnTrantype:(NSString*)tranType ;
+
 
 #pragma mask : 域值设置:需要打包的
 - (void) setFieldAtIndex:(int)index withValue:(NSString*)value;

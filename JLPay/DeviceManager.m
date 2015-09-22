@@ -195,6 +195,11 @@ static DeviceManager* _sharedDeviceManager = nil;
         [self.delegate deviceManager:self didSwipeSuccessOrNot:yesOrNo withMessage:error];
     }
 }
+- (void)didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString *)error andCardInfo:(NSDictionary *)cardInfo {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(deviceManager:didSwipeSuccessOrNot:withMessage:andCardInfo:)]) {
+        [self.delegate deviceManager:self didSwipeSuccessOrNot:yesOrNo withMessage:error andCardInfo:cardInfo];
+    }
+}
 
 
 

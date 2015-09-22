@@ -33,11 +33,11 @@ static Unpacking8583 *sharedObj2 = nil;
 }
 
 /*
-//1.（2字节包长）
-//2. (5 字节 TPDU)
-//3. (6 字节报文头)
-//4. (4 字节交易类型)
-//5. (8 字节 BITMAP 位图)
+//1. (4  位包长)
+//2. (10 位 TPDU)
+//3. (12 位报文头)
+//4. (4  位交易类型)
+//5. (16 位 BITMAP 位图串)
 //6. (实际交易数据)
 
 */
@@ -810,12 +810,12 @@ static Unpacking8583 *sharedObj2 = nil;
 
 #pragma mask ---- 重写8583报文解包函数 -----------------------------------------------------------
 /*
- //1. (2 字节包长)
- //2. (5 字节 TPDU)
- //3. (6 字节报文头)
- //4. (4 字节交易类型)
- //5. (8 字节 BITMAP 位图)
- //6. (实际交易数据)
+ * 1. (4  位包长)
+ * 2. (10 位 TPDU)
+ * 3. (12 位报文头)
+ * 4. (4  位交易类型)
+ * 5. (16 位 BITMAP 位图串)
+ * 6. (实际交易数据)
  */
 
 -(void)unpacking8583:(NSString *)responseString withDelegate:(id<Unpacking8583Delegate>)sdelegate {
@@ -829,19 +829,24 @@ static Unpacking8583 *sharedObj2 = nil;
         NSLog(@"位图:[%@]",[bitmapArr componentsJoinedByString:@" "]);
         
         // 截取纯域值串
-        NSMutableString* dataString = [[NSMutableString alloc] initWithString:[responseString substringFromIndex:4+10+12+8+16]];
+        NSMutableString* dataString = [[NSMutableString alloc] initWithString:[responseString substringFromIndex:46]];
         
         // 根据位图信息循环拆包
         NSMutableDictionary* dictFields = [NSMutableDictionary dictionaryWithCapacity:bitmapArr.count];
         for (NSString* bitIndex in bitmapArr) {
             // 并将拆包数据打包到字典
+            NSLog(@"拆包域:[%@]",bitIndex);
             NSString* content = [[ISOFieldFormation sharedInstance] unformatStringWithFormation:dataString atIndex:bitIndex.intValue];
             [dictFields setValue:content forKey:bitIndex];
         }
         
+        NSLog(@"拆包后的响应数据包:[%@]",dictFields);
         // 组合响应信息
         NSString* responseCode = [dictFields valueForKey:@"39"];
         responseCode = [PublicInformation stringFromHexString:responseCode];
+        if ([responseCode isEqualToString:@"00"]) {
+            rebackState = YES;
+        }
         rebackStr = [ErrorType errInfo:responseCode];
         rebackStr = [NSString stringWithFormat:@"[%@]%@",responseCode, rebackStr];
         

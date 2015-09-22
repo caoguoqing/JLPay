@@ -796,7 +796,42 @@
     [F60 appendString:@"00"];
     // 补齐整数位
     [F60 appendString:@"0"];
-    return F60;}
+    return F60;
+}
+// -- F60
++ (NSString*) makeF60OnTrantype:(NSString*)tranType {
+    NSMutableString* F60 = [[NSMutableString alloc] initWithString:@"0019"];
+    // 60.1 N2 交易类型
+    if ([tranType isEqualToString:TranType_Consume]) {
+        [F60 appendString:@"22"];
+    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
+        [F60 appendString:@"23"];
+    } else if ([tranType isEqualToString:TranType_DownMainKey]) {
+        [F60 appendString:@"99"];
+    } else if ([tranType isEqualToString:TranType_DownWorkKey]) {
+        [F60 appendString:@"00"];
+    }
+    // 60.2 N6 批次号
+    [F60 appendString:[PublicInformation returnSignSort]];
+    // 60.3 N3 操作类型
+    [F60 appendString:@"003"];
+    // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
+    [F60 appendString:@"1"];
+    // 60.5 N1 费率:
+    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
+    if (rate == nil || [rate isEqualToString:@""]) {
+        rate = @"0";
+    }
+    [F60 appendString:[rate substringToIndex:1]];
+    // 60.6 N4
+    [F60 appendString:@"0000"];
+    // 60.7 N2
+    [F60 appendString:@"00"];
+    // 补齐整数位
+    [F60 appendString:@"0"];
+    return F60;
+}
+
 // -- F61
 + (NSString*) makeF61 {
     NSMutableString* f61 = [[NSMutableString alloc] init];

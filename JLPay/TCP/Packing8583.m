@@ -10,6 +10,7 @@
 #import "ISOHelper.h"
 #import "PublicInformation.h"
 #import "ISOFieldFormation.h"
+#import "Define_Header.h"
 
 @interface Packing8583() {
     NSString* tpdu;
@@ -47,6 +48,9 @@
 
 #pragma mask : 域值设置:需要打包的
 - (void) setFieldAtIndex:(int)index withValue:(NSString*)value {
+    if (value == nil || value.length == 0) {
+        return;
+    }
     [self.dictionaryFieldNamesAndValues setValue:value forKey:[NSString stringWithFormat:@"%d",index]];
 }
 
@@ -57,6 +61,7 @@
     // 根据plist配置格式化所有的域值
     [self resetFormatValueOfFieldsDictionary];
     // 组包
+    NSLog(@"交易报文的所有域:[%@]",self.dictionaryFieldNamesAndValues);
     NSString* stringPackage = [self stringPacking];
     // 清空字典数据
     [self cleanAllFields];
@@ -71,6 +76,43 @@
 
 
 
+
+// -- F60
++ (NSString*) makeF60OnTrantype:(NSString*)tranType {
+    NSMutableString* F60 = [[NSMutableString alloc] init];
+    // 60.1 N2 交易类型
+    if ([tranType isEqualToString:TranType_Consume]) {
+        [F60 appendString:@"22"];
+    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
+        [F60 appendString:@"23"];
+    } else if ([tranType isEqualToString:TranType_DownMainKey]) {
+        [F60 appendString:@"99"];
+    } else if ([tranType isEqualToString:TranType_DownWorkKey]) {
+        [F60 appendString:@"00"];
+    }
+    // 60.2 N6 批次号
+    [F60 appendString:[PublicInformation returnSignSort]];
+    // 60.3 N3 操作类型
+    [F60 appendString:@"003"];
+    // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
+    [F60 appendString:@"1"];
+    // 60.5 N1 费率:
+    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
+    if (rate == nil || [rate isEqualToString:@""]) {
+        rate = @"0";
+    }
+    [F60 appendString:[rate substringToIndex:1]];
+    // 60.6 N4
+    [F60 appendString:@"0000"];
+    // 60.7 N2
+    [F60 appendString:@"00"];
+    // 补齐整数位
+    return F60;
+}
+
+
+
+
 #pragma mask -------------- PRIVATE INTERFACE
 
 // 执行排序
@@ -79,7 +121,7 @@
         return array;
     }
     NSArray* sortedArray = [array sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [obj1 compare:obj2];
+        return [[NSNumber numberWithInteger:[obj1 intValue]] compare:[NSNumber numberWithInteger:[obj2 intValue]]];
     }];
     return sortedArray;
 }
@@ -117,6 +159,7 @@
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];
+    NSLog(@"新接口,排序的位图:[%@]",mapArray);
     // 按排序好的顺序组字符串
     for (NSString* fieldKey in mapArray) {
         [dataString appendString:[self.dictionaryFieldNamesAndValues valueForKey:fieldKey]];
@@ -134,6 +177,8 @@
         }
     }
 }
+
+
 
 
 #pragma mask -------------- getter & setter

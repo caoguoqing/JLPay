@@ -274,7 +274,7 @@ SwipeListener
             }
             pin = [self.deviceSetter getEncryptedPIN:SLC :pan :source];
             NSLog(@"加密后的密文串:[%@]",pin);
-            if (!pin || pin.length == 0) {
+            if (!pin || pin.length != 16) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
                     [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"密码加密失败"];
                 }

@@ -25,8 +25,11 @@
 - (void) didWriteWorkKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 # pragma mask : 刷卡结果回调
 - (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
+- (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error andCardInfo:(NSDictionary*)cardInfo;
+
 # pragma mask : PIN加密回调
 - (void) didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString*)pin withError:(NSString*)error;
+
 # pragma mask : 设备超时
 - (void) deviceTimeOut;
 @end

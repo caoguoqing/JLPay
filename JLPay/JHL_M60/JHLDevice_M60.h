@@ -23,7 +23,9 @@
 # pragma mask : 写工作密钥结果回调
 - (void) didWriteWorkKeySucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
 # pragma mask : 刷卡结果回调
-- (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error;
+- (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error ;
+- (void) didCardSwipedSucOrFail:(BOOL)yesOrNo withError:(NSString*)error andCardInfo:(NSDictionary*)cardInfo;
+
 # pragma mask : 设备超时
 - (void) deviceTimeOut;
 @end
