@@ -158,43 +158,11 @@
 #pragma mask -----------------------  DeviceManagerDelegate
 
 #pragma mask : 刷卡结果的回调
-//- (void)deviceManager:(DeviceManager *)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        // 先停止计时器
-//        if ([self.waitingTimer isValid]) {
-//            [self.waitingTimer invalidate];
-//            self.waitingTimer = nil;
-//        }
-//        // 失败就退出
-//        if (!yesOrNot) {
-//            [self alertForFailedMessage:msg];
-//            return;
-//        }
-//        
-//        // 成功就继续,输入密码或直接发起交易
-//        NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
-//        if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
-//            // 直接发起消费交易
-//            [self toCust:nil];
-//        }
-//        else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
-//            // 打开密码输入提示框
-//            [self makePasswordAlertView];
-//        }
-//        else if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
-//            // 打开密码输入提示框
-//            [self makePasswordAlertView];
-//
-//        }
-//        else if ([deviceType isEqualToString:DeviceType_JLpay_TY01]) {
-//            [self toCust:nil];
-//        }
-//    });
-//}
 - (void)deviceManager:(DeviceManager *)deviceManager
  didSwipeSuccessOrNot:(BOOL)yesOrNot
           withMessage:(NSString *)msg
-          andCardInfo:(NSDictionary *)cardInfo {
+          andCardInfo:(NSDictionary *)cardInfo
+{
     dispatch_async(dispatch_get_main_queue(), ^{
         // 先停止计时器
         if ([self.waitingTimer isValid]) {
@@ -212,6 +180,7 @@
             self.cardInfoOfReading = nil;
         }
         [self.cardInfoOfReading addEntriesFromDictionary:cardInfo];
+        NSLog(@"刷卡读到的卡数据:[%@]",self.cardInfoOfReading);
         // 成功就继续,输入密码或直接发起交易
         NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
         if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
@@ -264,9 +233,16 @@
 #pragma mask : PIN加密密文获取
 - (void)didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString *)pin withError:(NSString *)error {
     if (yesOrNo) {
-        [[NSUserDefaults standardUserDefaults] setValue:pin forKey:Sign_in_PinKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        [self toCust:nil];
+        if (pin && pin.length > 0) {
+            NSMutableString* f22 = [NSMutableString stringWithString:[self.cardInfoOfReading valueForKey:@"22"]];
+            [f22 replaceCharactersInRange:NSMakeRange(2, 1) withString:@"1"];
+            [self.cardInfoOfReading setValue:f22 forKey:@"22"];
+            [self.cardInfoOfReading setValue:pin forKey:@"52"];
+            [self.cardInfoOfReading setValue:@"2600000000000000" forKey:@"53"];
+        } else {
+            [self.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
+        }
+        [self sendTranPackage:[self packingOnTranType:self.stringOfTranType]];
     } else {
         [self alertForFailedMessage:error];
     }
@@ -333,7 +309,8 @@
     NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
     if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
         NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
-        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[PublicInformation returnposCard] onSNVersion:SNVersion];
+        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:SNVersion];
+//        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[PublicInformation returnposCard] onSNVersion:SNVersion];
     } else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
         
     }

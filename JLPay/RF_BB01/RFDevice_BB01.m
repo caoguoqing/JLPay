@@ -220,8 +220,8 @@ SwipeListener
         int breakout = 0;
         while (![self.deviceManager sendDataEnable]) {
             if (breakout++ > 30 * 10) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败:设备连接异常"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败:设备连接异常" andCardInfo:nil];
                 }
                 return ;
             }
@@ -230,14 +230,16 @@ SwipeListener
         NSString* detect = [self.deviceSetter writeDetectCard];
         if (detect && [detect hasPrefix:@"00"]) {
             NSLog(@"IC在插槽,读取IC卡数据...");
-            BOOL swiped = [self getICCardDataWithMoney:(long)[money intValue]];
-            if (swiped) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+            NSDictionary* cardInfo = [self getICCardDataWithMoney:(long)[money intValue]];
+            if (cardInfo) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
+
                 }
             } else {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
+
                 }
             }
         } else {
@@ -261,7 +263,6 @@ SwipeListener
     } else {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSString* pin;
-            NSLog(@"加密[%@]的原始明文串:[%@]",pan,source);
             int breakout = 0;
             while (![self.deviceManager sendDataEnable]) {
                 if (breakout++ > 30*10) {
@@ -273,15 +274,14 @@ SwipeListener
                 [NSThread sleepForTimeInterval:0.1];
             }
             pin = [self.deviceSetter getEncryptedPIN:SLC :pan :source];
-            NSLog(@"加密后的密文串:[%@]",pin);
-            if (!pin || pin.length != 16) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
-                    [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"密码加密失败"];
-                }
-            } else {
+            if (pin && pin.length > 0) {
                 pin = [PublicInformation clearSpaceCharAtContentOfString:pin];
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
                     [self.delegate didEncryptPinSucOrFail:YES pin:[pin uppercaseString] withError:nil];
+                }
+            } else {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+                    [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"密码加密失败"];
                 }
             }
         });
@@ -305,7 +305,6 @@ SwipeListener
         }
     }
     if (!isExist) {
-        NSLog(@"扫描到设备%@:%@",peripheral.name,peripheral.identifier.UUIDString);
         NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:3];
         [dict setObject:peripheral forKey:KeyDataPathNodeDataPath];
         [dict setValue:peripheral.identifier.UUIDString forKey:KeyDataPathNodeIdentifier];
@@ -320,7 +319,6 @@ SwipeListener
 - (void)conectPeripheralSuccess {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         int breakout = 0;
-        NSLog(@"设备连接成功");
         while (![self.deviceManager sendDataEnable]) {
             if (breakout++ > 30 * 10) { // 30秒后要退出
                 NSLog(@"while超时了[%d]",breakout);
@@ -328,7 +326,6 @@ SwipeListener
             }
             [NSThread sleepForTimeInterval:0.1];
         }
-        NSLog(@"设备连接成功");
         // 读取SN号:连接成功之后,且状态为可操作的
         NSString* SNVersion = [self.deviceSetter getSN];
         // SN号格式处理:转换大写、去掉后面FF...字符串
@@ -337,7 +334,6 @@ SwipeListener
             NSRange range = [SNVersion rangeOfString:@"FF"];
             SNVersion = [SNVersion substringToIndex:range.location];
         }
-        NSLog(@"设备[SN:%@]连接成功",SNVersion);
         if (!SNVersion || SNVersion.length == 0) {
             return;
         }
@@ -359,20 +355,11 @@ SwipeListener
 
 #pragma mask : 解析数据
 -(void)onParseData:(SwipeEvent*)event{
-    NSLog(@"onParseData:[%@]",[event getValue]);
-    
-    NSMutableString *ss = [[NSMutableString alloc]init];
-    [ss appendString:@"final(16)=> "];
-    [ss appendString:[event getValue]];
-    [ss appendString:@"\n"];
-    [ss appendString:@"final(10)=> "];
-    [ss appendString:[StringUtils hex_to_str:[event getValue]]];
 }
 
 
 #pragma mask : 刷卡回调
 - (void)onCardDetected:(SwipeEvent *)event {
-    BOOL __block swiped = NO;
     int type = [event getType];
     if (type == EVENT_TYPE_IC_INSERTED) {
         NSLog(@"检测到IC卡,正在读取数据中...");
@@ -384,30 +371,30 @@ SwipeListener
                 }
                 [NSThread sleepForTimeInterval:0.1];
             }
-            swiped = [self getICCardDataWithMoney:100];
+            NSDictionary* cardInfo = [self getICCardDataWithMoney:100];
             // 刷卡回调
-            if (swiped) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+            if (cardInfo) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
                 }
             } else {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
                 }
             }
         });
     } else if (type == EVENT_TYPE_IC_REMOVED) {
         NSLog(@"IC卡已拔出...");
     } else if (type == EVENT_TYPE_MAG_SWIPED) {
-        swiped = [self getTrackCardData];
+        NSDictionary* cardInfo = [self getTrackCardData];
         // 刷卡回调
-        if (swiped) {
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                [self.delegate didCardSwipedSucOrFail:YES withError:nil];
+        if (cardInfo) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
             }
         } else {
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-                [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
             }
         }
     }
@@ -419,11 +406,11 @@ SwipeListener
 #pragma mask -------- private interface
 
 #pragma mask : IC卡数据读取
-- (BOOL) getICCardDataWithMoney:(long)money {
+- (NSDictionary*) getICCardDataWithMoney:(long)money {
     NSString* reset = [self.deviceSetter icReset];
     NSLog(@"ic reset = [%@]",reset);
     if (!reset || [reset hasPrefix:@"ff 3f"] || [reset hasPrefix:@"32 ff"]) {
-        return NO;
+        return nil;
     }
     // 参数设置
     EMVConfigure* configure = [[EMVConfigure alloc] init];
@@ -434,18 +421,12 @@ SwipeListener
     // IC下电
     [self.deviceManager icOff];
     
-    NSLog(@"IC 卡号:%@", [self.deviceManager getIcPan]);
-    NSLog(@"IC 序列号:%@", [self.deviceManager getIcSeq]);
-    NSLog(@"IC 55数据:%@", [self.deviceManager getIcField55]);
-    NSLog(@"IC 二磁:%@", [self.deviceManager getICEncryptedTrack2Data]);
-    NSLog(@"IC 有效期:%@", [self.deviceManager getIcEffDate]);
-    NSLog(@"IC 失效期:%@", [self.deviceManager getIcExpDate]);
+    NSMutableDictionary* cardInfo = [[NSMutableDictionary alloc] init];
+    
     // 数据 - 卡号
     NSString* panStr = [self.deviceManager getIcPan];
     if (panStr && panStr.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:panStr forKey:Card_Number];
-        NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[panStr substringToIndex:6],[panStr substringFromIndex:panStr.length - 4]];
-        [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
+        [cardInfo setValue:panStr forKey:@"2"];
     }
     // 数据 - IC序列号
     NSString* icSeq = [self.deviceManager getIcSeq];
@@ -453,67 +434,52 @@ SwipeListener
         while (icSeq.length < 4) {
             icSeq = [@"0" stringByAppendingString:icSeq];
         }
-        [[NSUserDefaults standardUserDefaults] setValue:icSeq forKey:ICCardSeq_23];
+        [cardInfo setValue:icSeq forKey:@"23"];
     }
     // 数据 - IC卡55域
     NSString* icData = [self.deviceManager getIcField55];
     if (icData && icData.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[icData uppercaseString] forKey:BlueIC55_Information];
+        [cardInfo setValue:[icData uppercaseString] forKey:@"55"];
     }
     // 数据 - 二磁加密数据
     NSString* track2 = [self.deviceManager getICEncryptedTrack2Data];
     if (track2 && track2.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:Two_Track_Data];
+        [cardInfo setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:@"35"];
     }
     // 数据 - 有效期
     NSString* expDate = [self.deviceManager getIcExpDate];
     if (expDate && expDate.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[expDate substringToIndex:4] forKey:Card_DeadLineTime];
+        [cardInfo setValue:[expDate substringToIndex:4] forKey:@"14"];
     }
+    [cardInfo setValue:@"0500" forKey:@"22"];
     
-    // IC卡片标志
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];
-
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    return YES;
+    return cardInfo;
 }
 #pragma mask : 磁条卡数据读取
-- (BOOL) getTrackCardData {
-    NSLog(@"磁条 卡号:%@", [self.deviceManager getMagPan]);
-    NSLog(@"磁条 二磁:%@", [self.deviceManager getTrack2Data]);
-    NSLog(@"磁条 三磁:%@", [self.deviceManager getTrack3Data]);
-    
-    NSLog(@"磁条 有效期:%@", [self.deviceManager getMagExpDate]);
-    
+- (NSDictionary*) getTrackCardData {
+    NSMutableDictionary* cardInfo = [[NSMutableDictionary alloc] init];
     // 卡号
     NSString* pan = [self.deviceManager getMagPan];
     if (pan && pan.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:pan forKey:Card_Number];
-        NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[pan substringToIndex:6],[pan substringFromIndex:pan.length - 4]];
-        [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
-
+        [cardInfo setValue:pan forKey:@"2"];
     }
     // 二磁加密数据
     NSString* track2 = [self.deviceManager getTrack2Data];
     if (track2 && track2.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:Two_Track_Data];
+        [cardInfo setValue:[[track2 substringFromIndex:2] uppercaseString] forKey:@"35"];
     }
     // 三磁加密数据
     NSString* track3 = [self.deviceManager getTrack3Data];
     if (track3 && track3.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[[track3 substringFromIndex:4] uppercaseString] forKey:F36_ThreeTrackData];
+        [cardInfo setValue:[[track3 substringFromIndex:4] uppercaseString] forKey:@"36"];
     }
     // 有效期
     NSString* expDate = [self.deviceManager getMagExpDate];
     if (expDate && expDate.length > 0) {
-        [[NSUserDefaults standardUserDefaults] setValue:expDate forKey:Card_DeadLineTime];
+        [cardInfo setValue:expDate forKey:@"14"];
     }
-    
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];
-
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    return YES;
+    [cardInfo setValue:@"0200" forKey:@"22"];
+    return cardInfo;
 }
 
 
