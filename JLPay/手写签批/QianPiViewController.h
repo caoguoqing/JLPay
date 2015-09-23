@@ -30,6 +30,9 @@
 @property(nonatomic,retain)NSString *lastLiushuiStr;
 
 
+@property (nonatomic, strong) NSDictionary* transInformation;
+
+
 -(void)getCurretnLiushui:(NSString *)liushui;
 
 -(void)leftTitle:(NSString *)title;

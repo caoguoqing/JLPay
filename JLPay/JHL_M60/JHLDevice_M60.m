@@ -472,7 +472,7 @@
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
                 // 解析读到的卡得数据
                 [self GetCard:data];
-                [self cardDataUserDefult];
+//                [self cardDataUserDefult];
                 NSDictionary* cardInfo = [self cardInfoOfReading];
                 // 保存读到的数据到本地
 //                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
@@ -500,7 +500,11 @@
                     error =@"MPOS已关机";
                 else // ByteDate[1]==0xE6,0x02,...
                     error = @"获取卡号数据失败:操作失败,请重试";;
-                [self.delegate didCardSwipedSucOrFail:NO withError:error];
+//                [self.delegate didCardSwipedSucOrFail:NO withError:error];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                    [self.delegate didCardSwipedSucOrFail:NO withError:error andCardInfo:nil];
+                }
+
             }
             break;
         case MAINKEY_CMD:
@@ -662,9 +666,14 @@
         }
     }
     if (dataPath == nil) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-            [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
+//        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
+//            [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
+//        }
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+//            [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
+            [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion] andCardInfo:nil];
         }
+
     } else {
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
@@ -795,7 +804,9 @@
     [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"52"];
     if (strlen((char*)dataStr) > 0) {
         [cardInfo setValue:@"2600000000000000" forKey:@"53"];
+        NSLog(@"52密码:[%s]",dataStr);
     }
+    
     
     // 23 IC卡序列号
     memset(dataStr, 0, 512);

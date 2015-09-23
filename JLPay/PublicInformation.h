@@ -139,8 +139,9 @@
 // app状态栏高度
 +(CGFloat) returnStatusHeight;
 
-// 将获取到的c字符串金额重新封装成12位的 NSString 格式
-+ (NSString*) moneyStringWithCString:(char*)cstring ;
+
+
+
 // app的状态栏高度+控制栏高度
 + (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController*)viewController;
 
@@ -155,5 +156,20 @@
 + (UIImage*) imageScaledBySourceImage:(UIImage*)image
                        withWidthScale:(CGFloat)wScale
                        andHeightScale:(CGFloat)hScale;
+
+#pragma mask 0-------------------------------------------0 8583交易相关
+
+#pragma mask ::: 卡号截取 e.g. 621790******3368
++ (NSString*) cuttingOffCardNo:(NSString*)cardNo ;
+
+#pragma mask ::: 交易名称转换 e.g. 消费-190000
++ (NSString*) transNameWithCode:(NSString*)transCode;
+
+#pragma mask ::: 金额: c小数点格式 -> 12位无小数点格式
++ (NSString*) moneyStringWithCString:(char*)cstring ;
+
+#pragma mask ::: 金额: 12位无小数点格式 -> 小数点格式
++ (NSString*) dotMoneyFromNoDotMoney:(NSString*)noDotMoney;
+
 
 @end

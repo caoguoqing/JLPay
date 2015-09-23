@@ -191,6 +191,7 @@ static NSMutableArray *colors;
     [self.view addSubview:requireBtn];
     
     
+    // -------- 以下无用了
     newVersionVi=[[NewVersionView alloc] initWithFrame:[UIScreen mainScreen].bounds info:@"签名成功" textHidden:YES];
     newVersionVi.backgroundColor=[UIColor clearColor];
     newVersionVi.passwordStr.hidden=YES;
@@ -226,16 +227,8 @@ static NSMutableArray *colors;
         
         PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
         posInformationVc.posImg=self.uploadImage;
-        NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"yyyyMMddHHmmss"];
-        NSString* transDateAndTime = [formatter stringFromDate:[NSDate date]];
-        NSString* trantime = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Time_12];
-        NSString* trandate = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Date_13];
-        transDateAndTime = [NSString stringWithFormat:@"%@/%@/%@ %@:%@:%@",
-                            [transDateAndTime substringToIndex:4],[trandate substringToIndex:2],[trandate substringFromIndex:2],
-                            [trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]
-                            ];
-        [posInformationVc liushuiNum:self.currentLiushuiStr time:transDateAndTime lastliushuinum:self.lastLiushuiStr];
+        
+        [posInformationVc setTransInformation:self.transInformation];
         
         // 跳转到小票界面
         [self.navigationController pushViewController:posInformationVc animated:YES];
@@ -275,16 +268,9 @@ static NSMutableArray *colors;
     
     PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
     posInformationVc.posImg=self.uploadImage;
-    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyyMMddHHmmss"];
-    NSString* transDateAndTime = [formatter stringFromDate:[NSDate date]];
-    NSString* trantime = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Time_12];
-    NSString* trandate = [[NSUserDefaults standardUserDefaults] valueForKey:Trans_Date_13];
-    transDateAndTime = [NSString stringWithFormat:@"%@/%@/%@ %@:%@:%@",
-                        [transDateAndTime substringToIndex:4],[trandate substringToIndex:2],[trandate substringFromIndex:2],
-                        [trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]
-                        ];
-    [posInformationVc liushuiNum:self.currentLiushuiStr time:transDateAndTime lastliushuinum:self.lastLiushuiStr];
+    
+    // 传递交易信息字典
+    [posInformationVc setTransInformation:self.transInformation];
     
     // 跳转到小票界面
     [self.navigationController pushViewController:posInformationVc animated:YES];

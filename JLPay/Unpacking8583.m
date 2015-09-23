@@ -820,13 +820,15 @@ static Unpacking8583 *sharedObj2 = nil;
 
 -(void)unpacking8583:(NSString *)responseString withDelegate:(id<Unpacking8583Delegate>)sdelegate {
     self.stateDelegate = sdelegate;
-    
     NSString* rebackStr = nil;
     BOOL rebackState = YES;
     @try {
+        // 交易类型
+        NSString* msgType = [responseString substringWithRange:NSMakeRange(26, 4)];
+
         // map数组: bitmap串(16进制) -> 二进制串 -> 取串中'1'的位置
         NSArray *bitmapArr=[self bitmapArr:[PublicInformation getBinaryByhex:[responseString substringWithRange:NSMakeRange(30, 16)]]];
-        NSLog(@"位图:[%@]",[bitmapArr componentsJoinedByString:@" "]);
+
         
         // 截取纯域值串
         NSMutableString* dataString = [[NSMutableString alloc] initWithString:[responseString substringFromIndex:46]];
@@ -835,17 +837,17 @@ static Unpacking8583 *sharedObj2 = nil;
         NSMutableDictionary* dictFields = [NSMutableDictionary dictionaryWithCapacity:bitmapArr.count];
         for (NSString* bitIndex in bitmapArr) {
             // 并将拆包数据打包到字典
-            NSLog(@"拆包域:[%@]",bitIndex);
             NSString* content = [[ISOFieldFormation sharedInstance] unformatStringWithFormation:dataString atIndex:bitIndex.intValue];
             [dictFields setValue:content forKey:bitIndex];
         }
+        // 追加交易类型
+        [dictFields setValue:msgType forKey:@"msgType"];
         
-        NSLog(@"拆包后的响应数据包:[%@]",dictFields);
         // 组合响应信息
         NSString* responseCode = [dictFields valueForKey:@"39"];
         responseCode = [PublicInformation stringFromHexString:responseCode];
-        if ([responseCode isEqualToString:@"00"]) {
-            rebackState = YES;
+        if (![responseCode isEqualToString:@"00"]) {
+            rebackState = NO;
         }
         rebackStr = [ErrorType errInfo:responseCode];
         rebackStr = [NSString stringWithFormat:@"[%@]%@",responseCode, rebackStr];
@@ -854,7 +856,6 @@ static Unpacking8583 *sharedObj2 = nil;
         if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {
             [self.stateDelegate didUnpackDatas:dictFields onState:rebackState withErrorMsg:rebackStr];
         }
-        
     }
     @catch (NSException *exception) {
         if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {

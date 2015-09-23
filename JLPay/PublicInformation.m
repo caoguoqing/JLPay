@@ -810,31 +810,6 @@
 
 
 
-// 将获取到的c字符串金额重新封装成12位的 NSString 格式
-+ (NSString*) moneyStringWithCString:(char*)cstring {
-    char* newString = (char*)malloc(12+1);
-    memset(newString, 0x00, 12+1);
-    memset(newString, '0', 12);
-    int len = (int)strlen(cstring);
-    int setIndex = 12 - 1;
-    char* tmp = cstring + len - 1;
-    while (1) {
-        if (tmp == cstring) {
-            newString[setIndex] = *tmp;
-            break;
-        }
-        if (*tmp != '.') {
-            newString[setIndex] = *tmp;
-            setIndex--;
-        }
-        tmp--;
-    }
-    
-    NSString* moneyString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
-    free(newString);
-    return moneyString;
-}
-
 // app的状态栏高度+控制栏高度
 + (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController *)viewController {
     CGFloat height = 0.0;
@@ -891,7 +866,74 @@
     return retString;
 }
 
+#pragma mask ::: 卡号截取 e.g. 621790******3368
++ (NSString*) cuttingOffCardNo:(NSString*)cardNo {
+    if (!cardNo || cardNo.length < 13) {
+        return nil;
+    }
+    NSMutableString* cuttingCardNo = [NSMutableString stringWithCapacity:6+6+4];
+    [cuttingCardNo appendString:[cardNo substringToIndex:6]];
+    [cuttingCardNo appendString:@"******"];
+    [cuttingCardNo appendString:[cardNo substringFromIndex:cardNo.length - 4]];
+    return cuttingCardNo;
+}
 
+#pragma mask ::: 交易名称转换 e.g. 消费-190000
++ (NSString*) transNameWithCode:(NSString*)transCode {
+    NSString* transName = nil;
+    if ([transCode isEqualToString:@"190000"]) {
+        transName = @"消费 (SALE)";
+    }
+    else if ([transCode isEqualToString:@"280000"]) {
+        transName = @"消费撤销 (VOID)";
+    }
+    return transName;
+}
+
+#pragma mask ::: 金额: 12位无小数点格式 -> 小数点格式
++ (NSString*) dotMoneyFromNoDotMoney:(NSString*)noDotMoney {
+    // 先去掉多余的前0
+    NSString* newMoney = [NSString stringWithFormat:@"%d",noDotMoney.intValue];
+    NSMutableString* dotMoney = [[NSMutableString alloc] init];
+    if (newMoney.length > 2) {
+        [dotMoney appendFormat:@"%@.%@",[newMoney substringToIndex:newMoney.length - 2],[newMoney substringFromIndex:newMoney.length - 2]];
+    } else if (newMoney.length > 0) {
+        [dotMoney appendString:@"0."];
+        for (int i = 0; i < 2 - newMoney.length; i++) {
+            [dotMoney appendString:@"0"];
+        }
+        [dotMoney appendString:newMoney];
+    } else {
+        [dotMoney appendString:@"0.00"];
+    }
+    return dotMoney;
+}
+
+
+#pragma mask ::: 金额: c小数点格式 -> 12位无小数点格式
++ (NSString*) moneyStringWithCString:(char*)cstring {
+    char* newString = (char*)malloc(12+1);
+    memset(newString, 0x00, 12+1);
+    memset(newString, '0', 12);
+    int len = (int)strlen(cstring);
+    int setIndex = 12 - 1;
+    char* tmp = cstring + len - 1;
+    while (1) {
+        if (tmp == cstring) {
+            newString[setIndex] = *tmp;
+            break;
+        }
+        if (*tmp != '.') {
+            newString[setIndex] = *tmp;
+            setIndex--;
+        }
+        tmp--;
+    }
+    
+    NSString* moneyString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
+    free(newString);
+    return moneyString;
+}
 
 // 缩放图片
 + (UIImage*) imageScaledBySourceImage:(UIImage*)image

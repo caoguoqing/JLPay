@@ -61,7 +61,7 @@
     // 根据plist配置格式化所有的域值
     [self resetFormatValueOfFieldsDictionary];
     // 组包
-    NSLog(@"交易报文的所有域:[%@]",self.dictionaryFieldNamesAndValues);
+    NSLog(@"准备打包:[%@]",self.dictionaryFieldNamesAndValues);
     NSString* stringPackage = [self stringPacking];
     // 清空字典数据
     [self cleanAllFields];
@@ -109,7 +109,14 @@
     // 补齐整数位
     return F60;
 }
-
++ (NSString*) makeF60ByLast60:(NSString*)last60 {
+    // 只需要修改 60.3 改为 203 // 0019 22 000000 000 500000000
+    NSMutableString* new60 = [[NSMutableString alloc] init];
+    [new60 appendString:[last60 substringToIndex:2 + 6]];
+    [new60 appendString:@"203"];
+    [new60 appendString:[last60 substringFromIndex:2+6+3]];
+    return new60;
+}
 
 
 
@@ -135,6 +142,7 @@
     [string appendString:[self bitMapHexString]];
     [string appendString:[self allDataString]];
     NSString* lengthString = [PublicInformation ToBHex:(int)string.length/2];
+    
     NSString* retString = [NSString stringWithFormat:@"%@%@", lengthString, string];
     return retString;
 }
@@ -159,7 +167,6 @@
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];
-    NSLog(@"新接口,排序的位图:[%@]",mapArray);
     // 按排序好的顺序组字符串
     for (NSString* fieldKey in mapArray) {
         [dataString appendString:[self.dictionaryFieldNamesAndValues valueForKey:fieldKey]];

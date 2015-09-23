@@ -18,11 +18,7 @@
 
 @property(nonatomic,retain)UIImage *scrollAllImg;
 
-@property(nonatomic,retain)NSString* infoLiushuiStr;
-@property(nonatomic,retain)NSString *timeStr;
-@property(nonatomic,retain)NSString *lastLiushuiStr;
+@property (nonatomic, strong) NSDictionary* transInformation;
 
-
--(void)liushuiNum:(NSString *)num time:(NSString *)ti lastliushuinum:(NSString *)num2;
 
 @end

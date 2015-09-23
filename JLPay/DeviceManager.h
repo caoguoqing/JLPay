@@ -94,7 +94,7 @@
 - (void) deviceManager:(DeviceManager*)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot;
 
 # pragma mask :  * 刷卡结果:
-- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;  // -- 无用了
+//- (void) deviceManager:(DeviceManager*)deviceManager didSwipeSuccessOrNot:(BOOL)yesOrNot withMessage:(NSString*)msg;  // -- 无用了
 - (void) deviceManager:(DeviceManager*)deviceManager
   didSwipeSuccessOrNot:(BOOL)yesOrNot
            withMessage:(NSString*)msg

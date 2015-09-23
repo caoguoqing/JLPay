@@ -25,21 +25,13 @@
 @property (nonatomic, strong) JLActivity* activitor;
 @end
 
+
 @implementation PosInformationViewController
 @synthesize uploadRequest = _uploadRequest;
 @synthesize activitor = _activitor;
 @synthesize posImg;
 @synthesize scrollAllImg;
-@synthesize infoLiushuiStr;
-@synthesize timeStr;
-@synthesize lastLiushuiStr;
 
-
--(void)liushuiNum:(NSString *)num time:(NSString *)ti lastliushuinum:(NSString *)num2{
-    self.timeStr=ti;
-    self.infoLiushuiStr=num;
-    self.lastLiushuiStr=num2;
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -51,16 +43,12 @@
 }
 
 
-/**
- *    重新上传
- */
+/* 重新上传 */
 -(void)uploadMethod{
     [self chatUploadImage];
 }
 
-/**
- *    确定-上传小票图片
-*/
+/* 确定-上传小票图片 */
 -(void)requireMethod{
     [self chatUploadImage];
 }
@@ -120,7 +108,6 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentRight font:midFont];
     [scrollVi addSubview:textLabel];
     
-    
     // 商户名称 - 名
     text = @"商户名称(MERCHANT NAME)";
     frame.origin.y += inset + frame.size.height;
@@ -159,6 +146,7 @@
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
+
     // 卡号 - 名
     text = @"卡号(CARD NO)";
     frame.origin.y += inset + frame.size.height;
@@ -166,11 +154,12 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 卡号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll];
+    text = [PublicInformation cuttingOffCardNo:[self.transInformation valueForKey:@"2"]];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
+
     // 交易类型 - 名
     text = @"交易类型(TRANS TYPE)";
     frame.origin.y += inset + frame.size.height;
@@ -178,17 +167,12 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 交易类型 - 值
-    text=[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type];
-    if ([text isEqualToString:@"消费"]) {
-        text = [text stringByAppendingString:@" (SALE)"];
-    } else if ([text isEqualToString:@"消费撤销"]) {
-        text = [text stringByAppendingString:@" (VOID)"];
-    }
+    text = [PublicInformation transNameWithCode:[self.transInformation valueForKey:@"3"]];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-    
+
     // 金额 - 名
     text = @"金额(AMOUNT)";
     frame.origin.y += inset + frame.size.height;
@@ -196,7 +180,8 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 金额 - 值
-    text = [NSString stringWithFormat:@"RMB: %@",[PublicInformation returnMoney]];;
+    text = @"RMB: ";
+    text = [text stringByAppendingString:[PublicInformation dotMoneyFromNoDotMoney:[self.transInformation valueForKey:@"4"]]];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
@@ -209,9 +194,21 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 日期/时间 - 值
-    text = self.timeStr;
-    frame.origin.y += frame.size.height;
+    NSMutableString* detailDate = [[NSMutableString alloc] init];
+    [detailDate appendString:[[PublicInformation nowDate] substringToIndex:4]];
+    [detailDate appendString:@"/"];
+    [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringToIndex:2]];
+    [detailDate appendString:@"/"];
+    [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringFromIndex:2]];
+    [detailDate appendString:@" "];
+    [detailDate appendString:[[self.transInformation valueForKey:@"12"] substringToIndex:2]];
+    [detailDate appendString:@":"];
+    [detailDate appendString:[[self.transInformation valueForKey:@"12"] substringWithRange:NSMakeRange(2, 2)]];
+    [detailDate appendString:@":"];
+    [detailDate appendString:[[self.transInformation valueForKey:@"12"] substringFromIndex:4]];
+    text = (NSString*)detailDate;
     
+    frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
@@ -224,11 +221,13 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 发卡行号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:ISS_NO_44_1];
+    NSString* f44 = [PublicInformation stringFromHexString:[self.transInformation valueForKey:@"44"]];
+    text = [f44 substringToIndex:f44.length/2];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
+
     // 收单行号 - 名
     text = @"收单行号(ACQ NO)";
     frame.origin.y += frame.size.height + inset;
@@ -237,15 +236,11 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 收单行号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:ACQ_NO_44_2];
+    text = [f44 substringFromIndex:f44.length/2];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-    
-    
-    
-    
     
     // 批次号 - 名
     text = @"批次号(BATCH NO)";
@@ -259,6 +254,7 @@
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
+
     // 凭证号 - 名
     text = @"凭证号(VOUCHER NO)";
     frame.origin.y += frame.size.height + inset;
@@ -266,12 +262,11 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 凭证号 - 值
-    text = self.infoLiushuiStr;
+    text = [self.transInformation valueForKey:@"11"];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-    
     
     // 授权码 - 名
     text = @"授权码(AUTH NO)";
@@ -280,13 +275,12 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 授权码 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:AuthNo_38];
+    text = [self.transInformation valueForKey:@"38"];
     if (text == nil || [text isEqualToString:@""]) text = @" ";
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-    
     
     // 交易参考号 - 名
     text = @"交易参考号(REFER NO)";
@@ -295,12 +289,14 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 交易参考号 - 值
-    text = [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]];
+    text = [self.transInformation valueForKey:@"37"];
+    text = [PublicInformation stringFromHexString:text];
+
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-    
+
     // 有效期 - 名
     text = @"有效期(EXP DATE)";
     frame.origin.y += frame.size.height + inset;
@@ -308,13 +304,11 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 有效期 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:EXP_DATE_14]; // yymm
+    text = [self.transInformation valueForKey:@"14"];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-    
-    
     
     // 备注 - 名
     text = @"备注(REFERENCE)";
@@ -441,20 +435,7 @@
 
     [NSThread detachNewThreadSelector:@selector(uploadRequestMethod:) toTarget:self withObject:uploadString];
 }
-/**
- * 签名图片上传接口
- *
- * @param money
- *            消费金额
- * @param trackNum
- *            流水号
- * @param batchNum
- *            批次号
- * @param operatorNum
- *            操作员号
- * @param accountNum
- *            卡号
- * ***/
+/*** 签名图片上传接口 ***/
 -(void)uploadRequestMethod:(NSString *)url{
     [self.uploadRequest setDelegate:self];
     
@@ -466,20 +447,18 @@
      uploadRequestAmoumt	交易金额        以分为单位
      uploadRequestTime      请求时间        14位
      */
-    NSMutableDictionary* headerInfo = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[PublicInformation returnBusiness],
-                                                                    [PublicInformation returnBusinessName],
-                                                                    [PublicInformation stringFromHexString:[PublicInformation returnConsumerSort]],
-                                                                    [PublicInformation returnTerminal],
-                                                                    [PublicInformation returnMoney],
-                                                                    [self formatTime:self.timeStr], // 2015-07-10 14:38:52  -> 20150710143852
-                                                                        nil]
-                                                           forKeys:[NSArray arrayWithObjects:
-                                                                    @"uploadRequstMchntNo",
-                                                                    @"uploadRequestMchntNM",
-                                                                    @"uploadRequestReferNo",
-                                                                    @"uploadRequestTermNo",
-                                                                    @"uploadRequestAmoumt",
-                                                                    @"uploadRequestTime", nil]];
+    NSMutableDictionary* headerInfo = [[NSMutableDictionary alloc] init];
+    [headerInfo setValue:[PublicInformation returnBusiness] forKey:@"uploadRequstMchntNo"];
+    [headerInfo setValue:[PublicInformation returnBusinessName] forKey:@"uploadRequestMchntNM"];
+    [headerInfo setValue:[PublicInformation stringFromHexString:[self.transInformation valueForKey:@"37"]] forKey:@"uploadRequestReferNo"];
+    [headerInfo setValue:[PublicInformation stringFromHexString:[self.transInformation valueForKey:@"41"]] forKey:@"uploadRequestTermNo"];
+    [headerInfo setValue:[self.transInformation valueForKey:@"4"] forKey:@"uploadRequestAmoumt"];
+    
+    NSMutableString* requestTime = [[NSMutableString alloc] init];
+    [requestTime appendString:[[PublicInformation nowDate] substringToIndex:4]];
+    [requestTime appendString:[self.transInformation valueForKey:@"13"]];
+    [requestTime appendString:[self.transInformation valueForKey:@"12"]];
+    [headerInfo setValue:requestTime forKey:@"uploadRequestTime"];
     
     [self.uploadRequest setRequestHeaders:headerInfo];
     [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
@@ -527,81 +506,6 @@
             [alert show];
         });
     }
-}
-
-//缓存图片路径
--(void)saveImagePathMethod:(NSString *)url{
-    NSString *exchangeTypeStr=[[NSUserDefaults standardUserDefaults] valueForKey:ExchangeMoney_Type];
-    //撤销支付
-    if ([exchangeTypeStr isEqualToString:@"撤销支付"]) {
-        
-        NSMutableArray *resultArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:TheCarcd_Record]];
-        
-        NSMutableArray *newArr=[[NSMutableArray alloc] initWithArray:resultArr];
-        
-        for (int i=0; i<[resultArr count]; i++) {
-            if ([[[newArr objectAtIndex:i] objectForKey:@"liushui"] isEqualToString:self.infoLiushuiStr]) {
-                NSLog(@"liushui====%@====%@",[[newArr objectAtIndex:i] objectForKey:@"liushui"],self.lastLiushuiStr);
-                NSMutableDictionary *dic=[[NSMutableDictionary alloc] initWithDictionary:[newArr objectAtIndex:i]];
-                [dic addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:url,@"path", nil]];
-                [newArr replaceObjectAtIndex:i withObject:dic];
-            }
-        }
-        NSLog(@"撤销支付=====%@",newArr);
-        [[NSUserDefaults standardUserDefaults] setObject:newArr forKey:TheCarcd_Record];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-    }
-    //添加本次消费记录,图片路径
-    else{
-        
-        NSMutableArray *resultArr=[[NSMutableArray alloc] init];
-        
-        NSMutableArray *allCardArr=[[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] valueForKey:Save_All_NonCardInfo]];
-        for (int i=0; i<[allCardArr count]; i++) {
-            [resultArr addObjectsFromArray:[[NSUserDefaults standardUserDefaults] objectForKey:[allCardArr objectAtIndex:i]]];
-        }
-        for (int i=0; i<[resultArr count]; i++) {
-            if ([[[resultArr objectAtIndex:i] objectForKey:@"liushui"] isEqualToString:self.infoLiushuiStr]) {
-                NSMutableDictionary *dic=[[NSMutableDictionary alloc] initWithDictionary:[resultArr objectAtIndex:i]];
-                [dic addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:url,@"path", nil]];
-                [resultArr replaceObjectAtIndex:i withObject:dic];
-            }
-        }
-        [[NSUserDefaults standardUserDefaults] setObject:resultArr forKey:TheCarcd_Record];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
-// 格式化时间为无任何符号格式
-- (NSString*) formatTime:(NSString*)timestr {
-    // 2015-07-10 14:38:52  -> 20150710143852
-    int length = (int)[timestr length] + 1;
-    char* str = (char*)malloc(length);
-    char* ctimestr = (char*)malloc(14 + 1);
-    memset(str, 0x00, length);
-    memcpy(str, [timestr cStringUsingEncoding:NSASCIIStringEncoding], length - 1);
-    char* temp = str;
-    int index = 0;
-    for (int i = 0; i < length - 1; i++) {
-        if (*temp < '0' || *temp > '9') {
-            temp++;
-            continue;
-        } else {
-            ctimestr[index++] = *temp;
-            temp++;
-        }
-    }
-    NSLog(@"14位时间:[%s]", ctimestr);
-    NSString* normalTime = [NSString stringWithCString:ctimestr encoding:NSASCIIStringEncoding];
-    free(str);
-    free(ctimestr);
-    return normalTime;
 }
 
 

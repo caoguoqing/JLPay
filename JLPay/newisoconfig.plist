@@ -263,7 +263,9 @@
 	<key>36</key>
 	<dict>
 		<key>type</key>
-		<string></string>
+		<string>asc</string>
+		<key>special</key>
+		<string>999</string>
 		<key>length</key>
 		<string></string>
 	</dict>
@@ -379,9 +381,9 @@
 	<key>52</key>
 	<dict>
 		<key>type</key>
-		<string></string>
+		<string>bcd</string>
 		<key>length</key>
-		<string></string>
+		<string>16</string>
 	</dict>
 	<key>53</key>
 	<dict>
