@@ -91,7 +91,6 @@ SwipeListener
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
     for (NSDictionary* dict in self.deviceList) {
         if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
-            NSLog(@"正在连接设备:%@",identifier);
             self.connectedIdentifier = identifier;
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
                 [self.deviceManager conectDiscoverPeripheral:[dict objectForKey:KeyDataPathNodeDataPath]];
@@ -229,12 +228,10 @@ SwipeListener
         }
         NSString* detect = [self.deviceSetter writeDetectCard];
         if (detect && [detect hasPrefix:@"00"]) {
-            NSLog(@"IC在插槽,读取IC卡数据...");
             NSDictionary* cardInfo = [self getICCardDataWithMoney:(long)[money intValue]];
             if (cardInfo) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
                     [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
-
                 }
             } else {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
@@ -321,7 +318,6 @@ SwipeListener
         int breakout = 0;
         while (![self.deviceManager sendDataEnable]) {
             if (breakout++ > 30 * 10) { // 30秒后要退出
-                NSLog(@"while超时了[%d]",breakout);
                 return;
             }
             [NSThread sleepForTimeInterval:0.1];
@@ -350,9 +346,6 @@ SwipeListener
     });
 }
 
-
-
-
 #pragma mask : 解析数据
 -(void)onParseData:(SwipeEvent*)event{
 }
@@ -362,7 +355,6 @@ SwipeListener
 - (void)onCardDetected:(SwipeEvent *)event {
     int type = [event getType];
     if (type == EVENT_TYPE_IC_INSERTED) {
-        NSLog(@"检测到IC卡,正在读取数据中...");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             int breakout = 0;
             while (![self.deviceManager sendDataEnable]) {
@@ -408,7 +400,6 @@ SwipeListener
 #pragma mask : IC卡数据读取
 - (NSDictionary*) getICCardDataWithMoney:(long)money {
     NSString* reset = [self.deviceSetter icReset];
-    NSLog(@"ic reset = [%@]",reset);
     if (!reset || [reset hasPrefix:@"ff 3f"] || [reset hasPrefix:@"32 ff"]) {
         return nil;
     }

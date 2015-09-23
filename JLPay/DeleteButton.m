@@ -24,7 +24,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        //
         self.imageView                      = [[UIImageView alloc] initWithFrame:CGRectMake(frame.size.width/4.0, frame.size.height/4.0, frame.size.width/2.0, frame.size.height/2.0)];
         self.imageView.image                = [UIImage imageNamed:@"delete"];
         [self addSubview:self.imageView];
@@ -32,9 +31,5 @@
     return self;
 }
 
-//- (void)layoutSubviews {
-////    self.titleLabel.font                   = [UIFont f];
-////    self.titleLabel.textColor                = [UIColor clearColor];
-//}
 
 @end

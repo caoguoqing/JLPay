@@ -29,9 +29,7 @@
         self.imageView              = [[UIImageView alloc] initWithFrame:CGRectZero];
         // 按钮 label
         self.labelName              = [[UILabel alloc] initWithFrame:CGRectZero];
-        
         // 按钮背景色
-//        self.backgroundColor        = [UIColor colorWithWhite:0.7 alpha:0.5];
         self.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0];
 
     }

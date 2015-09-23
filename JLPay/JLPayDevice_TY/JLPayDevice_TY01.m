@@ -166,13 +166,11 @@ TYJieLianDelegate
 
 #pragma mask : 刷卡
 - (void)cardSwipeWithMoney:(NSString *)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString *)SNVersion {
-    NSLog(@"刷卡金额:%@",money);
     CBPeripheral* peripheral = [self peripheralOnSNVersion:SNVersion];
     if (peripheral) {
         [self.deviceManager MagnAmountPasswordCardAmount:money TimeOut:20];
     } else {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-//            [self.delegate didCardSwipedSucOrFail:NO withError:@"设备未连接"];
             [self.delegate didCardSwipedSucOrFail:NO withError:@"设备未连接" andCardInfo:nil];
         }
     }
@@ -205,8 +203,6 @@ TYJieLianDelegate
     }
     if (!isExist) {
         // 设备列表追加
-        NSLog(@"扫描到新设备%@:%@",peripheral.name,peripheral.identifier.UUIDString);
-
         NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
         [dict setObject:peripheral forKey:KeyDataPathNodeDataPath];
         [dict setValue:peripheral.identifier.UUIDString forKey:KeyDataPathNodeIdentifier];
@@ -222,7 +218,6 @@ TYJieLianDelegate
 #pragma mask : 连接设备的回调
 - (void)didConnectPeripheral:(CBPeripheral *)peripheral {
     self.connectedPeripheral = peripheral;
-    NSLog(@"已连接<>设备%@:%@",peripheral.name,peripheral.identifier.UUIDString);
     for (NSDictionary* dict in self.deviceList) {
         CBPeripheral* iperipheral = [dict objectForKey:KeyDataPathNodeDataPath];
         if ([peripheral.identifier.UUIDString isEqualToString:iperipheral.identifier.UUIDString]) {
@@ -236,7 +231,6 @@ TYJieLianDelegate
 #pragma mask : 设备丢失的回调
 - (void)didDisconnectPeripheral:(CBPeripheral *)peripheral{
     self.connectedPeripheral = nil;
-    NSLog(@"设备已丢失:%@",peripheral.identifier.UUIDString);
     for (NSDictionary* dict in self.deviceList) {
         if ([[dict valueForKey:KeyDataPathNodeIdentifier] isEqualToString:peripheral.identifier.UUIDString]) {
         }
@@ -311,7 +305,6 @@ TYJieLianDelegate
                 cardSwipedSuccess = NO;
                 NSLog(@"刷卡失败");
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-//                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败"];
                     [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
                 }
             }
@@ -328,18 +321,11 @@ TYJieLianDelegate
         return;
     }
     NSMutableString* f22 = [NSMutableString stringWithString:@"0000"];
-    NSString* cardType = [data valueForKey:@"cardType"];
-    NSLog(@"卡类型:%@",cardType);
-    BOOL trackCardType = YES;
-    
     if ([[data valueForKey:@"cardType"] isEqualToString:@"01"]) {
-        trackCardType = NO;
         [f22 replaceCharactersInRange:NSMakeRange(1, 1) withString:@"5"];
     } else {
         [f22 replaceCharactersInRange:NSMakeRange(1, 1) withString:@"2"];
     }
-//    [[NSUserDefaults standardUserDefaults] setBool:trackCardType forKey:CardTypeIsTrack];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
     
     // 回调带回的卡数据信息字典
     NSMutableDictionary* cardInfo = [[NSMutableDictionary alloc] init];
@@ -349,59 +335,43 @@ TYJieLianDelegate
         if (!value || value.length == 0) {
             continue;
         }
-//        NSLog(@"key=[%@],value=[%@]",key,value);
-        if (trackCardType) {    // 磁条卡
+        if ([f22 hasPrefix:@"02"]) {    // 磁条卡
             // 卡号
             if ([key isEqualToString:@"cardNumber"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Card_Number];
-//                NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[value substringToIndex:6],[value substringFromIndex:value.length - 4]];
-//                [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
                 [cardInfo setValue:value forKey:@"2"];
             }
             // 二磁道
             else if ([key isEqualToString:@"encTrack2Ex"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Two_Track_Data];
                 [cardInfo setValue:value forKey:@"35"];
             }
             // 三磁道
             else if ([key isEqualToString:@"encTrack3Ex"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:F36_ThreeTrackData];
                 [cardInfo setValue:value forKey:@"36"];
             }
             // 密文密码
             else if ([key isEqualToString:@"pinBlock"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Sign_in_PinKey];
                 [cardInfo setValue:value forKey:@"52"];
             }
             // 有效期
             else if ([key isEqualToString:@"cardValidDate"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Card_DeadLineTime];
                 [cardInfo setValue:value forKey:@"14"];
             }
         } else {                // IC卡
             // 卡号
             if ([key isEqualToString:@"cardNumber"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Card_Number];
-//                NSString* cardNumNotAll = [NSString stringWithFormat:@"%@******%@",[value substringToIndex:6],[value substringFromIndex:value.length - 4]];
-//                [[NSUserDefaults standardUserDefaults] setValue:cardNumNotAll forKey:GetCurrentCard_NotAll];
                 [cardInfo setValue:value forKey:@"2"];
             }
             // 二磁道
             else if ([key isEqualToString:@"track2Data"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Two_Track_Data];
                 [cardInfo setValue:value forKey:@"35"];
             }
             // 密文密码
             else if ([key isEqualToString:@"pinBlock"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Sign_in_PinKey];
                 [cardInfo setValue:value forKey:@"52"];
-
             }
             // 卡有效期
             else if ([key isEqualToString:@"cardValidDate"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:Card_DeadLineTime];
                 [cardInfo setValue:value forKey:@"14"];
-
             }
             // 卡序列号
             else if ([key isEqualToString:@"masterSN"]) {
@@ -409,15 +379,12 @@ TYJieLianDelegate
                     value = [@"0" stringByAppendingString:value];
                 }
                 [cardInfo setValue:value forKey:@"23"];
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:ICCardSeq_23];
             }
             // IC卡数据
             else if ([key isEqualToString:@"ic_authData"]) {
-//                [[NSUserDefaults standardUserDefaults] setValue:value forKey:BlueIC55_Information];
                 [cardInfo setValue:value forKey:@"55"];
             }
         }
-//        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
     NSString* pin = [data valueForKey:@"pinBlock"];
@@ -429,10 +396,6 @@ TYJieLianDelegate
     }
     [cardInfo setValue:f22 forKey:@"22"];
 
-    
-//    if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-//        [self.delegate didCardSwipedSucOrFail:YES withError:nil];
-//    }
     if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
         [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
     }

@@ -341,14 +341,12 @@
  *      - 扫描到设备后仅仅添加到设备列表;
  */
 - (void)didGetDeviceList:(NSArray *)devices andConnected:(NSArray *)connectList {
-    NSLog(@"-------");
     for (ISBLEDataPath* dataPath in devices) {
         NSString* deviceName = [dataPath advName];
 
         if (!deviceName || ![deviceName hasPrefix:@"JHLM60"]) {
             continue;
         }
-        NSLog(@"扫描到设备%@:%@",deviceName,dataPath.UUID.UUIDString);
         BOOL isExist = NO;
         for (NSDictionary* curDeviceDict in self.knownDeviceList) {
             ISBLEDataPath* curDataPath = [curDeviceDict objectForKey:KeyDataPathNodeDataPath];
@@ -359,7 +357,6 @@
         }
         if (isExist == NO) {
             // 新扫描到的设备要添加到设备列表:并回调出ID
-            NSLog(@"扫描到设备%@:%@",deviceName,dataPath.UUID.UUIDString);
             NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity:3];
             [dict setObject:dataPath forKey:KeyDataPathNodeDataPath];
             [dict setValue:dataPath.UUID.UUIDString forKey:KeyDataPathNodeIdentifier];
@@ -370,66 +367,6 @@
         }
     }
 }
-
-
-/*------------------------------------------------
- * 函  数: updateConnetedListOnDevice:bySNNum
- * 功  能: 更新本地已连接设备列表中对应设备的SN号;
- *          终端号跟设备入口以字典形式保存着；
- *
- * 参  数:
- *          (ISDataPath*)dataPath
- *          (NSString*)terminalNum 终端编号
- * 返  回: 无
- *------------------------------------------------
- */
-//- (void) updateConnetedListOnDevice:(ISDataPath*)dataPath bySNNum:(NSString*)SNNum {
-//    ISBLEDataPath* oDataPath = (ISBLEDataPath*)dataPath;
-//    for (NSDictionary* dataDic in self.knownDeviceList) {
-//        ISBLEDataPath* innerDataPath = [dataDic valueForKey:KeyDataPathNodeDataPath];
-//        if (oDataPath.peripheral == innerDataPath.peripheral) {
-//            [dataDic setValue:SNNum forKeyPath:KeyDataPathNodeSNVersion];
-//            // 刷新SN号列表给外部协议
-//            [self renewSNVersionNumbers];
-//            break;
-//        }
-//    }
-//}
-
-
-
-/*
- * ---------------------------
- * 函  数: renewSNVersionNumbers
- * 功  能: 刷新外部协议从本控制器读取的所有设备的SN号;
- *          终端号跟设备入口以字典形式保存着；
- *
- * 参  数: 无
- * 返  回: 无
- * ---------------------------
- */
-//- (void) renewSNVersionNumbers {
-//    NSMutableArray* SNVersionArray = [[NSMutableArray alloc] init];
-//    for (NSDictionary* dic in self.knownDeviceList) {
-//        NSString* SNVersion = [dic valueForKey:KeyDataPathNodeSNVersion];
-//        // 如果sn号不为空
-//        if (SNVersion != nil && ![SNVersion isEqualToString: @""]) {
-//            ISBLEDataPath* dataPath = [dic objectForKey:KeyDataPathNodeDataPath];
-//            // 取出设备的 identifier
-//            NSString* identifier = [[dataPath peripheral] identifier].UUIDString;
-//            NSMutableDictionary* newDic = [[NSMutableDictionary alloc] init];
-//            [newDic setValue:SNVersion forKey:KeyDataPathNodeSNVersion];
-//            [newDic setValue:identifier forKey:KeyDataPathNodeIdentifier];
-//            // 封装 sn+identifier 并追加到回调的数组中
-//            [SNVersionArray addObject:newDic];
-//        }
-//    }
-//    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(renewSNVersionNumbers:)]) {
-//        [self.delegate renewSNVersionNumbers:SNVersionArray];
-//    }
-//}
-
-    
 
 
 #pragma mask --------------------- 设备响应数据
@@ -472,12 +409,7 @@
                 NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
                 // 解析读到的卡得数据
                 [self GetCard:data];
-//                [self cardDataUserDefult];
                 NSDictionary* cardInfo = [self cardInfoOfReading];
-                // 保存读到的数据到本地
-//                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-//                    [self.delegate didCardSwipedSucOrFail:YES withError:nil];
-//                }
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
                     [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
                 }
@@ -500,7 +432,6 @@
                     error =@"MPOS已关机";
                 else // ByteDate[1]==0xE6,0x02,...
                     error = @"获取卡号数据失败:操作失败,请重试";;
-//                [self.delegate didCardSwipedSucOrFail:NO withError:error];
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
                     [self.delegate didCardSwipedSucOrFail:NO withError:error andCardInfo:nil];
                 }
@@ -557,7 +488,6 @@
         case GETMAC_CMD:
             if (!ByteDate[1])   // MAC
             {
-                NSLog(@"%s,result:%@",__func__,@"MAC 获取成功");
                     NSString * strMAC =@"";
                     strMAC = [NSString stringWithFormat:@"%@",data];
                     strMAC = [strMAC stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -579,7 +509,6 @@
                 }
                 int nBattery =StrToNumber16([strBattery cStringUsingEncoding:NSASCIIStringEncoding]);
                 strBattery =[NSString stringWithFormat:@"%d",nBattery];
-                NSLog(@"%s,result:%@",__func__,@"电池电量获取成功");
             }else
             {
             }
@@ -666,14 +595,9 @@
         }
     }
     if (dataPath == nil) {
-//        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:)]) {
-//            [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
-//        }
         if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-//            [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion]];
             [self.delegate didCardSwipedSucOrFail:NO withError:[NSString stringWithFormat:@"设备[%@]未连接", SNVersion] andCardInfo:nil];
         }
-
     } else {
         memset(&TransData, 0x00, sizeof(FieldTrackData));
         Byte SendData[24]={0x00};
@@ -685,7 +609,6 @@
         SendData[5] =PASSWORD_ENCRY_MODEM;
         SendData[6] =TRACK_ENCRY_DATA;
         SendData[7] =TRACK_ENCRY_DATA;
-        NSLog(@"========== 金额:[%s]",[money cStringUsingEncoding:NSUTF8StringEncoding]);
         memcpy((char*)SendData+8, [money cStringUsingEncoding:NSUTF8StringEncoding], 12);
         NSString *strDate = [self returnDate];
         NSData* bytesDate =[self StrHexToByte:strDate];
@@ -804,9 +727,9 @@
     [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"52"];
     if (strlen((char*)dataStr) > 0) {
         [cardInfo setValue:@"2600000000000000" forKey:@"53"];
-        NSLog(@"52密码:[%s]",dataStr);
+    } else {
+        [cardInfo setValue:@"0600000000000000" forKey:@"53"];
     }
-    
     
     // 23 IC卡序列号
     memset(dataStr, 0, 512);
@@ -826,72 +749,6 @@
     return cardInfo;
 }
 
-// 将读到的卡数据保存到本地
-- (void) cardDataUserDefult {
-    Byte dataStr[512] = {0x00};
-    
-    // 卡片有效期 Card_DeadLineTime
-    memset(dataStr, 0, 512);
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
-    NSLog(@"^^^^^^^^^^^ 卡片有效期:[%s]",(char*)TransData.CardValid);
-    
-    // 22 服务码输入方式
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.szEntryMode :2];
-    NSLog(@"22域:[%s]", dataStr);
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Service_Entry_22];
-    
-    // 23 IC卡序列号
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.CardSeq :1];
-    NSString* f23 = [NSString stringWithFormat:@"%04d", atoi((const char*)dataStr)];
-    NSLog(@"23域:[%@]", f23);
-    [[NSUserDefaults standardUserDefaults] setValue:f23 forKey:ICCardSeq_23];
-    
-    // 35 2磁道加密数据
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
-    NSLog(@"2磁加密数据:[%s]", dataStr);
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
-    
-    // 36 3磁道加密数据
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.szEncryTrack3 :TransData.nEncryTrack3Len];
-    NSLog(@"3磁加密数据:[%s]", dataStr);
-
-    // 35 2磁道数据
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.szTrack2 :TransData.nTrack2Len];
-    NSLog(@"2磁数据:[%s]",dataStr);
-
-
-    // 52 PINBLOCK -- 密文密码
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Sign_in_PinKey];
-    
-    // 55 芯片数据55域信息
-    if (TransData.IccdataLen > 0) {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];  // 设置读卡方式:芯片
-        memset(dataStr, 0, 512);
-        [self BcdToAsc:dataStr :TransData.Field55Iccdata :TransData.IccdataLen];
-        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:BlueIC55_Information];
-    } else {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];  // 设置读卡方式:磁条
-    }
-        
-    // 2 卡号
-    memset(dataStr, 0, 512);
-    NSString *strData ;
-    strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
-    NSString* cardNo_notAll = [NSString stringWithFormat:@"%@******%@", [strData substringToIndex:6], [strData substringFromIndex:[strData length] - 4]];
-    [[NSUserDefaults standardUserDefaults] setValue:cardNo_notAll forKey:GetCurrentCard_NotAll];
-    [[NSUserDefaults  standardUserDefaults]setObject:strData forKey:Card_Number];
-    
-    [[NSUserDefaults standardUserDefaults]synchronize];
-}
-
-
 
 - (void) resetGetData
 {
@@ -904,24 +761,10 @@
 // 解析读卡数据
 -(int)GetCard:(NSData*)TrackData
 {
-    /*
-     20 00 0210
-     136210985800012004611d491212061006000000
-     136210985800012004611df5f98f2fb41d89000f
-     34996210985800012004611d1561560000000000000003000000114000049121d000000000000d000000000000d00000 0061006000
-     34996210985800012004611d1561560000000000000003000000114000049121d000000000000d0000000000450b3e bc742369 7f
-     000000
-     08cb59e6ea6d58c338
-     00
-     */
-    
     int nIndex =0,nIndexlen=0;
     Byte  ByteData[512] ={0x00};
     Byte  szTrack2[80] ={0x00};
     memcpy(ByteData, (Byte *)[TrackData bytes], [TrackData length]);
-    
-    NSLog(@"\n-=-=-=-=-=-=-=-=-=\n读到的卡数据=[%@]\n-=-=-=-=-=-=-=-=-=-=",TrackData);
-    
     
     if  (TRACK_ENCRY_DATA==0x01)
     {
@@ -1127,51 +970,9 @@ int StrToNumber16(const char *str)
         myBuffer[i / 2] = (char)anInt;
     }
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
-//    NSLog(@"------字符串=======%@",unicodeString);
     free(myBuffer);
     return unicodeString;
     
-    
-}
-// 打印读到的芯片卡得数据
-- (void) logTransData {
-    NSMutableString* logStr = [[NSMutableString alloc] initWithString:@"\n------------------\nTransData:[\n"];
-    /*
-     unsigned char iTransNo;                    //交易类型,指的什么交易 目前暂未使用
-     int iCardtype;                             //刷卡卡类型  磁条卡 IC卡
-     int iCardmodem;                            //刷卡模式
-     char TrackPAN[21];                         //域2  主帐号
-     unsigned char CardValid[5];                //域14 卡有效期
-     char szServiceCode[4];                     //服务代码
-     unsigned char CardSeq[2];                  //域23 卡片序列号
-     unsigned char szEntryMode[3];              //域22 服务点输入方式
-     unsigned char szTrack2[40];                //域35 磁道2数据
-     unsigned char szEncryTrack2[40];           //域35 磁道2加密数据 第一个字节为长度
-     unsigned char szTrack3[108];               //域36 磁道3数据
-     unsigned char szEncryTrack3[108];          //域36 磁道3加密数据
-     unsigned char sPIN[13];                    //域52 个人标识数据(pind ata)
-     unsigned char Field55Iccdata[300];         //的55域信息512->300
-     unsigned char FieldEncrydata[300];         //随机加密数据 //针对客户
-     */
-    [logStr appendString:[NSString stringWithFormat:@"iCardtype = [%d]\n", TransData.iCardtype]];
-    [logStr appendString:[NSString stringWithFormat:@"iCardmodem = [%d]\n", TransData.iCardmodem]];
-    [logStr appendString:[NSString stringWithFormat:@"TrackPAN = [%s]\n", TransData.TrackPAN]];
-    [logStr appendString:[NSString stringWithFormat:@"CardValid = [%s]\n", TransData.CardValid]];
-    [logStr appendString:[NSString stringWithFormat:@"szServiceCode = [%s]\n", TransData.szServiceCode]];
-    [logStr appendString:[NSString stringWithFormat:@"CardSeq = [%s]\n", TransData.CardSeq]];
-    [logStr appendString:[NSString stringWithFormat:@"szEntryMode = [%s]\n", TransData.szEntryMode]];
-    [logStr appendString:[NSString stringWithFormat:@"szTrack2 = [%s]\n", TransData.szTrack2]];
-    [logStr appendString:[NSString stringWithFormat:@"szEncryTrack2 = [%s]\n", TransData.szEncryTrack2]];
-    [logStr appendString:[NSString stringWithFormat:@"szTrack3 = [%s]\n", TransData.szTrack3]];
-    [logStr appendString:[NSString stringWithFormat:@"szEncryTrack3 = [%s]\n", TransData.szEncryTrack3]];
-    [logStr appendString:[NSString stringWithFormat:@"sPIN = [%s]\n", TransData.sPIN]];
-    [logStr appendString:[NSString stringWithFormat:@"Field55Iccdata = [%s]\n", TransData.Field55Iccdata]];
-    [logStr appendString:[NSString stringWithFormat:@"FieldEncrydata = [%s]\n", TransData.FieldEncrydata]];
-    [logStr appendString:[NSString stringWithFormat:@"iccDataLen = [%d]\n", TransData.IccdataLen]];
-    
-    
-    [logStr appendString:@"]----------------------\n"];
-    NSLog(@"%@",logStr);
     
 }
 

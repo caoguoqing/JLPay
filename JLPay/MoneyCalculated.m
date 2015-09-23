@@ -87,11 +87,8 @@
 }
 // 撤销到上一步金额
 - (NSString *)moneyByRevoked {
-    NSLog(@"pull前:stack.count = [%d]", (int)self.moneyArray.count);
     // 弹出金额栈顶得金额
     [self moneyStackPulling];
-    NSLog(@"pull后:stack.count = [%d]", (int)self.moneyArray.count);
-
     return self.money;
 }
 
@@ -151,7 +148,6 @@
     [moneyDic setObject:self.dotOrNot forKey:@"dotOrNot"];
     [moneyDic setObject:self.dotIndex forKey:@"dotIndex"];
     [self.moneyArray addObject:moneyDic];
-    NSLog(@"push后的count = [%d]", self.moneyArray.count);
 }
 // pull
 - (void) moneyStackPulling {

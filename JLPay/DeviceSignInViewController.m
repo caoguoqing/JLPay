@@ -15,10 +15,12 @@
 #import "JLActivity.h"
 #import "JLActivitor.h"
 #import "DeviceManager.h"
+#import "Packing8583.h"
+#import "EncodeString.h"
 
 @interface DeviceSignInViewController()
 <
-wallDelegate,managerToCard,DeviceManagerDelegate,
+wallDelegate,managerToCard,DeviceManagerDelegate,Unpacking8583Delegate,
 UITableViewDataSource,UITableViewDelegate,
 UIActionSheetDelegate,UIAlertViewDelegate
 >
@@ -311,22 +313,29 @@ UIActionSheetDelegate,UIAlertViewDelegate
 // 设置主密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
         // 主密钥下载成功了就继续签到
+    if (yesOrNot) {
+        [self sendTransPackageOnTransType:TranType_DownWorkKey];
+    } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (yesOrNot) {
-            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
-                                                         IP:Current_IP
-                                                       PORT:Current_Port
-                                                   Delegate:self
-                                                     method:TranType_DownWorkKey];
-            } else {
-                [[JLActivitor sharedInstance] stopAnimating];
-                [self alertForMessage:@"绑定设备失败!"];
-            }
+            [[JLActivitor sharedInstance] stopAnimating];
         });
+        [self alertForMessage:@"绑定设备失败!"];
+    }
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if (yesOrNot) {
+//            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
+//                                                         IP:Current_IP
+//                                                       PORT:Current_Port
+//                                                   Delegate:self
+//                                                     method:TranType_DownWorkKey];
+//            } else {
+//                [[JLActivitor sharedInstance] stopAnimating];
+//                [self alertForMessage:@"绑定设备失败!"];
+//            }
+//        });
 }
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
-    NSLog(@"工作密钥设置结果");
     // 停止等待转轮
     dispatch_async(dispatch_get_main_queue(), ^{
         [[JLActivitor sharedInstance] stopAnimating];
@@ -338,13 +347,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 更新tool显示
         self.terminalNumBinded = self.selectedTerminalNum;
         self.SNVersionNumBinded = self.selectedSNVersionNum;
-        NSLog(@"准备弹窗");
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
-        NSLog(@"开始弹窗");
         [self alertForMessage:@"绑定设备成功!"];
-        NSLog(@"弹窗完毕");
     } else {
         [self alertForMessage:@"绑定设备失败!"];
     }
@@ -360,7 +366,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     if ([data length] > 0) {
         // 拆包
-        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
+//        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
+        [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[JLActivitor sharedInstance] stopAnimating];
@@ -375,7 +382,25 @@ UIActionSheetDelegate,UIAlertViewDelegate
     });
     [self alertForMessage:@"连接设备失败:签到失败"];
 }
+
 // 拆包结果的回调方法
+- (void)didUnpackDatas:(NSDictionary *)dataDict onState:(BOOL)state withErrorMsg:(NSString *)message {
+    if (state) {
+        NSString* f60 = [dataDict valueForKey:@"60"];
+        NSString* msgType = [dataDict valueForKey:@"msgType"];
+        NSString* keyPin = [dataDict valueForKey:@"62"];
+        if ([msgType hasPrefix:@"08"] && [f60 hasPrefix:@"99"]) { // 下载主密钥
+            [[DeviceManager sharedInstance] writeMainKey:keyPin onSNVersion:self.selectedSNVersionNum];
+        }
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[JLActivitor sharedInstance] stopAnimating];
+        });
+        NSString* errorMessage = [NSString stringWithFormat:@"绑定设备失败:%@",message];
+        [self alertForMessage:errorMessage];
+    }
+}
+
 - (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
     if (state) {    // 成功
         // 先判断设备是否连接
@@ -471,13 +496,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
     int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
     if (beingConnect == 1) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey]
-                                                         IP:Current_IP
-                                                       PORT:Current_Port
-                                                   Delegate:self
-                                                     method:TranType_DownMainKey];
+//            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey]
+//                                                         IP:Current_IP
+//                                                       PORT:Current_Port
+//                                                   Delegate:self
+//                                                     method:TranType_DownMainKey];
             [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
         });
+        [self sendTransPackageOnTransType:TranType_DownMainKey];
     } else {
         [self alertForMessage:@"设备未连接"];
     }
@@ -517,6 +543,46 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 
 #pragma mask --------- private interface
+// 发送交易报文
+- (void) sendTransPackageOnTransType:(NSString*)transType {
+    NSString* package = nil;
+    if ([transType isEqualToString:TranType_DownMainKey]) {
+        package = [self packingMainKeyDownload];
+    } else if ([transType isEqualToString:TranType_DownWorkKey]) {
+        package = [self packingWorkKeyDownload];
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[TcpClientService getInstance] sendOrderMethod:package
+                                                     IP:Current_IP
+                                                   PORT:Current_Port
+                                               Delegate:self
+                                                 method:transType];
+    });
+}
+// 打包:主密钥
+- (NSString*) packingMainKeyDownload {
+    Packing8583* packingHolder = [Packing8583 sharedInstance];
+    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
+    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:self.selectedTerminalNum]];
+    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
+    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownMainKey]];
+    [packingHolder setFieldAtIndex:62 withValue:@"9F0605DF000000049F220101DF9981804ff32b878be48f71335aa4a3f3c54bcfc574020b9bc8d28692ff54523db6e57f3a865c4460963d59a3f6fc5c82d366a2cb95655e92224e204afd1b7d22cd2fb012013208970cbb24d22a9072e734acc13afe128191cfaf97e0969bbf2f1658b092398f8f0446421daca0862e93d9ad174e85e2a68eac8ec9897328ca5b5fa4e6"];
+    [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
+    
+    return [packingHolder stringPackingWithType:@"0800"];
+}
+// 打包:工作密钥
+- (NSString*) packingWorkKeyDownload {
+    Packing8583* packingHolder = [Packing8583 sharedInstance];
+    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
+    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:self.selectedTerminalNum]];
+    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
+    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownWorkKey]];
+    [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
+    
+    return [packingHolder stringPackingWithType:@"0800"];
+}
+
 
 
 // 弹出设备类型选择框
