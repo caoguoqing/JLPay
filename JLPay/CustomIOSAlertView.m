@@ -65,7 +65,7 @@ CGFloat buttonSpacerHeight = 0;
                                 [UIScreen mainScreen].bounds.size.width,
                                 [UIScreen mainScreen].bounds.size.height);
 
-        delegate = self;
+//        delegate = self;
         useMotionEffects = false;
         buttonTitles = @[@"Close"];
         

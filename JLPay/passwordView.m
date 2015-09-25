@@ -31,7 +31,6 @@
 #pragma mask ::: 构造子视图的frame
 - (void)layoutSubviews {
     CGFloat inset = 14;
-//    CGRect innerFrame = CGRectMake(self.frame.origin.x + inset, 0, self.frame.size.width - inset*2, (self.frame.size.height - inset*2)/2.0);
     CGRect innerFrame = CGRectMake(0, 0, self.frame.size.width, (self.frame.size.height - inset - SeperateLineWidth)/2.0);
 
     // 支付密码描述

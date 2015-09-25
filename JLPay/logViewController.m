@@ -71,7 +71,6 @@
     [self EndEdit];
     // 设置版本号
     NSString* appVersion            = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-    NSLog(@"app版本号:V%@",appVersion);
     
     
     // 设置 title 的字体颜色
@@ -402,14 +401,9 @@
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    // 登陆密码加密
+    NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
     
-    // 3des 加密
-    // 原始 key
-    NSString* keyStr    = @"123456789012345678901234567890123456789012345678";
-    NSString* sourceStr = [EncodeString encodeASC:self.userPasswordTextField.text] ;
-    NSLog(@"明文准备加密:%@", sourceStr);
-    // 开始加密
-    NSString* pin = [ThreeDesUtil encryptUse3DES:sourceStr key:keyStr];
     // 登陆
     [self logInWithPin:pin];
     
@@ -466,7 +460,6 @@
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
-    NSLog(@"登陆返回的商户信息:[%@]",dataDic);
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     NSString* retcode = [dataDic objectForKey:@"code"];
@@ -596,8 +589,6 @@
         if (self.dictLastRegisterInfo == nil) {
             return;
         }
-        NSLog(@"%@",alertView.message);
-        NSLog(@"放回信息:[%@]",self.dictLastRegisterInfo);
         UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
         [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
@@ -618,10 +609,13 @@
     }
 }
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+// 加密登陆密码
+- (NSString*) pinEncryptBySource:(NSString*)source {
+    NSString* formationSource = [EncodeString encodeASC:source];
+    NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:KeyEncryptLoading];
+    return pin;
 }
+
 
 #pragma mask ::: getter & setter 
 // 账号输入框

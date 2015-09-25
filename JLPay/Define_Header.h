@@ -46,6 +46,8 @@
 // 环境:HTTP协议的ip配置
 #define Tcp_IP  @"tcpip"
 #define Tcp_Port @"tcpport"
+// 登陆密码加密key
+#define KeyEncryptLoading           @"123456789012345678901234567890123456789012345678"
 
 
 /*************[交易类型]**************/
