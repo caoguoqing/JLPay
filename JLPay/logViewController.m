@@ -27,6 +27,7 @@
 #define leftLeave        30.0                                       // view 的左边距
 #define ImageForBrand   @"logo"                                     // 商标图片
 
+const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012345678";
 
 @interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
 
@@ -69,9 +70,6 @@
     // 登陆按钮
     [self addSubViews];
     [self EndEdit];
-    // 设置版本号
-    NSString* appVersion            = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-    
     
     // 设置 title 的字体颜色
     UIColor *color                  = [UIColor redColor];
@@ -382,7 +380,7 @@
  *************************************/
 - (IBAction)loadToMainView: (UIButton*)sender {
     // 添加动画效果
-    sender.transform                      = CGAffineTransformIdentity;
+    sender.transform = CGAffineTransformIdentity;
     
     if ([self.userNumberTextField.text length] == 0) {
         [self alertShow:@"请输入账号"];
@@ -392,24 +390,15 @@
         [self alertShow:@"请输入密码"];
         return;
     }
-
-    // 保存历史信息
-    [[NSUserDefaults standardUserDefaults] setBool:self.switchSavePin.on forKey:NeedSavingUserPW];
-    [[NSUserDefaults standardUserDefaults] setBool:self.switchSecurity.on forKey:NeedDisplayUserPW];
-    if ([self.switchSavePin isOn]) {
-        [[NSUserDefaults standardUserDefaults] setValue:self.userPasswordTextField.text forKey:UserPW];
-    }
-    [[NSUserDefaults standardUserDefaults] synchronize];
     
     // 登陆密码加密
     NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
+
+    // 保存登陆信息
+    [self savingLoadingInfo];
     
     // 登陆
     [self logInWithPin:pin];
-    
-    //***************** test for 不登陆 ************
-//    [app_delegate signInSuccessToLogin:1];  // 切换到主场景
-
 }
 
 /*************************************
@@ -449,7 +438,6 @@
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     NSString* versionNum = [NSString stringWithFormat:@"%@%@%@",[versionString substringToIndex:1],[versionString substringWithRange:NSMakeRange(2, 1)],[versionString substringFromIndex:versionString.length - 1]];
     // 发起HTTP请求
-//    versionNum = @"99"; // test for 低版本登陆校验
     [self.httpRequest addPostValue:versionNum forKey:@"versionNum"];
     [self.httpRequest startAsynchronous];
 }
@@ -465,35 +453,21 @@
     NSString* retcode = [dataDic objectForKey:@"code"];
     NSString* retMsg = [retcode stringByAppendingString:[dataDic objectForKey:@"message"]];
     if ([retcode intValue] != 0) {      // 登陆失败
-        if ([retcode isEqualToString:@"701"]) { // 当前版本过低
+        // 当前版本过低
+        if ([retcode isEqualToString:@"701"]) {
             retMsg = [retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
-        } else if ([retcode isEqualToString:@"802"]) {
+        }
+        // 注册审核拒绝
+        else if ([retcode isEqualToString:@"802"]) {
             self.dictLastRegisterInfo = [dataDic objectForKey:@"registerInfoList"];
         }
         [self alertShow:retMsg];
     } else {                            // 登陆成功
         // 校验是否切换了账号
-        [self checkoutCustSwitch];
+        [self checkoutLoadingSwitch];
 
         // 保存商户信息: 解析响应数据
-        [[NSUserDefaults standardUserDefaults] setObject:self.userNumberTextField.text forKey:UserID];                  // 账号
-        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
-        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
-        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
-        [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        int termCount = [[dataDic objectForKey:@"termCount"] intValue];
-        if (termCount > 0) {
-            // 终端编号组的编号
-            NSString* terminalNumbersString = [dataDic objectForKey:@"TermNoList"];
-            // 将终端号列表字符串拆成数组保存到 Terminal_Numbers
-            NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
-            [[NSUserDefaults standardUserDefaults] setObject:array forKey:Terminal_Numbers];
-        } else {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:Terminal_Numbers];
-        }
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self savingBussinessInfo:dataDic];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [[app_delegate window] makeToast:@"登陆成功"];
@@ -510,7 +484,7 @@
     [self alertShow:@"网络异常，请检查网络"];
 }
 // 校验是否切换了账号:如果切换,清空配置
-- (void) checkoutCustSwitch {
+- (void) checkoutLoadingSwitch {
     NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
     NSString* lastUserID = [userDefault valueForKey:UserID];
     
@@ -520,9 +494,42 @@
     }
 }
 
+#pragma mask ::: 保存登陆信息
+- (void) savingLoadingInfo {
+    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+    [userDefault setObject:self.userNumberTextField.text forKey:UserID];
+    [userDefault setBool:self.switchSavePin.on forKey:NeedSavingUserPW];
+    [userDefault setBool:self.switchSecurity.on forKey:NeedDisplayUserPW];
+    if ([self.switchSavePin isOn]) {
+        NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
+        [userDefault setValue:pin forKey:UserPW];
+    } else {
+        [userDefault removeObjectForKey:UserPW];
+    }
+    [userDefault synchronize];
+}
 
-
-
+#pragma mask ::: 保存商户信息
+- (void) savingBussinessInfo:(NSDictionary*)bussinessInfo {
+    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+    [userDefault setObject:[bussinessInfo objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
+    [userDefault setObject:[bussinessInfo objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
+    [userDefault setObject:[bussinessInfo objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
+    [userDefault setObject:[bussinessInfo objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
+    [userDefault synchronize];
+    
+    int termCount = [[bussinessInfo objectForKey:@"termCount"] intValue];
+    if (termCount > 0) {
+        // 终端编号组的编号
+        NSString* terminalNumbersString = [bussinessInfo objectForKey:@"TermNoList"];
+        // 将终端号列表字符串拆成数组保存到 Terminal_Numbers
+        NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
+        [userDefault setObject:array forKey:Terminal_Numbers];
+    } else {
+        [userDefault removeObjectForKey:Terminal_Numbers];
+    }
+    [userDefault synchronize];
+}
 #pragma mask ::: 分隔终端号字符串
 - (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
     NSMutableArray* array = [[NSMutableArray alloc] init];
@@ -612,8 +619,14 @@
 // 加密登陆密码
 - (NSString*) pinEncryptBySource:(NSString*)source {
     NSString* formationSource = [EncodeString encodeASC:source];
-    NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:KeyEncryptLoading];
+    NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:(NSString*)KeyEncryptLoading];
     return pin;
+}
+// 解密登陆密码
+- (NSString*) pswDecryptByPin:(NSString*)pin {
+    NSString* password = [ThreeDesUtil decryptUse3DES:pin key:(NSString*)KeyEncryptLoading];
+    password = [PublicInformation stringFromHexString:password];
+    return password;
 }
 
 
@@ -648,7 +661,7 @@
         if ([self.switchSavePin isOn]) {
             NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
             if (textPrepare && textPrepare.length > 0) {
-                _userPasswordTextField.text = textPrepare;
+                _userPasswordTextField.text = [self pswDecryptByPin:textPrepare];
             }
         }
         [_userPasswordTextField setDelegate:self];

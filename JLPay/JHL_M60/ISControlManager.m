@@ -256,7 +256,6 @@ __strong static id _sharedObject = nil;
     if (![advName isEqualToString:@"JHLM60"]) {
         return;
     }
-    NSLog(@"%s,发现设备:%@",__func__,advName);
     for (ISDataPath *dataPath in devices) {
         if ([dataPath isKindOfClass:[ISBLEDataPath class]]) {
             ISBLEDataPath *mDataPath = (ISBLEDataPath *)dataPath;

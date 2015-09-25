@@ -207,12 +207,10 @@
         if ([key isEqualToString:@"amtTrans"]) { // 金额
             NSString* amount = [self.dataDic objectForKey:key];
             CGFloat fAmount = [amount floatValue]/100.0;
-            label.text = [NSString stringWithFormat:@"%.02f", fAmount];
+            label.text = [NSString stringWithFormat:@"%.02f 元", fAmount];
         } else if ([key isEqualToString:@"pan"]) { // 卡号
             NSString* cardNo = [self.dataDic objectForKey:key];
-            label.text = [NSString stringWithFormat:@"%@******%@",
-                          [cardNo substringToIndex:6],
-                          [cardNo substringFromIndex:[cardNo length] - 1 - 4]];
+            label.text = [PublicInformation cuttingOffCardNo:cardNo];
         } else if ([key isEqualToString:@"instTime"]) {
             NSString* trantime = [self.dataDic valueForKey:key];
             label.text = [NSString stringWithFormat:@"%@:%@:%@",[trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]];
@@ -270,14 +268,14 @@
     if (_cellNames == nil) {
         _cellNames = [[NSMutableArray alloc] init];
         [_cellNames addObject:@"交易类型"];
+        [_cellNames addObject:@"商户编号"];
+        [_cellNames addObject:@"商户名称"];
         [_cellNames addObject:@"交易金额"];
         [_cellNames addObject:@"交易卡号"];
         [_cellNames addObject:@"交易日期"];
         [_cellNames addObject:@"交易时间"];
         [_cellNames addObject:@"交易状态"];
         [_cellNames addObject:@"订单编号"];
-        [_cellNames addObject:@"商户编号"];
-        [_cellNames addObject:@"商户名称"];
         [_cellNames addObject:@"终端编号"];
     }
     return _cellNames;

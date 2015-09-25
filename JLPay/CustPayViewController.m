@@ -7,7 +7,6 @@
 //
 
 #import "CustPayViewController.h"
-#import "JHNconnect.h"
 #import "Define_Header.h"
 #import "Define_Header.h"
 #import "MoneyCalculated.h"

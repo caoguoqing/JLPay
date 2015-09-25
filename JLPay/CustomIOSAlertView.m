@@ -240,7 +240,6 @@ CGFloat buttonSpacerHeight = 0;
     }
 
     CGSize dialogSize = [self countDialogSize];     // alertView 的size
-    NSLog(@"\n----------- \n screenSize=[%f,%f]\n dialogSize=[%f,%f] \n------------", screenSize.width, screenSize.height, dialogSize.width,dialogSize.height);
     
 
     // This is the dialog's container; we attach the custom content and the buttons to this one

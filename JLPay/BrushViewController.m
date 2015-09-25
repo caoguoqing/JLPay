@@ -184,7 +184,6 @@
             self.cardInfoOfReading = nil;
         }
         [self.cardInfoOfReading addEntriesFromDictionary:cardInfo];
-        NSLog(@"刷卡读到的卡数据:[%@]",self.cardInfoOfReading);
         // 成功就继续,输入密码或直接发起交易
         NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
         if ([deviceType isEqualToString:DeviceType_JHL_M60]) {

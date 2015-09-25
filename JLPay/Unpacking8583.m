@@ -15,7 +15,6 @@
 #import "ErrorType.h"
 #import "Define_Header.h"
 #import "PosLib.h"
-#import "JHNconnect.h"
 #import "AppDelegate.h"
 
 static Unpacking8583 *sharedObj2 = nil;

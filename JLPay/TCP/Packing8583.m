@@ -61,7 +61,6 @@
     // 根据plist配置格式化所有的域值
     [self resetFormatValueOfFieldsDictionary];
     // 组包
-    NSLog(@"准备打包:[%@]",self.dictionaryFieldNamesAndValues);
     NSString* stringPackage = [self stringPacking];
     // 清空字典数据
     [self cleanAllFields];

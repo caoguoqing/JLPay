@@ -36,7 +36,7 @@
  * 7: 内网测试72
  * 9: 外网测试62
  */
-#define TestOrProduce                   7
+#define TestOrProduce                   1
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -46,8 +46,6 @@
 // 环境:HTTP协议的ip配置
 #define Tcp_IP  @"tcpip"
 #define Tcp_Port @"tcpport"
-// 登陆密码加密key
-#define KeyEncryptLoading           @"123456789012345678901234567890123456789012345678"
 
 
 /*************[交易类型]**************/
@@ -121,23 +119,23 @@
 // 设备操作的等待超时时间
 #define DeviceWaitingTime           20                          
 
-//IC卡 SN序列号
-#define Blue_Device_SN @"4800006472"
-
-//蓝牙卡头 CSN
-#define Blue_Device_CSN @"bluecsn"
-#define Blue_IC_PiciNmuber @"000001"
-
-//公钥下载 tlv
-#define BlueIC_GongyaoLoad_TLV @"gongyaotlv"
-//参数下载 tlv
-#define BlueIC_ParameterLoad_TLV @"parametertlv"
-
-#define Blue_Suppay_Content @"014643B2343BC0204C4068ABCE98A630"
-#define Blue_Main_Key @"00000000000000000000000000000000"
-
-//bbpos和蓝牙卡头公用
-#define BlueIC55_Information @"55info"
+////IC卡 SN序列号
+//#define Blue_Device_SN @"4800006472"
+//
+////蓝牙卡头 CSN
+//#define Blue_Device_CSN @"bluecsn"
+//#define Blue_IC_PiciNmuber @"000001"
+//
+////公钥下载 tlv
+//#define BlueIC_GongyaoLoad_TLV @"gongyaotlv"
+////参数下载 tlv
+//#define BlueIC_ParameterLoad_TLV @"parametertlv"
+//
+//#define Blue_Suppay_Content @"014643B2343BC0204C4068ABCE98A630"
+//#define Blue_Main_Key @"00000000000000000000000000000000"
+//
+////bbpos和蓝牙卡头公用
+//#define BlueIC55_Information @"55info"
 
 
 

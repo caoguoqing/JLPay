@@ -178,7 +178,7 @@ static FieldTrackData TransData;
             if (!ByteDate[1])   // 获取卡数据成功
             {
                 [self GetCard:data];    // 解析卡数据到缓存
-                [self cardDataUserDefult];
+//                [self cardDataUserDefult];
                 // 从缓存中读取密码密文
 //                NSNotification* notification    = [NSNotification notificationWithName:Noti_TransSale_Success object:nil];
 //                [[NSNotificationCenter defaultCenter] postNotification:notification];   // test for reading card data,not trans
@@ -499,50 +499,50 @@ static FieldTrackData TransData;
 }
 
 #pragma mask : 将读卡数据的需要的部分值取出，并保存到本地配置
-- (void) cardDataUserDefult {
-    Byte dataStr[512] = {0x00};
-    
-    // 卡片有效期 Card_DeadLineTime
-    memset(dataStr, 0, 512);
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
-    
-    // 2磁道加密数据
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
-    NSLog(@"2磁数据:[%s]", dataStr);
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
-    
-    // PINBLOCK -- 密文密码
-    memset(dataStr, 0, 512);
-    [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Sign_in_PinKey];
-
-    // 芯片数据55域信息
-    if (TransData.IccdataLen > 0) {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];  // 设置读卡方式:芯片
-        memset(dataStr, 0, 512);
-        [self BcdToAsc:dataStr :TransData.Field55Iccdata :TransData.IccdataLen];
-        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:BlueIC55_Information];
-    } else {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];  // 设置读卡方式:磁条
-    }
-    
-    // 芯片序列号23域值
-    memset(dataStr, 0, 512);
-//    [self BcdToAsc:dataStr :TransData.CardSeq :(int)strlen((char*)TransData.CardSeq)];
-    strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
-
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
-    
-    // 卡号
-    memset(dataStr, 0, 512);
-    NSString *strData ;
-    strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@*****%@",[strData substringWithRange:NSMakeRange(0, [strData length]-9)],[strData substringWithRange:NSMakeRange([strData length]-4, 4)]] forKey:GetCurrentCard_NotAll];
-    [[NSUserDefaults  standardUserDefaults]setObject:strData forKey:Card_Number];
-    
-    [[NSUserDefaults standardUserDefaults]synchronize];
-}
+//- (void) cardDataUserDefult {
+//    Byte dataStr[512] = {0x00};
+//    
+//    // 卡片有效期 Card_DeadLineTime
+//    memset(dataStr, 0, 512);
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",(char*)TransData.CardValid] forKey:Card_DeadLineTime];
+//    
+//    // 2磁道加密数据
+//    memset(dataStr, 0, 512);
+//    [self BcdToAsc:dataStr :TransData.szEncryTrack2 :TransData.nEncryTrack2Len];
+//    NSLog(@"2磁数据:[%s]", dataStr);
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Two_Track_Data];
+//    
+//    // PINBLOCK -- 密文密码
+//    memset(dataStr, 0, 512);
+//    [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:Sign_in_PinKey];
+//
+//    // 芯片数据55域信息
+//    if (TransData.IccdataLen > 0) {
+//        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:CardTypeIsTrack];  // 设置读卡方式:芯片
+//        memset(dataStr, 0, 512);
+//        [self BcdToAsc:dataStr :TransData.Field55Iccdata :TransData.IccdataLen];
+//        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:BlueIC55_Information];
+//    } else {
+//        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:CardTypeIsTrack];  // 设置读卡方式:磁条
+//    }
+//    
+//    // 芯片序列号23域值
+//    memset(dataStr, 0, 512);
+////    [self BcdToAsc:dataStr :TransData.CardSeq :(int)strlen((char*)TransData.CardSeq)];
+//    strcpy((char*)dataStr, "0001"); // 不从卡读取了，直接赋值
+//
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:ICCardSeq_23];
+//    
+//    // 卡号
+//    memset(dataStr, 0, 512);
+//    NSString *strData ;
+//    strData = [[NSString alloc] initWithCString:(const char*)TransData.TrackPAN encoding:NSASCIIStringEncoding];
+//    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@*****%@",[strData substringWithRange:NSMakeRange(0, [strData length]-9)],[strData substringWithRange:NSMakeRange([strData length]-4, 4)]] forKey:GetCurrentCard_NotAll];
+//    [[NSUserDefaults  standardUserDefaults]setObject:strData forKey:Card_Number];
+//    
+//    [[NSUserDefaults standardUserDefaults]synchronize];
+//}
 
 
 #pragma mask : CommunicationCallBack 的暂时无用的协议

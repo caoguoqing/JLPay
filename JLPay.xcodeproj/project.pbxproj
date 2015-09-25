@@ -151,7 +151,6 @@
 		5ED344291AD8C1DB0005C890 /* ProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5ED344261AD8C1DB0005C890 /* ProgressHUD.bundle */; };
 		5ED3442A1AD8C1DB0005C890 /* ProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED344281AD8C1DB0005C890 /* ProgressHUD.m */; };
 		5ED3442D1AD8E10D0005C890 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED3442C1AD8E10D0005C890 /* MBProgressHUD.m */; };
-		5ED344301AD8EB130005C890 /* JHNconnect.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED3442F1AD8EB130005C890 /* JHNconnect.m */; };
 		5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344361AD8EF910005C890 /* AVFoundation.framework */; };
 		5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */; };
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
@@ -441,8 +440,6 @@
 		5ED344281AD8C1DB0005C890 /* ProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressHUD.m; sourceTree = "<group>"; };
 		5ED3442B1AD8E10D0005C890 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = ../MBProgressHUD.h; sourceTree = "<group>"; };
 		5ED3442C1AD8E10D0005C890 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = ../MBProgressHUD.m; sourceTree = "<group>"; };
-		5ED3442E1AD8EB130005C890 /* JHNconnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHNconnect.h; path = ../JHNconnect.h; sourceTree = "<group>"; };
-		5ED3442F1AD8EB130005C890 /* JHNconnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JHNconnect.m; path = ../JHNconnect.m; sourceTree = "<group>"; };
 		5ED344361AD8EF910005C890 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
@@ -1064,8 +1061,6 @@
 		5EBF82841ADDFC3D005F7E15 /* JHL */ = {
 			isa = PBXGroup;
 			children = (
-				5ED3442E1AD8EB130005C890 /* JHNconnect.h */,
-				5ED3442F1AD8EB130005C890 /* JHNconnect.m */,
 				5E82B78E1B1BFCC200A58751 /* JHLDevice.h */,
 				5E82B78F1B1BFCC200A58751 /* JHLDevice.m */,
 				5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */,
@@ -1328,7 +1323,6 @@
 				5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */,
 				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
-				5ED344301AD8EB130005C890 /* JHNconnect.m in Sources */,
 				5E5FA5861B46342600387E69 /* ISDataPath.m in Sources */,
 				5EBAA9101ACD3F1B00E2ABDD /* NSString+SBJSON.m in Sources */,
 				5EBA40F61AEA366000F270C0 /* PosInformationViewController.m in Sources */,
