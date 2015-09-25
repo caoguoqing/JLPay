@@ -731,13 +731,11 @@
 
 
 +(NSDate *)settingTime:(NSString *)time{
-//    NSTimeZone* localzone = [NSTimeZone localTimeZone];
     NSTimeZone* GTMzone = [NSTimeZone timeZoneForSecondsFromGMT:0];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     [dateFormatter setTimeZone:GTMzone];
     NSDate *bdate = [dateFormatter dateFromString:time];
-//    NSDate *day = [NSDate dateWithTimeInterval:(3600 + [localzone secondsFromGMT]) sinceDate:bdate];
     return bdate;
 }
 

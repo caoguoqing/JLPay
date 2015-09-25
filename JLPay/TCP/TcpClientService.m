@@ -14,8 +14,6 @@
 @interface NSString (NSStringHexToBytes)
 -(NSData*) hexToBytes ;
 
-//- (NSString*) stringWithHexBytes1;
-//- (NSString*)stringWithHexBytes2;
 @end
 @implementation NSString (NSStringHexToBytes)
 -(NSData*) hexToBytes {
@@ -62,7 +60,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
 //建立连接
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port{
     [self senMessage];
-//    NSLog(@"。。。。。。。。已经建立socket连接");
     // 发送数据并等待返回:带参数超时
     [sock readDataWithTimeout:readTimeOut tag:0];
 }
@@ -70,7 +67,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
 //读取数据
 -(void) onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     NSString* aStr = [PublicInformation stringWithHexBytes2:data];
-    NSLog(@"-----\n8583响应数据原始串:[%@]",aStr);
     self.returnAllData=aStr;
     [sock setDelegate:nil];
     [sock disconnect];
@@ -80,7 +76,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     }
 }
 
-//
 
 - (void)onSocket:(AsyncSocket *)sock didSecure:(BOOL)flag
 {
@@ -101,10 +96,8 @@ static int readTimeOut = 60;    // 超时时间统一60s
         errMessage = @"通讯超时!";
     }
     if (delegate && [delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
-//        [delegate falseReceiveGetDataMethod:self.tcpMethodStr];
         [delegate falseReceiveGetDataMethod:errMessage];
     }
-//    NSLog(@"onSocket:%p willDisconnectWithError:%@====tcp错误方法%@", sock, err,self.tcpMethodStr);
 }
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock
 {
@@ -119,14 +112,11 @@ static int readTimeOut = 60;    // 超时时间统一60s
 -(void)senMessage{
     //设备匹配指令
     NSData *data = [self.orderInfoStr hexToBytes];
-//    NSLog(@"发送data====%@",data);
     [asyncSocket writeData:data withTimeout:readTimeOut tag:1];
 }
 
 
 -(void)sendOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr{
-    //[SVProgressHUD showWithStatus:@"加载中..."];
-    NSLog(@"ip=====%@,port========%d",ip,port);
     self.tcpMethodStr=methodStr;
     self.delegate=selfdelegate;
     self.orderInfoStr=order;
@@ -137,15 +127,12 @@ static int readTimeOut = 60;    // 超时时间统一60s
     NSError *err = nil;
     
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
-//        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         [asyncSocket connectToHost:ip onPort:port error:&err];
     }
 }
 
 // 发送方法2:不等待返回
 -(void)sendWithoutWaitingOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr{
-    //[SVProgressHUD showWithStatus:@"加载中..."];
-    NSLog(@"ip=====%@,port========%d",ip,port);
     self.tcpMethodStr=methodStr;
     self.delegate=selfdelegate;
     self.orderInfoStr=order;
@@ -156,7 +143,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     NSError *err = nil;
     
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
-//        NSLog(@"- - - -- - -\n - - - - - asyncSocket 建立链接请求。。。。。。。。");
         if ([asyncSocket connectToHost:ip onPort:port error:&err]) {
             // 发送成功后就关闭连接
             [asyncSocket setDelegate:nil];

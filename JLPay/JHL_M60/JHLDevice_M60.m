@@ -67,7 +67,6 @@
 - (void)openAllDevices {
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
-        NSLog(@"打开设备[%@]", [[dataPath peripheral] identifier].UUIDString);
         if ([dataPath state] == CBPeripheralStateDisconnected) {
             [self.manager connectDevice:dataPath];
         } else if (dataPath.state == CBPeripheralStateConnected &&
@@ -83,8 +82,6 @@
 }
 // 读取所有已连接设备的SN号
 - (void)readSNVersions {
-    NSLog(@"%s,读取SN号",__func__);
-
     for (NSDictionary* dataDic in self.knownDeviceList) {
         ISBLEDataPath* dataPath = [dataDic objectForKey:KeyDataPathNodeDataPath];
         if ([dataPath state] == CBPeripheralStateConnected &&
@@ -136,7 +133,6 @@
 
 // pragma mask : 开始扫描设备
 - (void) startScanningDevices {
-    NSLog(@"开始扫描设备");
     [self startScanning];
 }
 // pragma mask : 停止扫描设备
@@ -320,11 +316,9 @@
 }
 // 完成向设备写数据:成功/失败还未知
 - (void)accessoryDidWriteData:(ISDataPath *)accessory bytes:(int)bytes complete:(BOOL)complete{
-    NSLog(@"蓝牙设备交互数据成功");
 }
 // 写设备数据失败
 - (void)accessoryDidFailToWriteData:(ISDataPath *)accessory error:(NSError *)error{
-    NSLog(@"蓝牙设备交互数据失败:[%@]", error);
 }
 
 #pragma mask --------------------- ISControlManagerDeviceList

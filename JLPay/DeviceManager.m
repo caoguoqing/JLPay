@@ -165,8 +165,6 @@ static DeviceManager* _sharedDeviceManager = nil;
 
 #pragma mask : SN号读取成功
 - (void) didReadSNVersion:(NSString*)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString*)error {
-    NSLog(@"%s,DeviceManager didReadSNVersion:%@",__func__, SNVersion);
-
     if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
         [self.delegate didReadSNVersion:SNVersion sucOrFail:yesOrNo withError:error];
     }

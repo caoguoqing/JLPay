@@ -303,7 +303,6 @@ TYJieLianDelegate
                 cardSwipedSuccess = YES;
             } else {
                 cardSwipedSuccess = NO;
-                NSLog(@"刷卡失败");
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
                     [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
                 }
