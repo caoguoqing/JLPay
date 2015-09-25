@@ -90,11 +90,8 @@ NSString* headerIdentifier = @"headerIdentifier";
     return YES;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-//    UICollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];
     [UIView animateWithDuration:0.1 animations:^{
-//        cell.transform = CGAffineTransformMakeScale(0.95, 0.95);
     }];
-    NSLog(@"点击了单元格..........[%@]",[self.titlesArray objectAtIndex:indexPath.row]);
     [self.view makeToast:@"功能正在建设中,请关注版本更新..."];
     
 }

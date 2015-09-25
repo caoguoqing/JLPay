@@ -41,7 +41,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     CGFloat inset = 10;
-    CGFloat buttonHeight = 45;
+//    CGFloat buttonHeight = 45;
     CGFloat naviAndStatusHeight = [[UIApplication sharedApplication] statusBarFrame].size.height + self.navigationController.navigationBar.bounds.size.height;
     UIImage* image = [UIImage imageNamed:@"logo"];
     CGRect frame = CGRectMake(self.view.bounds.size.width/4.0,

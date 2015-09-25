@@ -130,9 +130,6 @@
 		5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8D91ACD2FA800E2ABDD /* EncodeString.m */; };
 		5EBAA8EA1ACD2FA800E2ABDD /* HeaderString.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8DB1ACD2FA800E2ABDD /* HeaderString.m */; };
 		5EBAA8EB1ACD2FA800E2ABDD /* ErrorType.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8DD1ACD2FA800E2ABDD /* ErrorType.m */; };
-		5EBAA8EC1ACD2FA800E2ABDD /* IC_GroupPackage8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8DF1ACD2FA800E2ABDD /* IC_GroupPackage8583.m */; };
-		5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8E11ACD2FA800E2ABDD /* IC_Unpacking8583.m */; };
-		5EBAA8EE1ACD2FA800E2ABDD /* GroupPackage8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8E31ACD2FA800E2ABDD /* GroupPackage8583.m */; };
 		5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */; };
 		5EBAA8F71ACD389D00E2ABDD /* JsonToString.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8F41ACD389D00E2ABDD /* JsonToString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -403,12 +400,6 @@
 		5EBAA8DB1ACD2FA800E2ABDD /* HeaderString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeaderString.m; sourceTree = "<group>"; };
 		5EBAA8DC1ACD2FA800E2ABDD /* ErrorType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorType.h; sourceTree = "<group>"; };
 		5EBAA8DD1ACD2FA800E2ABDD /* ErrorType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ErrorType.m; sourceTree = "<group>"; };
-		5EBAA8DE1ACD2FA800E2ABDD /* IC_GroupPackage8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IC_GroupPackage8583.h; sourceTree = "<group>"; };
-		5EBAA8DF1ACD2FA800E2ABDD /* IC_GroupPackage8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IC_GroupPackage8583.m; sourceTree = "<group>"; };
-		5EBAA8E01ACD2FA800E2ABDD /* IC_Unpacking8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IC_Unpacking8583.h; sourceTree = "<group>"; };
-		5EBAA8E11ACD2FA800E2ABDD /* IC_Unpacking8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IC_Unpacking8583.m; sourceTree = "<group>"; };
-		5EBAA8E21ACD2FA800E2ABDD /* GroupPackage8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupPackage8583.h; sourceTree = "<group>"; };
-		5EBAA8E31ACD2FA800E2ABDD /* GroupPackage8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupPackage8583.m; sourceTree = "<group>"; };
 		5EBAA8E41ACD2FA800E2ABDD /* Unpacking8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unpacking8583.h; sourceTree = "<group>"; };
 		5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Unpacking8583.m; sourceTree = "<group>"; };
 		5EBAA8F31ACD389D00E2ABDD /* JsonToString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonToString.h; sourceTree = "<group>"; };
@@ -662,18 +653,18 @@
 				5E5E35AB1B7DD39B00560C0A /* HelperAndAboutTableViewController.h */,
 				5E5E35AC1B7DD39B00560C0A /* HelperAndAboutTableViewController.m */,
 				5E5E35DA1B8073DD00560C0A /* 关于我们 */,
-				5E5E35AE1B7DD70700560C0A /* 描述_绑定设备 */,
+				5E5E35AE1B7DD70700560C0A /* 描述_通用界面 */,
 			);
 			name = "帮助与关于";
 			sourceTree = "<group>";
 		};
-		5E5E35AE1B7DD70700560C0A /* 描述_绑定设备 */ = {
+		5E5E35AE1B7DD70700560C0A /* 描述_通用界面 */ = {
 			isa = PBXGroup;
 			children = (
 				5E5E35CE1B7DD7E400560C0A /* BangdingViewController.h */,
 				5E5E35CF1B7DD7E400560C0A /* BangdingViewController.m */,
 			);
-			name = "描述_绑定设备";
+			name = "描述_通用界面";
 			sourceTree = "<group>";
 		};
 		5E5E35DA1B8073DD00560C0A /* 关于我们 */ = {
@@ -829,7 +820,7 @@
 			name = "连接机具";
 			sourceTree = "<group>";
 		};
-		5E9D9BA11BA904AE00A7E8CC /* 新版接口 */ = {
+		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
 			isa = PBXGroup;
 			children = (
 				5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */,
@@ -839,7 +830,7 @@
 				5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */,
 				5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */,
 			);
-			name = "新版接口";
+			name = "8583打包解包";
 			sourceTree = "<group>";
 		};
 		5EB6F9731AC8DD1C00E47AB5 = {
@@ -969,30 +960,10 @@
 			path = "手写签批";
 			sourceTree = "<group>";
 		};
-		5EBAA8F01ACD2FBB00E2ABDD /* IC卡 */ = {
-			isa = PBXGroup;
-			children = (
-				5EBAA8DE1ACD2FA800E2ABDD /* IC_GroupPackage8583.h */,
-				5EBAA8DF1ACD2FA800E2ABDD /* IC_GroupPackage8583.m */,
-				5EBAA8E01ACD2FA800E2ABDD /* IC_Unpacking8583.h */,
-				5EBAA8E11ACD2FA800E2ABDD /* IC_Unpacking8583.m */,
-			);
-			name = "IC卡";
-			sourceTree = "<group>";
-		};
-		5EBAA8F11ACD2FCB00E2ABDD /* 磁条卡 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "磁条卡";
-			sourceTree = "<group>";
-		};
 		5EBAA8F21ACD2FDC00E2ABDD /* 8583 */ = {
 			isa = PBXGroup;
 			children = (
-				5EBAA8E21ACD2FA800E2ABDD /* GroupPackage8583.h */,
-				5EBAA8E31ACD2FA800E2ABDD /* GroupPackage8583.m */,
-				5E9D9BA11BA904AE00A7E8CC /* 新版接口 */,
+				5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */,
 				5EBAA8D21ACD2FA800E2ABDD /* ISOHelper.h */,
 				5EBAA8D31ACD2FA800E2ABDD /* ISOHelper.m */,
 				5EBAA8D41ACD2FA800E2ABDD /* ISOBitmap.h */,
@@ -1005,8 +976,6 @@
 				5EBAA8DB1ACD2FA800E2ABDD /* HeaderString.m */,
 				5EBAA8DC1ACD2FA800E2ABDD /* ErrorType.h */,
 				5EBAA8DD1ACD2FA800E2ABDD /* ErrorType.m */,
-				5EBAA8F01ACD2FBB00E2ABDD /* IC卡 */,
-				5EBAA8F11ACD2FCB00E2ABDD /* 磁条卡 */,
 			);
 			name = 8583;
 			path = ..;
@@ -1377,7 +1346,6 @@
 				5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */,
 				5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */,
 				5E397B2E1AD36429004F206F /* ASICloudFilesRequest.m in Sources */,
-				5EBAA8EC1ACD2FA800E2ABDD /* IC_GroupPackage8583.m in Sources */,
 				5EBA40FA1AEA37AC00F270C0 /* NewVersionView.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
@@ -1405,7 +1373,6 @@
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
-				5EBAA8EE1ACD2FA800E2ABDD /* GroupPackage8583.m in Sources */,
 				5E5E35A51B7C79EF00560C0A /* AreaDataSourceViewController.m in Sources */,
 				5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */,
 				5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */,
@@ -1423,7 +1390,6 @@
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */,
 				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
-				5EBAA8ED1ACD2FA800E2ABDD /* IC_Unpacking8583.m in Sources */,
 				5E5E362A1B8703F900560C0A /* RgBasicInfoTableViewCell.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,

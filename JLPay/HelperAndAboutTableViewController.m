@@ -53,7 +53,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController;
-//    UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:[self.cellTitles objectAtIndex:indexPath.row]];
 
     if (indexPath.row != 3) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"帮助界面"];
@@ -66,7 +65,6 @@
         NSDictionary* imagesAndDescs = [self.dictTitlesAndDatas objectForKey:key];
         [tongyong setArrayTitles:imageTitles];
         [tongyong setDictTitlesAndDesc:imagesAndDescs];
-        NSLog(@"设置图片跟标题信息:[%@]",self.dictTitlesAndDatas);
         
     } else {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"关于我们"];

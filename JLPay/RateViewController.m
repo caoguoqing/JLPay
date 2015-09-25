@@ -162,7 +162,7 @@
 - (NSMutableArray *)rateNameArray {
     if (_rateNameArray == nil) {
         _rateNameArray = [[NSMutableArray alloc] init];
-        [_rateNameArray addObject:@"通用/默认"];
+        [_rateNameArray addObject:@"通用/默认"];    //
         [_rateNameArray addObject:@"费率 0.78 不封顶"];
         [_rateNameArray addObject:@"费率 0.78 35封顶"];
         [_rateNameArray addObject:@"费率 1.25 不封顶"];

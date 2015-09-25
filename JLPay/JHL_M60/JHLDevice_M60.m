@@ -384,7 +384,6 @@
         case GETCARD_CMD:
             if (!ByteDate[1])   // 刷卡成功
             {
-                NSLog(@"%s,result:%@",__func__,@"刷卡成功");
                     NSString *strPan=@"";
                     int nlen =ByteDate[2]&0xff;
                     for (int i=0; i <nlen; i++) {
@@ -397,7 +396,6 @@
             }
             else
             {
-                NSLog(@"%s,result:%@",__func__,@"刷卡失败");
                     return;
             }
             
@@ -406,7 +404,6 @@
         case  GETTRACKDATA_CMD:
             if (!ByteDate[1])   // 获取卡号数据成功
             {
-                NSLog(@"%s,result:%@",__func__,@"获取卡号数据成功");
                 // 解析读到的卡得数据
                 [self GetCard:data];
                 NSDictionary* cardInfo = [self cardInfoOfReading];
@@ -416,7 +413,6 @@
             }
             else
             {
-                NSLog(@"%s,func=[%x],result:%@",__func__,ByteDate[0],@"获取卡号数据失败");
                 NSString* error = nil;
                 if (ByteDate[1]==0xE1 )
                     error = @"获取卡号数据失败:用户取消";
@@ -441,7 +437,6 @@
         case MAINKEY_CMD:
             if (!ByteDate[1])   // 主密钥设置成功
             {
-                NSLog(@"%s,result:%@",__func__,@"主密钥设置成功");
                     [self.delegate didWriteMainKeySucOrFail:YES withError:nil];
             }else
             {
@@ -451,7 +446,6 @@
         case WORKKEY_CMD:
             if (!ByteDate[1])   // 工作密钥设置成功
             {
-                NSLog(@"%s,result:%@",__func__,@"工作密钥设置成功");
                     [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
             }else
             {

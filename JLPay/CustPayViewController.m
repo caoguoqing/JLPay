@@ -12,6 +12,7 @@
 #import "Define_Header.h"
 #import "MoneyCalculated.h"
 #import "BrushViewController.h"
+#import <CoreBluetooth/CoreBluetooth.h>
 
 
 
@@ -20,7 +21,11 @@
 
 
 
-@interface CustPayViewController ()<UIAlertViewDelegate>
+@interface CustPayViewController ()<UIAlertViewDelegate, CBCentralManagerDelegate>
+{
+    BOOL blueToothPowerOn;
+    CBCentralManager* blueManager;
+}
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
@@ -37,6 +42,9 @@
     [self addSubViews];
     UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backBarButton];
+    
+    blueToothPowerOn = NO;
+    blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
 }
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
@@ -64,6 +72,14 @@
 
 }
 
+#pragma mask ---- CBCentrolManagerDelegate
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
+    if (central.state == CBCentralManagerStatePoweredOn) {
+        blueToothPowerOn = YES;
+    } else {
+        blueToothPowerOn = NO;
+    }
+}
 
 
 #pragma mask ::: 数字按键组的分割线
@@ -169,6 +185,11 @@
     sender.transform = CGAffineTransformIdentity;
     if ([self.money floatValue] < 0.0001) {
         [self alertShow:@"请输入金额!"];
+        return;
+    }
+    
+    if (!blueToothPowerOn) {
+        [self alertShow:@"手机蓝牙未打开,请打开蓝牙"];
         return;
     }
     
@@ -394,7 +415,9 @@
 // 小数点型金额转换为整型金额
 - (NSString*) sIntMoneyOfFloatMoney:(NSString*)floatMoney {
     NSString* sIntMoney = nil;
-    sIntMoney = [NSString stringWithFormat:@"%012d",(int)([floatMoney floatValue]*100)];
+    NSString* sInt = [floatMoney substringToIndex:[floatMoney rangeOfString:@"."].location];
+    NSString* sFloat = [floatMoney substringFromIndex:[floatMoney rangeOfString:@"."].location + 1];
+    sIntMoney = [NSString stringWithFormat:@"%012d",sInt.intValue * 100 + sFloat.intValue];
     return sIntMoney;
 }
 

@@ -10,20 +10,24 @@
 #import "Define_Header.h"
 #import "TCP/TcpClientService.h"
 #import "Unpacking8583.h"
-#import "GroupPackage8583.h"
 #import "Toast+UIView.h"
-#import "JLActivity.h"
 #import "JLActivitor.h"
 #import "DeviceManager.h"
+#import <CoreBluetooth/CoreBluetooth.h>
 #import "Packing8583.h"
 #import "EncodeString.h"
 
 @interface DeviceSignInViewController()
 <
-wallDelegate,managerToCard,DeviceManagerDelegate,Unpacking8583Delegate,
-UITableViewDataSource,UITableViewDelegate,
+wallDelegate,DeviceManagerDelegate,Unpacking8583Delegate,
+UITableViewDataSource,UITableViewDelegate,CBCentralManagerDelegate,
 UIActionSheetDelegate,UIAlertViewDelegate
 >
+{
+    BOOL needCheckoutToCustVC;
+    BOOL blueToothIsOn;
+    CBCentralManager* bleManager;
+}
 @property (nonatomic, strong) NSMutableArray* SNVersionNums;        // SN号列表
 @property (nonatomic, strong) NSMutableArray* terminalNums;         // 终端号列表
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 终端号:已勾选的
@@ -58,12 +62,16 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [self.view addSubview:self.tableView];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    [self setExtraCellLineHidden:self.tableView];
     
-    // 不要放在 viewWillAppear 中
-    [self actionSheetShowForSelectingDevice];
-    
+    self.selectedDevice = nil;
     [[DeviceManager sharedInstance] setDelegate:self];
+    
+    bleManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+    if (bleManager.state == CBCentralManagerStatePoweredOn) {
+        blueToothIsOn = YES;
+    } else {
+        blueToothIsOn = NO;
+    }
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -92,7 +100,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     self.sureButton.frame = frame;
     self.sureButton.layer.cornerRadius = frame.size.height/2.0;
     
-    
     // 加载已绑定信息:如果已经绑定过
     NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     if (infoBinded) {
@@ -102,12 +109,15 @@ UIActionSheetDelegate,UIAlertViewDelegate
         self.selectedSNVersionNum = self.SNVersionNumBinded;
     }
     
-    
-    
+    // 更新切换视图标记:切换到金额输入界面
+    needCheckoutToCustVC = NO;
 }
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+    if (self.selectedDevice == nil && blueToothIsOn) {
+        // 加载设备选择框
+        [self actionSheetShowForSelectingDevice];
+    }
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -118,6 +128,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self.waitingTimer invalidate];
         self.waitingTimer = nil;
     }
+    if (needCheckoutToCustVC) {
+        // 切换到金额输入界面
+        [self.tabBarController setSelectedIndex:0];
+    }
+
+}
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
 }
 
 
@@ -202,10 +220,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [button addTarget:self action:@selector(buttonTouchToOpenDevices:) forControlEvents:UIControlEventTouchUpInside];
         
         [headerView addSubview:button];
-        
     }
     return headerView;
 }
+
 // pragma mask ::: 设置section 头
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) {
@@ -214,6 +232,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         return nil;
     }
 }
+
 // pragma mask ::: 设置section 尾
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     NSMutableString* headerTitle = [[NSMutableString alloc] init];
@@ -269,6 +288,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
 }
 
+#pragma mask : -------------  CBCentrolManagerDelegate 
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
+    if (central.state == CBCentralManagerStatePoweredOn) {
+        blueToothIsOn = YES;
+    } else {
+        blueToothIsOn = NO;
+    }
+}
 
 #pragma mask : -------------  DeviceManagerDelegate
 // ID号读取
@@ -321,35 +348,21 @@ UIActionSheetDelegate,UIAlertViewDelegate
         });
         [self alertForMessage:@"绑定设备失败!"];
     }
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            if (yesOrNot) {
-//            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 signIn]
-//                                                         IP:Current_IP
-//                                                       PORT:Current_Port
-//                                                   Delegate:self
-//                                                     method:TranType_DownWorkKey];
-//            } else {
-//                [[JLActivitor sharedInstance] stopAnimating];
-//                [self alertForMessage:@"绑定设备失败!"];
-//            }
-//        });
 }
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
     // 停止等待转轮
     dispatch_async(dispatch_get_main_queue(), ^{
         [[JLActivitor sharedInstance] stopAnimating];
-        return;
     });
     if (yesOrNot) {
+        // 更新批次号
+        [self updateSignSort];
         // 保存已绑定设备的信息到本地列表
         [self saveBindedDevice];
         // 更新tool显示
-        self.terminalNumBinded = self.selectedTerminalNum;
-        self.SNVersionNumBinded = self.selectedSNVersionNum;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+        [self updateBindedTerminalNum:self.selectedTerminalNum];
+        [self updateBindedSNNum:self.selectedSNVersionNum];
         [self alertForMessage:@"绑定设备成功!"];
     } else {
         [self alertForMessage:@"绑定设备失败!"];
@@ -358,7 +371,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 
 
-#pragma mask : -------------  wallDelegate: 本模块用到了“签到”+"主密钥下载"
+#pragma mask : -------------  wallDelegate: 本模块用到了"签到"+"主密钥下载"
 // 成功接收到数据
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     if (![str isEqualToString:TranType_DownWorkKey] && ![str isEqualToString:TranType_DownMainKey]) {
@@ -366,7 +379,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     if ([data length] > 0) {
         // 拆包
-//        [[Unpacking8583 getInstance] unpackingSignin:data method:str getdelegate:self];
         [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -385,12 +397,26 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 // 拆包结果的回调方法
 - (void)didUnpackDatas:(NSDictionary *)dataDict onState:(BOOL)state withErrorMsg:(NSString *)message {
+    // 检查设备是否连接
+    int connectedState = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
+    if (connectedState != 1) {
+        state = NO;
+        message = @"设备未连接";
+    }
     if (state) {
         NSString* f60 = [dataDict valueForKey:@"60"];
         NSString* msgType = [dataDict valueForKey:@"msgType"];
         NSString* keyPin = [dataDict valueForKey:@"62"];
-        if ([msgType hasPrefix:@"08"] && [f60 hasPrefix:@"99"]) { // 下载主密钥
+        if ([msgType hasPrefix:@"08"] && [f60 hasPrefix:@"99"]) {           // 主密钥
+            // 解析主密钥
+            keyPin = [self mainKeyAnalysedByF62:keyPin];
+            // 写主密钥
             [[DeviceManager sharedInstance] writeMainKey:keyPin onSNVersion:self.selectedSNVersionNum];
+        } else if ([msgType hasPrefix:@"08"] && [f60 hasPrefix:@"00"]) {    // 工作密钥
+            // 解析 62域 工作密钥
+            keyPin = [self workKeyAnalysedByF62:keyPin];
+            // 写工作密钥
+            [[DeviceManager sharedInstance] writeWorkKey:keyPin onSNVersion:self.selectedSNVersionNum];
         }
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -399,51 +425,17 @@ UIActionSheetDelegate,UIAlertViewDelegate
         NSString* errorMessage = [NSString stringWithFormat:@"绑定设备失败:%@",message];
         [self alertForMessage:errorMessage];
     }
+    
 }
 
-- (void)managerToCardState:(NSString *)type isSuccess:(BOOL)state method:(NSString *)metStr {
-    if (state) {    // 成功
-        // 先判断设备是否连接
-        int connectedState = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
-        if (connectedState == 1) { // 已连接
-            if ([metStr isEqualToString:TranType_DownMainKey]) {  // 下载主密钥
-                [[DeviceManager sharedInstance] writeMainKey:[PublicInformation signinPin] onSNVersion:self.selectedSNVersionNum];
-            }
-            else if ([metStr isEqualToString:TranType_DownWorkKey]) {   // 下载工作密钥
-                // 更新批次号 returnSignSort -> Get_Sort_Number
-                NSString* signSort = [PublicInformation returnSignSort];
-                int intSignSort = [signSort intValue] + 1;
-                if (intSignSort > 999999) {
-                    intSignSort = 1;
-                }
-                [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-                
-                // 写工作密钥 ----- 到了这里就可以直接写了
-                NSString* workStr = [[NSUserDefaults standardUserDefaults] objectForKey:WorkKey];
-                NSLog(@"工作密钥: [%@]", workStr);
-                [[DeviceManager sharedInstance] writeWorkKey:workStr onSNVersion:self.selectedSNVersionNum];
-            }
-        } else {
-            [[JLActivitor sharedInstance] stopAnimating];
-            [self alertForMessage:@"设备未连接"];
-            if (connectedState == 0) { // 如果设备已识别，但未连接，进行连接
-                [[DeviceManager sharedInstance] openDevice:self.selectedSNVersionNum];
-            }
-        }
-    } else { // 失败
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] stopAnimating];
-        });
-        NSString* errorMessage = [NSString stringWithFormat:@"连接设备失败:%@",type];
-        [self alertForMessage:errorMessage];
-    }
-}
 
 #pragma mask -------------------------------- UIActionSheetDelegate 点击事件
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0) {
         self.selectedDevice = nil;
+        return;
+    }
+    if (!blueToothIsOn) {
         return;
     }
     // 保存选择的设备类型
@@ -454,6 +446,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [[DeviceManager sharedInstance] makeDeviceEntryWithType:title];
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (!blueToothIsOn) {
+        [self alertForBleMessage:@"手机蓝牙未打开,请打开蓝牙"];
+        return;
+    }
     if (buttonIndex != 0) {
         // 启动设备扫描
         [[DeviceManager sharedInstance] startScanningDevices];
@@ -478,7 +474,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     UIButton* button = (UIButton*)sender;
     button.transform = CGAffineTransformIdentity;
 
-    NSLog(@"点击了确定按钮");
     // 设置选择的终端号到本地配置 并签到
     if (self.selectedTerminalNum == nil) {
         [self alertForMessage:@"请选择终端号"];
@@ -496,11 +491,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
     if (beingConnect == 1) {
         dispatch_async(dispatch_get_main_queue(), ^{
-//            [[TcpClientService getInstance] sendOrderMethod:[GroupPackage8583 downloadMainKey]
-//                                                         IP:Current_IP
-//                                                       PORT:Current_Port
-//                                                   Delegate:self
-//                                                     method:TranType_DownMainKey];
             [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
         });
         [self sendTransPackageOnTransType:TranType_DownMainKey];
@@ -516,6 +506,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self.SNVersionNums addObject:@"无"];
         [self.tableView reloadData];
     });
+    if (!blueToothIsOn) {
+        [self alertForBleMessage:@"手机蓝牙未打开,请先打开蓝牙"];
+        return;
+    }
     if (self.selectedDevice == nil) {
         [self actionSheetShowForSelectingDevice];
     } else {
@@ -583,6 +577,51 @@ UIActionSheetDelegate,UIAlertViewDelegate
     return [packingHolder stringPackingWithType:@"0800"];
 }
 
+// 解析62域: 主密钥
+- (NSString*) mainKeyAnalysedByF62:(NSString*)f62 {
+    // 截取主密钥密文
+    NSRange sKeyRange = [f62 rangeOfString:@"DF02"];
+    NSInteger location = sKeyRange.location + sKeyRange.length;
+    NSString* sHexLength = [f62 substringWithRange:NSMakeRange(location, 2)];
+    location += 2;
+    int length = [PublicInformation sistenToTen:sHexLength] * 2;
+    NSString* mainKeyPin = [f62 substringWithRange:NSMakeRange(location, length)];
+    // 解密出明文
+    NSString* mainKey = [[Unpacking8583 getInstance] threeDESdecrypt:mainKeyPin keyValue:@"EF2AE9F834BFCDD5260B974A70AD1A4A"];
+    return mainKey;
+}
+// 解析62域: 工作密钥
+- (NSString*) workKeyAnalysedByF62:(NSString*)f62 {
+    NSString* workKey = [f62 substringFromIndex:2];
+    return workKey;
+}
+
+
+// 更新批次号
+- (void) updateSignSort {
+    NSString* signSort = [PublicInformation returnSignSort];
+    int intSignSort = [signSort intValue] + 1;
+    if (intSignSort > 999999) {
+        intSignSort = 1;
+    }
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+// 更新"已绑定终端号"
+- (void) updateBindedTerminalNum:(NSString*)terminalNum {
+    self.terminalNumBinded = terminalNum;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+}
+// 更新"已绑定SN号"
+- (void) updateBindedSNNum:(NSString*)SNNum {
+    self.SNVersionNumBinded = SNNum;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+}
 
 
 // 弹出设备类型选择框
@@ -600,22 +639,16 @@ UIActionSheetDelegate,UIAlertViewDelegate
     UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
 }
+- (void) alertForBleMessage:(NSString*)msg {
+    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"蓝牙提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([alertView.message isEqualToString:@"绑定设备成功!"]) {
         // 绑定成功后就跳转到金额输入界面
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:0.5 delay:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
-                [self.tabBarController setSelectedViewController:[[self.tabBarController viewControllers] objectAtIndex:0]];
-            } completion:nil];
-        });
+        [self.navigationController popViewControllerAnimated:YES];
+        needCheckoutToCustVC = YES;
     }
-}
-
-// pragma mask ::: 去掉多余的单元格的分割线
-- (void) setExtraCellLineHidden: (UITableView*)tableView {
-    UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
-    view.backgroundColor = [UIColor clearColor];
-    [tableView setTableFooterView:view];
 }
 
 
@@ -648,7 +681,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 // 启动设备等待定时器
 - (void) startDeviceTimer {
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
+        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
     });
 }
 // 关闭设备定时器

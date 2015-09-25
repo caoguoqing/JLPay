@@ -53,16 +53,22 @@
         UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:viewController animated:YES];
     }
-
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backBarButton];
 }
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 }
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+}
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+}
+
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -284,12 +290,6 @@
     UILabel *mailLabel              = [[UILabel alloc] initWithFrame:frame];
     mailLabel.text                  = [[NSUserDefaults standardUserDefaults] objectForKey:Business_Number]; // 商户编号
     mailLabel.font                  = [UIFont systemFontOfSize:FontOfLittleLabel];
-    // 设置 maillabel 的自适应大小
-    CGSize autoSize                 = [mailLabel.text sizeWithFont:mailLabel.font constrainedToSize:frame.size lineBreakMode:NSLineBreakByWordWrapping];
-    
-    frame                           = CGRectMake(frame.origin.x, frame.origin.y, autoSize.width, frame.size.height);
-    mailLabel.frame                 = frame;
-    // 设置 maillabel 的自适应大小
     mailLabel.textColor             = [UIColor colorWithWhite:1 alpha:1];
     mailLabel.textAlignment         = NSTextAlignmentLeft;
     [cell addSubview:mailLabel];
@@ -322,6 +322,16 @@
     view.backgroundColor = [UIColor clearColor];
     [tableView setTableFooterView:view];
 }
+
+
+
+// 简化代码
+- (void) alertShowWithMessage:(NSString*)msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:msg message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert show];
+}
+
+
 
 
 #pragma mask ---- getter & setter

@@ -40,5 +40,8 @@
 - (void)writeData:(NSData *)data {
     
 }
+- (void)cancelWriteData {
+    
+}
 
 @end

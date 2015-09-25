@@ -17,9 +17,8 @@
 #import "TcpClientService.h"
 #import "Unpacking8583.h"
 #import "QianPiViewController.h"
-#import "GroupPackage8583.h"
-#import "IC_GroupPackage8583.h"
 #import "DeviceManager.h"
+#import <CoreBluetooth/CoreBluetooth.h>
 
 
 #import "TCP/Packing8583.h"
@@ -32,10 +31,14 @@
     CustomIOSAlertViewDelegate,
     wallDelegate,
     Unpacking8583Delegate,
-    managerToCard,
     UIAlertViewDelegate,
-    DeviceManagerDelegate
+    DeviceManagerDelegate,
+    CBCentralManagerDelegate
 >
+{
+    BOOL blueToothPowerOn;
+    CBCentralManager* blueManager;
+}
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
@@ -93,6 +96,9 @@
     [self addSubViews];
     // 交易超时时间为60秒,后面可以重置
     [self setTimeOut:TIMEOUT];
+    
+    blueToothPowerOn = NO;
+    blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
 }
 
 #pragma mask ::: 子视图的属性设置
@@ -127,10 +133,15 @@
         [self alertForFailedMessage:@"未绑定设备,请先绑定设备!"];
         return;
     }
-    // 2.扫描设备
+    // 2.检查蓝牙是否开启
+    if (!blueToothPowerOn) {
+        [self alertForFailedMessage:@"手机蓝牙未打开,请打开蓝牙"];
+        return;
+    }
+    // 3.扫描设备
     [[DeviceManager sharedInstance] startScanningDevices];
     
-    // 3.先在主线程打开activitor 和 提示信息
+    // 4.先在主线程打开activitor 和 提示信息
     [self.activity startAnimating];
     self.timeOut = 30; // 扫描设备的超时时间为30
     [self startTimerWithSelector:@selector(waitingForDeviceOpenning)];
@@ -449,6 +460,16 @@
         }
     }
     
+}
+
+
+#pragma mask ------------------ CBCentrolManagerDelegate
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
+    if (central.state == CBCentralManagerStatePoweredOn) {
+        blueToothPowerOn = YES;
+    } else {
+        blueToothPowerOn = NO;
+    }
 }
 
 

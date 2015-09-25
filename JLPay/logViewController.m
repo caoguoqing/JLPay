@@ -9,7 +9,6 @@
 #import "logViewController.h"
 #import "Define_Header.h"
 #import "TCP/TcpClientService.h"
-#import "GroupPackage8583.h"
 #import "Unpacking8583.h"
 #import "Toast+UIView.h"
 #import "OtherSignButton.h"
@@ -19,6 +18,7 @@
 #import "ASIFormDataRequest.h"
 #import "AppDelegate.h"
 #import "RegisterViewController.h"
+#import <CoreBluetooth/CoreBluetooth.h>
 
 
 
@@ -29,7 +29,6 @@
 
 
 @interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
-
 
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
@@ -82,7 +81,6 @@
     self.navigationController.navigationBar.tintColor = color;
     UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backBarButton];
-
     
     self.dictLastRegisterInfo = nil;
 }
@@ -468,6 +466,7 @@
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    NSLog(@"登陆返回的商户信息:[%@]",dataDic);
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     NSString* retcode = [dataDic objectForKey:@"code"];
@@ -489,6 +488,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
         [[NSUserDefaults standardUserDefaults] setObject:[dataDic objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
+        [[NSUserDefaults standardUserDefaults] synchronize];
         
         int termCount = [[dataDic objectForKey:@"termCount"] intValue];
         if (termCount > 0) {
