@@ -173,6 +173,8 @@
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"费率选择"]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"rateViewController"];
+        [viewController setTitle:cellName];
     }
     if (viewController) {
         [self.navigationController pushViewController:viewController animated:YES];
@@ -341,8 +343,8 @@
         _cellNames = [NSArray arrayWithObjects:
                       @"账号名称",
                       @"交易明细",
-                      // @"费率选择",
                       @"绑定设备",
+                      @"费率选择",
                       // @"额度查询",
                       @"修改密码",
                       // @"意见反馈",
@@ -358,7 +360,8 @@
         [_cellNamesAndImages setValue:@"01_14" forKey:@"绑定设备"];
         [_cellNamesAndImages setValue:@"01_18" forKey:@"修改密码"];
         [_cellNamesAndImages setValue:@"01_24" forKey:@"帮助和关于"];
-        // @"费率选择":@"01_12",
+        [_cellNamesAndImages setValue:@"01_12" forKey:@"费率选择"];
+
         // @"额度查询":@"01_16",
         // @"意见反馈":@"01_20",
     }

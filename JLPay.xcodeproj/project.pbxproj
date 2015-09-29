@@ -43,6 +43,7 @@
 		5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B531AD36D22004F206F /* libz.1.2.5.dylib */; };
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
 		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
+		5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */; settings = {ASSET_TAGS = (); }; };
 		5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */; };
 		5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353F1B70BC4300560C0A /* myCollectionCell.m */; };
 		5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35461B71E93700560C0A /* ChangePinViewController.m */; };
@@ -250,6 +251,8 @@
 		5E397B551AD37B4B004F206F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoneyCalculated.h; sourceTree = "<group>"; };
 		5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoneyCalculated.m; sourceTree = "<group>"; };
+		5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicPickerView.h; path = CustomPickerView/DynamicPickerView.h; sourceTree = "<group>"; };
+		5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DynamicPickerView.m; path = CustomPickerView/DynamicPickerView.m; sourceTree = "<group>"; };
 		5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectIndicatorView.h; sourceTree = "<group>"; };
 		5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectIndicatorView.m; sourceTree = "<group>"; };
 		5E5E353E1B70BC4300560C0A /* myCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myCollectionCell.h; sourceTree = "<group>"; };
@@ -1133,6 +1136,8 @@
 			children = (
 				5EF3BAA51B69C01900DCD764 /* RateViewController.h */,
 				5EF3BAA61B69C01900DCD764 /* RateViewController.m */,
+				5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */,
+				5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */,
 			);
 			name = "费率选择";
 			sourceTree = "<group>";
@@ -1387,6 +1392,7 @@
 				5E5E362A1B8703F900560C0A /* RgBasicInfoTableViewCell.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
+				5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */,
 				5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */,
 				5E397B371AD36429004F206F /* ASIS3BucketObject.m in Sources */,
 				5EBAA8F71ACD389D00E2ABDD /* JsonToString.m in Sources */,

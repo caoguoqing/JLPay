@@ -37,6 +37,7 @@
  * 9: 外网测试62
  */
 #define TestOrProduce                   1
+
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
@@ -119,26 +120,6 @@
 // 设备操作的等待超时时间
 #define DeviceWaitingTime           20                          
 
-////IC卡 SN序列号
-//#define Blue_Device_SN @"4800006472"
-//
-////蓝牙卡头 CSN
-//#define Blue_Device_CSN @"bluecsn"
-//#define Blue_IC_PiciNmuber @"000001"
-//
-////公钥下载 tlv
-//#define BlueIC_GongyaoLoad_TLV @"gongyaotlv"
-////参数下载 tlv
-//#define BlueIC_ParameterLoad_TLV @"parametertlv"
-//
-//#define Blue_Suppay_Content @"014643B2343BC0204C4068ABCE98A630"
-//#define Blue_Main_Key @"00000000000000000000000000000000"
-//
-////bbpos和蓝牙卡头公用
-//#define BlueIC55_Information @"55info"
-
-
-
 
 
 // 文件名: 8583报文域值属性字典
@@ -150,11 +131,11 @@
 #define  SuccessConsumerMoney       @"successmoney"
 // 原交易流水号,消费交易的流水号
 #define  Last_Exchange_Number       @"lastnumber"
-// 3,交易处理码                 -- 跟上一笔交易保持一致  Processing Code
+// 3,交易处理码                    -- 跟上一笔交易保持一致  Processing Code
 #define  LastF03_ProcessingCode     @"LastProcessingCode_F03__"
-// 11,流水号 bcd 6           -- 跟上一笔交易保持一致    System Trace
+// 11,流水号 bcd 6                 -- 跟上一笔交易保持一致    System Trace
 #define  LastF11_SystemTrace        @"LastSystemTrace_F11__"
-// 22,服务点输入方式码         -- 跟上一笔交易保持一致    Service Entry Code
+// 22,服务点输入方式码              -- 跟上一笔交易保持一致    Service Entry Code
 #define  LastF22_ServiceEntryCode   @"LastServiceEntryCode_F22__"
 // 37,原交易参考号
 #define  LastF37_ReferenceNum       @"LastF37_ReferenceNum__"
@@ -162,7 +143,7 @@
 #define  LastF41_TerminalNo         @"LastF41_TerminalNo__"
 // 42 商户号
 #define  LastF42_BussinessNo        @"LastF42_BussinessNo__"
-// 60,                         -- 跟上一笔交易保持一致   Reserved Private
+// 60,                           -- 跟上一笔交易保持一致   Reserved Private
 #define  LastF60_Reserved           @"LastReserved_F60__"
 
 
@@ -209,53 +190,53 @@
 #define Last_FldReserved_Number @"fldReserved"
 
 // 参数更新(解密key)
-#define DECRYPT_KEY @"31313131313131313232323232323232"
+//#define DECRYPT_KEY @"31313131313131313232323232323232"
 
 // ----- 暂时没用到 :主密钥
 //#define Main_Work_key [PublicInformation getMainSecret]
 
-#define IsOrRefresh_MainKey @"refreshkey"
-#define Refresh_Later_MainKey @"laterkey"
+//#define IsOrRefresh_MainKey @"refreshkey"
+//#define Refresh_Later_MainKey @"laterkey"
 
 // 签到获取的pinkey
-#define Sign_in_PinKey @"pinkey"
-#define Sign_in_MacKey @"mackey"
+//#define Sign_in_PinKey @"pinkey"
+//#define Sign_in_MacKey @"mackey"
 
 // 保存本次消费的流水号
 #define Current_Liushui_Number @"liushuinumber"
 
 // 消费获取的搜索参考号
-#define Consumer_Get_Sort @"cankaohao"
+//#define Consumer_Get_Sort @"cankaohao"
 
 // 主秘钥明文，保存
-#define main_key_plain @"mainkeyplain"
+//#define main_key_plain @"mainkeyplain"
 
 // 是否消费
-#define Is_Or_Consumer @"isconsumer"
+//#define Is_Or_Consumer @"isconsumer"
 
 // 初始化终端成功，可以签到
-#define Init_Terminal_Success @"initterminal"
+//#define Init_Terminal_Success @"initterminal"
 
 // 下载的工作密钥
 #define WorkKey @"workkey"
 
 // 签到标志
-#define DeviceBeingSignedIn   @"DeviceBeingSignedIn"
+//#define DeviceBeingSignedIn   @"DeviceBeingSignedIn"
 
 // 查询的金额
-#define SearchCard_Money @"searchmoney"
+//#define SearchCard_Money @"searchmoney"
 
 // 刷卡记录
-#define TheCarcd_Record [PublicInformation returnposCard]//@"cardcord"
+//#define TheCarcd_Record [PublicInformation returnposCard]//@"cardcord"
 
 // 保存终端号
-#define The_terminal_Number @"terminalaaaaa"
+//#define The_terminal_Number @"terminalaaaaa"
 
 // 交易类型
-#define ExchangeMoney_Type @"exchangetype"
+//#define ExchangeMoney_Type @"exchangetype"
 
 //缓存卡号信息
-#define Save_All_NonCardInfo @"allcardinfo"
+//#define Save_All_NonCardInfo @"allcardinfo"
 
 
 // 8583报文配置
@@ -266,43 +247,43 @@
 
 /*************[支付宝 相关的参数:]**************/
 
-//支付宝二维码串
-#define ErWeiMaChuan @"erweimachuan"
-//支付宝扫码输入金额
-#define ZhifubaoSaomaMoney @"saomamoney"
-//支付宝订单号
-#define ZhiFuBaoOrderNumber @"ordernumber"
-//支付宝查询
-
-//支付宝查询流水号
-#define Zhifubao_search_liushui @"zhifubaosearchliushui"
-//支付宝账号
-#define Zhifubao_Number @"zhifubaonumber"
-//支付宝查询订单号
-#define Zhifubao_Search_Order @"searchorder"
-
-//支付宝条码支付，缓存消费记录
-#define ZhifubaoTiaomaRecord @"zhifubaotiaomarecord"
-
-//支付宝订单号状态切换(条码、扫码成功 state=1；撤销、退款 state=0)
-#define ZhifubaoDingdanState @"dingdanstate"
-
-//支付宝撤销流水号\支付宝退款
-#define ZhifubaoChexiaoLiushui @"chexiaoliushui"
-
-//支付宝撤销\退款,账号
-
-//支付宝撤销\退款,订单号
-#define ZhifubaoChexiaoDingdanNum @"chexiaodingdannumber"
-
-//支付宝撤销\退款,撤销金额
-#define ZhifubaoChexiaoMoney @"chexiaomoney"
-
-//支付宝pos小票中得 商户名称
-#define Zhifubao_Merchant @"zhifubaomerchant"
+////支付宝二维码串
+//#define ErWeiMaChuan @"erweimachuan"
+////支付宝扫码输入金额
+//#define ZhifubaoSaomaMoney @"saomamoney"
+////支付宝订单号
+//#define ZhiFuBaoOrderNumber @"ordernumber"
+////支付宝查询
+//
+////支付宝查询流水号
+//#define Zhifubao_search_liushui @"zhifubaosearchliushui"
+////支付宝账号
+//#define Zhifubao_Number @"zhifubaonumber"
+////支付宝查询订单号
+//#define Zhifubao_Search_Order @"searchorder"
+//
+////支付宝条码支付，缓存消费记录
+//#define ZhifubaoTiaomaRecord @"zhifubaotiaomarecord"
+//
+////支付宝订单号状态切换(条码、扫码成功 state=1；撤销、退款 state=0)
+//#define ZhifubaoDingdanState @"dingdanstate"
+//
+////支付宝撤销流水号\支付宝退款
+//#define ZhifubaoChexiaoLiushui @"chexiaoliushui"
+//
+////支付宝撤销\退款,账号
+//
+////支付宝撤销\退款,订单号
+//#define ZhifubaoChexiaoDingdanNum @"chexiaodingdannumber"
+//
+////支付宝撤销\退款,撤销金额
+//#define ZhifubaoChexiaoMoney @"chexiaomoney"
+//
+////支付宝pos小票中得 商户名称
+//#define Zhifubao_Merchant @"zhifubaomerchant"
 
 //14域，卡有效期
-#define Card_DeadLineTime @"deadline"
+//#define Card_DeadLineTime @"deadline"
 
 
 /*************[注册审核未通过:响应配置信息]**************/

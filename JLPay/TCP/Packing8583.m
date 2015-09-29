@@ -93,18 +93,18 @@
     [F60 appendString:[PublicInformation returnSignSort]];
     // 60.3 N3 操作类型
     [F60 appendString:@"003"];
-    // 60.4 N1 磁条:2 , IC : 5 手机端统一送1
-    [F60 appendString:@"1"];
+    // 60.4 N2 手机统一送10,后续加了费率再切换
+    [F60 appendString:@"10"];
     // 60.5 N1 费率:
-    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
-    if (rate == nil || [rate isEqualToString:@""]) {
-        rate = @"0";
-    }
-    [F60 appendString:[rate substringToIndex:1]];
-    // 60.6 N4
-    [F60 appendString:@"0000"];
-    // 60.7 N2
-    [F60 appendString:@"00"];
+//    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
+//    if (rate == nil || [rate isEqualToString:@""]) {
+//        rate = @"0";
+//    }
+//    [F60 appendString:[rate substringToIndex:1]];
+//    // 60.6 N4
+//    [F60 appendString:@"0000"];
+//    // 60.7 N2
+//    [F60 appendString:@"00"];
     // 补齐整数位
     return F60;
 }
@@ -143,6 +143,7 @@
     NSString* lengthString = [PublicInformation ToBHex:(int)string.length/2];
     
     NSString* retString = [NSString stringWithFormat:@"%@%@", lengthString, string];
+    NSLog(@"打包的8583请求数据:[%@]",retString);
     return retString;
 }
 
@@ -165,6 +166,7 @@
 - (NSString*) allDataString {
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
+    NSLog(@"8583数据包:[%@]",self.dictionaryFieldNamesAndValues);
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];
     // 按排序好的顺序组字符串
     for (NSString* fieldKey in mapArray) {

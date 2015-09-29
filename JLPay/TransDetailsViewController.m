@@ -20,8 +20,9 @@
 #import "Define_Header.h"
 
 @interface TransDetailsViewController()
-<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,
-UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicatorViewDelegate>
+<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate
+,DatePickerViewDelegate,SelectIndicatorViewDelegate>
+
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
@@ -107,46 +108,6 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
 }
 
 
-
-#pragma mask ------ UIPickerViewDelegate
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    NSString* titleString = nil;
-    switch (component) {
-        case 0:
-            titleString = [self.years objectAtIndex:row];
-            break;
-        case 1:
-            titleString = [self.months objectAtIndex:row];
-            break;
-        case 2:
-            titleString = [self.days objectAtIndex:row];
-            break;
-        default:
-            break;
-    }
-    return titleString;
-}
-#pragma mask ------ UIPickerViewDataSource
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-    return 3;
-}
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    NSInteger numberOfRows = 0;
-    switch (component) {
-        case 0:
-            numberOfRows = self.years.count;
-            break;
-        case 1:
-            numberOfRows = self.months.count;
-            break;
-        case 2:
-            numberOfRows = self.days.count;
-            break;
-        default:
-            break;
-    }
-    return numberOfRows;
-}
 
 #pragma mask ------ DatePickerViewDelegate
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
@@ -526,7 +487,7 @@ UIPickerViewDataSource,UIPickerViewDelegate,DatePickerViewDelegate,SelectIndicat
     if (_dateButton == nil) {
         _dateButton = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButton.layer.cornerRadius = 5.0;
-        [_dateButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [_dateButton setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
         
         [_dateButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_dateButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];

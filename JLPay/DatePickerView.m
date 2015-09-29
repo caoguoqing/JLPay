@@ -14,8 +14,8 @@
 @property (nonatomic, strong) UIButton* sureButton;         // 确定按钮
 @property (nonatomic, strong) UIButton* cancelButton;       // 取消按钮
 @property (nonatomic, strong) NSMutableArray* years;        // dataSource:年份数组
-@property (nonatomic, strong) NSMutableArray* months;        // dataSource:月份数组
-@property (nonatomic, strong) NSMutableArray* days;        // dataSource:日期数组
+@property (nonatomic, strong) NSMutableArray* months;       // dataSource:月份数组
+@property (nonatomic, strong) NSMutableArray* days;         // dataSource:日期数组
 
 
 @end
@@ -58,7 +58,14 @@
     return numberOfRows;
 }
 #pragma mask ---- UIPickerViewDelegate
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
+    UILabel* label = (UILabel*)view;
+    if (label == nil) {
+        label = [[UILabel alloc] init];
+        label.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+        label.textAlignment = NSTextAlignmentCenter;
+        label.font = [UIFont systemFontOfSize:20];
+    }
     NSString* title = nil;
     if (component == 0) {
         title = [self.years objectAtIndex:row];
@@ -69,7 +76,11 @@
     else if (component == 2) {
         title = [self.days objectAtIndex:row];
     }
-    return title;
+    label.text = title;
+    return label;
+}
+- (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component {
+    return 162 / 6.0;
 }
 
 - (void) initialPickerDataWithDate:(NSString*)ndate {
@@ -136,11 +147,12 @@
 
 // 加载子视图
 - (void)layoutSubviews {
-    [super layoutSubviews];
+//    [super layoutSubviews];
+    CGFloat pickerHeighth = 162;
     CGRect iFrame = CGRectMake(0,
-                               self.frame.size.height - self.pickerView.frame.size.height,
+                               self.frame.size.height - pickerHeighth,//self.pickerView.frame.size.height,
                                self.frame.size.width,
-                               self.pickerView.frame.size.height);
+                               pickerHeighth);//self.pickerView.frame.size.height);
 
     
     // pickerView
@@ -183,8 +195,9 @@
 #pragma mask ::: getter & setter 
 - (UIPickerView *)pickerView {
     if (_pickerView == nil) {
-        _pickerView = [[UIPickerView alloc] initWithFrame:CGRectZero];
+        _pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 162)];
         _pickerView.backgroundColor = [UIColor whiteColor];
+        [_pickerView setShowsSelectionIndicator:YES];
         [_pickerView setDelegate:self];
         [_pickerView setDataSource:self];
     }

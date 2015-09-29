@@ -260,7 +260,7 @@
     } else if (placeType == 2) {
         sqlString = [NSString stringWithFormat:@"select value,key from cst_sys_param where owner = 'AREA' and descr = '%@'",[self.dictDetailPlace valueForKey:@"cityCode"]];
     }
-    NSArray* selectedDatas = [[MySQLiteManager SQLiteManagerWithDBFile:@"test.db"] selectedDatasWithSQLString:sqlString];
+    NSArray* selectedDatas = [[MySQLiteManager SQLiteManagerWithDBFile:DBFILENAME_AREACODE] selectedDatasWithSQLString:sqlString];
     NSMutableDictionary* dataDict = [[NSMutableDictionary alloc] init];
     NSMutableArray* datas = [[NSMutableArray alloc] init];
     for (NSDictionary* dict in selectedDatas) {

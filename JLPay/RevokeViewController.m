@@ -143,18 +143,18 @@
         // 返回的金额已经是无小数点的金额串12位
         NSString* amount = [self.dataDic objectForKey:@"amtTrans"];
         // 保存原始消费金额
-        [[NSUserDefaults standardUserDefaults] setValue:amount forKey:SuccessConsumerMoney];
-        CGFloat money = [amount floatValue]/100.0;
-        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%.02f", money] forKey:Consumer_Money];
+//        [[NSUserDefaults standardUserDefaults] setValue:amount forKey:SuccessConsumerMoney];
+//        CGFloat money = [amount floatValue]/100.0;
+//        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%.02f", money] forKey:Consumer_Money];
         // 保存原消费流水号
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"retrivlRef"] forKey:Consumer_Get_Sort];
+//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"retrivlRef"] forKey:Consumer_Get_Sort];
         // 保存原消费批次号 用于撤销报文的61.1域
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
+//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
         // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number];
+//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number];
         // 保存原始交易的终端号\商户号
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpTermId"] forKey:LastF41_TerminalNo];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpId"] forKey:LastF42_BussinessNo];
+//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpTermId"] forKey:LastF41_TerminalNo];
+//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpId"] forKey:LastF42_BussinessNo];
         // 注册交易类型到本地配置
         [[NSUserDefaults standardUserDefaults] setValue:TranType_ConsumeRepeal forKey:TranType];
         [[NSUserDefaults standardUserDefaults] synchronize];

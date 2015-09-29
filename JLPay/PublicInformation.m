@@ -19,30 +19,30 @@
 }
 
 
-+(NSString *)returnBBposKeyStr{
-     NSString *masterKey=@"CED0505457484395C6FAB0358A9E6E65";
-     NSString *rightKey =@"C0C0C0C000000000C0C0C0C000000000";
-    NSString *csnStr=[[NSUserDefaults standardUserDefaults] valueForKey:The_terminal_Number];//@"01100000000030070000000000000000";//@"0110000000003007";//
-     //3des加密
-     NSString *firstStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:masterKey];
-     //异或运算
-     Byte *left=(Byte *)[[PublicInformation NewhexStrToNSData:masterKey] bytes];
-     Byte *right=(Byte *)[[PublicInformation NewhexStrToNSData:rightKey] bytes];
-     
-     Byte pwdPlaintext[16];
-     for (int i = 0; i < 16; i++) {
-     pwdPlaintext[i] = (Byte)(left[i] ^ right[i]);
-     }
-     
-     NSData *theData = [[NSData alloc] initWithBytes:pwdPlaintext length:sizeof(pwdPlaintext)];
-     NSString *resultStr=[PublicInformation stringWithHexBytes2:theData];
-    
-     //再次3des加密
-     NSString *secondStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:resultStr];
-     //工作秘钥拼接
-     NSString *workKeyStr=[NSString stringWithFormat:@"%@%@",[firstStr substringWithRange:NSMakeRange(0, 16)],[secondStr substringWithRange:NSMakeRange(0, 16)]];
-    return workKeyStr;
-}
+//+(NSString *)returnBBposKeyStr{
+//     NSString *masterKey=@"CED0505457484395C6FAB0358A9E6E65";
+//     NSString *rightKey =@"C0C0C0C000000000C0C0C0C000000000";
+//    NSString *csnStr=[[NSUserDefaults standardUserDefaults] valueForKey:The_terminal_Number];//@"01100000000030070000000000000000";//@"0110000000003007";//
+//     //3des加密
+//     NSString *firstStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:masterKey];
+//     //异或运算
+//     Byte *left=(Byte *)[[PublicInformation NewhexStrToNSData:masterKey] bytes];
+//     Byte *right=(Byte *)[[PublicInformation NewhexStrToNSData:rightKey] bytes];
+//     
+//     Byte pwdPlaintext[16];
+//     for (int i = 0; i < 16; i++) {
+//     pwdPlaintext[i] = (Byte)(left[i] ^ right[i]);
+//     }
+//     
+//     NSData *theData = [[NSData alloc] initWithBytes:pwdPlaintext length:sizeof(pwdPlaintext)];
+//     NSString *resultStr=[PublicInformation stringWithHexBytes2:theData];
+//    
+//     //再次3des加密
+//     NSString *secondStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:resultStr];
+//     //工作秘钥拼接
+//     NSString *workKeyStr=[NSString stringWithFormat:@"%@%@",[firstStr substringWithRange:NSMakeRange(0, 16)],[secondStr substringWithRange:NSMakeRange(0, 16)]];
+//    return workKeyStr;
+//}
 
 +(int)returnSelectIndex{
     int deviceSelect;
@@ -64,15 +64,15 @@
 }
 
 //更新主密钥
-+(NSString *)getMainSecret{
-    NSString *mainkey=@"";
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:IsOrRefresh_MainKey]) {
-        mainkey=[[NSUserDefaults standardUserDefaults] valueForKey:Refresh_Later_MainKey];
-    }else{
-        mainkey=@"EF2AE9F834BFCDD5260B974A70AD1A4A";
-    }
-    return mainkey;
-}
+//+(NSString *)getMainSecret{
+//    NSString *mainkey=@"";
+//    if ([[NSUserDefaults standardUserDefaults] boolForKey:IsOrRefresh_MainKey]) {
+//        mainkey=[[NSUserDefaults standardUserDefaults] valueForKey:Refresh_Later_MainKey];
+//    }else{
+//        mainkey=@"EF2AE9F834BFCDD5260B974A70AD1A4A";
+//    }
+//    return mainkey;
+//}
 
 //原交易流水号,消费交易的流水号
 +(NSString *)returnLiushuiHao{
@@ -86,15 +86,15 @@
 }
 
 //消费成功的搜索参考号
-+(NSString *)returnConsumerSort{
-    NSString *consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
-    if (consumerStr && ![consumerStr isEqualToString:@""] && ![consumerStr isEqualToString:@"(null)"]) {
-        consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
-    }else{
-        consumerStr=@"";
-    }
-    return consumerStr;
-}
+//+(NSString *)returnConsumerSort{
+//    NSString *consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
+//    if (consumerStr && ![consumerStr isEqualToString:@""] && ![consumerStr isEqualToString:@"(null)"]) {
+//        consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
+//    }else{
+//        consumerStr=@"";
+//    }
+//    return consumerStr;
+//}
 
 //消费成功的金额,方便撤销支付
 +(NSString *)returnConsumerMoney{
@@ -231,12 +231,12 @@
 }
 
 //签到保存mackey，pinkey
-+(NSString *)signinPin{//3A78137C68EA4E670A441384ABC5251E
-    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
-}
-+(NSString *)signinMac{//104E324600A3F13DD2E7757053356383
-    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_MacKey];
-}
+//+(NSString *)signinPin{//3A78137C68EA4E670A441384ABC5251E
+//    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
+//}
+//+(NSString *)signinMac{//104E324600A3F13DD2E7757053356383
+//    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_MacKey];
+//}
 
 // 金融交易后台ip
 +(NSString *)settingIp{
