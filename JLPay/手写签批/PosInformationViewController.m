@@ -20,9 +20,8 @@
 #import "JLActivity.h"
 
 
-@interface PosInformationViewController ()
+@interface PosInformationViewController ()<ASIHTTPRequestDelegate>
 @property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
-@property (nonatomic, strong) JLActivity* activitor;
 
 @property (nonatomic, strong) UIButton* sureButton;
 @property (nonatomic, strong) UIProgressView* progressView;
@@ -31,7 +30,6 @@
 
 @implementation PosInformationViewController
 @synthesize uploadRequest = _uploadRequest;
-@synthesize activitor = _activitor;
 @synthesize progressView = _progressView;
 @synthesize sureButton = _sureButton;
 @synthesize posImg;
@@ -73,6 +71,89 @@
     });
     [self chatUploadImage];
 }
+
+#pragma mark ------------图片上传
+-(void)chatUploadImage{
+    NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
+                              [PublicInformation getDataSourceIP],
+                              [PublicInformation getDataSourcePort]];
+    
+    [NSThread detachNewThreadSelector:@selector(uploadRequestMethod:) toTarget:self withObject:uploadString];
+}
+/*** 签名图片上传接口 ***/
+-(void)uploadRequestMethod:(NSString *)url{
+    [self.uploadRequest setDelegate:self];
+    
+    /*
+     uploadRequstMchntNo	商户编号        15位
+     uploadRequestMchntNM	商户名称        不超过100位
+     uploadRequestReferNo	交易检索号       12位
+     uploadRequestTermNo	终端编号        8位
+     uploadRequestAmoumt	交易金额        以分为单位
+     uploadRequestTime      请求时间        14位
+     */
+    NSMutableDictionary* headerInfo = [[NSMutableDictionary alloc] init];
+    [headerInfo setValue:[PublicInformation returnBusiness] forKey:@"uploadRequstMchntNo"];
+    [headerInfo setValue:[PublicInformation returnBusinessName] forKey:@"uploadRequestMchntNM"];
+    [headerInfo setValue:[PublicInformation stringFromHexString:[self.transInformation valueForKey:@"37"]] forKey:@"uploadRequestReferNo"];
+    [headerInfo setValue:[PublicInformation stringFromHexString:[self.transInformation valueForKey:@"41"]] forKey:@"uploadRequestTermNo"];
+    [headerInfo setValue:[self.transInformation valueForKey:@"4"] forKey:@"uploadRequestAmoumt"];
+    
+    NSMutableString* requestTime = [[NSMutableString alloc] init];
+    [requestTime appendString:[[PublicInformation nowDate] substringToIndex:4]];
+    [requestTime appendString:[self.transInformation valueForKey:@"13"]];
+    [requestTime appendString:[self.transInformation valueForKey:@"12"]];
+    [headerInfo setValue:requestTime forKey:@"uploadRequestTime"];
+    
+    [self.uploadRequest setRequestHeaders:headerInfo];
+    // 小票图片data
+    NSData* imageData = UIImageJPEGRepresentation(self.scrollAllImg, 1.0);
+    NSLog(@"上传小票的大小:[%uKbit]",imageData.length/1024);
+    [self.uploadRequest appendPostData:imageData];
+    // 同步发送HTTP请求
+    [self.uploadRequest startAsynchronous];
+}
+
+/* HTTP回调: 响应成功 */
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.sureButton setEnabled:YES];
+    });
+    [request clearDelegatesAndCancel];
+    self.uploadRequest = nil;
+    NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:request.responseString]];
+    
+    if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
+        //缓存图片路径
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[app_delegate window] makeToast:@"小票上传成功"];
+            // 成功后就退出到root视图界面
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        });
+    }else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"小票上传失败，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alert show];
+        });
+    }
+}
+/* HTTP回调: 响应失败 */
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.sureButton setEnabled:YES];
+    });
+    [request clearDelegatesAndCancel];
+    self.uploadRequest = nil;
+    NSError *error = [request error];
+    if (error) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请检查网络" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alert show];
+        });
+    }
+}
+
+
 
 
 - (void)viewDidLoad
@@ -399,7 +480,6 @@
     
     // 将滚动视图的内容装填成图片.jpg
     self.scrollAllImg = [self getNormalImage:scrollVi];
-    [self.view addSubview:self.activitor];
 }
 // 简化代码:label可以用同一个产出方式
 - (UILabel*) newTextLabelWithText:(NSString*)text
@@ -422,8 +502,6 @@
 // 视图退出,要取消
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.activitor stopAnimating];
-    self.activitor = nil;
     [self.uploadRequest clearDelegatesAndCancel];
     self.uploadRequest = nil;
 }
@@ -446,92 +524,6 @@
 }
 
 
-#pragma mark ------------图片上传
--(void)chatUploadImage{
-    NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
-                              [PublicInformation getDataSourceIP],
-                              [PublicInformation getDataSourcePort]];
-
-    [NSThread detachNewThreadSelector:@selector(uploadRequestMethod:) toTarget:self withObject:uploadString];
-}
-/*** 签名图片上传接口 ***/
--(void)uploadRequestMethod:(NSString *)url{
-    [self.uploadRequest setDelegate:self];
-    
-    /*
-     uploadRequstMchntNo	商户编号        15位
-     uploadRequestMchntNM	商户名称        不超过100位
-     uploadRequestReferNo	交易检索号       12位
-     uploadRequestTermNo	终端编号        8位
-     uploadRequestAmoumt	交易金额        以分为单位
-     uploadRequestTime      请求时间        14位
-     */
-    NSMutableDictionary* headerInfo = [[NSMutableDictionary alloc] init];
-    [headerInfo setValue:[PublicInformation returnBusiness] forKey:@"uploadRequstMchntNo"];
-    [headerInfo setValue:[PublicInformation returnBusinessName] forKey:@"uploadRequestMchntNM"];
-    [headerInfo setValue:[PublicInformation stringFromHexString:[self.transInformation valueForKey:@"37"]] forKey:@"uploadRequestReferNo"];
-    [headerInfo setValue:[PublicInformation stringFromHexString:[self.transInformation valueForKey:@"41"]] forKey:@"uploadRequestTermNo"];
-    [headerInfo setValue:[self.transInformation valueForKey:@"4"] forKey:@"uploadRequestAmoumt"];
-    
-    NSMutableString* requestTime = [[NSMutableString alloc] init];
-    [requestTime appendString:[[PublicInformation nowDate] substringToIndex:4]];
-    [requestTime appendString:[self.transInformation valueForKey:@"13"]];
-    [requestTime appendString:[self.transInformation valueForKey:@"12"]];
-    [headerInfo setValue:requestTime forKey:@"uploadRequestTime"];
-    
-    [self.uploadRequest setRequestHeaders:headerInfo];
-    // 小票图片data
-    NSData* imageData = UIImageJPEGRepresentation(self.scrollAllImg, 1.0);
-    NSLog(@"上传小票的大小:[%ud]",imageData.length);
-    [self.uploadRequest appendPostData:imageData];
-    // 同步发送HTTP请求
-	[self.uploadRequest startAsynchronous];
-    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.activitor startAnimating];
-    });
-}
-
-// HTTP 请求成功
--(void)successLogin:(ASIHTTPRequest *)successLoginStr{
-    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.activitor stopAnimating];
-        [self.sureButton setEnabled:YES];
-    });
-    [successLoginStr clearDelegatesAndCancel];
-    self.uploadRequest = nil;
-    NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:successLoginStr.responseString]];
-
-    if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
-        //缓存图片路径
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[app_delegate window] makeToast:@"小票上传成功"];
-            // 成功后就退出到root视图界面
-            [self.navigationController popToRootViewControllerAnimated:YES];
-        });
-    }else{
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"小票上传失败，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [alert show];
-        });
-    }
-    
-}
-// HTTP 请求失败
--(void)falseLogin:(ASIHTTPRequest *)falseScoreStr{
-    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.activitor stopAnimating];
-        [self.sureButton setEnabled:YES];
-    });
-    [falseScoreStr clearDelegatesAndCancel];
-    self.uploadRequest = nil;
-    NSError *error = [falseScoreStr error];
-    if (error) {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [alert show];
-        });
-    }
-}
 
 
 #pragma mask ::: setter && getter
@@ -543,22 +535,13 @@
         NSURL* url = [NSURL URLWithString:uploadString];
         _uploadRequest = [[ASIFormDataRequest alloc] initWithURL:url];
         [_uploadRequest setShouldAttemptPersistentConnection:YES];
-        [_uploadRequest setNumberOfTimesToRetryOnTimeout:2];
+        [_uploadRequest setNumberOfTimesToRetryOnTimeout:3];
         [_uploadRequest setTimeOutSeconds:30];
-        [_uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
-        [_uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
-        [_uploadRequest setShouldContinueWhenAppEntersBackground:YES];
+        [_uploadRequest setDelegate:self];
         
         [_uploadRequest setUploadProgressDelegate:self.progressView];
     }
     return _uploadRequest;
-}
-
-- (JLActivity *)activitor {
-    if (_activitor == nil) {
-        _activitor = [[JLActivity alloc] init];
-    }
-    return _activitor;
 }
 - (UIProgressView *)progressView {
     if (_progressView == nil) {
