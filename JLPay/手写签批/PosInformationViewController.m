@@ -23,12 +23,17 @@
 @interface PosInformationViewController ()
 @property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
 @property (nonatomic, strong) JLActivity* activitor;
+
+@property (nonatomic, strong) UIButton* sureButton;
+@property (nonatomic, strong) UIProgressView* progressView;
 @end
 
 
 @implementation PosInformationViewController
 @synthesize uploadRequest = _uploadRequest;
 @synthesize activitor = _activitor;
+@synthesize progressView = _progressView;
+@synthesize sureButton = _sureButton;
 @synthesize posImg;
 @synthesize scrollAllImg;
 
@@ -48,8 +53,24 @@
     [self chatUploadImage];
 }
 
-/* 确定-上传小票图片 */
--(void)requireMethod{
+
+- (IBAction) touchDown:(UIButton*)sender {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        sender.transform = CGAffineTransformMakeScale(0.95, 0.95);
+        [sender setEnabled:NO];
+    });
+}
+- (IBAction) touchOut:(UIButton*)sender {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        sender.transform = CGAffineTransformIdentity;
+        [sender setEnabled:YES];
+    });
+}
+/* 确定按钮-上传小票图片 */
+-(IBAction) requireMethod:(UIButton*)sender {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        sender.transform = CGAffineTransformIdentity;
+    });
     [self chatUploadImage];
 }
 
@@ -359,27 +380,25 @@
     frame.origin.y += inset + frame.size.height;
     scrollVi.contentSize = CGSizeMake(Screen_Width, frame.origin.y); // 高度要重新定义
     [self.view addSubview:scrollVi];
+    
+    // 进度条
+    frame.origin.x = 0;//inset * 10;
+    frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height;
+    frame.size.width = scrollVi.bounds.size.width ;//- inset*10 * 2;
+    frame.size.height = inset*2;
+    [self.progressView setFrame:frame];
+    [self.view addSubview:self.progressView];
 
     // 确定按钮
     frame.origin.x = inset * 2.0;
     frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height + inset * 2.0;
     frame.size.width = scrollVi.bounds.size.width - inset * 2.0 * 2.0;
     frame.size.height = buttonHeight;
-    UIButton *requireBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    requireBtn.frame = frame;
-    requireBtn.layer.cornerRadius = 10.0;
-    requireBtn.layer.masksToBounds = YES;
-    [requireBtn setBackgroundImage:[PublicInformation createImageWithColor:[UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0]] forState:UIControlStateNormal];
-    [requireBtn addTarget:self action:@selector(requireMethod) forControlEvents:UIControlEventTouchUpInside];
-    [requireBtn setTitle:@"确定" forState:UIControlStateNormal];
-    [requireBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [requireBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [requireBtn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    requireBtn.titleLabel.font = bigFont;
-    [self.view addSubview:requireBtn];
+    [self.sureButton setFrame:frame];
+    [self.view addSubview:self.sureButton];
     
     // 将滚动视图的内容装填成图片.jpg
-    self.scrollAllImg=[self getNormalImage:scrollVi];
+    self.scrollAllImg = [self getNormalImage:scrollVi];
     [self.view addSubview:self.activitor];
 }
 // 简化代码:label可以用同一个产出方式
@@ -461,17 +480,22 @@
     [headerInfo setValue:requestTime forKey:@"uploadRequestTime"];
     
     [self.uploadRequest setRequestHeaders:headerInfo];
-    [self.uploadRequest appendPostData:UIImageJPEGRepresentation(self.scrollAllImg, 1.0)];             // 小票图片data
-	[self.uploadRequest startAsynchronous];                           // 同步发送HTTP请求
+    // 小票图片data
+    NSData* imageData = UIImageJPEGRepresentation(self.scrollAllImg, 1.0);
+    NSLog(@"上传小票的大小:[%ud]",imageData.length);
+    [self.uploadRequest appendPostData:imageData];
+    // 同步发送HTTP请求
+	[self.uploadRequest startAsynchronous];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor startAnimating];
+//        [self.activitor startAnimating];
     });
 }
 
 // HTTP 请求成功
 -(void)successLogin:(ASIHTTPRequest *)successLoginStr{
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
+//        [self.activitor stopAnimating];
+        [self.sureButton setEnabled:YES];
     });
     [successLoginStr clearDelegatesAndCancel];
     self.uploadRequest = nil;
@@ -495,7 +519,8 @@
 // HTTP 请求失败
 -(void)falseLogin:(ASIHTTPRequest *)falseScoreStr{
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
+//        [self.activitor stopAnimating];
+        [self.sureButton setEnabled:YES];
     });
     [falseScoreStr clearDelegatesAndCancel];
     self.uploadRequest = nil;
@@ -523,6 +548,8 @@
         [_uploadRequest setDidFinishSelector:@selector(successLogin:)];  // 接收成功消息
         [_uploadRequest setDidFailSelector:@selector(falseLogin:)];      // 接收失败消息
         [_uploadRequest setShouldContinueWhenAppEntersBackground:YES];
+        
+        [_uploadRequest setUploadProgressDelegate:self.progressView];
     }
     return _uploadRequest;
 }
@@ -532,6 +559,29 @@
         _activitor = [[JLActivity alloc] init];
     }
     return _activitor;
+}
+- (UIProgressView *)progressView {
+    if (_progressView == nil) {
+        _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
+    }
+    return _progressView;
+}
+- (UIButton *)sureButton {
+    if (_sureButton == nil) {
+        _sureButton = [[UIButton alloc] init];
+        _sureButton.layer.cornerRadius = 10.0;
+        [_sureButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
+        [_sureButton setTitle:@"确定" forState:UIControlStateNormal];
+        [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+        
+        [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_sureButton addTarget:self action:@selector(touchOut:) forControlEvents:UIControlEventTouchUpOutside];
+        [_sureButton addTarget:self action:@selector(requireMethod:) forControlEvents:UIControlEventTouchUpInside];
+
+    }
+    return _sureButton;
 }
 
 @end
