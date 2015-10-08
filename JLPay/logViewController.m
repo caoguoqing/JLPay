@@ -208,7 +208,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     /* 商标：图片 */
     UIImage*     iconImage              = [UIImage imageNamed:ImageForBrand];
     CGSize       iconSize               = [iconImage size];
-    NSLog(@"logo图片size:[%lf,%lf]",iconSize.width, iconSize.height);
 
     CGFloat      iconViewWidth          = self.view.bounds.size.width / 2.0;
     CGFloat      iconViewHeight         = iconViewWidth * iconSize.height/iconSize.width;
