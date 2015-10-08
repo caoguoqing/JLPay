@@ -82,7 +82,7 @@
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
         [_cellTitles addObject:@"3.交易明细"];
-        [_cellTitles addObject:@"4.关于我们"];
+//        [_cellTitles addObject:@"4.关于我们"];
     }
     return _cellTitles;
 }
