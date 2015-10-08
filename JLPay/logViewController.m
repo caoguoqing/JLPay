@@ -25,7 +25,7 @@
 #pragma mask    ---- 常量设置区 ----
 #define ViewCornerRadius 6.0                                        // 各个 view 的圆角半径值
 #define leftLeave        30.0                                       // view 的左边距
-#define ImageForBrand   @"logo"                                     // 商标图片
+#define ImageForBrand   @"logoNameWLS"                                     // 商标图片
 
 const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012345678";
 
@@ -207,7 +207,10 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     CGFloat      inset                  = 10.0; // 间隔
     /* 商标：图片 */
     UIImage*     iconImage              = [UIImage imageNamed:ImageForBrand];
+    NSLog(@"获取到了logo图片:[%@]",iconImage);
     CGSize       iconSize               = [iconImage size];
+    NSLog(@"logo图片size:[%lf,%lf]",iconSize.width, iconSize.height);
+
     CGFloat      iconViewWidth          = self.view.bounds.size.width / 2.0;
     CGFloat      iconViewHeight         = iconViewWidth * iconSize.height/iconSize.width;
     CGFloat      x                      = 0 + (self.view.bounds.size.width - iconViewWidth)/2.0;

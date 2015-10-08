@@ -313,8 +313,8 @@ const NSString* kDBFieldDescr = @"DESCR";
         [_btnRate setTitle:@"默认" forState:UIControlStateNormal];
         [_btnRate setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_btnRate.titleLabel setFont:[UIFont systemFontOfSize:fontOfText]];
-        _btnRate.layer.borderColor = [UIColor grayColor].CGColor;
-        _btnRate.layer.borderWidth = 0.5;
+        _btnRate.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
+        _btnRate.layer.borderWidth = 1;
         
         [_btnRate addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_btnRate addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
@@ -328,8 +328,8 @@ const NSString* kDBFieldDescr = @"DESCR";
         [_btnArea setTitle:@"-省-市-" forState:UIControlStateNormal];
         [_btnArea setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_btnArea.titleLabel setFont:[UIFont systemFontOfSize:fontOfText]];
-        _btnArea.layer.borderColor = [UIColor grayColor].CGColor;
-        _btnArea.layer.borderWidth = 0.5;
+        _btnArea.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
+        _btnArea.layer.borderWidth = 1;
         
         [_btnArea addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_btnArea addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
