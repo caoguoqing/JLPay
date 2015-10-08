@@ -79,7 +79,6 @@
                     <connections>
                         <segue destination="iaz-sx-1dJ" kind="relationship" relationship="viewControllers" id="1of-xI-RZz"/>
                         <segue destination="UH2-IW-g8J" kind="relationship" relationship="viewControllers" id="Us1-gL-mHV"/>
-                        <segue destination="Q2H-dN-ums" kind="relationship" relationship="viewControllers" id="MMt-15-zGX"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bYU-Ha-gIe" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -428,6 +427,6 @@
         <image name="iconb" width="32" height="34"/>
         <image name="iconbG" width="32" height="34"/>
         <image name="iconcG" width="32" height="34"/>
-        <image name="logo" width="326" height="108"/>
+        <image name="logo" width="326" height="84"/>
     </resources>
 </document>
