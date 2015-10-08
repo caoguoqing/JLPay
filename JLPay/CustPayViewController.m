@@ -15,7 +15,7 @@
 
 
 
-#define ImageForBrand   @"logoNameWLS"                                      // 商标图片
+#define ImageForBrand   @"logo"                                      // 商标图片
 #define NameForBrand    @"捷联通"                                            // 商标名字
 
 

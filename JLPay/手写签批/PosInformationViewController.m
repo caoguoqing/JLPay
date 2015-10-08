@@ -108,7 +108,6 @@
     [self.uploadRequest setRequestHeaders:headerInfo];
     // 小票图片data
     NSData* imageData = UIImageJPEGRepresentation(self.scrollAllImg, 1.0);
-    NSLog(@"上传小票的大小:[%uKbit]",imageData.length/1024);
     [self.uploadRequest appendPostData:imageData];
     // 同步发送HTTP请求
     [self.uploadRequest startAsynchronous];
