@@ -11,11 +11,12 @@
 #import "TCP/TcpClientService.h"
 #import "Unpacking8583.h"
 #import "Toast+UIView.h"
-#import "JLActivitor.h"
 #import "DeviceManager.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "Packing8583.h"
 #import "EncodeString.h"
+
+#import "MBProgressHUD.h"
 
 @interface DeviceSignInViewController()
 <
@@ -37,8 +38,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
-@property (nonatomic) CGRect activitorFrame;
 @property (nonatomic, strong) NSString* selectedDevice;             // 已选取的设备类型
+
+@property (nonatomic, strong) MBProgressHUD* progressHud;           // 指示器
 @end
 
 
@@ -49,10 +51,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @synthesize sureButton = _sureButton;
 @synthesize waitingTimer;
 @synthesize selectedTerminalNum;
-@synthesize activitorFrame;
 @synthesize terminalNumBinded;
 @synthesize SNVersionNumBinded;
 @synthesize selectedDevice;
+@synthesize progressHud = _progressHud;
 
 #pragma mask ::: 主视图加载
 - (void)viewDidLoad {
@@ -60,6 +62,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     self.title = @"绑定设备";
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.progressHud];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     
@@ -81,10 +84,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     CGFloat tabBarHeignth = self.tabBarController.tabBar.bounds.size.height;
     CGFloat buttonHeight = 50;
     CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight - inset*4;
-    self.activitorFrame = CGRectMake(0,
-                                     navigationBarHeight + statusBarHeight,
-                                     self.view.bounds.size.width,
-                                     self.view.bounds.size.height - navigationBarHeight - statusBarHeight - tabBarHeignth);
     // 表视图
     CGRect frame = CGRectMake(0,
                               statusBarHeight + navigationBarHeight,
@@ -121,7 +120,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[JLActivitor sharedInstance] stopAnimating];
+    [self stopProgressHud];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
     if ([self.waitingTimer isValid]) {
@@ -310,9 +309,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         return;
     }
     [self stopDeviceTimer];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
-    });
+    [self stopProgressHud];
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
@@ -343,18 +340,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (yesOrNot) {
         [self sendTransPackageOnTransType:TranType_DownWorkKey];
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] stopAnimating];
-        });
+        [self stopProgressHud];
         [self alertForMessage:@"绑定设备失败!"];
     }
 }
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
     // 停止等待转轮
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
-    });
+    [self stopProgressHud];
     if (yesOrNot) {
         // 更新批次号
         [self updateSignSort];
@@ -381,17 +374,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 拆包
         [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] stopAnimating];
-            [self alertForMessage:@"连接设备失败:签到失败"];
-        });
+        [self stopProgressHud];
+        [self alertForMessage:@"连接设备失败:签到失败"];
     }
 }
 // 接收数据失败
 - (void)falseReceiveGetDataMethod:(NSString *)str {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
-    });
+    [self stopProgressHud];
     [self alertForMessage:@"连接设备失败:签到失败"];
 }
 
@@ -419,9 +408,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
             [[DeviceManager sharedInstance] writeWorkKey:keyPin onSNVersion:self.selectedSNVersionNum];
         }
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] stopAnimating];
-        });
+        [self stopProgressHud];
         NSString* errorMessage = [NSString stringWithFormat:@"绑定设备失败:%@",message];
         [self alertForMessage:errorMessage];
     }
@@ -454,9 +441,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 启动设备扫描
         [[DeviceManager sharedInstance] startScanningDevices];
         // 异步启动等待视图
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+//        });
+        [self startProgressHudOnText:@"正在扫描设备..."];
         // 异步启动等待定时器
         [self startDeviceTimer];
     }
@@ -490,9 +478,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 下载主密钥 -- 需要判断设备是否连接
     int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
     if (beingConnect == 1) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+//        });
+        [self startProgressHudOnText:@"正在绑定设备..."];
         [self sendTransPackageOnTransType:TranType_DownMainKey];
     } else {
         [self alertForMessage:@"设备未连接"];
@@ -516,9 +505,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 异步调起等待定时器
         [self startDeviceTimer];
         // 异步打开等待视图
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+//        });
+        [self startProgressHudOnText:@"正在扫描设备..."];
         [[DeviceManager sharedInstance] closeAllDevices];
         [[DeviceManager sharedInstance] startScanningDevices];
     }
@@ -637,7 +627,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
 // 小工具: 为简化弹窗代码
 - (void) alertForMessage: (NSString*) messageStr {
     UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
 }
 - (void) alertForBleMessage:(NSString*)msg {
     UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"蓝牙提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -695,12 +687,25 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 // 超时后解除转轮，并输出错误信息
 - (void) waitingTimeoutWithMsg {
-    [[JLActivitor sharedInstance] stopAnimating];
+//    [[JLActivitor sharedInstance] stopAnimating];
+    [self stopProgressHud];
     [self stopDeviceTimer];
     [self alertForMessage:@"设备连接超时"];
 }
 
-
+// 启动指示器:指定描述语句
+- (void) startProgressHudOnText:(NSString*)text {
+    [self.progressHud setLabelText:text];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.progressHud show:YES];
+    });
+}
+// 停止指示器
+- (void) stopProgressHud {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.progressHud hide:YES];
+    });
+}
 
 
 
@@ -748,7 +753,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     return _tableView;
 }
-
+- (MBProgressHUD *)progressHud {
+    if (_progressHud == nil) {
+        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
+        [_progressHud setMode:MBProgressHUDModeIndeterminate];
+    }
+    return _progressHud ;
+}
 
 @end
 

@@ -17,21 +17,23 @@
 #import "Photo.h"
 #import "Toast+UIView.h"
 #import "JsonToString.h"
-#import "JLActivity.h"
+
+#import "MBProgressHUD.h"
 
 
 @interface PosInformationViewController ()<ASIHTTPRequestDelegate>
 @property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
 
 @property (nonatomic, strong) UIButton* sureButton;
-@property (nonatomic, strong) UIProgressView* progressView;
+
+@property (nonatomic, strong) MBProgressHUD* progressHud;
 @end
 
 
 @implementation PosInformationViewController
 @synthesize uploadRequest = _uploadRequest;
-@synthesize progressView = _progressView;
 @synthesize sureButton = _sureButton;
+@synthesize progressHud = _progressHud;
 @synthesize posImg;
 @synthesize scrollAllImg;
 
@@ -55,13 +57,11 @@
 - (IBAction) touchDown:(UIButton*)sender {
     dispatch_async(dispatch_get_main_queue(), ^{
         sender.transform = CGAffineTransformMakeScale(0.95, 0.95);
-        [sender setEnabled:NO];
     });
 }
 - (IBAction) touchOut:(UIButton*)sender {
     dispatch_async(dispatch_get_main_queue(), ^{
         sender.transform = CGAffineTransformIdentity;
-        [sender setEnabled:YES];
     });
 }
 /* 确定按钮-上传小票图片 */
@@ -69,6 +69,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         sender.transform = CGAffineTransformIdentity;
     });
+    [self startProgressHud];
     [self chatUploadImage];
 }
 
@@ -115,9 +116,7 @@
 
 /* HTTP回调: 响应成功 */
 - (void)requestFinished:(ASIHTTPRequest *)request {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.sureButton setEnabled:YES];
-    });
+    [self stopProgressHud];
     [request clearDelegatesAndCancel];
     self.uploadRequest = nil;
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:request.responseString]];
@@ -138,9 +137,7 @@
 }
 /* HTTP回调: 响应失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.sureButton setEnabled:YES];
-    });
+    [self stopProgressHud];
     [request clearDelegatesAndCancel];
     self.uploadRequest = nil;
     NSError *error = [request error];
@@ -152,6 +149,19 @@
     }
 }
 
+/* 启动指示器 */
+- (void) startProgressHud {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.progressHud setLabelText:@"小票上传中..."];
+        [self.progressHud show:YES];
+    });
+}
+/* 停止指示器 */
+- (void) stopProgressHud {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.progressHud hide:YES];
+    });
+}
 
 
 
@@ -461,14 +471,6 @@
     scrollVi.contentSize = CGSizeMake(Screen_Width, frame.origin.y); // 高度要重新定义
     [self.view addSubview:scrollVi];
     
-    // 进度条
-    frame.origin.x = 0;//inset * 10;
-    frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height;
-    frame.size.width = scrollVi.bounds.size.width ;//- inset*10 * 2;
-    frame.size.height = inset*2;
-    [self.progressView setFrame:frame];
-    [self.view addSubview:self.progressView];
-
     // 确定按钮
     frame.origin.x = inset * 2.0;
     frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height + inset * 2.0;
@@ -479,6 +481,9 @@
     
     // 将滚动视图的内容装填成图片.jpg
     self.scrollAllImg = [self getNormalImage:scrollVi];
+    
+    // 指示器
+    [self.view addSubview:self.progressHud];
 }
 // 简化代码:label可以用同一个产出方式
 - (UILabel*) newTextLabelWithText:(NSString*)text
@@ -538,15 +543,9 @@
         [_uploadRequest setTimeOutSeconds:30];
         [_uploadRequest setDelegate:self];
         
-        [_uploadRequest setUploadProgressDelegate:self.progressView];
+        [_uploadRequest setUploadProgressDelegate:self.progressHud];
     }
     return _uploadRequest;
-}
-- (UIProgressView *)progressView {
-    if (_progressView == nil) {
-        _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
-    }
-    return _progressView;
 }
 - (UIButton *)sureButton {
     if (_sureButton == nil) {
@@ -565,5 +564,11 @@
     }
     return _sureButton;
 }
-
+-(MBProgressHUD *)progressHud {
+    if (_progressHud == nil) {
+        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
+        [_progressHud setMode:MBProgressHUDModeIndeterminate];
+    }
+    return _progressHud;
+}
 @end

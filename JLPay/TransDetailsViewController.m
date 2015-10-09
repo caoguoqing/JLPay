@@ -11,13 +11,14 @@
 #import "DetailsCell.h"
 #import "RevokeViewController.h"
 #import "ASIFormDataRequest.h"
-#import "JLActivitor.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
 #import "SelectIndicatorView.h"
 #import "DoubleLayerButton.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
+
+#import "MBProgressHUD.h"
 
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate
@@ -39,7 +40,8 @@
 @property (nonatomic, strong) NSMutableArray* days;
 @property (nonatomic, retain) ASIHTTPRequest* HTTPRequest;      // HTTP入口
 
-@property (nonatomic) CGRect activitorFrame;
+@property (nonatomic, strong) MBProgressHUD* progressHud;           // 指示器
+
 @end
 
 
@@ -54,7 +56,7 @@
 @synthesize days = _days;
 @synthesize HTTPRequest = _HTTPRequest;
 @synthesize dateButton = _dateButton;
-@synthesize activitorFrame;
+@synthesize progressHud = _progressHud;
 
 #pragma mask ------ UITableViewDataSource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
@@ -181,9 +183,10 @@
     [_HTTPRequest addRequestHeader:@"mchntNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedBussinessNum]];
     [self.HTTPRequest setDelegate:self];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.HTTPRequest startAsynchronous];  // 异步获取数据
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+        [self.progressHud show:YES];
     });
+    [self.HTTPRequest startAsynchronous];  // 异步获取数据
+    
 }
 
 
@@ -225,8 +228,10 @@
     [self.reciveData appendData:[request responseData]];
     [request clearDelegatesAndCancel];
     dispatch_async(dispatch_get_main_queue(), ^{
+        // 拆包交易明细
         [self analysisJSONDataToDisplay];
-        [[JLActivitor sharedInstance] stopAnimating];
+        // 停止指示器
+        [self.progressHud hide:YES];
         // 删掉请求,需要时重建
         self.HTTPRequest = nil;
     });
@@ -238,7 +243,8 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alerView show];
-        [[JLActivitor sharedInstance] stopAnimating];
+        // 停止指示器
+        [self.progressHud hide:YES];
 
     });
     self.HTTPRequest = nil;
@@ -300,11 +306,7 @@
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.dateButton];
     [self.view addSubview:self.searchButton];
-    CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    self.activitorFrame = CGRectMake(0,
-                                     naviAndState,
-                                     self.view.bounds.size.width,
-                                     self.view.bounds.size.height - naviAndState - self.tabBarController.tabBar.bounds.size.height);
+    [self.view addSubview:self.progressHud];
 
     UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backItem];
@@ -372,8 +374,8 @@
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[JLActivitor sharedInstance] stopAnimating];
-    if (self.HTTPRequest != nil) {        
+    [self.progressHud hide:YES];
+    if (self.HTTPRequest != nil) {
         [self.HTTPRequest clearDelegatesAndCancel];
         self.HTTPRequest = nil;
     }
@@ -546,5 +548,13 @@
     return _HTTPRequest;
 }
 
+- (MBProgressHUD *)progressHud {
+    if (_progressHud == nil) {
+        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
+        [_progressHud setMode:MBProgressHUDModeIndeterminate];
+        [_progressHud setLabelText:@"正在查询..."];
+    }
+    return _progressHud;
+}
 
 @end

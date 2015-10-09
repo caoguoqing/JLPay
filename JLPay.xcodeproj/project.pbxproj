@@ -884,7 +884,6 @@
 		5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				5EF45B2A1BC654F200C75276 /* 图片资源 */,
 				5E5E35A81B7C7A3200560C0A /* test.db */,
 				5EBE92851ACBE9FE0096BD72 /* Default-568h@2x.png */,
 				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
@@ -1141,13 +1140,6 @@
 				5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */,
 			);
 			name = "费率选择";
-			sourceTree = "<group>";
-		};
-		5EF45B2A1BC654F200C75276 /* 图片资源 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "图片资源";
 			sourceTree = "<group>";
 		};
 		5EF4C0DD1B1706A300CE3E3F /* 登陆界面 */ = {

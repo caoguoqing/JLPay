@@ -9,10 +9,11 @@
 #import "ChangePinViewController.h"
 #import "PublicInformation.h"
 #import "asi-http/ASIFormDataRequest.h"
-#import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 #import "Define_Header.h"
+
+#import "MBProgressHUD.h"
 
 @interface ChangePinViewController()<ASIHTTPRequestDelegate> {
     CGFloat textFontSize;
@@ -22,9 +23,9 @@
 @property (nonatomic, strong) UITextField* userResureNewPwdField;
 
 @property (nonatomic, strong) UIButton* sureButton;
-@property (nonatomic, strong) JLActivity* activitor;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
 
+@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @end
 
@@ -33,9 +34,9 @@
 @synthesize userOldPwdField = _userOldPwdField;
 @synthesize userNewPwdField = _userNewPwdField;
 @synthesize sureButton = _sureButton;
-@synthesize activitor = _activitor;
 @synthesize httpRequest = _httpRequest;
 @synthesize userResureNewPwdField = _userResureNewPwdField;
+@synthesize progressHud = _progressHud ;
 
 /******************************
  * 函  数: requestForChangingPin
@@ -47,10 +48,8 @@
     [self.httpRequest addPostValue:[[NSUserDefaults standardUserDefaults] valueForKey:UserID] forKey:@"userName"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.httpRequest startAsynchronous];
-        [self.activitor startAnimating];
-    });
+    [self.httpRequest startAsynchronous];
+    [self startProgressHud];
 }
 
 - (NSString*) encryptBy3DESForPin:(NSString*)pin {
@@ -62,9 +61,7 @@
 }
 #pragma mask --- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
-    });
+    [self stopProgressHud];
     NSData* data = [self.httpRequest responseData];
     [self.httpRequest clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
@@ -77,10 +74,8 @@
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequest clearDelegatesAndCancel];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
-        [self alertViewWithMessage:@"网络异常,请检查网络"];
-    });
+    [self alertViewWithMessage:@"网络异常,请检查网络"];
+    [self stopProgressHud];
     self.httpRequest = nil;
 }
 
@@ -102,7 +97,6 @@
     [UIView animateWithDuration:0.2 animations:^{
         sender.transform = CGAffineTransformIdentity;
     }];
-
     // 上送修改密码请求
     if ([self checkInPut]) {
         [self requestForChangingPin];
@@ -117,7 +111,7 @@
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.userResureNewPwdField];
     [self.view addSubview:self.sureButton];
-    [self.view addSubview:self.activitor];
+    [self.view addSubview:self.progressHud];
     textFontSize = 15;
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -220,6 +214,20 @@
     [self.view endEditing:YES];
 }
 
+#pragma mask ---- 指示器相关
+// 启动指示器
+- (void) startProgressHud {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.progressHud show:YES];
+    });
+}
+// 停止指示器
+- (void) stopProgressHud {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.progressHud hide:YES];
+    });
+}
+
 /******************************
  * 函  数: checkInPut
  * 功  能: 检查输入是否有效
@@ -251,7 +259,9 @@
 
 - (void) alertViewWithMessage:(NSString*)msg {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
 }
 
 #pragma mask ---- getter & setter
@@ -309,14 +319,6 @@
     }
     return _sureButton;
 }
-
-
-- (JLActivity *)activitor {
-    if (_activitor == nil) {
-        _activitor = [[JLActivity alloc] init];
-    }
-    return _activitor;
-}
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
         NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ModifyPassword",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
@@ -326,4 +328,13 @@
     }
     return _httpRequest;
 }
+
+- (MBProgressHUD *)progressHud {
+    if (_progressHud == nil) {
+        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
+        [_progressHud setMode:MBProgressHUDModeIndeterminate];
+    }
+    return _progressHud ;
+}
+
 @end
