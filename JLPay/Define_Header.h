@@ -116,6 +116,19 @@
 #define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
 #define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
 
+/* ------------------------------ 信息字典: 选择的机构信息
+ *  KeyInfoDictOfJiGouBusinessNum           - 机构商户号
+ *  KeyInfoDictOfJiGouTerminalNum           - 机构终端号
+ *  KeyInfoDictOfJiGouBusinessName          - 机构商户名
+ ------------------------------*/
+#define KeyInfoDictOfJiGou                      @"KeyInfoDictOfJiGou"               // 字典
+#define KeyInfoDictOfJiGouBusinessNum           @"KeyInfoDictOfJiGouBusinessNum"
+#define KeyInfoDictOfJiGouTerminalNum           @"KeyInfoDictOfJiGouTerminalNum"
+#define KeyInfoDictOfJiGouBusinessName          @"KeyInfoDictOfJiGouBusinessName"
+
+
+
+
 
 // 设备操作的等待超时时间
 #define DeviceWaitingTime           20                          

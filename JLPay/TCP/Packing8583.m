@@ -93,19 +93,25 @@
     [F60 appendString:[PublicInformation returnSignSort]];
     // 60.3 N3 操作类型
     [F60 appendString:@"003"];
-    // 60.4 N2 手机统一送10,后续加了费率再切换
-    [F60 appendString:@"10"];
+    // 60.4 N1 手机统一送1
+    [F60 appendString:@"1"];
     // 60.5 N1 费率:
-//    NSString* rate = [[NSUserDefaults standardUserDefaults] valueForKey:Key_RateOfPay];
-//    if (rate == nil || [rate isEqualToString:@""]) {
-//        rate = @"0";
-//    }
-//    [F60 appendString:[rate substringToIndex:1]];
-//    // 60.6 N4
-//    [F60 appendString:@"0000"];
-//    // 60.7 N2
-//    [F60 appendString:@"00"];
-    // 补齐整数位
+    BOOL hasJiGou = [self isSavedJiGouInfo];
+    if (hasJiGou) {
+        [F60 appendString:@"9"];
+    } else {
+        [F60 appendString:@"0"];
+    }
+    // 60.6 N15 商户号:
+    if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
+        [F60 appendString:[self businessNumInJiGou]];
+    }
+    // 60.7 N8 终端号:
+    if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
+        [F60 appendString:[self terminalNumInJiGou]];
+    }
+
+    
     return F60;
 }
 + (NSString*) makeF60ByLast60:(NSString*)last60 {
@@ -187,6 +193,36 @@
 }
 
 
+/* 是否保存了机构商户信息 */
++ (BOOL) isSavedJiGouInfo {
+    BOOL isSaved = NO;
+    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
+    if (jigouInfo) {
+        isSaved = YES;
+    }
+    return isSaved;
+}
+/* 商户号提取: 从机构商户配置中 */
++ (NSString*) businessNumInJiGou {
+    NSString* businessJigou = nil;
+    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
+    if (jigouInfo) {
+        businessJigou = [jigouInfo valueForKey:KeyInfoDictOfJiGouBusinessNum];
+    }
+    return businessJigou;
+}
+/* 终端号提取: 从机构商户配置中 */
++ (NSString*) terminalNumInJiGou {
+    NSString* terminalJigou = nil;
+    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
+    if (jigouInfo) {
+        terminalJigou = [jigouInfo valueForKey:KeyInfoDictOfJiGouTerminalNum];
+    }
+    return terminalJigou;
+}
 
 
 #pragma mask -------------- getter & setter

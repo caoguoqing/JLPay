@@ -14,14 +14,22 @@
 @protocol DynamicPickerViewDelegate <NSObject>
 @required
 // 已选取数据: 指定列
+//- (void) pickerView:(DynamicPickerView*)pickerView
+//     didPickedData:(NSString*)data
+//        atComponent:(NSInteger)component;
 - (void) pickerView:(DynamicPickerView*)pickerView
-     didPickedData:(NSString*)data
+       didPickedRow:(NSInteger)row
         atComponent:(NSInteger)component;
 
+
 // 已选择数据: 指定列
+//- (void) pickerView:(DynamicPickerView *)pickerView
+//    didSelectedData:(NSString *)data
+//        atComponent:(NSInteger)component;
 - (void) pickerView:(DynamicPickerView *)pickerView
-    didSelectedData:(NSString *)data
+     didSelectedRow:(NSInteger)row
         atComponent:(NSInteger)component;
+
 @end
 
 
@@ -38,6 +46,7 @@
 
 #pragma mask : 给指定列添加数据
 - (void) setDatas:(NSArray*)datas atComponent:(NSInteger)component;
+- (void) selectRow:(NSInteger)row atComponent:(NSInteger)component;
 
 #pragma mask : 清理数据
 - (void) clearDatas;

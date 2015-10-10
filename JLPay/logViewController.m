@@ -582,38 +582,47 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
-    if (buttonIndex == 0) {
+    NSString* title = [alertView buttonTitleAtIndex:buttonIndex];
+    if (![title isEqualToString:@"确定"]) {
         return;
     }
     
     // 如果是版本过低的提示，点击了确定要跳转到下载网址
     if ([alertView.message hasPrefix:@"701"]) {
-        NSString* urlString = @"http://www.cccpay.cn/center.html";
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+        [self gotoDownloadApp];
     }
     // 注册审核不通过,需要修改信息
     else if ([alertView.message hasPrefix:@"802"]) {
         if (self.dictLastRegisterInfo == nil) {
             return;
         }
-        UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-        [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"identifyNo"] forKey:RESIGN_identifyNo];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"telNo"] forKey:RESIGN_telNo];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"speSettleDs"] forKey:RESIGN_speSettleDs];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcct"] forKey:RESIGN_settleAcct];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcctNm"] forKey:RESIGN_settleAcctNm];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mail"] forKey:RESIGN_mail];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"ageUserName"] forKey:RESIGN_ageUserName];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"addr"] forKey:RESIGN_addr];
-        [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        [self.navigationController pushViewController:viewController animated:YES];
+        [self gotoSignUp];
     }
+}
+// 下载app
+- (void) gotoDownloadApp {
+    NSString* urlString = @"http://www.cccpay.cn/center.html";
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+}
+// 跳转注册页面
+- (void) gotoSignUp {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"identifyNo"] forKey:RESIGN_identifyNo];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"telNo"] forKey:RESIGN_telNo];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"speSettleDs"] forKey:RESIGN_speSettleDs];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcct"] forKey:RESIGN_settleAcct];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcctNm"] forKey:RESIGN_settleAcctNm];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mail"] forKey:RESIGN_mail];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"ageUserName"] forKey:RESIGN_ageUserName];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"addr"] forKey:RESIGN_addr];
+    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 // 加密登陆密码

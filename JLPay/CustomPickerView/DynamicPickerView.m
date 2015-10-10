@@ -86,6 +86,11 @@
     [self.pickerView reloadAllComponents];
 }
 
+#pragma mask : 切换滚轮
+- (void)selectRow:(NSInteger)row atComponent:(NSInteger)component {
+    [self.pickerView selectRow:row inComponent:component animated:YES];
+}
+
 #pragma mask : 清理数据
 - (void) clearDatas {
     [self.dataSources removeAllObjects];
@@ -108,14 +113,9 @@
     sender.transform = CGAffineTransformIdentity;
     [self hidden];
     
-    NSArray* datasPicked = [self arrayDatasPicked];
-    if (datasPicked.count == 0) {
-        return;
-    }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(pickerView:didPickedData:atComponent:)]) {
-        for (NSDictionary* dict in datasPicked) {
-            NSString* key = [[dict allKeys] objectAtIndex:0];
-            [self.delegate pickerView:self didPickedData:[dict valueForKey:key] atComponent:key.intValue];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pickerView:didPickedRow:atComponent:)]) {
+        for (int i = 0; i < self.pickerView.numberOfComponents; i++) {
+            [self.delegate pickerView:self didPickedRow:[self.pickerView selectedRowInComponent:i] atComponent:i];
         }
     }
 }
@@ -127,18 +127,12 @@
 
 
 #pragma mask : === UIPickerViewDelegate
-/* 代理: 行标题 */
-//- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-//    NSArray* datas = [self.dataSources objectForKey:[NSString stringWithFormat:@"%ld",(long)component]];
-//    return [datas objectAtIndex:row];
-//}
 
 /* 代理: 选择行 */
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    NSArray* datas = [self.dataSources objectForKey:[NSString stringWithFormat:@"%ld",(long)component]];
     if (component == 0) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(pickerView:didSelectedData:atComponent:)]) {
-            [self.delegate pickerView:self didSelectedData:[datas objectAtIndex:row] atComponent:component];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(pickerView:didSelectedRow:atComponent:)]) {
+            [self.delegate pickerView:self didSelectedRow:row atComponent:component];
         }
     }
 }
@@ -159,7 +153,6 @@
         textLabel.font = [UIFont systemFontOfSize:fontSize + 5];
     }
     NSArray* datas = [self.dataSources objectForKey:[NSString stringWithFormat:@"%ld",(long)component]];
-
     textLabel.text = [datas objectAtIndex:row];
     return textLabel;
 }
