@@ -629,6 +629,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 - (NSString*) pinEncryptBySource:(NSString*)source {
     NSString* formationSource = [EncodeString encodeASC:source];
     NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:(NSString*)KeyEncryptLoading];
+    NSLog(@"登陆密码密文:[%@]",pin);
     return pin;
 }
 // 解密登陆密码

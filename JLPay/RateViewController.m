@@ -12,7 +12,7 @@
 #import "DynamicPickerView.h"
 #import "MySQLiteManager.h"
 #import "asi-http/ASIFormDataRequest.h"
-
+#import "JLActivitor.h"
 
 @interface RateViewController()
 < DynamicPickerViewDelegate , ASIHTTPRequestDelegate, UIAlertViewDelegate>
@@ -29,8 +29,11 @@
 @property (nonatomic, strong) UIButton* btnArea;                    // 按钮: 地区
 @property (nonatomic, strong) UIButton* btnBusiness;                // 按钮: 商户
 @property (nonatomic, strong) UIButton* sureButton;                 // 按钮: 确定
+@property (nonatomic, strong) UIButton* clearButton;                // 按钮: 清空
 
 @property (nonatomic, strong) DynamicPickerView* pickerView;        // 选择器: 费率、地区、商户 共用
+
+@property (nonatomic, assign) CGRect activitorFrame ;               // 指示器的frame
 
 @property (nonatomic, strong) NSMutableArray* arrayRates;
 
@@ -84,6 +87,7 @@ const NSInteger tagAlertDidSaved = 15;
 @synthesize btnArea = _btnArea;
 @synthesize btnBusiness = _btnBusiness;
 @synthesize sureButton = _sureButton;
+@synthesize clearButton = _clearButton;
 @synthesize pickerView = _pickerView;
 @synthesize arrayRates = _arrayRates;
 @synthesize httpRequest = _httpRequest;
@@ -94,6 +98,7 @@ const NSInteger tagAlertDidSaved = 15;
 @synthesize cityCodePicked;
 @synthesize businessNumPicked;
 @synthesize terminalNumPicked;
+@synthesize activitorFrame;
 
 
 #pragma mask --- 按钮事件
@@ -166,13 +171,8 @@ const NSInteger tagAlertDidSaved = 15;
         [self alertShowWithMessage:@"未选择地区" atTag:tagAlertAreaNotNull];
         return;
     }
-    else if (!self.arrayBusinesses || self.arrayBusinesses.count == 0) {
-        [self alertShowWithMessage:@"查询的商户列表为空" atTag:tagAlertBusinessNotNull];
-        return;
-    }
-    
-    // 重载商户列表到选择器
-    [self loadBusinessesInPicker];
+    // 重新获取商户列表到选择器
+    [self requestBusinessArrayOnRate:self.rateCodePicked areaCode:self.cityCodePicked businessNum:[PublicInformation returnBusiness]];
 }
 
 /* 抬起: 在内部: 保存选择的商户号+终端号 */
@@ -191,6 +191,18 @@ const NSInteger tagAlertDidSaved = 15;
     
     [self loadBusinessInLabel];
     [self alertShowWithMessage:@"已保存机构商户信息,请继续刷卡" atTag:tagAlertDidSaved];
+}
+
+/* 抬起: 在内部: 清空已保存的商户号+终端号 */
+- (IBAction) touchToClearSavedBusinessAndTerminal:(UIButton*)sender {
+    sender.transform = CGAffineTransformIdentity;
+    NSDictionary* jigouInfoSaved = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfJiGou];
+    if (jigouInfoSaved) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:KeyInfoDictOfJiGou];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self alertShowWithMessage:@"已清空保存的商户信息" atTag:tagAlertBusinessNotNull];
+    }
+    [self.labSavedBusiness setText:nil];
 }
 
 
@@ -251,6 +263,7 @@ const NSInteger tagAlertDidSaved = 15;
 
 #pragma mask --- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
+    [self stopActivitor];
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     NSData* responseData = [request responseData];
@@ -265,10 +278,11 @@ const NSInteger tagAlertDidSaved = 15;
         self.terminalNumPicked = nil;
         
         [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
-        [self alertShowWithMessage:@"查询商户列表为空" atTag:tagAlertHttpError];
+        [self alertShowWithMessage:@"查询商户列表为空,请重新选择费率或地区" atTag:tagAlertHttpError];
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
+    [self stopActivitor];
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     [self alertShowWithMessage:@"查询商户列表失败" atTag:tagAlertHttpError];
@@ -323,7 +337,6 @@ const NSInteger tagAlertDidSaved = 15;
         city = [PublicInformation clearSpaceCharAtLastOfString:city];
         [dict setValue:city forKey:(NSString*)kDBFieldValue];
     }
-
 }
 
 
@@ -336,8 +349,21 @@ const NSInteger tagAlertDidSaved = 15;
     [self.httpRequest addPostValue:areaCode forKey:@"areaCode"];
     [self.httpRequest addPostValue:businessNum forKey:@"mchtNo"];
     [self.httpRequest startAsynchronous];
+    [self startActivitor];
 }
 
+/* 启动指示器 */
+- (void) startActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+    });
+}
+/* 关闭指示器 */
+- (void) stopActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] stopAnimating];
+    });
+}
 
 
 
@@ -470,6 +496,7 @@ const NSInteger tagAlertDidSaved = 15;
     [self.view addSubview:self.labSaved];
     [self.view addSubview:self.labSavedBusiness];
     [self.view addSubview:self.sureButton];
+    [self.view addSubview:self.clearButton];
     [self.view addSubview:self.pickerView];
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -479,10 +506,12 @@ const NSInteger tagAlertDidSaved = 15;
     
     CGFloat btnWith = self.view.bounds.size.width - inset * 3 - labelWidth;
     CGFloat labelHeight = 40;
-    CGFloat buttonHeight =  50;
+    CGFloat buttonHeight =  45;
     CGFloat statusHeight = [PublicInformation returnStatusHeight];
     CGFloat navigationHeight = self.navigationController.navigationBar.bounds.size.height;
+    CGFloat tabBarHeight = self.tabBarController.tabBar.frame.size.height;
     
+    self.activitorFrame = CGRectMake(0, statusHeight + navigationHeight, self.view.frame.size.width, self.view.frame.size.height - statusHeight - navigationHeight - tabBarHeight);
     CGRect frame = CGRectMake(inset,
                               inset + statusHeight + navigationHeight,
                               labelWidth,
@@ -521,12 +550,16 @@ const NSInteger tagAlertDidSaved = 15;
     frame.size.width = btnWith;
     [self.labSavedBusiness setFrame:frame];
     [self loadBusinessInLabel];
-    // 按钮: 确定
+    // 按钮: 清空
     frame.origin.x = inset;
     frame.origin.y += frame.size.height + inset*2;
-    frame.size.width = self.view.bounds.size.width - inset*2;
+    frame.size.width = (self.view.bounds.size.width - inset*3)/2.0;
     frame.size.height = buttonHeight;
+    [self.clearButton setFrame:frame];
+    // 按钮: 确定
+    frame.origin.x += frame.size.width + inset;
     [self.sureButton setFrame:frame];
+    
     // 选择器
     frame.origin.x = inset;
     frame.size.width = self.view.bounds.size.width - inset * 2;
@@ -535,7 +568,9 @@ const NSInteger tagAlertDidSaved = 15;
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self stopActivitor];
     [self.httpRequest clearDelegatesAndCancel];
+    self.httpRequest = nil;
 }
 
 /* 已选择商户: 从本地配置加载商户 */
@@ -601,7 +636,6 @@ const NSInteger tagAlertDidSaved = 15;
     if (_labSavedBusiness == nil) {
         _labSavedBusiness = [[UILabel alloc] initWithFrame:CGRectZero];
         [_labSavedBusiness setTextColor:[UIColor blueColor]];
-//        [_labSavedBusiness setTextAlignment:NSTextAlignmentRight];
         [_labSavedBusiness setFont:[UIFont systemFontOfSize:fontOfText]];
     }
     return _labSavedBusiness;
@@ -655,14 +689,27 @@ const NSInteger tagAlertDidSaved = 15;
     if (_sureButton == nil) {
         _sureButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_sureButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_sureButton setTitle:@"确定" forState:UIControlStateNormal];
+        [_sureButton setTitle:@"保存" forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _sureButton.layer.cornerRadius = 10.0;
+        _sureButton.layer.cornerRadius = 8.0;
         [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_sureButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
         [_sureButton addTarget:self action:@selector(touchToSaveBusinessNumAndTerminalNum:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _sureButton;
+}
+- (UIButton *)clearButton {
+    if (_clearButton == nil) {
+        _clearButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [_clearButton setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:1]];
+        [_clearButton setTitle:@"清空" forState:UIControlStateNormal];
+        [_clearButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _clearButton.layer.cornerRadius = 8.0;
+        [_clearButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_clearButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
+        [_clearButton addTarget:self action:@selector(touchToClearSavedBusinessAndTerminal:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _clearButton;
 }
 
 - (DynamicPickerView *)pickerView {
