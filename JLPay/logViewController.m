@@ -18,6 +18,7 @@
 #import "ASIFormDataRequest.h"
 #import "AppDelegate.h"
 #import "RegisterViewController.h"
+#import "UserRegisterViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
 
@@ -281,20 +282,20 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
                                                      signInViewWidth,
                                                      signInViewHeight);
     self.signInButton.frame             = signInFrame;
-//    [self.view addSubview:self.signInButton];
+    [self.view addSubview:self.signInButton];
     
     // 间隔图标
     signInFrame.origin.x                += signInViewWidth + midInset;
     signInFrame.size.width              = midViewLeave;
     UIImageView* midLeaveView           = [[UIImageView alloc] initWithFrame:signInFrame];
     midLeaveView.image                  = [UIImage imageNamed:@"fgx"];
-//    [self.view addSubview:midLeaveView];
+    [self.view addSubview:midLeaveView];
     
     // 修改密码按钮：UIButton
     signInFrame.origin.x                += midViewLeave + midInset;
     signInFrame.size.width              = pinChangeViewWidth;
     self.pinChangeButton.frame          = signInFrame;
-//    [self.view addSubview:self.pinChangeButton];
+    [self.view addSubview:self.pinChangeButton];
 }
 
 
@@ -409,8 +410,9 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
  *************************************/
 - (IBAction)signIn: (id)sender {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-    [viewController setPackageType:0];// 注册
+//    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+//    [viewController setPackageType:0];// 注册
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -448,6 +450,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    NSLog(@"登陆响应信息:[%@]",dataDic);
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     NSString* retcode = [dataDic objectForKey:@"code"];

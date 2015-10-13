@@ -32,12 +32,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4W0-X5-3lj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2011" y="2652"/>
+            <point key="canvasLocation" x="-1999" y="2524"/>
         </scene>
         <!--商户注册-->
         <scene sceneID="xYJ-rb-LbQ">
             <objects>
-                <viewController storyboardIdentifier="userRegisterVC" title="商户注册" id="U2x-gO-mqC" customClass="RegisterViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="userRegisterVC" title="商户注册" id="U2x-gO-mqC" customClass="UserRegisterViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xw6-mz-WrW">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -46,21 +46,21 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NCg-b2-Pvc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1873" y="2772"/>
+            <point key="canvasLocation" x="-1949" y="2600"/>
         </scene>
-        <!--商户所在地-->
-        <scene sceneID="FJU-5X-24g">
+        <!--详细地址-->
+        <scene sceneID="rHA-Tn-w8P">
             <objects>
-                <viewController storyboardIdentifier="areaDataSourceVC" title="商户所在地" id="N87-wV-y9w" customClass="AreaDataSourceViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Dgq-I1-f0I">
+                <viewController storyboardIdentifier="detailAreaVC" title="详细地址" id="BFE-bY-6hF" customClass="DetailAreaViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="YjC-QX-Ndt">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dGm-QO-fye" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fko-0R-3Ip" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1727" y="2888"/>
+            <point key="canvasLocation" x="-1608" y="2600"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="mqF-op-VjK">
