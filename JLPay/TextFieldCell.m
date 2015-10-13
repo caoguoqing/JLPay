@@ -9,7 +9,7 @@
 #import "TextFieldCell.h"
 #import "PublicInformation.h"
 
-@interface TextFieldCell()
+@interface TextFieldCell()<UITextFieldDelegate>
 {
     CGFloat fontSize;
     CGFloat rateTitle;
@@ -24,6 +24,15 @@
 
 @implementation TextFieldCell
 
+
+#pragma mask ---- UITextFieldDelegate
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(tableViewCell:didInputedText:)]) {
+        [self.delegate tableViewCell:self didInputedText:textField.text];
+    }
+}
+
+
 #pragma mask ---- 初始化
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -35,7 +44,6 @@
         [self addSubview:self.mustInputLabel];
         [self addSubview:self.titleLabel];
         [self addSubview:self.inputField];
-
     }
     return self;
 }
@@ -119,6 +127,7 @@
 - (UITextField *)inputField {
     if (_inputField == nil) {
         _inputField = [[UITextField alloc] initWithFrame:CGRectZero];
+        [_inputField setDelegate:self];
     }
     return _inputField;
 }
@@ -126,15 +135,19 @@
 
 #pragma mask ---- setter
 - (void)setTitle:(NSString *)title {
+    _title = title;
     [self.titleLabel setText:title];
 }
 - (void)setPlaceHolder:(NSString *)placeHolder {
+    _placeHolder = placeHolder;
     self.inputField.placeholder = placeHolder;
 }
 - (void)setSecureTextEntry:(BOOL)secureTextEntry {
+    _secureTextEntry = secureTextEntry;
     [self.inputField setSecureTextEntry:secureTextEntry];
 }
 - (void)setMustInput:(BOOL)mustInput {
+    _mustInput = mustInput;
     [self.mustInputLabel setHidden:!mustInput];
 }
 

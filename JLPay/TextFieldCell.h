@@ -11,6 +11,8 @@
 @class TextLabelCell;
 @protocol TextFieldCellDelegate <NSObject>
 @required
+// 完成文本的输入
+- (void) tableViewCell:(id)cell didInputedText:(NSString*)text;
 @end
 
 

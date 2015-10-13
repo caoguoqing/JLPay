@@ -13,7 +13,7 @@
 #import "DetailAreaViewController.h"
 
 
-@interface UserRegisterViewController() <UITableViewDataSource, UITableViewDelegate>
+@interface UserRegisterViewController() <UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate>
 @property (nonatomic, strong) UIButton* registerButton;
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) NSArray* arrayBasicInfo;
@@ -99,6 +99,66 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 
 
 
+
+
+
+#pragma mask ------ TextFieldCellDelegate
+- (void)tableViewCell:(id)cell didInputedText:(NSString *)text {
+    TextFieldCell* tableCell = (TextFieldCell*)cell;
+    if ([tableCell.reuseIdentifier isEqualToString:IdentifierCellBasicField]) {
+        NSMutableDictionary* infoNode = [self infoNodeOfBasicAtTitle:tableCell.title];
+        if (infoNode) {
+            [infoNode setValue:text forKey:KeyBasicInfoTextString];
+        }
+    }
+    else if ([tableCell.reuseIdentifier isEqualToString:IdentifierCellAccountField]) {
+        NSMutableDictionary* infoNode = [self infoNodeOfAccountAtTitle:tableCell.title];
+        if (infoNode) {
+            [infoNode setValue:text forKey:KeyAccountInfoTextString];
+        }
+    }
+}
+- (NSMutableDictionary*) infoNodeOfBasicAtTitle:(NSString*)title {
+    NSMutableDictionary* infoNode = nil;
+    for (NSMutableDictionary* dict in self.arrayBasicInfo) {
+        if ([title isEqualToString:[dict valueForKey:KeyBasicInfoTitleString]]) {
+            infoNode = dict;
+            break;
+        }
+    }
+    return infoNode;
+}
+- (NSMutableDictionary*) infoNodeOfAccountAtTitle:(NSString*)title {
+    NSMutableDictionary* infoNode = nil;
+    for (NSMutableDictionary* dict in self.arrayAccountInfo) {
+        if ([title isEqualToString:[dict valueForKey:KeyAccountInfoTitleString]]) {
+            infoNode = dict;
+            break;
+        }
+    }
+    return infoNode;
+}
+
+
+
+
+#pragma mask ------ 按钮点击事件
+- (IBAction) touchDown:(UIButton*)sender {
+    sender.transform = CGAffineTransformMakeScale(0.95, 0.95);
+}
+- (IBAction) touchOut:(UIButton*)sender {
+    sender.transform = CGAffineTransformIdentity;
+}
+- (IBAction) touchToRegister:(UIButton*)sender {
+    sender.transform = CGAffineTransformIdentity;
+    [self printLogBasicInfo];
+    [self printLogAccountInfo];
+}
+
+
+
+
+
 #pragma mask ------ tabel cell 的初始化及属性设置
 /* 初始化cell */
 - (UITableViewCell*) cellForIdentifier:(NSString*)cellIdentifier {
@@ -106,7 +166,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     if ([cellIdentifier isEqualToString:IdentifierCellBasicField] ||
         [cellIdentifier isEqualToString:IdentifierCellAccountField])
     {
-        cell = [[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        TextFieldCell* fieldCell = [[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        [fieldCell setDelegate:self];
+        cell = fieldCell;
     }
     else if ([cellIdentifier isEqualToString:IdentifierCellAreaLabel]) {
         cell = [[TextLabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
@@ -200,8 +262,34 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     else if (indexPath.section == 1) {
         mustInput = [[[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoMustInputBool] boolValue];
     }
-
     return mustInput;
+}
+
+
+/////// -- 打印数据
+- (void) printLogBasicInfo {
+    NSMutableString* logString = [NSMutableString stringWithString:@"----基本信息----\n"];
+    for (NSDictionary* dict in self.arrayBasicInfo) {
+        [logString appendString:@"{\n"];
+        for (NSString* key in dict.allKeys) {
+            [logString appendFormat:@"\t[%@:%@]\n",key,[dict valueForKey:key]];
+        }
+        [logString appendString:@"}\n"];
+    }
+    [logString appendString:@"----基本信息----"];
+    NSLog(@"%@",logString);
+}
+- (void) printLogAccountInfo {
+    NSMutableString* logString = [NSMutableString stringWithString:@"----账户信息----\n"];
+    for (NSDictionary* dict in self.arrayAccountInfo) {
+        [logString appendString:@"{\n"];
+        for (NSString* key in dict.allKeys) {
+            [logString appendFormat:@"\t[%@:%@]\n",key,[dict valueForKey:key]];
+        }
+        [logString appendString:@"}\n"];
+    }
+    [logString appendString:@"----账户信息----"];
+    NSLog(@"%@",logString);
 }
 
 
@@ -255,6 +343,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [_registerButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_registerButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
         _registerButton.layer.cornerRadius = 5.0;
+        
+        [_registerButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_registerButton addTarget:self action:@selector(touchOut:) forControlEvents:UIControlEventTouchUpOutside];
+        [_registerButton addTarget:self action:@selector(touchToRegister:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _registerButton;
 }

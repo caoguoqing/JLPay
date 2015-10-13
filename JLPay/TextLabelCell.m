@@ -132,12 +132,15 @@
 }
 #pragma mask ---- setter
 - (void)setTitle:(NSString *)title {
+    _title = title;
     [self.titleLabel setText:title];
 }
 - (void)setPlaceHolder:(NSString *)placeHolder {
+    _placeHolder = placeHolder;
     [self.remindLabel setText:placeHolder];
 }
 - (void)setMustInput:(BOOL)mustInput {
+    _mustInput = mustInput;
     [self.mustInputLabel setHidden:!mustInput];
 }
 
