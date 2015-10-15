@@ -10,6 +10,14 @@
 
 @interface UserRegisterViewController : UIViewController
 
+/* 设置详细地址 */
+- (void) setDetailAddr:(NSString*)detailAddr
+            inProvince:(NSString*)province
+               andCity:(NSString*)city
+               andArea:(NSString*)area
+           andAreaCode:(NSString*)areaCode;
+
+
 /*
  * 注册类型
  *  0: 新增注册(默认)

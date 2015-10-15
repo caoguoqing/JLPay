@@ -262,6 +262,49 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     return mustInput;
 }
 
+/* 详细地址设置:省名+市名(+区县名)+详细地址+areaCode */
+- (void) setDetailAddr:(NSString*)detailAddr
+            inProvince:(NSString*)province
+               andCity:(NSString*)city
+               andArea:(NSString*)area
+           andAreaCode:(NSString*)areaCode
+{
+    // 设置数据源
+    NSDictionary* addrInfo = [self infoDetailAddr];
+    [addrInfo setValue:detailAddr forKey:KeyBasicInfoTextString];
+    [addrInfo setValue:province forKey:KeyBasicInfoProvinceString];
+    [addrInfo setValue:city forKey:KeyBasicInfoCityString];
+    [addrInfo setValue:area forKey:KeyBasicInfoAreaString];
+    [addrInfo setValue:areaCode forKey:KeyBasicInfoAreaCodeString];
+    // 重置label地址
+    NSMutableString* detailAddrs = [[NSMutableString alloc] init];
+    if (province && province.length > 0) {
+        [detailAddrs appendString:province];
+    }
+    if (city && city.length > 0) {
+        [detailAddrs appendString:city];
+    }
+    if (area && area.length > 0) {
+        [detailAddrs appendString:area];
+    }
+    if (detailAddr && detailAddr.length > 0) {
+        [detailAddrs appendString:detailAddr];
+    }
+    [addrInfo setValue:detailAddrs forKey:KeyBasicInfoPlaceHolderString];
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:self.arrayBasicInfo.count - 1 inSection:0];
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+- (NSDictionary*) infoDetailAddr {
+    NSDictionary* info = nil;
+    for (NSDictionary* dict in self.arrayBasicInfo) {
+        if ([[dict valueForKey:KeyBasicInfoTitleString] isEqualToString:@"详细地址"]) {
+            info = dict;
+            break;
+        }
+    }
+    return info;
+}
+
 
 /////// -- 打印数据
 - (void) printLogBasicInfo {
@@ -375,7 +418,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"身份证号码",@"请输入15位或18位身份证号码",@(YES),@"", nil] forKeys:basicKeys]];
         [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"手机号码",@"请输入手机号码",@(YES),@"", nil] forKeys:basicKeys]];
         [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"邮箱",@"请输入有效的邮箱",@(NO),@"", nil] forKeys:basicKeys]];
-        [basicInfos addObject:[NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"详细地址",@"请选择并输入详细地址",@(YES),@"",@"",@"",@"",@"", nil] forKeys:areaKeys]];
+        [basicInfos addObject:[NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"详细地址",@"请选择并输入商铺详细地址",@(YES),@"",@"",@"",@"",@"", nil] forKeys:areaKeys]];
         _arrayBasicInfo = [NSArray arrayWithArray:basicInfos];
     }
     return _arrayBasicInfo;

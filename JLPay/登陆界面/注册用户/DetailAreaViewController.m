@@ -11,6 +11,7 @@
 #import "../注册/MySQLiteManager.h"
 #import "../../CustomPickerView/DynamicPickerView.h"
 #import "Define_Header.h"
+#import "UserRegisterViewController.h"
 
 @interface DetailAreaViewController()<DynamicPickerViewDelegate>
 {
@@ -134,11 +135,35 @@
 
 - (IBAction) touchToSaveDetails:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
+    NSString* titleBtnProvince = [self.btnProvince titleForState:UIControlStateNormal];
+    NSString* titleBtnCity = [self.btnCity titleForState:UIControlStateNormal];
+    NSString* titleBtnArea = [self.btnArea titleForState:UIControlStateNormal];
     // 检查输入
-    // 打包要带回的数据
+    if ([titleBtnProvince isEqualToString:initialProvinceTitle]) {
+        [self alertWithMessage:@"未选择省份!"];
+        return;
+    }
+    if ([titleBtnCity isEqualToString:initialCityTitle]) {
+        [self alertWithMessage:@"未选择城市!"];
+        return;
+    }
+    if ([titleBtnArea isEqualToString:initialAreaTitle]) {
+        titleBtnArea = nil;
+    }
+    if (self.fieldDetailAddr.text.length == 0) {
+        [self alertWithMessage:@"未输入详细商铺地址!"];
+        return;
+    }
     // 回退场景
     [self.navigationController popViewControllerAnimated:YES];
     NSLog(@"pop后的最上层VC:[%@]", self.navigationController.topViewController);
+    // 打包要带回的数据
+    UserRegisterViewController* viewController = (UserRegisterViewController*)self.navigationController.topViewController;
+    [viewController setDetailAddr:self.fieldDetailAddr.text
+                       inProvince:titleBtnProvince
+                          andCity:titleBtnCity
+                          andArea:titleBtnArea
+                      andAreaCode:[self areaAddrCode]];
 }
 // 计算选择器的frame: 指定按钮
 - (CGRect) frameForPickerByButton:(UIButton*)button {
@@ -280,6 +305,17 @@
     }
     return codeArea;
 }
+/* area code获取: 指定区县名 */
+- (NSString*) codeArea:(NSString*)area {
+    NSString* code = nil;
+    for (NSDictionary* dict in self.arrayAreas) {
+        if ([[dict valueForKey:@"VALUE"] isEqualToString:area]) {
+            code = [dict valueForKey:@"KEY"];
+            break;
+        }
+    }
+    return code;
+}
 /* area 获取: 指定序号 */
 - (NSString*) areaAtIndex:(NSInteger)index {
     NSString* area = nil;
@@ -290,6 +326,19 @@
     return area;
 }
 
+
+/* code 地区代码: 获取(区县或市) */
+- (NSString*) areaAddrCode {
+    NSString* codeOfAreaOrCity = nil;
+    NSString* titleBtnArea = [self.btnArea titleForState:UIControlStateNormal];
+    NSString* titleBtnCity = [self.btnCity titleForState:UIControlStateNormal];
+    if (![titleBtnArea isEqualToString:initialAreaTitle]) {
+        codeOfAreaOrCity = [self codeArea:titleBtnArea];
+    } else {
+        codeOfAreaOrCity = [self codeCity:titleBtnCity];
+    }
+    return codeOfAreaOrCity;
+}
 
 
 
@@ -443,7 +492,7 @@
 - (UITextField *)fieldDetailAddr {
     if (_fieldDetailAddr == nil) {
         _fieldDetailAddr = [[UITextField alloc] initWithFrame:CGRectZero];
-        _fieldDetailAddr.placeholder = @"(必输)请输入详细街区地址";
+        _fieldDetailAddr.placeholder = @"(必输)请输入详细商铺地址";
         _fieldDetailAddr.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         _fieldDetailAddr.layer.borderWidth = 1;
         [_fieldDetailAddr setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 5)]];
@@ -456,7 +505,7 @@
         _btnSure = [[UIButton alloc] initWithFrame:CGRectZero];
         [_btnSure setTitle:@"确定" forState:UIControlStateNormal];
         [_btnSure setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _btnSure.layer.cornerRadius = 8.0;
+        _btnSure.layer.cornerRadius = 5.0;
         [_btnSure setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
         
         [_btnSure addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
