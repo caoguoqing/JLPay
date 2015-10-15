@@ -100,8 +100,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 
 
 
-
-
 #pragma mask ------ TextFieldCellDelegate
 - (void)tableViewCell:(id)cell didInputedText:(NSString *)text {
     TextFieldCell* tableCell = (TextFieldCell*)cell;
@@ -225,7 +223,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     {
         
     }
-    
 }
 
 
@@ -303,6 +300,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
+
     
     CGFloat statesNaviHeight = [PublicInformation returnStatusHeight] + self.navigationController.navigationBar.frame.size.height;
     CGFloat inset = 12;
@@ -332,6 +332,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [super viewWillDisappear:animated];
 }
 
+/* 回退到上一个场景 */
+- (void) backToLastViewController {
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 
 #pragma mask ---- getter
