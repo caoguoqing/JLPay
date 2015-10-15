@@ -639,7 +639,7 @@
 				5E5E354A1B735B1100560C0A /* ForgetPinViewConroller.h */,
 				5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */,
 			);
-			name = "忘记密码";
+			path = "忘记密码";
 			sourceTree = "<group>";
 		};
 		5E5E35491B735A6F00560C0A /* 注册用户 */ = {
@@ -648,7 +648,7 @@
 				5EF45B6B1BCBAC5A00C75276 /* ViewModel */,
 				5EF45B6A1BCBAC4C00C75276 /* View */,
 			);
-			name = "注册用户";
+			path = "注册用户";
 			sourceTree = "<group>";
 		};
 		5E5E35AA1B7DD33800560C0A /* 帮助与关于 */ = {
@@ -694,7 +694,7 @@
 				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
 				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
 			);
-			name = "注册";
+			path = "注册";
 			sourceTree = "<group>";
 		};
 		5E5E362C1B87076200560C0A /* CustomPickerView */ = {
@@ -1203,7 +1203,7 @@
 				5E5E35491B735A6F00560C0A /* 注册用户 */,
 				5E5E35481B735A6300560C0A /* 忘记密码 */,
 			);
-			name = "登陆界面";
+			path = "登陆界面";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

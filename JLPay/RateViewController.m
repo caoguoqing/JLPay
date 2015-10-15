@@ -10,7 +10,8 @@
 #import "PublicInformation.h"
 #import "Define_Header.h"
 #import "DynamicPickerView.h"
-#import "MySQLiteManager.h"
+//#import "../../登陆/MySQLiteManager.h"
+#import "登陆界面/注册/MySQLiteManager.h"
 #import "asi-http/ASIFormDataRequest.h"
 #import "JLActivitor.h"
 
