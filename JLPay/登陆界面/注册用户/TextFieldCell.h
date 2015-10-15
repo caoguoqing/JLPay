@@ -17,9 +17,6 @@
 
 
 
-
-
-
 @interface TextFieldCell : UITableViewCell
 // 数据源协议
 @property (nonatomic, retain) id<TextFieldCellDelegate>delegate;
@@ -35,5 +32,6 @@
 
 // 文本
 - (NSString*)text;
+
 
 @end

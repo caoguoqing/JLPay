@@ -10,14 +10,21 @@
 #import "PublicInformation.h"
 #import "TextFieldCell.h"
 #import "TextLabelCell.h"
+#import "ImageViewCell.h"
 #import "DetailAreaViewController.h"
 
 
-@interface UserRegisterViewController() <UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate>
+@interface UserRegisterViewController()
+<UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate, UIActionSheetDelegate,
+UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+{
+    NSInteger rowCellImageNeedPicking;
+}
 @property (nonatomic, strong) UIButton* registerButton;
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) NSArray* arrayBasicInfo;
 @property (nonatomic, strong) NSArray* arrayAccountInfo;
+@property (nonatomic, strong) NSArray* arrayImageInfo;
 
 @end
 
@@ -40,7 +47,11 @@ NSString* KeyAccountInfoPlaceHolderString = @"KeyAccountInfoPlaceHolderString__"
 NSString* KeyAccountInfoMustInputBool = @"KeyAccountInfoMustInputBool__"; // 必输标志
 NSString* KeyAccountInfoTextString = @"KeyAccountInfoTextString__"; // 文本
 
-
+// -- 图片信息
+NSString* KeyImageInfoTitleString = @"KeyImageInfoTitleString__"; // 标题
+NSString* KeyImageInfoImage = @"KeyImageInfoImage__"; // 图片
+NSString* KeyImageInfoImageNameString = @"KeyImageInfoImageNameString__"; // 图片名字
+NSString* KeyImageInfoSettedBool = @"KeyImageInfoSettedBool__"; // 已设置图片标志
 
 
 /*** cell标识名定义 ***/
@@ -56,16 +67,21 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 
 #pragma mask ------ UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return (section == 0)?(self.arrayBasicInfo.count):(self.arrayAccountInfo.count);
+    NSInteger number = 0;
+    if (section == 0) number = self.arrayBasicInfo.count;
+    else if (section == 1) number = self.arrayAccountInfo.count;
+    else if (section == 2) number = self.arrayImageInfo.count;
+    return number;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* reuseIdentifier = [self identifierCellAtIndexPath:indexPath];
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
     if (!cell) {
         cell = [self cellForIdentifier:reuseIdentifier];
+        [cell setFrame:[tableView rectForRowAtIndexPath:indexPath]];
     }
     [self settingAttributesOfCell:cell onIdentifier:reuseIdentifier onIndexPath:indexPath];
     
@@ -76,12 +92,29 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 30;
 }
+/* cell 的高度 */
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 2) {
+        return 200;
+    } else {
+        return 50;
+    }
+}
+
 
 /* section 的标题定义 */
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     CGRect inframe = CGRectMake(0, 0, tableView.frame.size.width, [tableView rectForHeaderInSection:section].size.height);
     UILabel* label = [[UILabel alloc] initWithFrame:inframe];
-    label.text = (section == 0)?(@"  基本信息"):(@"  账户信息");
+    if (section == 0) {
+        label.text = @"  1.基本信息";
+    }
+    else if (section == 1) {
+        label.text = @"  2.账户信息";
+    }
+    else if (section == 2) {
+        label.text = @"  3.证件图片";
+    }
     return label;
 }
 
@@ -89,11 +122,27 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 #pragma mask ------ UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
     NSString* reuseIdentifier = [self identifierCellAtIndexPath:indexPath];
+    // 点击cell: 详细地址
     if ([reuseIdentifier isEqualToString:IdentifierCellAreaLabel]) {
         UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         DetailAreaViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"detailAreaVC"];
         [self.navigationController pushViewController:viewController animated:YES];
+    }
+    // 点击cell: 图片加载
+    else if ([reuseIdentifier isEqualToString:IdentifierCellImageView]) {
+        rowCellImageNeedPicking = indexPath.row;
+        UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:[self titleAtIndexPath:indexPath]
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"取消"
+                                                   destructiveButtonTitle:nil
+                                                        otherButtonTitles:nil, nil];
+        if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
+            [actionSheet addButtonWithTitle:@"拍摄"];
+        }
+        [actionSheet addButtonWithTitle:@"从相册选择"];
+        [actionSheet showInView:self.view];
     }
 }
 
@@ -138,6 +187,32 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 
 
+#pragma mask ------ UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    UIImagePickerController* imagePickerController = [[UIImagePickerController alloc] init];
+    NSString* btnTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([btnTitle isEqualToString:@"取消"]) {
+        return;
+    }
+    else if ([btnTitle isEqualToString:@"拍摄"]) {
+        [imagePickerController setSourceType:UIImagePickerControllerSourceTypeCamera];
+    }
+    else if ([btnTitle isEqualToString:@"从相册选择"]) {
+        [imagePickerController setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+    }
+    [imagePickerController setDelegate:self];
+    [self presentViewController:imagePickerController animated:YES completion:^{}];
+}
+#pragma mask ------ UIImagePickerControllerDelegate
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    [picker dismissViewControllerAnimated:YES completion:^{}];
+    UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
+    imagePicked = [PublicInformation imageScaledBySourceImage:imagePicked withWidthScale:0.1 andHeightScale:0.1];
+    // 将图片保存到数据源
+    [self setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
+    // 重载表格视图
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowCellImageNeedPicking inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
 
 
 #pragma mask ------ 按钮点击事件
@@ -172,7 +247,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         cell = [[TextLabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     else if ([cellIdentifier isEqualToString:IdentifierCellImageView]) {
-        
+        cell = [[ImageViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     return cell;
 }
@@ -189,6 +264,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
     else if (indexPath.section == 1) {
         reuseIdentifierCell = IdentifierCellAccountField;
+    }
+    else if (indexPath.section == 2) {
+        reuseIdentifierCell = IdentifierCellImageView;
     }
     return reuseIdentifierCell;
 }
@@ -221,7 +299,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
     else if ([identifier isEqualToString:IdentifierCellImageView])
     {
-        
+        ImageViewCell* imageCell = (ImageViewCell*)cell;
+        [imageCell setTitle:[self titleAtIndexPath:indexPath]];
+        [imageCell setImageDisplay:[self imageAtIndexPath:indexPath]];
     }
 }
 
@@ -236,6 +316,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
     else if (indexPath.section == 1) {
         sTitle = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoTitleString];
+    }
+    else if (indexPath.section == 2) {
+        sTitle = [[self.arrayImageInfo objectAtIndex:indexPath.row] valueForKey:KeyImageInfoTitleString];
     }
     return sTitle;
 }
@@ -260,6 +343,20 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         mustInput = [[[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoMustInputBool] boolValue];
     }
     return mustInput;
+}
+/* 图片信息 */
+- (UIImage*) imageAtIndexPath:(NSIndexPath*)indexPath {
+    UIImage* image = nil;
+    if (indexPath.section == 2) {
+        image = [[self.arrayImageInfo objectAtIndex:indexPath.row] valueForKey:KeyImageInfoImage];
+    }
+    return image;
+}
+/* 设置图片: 指定row */
+- (void) setImageInfoWithImage:(UIImage*)image atIndex:(NSInteger)index {
+    NSMutableDictionary* imageNode = [self.arrayImageInfo objectAtIndex:index];
+    [imageNode setObject:image forKey:KeyImageInfoImage];
+    [imageNode setObject:@(YES) forKey:KeyImageInfoSettedBool];
 }
 
 /* 详细地址设置:省名+市名(+区县名)+详细地址+areaCode */
@@ -380,7 +477,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-
+/* 初始图片 */
+- (UIImage*) initialImage {
+    return [UIImage imageNamed:@"camera"];
+}
 #pragma mask ---- getter
 - (UIButton *)registerButton {
     if (_registerButton == nil) {
@@ -434,6 +534,18 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         _arrayAccountInfo = [NSArray arrayWithArray:accountInfos];
     }
     return _arrayAccountInfo;
+}
+- (NSArray *)arrayImageInfo {
+    if (_arrayImageInfo == nil) {
+        NSMutableArray* imageInfos = [[NSMutableArray alloc] init];
+        NSArray* keys = @[KeyImageInfoTitleString,KeyImageInfoImageNameString,KeyImageInfoSettedBool,KeyImageInfoImage];
+        [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传身份证照(正面)",@"03",@(NO),[self initialImage], nil] forKeys:keys]];
+        [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传身份证照(反面)",@"06",@(NO),[self initialImage], nil] forKeys:keys]];
+        [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传手持身份证照(正面)",@"09",@(NO),[self initialImage], nil] forKeys:keys]];
+        [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传结算银行卡照(正面)",@"08",@(NO),[self initialImage], nil] forKeys:keys]];
+        _arrayImageInfo = [NSArray arrayWithArray:imageInfos];
+    }
+    return _arrayImageInfo;
 }
 
 @end

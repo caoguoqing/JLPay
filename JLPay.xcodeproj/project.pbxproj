@@ -166,6 +166,7 @@
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
+		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -472,6 +473,8 @@
 		5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlipayViewController.m; sourceTree = "<group>"; };
 		5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSignButton.h; sourceTree = "<group>"; };
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
+		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
+		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1169,9 +1172,10 @@
 			children = (
 				5E5E354D1B7380DB00560C0A /* UserRegisterViewController.h */,
 				5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */,
-				5EBE9F261BCCE7AA0076BA98 /* detailAreaVC */,
+				9E4D909E1BCF59C60096F84E /* cellImageView */,
 				5EBE9F251BCCE6B70076BA98 /* cellLabelView */,
 				5EF45B6C1BCBAD5C00C75276 /* cellFieldView */,
+				5EBE9F261BCCE7AA0076BA98 /* detailAreaVC */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1204,6 +1208,15 @@
 				5E5E35481B735A6300560C0A /* 忘记密码 */,
 			);
 			path = "登陆界面";
+			sourceTree = "<group>";
+		};
+		9E4D909E1BCF59C60096F84E /* cellImageView */ = {
+			isa = PBXGroup;
+			children = (
+				9E4D909F1BCF5B410096F84E /* ImageViewCell.h */,
+				9E4D90A01BCF5B410096F84E /* ImageViewCell.m */,
+			);
+			name = cellImageView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1406,6 +1419,7 @@
 				5E397B491AD364A9004F206F /* TcpClientService2.m in Sources */,
 				5E5E36321B87082F00560C0A /* CustomPickerView.m in Sources */,
 				5E5E362B1B8703F900560C0A /* RgImageTableViewCell.m in Sources */,
+				9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */,
 				5EBAA8FE1ACD3AFB00E2ABDD /* DesUtil.m in Sources */,
 				5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */,
 				5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */,
