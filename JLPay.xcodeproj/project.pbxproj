@@ -522,7 +522,7 @@
 				5E08AE711B09949200B8C198 /* DynamicScrollView.h */,
 				5E08AE721B09949200B8C198 /* DynamicScrollView.m */,
 			);
-			name = "增值服务界面";
+			path = "增值服务界面";
 			sourceTree = "<group>";
 		};
 		5E0D18661B09D9240092F4AB /* 刷卡界面 */ = {
