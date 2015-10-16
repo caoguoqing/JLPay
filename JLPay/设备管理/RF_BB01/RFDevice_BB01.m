@@ -7,10 +7,11 @@
 //
 
 #import "RFDevice_BB01.h"
+
 #import <iMagPay/BluetoothHandler.h>
 #import <iMagPay/EMVConfigure.h>
-#import "../PublicInformation.h"
-#import "../Define_Header.h"
+#import "../../PublicInformation.h"
+#import "../../Define_Header.h"
 
 @interface RFDevice_BB01()
 <

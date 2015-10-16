@@ -93,7 +93,6 @@
 		5E82B87B1B310AF000A58751 /* activitor11.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86F1B310AF000A58751 /* activitor11.png */; };
 		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
 		5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D001BB0051400FD461A /* libsqlite3.tbd */; };
-		5E8B0D0F1BB0255100FD461A /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D0E1BB0255100FD461A /* iMagPay.framework */; settings = {ASSET_TAGS = (); }; };
 		5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D101BB0E61800FD461A /* libJieLianService.a */; settings = {ASSET_TAGS = (); }; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
@@ -168,6 +167,7 @@
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; settings = {ASSET_TAGS = (); }; };
 		9E4D90A51BCFD86A0096F84E /* DoubleFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */; settings = {ASSET_TAGS = (); }; };
+		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -313,8 +313,8 @@
 		5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHLDevice_M60.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
-		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = JLPay/JHLDevice.h; sourceTree = SOURCE_ROOT; };
-		5E82B78F1B1BFCC200A58751 /* JHLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JHLDevice.m; path = JLPay/JHLDevice.m; sourceTree = SOURCE_ROOT; };
+		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = "JLPay/设备管理/JHL/JHLDevice.h"; sourceTree = SOURCE_ROOT; };
+		5E82B78F1B1BFCC200A58751 /* JHLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JHLDevice.m; path = "JLPay/设备管理/JHL/JHLDevice.m"; sourceTree = SOURCE_ROOT; };
 		5E82B7DD1B214B8200A58751 /* CustomIOSAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomIOSAlertView.h; sourceTree = "<group>"; };
 		5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomIOSAlertView.m; sourceTree = "<group>"; };
 		5E82B7E01B214B8F00A58751 /* passwordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = passwordView.h; sourceTree = "<group>"; };
@@ -340,8 +340,7 @@
 		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor11.png; sourceTree = "<group>"; };
 		5E82B8701B310AF000A58751 /* activitor12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor12.png; sourceTree = "<group>"; };
 		5E8B0D001BB0051400FD461A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		5E8B0D0E1BB0255100FD461A /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
-		5E8B0D101BB0E61800FD461A /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libJieLianService.a; sourceTree = "<group>"; };
+		5E8B0D101BB0E61800FD461A /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libJieLianService.a; path = JLPayDevice_TY/libJieLianService.a; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -455,7 +454,7 @@
 		5EDA843A1B9EC36A0096391B /* Define_8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define_8583.h; sourceTree = "<group>"; };
 		5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JLPayDevice_TY01.h; path = JLPayDevice_TY/JLPayDevice_TY01.h; sourceTree = "<group>"; };
 		5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLPayDevice_TY01.m; path = JLPayDevice_TY/JLPayDevice_TY01.m; sourceTree = "<group>"; };
-		5EDA84451B9ED3670096391B /* JieLianService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JieLianService.h; sourceTree = "<group>"; };
+		5EDA84451B9ED3670096391B /* JieLianService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JieLianService.h; path = JLPayDevice_TY/JieLianService.h; sourceTree = "<group>"; };
 		5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TotalAmountDisplayView.h; sourceTree = "<group>"; };
 		5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TotalAmountDisplayView.m; sourceTree = "<group>"; };
 		5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransDetailsViewController.h; sourceTree = "<group>"; };
@@ -478,6 +477,7 @@
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90A31BCFD86A0096F84E /* DoubleFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleFieldCell.h; sourceTree = "<group>"; };
 		9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleFieldCell.m; sourceTree = "<group>"; };
+		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -488,7 +488,7 @@
 				5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */,
 				5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */,
 				5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */,
-				5E8B0D0F1BB0255100FD461A /* iMagPay.framework in Frameworks */,
+				9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */,
 				5EB9B1401AD79F7600A73190 /* libstdc++.dylib in Frameworks */,
 				5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */,
 				5E5FA56B1B413EBD00387E69 /* libCommunicationManager.a in Frameworks */,
@@ -755,7 +755,7 @@
 				5EDA843E1B9EC81D0096391B /* JLPayDevice_TY */,
 				5EBF82841ADDFC3D005F7E15 /* JHL */,
 			);
-			name = "设备管理";
+			path = "设备管理";
 			sourceTree = "<group>";
 		};
 		5E82B7DC1B214B5300A58751 /* 密码输入框 */ = {
@@ -841,7 +841,7 @@
 				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
 				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
 				5E397B4B1AD3677E004F206F /* libxml2.dylib */,
-				5E8B0D0E1BB0255100FD461A /* iMagPay.framework */,
+				9E4D90AB1BD0FB330096F84E /* iMagPay.framework */,
 				5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */,
 				5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */,
 				5ED344361AD8EF910005C890 /* AVFoundation.framework */,
@@ -1609,7 +1609,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"/Users/jielian/Desktop/04_厂商设备接口资料/02_睿付",
+					"$(PROJECT_DIR)/JLPay",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1618,20 +1618,23 @@
 				);
 				INFOPLIST_FILE = JLPay/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				"LD_MAP_FILE_PATH[arch=*]" = "$(TARGET_TEMP_DIR)/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/JLPay/SDK",
-					"$(PROJECT_DIR)/JLPay/JHL",
-					"$(PROJECT_DIR)/JLPay/JHL_M60",
 					"$(PROJECT_DIR)/JLPay",
+					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
+					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY",
+					"$(PROJECT_DIR)/",
+					"$(PROJECT_DIR)/JLPay/设备管理/JHL_M60",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-force_load",
-					"$(PROJECT_DIR)/JLPay/libJieLianService.a",
-					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
+					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY/libJieLianService.a",
+					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "6bdab874-323d-47aa-8a39-6ca4d7462b9a";
@@ -1651,7 +1654,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"/Users/jielian/Desktop/04_厂商设备接口资料/02_睿付",
+					"$(PROJECT_DIR)/JLPay",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1664,16 +1667,18 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/JLPay/SDK",
-					"$(PROJECT_DIR)/JLPay/JHL",
-					"$(PROJECT_DIR)/JLPay/JHL_M60",
 					"$(PROJECT_DIR)/JLPay",
+					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
+					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY",
+					"$(PROJECT_DIR)/",
+					"$(PROJECT_DIR)/JLPay/设备管理/JHL_M60",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-force_load",
-					"$(PROJECT_DIR)/JLPay/libJieLianService.a",
-					"$(PROJECT_DIR)/JLPay/JHL/libCommunicationManager.a",
+					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY/libJieLianService.a",
+					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "6bdab874-323d-47aa-8a39-6ca4d7462b9a";

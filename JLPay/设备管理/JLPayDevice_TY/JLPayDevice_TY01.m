@@ -8,7 +8,7 @@
 
 #import "JLPayDevice_TY01.h"
 #import "JieLianService.h"
-#import "../Define_Header.h"
+#import "../../Define_Header.h"
 
 @interface JLPayDevice_TY01()
 <
