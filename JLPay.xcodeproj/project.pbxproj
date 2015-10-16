@@ -342,12 +342,12 @@
 		5E8B0D001BB0051400FD461A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		5E8B0D0E1BB0255100FD461A /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
 		5E8B0D101BB0E61800FD461A /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libJieLianService.a; sourceTree = "<group>"; };
-		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Packing8583.h; path = TCP/Packing8583.h; sourceTree = "<group>"; };
-		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Packing8583.m; path = TCP/Packing8583.m; sourceTree = "<group>"; };
+		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
+		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
 		5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleLayerButton.m; sourceTree = "<group>"; };
-		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ISOFieldFormation.h; path = TCP/ISOFieldFormation.h; sourceTree = "<group>"; };
-		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ISOFieldFormation.m; path = TCP/ISOFieldFormation.m; sourceTree = "<group>"; };
+		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOFieldFormation.h; sourceTree = "<group>"; };
+		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISOFieldFormation.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -829,10 +829,8 @@
 				5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */,
 				5EBAA8E41ACD2FA800E2ABDD /* Unpacking8583.h */,
 				5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */,
-				5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */,
-				5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */,
 			);
-			name = "8583打包解包";
+			path = "8583打包解包";
 			sourceTree = "<group>";
 		};
 		5EB6F9731AC8DD1C00E47AB5 = {
@@ -965,22 +963,10 @@
 		5EBAA8F21ACD2FDC00E2ABDD /* 8583 */ = {
 			isa = PBXGroup;
 			children = (
+				9E4D90A61BD0DFA60096F84E /* 8583工具组 */,
 				5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */,
-				5EBAA8D21ACD2FA800E2ABDD /* ISOHelper.h */,
-				5EBAA8D31ACD2FA800E2ABDD /* ISOHelper.m */,
-				5EBAA8D41ACD2FA800E2ABDD /* ISOBitmap.h */,
-				5EBAA8D51ACD2FA800E2ABDD /* ISOBitmap.m */,
-				5EBAA8D61ACD2FA800E2ABDD /* ASCIIString.h */,
-				5EBAA8D71ACD2FA800E2ABDD /* ASCIIString.m */,
-				5EBAA8D81ACD2FA800E2ABDD /* EncodeString.h */,
-				5EBAA8D91ACD2FA800E2ABDD /* EncodeString.m */,
-				5EBAA8DA1ACD2FA800E2ABDD /* HeaderString.h */,
-				5EBAA8DB1ACD2FA800E2ABDD /* HeaderString.m */,
-				5EBAA8DC1ACD2FA800E2ABDD /* ErrorType.h */,
-				5EBAA8DD1ACD2FA800E2ABDD /* ErrorType.m */,
 			);
-			name = 8583;
-			path = ..;
+			path = 8583;
 			sourceTree = "<group>";
 		};
 		5EBAA8F91ACD38A600E2ABDD /* public */ = {
@@ -1119,7 +1105,7 @@
 				5E397B451AD364A9004F206F /* TcpClientService3.h */,
 				5E397B461AD364A9004F206F /* TcpClientService3.m */,
 			);
-			name = TcpSocket;
+			path = TcpSocket;
 			sourceTree = "<group>";
 		};
 		5EDA83DD1B9047AF0096391B /* 自定义控件 */ = {
@@ -1222,6 +1208,27 @@
 				9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */,
 			);
 			name = cellDoubelFieldView;
+			sourceTree = "<group>";
+		};
+		9E4D90A61BD0DFA60096F84E /* 8583工具组 */ = {
+			isa = PBXGroup;
+			children = (
+				5EBAA8D21ACD2FA800E2ABDD /* ISOHelper.h */,
+				5EBAA8D31ACD2FA800E2ABDD /* ISOHelper.m */,
+				5EBAA8D41ACD2FA800E2ABDD /* ISOBitmap.h */,
+				5EBAA8D51ACD2FA800E2ABDD /* ISOBitmap.m */,
+				5EBAA8D61ACD2FA800E2ABDD /* ASCIIString.h */,
+				5EBAA8D71ACD2FA800E2ABDD /* ASCIIString.m */,
+				5EBAA8D81ACD2FA800E2ABDD /* EncodeString.h */,
+				5EBAA8D91ACD2FA800E2ABDD /* EncodeString.m */,
+				5EBAA8DA1ACD2FA800E2ABDD /* HeaderString.h */,
+				5EBAA8DB1ACD2FA800E2ABDD /* HeaderString.m */,
+				5EBAA8DC1ACD2FA800E2ABDD /* ErrorType.h */,
+				5EBAA8DD1ACD2FA800E2ABDD /* ErrorType.m */,
+				5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */,
+				5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */,
+			);
+			path = "8583工具组";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
