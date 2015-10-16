@@ -545,7 +545,7 @@
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
 			);
-			name = "刷卡界面";
+			path = "刷卡界面";
 			sourceTree = "<group>";
 		};
 		5E0D18681B09D9BB0092F4AB /* 商户设置界面 */ = {
@@ -767,7 +767,7 @@
 				5E82B7E01B214B8F00A58751 /* passwordView.h */,
 				5E82B7E11B214B8F00A58751 /* passwordView.m */,
 			);
-			name = "密码输入框";
+			path = "密码输入框";
 			sourceTree = "<group>";
 		};
 		5E82B7E31B253F5F00A58751 /* 交易管理 */ = {

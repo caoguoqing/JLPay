@@ -9,7 +9,7 @@
 #import "BrushViewController.h"
 #import "CommunicationManager.h"
 #import "Toast+UIView.h"
-#import "ProgressHUD/ProgressHUD.h"
+#import "../ProgressHUD/ProgressHUD.h"
 #import "AppDelegate.h"
 #import "Define_Header.h"
 #import "CustomIOSAlertView.h"
@@ -21,7 +21,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 
 
-#import "TCP/Packing8583.h"
+#import "../TCP/Packing8583.h"
 #import "EncodeString.h"
 
 
