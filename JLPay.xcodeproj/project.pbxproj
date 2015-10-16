@@ -167,6 +167,7 @@
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; settings = {ASSET_TAGS = (); }; };
+		9E4D90A51BCFD86A0096F84E /* DoubleFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -475,6 +476,8 @@
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
+		9E4D90A31BCFD86A0096F84E /* DoubleFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleFieldCell.h; sourceTree = "<group>"; };
+		9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleFieldCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1172,9 +1175,10 @@
 			children = (
 				5E5E354D1B7380DB00560C0A /* UserRegisterViewController.h */,
 				5E5E354E1B7380DB00560C0A /* UserRegisterViewController.m */,
-				9E4D909E1BCF59C60096F84E /* cellImageView */,
-				5EBE9F251BCCE6B70076BA98 /* cellLabelView */,
 				5EF45B6C1BCBAD5C00C75276 /* cellFieldView */,
+				5EBE9F251BCCE6B70076BA98 /* cellLabelView */,
+				9E4D909E1BCF59C60096F84E /* cellImageView */,
+				9E4D90A21BCFD7DE0096F84E /* cellDoubelFieldView */,
 				5EBE9F261BCCE7AA0076BA98 /* detailAreaVC */,
 			);
 			name = View;
@@ -1217,6 +1221,15 @@
 				9E4D90A01BCF5B410096F84E /* ImageViewCell.m */,
 			);
 			name = cellImageView;
+			sourceTree = "<group>";
+		};
+		9E4D90A21BCFD7DE0096F84E /* cellDoubelFieldView */ = {
+			isa = PBXGroup;
+			children = (
+				9E4D90A31BCFD86A0096F84E /* DoubleFieldCell.h */,
+				9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */,
+			);
+			name = cellDoubelFieldView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1362,6 +1375,7 @@
 				5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */,
 				5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */,
 				5E397B2B1AD36429004F206F /* ASICloudFilesContainerXMLParserDelegate.m in Sources */,
+				9E4D90A51BCFD86A0096F84E /* DoubleFieldCell.m in Sources */,
 				5EBA40FD1AEA3A3200F270C0 /* Photo.m in Sources */,
 				5EB9B1581AD7B92100A73190 /* MLTableAlert.m in Sources */,
 				5EBAA8E81ACD2FA800E2ABDD /* ASCIIString.m in Sources */,

@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+
+#define HEIGHT_LABEL_CELL   50
+
+
+
 @interface TextLabelCell : UITableViewCell
 
 // 标题

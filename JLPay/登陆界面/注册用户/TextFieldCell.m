@@ -31,6 +31,14 @@
         [self.delegate tableViewCell:self didInputedText:textField.text];
     }
 }
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    BOOL shouldChange = YES;
+    if ([string isEqualToString:@"\n"]) {
+        [textField resignFirstResponder];
+        shouldChange = NO;
+    }
+    return shouldChange;
+}
 
 
 #pragma mask ---- 初始化
@@ -98,13 +106,6 @@
 }
 
 
-/* 左边空白视图: 文本输入框 */
-- (UIView*) leftViewInField {
-    return [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 5)];
-}
-
-
-
 #pragma mask ---- getter
 - (UILabel *)mustInputLabel {
     if (_mustInputLabel == nil) {
@@ -127,6 +128,8 @@
 - (UITextField *)inputField {
     if (_inputField == nil) {
         _inputField = [[UITextField alloc] initWithFrame:CGRectZero];
+        [_inputField setDelegate:self];
+        [_inputField setClearButtonMode:UITextFieldViewModeWhileEditing];
         [_inputField setDelegate:self];
     }
     return _inputField;

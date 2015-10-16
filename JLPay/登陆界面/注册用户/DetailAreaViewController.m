@@ -13,7 +13,7 @@
 #import "Define_Header.h"
 #import "UserRegisterViewController.h"
 
-@interface DetailAreaViewController()<DynamicPickerViewDelegate>
+@interface DetailAreaViewController()<DynamicPickerViewDelegate, UITextFieldDelegate>
 {
     NSString* kPickerTypeProvince ;
     NSString* kPickerTypeArea ;
@@ -89,6 +89,17 @@
         [self.btnArea setTitle:[self areaAtIndex:row] forState:UIControlStateNormal];
     }
 }
+
+#pragma mask ------ UITextFieldDelegate
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    BOOL shouldChange = YES;
+    if ([string isEqualToString:@"\n"]) {
+        [textField resignFirstResponder];
+        shouldChange = NO;
+    }
+    return shouldChange;
+}
+
 
 #pragma mask ------ 按钮事件组
 - (IBAction) touchDown:(UIButton*)sender {
@@ -497,6 +508,8 @@
         _fieldDetailAddr.layer.borderWidth = 1;
         [_fieldDetailAddr setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 5)]];
         [_fieldDetailAddr setLeftViewMode:UITextFieldViewModeAlways];
+        [_fieldDetailAddr setClearButtonMode:UITextFieldViewModeWhileEditing];
+        [_fieldDetailAddr setDelegate:self];
     }
     return _fieldDetailAddr;
 }

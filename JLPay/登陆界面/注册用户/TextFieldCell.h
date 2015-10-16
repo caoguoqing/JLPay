@@ -15,7 +15,7 @@
 - (void) tableViewCell:(id)cell didInputedText:(NSString*)text;
 @end
 
-
+#define HEIGHT_FIELD_CELL   50
 
 @interface TextFieldCell : UITableViewCell
 // 数据源协议

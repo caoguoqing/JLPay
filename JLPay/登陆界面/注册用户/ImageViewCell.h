@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+#define HEIGHT_IMAGEVIEW_CELL   200
+
+
 @interface ImageViewCell : UITableViewCell
 
 // 标题
