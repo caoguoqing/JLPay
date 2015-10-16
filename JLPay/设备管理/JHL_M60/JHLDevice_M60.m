@@ -11,7 +11,8 @@
 #import "ISDataPath.h"
 #import "ISBLEDataPath.h"
 #import "ISMFiDataPath.h"
-#import "../../Define_Header.h"
+//#import "../../Define_Header.h"
+#import "../../public/Define_Header.h"
 
 @interface JHLDevice_M60()<ISControlManagerDeviceList,ISControlManagerDelegate>{
     FieldTrackData TransData;       //磁道数据

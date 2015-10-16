@@ -444,14 +444,13 @@
 		5ED344261AD8C1DB0005C890 /* ProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ProgressHUD.bundle; sourceTree = "<group>"; };
 		5ED344271AD8C1DB0005C890 /* ProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressHUD.h; sourceTree = "<group>"; };
 		5ED344281AD8C1DB0005C890 /* ProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressHUD.m; sourceTree = "<group>"; };
-		5ED3442B1AD8E10D0005C890 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = ../MBProgressHUD.h; sourceTree = "<group>"; };
-		5ED3442C1AD8E10D0005C890 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = ../MBProgressHUD.m; sourceTree = "<group>"; };
+		5ED3442B1AD8E10D0005C890 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		5ED3442C1AD8E10D0005C890 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		5ED344361AD8EF910005C890 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		5EDA83E41B9050FE0096391B /* RFDevice_BB01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RFDevice_BB01.h; path = RF_BB01/RFDevice_BB01.h; sourceTree = "<group>"; };
 		5EDA83E51B9050FE0096391B /* RFDevice_BB01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RFDevice_BB01.m; path = RF_BB01/RFDevice_BB01.m; sourceTree = "<group>"; };
-		5EDA843A1B9EC36A0096391B /* Define_8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define_8583.h; sourceTree = "<group>"; };
 		5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JLPayDevice_TY01.h; path = JLPayDevice_TY/JLPayDevice_TY01.h; sourceTree = "<group>"; };
 		5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLPayDevice_TY01.m; path = JLPayDevice_TY/JLPayDevice_TY01.m; sourceTree = "<group>"; };
 		5EDA84451B9ED3670096391B /* JieLianService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JieLianService.h; path = JLPayDevice_TY/JieLianService.h; sourceTree = "<group>"; };
@@ -705,6 +704,8 @@
 		5E5E362C1B87076200560C0A /* CustomPickerView */ = {
 			isa = PBXGroup;
 			children = (
+				5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */,
+				5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */,
 				5E5E36301B87082F00560C0A /* CustomPickerView.h */,
 				5E5E36311B87082F00560C0A /* CustomPickerView.m */,
 			);
@@ -790,7 +791,7 @@
 			path = "交易管理";
 			sourceTree = "<group>";
 		};
-		5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */ = {
+		5E82B8611B310A7D00A58751 /* 捷联通指示器 */ = {
 			isa = PBXGroup;
 			children = (
 				5E82B8651B310AF000A58751 /* activitor01.png */,
@@ -810,7 +811,7 @@
 				5E5E36331B8B059D00560C0A /* JLActivitor.h */,
 				5E5E36341B8B059D00560C0A /* JLActivitor.m */,
 			);
-			name = "捷联通等待滚轮图标";
+			path = "捷联通指示器";
 			sourceTree = "<group>";
 		};
 		5E82B87D1B31610700A58751 /* 连接机具 */ = {
@@ -972,28 +973,25 @@
 		5EBAA8F91ACD38A600E2ABDD /* public */ = {
 			isa = PBXGroup;
 			children = (
-				5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */,
-				5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */,
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
-				5EDA843A1B9EC36A0096391B /* Define_8583.h */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
 				5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */,
 				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
-				5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */,
+				5E82B8611B310A7D00A58751 /* 捷联通指示器 */,
 				5EB9B1371AD79EC600A73190 /* SDK */,
 				5EBF3C401AD3B5BB00091F83 /* Toast */,
-				5EBAA9001ACD3B0200E2ABDD /* des/3des */,
-				5EBAA9151ACD3F2400E2ABDD /* json */,
+				5EBAA9001ACD3B0200E2ABDD /* DES */,
+				5EBAA9151ACD3F2400E2ABDD /* JSON */,
 				5E397AF31AD36429004F206F /* asi-http */,
 				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
 				5E5E362C1B87076200560C0A /* CustomPickerView */,
 				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
 				5ED344251AD8C1DB0005C890 /* ProgressHUD */,
 			);
-			name = public;
+			path = public;
 			sourceTree = "<group>";
 		};
-		5EBAA9001ACD3B0200E2ABDD /* des/3des */ = {
+		5EBAA9001ACD3B0200E2ABDD /* DES */ = {
 			isa = PBXGroup;
 			children = (
 				5EBAA8FA1ACD3AFB00E2ABDD /* DesUtil.h */,
@@ -1003,10 +1001,10 @@
 				5EBAA8FC1ACD3AFB00E2ABDD /* ConverUtil.h */,
 				5EBAA8FD1ACD3AFB00E2ABDD /* ConverUtil.m */,
 			);
-			name = des/3des;
+			path = DES;
 			sourceTree = "<group>";
 		};
-		5EBAA9151ACD3F2400E2ABDD /* json */ = {
+		5EBAA9151ACD3F2400E2ABDD /* JSON */ = {
 			isa = PBXGroup;
 			children = (
 				5EBAA8F31ACD389D00E2ABDD /* JsonToString.h */,
@@ -1026,7 +1024,7 @@
 				5EBAA90D1ACD3F1B00E2ABDD /* SBJsonWriter.m */,
 				5EBAA90E1ACD3F1B00E2ABDD /* SBProxyForJson.h */,
 			);
-			name = json;
+			path = JSON;
 			sourceTree = "<group>";
 		};
 		5EBE376C1ADF5BC700901980 /* CustomKeyboard */ = {
@@ -1066,7 +1064,7 @@
 				5EBF3C3D1AD3B5B400091F83 /* Toast+UIView.h */,
 				5EBF3C3E1AD3B5B400091F83 /* Toast+UIView.m */,
 			);
-			name = Toast;
+			path = Toast;
 			sourceTree = "<group>";
 		};
 		5EBF82841ADDFC3D005F7E15 /* JHL */ = {
@@ -1116,7 +1114,7 @@
 				5EBA40FB1AEA3A3200F270C0 /* Photo.h */,
 				5EBA40FC1AEA3A3200F270C0 /* Photo.m */,
 			);
-			name = "自定义控件";
+			path = "自定义控件";
 			sourceTree = "<group>";
 		};
 		5EDA83E31B90507A0096391B /* RF_BB01 */ = {
@@ -1622,7 +1620,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/JLPay/SDK",
+					"$(PROJECT_DIR)/JLPay/public/SDK",
 					"$(PROJECT_DIR)/JLPay",
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
 					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY",
@@ -1666,7 +1664,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/JLPay/SDK",
+					"$(PROJECT_DIR)/JLPay/public/SDK",
 					"$(PROJECT_DIR)/JLPay",
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
 					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY",
