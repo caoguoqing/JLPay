@@ -8,7 +8,7 @@
 
 #import "ChangePinViewController.h"
 #import "PublicInformation.h"
-#import "asi-http/ASIFormDataRequest.h"
+#import "../../asi-http/ASIFormDataRequest.h"
 #import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"

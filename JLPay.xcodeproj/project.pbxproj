@@ -557,10 +557,9 @@
 				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E82B87D1B31610700A58751 /* 连接机具 */,
 				5E5E35441B71E90400560C0A /* 修改密码 */,
-				5E82B7E71B25425600A58751 /* 参数设置 */,
 				5E5E35AA1B7DD33800560C0A /* 帮助与关于 */,
 			);
-			name = "商户设置界面";
+			path = "商户设置界面";
 			sourceTree = "<group>";
 		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
@@ -636,7 +635,7 @@
 				5E5E35451B71E93700560C0A /* ChangePinViewController.h */,
 				5E5E35461B71E93700560C0A /* ChangePinViewController.m */,
 			);
-			name = "修改密码";
+			path = "修改密码";
 			sourceTree = "<group>";
 		};
 		5E5E35481B735A6300560C0A /* 忘记密码 */ = {
@@ -665,7 +664,7 @@
 				5E5E35DA1B8073DD00560C0A /* 关于我们 */,
 				5E5E35AE1B7DD70700560C0A /* 描述_通用界面 */,
 			);
-			name = "帮助与关于";
+			path = "帮助与关于";
 			sourceTree = "<group>";
 		};
 		5E5E35AE1B7DD70700560C0A /* 描述_通用界面 */ = {
@@ -788,14 +787,7 @@
 				5E82B8231B295F4400A58751 /* RevokeViewController.h */,
 				5E82B8241B295F4400A58751 /* RevokeViewController.m */,
 			);
-			name = "交易管理";
-			sourceTree = "<group>";
-		};
-		5E82B7E71B25425600A58751 /* 参数设置 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "参数设置";
+			path = "交易管理";
 			sourceTree = "<group>";
 		};
 		5E82B8611B310A7D00A58751 /* 捷联通等待滚轮图标 */ = {
@@ -827,7 +819,7 @@
 				5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */,
 				5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */,
 			);
-			name = "连接机具";
+			path = "连接机具";
 			sourceTree = "<group>";
 		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
@@ -994,6 +986,8 @@
 		5EBAA8F91ACD38A600E2ABDD /* public */ = {
 			isa = PBXGroup;
 			children = (
+				5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */,
+				5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */,
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
 				5EDA843A1B9EC36A0096391B /* Define_8583.h */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
@@ -1164,10 +1158,8 @@
 			children = (
 				5EF3BAA51B69C01900DCD764 /* RateViewController.h */,
 				5EF3BAA61B69C01900DCD764 /* RateViewController.m */,
-				5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */,
-				5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */,
 			);
-			name = "费率选择";
+			path = "费率选择";
 			sourceTree = "<group>";
 		};
 		5EF45B6A1BCBAC4C00C75276 /* View */ = {
