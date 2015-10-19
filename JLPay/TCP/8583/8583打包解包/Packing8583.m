@@ -149,7 +149,6 @@
     NSString* lengthString = [PublicInformation ToBHex:(int)string.length/2];
     
     NSString* retString = [NSString stringWithFormat:@"%@%@", lengthString, string];
-    NSLog(@"打包的8583请求数据:[%@]",retString);
     return retString;
 }
 
@@ -172,7 +171,6 @@
 - (NSString*) allDataString {
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
-    NSLog(@"8583数据包:[%@]",self.dictionaryFieldNamesAndValues);
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];
     // 按排序好的顺序组字符串
     for (NSString* fieldKey in mapArray) {

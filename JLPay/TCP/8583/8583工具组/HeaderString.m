@@ -57,7 +57,6 @@
     [packedString appendString:exchangeType];
     [packedString appendString:[self returnBitmap:mapArray]];
     for (NSString* key in mapArray) {
-        NSLog(@"key = [%@], value = [%@]",key, [dict valueForKey:key]);
         [packedString appendString:[dict valueForKey:key]];
     }
     return [NSString stringWithFormat:@"%@%@",[self ToBHex:(int)packedString.length/2],packedString];
@@ -69,7 +68,6 @@
 +(NSString *)IC_receiveArr:(NSArray *)arr  Tpdu:(NSString *)tpdu Header:(NSString *)header ExchangeType:(NSString *)exchangetype DataArr:(NSArray *)dataarr{
     
     NSString *bitmapStr=[self returnBitmap:arr];
-    NSLog(@"位图======%@",bitmapStr);
     
     NSString *dataStr=[dataarr componentsJoinedByString:@""];
     NSString *allStr=[NSString stringWithFormat:@"%@%@%@%@%@",tpdu,header,exchangetype,bitmapStr,dataStr];

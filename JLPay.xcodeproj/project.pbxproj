@@ -792,18 +792,7 @@
 		5E82B8611B310A7D00A58751 /* 捷联通指示器 */ = {
 			isa = PBXGroup;
 			children = (
-				5E82B8651B310AF000A58751 /* activitor01.png */,
-				5E82B8661B310AF000A58751 /* activitor02.png */,
-				5E82B8671B310AF000A58751 /* activitor03.png */,
-				5E82B8681B310AF000A58751 /* activitor04.png */,
-				5E82B8691B310AF000A58751 /* activitor05.png */,
-				5E82B86A1B310AF000A58751 /* activitor06.png */,
-				5E82B86B1B310AF000A58751 /* activitor07.png */,
-				5E82B86C1B310AF000A58751 /* activitor08.png */,
-				5E82B86D1B310AF000A58751 /* activitor09.png */,
-				5E82B86E1B310AF000A58751 /* activitor10.png */,
-				5E82B86F1B310AF000A58751 /* activitor11.png */,
-				5E82B8701B310AF000A58751 /* activitor12.png */,
+				9E4D90AE1BD2328C0096F84E /* images */,
 				5E82B8621B310AAD00A58751 /* JLActivity.h */,
 				5E82B8631B310AAD00A58751 /* JLActivity.m */,
 				5E5E36331B8B059D00560C0A /* JLActivitor.h */,
@@ -835,17 +824,7 @@
 		5EB6F9731AC8DD1C00E47AB5 = {
 			isa = PBXGroup;
 			children = (
-				5E8B0D001BB0051400FD461A /* libsqlite3.tbd */,
-				5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */,
-				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
-				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
-				5E397B4B1AD3677E004F206F /* libxml2.dylib */,
-				9E4D90AB1BD0FB330096F84E /* iMagPay.framework */,
-				5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */,
-				5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */,
-				5ED344361AD8EF910005C890 /* AVFoundation.framework */,
-				5EB9B13D1AD79F6A00A73190 /* CoreBluetooth.framework */,
-				5E397B551AD37B4B004F206F /* CFNetwork.framework */,
+				9E4D90AD1BD1E5850096F84E /* frameworks */,
 				5EB6F97E1AC8DD1C00E47AB5 /* JLPay */,
 				5EB6F9981AC8DD1C00E47AB5 /* JLPayTests */,
 				5EB6F97D1AC8DD1C00E47AB5 /* Products */,
@@ -1224,6 +1203,43 @@
 				5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */,
 			);
 			path = "8583工具组";
+			sourceTree = "<group>";
+		};
+		9E4D90AD1BD1E5850096F84E /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
+				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
+				5E397B4B1AD3677E004F206F /* libxml2.dylib */,
+				9E4D90AB1BD0FB330096F84E /* iMagPay.framework */,
+				5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */,
+				5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */,
+				5ED344361AD8EF910005C890 /* AVFoundation.framework */,
+				5EB9B13D1AD79F6A00A73190 /* CoreBluetooth.framework */,
+				5E397B551AD37B4B004F206F /* CFNetwork.framework */,
+				5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */,
+				5E8B0D001BB0051400FD461A /* libsqlite3.tbd */,
+			);
+			name = frameworks;
+			sourceTree = "<group>";
+		};
+		9E4D90AE1BD2328C0096F84E /* images */ = {
+			isa = PBXGroup;
+			children = (
+				5E82B8651B310AF000A58751 /* activitor01.png */,
+				5E82B8661B310AF000A58751 /* activitor02.png */,
+				5E82B8671B310AF000A58751 /* activitor03.png */,
+				5E82B8681B310AF000A58751 /* activitor04.png */,
+				5E82B8691B310AF000A58751 /* activitor05.png */,
+				5E82B86A1B310AF000A58751 /* activitor06.png */,
+				5E82B86B1B310AF000A58751 /* activitor07.png */,
+				5E82B86C1B310AF000A58751 /* activitor08.png */,
+				5E82B86D1B310AF000A58751 /* activitor09.png */,
+				5E82B86E1B310AF000A58751 /* activitor10.png */,
+				5E82B86F1B310AF000A58751 /* activitor11.png */,
+				5E82B8701B310AF000A58751 /* activitor12.png */,
+			);
+			name = images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

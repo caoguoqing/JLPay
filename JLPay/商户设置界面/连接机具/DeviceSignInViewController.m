@@ -104,7 +104,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
     NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     if (infoBinded) {
         self.terminalNumBinded = [infoBinded valueForKey:KeyInfoDictOfBindedTerminalNum];
+        if (!self.terminalNumBinded || self.terminalNumBinded.length == 0) self.terminalNumBinded = @"无";
         self.SNVersionNumBinded = [infoBinded valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
+        if (!self.SNVersionNumBinded || self.SNVersionNumBinded.length == 0) self.SNVersionNumBinded = @"无";
+
         self.selectedTerminalNum = self.terminalNumBinded;
         self.selectedSNVersionNum = self.SNVersionNumBinded;
     }
@@ -206,7 +209,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         headerView = [[UIView alloc] initWithFrame:frame];
         // 标题
         UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(15, inset*2, frame.size.width/2.0, frame.size.height - inset*2)];
-        label.text = @"请选择设备";
+        label.text = @"2.请选择设备";
         label.font = cell.textLabel.font;
         label.textColor = [UIColor colorWithWhite:0.4 alpha:1];
         [headerView addSubview:label];
@@ -227,7 +230,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 // pragma mask ::: 设置section 头
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) {
-        return @"请选择终端号";
+        return @"1.请选择终端号";
     } else {
         return nil;
     }
@@ -237,14 +240,18 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     NSMutableString* headerTitle = [[NSMutableString alloc] init];
     if (section == 0) {
-        [headerTitle appendString: @"已绑定终端号: "];
+        [headerTitle appendString: @"(已绑定终端号: "];
         if (self.terminalNumBinded) {
-            [headerTitle appendString:self.terminalNumBinded];
+            [headerTitle appendFormat:@"%@)",self.terminalNumBinded];
+        } else {
+            [headerTitle appendFormat:@"无)"];
         }
     } else if (section == 1) {
-        [headerTitle appendString: @"已绑定设备 SN: "];
+        [headerTitle appendString: @"(已绑定设备 SN: "];
         if (self.SNVersionNumBinded) {
-            [headerTitle appendString:self.SNVersionNumBinded];
+            [headerTitle appendFormat:@"%@)",self.SNVersionNumBinded];
+        } else {
+            [headerTitle appendFormat:@"无)"];
         }
     }
     return headerTitle;

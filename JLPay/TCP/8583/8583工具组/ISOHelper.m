@@ -49,7 +49,6 @@
     NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:regExPattern options:0 error:nil];
     NSUInteger regExMatches = [regEx numberOfMatchesInString:hexString options:0 range:NSMakeRange(0, hexString.length)];
     if (regExMatches != hexString.length) {
-        NSLog(@"Parameter %@ is an invalid hexadecimal number.", hexString);
         return nil;
     }
     
@@ -75,13 +74,11 @@
     NSRegularExpression *regEx = [[NSRegularExpression alloc] initWithPattern:regExPattern options:0 error:nil];
     NSUInteger regExMatches = [regEx numberOfMatchesInString:binaryString options:0 range:NSMakeRange(0, binaryString.length)];
     if (regExMatches != binaryString.length) {
-        NSLog(@"Parameter %@ is an invalid binary number.", binaryString);
         return nil;
     }
     
     // Validate that length is correct (multiple of 4)
     if (binaryString.length % 4 != 0) {
-        NSLog(@"Invalid binary string length (%d). It must be multiple of 4.", (int)binaryString.length);
         return nil;
     }
     
@@ -108,7 +105,6 @@
     }
     
     if ([length rangeOfString:@"."].location != NSNotFound) {
-        NSLog(@"The length format is not correct.");
         return string;
     }
     
@@ -118,7 +114,6 @@
     NSUInteger regExMatches = [regEx numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
     
     if (regExMatches != string.length) {
-        NSLog(@"The string provided \"%@\" is not a numeric string and cannot be filled with zeroes (0).", string);
         return string;
     }
     
@@ -148,7 +143,6 @@
     }
     
     if ([length rangeOfString:@"."].location != NSNotFound) {
-        NSLog(@"The length format is not correct.");
         return string;
     }
     
@@ -158,7 +152,6 @@
     NSUInteger regExMatches = [regEx numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
     
     if (regExMatches != string.length) {
-        NSLog(@"The string provided \"%@\" is not an alphanumeric string and cannot be filled with blank spaces.", string);
         return string;
     }
     
