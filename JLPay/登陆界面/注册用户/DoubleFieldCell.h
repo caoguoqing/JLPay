@@ -14,8 +14,13 @@
 @class DoubleFieldCell;
 @protocol DoubleFieldCellDelegate <NSObject>
 @required
-// 查询到了联行号
-- doubleFieldCell:(DoubleFieldCell*)cell didSearchedBankNum:(NSString*)bankNum;
+// 查询联行号
+//- doubleFieldCell:(DoubleFieldCell*)cell doSearchedBankNum:(NSString*)bankNum;
+//- (void) doSearchBankNumWithBankName:(NSString*)bankName andBranchName:(NSString*)branchName;
+- (void) doSearchBankNumEnable:(BOOL)enable
+                  withBankName:(NSString*)bankName
+                 andBranchName:(NSString*)branchName
+                  ifDisableMsg:(NSString*)msg;
 
 @end
 

@@ -35,7 +35,6 @@
      *    如果绑定了:就跳转到金额输入界面
      *    如果没有绑定:就跳转到绑定设备界面
      */
-//    NSString* identifier = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceIDOfBinded];
     NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     if (infoBinded == nil) {
         tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];

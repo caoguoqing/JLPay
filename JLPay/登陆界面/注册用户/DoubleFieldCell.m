@@ -33,6 +33,37 @@
     return shouldChange;
 }
 
+
+
+
+#pragma mask ------ 按钮事件组
+- (IBAction) touchDown:(UIButton*)sender {
+    sender.transform = CGAffineTransformMakeScale(0.95, 0.95);
+}
+- (IBAction) touchOut:(UIButton*)sender {
+    sender.transform = CGAffineTransformIdentity;
+}
+- (IBAction) touchToSearchBankNum:(UIButton*)sender {
+    sender.transform = CGAffineTransformIdentity;
+    // 检查输入
+    BOOL enable = YES;
+    NSString* disableMsg = nil;
+    if (self.bankMasterField.text.length == 0) {
+        enable = NO;
+        disableMsg = @"未输入银行名";
+    }
+    if (self.bankBranchField.text.length == 0) {
+        enable = NO;
+        disableMsg = @"未输入分支行关键字";
+    }
+    // 调用协议
+    if (self.delegate && [self.delegate respondsToSelector:@selector(doSearchBankNumEnable:withBankName:andBranchName:ifDisableMsg:)]) {
+        [self.delegate doSearchBankNumEnable:enable withBankName:self.bankMasterField.text andBranchName:self.bankBranchField.text ifDisableMsg:disableMsg];
+    }
+}
+
+
+
 #pragma mask ------ 初始化
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -136,10 +167,14 @@
 - (UIButton *)searchButton {
     if (_searchButton == nil) {
         _searchButton = [[UIButton alloc] initWithFrame:CGRectZero];
-//        [_searchButton setTitle:@"查询" forState:UIControlStateNormal];
         [_searchButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_searchButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
         _searchButton.layer.cornerRadius = 5.0;
+        
+        [_searchButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+        [_searchButton addTarget:self action:@selector(touchOut:) forControlEvents:UIControlEventTouchUpOutside];
+        [_searchButton addTarget:self action:@selector(touchToSearchBankNum:) forControlEvents:UIControlEventTouchUpInside];
+
     }
     return _searchButton;
 }

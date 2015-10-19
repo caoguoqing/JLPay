@@ -77,9 +77,10 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = dict;
     self.navigationController.navigationBar.tintColor = color;
+    // 回退场景按钮标题: 设置为空标题
     UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backBarButton];
-    
+    // 注册信息字典:
     self.dictLastRegisterInfo = nil;
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -469,16 +470,20 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         // 校验是否切换了账号
         [self checkoutLoadingSwitch];
 
-        // 保存商户信息: 解析响应数据
-        [self savingBussinessInfo:dataDic];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[app_delegate window] makeToast:@"登陆成功"];
-        });
-        // 切换到主场景
-        [app_delegate signInSuccessToLogin:1];
+        // 校验并保存商户信息: 解析响应数据
+        NSArray* terminals = [self arraySeparatedByTerminalListString:[dataDic valueForKey:@"TermNoList"]];
+        NSString* termNums = [dataDic valueForKey:@"termCount"];
+        if (terminals.count == termNums.intValue) {
+            [self savingBussinessInfo:dataDic];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[app_delegate window] makeToast:@"登陆成功"];
+            });
+            // 切换到主场景
+            [app_delegate signInSuccessToLogin:1];
+        } else {
+            [self alertShow:@"登陆校验失败:终端号个数返回异常"];
+        }
     }
-    
 }
 -(void)requestFailed:(ASIHTTPRequest *)request {
     [self.loadButton setEnabled:YES];
@@ -534,42 +539,68 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [userDefault synchronize];
 }
 #pragma mask ::: 分隔终端号字符串
+- (NSArray*) arraySeparatedByTerminalListString:(NSString*) terminalsString {
+    NSMutableArray* array = [[NSMutableArray alloc] init];
+    // 按逗号拆分到数组
+    [array addObjectsFromArray:[terminalsString componentsSeparatedByString:@","]];
+    for (int i = 0; i < array.count; i++) {
+        NSString* sourceString = [array objectAtIndex:i];
+        // 去掉首位的多余空白字符
+        NSString* stringTrimmed = [sourceString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        if (![stringTrimmed isEqualToString:sourceString]) {
+            [array replaceObjectAtIndex:i withObject:stringTrimmed];
+        }
+    }
+    return array;
+}
 - (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
     NSMutableArray* array = [[NSMutableArray alloc] init];
-    NSString* tempString = [termString copy];
-    for (int i = 0; i < count; i++) {
-        NSInteger index;
-        NSString* terminalNum;
-        if ([tempString rangeOfString:@","].length == 0) {
-            index = 0;
-            terminalNum = tempString;
-        } else {
-            index = [tempString rangeOfString:@","].location;
-            terminalNum = [tempString substringToIndex:index];
-        }
-        if (terminalNum == nil) {
-            break;
-        }
-        while ([terminalNum hasPrefix:@" "]) {
-            terminalNum = [terminalNum substringFromIndex:[terminalNum rangeOfString:@" "].location + 1];
-        }
-        if ([terminalNum hasSuffix:@" "]) {
-            terminalNum = [terminalNum substringToIndex:[terminalNum rangeOfString:@" "].location];
-        }
-        if (terminalNum != nil) {
-            [array addObject:terminalNum];
-        }
-        if (index != 0) {
-            tempString = [tempString substringFromIndex:index + 1];
+//    NSString* tempString = [termString copy];
+    [array addObjectsFromArray:[termString componentsSeparatedByString:@","]];
+    for (int i = 0; i < array.count; i++) {
+        NSString* sourceString = [array objectAtIndex:i];
+        NSString* stringTrimmed = [sourceString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        if (![stringTrimmed isEqualToString:sourceString]) {
+            [array replaceObjectAtIndex:i withObject:stringTrimmed];
         }
     }
-    if (array.count == 0) {
-        return nil;
-    }
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count] intValue] != array.count) {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%lu", (unsigned long)array.count] forKey:Terminal_Count];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
+//    for (NSString* inString in array) {
+//        [inString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+//    }
+//    for (int i = 0; i < count; i++) {
+//        NSInteger index;
+//        NSString* terminalNum;
+//        if ([tempString rangeOfString:@","].length == 0) {
+//            index = 0;
+//            terminalNum = tempString;
+//        } else {
+//            index = [tempString rangeOfString:@","].location;
+//            terminalNum = [tempString substringToIndex:index];
+//        }
+//        if (terminalNum == nil) {
+//            break;
+//        }
+//        while ([terminalNum hasPrefix:@" "]) {
+//            terminalNum = [terminalNum substringFromIndex:[terminalNum rangeOfString:@" "].location + 1];
+//        }
+//        if ([terminalNum hasSuffix:@" "]) {
+//            terminalNum = [terminalNum substringToIndex:[terminalNum rangeOfString:@" "].location];
+//        }
+//        if (terminalNum != nil) {
+//            [array addObject:terminalNum];
+//        }
+//        if (index != 0) {
+//            tempString = [tempString substringFromIndex:index + 1];
+//        }
+//    }
+//    if (array.count == 0) {
+//        return nil;
+//    }
+//    NSLog(@"解析出来的终端号列表:[%@]",array);
+//    if ([[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count] intValue] != array.count) {
+//        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%lu", (unsigned long)array.count] forKey:Terminal_Count];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//    }
     return array;
 }
 
@@ -632,7 +663,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 - (NSString*) pinEncryptBySource:(NSString*)source {
     NSString* formationSource = [EncodeString encodeASC:source];
     NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:(NSString*)KeyEncryptLoading];
-    NSLog(@"登陆密码密文:[%@]",pin);
     return pin;
 }
 // 解密登陆密码

@@ -13,19 +13,26 @@
 #import "TextLabelCell.h"
 #import "ImageViewCell.h"
 #import "DetailAreaViewController.h"
+#import "../../public/asi-http/ASIFormDataRequest.h"
 
 
 @interface UserRegisterViewController()
-<UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate, UIActionSheetDelegate,
-UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+<UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate,DoubleFieldCellDelegate, UIActionSheetDelegate,
+UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestDelegate>
 {
     NSInteger rowCellImageNeedPicking;
+    NSInteger tagHttpRequestBankNo;
+    NSInteger tagHttpRequestRegister;
 }
 @property (nonatomic, strong) UIButton* registerButton;
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) NSArray* arrayBasicInfo;
 @property (nonatomic, strong) NSArray* arrayAccountInfo;
 @property (nonatomic, strong) NSArray* arrayImageInfo;
+
+@property (nonatomic, strong) ASIFormDataRequest* httpRequestBankNo;
+@property (nonatomic, strong) ASIFormDataRequest* httpRequestRegister;
+
 
 @end
 
@@ -203,6 +210,19 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     return infoNode;
 }
 
+#pragma mask ------ DoubleFieldCellDelegate
+- (void)doSearchBankNumEnable:(BOOL)enable
+                 withBankName:(NSString *)bankName
+                andBranchName:(NSString *)branchName
+                 ifDisableMsg:(NSString *)msg
+{
+    if (enable) {
+        [self requestBankNoByBankName:bankName andBranchName:branchName];
+    } else {
+        [self alertShowWithMessage:msg];
+    }
+}
+
 
 #pragma mask ------ UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -229,6 +249,53 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     [self setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
     // 重载表格视图
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowCellImageNeedPicking inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+#pragma mask ------ ASIHTTPRequestDelegate
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    [request clearDelegatesAndCancel];
+    NSData* datas = [request responseData];
+    request = nil;
+    NSError* error;
+    NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableLeaves error:&error];
+    NSLog(@"http响应结果:[%@]",dataDict);
+    NSString* retCode = [dataDict valueForKey:@"code"];
+    if ([retCode isEqualToString:@"00"]) { // 成功
+        if (request.tag == tagHttpRequestBankNo) {
+            [self analyseBankInfo:dataDict];
+        }
+    } else { // 失败
+        NSString* retMsg;
+        if (request.tag == tagHttpRequestBankNo) {
+            retMsg = [NSString stringWithFormat:@"查询联行号失败:%@",[dataDict valueForKey:@"message"]];
+        } else {
+            retMsg = [NSString stringWithFormat:@"商户注册失败:%@",[dataDict valueForKey:@"message"]];
+        }
+        [self alertShowWithMessage:retMsg];
+    }
+}
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    [request clearDelegatesAndCancel];
+    request = nil;
+    if (request.tag == tagHttpRequestBankNo) {
+        [self alertShowWithMessage:@"查询联行号失败:网络异常!"];
+    } else {
+        [self alertShowWithMessage:@"商户注册失败:网络异常!"];
+    }
+}
+/* 解析响应的银行信息 */
+- (void) analyseBankInfo:(NSDictionary*)bankInfo {
+    NSArray* bankArray = [bankInfo objectForKey:@"bankList"];
+}
+
+#pragma mask ------ http操作
+/* HTTP: 获取联行号 */
+- (void) requestBankNoByBankName:(NSString*)bankName andBranchName:(NSString*)branchName {
+    // 打包
+    [self.httpRequestBankNo addPostValue:bankName forKey:@"bankName"];
+    [self.httpRequestBankNo addPostValue:branchName forKey:@"branchName"];
+    // http请求
+    [self.httpRequestBankNo startAsynchronous];
 }
 
 
@@ -268,7 +335,9 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
         cell = [[ImageViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     else if ([cellIdentifier isEqualToString:IdentifierCellDoubeField]) {
-        cell = [[DoubleFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        DoubleFieldCell* dFieldCell = [[DoubleFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        [dFieldCell setDelegate:self];
+        cell = dFieldCell;
     }
     return cell;
 }
@@ -495,6 +564,8 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     [self setTitle:@"商户注册"];
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
+    tagHttpRequestBankNo = 23234;
+    tagHttpRequestRegister = 2392;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -523,13 +594,19 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
         [self.navigationController setNavigationBarHidden:NO];
     }
 }
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self.httpRequestBankNo clearDelegatesAndCancel];
+    [self.httpRequestRegister clearDelegatesAndCancel];
 }
 
+/* 简化alert代码 */
+- (void) alertShowWithMessage:(NSString*)msg {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
+}
 /* 回退到上一个场景 */
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
@@ -605,6 +682,24 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
         _arrayImageInfo = [NSArray arrayWithArray:imageInfos];
     }
     return _arrayImageInfo;
+}
+- (ASIFormDataRequest *)httpRequestBankNo {
+    if (_httpRequestBankNo == nil) {
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getOpenBankNo",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        _httpRequestBankNo = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+        [_httpRequestBankNo setDelegate:self];
+        [_httpRequestBankNo setTag:tagHttpRequestBankNo];
+    }
+    return _httpRequestBankNo;
+}
+- (ASIFormDataRequest *)httpRequestRegister {
+    if (_httpRequestRegister == nil) {
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/MchntRegister",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        _httpRequestRegister = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+        [_httpRequestRegister setDelegate:self];
+        [_httpRequestRegister setTag:tagHttpRequestRegister];
+    }
+    return _httpRequestRegister;
 }
 
 @end

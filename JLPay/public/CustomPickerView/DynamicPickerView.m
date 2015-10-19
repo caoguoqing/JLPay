@@ -197,6 +197,7 @@
     CGFloat widthPicker = self.frame.size.width;
     CGFloat widthSeperView = widthPicker - widthBtn * 2;
     
+    
     CGRect inFrame = CGRectMake(0, 0, widthBtn, heightBtn);
     // 按钮: 取消
     [self.btnCancel setFrame:inFrame];

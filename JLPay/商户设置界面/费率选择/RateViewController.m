@@ -10,9 +10,7 @@
 #import "PublicInformation.h"
 #import "Define_Header.h"
 #import "DynamicPickerView.h"
-//#import "../../登陆/MySQLiteManager.h"
 #import "../../登陆界面/注册/MySQLiteManager.h"
-//#import "../../asi-http/ASIFormDataRequest.h"
 #import "../../public/asi-http/ASIFormDataRequest.h"
 #import "JLActivitor.h"
 
@@ -26,7 +24,6 @@
 @property (nonatomic, strong) UILabel*  labArea;                    // 标签: 地区
 @property (nonatomic, strong) UILabel*  labBusiness;                // 标签: 商户
 @property (nonatomic, strong) UILabel*  labSaved;
-@property (nonatomic, strong) UILabel*  labSavedBusiness;
 @property (nonatomic, strong) UIButton* btnRate;                    // 按钮: 费率
 @property (nonatomic, strong) UIButton* btnArea;                    // 按钮: 地区
 @property (nonatomic, strong) UIButton* btnBusiness;                // 按钮: 商户
@@ -84,7 +81,6 @@ const NSInteger tagAlertDidSaved = 15;
 @synthesize labArea = _labArea;
 @synthesize labBusiness = _labBusiness;
 @synthesize labSaved = _labSaved;
-@synthesize labSavedBusiness = _labSavedBusiness;
 @synthesize btnRate = _btnRate;
 @synthesize btnArea = _btnArea;
 @synthesize btnBusiness = _btnBusiness;
@@ -154,11 +150,16 @@ const NSInteger tagAlertDidSaved = 15;
     [self.pickerView setDatas:[self provincesInDataSource] atComponent:0];
     [self.pickerView setDatas:[self citiesInDataSource] atComponent:1];
 
+    // 数据是有的。为什么没有加载视图
     // 展示picker
     framePicker.origin.y = sender.frame.origin.y + sender.frame.size.height + 10;
     [self.pickerView setFrame:framePicker];
     [self.pickerView show];
-    
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//    });
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        sleep(0.1);
+//    });
     [self.pickerView selectRow:0 atComponent:0];
 }
 
@@ -184,6 +185,7 @@ const NSInteger tagAlertDidSaved = 15;
         [self alertShowWithMessage:@"未选择机构商户" atTag:tagAlertBusinessNotNull];
         return;
     }
+    // 保存选择的商户信息到配置
     NSMutableDictionary* jigouInfo = [[NSMutableDictionary alloc] init];
     [jigouInfo setValue:self.businessNumPicked forKey:KeyInfoDictOfJiGouBusinessNum];
     [jigouInfo setValue:self.terminalNumPicked forKey:KeyInfoDictOfJiGouTerminalNum];
@@ -191,7 +193,8 @@ const NSInteger tagAlertDidSaved = 15;
     [[NSUserDefaults standardUserDefaults] setObject:jigouInfo forKey:KeyInfoDictOfJiGou];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    [self loadBusinessInLabel];
+    // 修改保存商户标签
+    [self labSavedChangeByNewBusinessName:[self.btnBusiness titleForState:UIControlStateNormal]];
     [self alertShowWithMessage:@"已保存机构商户信息,请继续刷卡" atTag:tagAlertDidSaved];
 }
 
@@ -204,7 +207,7 @@ const NSInteger tagAlertDidSaved = 15;
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self alertShowWithMessage:@"已清空保存的商户信息" atTag:tagAlertBusinessNotNull];
     }
-    [self.labSavedBusiness setText:nil];
+    [self labSavedChangeByNewBusinessName:@"无"];
 }
 
 
@@ -496,75 +499,73 @@ const NSInteger tagAlertDidSaved = 15;
     [self.view addSubview:self.labBusiness];
     [self.view addSubview:self.btnBusiness];
     [self.view addSubview:self.labSaved];
-    [self.view addSubview:self.labSavedBusiness];
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.clearButton];
     [self.view addSubview:self.pickerView];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    CGFloat inset = 15;
-    CGFloat labelWidth = [self.labRate.text sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontOfText] forKey:NSFontAttributeName]].width;
-    
-    CGFloat btnWith = self.view.bounds.size.width - inset * 3 - labelWidth;
-    CGFloat labelHeight = 40;
-    CGFloat buttonHeight =  45;
+    CGFloat insetHorizantal = 15;
+    CGFloat insetVertical = 6;
+    CGFloat viewWidth = self.view.bounds.size.width - insetHorizantal * 2;
+    CGFloat labelHeight = 25;
+    CGFloat buttonHeight =  40;
     CGFloat statusHeight = [PublicInformation returnStatusHeight];
     CGFloat navigationHeight = self.navigationController.navigationBar.bounds.size.height;
     CGFloat tabBarHeight = self.tabBarController.tabBar.frame.size.height;
     
-    self.activitorFrame = CGRectMake(0, statusHeight + navigationHeight, self.view.frame.size.width, self.view.frame.size.height - statusHeight - navigationHeight - tabBarHeight);
-    CGRect frame = CGRectMake(inset,
-                              inset + statusHeight + navigationHeight,
-                              labelWidth,
+    self.activitorFrame = CGRectMake(0,
+                                     statusHeight + navigationHeight,
+                                     self.view.frame.size.width,
+                                     self.view.frame.size.height - statusHeight - navigationHeight - tabBarHeight);
+    CGRect frame = CGRectMake(insetHorizantal,
+                              insetVertical + statusHeight + navigationHeight,
+                              viewWidth,
                               labelHeight);
     // 标签: 费率
     [self.labRate setFrame:frame];
     // 按钮: 费率
-    frame.origin.x += frame.size.width + inset;
-    frame.size.width = btnWith;
+    frame.origin.y += frame.size.height;
+    frame.size.height = buttonHeight;
     [self.btnRate setFrame:frame];
+    
     // 标签: 地区
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset;
-    frame.size.width = labelWidth;
+    frame.origin.y += frame.size.height + insetVertical;
+    frame.size.height = labelHeight;
     [self.labArea setFrame:frame];
     // 按钮: 地区
-    frame.origin.x += frame.size.width + inset;
-    frame.size.width = btnWith;
+    frame.origin.y += frame.size.height;
+    frame.size.height = buttonHeight;
     [self.btnArea setFrame:frame];
+    
     // 标签: 商户
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset;
-    frame.size.width = labelWidth;
+    frame.origin.y += frame.size.height + insetVertical;
+    frame.size.height = labelHeight;
     [self.labBusiness setFrame:frame];
     // 按钮: 商户
-    frame.origin.x += frame.size.width + inset;
-    frame.size.width = btnWith;
+    frame.origin.y += frame.size.height;
+    frame.size.height = buttonHeight;
     [self.btnBusiness setFrame:frame];
-    // 标签: 已选择的
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset;
-    frame.size.width = labelWidth;
+    
+    // 标签: 已选择的商户
+    frame.origin.y += frame.size.height ;//+ inset;
+    frame.size.height = labelHeight;
+
     [self.labSaved setFrame:frame];
-    // 标签: 商户
-    frame.origin.x += frame.size.width + inset;
-    frame.size.width = btnWith;
-    [self.labSavedBusiness setFrame:frame];
-    [self loadBusinessInLabel];
+    
     // 按钮: 清空
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset*2;
-    frame.size.width = (self.view.bounds.size.width - inset*3)/2.0;
+    frame.origin.x = insetHorizantal;
+    frame.origin.y += frame.size.height + insetVertical*2;
+    frame.size.width = (self.view.bounds.size.width - insetHorizantal*3)/2.0;
     frame.size.height = buttonHeight;
     [self.clearButton setFrame:frame];
     // 按钮: 确定
-    frame.origin.x += frame.size.width + inset;
+    frame.origin.x += frame.size.width + insetHorizantal;
     [self.sureButton setFrame:frame];
     
     // 选择器
-    frame.origin.x = inset;
-    frame.size.width = self.view.bounds.size.width - inset * 2;
+    frame.origin.x = insetHorizantal;
+    frame.size.width = self.view.bounds.size.width - insetHorizantal * 2;
     frame.size.height = 40 + 180;
     framePicker = frame;
 }
@@ -575,15 +576,24 @@ const NSInteger tagAlertDidSaved = 15;
     self.httpRequest = nil;
 }
 
-/* 已选择商户: 从本地配置加载商户 */
-- (void) loadBusinessInLabel {
+/* 保存的商户号: 从配置中读取 */
+- (NSString*) businessNameSaved {
+    NSString* businessName = nil;
     NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
     NSDictionary* jigouInfo = [userDefault objectForKey:KeyInfoDictOfJiGou];
     if (jigouInfo != nil) {
-        [self.labSavedBusiness setText:[jigouInfo valueForKey:KeyInfoDictOfJiGouBusinessName]];
+        businessName = [jigouInfo valueForKey:KeyInfoDictOfJiGouBusinessName];
     }
+    return businessName;
 }
-
+/* 更改商户名标签 */
+- (void) labSavedChangeByNewBusinessName:(NSString*)newBusinessName {
+    NSString* oldText = self.labSaved.text;
+    NSRange range = [oldText rangeOfString:@":"];
+    NSMutableString* newText = [NSMutableString stringWithString:[oldText substringToIndex:range.location + range.length]];
+    [newText appendString:newBusinessName];
+    [self.labSaved setText:newText];
+}
 
 
 - (void) alertShowWithMessage:(NSString*)msg atTag:(NSInteger)tag {
@@ -600,8 +610,8 @@ const NSInteger tagAlertDidSaved = 15;
 - (UILabel *)labRate {
     if (_labRate == nil) {
         _labRate = [[UILabel alloc] initWithFrame:CGRectZero];
-        [_labRate setText:@"请选择费率:"];
-        [_labRate setTextAlignment:NSTextAlignmentRight];
+        [_labRate setText:@"1.请选择费率:"];
+        [_labRate setTextAlignment:NSTextAlignmentLeft];
         [_labRate setFont:[UIFont systemFontOfSize:fontOfText]];
     }
     return _labRate;
@@ -609,8 +619,8 @@ const NSInteger tagAlertDidSaved = 15;
 - (UILabel *)labArea {
     if (_labArea == nil) {
         _labArea = [[UILabel alloc] initWithFrame:CGRectZero];
-        [_labArea setText:@"请选择地区:"];
-        [_labArea setTextAlignment:NSTextAlignmentRight];
+        [_labArea setText:@"2.请选择地区:"];
+        [_labArea setTextAlignment:NSTextAlignmentLeft];
         [_labArea setFont:[UIFont systemFontOfSize:fontOfText]];
     }
     return _labArea;
@@ -618,8 +628,8 @@ const NSInteger tagAlertDidSaved = 15;
 - (UILabel *)labBusiness {
     if (_labBusiness == nil) {
         _labBusiness = [[UILabel alloc] initWithFrame:CGRectZero];
-        [_labBusiness setText:@"请选择商户:"];
-        [_labBusiness setTextAlignment:NSTextAlignmentRight];
+        [_labBusiness setText:@"3.请选择商户:"];
+        [_labBusiness setTextAlignment:NSTextAlignmentLeft];
         [_labBusiness setFont:[UIFont systemFontOfSize:fontOfText]];
     }
     return _labBusiness;
@@ -627,20 +637,19 @@ const NSInteger tagAlertDidSaved = 15;
 - (UILabel *)labSaved {
     if (_labSaved == nil) {
         _labSaved = [[UILabel alloc] initWithFrame:CGRectZero];
-        [_labSaved setText:@"已保存商户:"];
         [_labSaved setTextColor:[UIColor blueColor]];
-        [_labSaved setTextAlignment:NSTextAlignmentRight];
+        [_labSaved setTextAlignment:NSTextAlignmentLeft];
         [_labSaved setFont:[UIFont systemFontOfSize:fontOfText]];
+        NSMutableString* labText = [NSMutableString stringWithString:@"已保存商户:"];
+        NSString* businessName = [self businessNameSaved];
+        if (businessName) {
+            [labText appendString:businessName];
+        } else {
+            [labText appendString:@"无"];
+        }
+        [_labSaved setText:labText];
     }
     return _labSaved;
-}
-- (UILabel *)labSavedBusiness {
-    if (_labSavedBusiness == nil) {
-        _labSavedBusiness = [[UILabel alloc] initWithFrame:CGRectZero];
-        [_labSavedBusiness setTextColor:[UIColor blueColor]];
-        [_labSavedBusiness setFont:[UIFont systemFontOfSize:fontOfText]];
-    }
-    return _labSavedBusiness;
 }
 - (UIButton *)btnRate {
     if (_btnRate == nil) {
