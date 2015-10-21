@@ -8,9 +8,8 @@
 
 #import "DetailAreaViewController.h"
 #import "PublicInformation.h"
-#import "../注册/MySQLiteManager.h"
-//#import "../../pu/CustomPickerView/DynamicPickerView.h"
-#import "../../public/CustomPickerView/DynamicPickerView.h"
+#import "MySQLiteManager.h"
+#import "DynamicPickerView.h"
 #import "Define_Header.h"
 #import "UserRegisterViewController.h"
 

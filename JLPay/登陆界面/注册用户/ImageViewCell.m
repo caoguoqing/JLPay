@@ -54,8 +54,6 @@
     frame.origin.y += frame.size.height + insetVertical;
     frame.size.height = self.frame.size.height - frame.size.height - insetVertical*3;
     [self.imageViewDisplay setFrame:frame];
-//    [self.imageViewDisplay setImage:[self newImageWithSourceImage:self.imageDisplay]];
-//    NSLog(@"%s,imageview.frame[%lf,%lf]",__func__,frame.size.width,frame.size.height);
 }
 
 /* 字体大小重置: 指定frame */
@@ -81,12 +79,13 @@
     CGFloat newImageHeight = 0;
 
     // 按原图大小来定义新的放置图片的视图
-//    if (sourceImage.size.width <= view.frame.size.width && sourceImage.size.height <= view.frame.size.height) {
-//        newImageWidth = sourceImage.size.width;
-//        newImageHeight = sourceImage.size.height;
-//    } else {
+    if (sourceImage.size.width <= view.frame.size.width && sourceImage.size.height <= view.frame.size.height) {
+        newImageWidth = sourceImage.size.width;
+        newImageHeight = sourceImage.size.height;
+    } else {
         CGFloat sourceRateWH = (sourceImage.size.width)/(sourceImage.size.height);
         CGFloat newRateWH = (view.frame.size.width)/(view.frame.size.height);
+        // 图片的宽高比大于视图的宽高比: 以视图的宽为准;否则以视图的高为准
         if (newRateWH >= sourceRateWH) {
             newImageHeight = view.frame.size.height;
             newImageWidth = newImageHeight * sourceRateWH;
@@ -94,7 +93,7 @@
             newImageWidth = view.frame.size.width;
             newImageHeight = newImageWidth * 1/sourceRateWH;
         }
-//    }
+    }
     
     UIImageView* newImageView = [[UIImageView alloc] initWithFrame:CGRectMake((view.frame.size.width - newImageWidth)/2.0,
                                                                               (view.frame.size.height - newImageHeight)/2.0,
@@ -104,7 +103,8 @@
     [view addSubview:newImageView];
     
     // 将view转换为image
-    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, sourceImage.scale);
+//    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, sourceImage.scale);
+    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];
     newImage = UIGraphicsGetImageFromCurrentImageContext();

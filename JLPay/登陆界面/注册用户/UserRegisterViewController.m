@@ -9,13 +9,12 @@
 #import "UserRegisterViewController.h"
 #import "PublicInformation.h"
 #import "TextFieldCell.h"
-//#import "DoubleFieldCell.h"
 #import "TextLabelCell.h"
 #import "ImageViewCell.h"
 #import "DetailAreaViewController.h"
 #import "BankNumberViewController.h"
-//#import "../../public/asi-http/ASIFormDataRequest.h"
 #import "ASIFormDataRequest.h"
+#import "JLActivitor.h"
 
 
 @interface UserRegisterViewController()
@@ -23,6 +22,7 @@
 UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestDelegate>
 {
     NSInteger rowCellImageNeedPicking;
+    CGRect activitorFrame;
 }
 @property (nonatomic, strong) UIButton* registerButton;
 @property (nonatomic, strong) UITableView* tableView;
@@ -225,13 +225,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
-    NSLog(@"http响应");
     [request clearDelegatesAndCancel];
+    [self stopActivitor];
     NSData* datas = [request responseData];
     self.httpRequestRegister = nil;
     NSError* error;
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableLeaves error:&error];
-    NSLog(@"http响应结果:[%@]",dataDict);
     NSString* retCode = [dataDict valueForKey:@"code"];
     if ([retCode intValue] == 0) { // 成功
         [self alertShowWithMessage:@"商户注册成功!"];
@@ -241,6 +240,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
+    [self stopActivitor];
     [self alertShowWithMessage:@"商户注册失败:网络异常!"];
     [request clearDelegatesAndCancel];
     self.httpRequestRegister = nil;
@@ -313,9 +313,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 - (IBAction) touchToRegister:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
-//    [self printLogBasicInfo];
-//    [self printLogAccountInfo];
-//    [self printLogImageInfo];
     // 检查输入是否完整
     NSIndexPath* indexPath = [self indexPathNotInputedByChecking];
     if (indexPath) {
@@ -328,12 +325,14 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [self alertShowWithMessage:@"确认密码输入错误!"];
         return;
     }
-    // 打包
-    [self requestPacking];
-    // 发起http请求
-    [self.httpRequestRegister buildPostBody];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [self startActivitor];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // 打包
+        [self requestPacking];
+        // 发起http请求
+        [self.httpRequestRegister buildPostBody];
+        
         [self.httpRequestRegister startAsynchronous];
     });
 }
@@ -663,6 +662,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     CGFloat inset = 12;
     CGFloat btnHeight = 45;
     
+    activitorFrame = CGRectMake(0, statesNaviHeight, self.view.frame.size.width, self.view.frame.size.height - (statesNaviHeight));
     CGRect frame = CGRectMake(0,//inset,
                               statesNaviHeight,
                               self.view.frame.size.width,// - inset*2,
@@ -693,6 +693,17 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [alert show];
     });
 }
+- (void) startActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] startAnimatingInFrame:activitorFrame];
+    });
+}
+- (void) stopActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] stopAnimating];
+    });
+}
+
 /* 回退到上一个场景 */
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
@@ -701,10 +712,15 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 /* 初始图片 */
 - (UIImage*) initialImage {
     UIImage* image = [UIImage imageNamed:@"camera"];
-    CGFloat viewHeight = 200;
-    CGFloat viewWidth = viewHeight * image.size.width/image.size.height;
+    CGFloat viewHeight = HEIGHT_IMAGEVIEW_CELL;
+    CGFloat viewWidth = self.view.frame.size.width ;
+    CGFloat imageHeight = viewHeight/2.0;
+    CGFloat imageWidth = imageHeight * image.size.width/image.size.height;
     UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight)];
-    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(viewWidth/4, viewHeight/4, viewWidth/2, viewHeight/2)];
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake((viewWidth - imageWidth)/2.0,
+                                                                           (viewHeight - imageHeight)/2.0,
+                                                                           imageWidth,
+                                                                           imageHeight)];
     [imageView setImage:image];
     [view addSubview:imageView];
     

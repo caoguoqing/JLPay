@@ -11,9 +11,12 @@
 #import "PublicInformation.h"
 #import "ASIFormDataRequest.h"
 #import "UserRegisterViewController.h"
+#import "JLActivitor.h"
 
-@interface BankNumberViewController()<DynamicPickerViewDelegate, ASIHTTPRequestDelegate>
-
+@interface BankNumberViewController()<DynamicPickerViewDelegate, ASIHTTPRequestDelegate, UITextFieldDelegate>
+{
+    CGRect actiFrame;
+}
 @property (nonatomic, strong) UITextField* bankNameField;
 @property (nonatomic, strong) UITextField* branchNameField;
 @property (nonatomic, strong) UILabel* bankNameSearchedLabel;
@@ -22,13 +25,21 @@
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
 
 @property (nonatomic, strong) NSArray* bankInfos;
-@property (nonatomic, assign) NSInteger selectedIndex;
+@property (nonatomic, assign) int selectedIndex;
 @end
 
 @implementation BankNumberViewController
 
 
-
+#pragma mask ------ UITextFieldDelegate 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    BOOL enabel = YES;
+    if ([string isEqualToString:@"\n"]) {
+        [textField resignFirstResponder];
+        enabel = NO;
+    }
+    return enabel;
+}
 
 #pragma mask ------ 按钮事件组
 - (IBAction) touchDown:(UIButton*)sender {
@@ -49,6 +60,7 @@
         return;
     }
     // HTTP请求
+    [self startActivitor];
     [self requestBankInfoWithBankName:self.bankNameField.text andBranchName:self.branchNameField.text];
 }
 
@@ -70,6 +82,7 @@
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
+    [self stopActivitor];
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* responseInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
@@ -91,6 +104,7 @@
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
+    [self stopActivitor];
     self.httpRequest = nil;
     [self alertForMessage:@"查询联行号失败:网络异常"];
 }
@@ -108,6 +122,12 @@
 
 #pragma mask ------ 确定并回退场景
 - (void) popVCWithSearchedBankNum {
+    // 检查输入
+    if (self.selectedIndex < 0) {
+        [self alertForMessage:@"未选择开户行联行号,请先选择!"];
+        return;
+    }
+    // 跳转界面
     NSDictionary* bankInfo = [self.bankInfos objectAtIndex:self.selectedIndex];
     [self.navigationController popViewControllerAnimated:YES];
     UserRegisterViewController* registerVC = (UserRegisterViewController*)[self.navigationController topViewController];
@@ -122,6 +142,8 @@
     [self.view addSubview:self.searchButton];
     [self.view addSubview:self.pickerView];
     
+    self.selectedIndex = -1;
+    
     UIBarButtonItem* doneItem = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(popVCWithSearchedBankNum)];
     self.navigationItem.rightBarButtonItem = doneItem;
 }
@@ -134,6 +156,7 @@
     CGFloat viewHeight = 40;
     CGFloat statesNaviHeight = [PublicInformation returnStatusHeight] + self.navigationController.navigationBar.frame.size.height;
     
+    actiFrame = CGRectMake(0, statesNaviHeight, self.view.frame.size.width, self.view.frame.size.height - statesNaviHeight);
     CGRect frame = CGRectMake(insetHorizantal, statesNaviHeight + insetVertical, mustInputWidth, viewHeight);
     [self.view addSubview:[self mustInputLabelInFrame:frame]];
     
@@ -176,6 +199,16 @@
         [alert show];
     });
 }
+- (void) startActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] startAnimatingInFrame:actiFrame];
+    });
+}
+- (void) stopActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] stopAnimating];
+    });
+}
 
 #pragma mask ---- getter
 - (UITextField *)bankNameField {
@@ -187,6 +220,7 @@
         [_bankNameField setClearButtonMode:UITextFieldViewModeWhileEditing];
         _bankNameField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         _bankNameField.layer.borderWidth = 1.0;
+        [_bankNameField setDelegate:self];
     }
     return _bankNameField;
 }
@@ -199,6 +233,7 @@
         [_branchNameField setClearButtonMode:UITextFieldViewModeWhileEditing];
         _branchNameField.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         _branchNameField.layer.borderWidth = 1.0;
+        [_branchNameField setDelegate:self];
     }
     return _branchNameField;
 }

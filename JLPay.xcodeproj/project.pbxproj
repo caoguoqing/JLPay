@@ -650,7 +650,6 @@
 		5E5E35491B735A6F00560C0A /* 注册用户 */ = {
 			isa = PBXGroup;
 			children = (
-				5EF45B6B1BCBAC5A00C75276 /* ViewModel */,
 				5EF45B6A1BCBAC4C00C75276 /* View */,
 			);
 			path = "注册用户";
@@ -1147,13 +1146,6 @@
 				5E8541B21BD4EA8A00C03B41 /* bankNumVC */,
 			);
 			name = View;
-			sourceTree = "<group>";
-		};
-		5EF45B6B1BCBAC5A00C75276 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ViewModel;
 			sourceTree = "<group>";
 		};
 		5EF45B6C1BCBAD5C00C75276 /* cellFieldView */ = {
