@@ -411,8 +411,10 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
  *************************************/
 - (IBAction)signIn: (id)sender {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+//    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"]; //userRegisterVC
     UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+//    UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+
 //    [viewController setPackageType:0];// 注册
     [self.navigationController pushViewController:viewController animated:YES];
 }

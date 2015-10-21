@@ -11,7 +11,7 @@
 
 @interface DynamicPickerView() <UIPickerViewDelegate, UIPickerViewDataSource>
 {
-    CGFloat fontSize ;
+//    CGFloat fontSize ;
 }
 
 @property (nonatomic, strong) UIButton* btnSure;                    // 按钮: 确定
@@ -37,7 +37,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        fontSize = 15.0;
+        self.fontSize = 15.0;
         self.seperatorColor = [UIColor colorWithWhite:0.5 alpha:0.5];
         [self addSubview:self.btnSure];
         [self addSubview:self.btnCancel];
@@ -53,7 +53,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        fontSize = 15.0;
+        self.fontSize = 15.0;
         self.seperatorColor = [UIColor colorWithWhite:0.5 alpha:0.5];
         [self addSubview:self.btnSure];
         [self addSubview:self.btnCancel];
@@ -150,7 +150,7 @@
         textLabel.layer.cornerRadius = 5.0;
         textLabel.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
         textLabel.textAlignment = NSTextAlignmentCenter;
-        textLabel.font = [UIFont systemFontOfSize:fontSize + 5];
+        textLabel.font = [UIFont systemFontOfSize:self.fontSize + 5];
     }
     NSArray* datas = [self.dataSources objectForKey:[NSString stringWithFormat:@"%ld",(long)component]];
     textLabel.text = [datas objectAtIndex:row];
@@ -190,7 +190,7 @@
 
 #pragma mask : === 子视图布局
 - (void)layoutSubviews {
-    CGSize sizeOfBtnTitle = [@"确定" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontSize] forKey:NSFontAttributeName]];
+    CGSize sizeOfBtnTitle = [@"确定" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:self.fontSize] forKey:NSFontAttributeName]];
     CGFloat widthBtn = sizeOfBtnTitle.width + 30;
     CGFloat heightBtn = 40;
     CGFloat heightPicker = self.frame.size.height - heightBtn;

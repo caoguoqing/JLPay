@@ -54,7 +54,7 @@
     frame.origin.y += frame.size.height + insetVertical;
     frame.size.height = self.frame.size.height - frame.size.height - insetVertical*3;
     [self.imageViewDisplay setFrame:frame];
-    [self.imageViewDisplay setImage:[self newImageWithSourceImage:self.imageDisplay]];
+//    [self.imageViewDisplay setImage:[self newImageWithSourceImage:self.imageDisplay]];
 //    NSLog(@"%s,imageview.frame[%lf,%lf]",__func__,frame.size.width,frame.size.height);
 }
 
@@ -80,11 +80,11 @@
     CGFloat newImageWidth = 0;
     CGFloat newImageHeight = 0;
 
-    
-    if (sourceImage.size.width <= view.frame.size.width && sourceImage.size.height <= view.frame.size.height) {
-        newImageWidth = sourceImage.size.width;
-        newImageHeight = sourceImage.size.height;
-    } else {
+    // 按原图大小来定义新的放置图片的视图
+//    if (sourceImage.size.width <= view.frame.size.width && sourceImage.size.height <= view.frame.size.height) {
+//        newImageWidth = sourceImage.size.width;
+//        newImageHeight = sourceImage.size.height;
+//    } else {
         CGFloat sourceRateWH = (sourceImage.size.width)/(sourceImage.size.height);
         CGFloat newRateWH = (view.frame.size.width)/(view.frame.size.height);
         if (newRateWH >= sourceRateWH) {
@@ -94,7 +94,7 @@
             newImageWidth = view.frame.size.width;
             newImageHeight = newImageWidth * 1/sourceRateWH;
         }
-    }
+//    }
     
     UIImageView* newImageView = [[UIImageView alloc] initWithFrame:CGRectMake((view.frame.size.width - newImageWidth)/2.0,
                                                                               (view.frame.size.height - newImageHeight)/2.0,
@@ -146,11 +146,14 @@
     _title = title;
     self.titleLabel.text = title;
 }
-//- (void)setImageDisplay:(UIImage *)imageDisplay {
-////    NSLog(@"%s,imageview.frame[%lf,%lf]",__func__,self.imageViewDisplay.frame.size.width,self.imageViewDisplay.frame.size.height);
-//
-//    _imageDisplay = imageDisplay;
-////    [self.imageViewDisplay setImage:_imageDisplay];
-//}
+- (void)setImageDisplay:(UIImage *)imageDisplay {
+    _imageDisplay = imageDisplay;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage* newImage = [self newImageWithSourceImage:_imageDisplay];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.imageViewDisplay setImage:newImage];
+        });
+    });
+}
 
 @end

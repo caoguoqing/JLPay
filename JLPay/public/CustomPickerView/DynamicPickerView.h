@@ -18,7 +18,7 @@
        didPickedRow:(NSInteger)row
         atComponent:(NSInteger)component;
 
-
+@optional
 // 已选择数据: 指定列
 - (void) pickerView:(DynamicPickerView *)pickerView
      didSelectedRow:(NSInteger)row
@@ -32,6 +32,7 @@
 
 @property (nonatomic, weak) id<DynamicPickerViewDelegate>delegate;
 @property (nonatomic, strong) NSString* pickerType;
+@property (nonatomic, assign) CGFloat fontSize;
 
 #pragma mask : 显示
 - (void) show;

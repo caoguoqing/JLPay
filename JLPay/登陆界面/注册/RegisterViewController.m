@@ -158,6 +158,7 @@
         } else {
             if (textValue && textValue.length > 0) {                
                 [self.httpRequest setPostValue:textValue forKey:[dict valueForKey:@"textKey"]];
+                NSLog(@"打包[%@]:[%@]",[dict valueForKey:@"textKey"],textValue);
             }
         }
     }
@@ -165,10 +166,14 @@
 // 提取基本信息 image info:必选
 - (void) packingImageInfo {
     for (NSDictionary* dict in self.imageCellDataAttri) {
-        [self.httpRequest setData:[dict objectForKey:@"uploadImage"]
+        NSData* imageData = [dict objectForKey:@"uploadImage"];
+        NSLog(@"打包图片[%@]:大小[%u]",[dict valueForKey:@"imageKey"],imageData.length);
+
+        [self.httpRequest setData:imageData
                      withFileName:[NSString stringWithFormat:@"%@.png",[dict valueForKey:@"imageKey"]]
                    andContentType:@"image/png"
                            forKey:[dict valueForKey:@"imageKey"]];
+        
     }
 }
 // 提取基本信息 addr info:区县可选
@@ -187,11 +192,14 @@
     }
     [detailPlaces appendString:detailPlace];
     [self.httpRequest setPostValue:detailPlaces forKey:@"addr"];
+    NSLog(@"打包:[addr]:[%@]",detailPlaces);
     // 地区代码: 如果有区县就用区县，否则用市
     if (areaCode == nil || areaCode.length == 0) {
         areaCode = [self.dictDetailPlace valueForKey:@"cityCode"];
     }
     [self.httpRequest setPostValue:areaCode forKey:@"areaNo"];
+    NSLog(@"打包:[areaNo]:[%@]",areaCode);
+
 }
 
 #pragma mask ---- CustomPickerViewDelegate

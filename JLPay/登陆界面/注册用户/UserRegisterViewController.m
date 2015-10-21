@@ -9,20 +9,20 @@
 #import "UserRegisterViewController.h"
 #import "PublicInformation.h"
 #import "TextFieldCell.h"
-#import "DoubleFieldCell.h"
+//#import "DoubleFieldCell.h"
 #import "TextLabelCell.h"
 #import "ImageViewCell.h"
 #import "DetailAreaViewController.h"
-#import "../../public/asi-http/ASIFormDataRequest.h"
+#import "BankNumberViewController.h"
+//#import "../../public/asi-http/ASIFormDataRequest.h"
+#import "ASIFormDataRequest.h"
 
 
 @interface UserRegisterViewController()
-<UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate,DoubleFieldCellDelegate, UIActionSheetDelegate,
+<UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate, UIActionSheetDelegate,
 UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestDelegate>
 {
     NSInteger rowCellImageNeedPicking;
-    NSInteger tagHttpRequestBankNo;
-    NSInteger tagHttpRequestRegister;
 }
 @property (nonatomic, strong) UIButton* registerButton;
 @property (nonatomic, strong) UITableView* tableView;
@@ -30,56 +30,48 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestD
 @property (nonatomic, strong) NSArray* arrayAccountInfo;
 @property (nonatomic, strong) NSArray* arrayImageInfo;
 
-@property (nonatomic, strong) ASIFormDataRequest* httpRequestBankNo;
-@property (nonatomic, strong) ASIFormDataRequest* httpRequestRegister;
+@property (nonatomic, retain) ASIFormDataRequest* httpRequestRegister;
 
 
 @end
 
 /*** cell数据源KEY定义区 ***/
 
-// -- 基本信息
-NSString* KeyBasicInfoTitleString = @"KeyBasicInfoTitleString__"; // 标题
-NSString* KeyBasicInfoPlaceHolderString = @"KeyBasicInfoPlaceHolderString__"; // 输入框的提示信息
-NSString* KeyBasicInfoMustInputBool = @"KeyBasicInfoMustInputBool__"; // 必输标志
-NSString* KeyBasicInfoTextString = @"KeyBasicInfoTextString__"; // 文本(详细地址)
-NSString* KeyBasicInfoSecurityBool = @"KeyBasicInfoSecurityBool__"; // 必输标志
+// -- field & label & image
+NSString* KeyInfoBoolMustInput = @"KeyInfoBoolMustInput__";
+NSString* KeyInfoStringTitle = @"KeyInfoStringTitle__";
+NSString* KeyInfoBoolInputed = @"KeyInfoBoolInputed__";
+// -- field & label
+NSString* KeyInfoStringInputText = @"KeyInfoStringInputText__";
+// -- field
+NSString* KeyInfoStringPlayceHolder = @"KeyInfoStringPlayceHolder__";
+NSString* KeyInfoBoolSecureEnable = @"KeyInfoBoolSecureEnable__";
+NSString* KeyInfoStringKeyName = @"KeyInfoStringKeyName__";
+// -- image
+NSString* KeyInfoImageSelected = @"KeyInfoImageSelected__";
+NSString* KeyInfoImageName = @"KeyInfoImageName__";
+// -- label
+NSString* KeyInfoStringAreaCode = @"KeyInfoStringAreaCode__";
+NSString* KeyInfoStringDetailArea = @"KeyInfoStringDetailArea__";
+NSString* KeyInfoStringDetailKeyName = @"KeyInfoStringDetailKeyName__";
+NSString* KeyInfoStringAreaCodeKeyName = @"KeyInfoStringAreaCodeKeyName__";
 
+NSString* KeyInfoStringBankNum = @"KeyInfoStringBankNum__";
+NSString* KeyInfoStringBankName = @"KeyInfoStringBankName__";
+NSString* KeyInfoStringBankNameKeyName = @"KeyInfoStringBankNameKeyName__";
+NSString* KeyInfoStringBankNumKeyName = @"KeyInfoStringBankNumKeyName__";
 
-NSString* KeyBasicInfoProvinceString = @"KeyBasicInfoProvinceString__"; // 省名
-NSString* KeyBasicInfoCityString = @"KeyBasicInfoCityString__"; // 市名
-NSString* KeyBasicInfoAreaString = @"KeyBasicInfoAreaString__"; // 区县名
-NSString* KeyBasicInfoAreaCodeString = @"KeyBasicInfoAreaCodeString__"; // 地区代码(市或区县)
-
-// -- 账户信息
-NSString* KeyAccountInfoTitleString = @"KeyAccountInfoTitleString__"; // 标题
-NSString* KeyAccountInfoPlaceHolderString = @"KeyAccountInfoPlaceHolderString__"; // 输入框的提示信息
-NSString* KeyAccountInfoMustInputBool = @"KeyAccountInfoMustInputBool__"; // 必输标志
-NSString* KeyAccountInfoTextString = @"KeyAccountInfoTextString__"; // 文本
-
-//NSString* KeyBankNoInfoTitleString = @"KeyBankNoInfoTitleString__"; // 标题
-NSString* KeyAccountInfoBankNoSettedBool = @"KeyAccountInfoBankNoSettedBool__"; // 已输标记
-NSString* KeyAccountInfoBankNoString = @"KeyAccountInfoBankNoString__"; // 联行号
-NSString* KeyAccountInfoBankNameText = @"KeyAccountInfoBankNameText__"; // 开户行全名
-
-
-// -- 图片信息
-NSString* KeyImageInfoTitleString = @"KeyImageInfoTitleString__"; // 标题
-NSString* KeyImageInfoImage = @"KeyImageInfoImage__"; // 图片
-NSString* KeyImageInfoImageNameString = @"KeyImageInfoImageNameString__"; // 图片名字
-NSString* KeyImageInfoSettedBool = @"KeyImageInfoSettedBool__"; // 已设置图片标志
 
 
 /*** cell标识名定义 ***/
-NSString* IdentifierCellBasicField = @"IdentifierCellBasicField__"; // 基本信息
-NSString* IdentifierCellAccountField = @"IdentifierCellAccountField__"; // 账户信息
-NSString* IdentifierCellAreaLabel = @"IdentifierCellAreaLabel__"; // 地区
+NSString* IdentifierCellField = @"IdentifierCellField__"; // 基本信息
+NSString* IdentifierCellLabel = @"IdentifierCellLabel__"; // 地区
 NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
-NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行信息
 
 @implementation UserRegisterViewController
 @synthesize registerButton = _registerButton;
 @synthesize tableView = _tableView;
+@synthesize httpRequestRegister = _httpRequestRegister;
 
 #pragma mask ------ UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -114,11 +106,15 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
         return HEIGHT_IMAGEVIEW_CELL;
     }
     else if (indexPath.section == 0) {
-        return HEIGHT_FIELD_CELL;
+        if (indexPath.row == self.arrayBasicInfo.count - 1) {
+            return HEIGHT_LABEL_CELL;
+        } else {
+            return HEIGHT_FIELD_CELL;
+        }
     }
     else {
         if (indexPath.row == 0) {
-            return HEIGHT_DOUBLEFIELD_CELL;
+            return HEIGHT_LABEL_CELL;
         } else {
             return HEIGHT_FIELD_CELL;
         }
@@ -149,10 +145,17 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     
     NSString* reuseIdentifier = [self identifierCellAtIndexPath:indexPath];
     // 点击cell: 详细地址
-    if ([reuseIdentifier isEqualToString:IdentifierCellAreaLabel]) {
-        UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        DetailAreaViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"detailAreaVC"];
-        [self.navigationController pushViewController:viewController animated:YES];
+    if ([reuseIdentifier isEqualToString:IdentifierCellLabel]) {
+        if (indexPath.section == 0 && indexPath.row == self.arrayBasicInfo.count - 1) {
+            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            DetailAreaViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"detailAreaVC"];
+            [self.navigationController pushViewController:viewController animated:YES];
+        }
+        else if (indexPath.section == 1 && indexPath.row == 0) {
+            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            BankNumberViewController* bankVC = [storyBoard instantiateViewControllerWithIdentifier:@"bankNumVC"];
+            [self.navigationController pushViewController:bankVC animated:YES];
+        }
     }
     // 点击cell: 图片加载
     else if ([reuseIdentifier isEqualToString:IdentifierCellImageView]) {
@@ -176,50 +179,16 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 #pragma mask ------ TextFieldCellDelegate
 - (void)tableViewCell:(id)cell didInputedText:(NSString *)text {
     TextFieldCell* tableCell = (TextFieldCell*)cell;
-    if ([tableCell.reuseIdentifier isEqualToString:IdentifierCellBasicField]) {
-        NSMutableDictionary* infoNode = [self infoNodeOfBasicAtTitle:tableCell.title];
-        if (infoNode) {
-            [infoNode setValue:text forKey:KeyBasicInfoTextString];
-        }
+    NSIndexPath* indexPath = [self.tableView indexPathForCell:tableCell];
+    if (indexPath.section == 0) {
+        NSMutableDictionary* basicInfo = [self.arrayBasicInfo objectAtIndex:indexPath.row];
+        [basicInfo setValue:text forKey:KeyInfoStringInputText];
+        [basicInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
     }
-    else if ([tableCell.reuseIdentifier isEqualToString:IdentifierCellAccountField]) {
-        NSMutableDictionary* infoNode = [self infoNodeOfAccountAtTitle:tableCell.title];
-        if (infoNode) {
-            [infoNode setValue:text forKey:KeyAccountInfoTextString];
-        }
-    }
-}
-- (NSMutableDictionary*) infoNodeOfBasicAtTitle:(NSString*)title {
-    NSMutableDictionary* infoNode = nil;
-    for (NSMutableDictionary* dict in self.arrayBasicInfo) {
-        if ([title isEqualToString:[dict valueForKey:KeyBasicInfoTitleString]]) {
-            infoNode = dict;
-            break;
-        }
-    }
-    return infoNode;
-}
-- (NSMutableDictionary*) infoNodeOfAccountAtTitle:(NSString*)title {
-    NSMutableDictionary* infoNode = nil;
-    for (NSMutableDictionary* dict in self.arrayAccountInfo) {
-        if ([title isEqualToString:[dict valueForKey:KeyAccountInfoTitleString]]) {
-            infoNode = dict;
-            break;
-        }
-    }
-    return infoNode;
-}
-
-#pragma mask ------ DoubleFieldCellDelegate
-- (void)doSearchBankNumEnable:(BOOL)enable
-                 withBankName:(NSString *)bankName
-                andBranchName:(NSString *)branchName
-                 ifDisableMsg:(NSString *)msg
-{
-    if (enable) {
-        [self requestBankNoByBankName:bankName andBranchName:branchName];
-    } else {
-        [self alertShowWithMessage:msg];
+    else if (indexPath.section == 1) {
+        NSMutableDictionary* accountInfo = [self.arrayAccountInfo objectAtIndex:indexPath.row];
+        [accountInfo setValue:text forKey:KeyInfoStringInputText];
+        [accountInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
     }
 }
 
@@ -244,58 +213,94 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
     [picker dismissViewControllerAnimated:YES completion:^{}];
     UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
-    imagePicked = [PublicInformation imageScaledBySourceImage:imagePicked withWidthScale:0.1 andHeightScale:0.1];
-    // 将图片保存到数据源
-    [self setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
-    // 重载表格视图
-    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowCellImageNeedPicking inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // 将图片保存到数据源
+        [self setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // 重载表格视图
+            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowCellImageNeedPicking inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        });
+    });
 }
 
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
+    NSLog(@"http响应");
     [request clearDelegatesAndCancel];
     NSData* datas = [request responseData];
-    request = nil;
+    self.httpRequestRegister = nil;
     NSError* error;
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableLeaves error:&error];
     NSLog(@"http响应结果:[%@]",dataDict);
     NSString* retCode = [dataDict valueForKey:@"code"];
-    if ([retCode isEqualToString:@"00"]) { // 成功
-        if (request.tag == tagHttpRequestBankNo) {
-            [self analyseBankInfo:dataDict];
-        }
+    if ([retCode intValue] == 0) { // 成功
+        [self alertShowWithMessage:@"商户注册成功!"];
     } else { // 失败
-        NSString* retMsg;
-        if (request.tag == tagHttpRequestBankNo) {
-            retMsg = [NSString stringWithFormat:@"查询联行号失败:%@",[dataDict valueForKey:@"message"]];
-        } else {
-            retMsg = [NSString stringWithFormat:@"商户注册失败:%@",[dataDict valueForKey:@"message"]];
-        }
+        NSString* retMsg = [NSString stringWithFormat:@"商户注册失败:%@", [dataDict valueForKey:@"message"]];
         [self alertShowWithMessage:retMsg];
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
+    [self alertShowWithMessage:@"商户注册失败:网络异常!"];
     [request clearDelegatesAndCancel];
-    request = nil;
-    if (request.tag == tagHttpRequestBankNo) {
-        [self alertShowWithMessage:@"查询联行号失败:网络异常!"];
-    } else {
-        [self alertShowWithMessage:@"商户注册失败:网络异常!"];
-    }
-}
-/* 解析响应的银行信息 */
-- (void) analyseBankInfo:(NSDictionary*)bankInfo {
-    NSArray* bankArray = [bankInfo objectForKey:@"bankList"];
+    self.httpRequestRegister = nil;
 }
 
+
 #pragma mask ------ http操作
-/* HTTP: 获取联行号 */
-- (void) requestBankNoByBankName:(NSString*)bankName andBranchName:(NSString*)branchName {
-    // 打包
-    [self.httpRequestBankNo addPostValue:bankName forKey:@"bankName"];
-    [self.httpRequestBankNo addPostValue:branchName forKey:@"branchName"];
-    // http请求
-    [self.httpRequestBankNo startAsynchronous];
+/* 打包 */
+- (void) requestPacking {
+    // 基本信息
+    [self packingBasicInfo];
+    // 账户信息
+    [self packingAccountInfo];
+    // 图片信息
+    [self packingImageInfo];
+}
+- (void) packingBasicInfo {
+    for (int i = 0; i < self.arrayBasicInfo.count; i++) {
+        NSDictionary* dict = [self.arrayBasicInfo objectAtIndex:i];
+        if (i != self.arrayBasicInfo.count - 1) { // 基本信息
+            if ([[dict valueForKey:KeyInfoStringKeyName] length] == 0) {
+                continue;
+            }
+            if ([[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+                [self.httpRequestRegister setPostValue:[dict valueForKey:KeyInfoStringInputText] forKey:[dict valueForKey:KeyInfoStringKeyName]];
+            }
+        }
+        else { // 地区信息
+            if ([[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+                [self.httpRequestRegister setPostValue:[dict valueForKey:KeyInfoStringAreaCode] forKey:[dict valueForKey:KeyInfoStringAreaCodeKeyName]];
+                [self.httpRequestRegister setPostValue:[dict valueForKey:KeyInfoStringDetailArea] forKey:[dict valueForKey:KeyInfoStringDetailKeyName]];
+            }
+        }
+    }
+}
+- (void) packingAccountInfo {
+    for (int i = 0; i < self.arrayAccountInfo.count; i++) {
+        NSDictionary* dict = [self.arrayAccountInfo objectAtIndex:i];
+        if (i == 0) { // 开户行信息
+            if ([[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+                [self.httpRequestRegister setPostValue:[dict valueForKey:KeyInfoStringBankName] forKey:[dict valueForKey:KeyInfoStringBankNameKeyName]];
+                [self.httpRequestRegister setPostValue:[dict valueForKey:KeyInfoStringBankNum] forKey:[dict valueForKey:KeyInfoStringBankNumKeyName]];
+            }
+        } else { // 账户基本信息
+            if ([[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+                [self.httpRequestRegister setPostValue:[dict valueForKey:KeyInfoStringInputText] forKey:[dict valueForKey:KeyInfoStringKeyName]];
+            }
+        }
+    }
+}
+- (void) packingImageInfo {
+    for (int i = 0; i < self.arrayImageInfo.count; i++) {
+        NSDictionary* dict = [self.arrayImageInfo objectAtIndex:i];
+        NSData* imageData = UIImageJPEGRepresentation([dict objectForKey:KeyInfoImageSelected], 0.5);
+        NSString* imageName = [dict valueForKey:KeyInfoImageName];
+        [self.httpRequestRegister setData:imageData
+                             withFileName:[NSString stringWithFormat:@"%@.png", imageName]
+                           andContentType:@"image/png"
+                                   forKey:imageName];
+    }
 }
 
 
@@ -308,9 +313,29 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 }
 - (IBAction) touchToRegister:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
-    [self printLogBasicInfo];
-    [self printLogAccountInfo];
-    [self printLogImageInfo];
+//    [self printLogBasicInfo];
+//    [self printLogAccountInfo];
+//    [self printLogImageInfo];
+    // 检查输入是否完整
+    NSIndexPath* indexPath = [self indexPathNotInputedByChecking];
+    if (indexPath) {
+        NSString* msg = [NSString stringWithFormat:@"%@未输入,请先输入!",[self titleAtIndexPath:indexPath]];
+        [self alertShowWithMessage:msg];
+        return;
+    }
+    // 检查确认密码是否输入正确
+    if (![self isEqualingWithPasswordSured]) {
+        [self alertShowWithMessage:@"确认密码输入错误!"];
+        return;
+    }
+    // 打包
+    [self requestPacking];
+    // 发起http请求
+    [self.httpRequestRegister buildPostBody];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.httpRequestRegister startAsynchronous];
+    });
 }
 
 
@@ -321,23 +346,17 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 /* 初始化cell */
 - (UITableViewCell*) cellForIdentifier:(NSString*)cellIdentifier {
     UITableViewCell* cell = nil;
-    if ([cellIdentifier isEqualToString:IdentifierCellBasicField] ||
-        [cellIdentifier isEqualToString:IdentifierCellAccountField])
+    if ([cellIdentifier isEqualToString:IdentifierCellField])
     {
         TextFieldCell* fieldCell = [[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [fieldCell setDelegate:self];
         cell = fieldCell;
     }
-    else if ([cellIdentifier isEqualToString:IdentifierCellAreaLabel]) {
+    else if ([cellIdentifier isEqualToString:IdentifierCellLabel]) {
         cell = [[TextLabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     else if ([cellIdentifier isEqualToString:IdentifierCellImageView]) {
         cell = [[ImageViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    }
-    else if ([cellIdentifier isEqualToString:IdentifierCellDoubeField]) {
-        DoubleFieldCell* dFieldCell = [[DoubleFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        [dFieldCell setDelegate:self];
-        cell = dFieldCell;
     }
     return cell;
 }
@@ -347,16 +366,16 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     NSString* reuseIdentifierCell = nil;
     if (indexPath.section == 0) {
         if (indexPath.row == self.arrayBasicInfo.count - 1) {
-            reuseIdentifierCell = IdentifierCellAreaLabel;
+            reuseIdentifierCell = IdentifierCellLabel;
         } else {
-            reuseIdentifierCell = IdentifierCellBasicField;
+            reuseIdentifierCell = IdentifierCellField;
         }
     }
     else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
-            reuseIdentifierCell = IdentifierCellDoubeField;
+            reuseIdentifierCell = IdentifierCellLabel;
         } else {
-            reuseIdentifierCell = IdentifierCellAccountField;
+            reuseIdentifierCell = IdentifierCellField;
         }
     }
     else if (indexPath.section == 2) {
@@ -370,22 +389,16 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
                     onIdentifier:(NSString*)identifier
                      onIndexPath:(NSIndexPath*)indexPath
 {
-    if ([identifier isEqualToString:IdentifierCellBasicField])
+    if ([identifier isEqualToString:IdentifierCellField])
     {
         TextFieldCell* fieldCell = (TextFieldCell*)cell;
         [fieldCell setTitle:[self titleAtIndexPath:indexPath]];
         [fieldCell setPlaceHolder:[self placeHolderAtIndexPath:indexPath]];
         [fieldCell setMustInput:[self mustInputAtIndexPath:indexPath]];
         [fieldCell setSecureTextEntry:[self securityAtIndexPath:indexPath]];
+        [fieldCell setTextInputed:[self textInputedAtIndexPath:indexPath]];
     }
-    else if ([identifier isEqualToString:IdentifierCellAccountField])
-    {
-        TextFieldCell* fieldCell = (TextFieldCell*)cell;
-        [fieldCell setTitle:[self titleAtIndexPath:indexPath]];
-        [fieldCell setPlaceHolder:[self placeHolderAtIndexPath:indexPath]];
-        [fieldCell setMustInput:[self mustInputAtIndexPath:indexPath]];
-    }
-    else if ([identifier isEqualToString:IdentifierCellAreaLabel])
+    else if ([identifier isEqualToString:IdentifierCellLabel])
     {
         TextLabelCell* labelCell = (TextLabelCell*)cell;
         [labelCell setTitle:[self titleAtIndexPath:indexPath]];
@@ -396,13 +409,11 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     {
         ImageViewCell* imageCell = (ImageViewCell*)cell;
         [imageCell setTitle:[self titleAtIndexPath:indexPath]];
-        [imageCell setImageDisplay:[self imageAtIndexPath:indexPath]];
-    }
-    else if ([identifier isEqualToString:IdentifierCellDoubeField])
-    {
-        DoubleFieldCell* dFieldCell = (DoubleFieldCell*)cell;
-        [dFieldCell setTitle:[self titleAtIndexPath:indexPath]];
-        [dFieldCell setBankNum:[self bankNoAtIndexPath:indexPath]];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage* image = [self imageAtIndexPath:indexPath];
+            [imageCell setImageDisplay:image];
+        });
     }
 }
 
@@ -413,13 +424,13 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (NSString*) titleAtIndexPath:(NSIndexPath*)indexPath {
     NSString* sTitle = nil;
     if (indexPath.section == 0) {
-        sTitle = [[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyBasicInfoTitleString];
+        sTitle = [[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringTitle];
     }
     else if (indexPath.section == 1) {
-        sTitle = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoTitleString];
+        sTitle = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringTitle];
     }
     else if (indexPath.section == 2) {
-        sTitle = [[self.arrayImageInfo objectAtIndex:indexPath.row] valueForKey:KeyImageInfoTitleString];
+        sTitle = [[self.arrayImageInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringTitle];
     }
     return sTitle;
 }
@@ -427,35 +438,55 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (NSString*) placeHolderAtIndexPath:(NSIndexPath*)indexPath {
     NSString* sPlaceHolder = nil;
     if (indexPath.section == 0) {
-        sPlaceHolder = [[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyBasicInfoPlaceHolderString];
+        sPlaceHolder = [[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringPlayceHolder];
     }
     else if (indexPath.section == 1) {
-        sPlaceHolder = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoPlaceHolderString];
+        sPlaceHolder = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringPlayceHolder];
     }
     return sPlaceHolder;
+}
+/* 输入文本 */
+- (NSString*) textInputedAtIndexPath:(NSIndexPath*)indexPath {
+    NSString* textInputed = @"";
+    if (indexPath.section == 0) {
+        textInputed = [[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringInputText];
+    }
+    else if (indexPath.section == 1) {
+        textInputed = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringInputText];
+    }
+    return textInputed;
 }
 /* 必输标记 */
 - (BOOL) mustInputAtIndexPath:(NSIndexPath*)indexPath {
     BOOL mustInput = YES;
     if (indexPath.section == 0) {
-        mustInput = [[[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyBasicInfoMustInputBool] boolValue];
+        mustInput = [[[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoBoolMustInput] boolValue];
     }
     else if (indexPath.section == 1) {
-        mustInput = [[[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoMustInputBool] boolValue];
+        mustInput = [[[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoBoolMustInput] boolValue];
     }
     return mustInput;
 }
 /* 文本密文显示标志 */
 - (BOOL) securityAtIndexPath:(NSIndexPath*)indexPath {
     BOOL security = YES;
-    security = [[[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyBasicInfoSecurityBool] boolValue];
+    if (indexPath.section == 0) {
+        security = [[[self.arrayBasicInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoBoolSecureEnable] boolValue];
+    }
+    else if (indexPath.section == 1) {
+        security = [[[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoBoolSecureEnable] boolValue];
+    }
     return security;
 }
 /* 图片信息 */
 - (UIImage*) imageAtIndexPath:(NSIndexPath*)indexPath {
     UIImage* image = nil;
     if (indexPath.section == 2) {
-        image = [[self.arrayImageInfo objectAtIndex:indexPath.row] valueForKey:KeyImageInfoImage];
+        NSDictionary* imageInfo = [self.arrayImageInfo objectAtIndex:indexPath.row];
+        image = [imageInfo objectForKey:KeyInfoImageSelected];
+        if (image.size.width > 1000) {
+            image = [PublicInformation imageScaledBySourceImage:image withWidthScale:0.1 andHeightScale:0.1];
+        }
     }
     return image;
 }
@@ -463,15 +494,15 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (NSString*) bankNoAtIndexPath:(NSIndexPath*)indexPath {
     NSString* bankNo = nil;
     if (indexPath.section == 1 && indexPath.row == 0) {
-        bankNo = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyAccountInfoBankNoString];
+        bankNo = [[self.arrayAccountInfo objectAtIndex:indexPath.row] valueForKey:KeyInfoStringBankNum];
     }
     return bankNo;
 }
 /* 设置图片: 指定row */
 - (void) setImageInfoWithImage:(UIImage*)image atIndex:(NSInteger)index {
     NSMutableDictionary* imageNode = [self.arrayImageInfo objectAtIndex:index];
-    [imageNode setObject:image forKey:KeyImageInfoImage];
-    [imageNode setObject:@(YES) forKey:KeyImageInfoSettedBool];
+    [imageNode setObject:image forKey:KeyInfoImageSelected];
+    [imageNode setObject:@(YES) forKey:KeyInfoBoolInputed];
 }
 
 /* 详细地址设置:省名+市名(+区县名)+详细地址+areaCode */
@@ -482,12 +513,10 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
            andAreaCode:(NSString*)areaCode
 {
     // 设置数据源
-    NSDictionary* addrInfo = [self infoDetailAddr];
-    [addrInfo setValue:detailAddr forKey:KeyBasicInfoTextString];
-    [addrInfo setValue:province forKey:KeyBasicInfoProvinceString];
-    [addrInfo setValue:city forKey:KeyBasicInfoCityString];
-    [addrInfo setValue:area forKey:KeyBasicInfoAreaString];
-    [addrInfo setValue:areaCode forKey:KeyBasicInfoAreaCodeString];
+//    NSDictionary* addrInfo = [self infoDetailAddr];
+    NSMutableDictionary* addrInfo = [self.arrayBasicInfo objectAtIndex:self.arrayBasicInfo.count - 1];
+    [addrInfo setValue:detailAddr forKey:KeyInfoStringDetailArea];
+    [addrInfo setValue:areaCode forKey:KeyInfoStringAreaCode];
     // 重置label地址
     NSMutableString* detailAddrs = [[NSMutableString alloc] init];
     if (province && province.length > 0) {
@@ -502,19 +531,78 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     if (detailAddr && detailAddr.length > 0) {
         [detailAddrs appendString:detailAddr];
     }
-    [addrInfo setValue:detailAddrs forKey:KeyBasicInfoPlaceHolderString];
+    [addrInfo setValue:detailAddrs forKey:KeyInfoStringPlayceHolder];
+    [addrInfo setObject:@(YES) forKey:KeyInfoBoolInputed];
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:self.arrayBasicInfo.count - 1 inSection:0];
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 - (NSDictionary*) infoDetailAddr {
     NSDictionary* info = nil;
     for (NSDictionary* dict in self.arrayBasicInfo) {
-        if ([[dict valueForKey:KeyBasicInfoTitleString] isEqualToString:@"详细地址"]) {
+        if ([[dict valueForKey:KeyInfoStringTitle] isEqualToString:@"详细地址"]) {
             info = dict;
             break;
         }
     }
     return info;
+}
+
+/* 设置开户行-联行号 */
+- (void) setBankNum:(NSString*)bankNum forBankName:(NSString*)bankName {
+    NSDictionary* bankInfo = [self.arrayAccountInfo objectAtIndex:0];
+    [bankInfo setValue:bankNum forKey:KeyInfoStringBankNum];
+    [bankInfo setValue:bankName forKey:KeyInfoStringBankName];
+    [bankInfo setValue:bankName forKey:KeyInfoStringPlayceHolder];
+    [bankInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+    [self.tableView reloadData];
+}
+
+/* 检查输入是否都完全: 返回nil表示都输入了 */
+- (NSIndexPath*) indexPathNotInputedByChecking {
+    NSIndexPath* indexPath = nil;
+    for (int i = 0; i < self.arrayBasicInfo.count; i++) {
+        NSDictionary* dict = [self.arrayBasicInfo objectAtIndex:i];
+        if ([[dict objectForKey:KeyInfoBoolMustInput] boolValue] && ![[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+            indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            return indexPath;
+        }
+    }
+    for (int i = 0; i < self.arrayAccountInfo.count; i++) {
+        NSDictionary* dict = [self.arrayAccountInfo objectAtIndex:i];
+        if ([[dict objectForKey:KeyInfoBoolMustInput] boolValue] && ![[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+            indexPath = [NSIndexPath indexPathForRow:i inSection:1];
+            return indexPath;
+        }
+    }
+    for (int i = 0; i < self.arrayImageInfo.count; i++) {
+        NSDictionary* dict = [self.arrayImageInfo objectAtIndex:i];
+        if (![[dict objectForKey:KeyInfoBoolInputed] boolValue]) {
+            indexPath = [NSIndexPath indexPathForRow:i inSection:2];
+            return indexPath;
+        }
+    }
+    return indexPath;
+}
+/* 检查确认密码是否一致 */
+- (BOOL) isEqualingWithPasswordSured {
+    NSString* passwordInfo = nil;
+    NSString* passwordSuredInfo = nil;
+    BOOL isEqualingPwd = NO;
+    for (NSDictionary* dict in self.arrayBasicInfo) {
+        if (passwordInfo && passwordSuredInfo) {
+            break;
+        }
+        if ([[dict valueForKey:KeyInfoStringTitle] isEqualToString:@"登陆密码"]) {
+            passwordInfo = [dict valueForKey:KeyInfoStringInputText];
+        }
+        if ([[dict valueForKey:KeyInfoStringTitle] isEqualToString:@"确认密码"]) {
+            passwordSuredInfo = [dict valueForKey:KeyInfoStringInputText];
+        }
+    }
+    if ([passwordInfo isEqualToString:passwordSuredInfo]) {
+        isEqualingPwd = YES;
+    }
+    return isEqualingPwd;
 }
 
 
@@ -564,8 +652,6 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     [self setTitle:@"商户注册"];
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
-    tagHttpRequestBankNo = 23234;
-    tagHttpRequestRegister = 2392;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -596,8 +682,8 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.httpRequestBankNo clearDelegatesAndCancel];
     [self.httpRequestRegister clearDelegatesAndCancel];
+    self.httpRequestRegister = nil;
 }
 
 /* 简化alert代码 */
@@ -614,7 +700,21 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 
 /* 初始图片 */
 - (UIImage*) initialImage {
-    return [UIImage imageNamed:@"camera"];
+    UIImage* image = [UIImage imageNamed:@"camera"];
+    CGFloat viewHeight = 200;
+    CGFloat viewWidth = viewHeight * image.size.width/image.size.height;
+    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight)];
+    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(viewWidth/4, viewHeight/4, viewWidth/2, viewHeight/2)];
+    [imageView setImage:image];
+    [view addSubview:imageView];
+    
+    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, [UIScreen mainScreen].scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [view.layer renderInContext:context];
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
 }
 #pragma mask ---- getter
 - (UIButton *)registerButton {
@@ -644,16 +744,16 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (NSArray *)arrayBasicInfo {
     if (_arrayBasicInfo == nil) {
         NSMutableArray* basicInfos = [[NSMutableArray alloc] init];
-        NSArray* basicKeys = @[KeyBasicInfoTitleString,KeyBasicInfoPlaceHolderString,KeyBasicInfoMustInputBool,KeyBasicInfoTextString,KeyBasicInfoSecurityBool];
-        NSArray* areaKeys = @[KeyBasicInfoTitleString,KeyBasicInfoPlaceHolderString,KeyBasicInfoMustInputBool,KeyBasicInfoTextString,KeyBasicInfoProvinceString,KeyBasicInfoCityString,KeyBasicInfoAreaString,KeyBasicInfoAreaCodeString];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"商户名称",@"不超过40位字符",@(YES),@"",@(NO), nil] forKeys:basicKeys]];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"登陆用户名",@"不超过40位字母或数字字符",@(YES),@"",@(NO), nil] forKeys:basicKeys]];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"登陆密码",@"请输入8位字母或数字字符",@(YES),@"",@(YES), nil] forKeys:basicKeys]];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"确认密码",@"请重新输入登陆密码",@(YES),@"",@(YES), nil] forKeys:basicKeys]];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"身份证号码",@"请输入15位或18位身份证号码",@(YES),@"",@(NO), nil] forKeys:basicKeys]];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"手机号码",@"请输入手机号码",@(YES),@"",@(NO), nil] forKeys:basicKeys]];
-        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"邮箱",@"请输入有效的邮箱",@(NO),@"",@(NO), nil] forKeys:basicKeys]];
-        [basicInfos addObject:[NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"详细地址",@"请选择并输入商铺详细地址",@(YES),@"",@"",@"",@"",@"", nil] forKeys:areaKeys]];
+        NSArray* basicKeys = @[KeyInfoStringTitle,KeyInfoStringPlayceHolder,KeyInfoBoolMustInput,KeyInfoStringInputText,KeyInfoBoolSecureEnable,KeyInfoBoolInputed,KeyInfoStringKeyName];
+        NSArray* areaKeys = @[KeyInfoStringTitle,KeyInfoBoolMustInput,KeyInfoStringPlayceHolder,KeyInfoStringAreaCode,KeyInfoStringDetailArea,KeyInfoBoolInputed,KeyInfoStringDetailKeyName,KeyInfoStringAreaCodeKeyName];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"商户名称",@"不超过40位字符",@(YES),@"",@(NO),@(NO),@"mchntNm", nil] forKeys:basicKeys]];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"登陆用户名",@"不超过40位字母或数字字符",@(YES),@"",@(NO),@(NO),@"userName", nil] forKeys:basicKeys]];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"登陆密码",@"请输入8位字母或数字字符",@(YES),@"",@(YES),@(NO),@"passWord", nil] forKeys:basicKeys]];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"确认密码",@"请重新输入登陆密码",@(YES),@"",@(YES),@(NO),@"", nil] forKeys:basicKeys]];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"身份证号码",@"请输入15位或18位身份证号码",@(YES),@"",@(NO),@(NO),@"identifyNo", nil] forKeys:basicKeys]];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"手机号码",@"请输入手机号码",@(YES),@"",@(NO),@(NO),@"telNo", nil] forKeys:basicKeys]];
+        [basicInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"邮箱",@"请输入有效的邮箱",@(NO),@"",@(NO),@(NO),@"mail", nil] forKeys:basicKeys]];
+        [basicInfos addObject:[NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"详细地址",@(YES),@"请选择并输入商铺详细地址",@"",@"",@(NO),@"addr",@"areaNo", nil] forKeys:areaKeys]];
         _arrayBasicInfo = [NSArray arrayWithArray:basicInfos];
     }
     return _arrayBasicInfo;
@@ -661,12 +761,12 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (NSArray *)arrayAccountInfo {
     if (_arrayAccountInfo == nil) {
         NSMutableArray* accountInfos = [[NSMutableArray alloc] init];
-        NSArray* keys = @[KeyAccountInfoTitleString,KeyAccountInfoPlaceHolderString,KeyAccountInfoMustInputBool,KeyAccountInfoTextString];
-        NSArray* bankNoKeys = @[KeyAccountInfoTitleString,KeyAccountInfoBankNoSettedBool,KeyAccountInfoBankNoString,KeyAccountInfoBankNameText];
-        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"开户行联行号",@(NO),@"查询",@"", nil] forKeys:bankNoKeys]];
-        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账户名",@"不超过40位字符",@(YES),@"", nil] forKeys:keys]];
-        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账号",@"不超过30位账号",@(YES),@"", nil] forKeys:keys]];
-        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"代理商用户名",@"不超过20位字符",@(NO),@"", nil] forKeys:keys]];
+        NSArray* keys = @[KeyInfoStringTitle,KeyInfoStringPlayceHolder,KeyInfoBoolMustInput,KeyInfoStringInputText,KeyInfoBoolSecureEnable,KeyInfoBoolInputed,KeyInfoStringKeyName];
+        NSArray* bankNoKeys = @[KeyInfoStringTitle,KeyInfoBoolMustInput,KeyInfoStringPlayceHolder,KeyInfoStringBankName,KeyInfoStringBankNum,KeyInfoBoolInputed,KeyInfoStringBankNameKeyName,KeyInfoStringBankNumKeyName];
+        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"开户行联行号",@(YES),@"请输入开户行名并选择联行号",@"",@"",@(NO),@"speSettleDs",@"openStlno", nil] forKeys:bankNoKeys]];
+        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账户名",@"不超过40位字符",@(YES),@"",@(NO),@(NO),@"settleAcctNm", nil] forKeys:keys]];
+        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账号",@"不超过30位账号",@(YES),@"",@(NO),@(NO),@"settleAcct", nil] forKeys:keys]];
+        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"代理商用户名",@"不超过20位字符",@(NO),@"",@(NO),@(NO),@"ageUserName", nil] forKeys:keys]];
         _arrayAccountInfo = [NSArray arrayWithArray:accountInfos];
     }
     return _arrayAccountInfo;
@@ -674,7 +774,7 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
 - (NSArray *)arrayImageInfo {
     if (_arrayImageInfo == nil) {
         NSMutableArray* imageInfos = [[NSMutableArray alloc] init];
-        NSArray* keys = @[KeyImageInfoTitleString,KeyImageInfoImageNameString,KeyImageInfoSettedBool,KeyImageInfoImage];
+        NSArray* keys = @[KeyInfoStringTitle,KeyInfoImageName,KeyInfoBoolInputed,KeyInfoImageSelected];
         [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传身份证照(正面)",@"03",@(NO),[self initialImage], nil] forKeys:keys]];
         [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传身份证照(反面)",@"06",@(NO),[self initialImage], nil] forKeys:keys]];
         [imageInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"上传手持身份证照(正面)",@"09",@(NO),[self initialImage], nil] forKeys:keys]];
@@ -683,21 +783,14 @@ NSString* IdentifierCellDoubeField = @"IdentifierCellDoubeField__"; // 开户行
     }
     return _arrayImageInfo;
 }
-- (ASIFormDataRequest *)httpRequestBankNo {
-    if (_httpRequestBankNo == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getOpenBankNo",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
-        _httpRequestBankNo = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
-        [_httpRequestBankNo setDelegate:self];
-        [_httpRequestBankNo setTag:tagHttpRequestBankNo];
-    }
-    return _httpRequestBankNo;
-}
 - (ASIFormDataRequest *)httpRequestRegister {
     if (_httpRequestRegister == nil) {
         NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/MchntRegister",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
         _httpRequestRegister = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+        [_httpRequestRegister setPostFormat:ASIMultipartFormDataPostFormat];
+        [_httpRequestRegister setRequestMethod:@"POST"];
+        [_httpRequestRegister setStringEncoding:NSUTF8StringEncoding];
         [_httpRequestRegister setDelegate:self];
-        [_httpRequestRegister setTag:tagHttpRequestRegister];
     }
     return _httpRequestRegister;
 }

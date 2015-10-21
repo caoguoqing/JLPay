@@ -25,6 +25,8 @@
 @property (nonatomic, assign) NSString* title;
 // 提示文本
 @property (nonatomic, assign) NSString* placeHolder;
+// 输入的文本
+@property (nonatomic, assign) NSString* textInputed;
 // 密码标志
 @property (nonatomic, assign) BOOL secureTextEntry;
 // 必输标识

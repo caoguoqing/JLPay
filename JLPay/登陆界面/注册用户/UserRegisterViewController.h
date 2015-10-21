@@ -17,6 +17,9 @@
                andArea:(NSString*)area
            andAreaCode:(NSString*)areaCode;
 
+/* 设置开户行-联行号 */
+- (void) setBankNum:(NSString*)bankNum forBankName:(NSString*)bankName;
+
 
 /*
  * 注册类型

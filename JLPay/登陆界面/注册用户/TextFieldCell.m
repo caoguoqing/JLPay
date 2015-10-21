@@ -145,6 +145,10 @@
     _placeHolder = placeHolder;
     self.inputField.placeholder = placeHolder;
 }
+- (void)setTextInputed:(NSString *)textInputed {
+    _textInputed = textInputed;
+    self.inputField.text = textInputed;
+}
 - (void)setSecureTextEntry:(BOOL)secureTextEntry {
     _secureTextEntry = secureTextEntry;
     [self.inputField setSecureTextEntry:secureTextEntry];

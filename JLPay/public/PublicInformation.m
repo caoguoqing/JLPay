@@ -939,7 +939,9 @@
                        andHeightScale:(CGFloat)hScale
 {
     CGRect newRect = CGRectMake(0, 0, image.size.width*wScale, image.size.height*hScale);
+//    UIGraphicsBeginImageContextWithOptions(newRect.size, NO, image.scale);
     UIGraphicsBeginImageContextWithOptions(newRect.size, NO, [UIScreen mainScreen].scale);
+//    UIGraphicsBeginImageContext(newRect.size);
     [image drawInRect:newRect];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

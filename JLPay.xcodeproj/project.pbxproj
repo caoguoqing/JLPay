@@ -92,6 +92,7 @@
 		5E82B87A1B310AF000A58751 /* activitor10.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86E1B310AF000A58751 /* activitor10.png */; };
 		5E82B87B1B310AF000A58751 /* activitor11.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86F1B310AF000A58751 /* activitor11.png */; };
 		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
+		5E8541B51BD4EAD000C03B41 /* BankNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */; settings = {ASSET_TAGS = (); }; };
 		5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D001BB0051400FD461A /* libsqlite3.tbd */; };
 		5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D101BB0E61800FD461A /* libJieLianService.a */; settings = {ASSET_TAGS = (); }; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
@@ -338,6 +339,8 @@
 		5E82B86E1B310AF000A58751 /* activitor10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor10.png; sourceTree = "<group>"; };
 		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor11.png; sourceTree = "<group>"; };
 		5E82B8701B310AF000A58751 /* activitor12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor12.png; sourceTree = "<group>"; };
+		5E8541B31BD4EAD000C03B41 /* BankNumberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BankNumberViewController.h; sourceTree = "<group>"; };
+		5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BankNumberViewController.m; sourceTree = "<group>"; };
 		5E8B0D001BB0051400FD461A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		5E8B0D101BB0E61800FD461A /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libJieLianService.a; path = JLPayDevice_TY/libJieLianService.a; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
@@ -810,6 +813,15 @@
 			path = "连接机具";
 			sourceTree = "<group>";
 		};
+		5E8541B21BD4EA8A00C03B41 /* bankNumVC */ = {
+			isa = PBXGroup;
+			children = (
+				5E8541B31BD4EAD000C03B41 /* BankNumberViewController.h */,
+				5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */,
+			);
+			name = bankNumVC;
+			sourceTree = "<group>";
+		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1132,6 +1144,7 @@
 				9E4D909E1BCF59C60096F84E /* cellImageView */,
 				9E4D90A21BCFD7DE0096F84E /* cellDoubelFieldView */,
 				5EBE9F261BCCE7AA0076BA98 /* detailAreaVC */,
+				5E8541B21BD4EA8A00C03B41 /* bankNumVC */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1446,6 +1459,7 @@
 				5EBAA8FE1ACD3AFB00E2ABDD /* DesUtil.m in Sources */,
 				5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */,
 				5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */,
+				5E8541B51BD4EAD000C03B41 /* BankNumberViewController.m in Sources */,
 				5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */,
 				5E5FA5841B46342600387E69 /* ISBLEDataPath.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
