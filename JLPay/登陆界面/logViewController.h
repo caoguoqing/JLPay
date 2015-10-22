@@ -11,5 +11,11 @@
 @interface logViewController : UIViewController
 
 
+// 加载用户名
+- (void) loadUserNameField ;
+// 加载密码
+- (void) loadUserPasswordField ;
+
+
 @end
 

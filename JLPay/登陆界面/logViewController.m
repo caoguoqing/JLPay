@@ -31,7 +31,11 @@
 const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012345678";
 
 @interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
-
+{
+    NSInteger tagFieldUserName;
+    NSInteger tagFieldUserPwd;
+    NSString* KeyPathFieldSecureEntry;
+}
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
 @property (nonatomic, strong) UIButton    *loadButton;              // 登陆按钮
@@ -64,6 +68,10 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 /*****************************/
 - (void)viewDidLoad {
     [super viewDidLoad];
+    tagFieldUserName = 2323;
+    tagFieldUserPwd = 2321;
+    KeyPathFieldSecureEntry = @"KeyPathFieldSecureEntry__";
+
     UIImageView *bgImageView        = [[UIImageView alloc] initWithFrame:self.view.bounds];
     bgImageView.image               = [UIImage imageNamed:@"bg"];
     [self.view addSubview:bgImageView];
@@ -88,6 +96,9 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     if (!self.navigationController.navigationBarHidden) {
         self.navigationController.navigationBarHidden = YES;
     }
+    // 加载用户名和密码
+    [self loadUserNameField];
+    [self loadUserPasswordField];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -106,30 +117,75 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+// 加载用户名
+- (void) loadUserNameField {
+    NSString* userName = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+    if (userName) {
+        [self.userNumberTextField setText:userName];
+    }
+}
+// 加载密码
+- (void) loadUserPasswordField {
+    NSString* userPwdPin = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
+    if (userPwdPin && userPwdPin.length > 0) {
+        [self.userPasswordTextField setText:[self pswDecryptByPin:userPwdPin]];
+    }
+}
 
 #pragma mask ---- 密码文本框的编辑事件
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    if (textField == self.userPasswordTextField) {
-        if ([self.switchSecurity isOn]) {
+    if (textField.tag == tagFieldUserPwd) {
+//    if (textField == self.userPasswordTextField) {
+        if ([self.switchSecurity isOn] && textField.secureTextEntry) {
             [textField setSecureTextEntry:NO];
-        } else {
+            [textField setNeedsDisplay];
+        } else if (![self.switchSecurity isOn] && !textField.secureTextEntry) {
             [textField setSecureTextEntry:YES];
+            [textField setNeedsDisplay];
         }
     }
-    
     return YES;
 }
 
 
 #pragma mask ---- UITextFieldDelegate
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    NSString* newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    if (newString.length > 8) {
-        textField.text = [newString substringToIndex:8];
-        return NO;
+    BOOL enable = YES;
+    // 回车直接取消输入
+    if ([string isEqualToString:@"\n"]) {
+        enable = NO;
+        [textField resignFirstResponder];
+    } else {
+        // 密码才限制位数,用户名不用限制
+        if (textField.tag == tagFieldUserPwd) {
+            NSInteger oldLength = textField.text.length;
+            NSInteger newLength = string.length;
+            if (oldLength + newLength > 8) {
+                range.length = 8 - oldLength;
+                NSMutableString* newString = [NSMutableString stringWithString:textField.text];
+                string = [string substringToIndex:(newLength - range.length)];
+                [newString replaceCharactersInRange:range withString:string];
+                enable = NO;
+            }
+        }
     }
-    return YES;
+    return enable;
 }
+
+//#pragma mask ---- KVO-textField.secureTextEntry
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+//    NSLog(@"switchSecurity值改变了:");
+//    if ([keyPath isEqualToString:KeyPathFieldSecureEntry] && object == self.switchSecurity) {
+//        if (self.switchSecurity.isOn && self.userPasswordTextField.secureTextEntry) {
+//            self.userPasswordTextField.secureTextEntry = NO;
+//            [self.userPasswordTextField setNeedsDisplay];
+//        }
+//        else if (!self.switchSecurity.isOn && !self.userPasswordTextField.secureTextEntry) {
+//            self.userPasswordTextField.secureTextEntry = YES;
+//            [self.userPasswordTextField setNeedsDisplay];
+//        }
+//    }
+//}
 
 /*************************************
  * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
@@ -557,7 +613,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 - (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
     NSMutableArray* array = [[NSMutableArray alloc] init];
-//    NSString* tempString = [termString copy];
     [array addObjectsFromArray:[termString componentsSeparatedByString:@","]];
     for (int i = 0; i < array.count; i++) {
         NSString* sourceString = [array objectAtIndex:i];
@@ -566,43 +621,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
             [array replaceObjectAtIndex:i withObject:stringTrimmed];
         }
     }
-//    for (NSString* inString in array) {
-//        [inString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-//    }
-//    for (int i = 0; i < count; i++) {
-//        NSInteger index;
-//        NSString* terminalNum;
-//        if ([tempString rangeOfString:@","].length == 0) {
-//            index = 0;
-//            terminalNum = tempString;
-//        } else {
-//            index = [tempString rangeOfString:@","].location;
-//            terminalNum = [tempString substringToIndex:index];
-//        }
-//        if (terminalNum == nil) {
-//            break;
-//        }
-//        while ([terminalNum hasPrefix:@" "]) {
-//            terminalNum = [terminalNum substringFromIndex:[terminalNum rangeOfString:@" "].location + 1];
-//        }
-//        if ([terminalNum hasSuffix:@" "]) {
-//            terminalNum = [terminalNum substringToIndex:[terminalNum rangeOfString:@" "].location];
-//        }
-//        if (terminalNum != nil) {
-//            [array addObject:terminalNum];
-//        }
-//        if (index != 0) {
-//            tempString = [tempString substringFromIndex:index + 1];
-//        }
-//    }
-//    if (array.count == 0) {
-//        return nil;
-//    }
-//    NSLog(@"解析出来的终端号列表:[%@]",array);
-//    if ([[[NSUserDefaults standardUserDefaults] objectForKey:Terminal_Count] intValue] != array.count) {
-//        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%lu", (unsigned long)array.count] forKey:Terminal_Count];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//    }
     return array;
 }
 
@@ -683,10 +701,12 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         _userNumberTextField.placeholder    = @"请输入您的账号";
         _userNumberTextField.textColor      = [UIColor whiteColor];
         _userNumberTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
-        if (textPrepare && textPrepare.length > 0) {
-            _userNumberTextField.text = textPrepare;
-        }
+//        NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+//        if (textPrepare && textPrepare.length > 0) {
+//            _userNumberTextField.text = textPrepare;
+//        }
+        [_userNumberTextField setDelegate:self];
+        [_userNumberTextField setTag:tagFieldUserName];
     }
     return _userNumberTextField;
 }
@@ -703,13 +723,15 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         }
         _userPasswordTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
         [_userPasswordTextField setDelegate:self];
-        if ([self.switchSavePin isOn]) {
-            NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
-            if (textPrepare && textPrepare.length > 0) {
-                _userPasswordTextField.text = [self pswDecryptByPin:textPrepare];
-            }
-        }
+//        if ([self.switchSavePin isOn]) {
+//            NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
+//            if (textPrepare && textPrepare.length > 0) {
+//                _userPasswordTextField.text = [self pswDecryptByPin:textPrepare];
+//            }
+//        }
         [_userPasswordTextField setDelegate:self];
+        [_userPasswordTextField setTag:tagFieldUserPwd];
+
     }
     return _userPasswordTextField;
 }

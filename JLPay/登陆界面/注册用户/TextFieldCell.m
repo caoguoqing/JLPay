@@ -37,6 +37,18 @@
         [textField resignFirstResponder];
         shouldChange = NO;
     }
+//    else if (textField.text.length > ) {
+    NSInteger oldLength = textField.text.length;
+    NSInteger newLength = string.length;
+    if (oldLength + newLength > self.lengthLimit) {
+        range.length = self.lengthLimit - oldLength;
+        NSMutableString* newString = [NSMutableString stringWithString:textField.text];
+        string = [string substringToIndex:(newLength - range.length)];
+        [newString replaceCharactersInRange:range withString:string];
+        shouldChange = NO;
+    }
+
+//    }
     return shouldChange;
 }
 
@@ -60,6 +72,12 @@
 - (NSString *)text {
     return [self.inputField text];
 }
+#pragma mask ---- 激活输入
+- (void) startInput {
+    [self.inputField becomeFirstResponder];
+}
+
+
 #pragma mask ---- 加载子视图
 - (void)layoutSubviews {
     [super layoutSubviews];

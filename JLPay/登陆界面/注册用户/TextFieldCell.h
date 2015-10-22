@@ -31,9 +31,12 @@
 @property (nonatomic, assign) BOOL secureTextEntry;
 // 必输标识
 @property (nonatomic, assign) BOOL mustInput;
+// 长度限制
+@property (nonatomic, assign) NSInteger lengthLimit;
 
 // 文本
 - (NSString*)text;
-
+// 激活输入
+- (void) startInput;
 
 @end

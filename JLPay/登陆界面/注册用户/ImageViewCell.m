@@ -103,7 +103,6 @@
     [view addSubview:newImageView];
     
     // 将view转换为image
-//    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, sourceImage.scale);
     UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];
