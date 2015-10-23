@@ -247,15 +247,22 @@
         if (TestOrProduce == 0) {
             // 62环境: TCP[192.168.1.62/28080]  HTTP[192.168.1.62/80]
             ipStr   = @"192.168.1.62";
-        } else if (TestOrProduce == 1) {
+        }
+        else if (TestOrProduce == 1) {
             // 生产环境: TCP[202.104.101.126/28088]  HTTP[202.104.101.126/80]
             ipStr = @"202.104.101.126";
-        } else if (TestOrProduce == 5) {
+        }
+        else if (TestOrProduce == 5) {
             // 50环境: TCP[192.168.1.62/28080]  HTTP[192.168.1.62/80]
             ipStr = @"192.168.1.50";
-        } else if (TestOrProduce == 7) {
+        }
+        else if (TestOrProduce == 7) {
             // 72环境: TCP[202.104.101.126/9088]  HTTP[202.104.101.126/80]
             ipStr = @"202.104.101.126";
+        }
+        else if (TestOrProduce == 8) {
+            // 内网开发环境: TCP[../..]  HTTP[192.188.8.120/80]
+            ipStr = @"192.188.8.120";
         }
         else if (TestOrProduce == 9) {
             // 外网环境: TCP[.../6280]  HTTP[.../6288]  ping  szjl2014.eicp.net
@@ -272,13 +279,20 @@
     }else{
         if (TestOrProduce == 0) {
             portStr = @"28080";
-        } else if (TestOrProduce == 1) {
+        }
+        else if (TestOrProduce == 1) {
             portStr = @"28088";
-        } else if (TestOrProduce == 5) {
+        }
+        else if (TestOrProduce == 5) {
             portStr = @"28080";
-        } else if (TestOrProduce == 7) {
+        }
+        else if (TestOrProduce == 7) {
             portStr = @"9088";
-        } else if (TestOrProduce == 9) {
+        }
+        else if (TestOrProduce == 8) {
+            portStr = @"80";
+        }
+        else if (TestOrProduce == 9) {
             portStr = @"6280";
         }
     }
@@ -293,13 +307,20 @@
     } else {
         if (TestOrProduce == 0) {
             ip = @"192.168.1.62";
-        } else if (TestOrProduce == 1) {
+        }
+        else if (TestOrProduce == 1) {
             ip = @"202.104.101.126";
-        } else if (TestOrProduce == 5) {
+        }
+        else if (TestOrProduce == 5) {
             ip = @"192.168.1.50";
-        } else if (TestOrProduce == 7) {
+        }
+        else if (TestOrProduce == 7) {
             ip = @"202.104.101.126";
-        } else if (TestOrProduce == 9) {
+        }
+        else if (TestOrProduce == 8) {
+            ip = @"192.188.8.120";
+        }
+        else if (TestOrProduce == 9) {
             ip = @"183.16.198.55";
         }
     }
@@ -313,8 +334,12 @@
         port = @"80";
         if (TestOrProduce == 9) {
             port = @"6288";
-        } else if (TestOrProduce == 7) {
+        }
+        else if (TestOrProduce == 7) {
             port = @"8088";
+        }
+        else if (TestOrProduce == 8) {
+            port = @"80";
         }
     }
     return port;

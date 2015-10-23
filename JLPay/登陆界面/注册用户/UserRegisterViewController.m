@@ -75,6 +75,59 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 @synthesize tableView = _tableView;
 @synthesize httpRequestRegister = _httpRequestRegister;
 
+
+#pragma mask ------  加载历史注册信息 : 修改注册或修改时由转场时上层场景加载
+- (void) loadLastRegisterInfo:(NSDictionary*)lastRegisterInfo {
+    for (NSString* key in lastRegisterInfo.allKeys) {
+        if ([key isEqualToString:@"areaNo"]) { // 地区代码
+            NSMutableDictionary* areaInfo = [self.arrayBasicInfo objectAtIndex:self.arrayBasicInfo.count - 1];
+            [areaInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringAreaCode];
+            [areaInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+        }
+        else if ([key isEqualToString:@"addr"]) { // 详细地址
+            NSMutableDictionary* areaInfo = [self.arrayBasicInfo objectAtIndex:self.arrayBasicInfo.count - 1];
+            [areaInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringDetailArea];
+            [areaInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringPlayceHolder];
+            [areaInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+        }
+        else if ([key isEqualToString:@"openStlno"]) { // 联行号
+            NSMutableDictionary* bankInfo = [self.arrayAccountInfo objectAtIndex:0];
+            [bankInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringBankNum];
+            [bankInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+        }
+        else if ([key isEqualToString:@"speSettleDs"]) { // 开户行
+            NSMutableDictionary* bankInfo = [self.arrayAccountInfo objectAtIndex:0];
+            [bankInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringBankName];
+            [bankInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringPlayceHolder];
+            [bankInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+        }
+        else { // 其他
+            BOOL finded = NO;
+            for (NSDictionary* baseInfo in self.arrayBasicInfo) {
+                // 基本信息
+                if ([key isEqualToString:[baseInfo valueForKey:KeyInfoStringKeyName]]) {
+                    [baseInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringInputText];
+                    [baseInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+                    finded = YES;
+                    break;
+                }
+            }
+            if (finded) continue;
+            for (NSDictionary* accountInfo in self.arrayAccountInfo) {
+                // 基本信息
+                if ([key isEqualToString:[accountInfo valueForKey:KeyInfoStringKeyName]]) {
+                    [accountInfo setValue:[lastRegisterInfo valueForKey:key] forKey:KeyInfoStringInputText];
+                    [accountInfo setValue:@(YES) forKey:KeyInfoBoolInputed];
+                    finded = YES;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+
 #pragma mask ------ UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 3;
@@ -214,7 +267,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [imagePickerController setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     }
     [imagePickerController setDelegate:self];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+        [imagePickerController setModalPresentationStyle:UIModalPresentationCurrentContext];
+    }
     [self presentViewController:imagePickerController animated:YES completion:^{}];
+    
 }
 #pragma mask ------ UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
@@ -239,16 +296,22 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     NSError* error;
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingMutableLeaves error:&error];
     NSString* retCode = [dataDict valueForKey:@"code"];
-    if ([retCode intValue] == 0) { // 成功
-        [self alertShowWithMessage:@"商户注册成功!等待审核中..."];
-    } else { // 失败
-        NSString* retMsg = [NSString stringWithFormat:@"商户注册失败:%@", [dataDict valueForKey:@"message"]];
+    // 成功
+    if ([retCode intValue] == 0) {
+        NSString* msg = [NSString stringWithFormat:@"%@成功!", [self titleForRegisterType:self.registerType]];
+        [self alertShowWithMessage:msg];
+    }
+    // 失败
+    else {
+        NSString* retMsg = [NSString stringWithFormat:@"%@失败:%@", [self titleForRegisterType:self.registerType],[dataDict valueForKey:@"message"]];
         [self alertShowWithMessage:retMsg];
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self stopActivitor];
-    [self alertShowWithMessage:@"商户注册失败:网络异常!"];
+    NSString* errorMesg = [[request error] domain];
+    NSString* msg = [NSString stringWithFormat:@"%@失败:网络异常!:[%@]", [self titleForRegisterType:self.registerType], errorMesg];
+    [self alertShowWithMessage:msg];
     [request clearDelegatesAndCancel];
     self.httpRequestRegister = nil;
 }
@@ -687,7 +750,8 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 #pragma mask ------ 界面声明周期
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setTitle:@"商户注册"];
+    [self setTitle:[self titleForRegisterType:self.registerType]]; // 设置界面标题
+    [self.registerButton setTitle:[self buttonTitleForRegisterType:self.registerType] forState:UIControlStateNormal]; // 设置按钮标题
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
 }
@@ -724,6 +788,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.httpRequestRegister clearDelegatesAndCancel];
     self.httpRequestRegister = nil;
 }
+
 
 /* 简化alert代码 */
 - (void) alertShowWithMessage:(NSString*)msg {
@@ -771,12 +836,71 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     
     return image;
 }
+/* http请求类型 */
+- (NSString*) requestTypeForRegisterType:(RegisterType)type {
+    NSString* requestType = nil;
+    switch (type) {
+        case RegisterTypeNew:
+            requestType = @"MchntRegister";
+            break;
+        case RegisterTypeRefused:
+            requestType = @"MchntModify";
+            break;
+
+        case RegisterTypeOldModify:
+            requestType = @"";
+            break;
+        default:
+            break;
+    }
+    return requestType;
+}
+/* 标题: 按界面类型分类 */
+- (NSString*) titleForRegisterType:(RegisterType)type {
+    NSString* stitle = nil;
+    switch (type) {
+        case RegisterTypeNew:
+            stitle = @"新用户注册";
+            break;
+        case RegisterTypeRefused:
+            stitle = @"注册信息修改";
+            break;
+            
+        case RegisterTypeOldModify:
+            stitle = @"商户信息修改";
+            break;
+        default:
+            break;
+    }
+    return stitle;
+}
+/* 按钮标题: 按界面类型分类 */
+- (NSString*) buttonTitleForRegisterType:(RegisterType)type {
+    NSString* stitle = nil;
+    switch (type) {
+        case RegisterTypeNew:
+            stitle = @"注册";
+            break;
+        case RegisterTypeRefused:
+            stitle = @"修改";
+            break;
+            
+        case RegisterTypeOldModify:
+            stitle = @"修改";
+            break;
+        default:
+            break;
+    }
+    return stitle;
+}
+
+
 #pragma mask ---- getter
 - (UIButton *)registerButton {
     if (_registerButton == nil) {
         _registerButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_registerButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_registerButton setTitle:@"注册" forState:UIControlStateNormal];
+//        [_registerButton setTitle:@"注册" forState:UIControlStateNormal];
         [_registerButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_registerButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
         _registerButton.layer.cornerRadius = 5.0;
@@ -840,7 +964,8 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 - (ASIFormDataRequest *)httpRequestRegister {
     if (_httpRequestRegister == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/MchntRegister",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSMutableString* urlString = [NSMutableString stringWithFormat:@"http://%@:%@/jlagent/",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        [urlString appendString:[self requestTypeForRegisterType:self.registerType]];
         _httpRequestRegister = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
         [_httpRequestRegister setPostFormat:ASIMultipartFormDataPostFormat];
         [_httpRequestRegister setRequestMethod:@"POST"];

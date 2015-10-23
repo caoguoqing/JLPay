@@ -28,13 +28,25 @@
 #define leftLeave        30.0                                       // view 的左边距
 #define ImageForBrand   @"logo"                                     // 商标图片
 
+
+// 枚举: 弹窗标记
+typedef enum : NSUInteger {
+    TagAlertVersionLow = 211,
+    TagAlertRegisterRefuse,
+    TagAlertOther
+} TagAlert;
+
+
+
 const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012345678";
 
 @interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
 {
     NSInteger tagFieldUserName;
     NSInteger tagFieldUserPwd;
-    NSString* KeyPathFieldSecureEntry;
+    
+//    NSInteger TagAlertVersionLow;
+//    NSInteger TagAlertRegisterRefuse;
 }
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
@@ -70,8 +82,10 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [super viewDidLoad];
     tagFieldUserName = 2323;
     tagFieldUserPwd = 2321;
-    KeyPathFieldSecureEntry = @"KeyPathFieldSecureEntry__";
+//    TagAlertRegisterRefuse = 83838;
+//    TagAlertVersionLow = 457;
 
+    
     UIImageView *bgImageView        = [[UIImageView alloc] initWithFrame:self.view.bounds];
     bgImageView.image               = [UIImage imageNamed:@"bg"];
     [self.view addSubview:bgImageView];
@@ -98,7 +112,9 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     }
     // 加载用户名和密码
     [self loadUserNameField];
-    [self loadUserPasswordField];
+    if (self.switchSavePin.isOn) {
+        [self loadUserPasswordField];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -135,7 +151,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 #pragma mask ---- 密码文本框的编辑事件
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
     if (textField.tag == tagFieldUserPwd) {
-//    if (textField == self.userPasswordTextField) {
         if ([self.switchSecurity isOn] && textField.secureTextEntry) {
             [textField setSecureTextEntry:NO];
             [textField setNeedsDisplay];
@@ -172,20 +187,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     return enable;
 }
 
-//#pragma mask ---- KVO-textField.secureTextEntry
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-//    NSLog(@"switchSecurity值改变了:");
-//    if ([keyPath isEqualToString:KeyPathFieldSecureEntry] && object == self.switchSecurity) {
-//        if (self.switchSecurity.isOn && self.userPasswordTextField.secureTextEntry) {
-//            self.userPasswordTextField.secureTextEntry = NO;
-//            [self.userPasswordTextField setNeedsDisplay];
-//        }
-//        else if (!self.switchSecurity.isOn && !self.userPasswordTextField.secureTextEntry) {
-//            self.userPasswordTextField.secureTextEntry = YES;
-//            [self.userPasswordTextField setNeedsDisplay];
-//        }
-//    }
-//}
 
 /*************************************
  * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
@@ -441,11 +442,12 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     sender.transform = CGAffineTransformIdentity;
     
     if ([self.userNumberTextField.text length] == 0) {
-        [self alertShow:@"请输入账号"];
+        [self alertShowMessage:@"请输入账号" andTag:TagAlertOther];
+
         return;
     }
     if ([self.userPasswordTextField.text length] == 0) {
-        [self alertShow:@"请输入密码"];
+        [self alertShowMessage:@"请输入密码" andTag:TagAlertOther];
         return;
     }
     
@@ -509,25 +511,16 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
-    NSLog(@"登陆响应信息:[%@]",dataDic);
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
     NSString* retcode = [dataDic objectForKey:@"code"];
     NSString* retMsg = [retcode stringByAppendingString:[dataDic objectForKey:@"message"]];
-    if ([retcode intValue] != 0) {      // 登陆失败
-        // 当前版本过低
-        if ([retcode isEqualToString:@"701"]) {
-            retMsg = [retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
-        }
-        // 注册审核拒绝
-        else if ([retcode isEqualToString:@"802"]) {
-            self.dictLastRegisterInfo = [dataDic objectForKey:@"registerInfoList"];
-        }
-        [self alertShow:retMsg];
-    } else {                            // 登陆成功
+    
+    // 登陆成功
+    if ([retcode intValue] == 0) {
         // 校验是否切换了账号
         [self checkoutLoadingSwitch];
-
+        
         // 校验并保存商户信息: 解析响应数据
         NSArray* terminals = [self arraySeparatedByTerminalListString:[dataDic valueForKey:@"TermNoList"]];
         NSString* termNums = [dataDic valueForKey:@"termCount"];
@@ -539,15 +532,32 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
             // 切换到主场景
             [app_delegate signInSuccessToLogin:1];
         } else {
-            [self alertShow:@"登陆校验失败:终端号个数返回异常"];
+            [self alertShowMessage:@"登陆校验失败:终端号个数返回异常" andTag:TagAlertOther];
         }
+    }
+    // 登陆失败
+    else { // ([retcode intValue] != 0)
+        TagAlert tagalert = TagAlertOther;
+        // 当前版本过低
+        if ([retcode isEqualToString:@"701"]) {
+            retMsg = [retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
+            tagalert = TagAlertVersionLow;
+        }
+        // 注册审核拒绝
+        else if ([retcode isEqualToString:@"802"]) {
+            self.dictLastRegisterInfo = [dataDic objectForKey:@"registerInfoList"];
+            tagalert = TagAlertRegisterRefuse;
+        }
+//        [self alertShow:retMsg];
+        [self alertShowMessage:retMsg andTag:tagalert];
     }
 }
 -(void)requestFailed:(ASIHTTPRequest *)request {
     [self.loadButton setEnabled:YES];
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
-    [self alertShow:@"网络异常，请检查网络"];
+//    [self alertShow:@""];
+    [self alertShowMessage:@"网络异常，请检查网络" andTag:TagAlertOther];
 }
 // 校验是否切换了账号:如果切换,清空配置
 - (void) checkoutLoadingSwitch {
@@ -625,33 +635,80 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 
 #pragma mask ::: 弹出提示框
-- (void) alertShow: (NSString*) message {
-    UIAlertView* alert;
-    if ([message hasPrefix:@"802"]) {
-        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"修改注册", nil];
-    } else {
-        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+- (void) alertShowMessage:(NSString*)msg andTag:(TagAlert)alertTag {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:msg delegate:self cancelButtonTitle:nil otherButtonTitles:nil, nil];
+    alert.tag = alertTag;
+    switch (alertTag) {
+        case TagAlertRegisterRefuse:
+            [alert addButtonWithTitle:@"取消"];
+            [alert addButtonWithTitle:@"修改注册信息"];
+            break;
+        default:
+            [alert addButtonWithTitle:@"确定"];
+            break;
     }
-    [alert show];
+//    if (alertTag == TagAlertRegisterRefuse) {
+//        [alert addButtonWithTitle:@"取消"];
+//        [alert addButtonWithTitle:@"修改注册信息"];
+//    } else {
+//        [alert addButtonWithTitle:@"确定"];
+//    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
 }
+//- (void) alertShow: (NSString*) message {
+//    UIAlertView* alert;
+//    if ([message hasPrefix:@"802"]) {
+//        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"修改注册", nil];
+//    } else {
+//        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//    }
+//    [alert show];
+//}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
-    NSString* title = [alertView buttonTitleAtIndex:buttonIndex];
-    if (![title isEqualToString:@"确定"]) {
-        return;
+//    NSString* title = [alertView buttonTitleAtIndex:buttonIndex];
+//    if (![title isEqualToString:@"确定"]) {
+//        return;
+//    }
+    
+    switch (alertView.tag) {
+        case TagAlertVersionLow:
+            [self gotoDownloadApp];
+            break;
+        case TagAlertRegisterRefuse:
+        {
+            if (self.dictLastRegisterInfo == nil) {
+                return;
+            }
+            [self gotoSignUp];
+        }
+            break;
+        default:
+            break;
     }
     
+//    if (alertView.tag == TagAlertVersionLow) {
+//        [self gotoDownloadApp];
+//    }
+//    else if (alertView.tag == TagAlertRegisterRefuse && buttonIndex == 1) {
+//        if (self.dictLastRegisterInfo == nil) {
+//            return;
+//        }
+//        [self gotoSignUp];
+//    }
     // 如果是版本过低的提示，点击了确定要跳转到下载网址
-    if ([alertView.message hasPrefix:@"701"]) {
-        [self gotoDownloadApp];
-    }
+//    if ([alertView.message hasPrefix:@"701"]) {
+//        [self gotoDownloadApp];
+//    }
     // 注册审核不通过,需要修改信息
-    else if ([alertView.message hasPrefix:@"802"]) {
-        if (self.dictLastRegisterInfo == nil) {
-            return;
-        }
-        [self gotoSignUp];
-    }
+//    else if ([alertView.message hasPrefix:@"802"]) {
+//        if (self.dictLastRegisterInfo == nil) {
+//            return;
+//        }
+//        [self gotoSignUp];
+//    }
 }
 // 下载app
 - (void) gotoDownloadApp {
@@ -661,21 +718,23 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 // 跳转注册页面
 - (void) gotoSignUp {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-    [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"identifyNo"] forKey:RESIGN_identifyNo];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"telNo"] forKey:RESIGN_telNo];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"speSettleDs"] forKey:RESIGN_speSettleDs];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcct"] forKey:RESIGN_settleAcct];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcctNm"] forKey:RESIGN_settleAcctNm];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mail"] forKey:RESIGN_mail];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"ageUserName"] forKey:RESIGN_ageUserName];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"addr"] forKey:RESIGN_addr];
-    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+//    [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
+    [viewController setRegisterType:RegisterTypeRefused];
+    [viewController loadLastRegisterInfo:self.dictLastRegisterInfo];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"identifyNo"] forKey:RESIGN_identifyNo];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"telNo"] forKey:RESIGN_telNo];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"speSettleDs"] forKey:RESIGN_speSettleDs];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcct"] forKey:RESIGN_settleAcct];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcctNm"] forKey:RESIGN_settleAcctNm];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mail"] forKey:RESIGN_mail];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"ageUserName"] forKey:RESIGN_ageUserName];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"addr"] forKey:RESIGN_addr];
+//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -701,10 +760,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         _userNumberTextField.placeholder    = @"请输入您的账号";
         _userNumberTextField.textColor      = [UIColor whiteColor];
         _userNumberTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
-//        NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
-//        if (textPrepare && textPrepare.length > 0) {
-//            _userNumberTextField.text = textPrepare;
-//        }
         [_userNumberTextField setDelegate:self];
         [_userNumberTextField setTag:tagFieldUserName];
     }
@@ -723,12 +778,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         }
         _userPasswordTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
         [_userPasswordTextField setDelegate:self];
-//        if ([self.switchSavePin isOn]) {
-//            NSString* textPrepare = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
-//            if (textPrepare && textPrepare.length > 0) {
-//                _userPasswordTextField.text = [self pswDecryptByPin:textPrepare];
-//            }
-//        }
         [_userPasswordTextField setDelegate:self];
         [_userPasswordTextField setTag:tagFieldUserPwd];
 

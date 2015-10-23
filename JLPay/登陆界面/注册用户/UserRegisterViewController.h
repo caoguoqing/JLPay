@@ -8,6 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+
+/*
+ * 注册类型
+ *  0: 新增注册(默认)
+ *  1: 修改审核(未审核通过的)
+ *  2: 修改信息(已审核通过的)
+ */
+typedef enum: NSUInteger {
+    RegisterTypeNew,            // 新增注册(默认)
+    RegisterTypeRefused,        // 修改审核(未审核通过的)
+    RegisterTypeOldModify       // 修改信息(已审核通过的)
+} RegisterType;
+
+
 @interface UserRegisterViewController : UIViewController
 
 /* 设置详细地址 */
@@ -20,12 +34,11 @@
 /* 设置开户行-联行号 */
 - (void) setBankNum:(NSString*)bankNum forBankName:(NSString*)bankName;
 
+/* 加载历史注册信息 */
+- (void) loadLastRegisterInfo:(NSDictionary*)lastRegisterInfo ;
+    
+// 注册类型
+@property (nonatomic, assign) RegisterType registerType;
 
-/*
- * 注册类型
- *  0: 新增注册(默认)
- *  1: 修改审核(未审核通过的)
- *  2: 修改信息(已审核通过的)
- */
-@property (nonatomic, assign) int packageType;
+
 @end

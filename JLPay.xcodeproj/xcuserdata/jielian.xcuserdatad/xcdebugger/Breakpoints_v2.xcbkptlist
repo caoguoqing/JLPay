@@ -198,11 +198,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/&#x767b;&#x9646;&#x754c;&#x9762;/&#x6ce8;&#x518c;&#x7528;&#x6237;/UserRegisterViewController.m"
-            timestampString = "467177854.786439"
+            timestampString = "467195666.470971"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
+            startingLineNumber = "256"
+            endingLineNumber = "256"
             landmarkName = "-actionSheet:clickedButtonAtIndex:"
             landmarkType = "5">
          </BreakpointContent>
