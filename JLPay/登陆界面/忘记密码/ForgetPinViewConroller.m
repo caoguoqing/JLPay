@@ -8,13 +8,21 @@
 
 #import "ForgetPinViewConroller.h"
 #import "PublicInformation.h"
-//#import "../../asi-http/ASIFormDataRequest.h"
-#import "../../public/asi-http/ASIFormDataRequest.h"
+#import "ASIFormDataRequest.h"
 #import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 
-@interface ForgetPinViewConroller()<ASIHTTPRequestDelegate,UIAlertViewDelegate>
+
+/* 文本输入框的标签枚举 */
+typedef enum : NSUInteger {
+    TagFieldUserName = 1000,
+    TagFieldUserID,
+    TagFieldUserPwd
+} TagField;
+
+
+@interface ForgetPinViewConroller()<ASIHTTPRequestDelegate,UIAlertViewDelegate,UITextFieldDelegate>
 {
     CGFloat textFontSize;
 }
@@ -82,6 +90,19 @@
     self.httpRequest = nil;
 }
 
+#pragma mask --- UITextFieldDelegate
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    BOOL enable = YES;
+    if ([string isEqualToString:@"\n"]) {
+        [textField resignFirstResponder];
+        enable = NO;
+    }
+    else if (textField.tag == TagFieldUserPwd && textField.text.length + string.length > 8) {
+        enable = NO;
+    }
+    return enable;
+}
+
 
 
 #pragma mask ---- “修改”按钮的点击事件
@@ -111,7 +132,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 背景图
-//    [self.view setBackgroundColor:[UIColor colorWithRed:220.0/255.0 green:220.0/255.0 blue:220.0/255.0 alpha:1]];
     textFontSize = 15;
     [self.view addSubview:self.userNumberField];
     [self.view addSubview:self.userIDField];
@@ -193,34 +213,6 @@
     frame.size.width = lineWidth;
     frame.size.height = btnHeight;
     self.sureButton.frame = frame;
-    
-//    CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-//    CGFloat tabBarHeight = self.tabBarController.tabBar.bounds.size.height;
-//    CGFloat verticalInset = 15;
-//    CGFloat horizontalInset = 20;
-//    CGFloat viewHeight = 50;
-//    
-//    CGRect frame = CGRectMake(horizontalInset,
-//                              naviAndStatusHeight + viewHeight*2,
-//                              self.view.bounds.size.width - horizontalInset*2.0,
-//                              viewHeight);
-//    // 账号
-//    self.userNumberField.frame = frame;
-//    [self.userNumberField setLeftView:[self newLabelWithText:@"账   号:" andFrame:frame]];
-//    [self.userNumberField setLeftViewMode:UITextFieldViewModeAlways];
-//    // 旧密码
-//    frame.origin.y += frame.size.height + verticalInset;
-//    self.userIDField.frame = frame;
-//    [self.userIDField setLeftView:[self newLabelWithText:@"身份证:" andFrame:frame]];
-//    [self.userIDField setLeftViewMode:UITextFieldViewModeAlways];
-//    // 新密码
-//    frame.origin.y += frame.size.height + verticalInset;
-//    self.userNewPwdField.frame = frame;
-//    [self.userNewPwdField setLeftView:[self newLabelWithText:@"新密码:" andFrame:frame]];
-//    [self.userNewPwdField setLeftViewMode:UITextFieldViewModeAlways];
-//    // 修改按钮
-//    frame.origin.y = self.view.bounds.size.height - tabBarHeight - viewHeight*2.0;
-//    self.sureButton.frame = frame;
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -229,12 +221,6 @@
 
 // 给textField生成的左边的描述label
 - (UILabel*)newLabelWithText:(NSString*)text andFrame:(CGRect)frame {
-//    UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width/4.0, frame.size.height)];
-//    label.text = text;
-//    label.textColor = [UIColor whiteColor];
-//    label.textAlignment = NSTextAlignmentCenter;
-//    label.backgroundColor = [UIColor clearColor];
-//    return label;
     UILabel* label = [[UILabel alloc] initWithFrame:frame];
     label.text = text;
     [label setFont:[UIFont systemFontOfSize:textFontSize]];
@@ -302,9 +288,9 @@
         _userNumberField.layer.cornerRadius = 8.0;
         _userNumberField.layer.masksToBounds = YES;
         _userNumberField.placeholder = @"请输入登陆账号";
-//        [_userNumberField setBackgroundColor:[UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1]];
-        _userNumberField.textColor = [UIColor whiteColor];
         _userNumberField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        [_userNumberField setTag:TagFieldUserName];
+        [_userNumberField setDelegate:self];
     }
     return _userNumberField;
 }
@@ -314,9 +300,10 @@
         _userIDField.layer.cornerRadius = 8.0;
         _userIDField.layer.masksToBounds = YES;
         _userIDField.placeholder = @"请输入身份证号码";
-//        _userIDField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
-        _userIDField.textColor = [UIColor whiteColor];
         _userIDField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        [_userIDField setTag:TagFieldUserID];
+        [_userIDField setDelegate:self];
+
     }
     return _userIDField;
 }
@@ -326,10 +313,10 @@
         _userNewPwdField.layer.cornerRadius = 8.0;
         _userNewPwdField.layer.masksToBounds = YES;
         _userNewPwdField.placeholder = @"请输入8位新密码";
-//        _userNewPwdField.backgroundColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1];
         _userNewPwdField.secureTextEntry = YES;
-        _userNewPwdField.textColor = [UIColor whiteColor];
         _userNewPwdField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        [_userNewPwdField setTag:TagFieldUserPwd];
+        [_userNewPwdField setDelegate:self];
     }
     return _userNewPwdField;
 }

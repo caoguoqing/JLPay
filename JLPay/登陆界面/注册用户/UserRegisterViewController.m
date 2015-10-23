@@ -387,23 +387,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 - (IBAction) touchToRegister:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
-    // 检查输入是否完整
-//    NSIndexPath* indexPath = [self indexPathNotInputedByChecking];
-//    if (indexPath) {
-//        NSString* msg = [NSString stringWithFormat:@"%@未输入,请先输入!",[self titleAtIndexPath:indexPath]];
-//        [self alertShowWithMessage:msg];
-//        return;
-//    }
-//    // 检查确认密码是否输入正确
-//    if (![self isEqualingWithPasswordSured]) {
-//        [self alertShowWithMessage:@"确认密码输入错误!"];
-//        return;
-//    }
     // 检查输入不通过就退出
     if (![self enableToRequest]) {
         return;
     }
-
     
     [self startActivitor];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -455,11 +442,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
             NSLog(@"清除配置中保存的密码");
             [userDefault removeObjectForKey:UserPW];
         }
-        
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
-
 
 
 #pragma mask ------ tabel cell 的初始化及属性设置
@@ -537,7 +522,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         });
     }
 }
-
 
 
 #pragma mask ------ 数据源
@@ -645,7 +629,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
            andAreaCode:(NSString*)areaCode
 {
     // 设置数据源
-//    NSDictionary* addrInfo = [self infoDetailAddr];
     NSMutableDictionary* addrInfo = [self.arrayBasicInfo objectAtIndex:self.arrayBasicInfo.count - 1];
     [addrInfo setValue:detailAddr forKey:KeyInfoStringDetailArea];
     [addrInfo setValue:areaCode forKey:KeyInfoStringAreaCode];
@@ -971,7 +954,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     if (_registerButton == nil) {
         _registerButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_registerButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-//        [_registerButton setTitle:@"注册" forState:UIControlStateNormal];
         [_registerButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_registerButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
         _registerButton.layer.cornerRadius = 5.0;

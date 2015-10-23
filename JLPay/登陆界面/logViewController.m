@@ -45,8 +45,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     NSInteger tagFieldUserName;
     NSInteger tagFieldUserPwd;
     
-//    NSInteger TagAlertVersionLow;
-//    NSInteger TagAlertRegisterRefuse;
 }
 @property (nonatomic, strong) UITextField *userNumberTextField;     // 用户账号的文本输入框
 @property (nonatomic, strong) UITextField *userPasswordTextField;   // 用户密码的文本输入框
@@ -82,8 +80,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [super viewDidLoad];
     tagFieldUserName = 2323;
     tagFieldUserPwd = 2321;
-//    TagAlertRegisterRefuse = 83838;
-//    TagAlertVersionLow = 457;
 
     
     UIImageView *bgImageView        = [[UIImageView alloc] initWithFrame:self.view.bounds];
@@ -172,16 +168,8 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         [textField resignFirstResponder];
     } else {
         // 密码才限制位数,用户名不用限制
-        if (textField.tag == tagFieldUserPwd) {
-            NSInteger oldLength = textField.text.length;
-            NSInteger newLength = string.length;
-            if (oldLength + newLength > 8) {
-                range.length = 8 - oldLength;
-                NSMutableString* newString = [NSMutableString stringWithString:textField.text];
-                string = [string substringToIndex:(newLength - range.length)];
-                [newString replaceCharactersInRange:range withString:string];
-                enable = NO;
-            }
+        if (textField.tag == tagFieldUserPwd && textField.text.length + string.length > 8) {
+            enable = NO;
         }
     }
     return enable;
@@ -469,11 +457,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
  *************************************/
 - (IBAction)signIn: (id)sender {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    RegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"]; //userRegisterVC
     UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-//    UIViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-
-//    [viewController setPackageType:0];// 注册
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -548,7 +532,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
             self.dictLastRegisterInfo = [dataDic objectForKey:@"registerInfoList"];
             tagalert = TagAlertRegisterRefuse;
         }
-//        [self alertShow:retMsg];
         [self alertShowMessage:retMsg andTag:tagalert];
     }
 }
@@ -556,7 +539,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [self.loadButton setEnabled:YES];
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
-//    [self alertShow:@""];
     [self alertShowMessage:@"网络异常，请检查网络" andTag:TagAlertOther];
 }
 // 校验是否切换了账号:如果切换,清空配置
@@ -647,32 +629,13 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
             [alert addButtonWithTitle:@"确定"];
             break;
     }
-//    if (alertTag == TagAlertRegisterRefuse) {
-//        [alert addButtonWithTitle:@"取消"];
-//        [alert addButtonWithTitle:@"修改注册信息"];
-//    } else {
-//        [alert addButtonWithTitle:@"确定"];
-//    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [alert show];
     });
 }
-//- (void) alertShow: (NSString*) message {
-//    UIAlertView* alert;
-//    if ([message hasPrefix:@"802"]) {
-//        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"修改注册", nil];
-//    } else {
-//        alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//    }
-//    [alert show];
-//}
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
-//    NSString* title = [alertView buttonTitleAtIndex:buttonIndex];
-//    if (![title isEqualToString:@"确定"]) {
-//        return;
-//    }
-    
     switch (alertView.tag) {
         case TagAlertVersionLow:
             [self gotoDownloadApp];
@@ -688,27 +651,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         default:
             break;
     }
-    
-//    if (alertView.tag == TagAlertVersionLow) {
-//        [self gotoDownloadApp];
-//    }
-//    else if (alertView.tag == TagAlertRegisterRefuse && buttonIndex == 1) {
-//        if (self.dictLastRegisterInfo == nil) {
-//            return;
-//        }
-//        [self gotoSignUp];
-//    }
-    // 如果是版本过低的提示，点击了确定要跳转到下载网址
-//    if ([alertView.message hasPrefix:@"701"]) {
-//        [self gotoDownloadApp];
-//    }
-    // 注册审核不通过,需要修改信息
-//    else if ([alertView.message hasPrefix:@"802"]) {
-//        if (self.dictLastRegisterInfo == nil) {
-//            return;
-//        }
-//        [self gotoSignUp];
-//    }
 }
 // 下载app
 - (void) gotoDownloadApp {
@@ -719,22 +661,8 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 - (void) gotoSignUp {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
-//    [viewController setPackageType:1]; // 0:新增注册, 1:修改注册, 2:修改信息
     [viewController setRegisterType:RegisterTypeRefused];
     [viewController loadLastRegisterInfo:self.dictLastRegisterInfo];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mchntNm"] forKey:RESIGN_mchntNm];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"userName"] forKey:RESIGN_userName];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"passWord"] forKey:RESIGN_passWord];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"identifyNo"] forKey:RESIGN_identifyNo];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"telNo"] forKey:RESIGN_telNo];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"speSettleDs"] forKey:RESIGN_speSettleDs];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcct"] forKey:RESIGN_settleAcct];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"settleAcctNm"] forKey:RESIGN_settleAcctNm];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"mail"] forKey:RESIGN_mail];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"ageUserName"] forKey:RESIGN_ageUserName];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"addr"] forKey:RESIGN_addr];
-//    [[NSUserDefaults standardUserDefaults] setValue:[self.dictLastRegisterInfo valueForKey:@"areaNo"] forKey:RESIGN_areaNo];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 

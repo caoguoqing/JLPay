@@ -71,11 +71,7 @@
 /* 重置图片: 适应于当前cell frame */
 - (UIImage*) newImageWithSourceImage:(UIImage*)sourceImage {
     UIImage* newImage = nil;
-//    if (self.imageViewDisplay.frame.size.width == 0) {
-//        return sourceImage;
-//    }
     CGRect frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width - 30 - 8, HEIGHT_IMAGEVIEW_CELL);
-//    UIView* view = [[UIView alloc] initWithFrame:self.imageViewDisplay.frame];
     UIView* view = [[UIView alloc] initWithFrame:frame];
     CGFloat newImageWidth = 0;
     CGFloat newImageHeight = 0;
