@@ -368,7 +368,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 - (void) packingImageInfo {
     for (int i = 0; i < self.arrayImageInfo.count; i++) {
         NSDictionary* dict = [self.arrayImageInfo objectAtIndex:i];
-        NSData* imageData = UIImageJPEGRepresentation([dict objectForKey:KeyInfoImageSelected], 0.5);
+        NSData* imageData = UIImageJPEGRepresentation([dict objectForKey:KeyInfoImageSelected], 0.1);
         NSString* imageName = [dict valueForKey:KeyInfoImageName];
         [self.httpRequestRegister setData:imageData
                              withFileName:[NSString stringWithFormat:@"%@.png", imageName]
@@ -388,18 +388,23 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 - (IBAction) touchToRegister:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
     // 检查输入是否完整
-    NSIndexPath* indexPath = [self indexPathNotInputedByChecking];
-    if (indexPath) {
-        NSString* msg = [NSString stringWithFormat:@"%@未输入,请先输入!",[self titleAtIndexPath:indexPath]];
-        [self alertShowWithMessage:msg];
-        return;
-    }
-    // 检查确认密码是否输入正确
-    if (![self isEqualingWithPasswordSured]) {
-        [self alertShowWithMessage:@"确认密码输入错误!"];
+//    NSIndexPath* indexPath = [self indexPathNotInputedByChecking];
+//    if (indexPath) {
+//        NSString* msg = [NSString stringWithFormat:@"%@未输入,请先输入!",[self titleAtIndexPath:indexPath]];
+//        [self alertShowWithMessage:msg];
+//        return;
+//    }
+//    // 检查确认密码是否输入正确
+//    if (![self isEqualingWithPasswordSured]) {
+//        [self alertShowWithMessage:@"确认密码输入错误!"];
+//        return;
+//    }
+    // 检查输入不通过就退出
+    if (![self enableToRequest]) {
         return;
     }
 
+    
     [self startActivitor];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // 打包
@@ -410,10 +415,35 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [self.httpRequestRegister startAsynchronous];
     });
 }
+/* 检查输入是否满足 */
+- (BOOL) enableToRequest {
+    BOOL enable = YES;
+    
+    // 检查输入是否完整
+    NSIndexPath* indexPath = [self indexPathNotInputedByChecking];
+    if (indexPath) {
+        NSString* msg = [NSString stringWithFormat:@"%@未输入,请先输入!",[self titleAtIndexPath:indexPath]];
+        [self alertShowWithMessage:msg];
+        enable = NO;
+    }
+    // 检查确认密码是否输入正确
+    if (enable && ![self isEqualingWithPasswordSured]) {
+        [self alertShowWithMessage:@"确认密码输入错误!"];
+        enable = NO;
+    }
+    // 检查邮箱格式
+    if (enable && ![self isValidOfMail:[self mailInputed]]) {
+        [self alertShowWithMessage:@"邮箱格式错误,请确认格式!"];
+        enable = NO;
+    }
+    
+    return enable;
+}
 
 #pragma mask ------ UIAlertViewDelegate 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([alertView.message hasPrefix:@"商户注册成功"]) {
+    if ([alertView.message hasPrefix:@"新用户注册成功"] ||
+        [alertView.message hasPrefix:@"注册信息修改"]) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         NSString* userName = [self textInputedAtIndexPath:indexPath];
         NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
@@ -422,6 +452,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [userDefault synchronize];
         // 清空密码
         if ([userDefault objectIsForcedForKey:UserPW]) {
+            NSLog(@"清除配置中保存的密码");
             [userDefault removeObjectForKey:UserPW];
         }
         
@@ -647,6 +678,23 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
     return info;
 }
+/* 获取邮箱 */
+- (NSString*) mailInputed {
+    NSString* mail = nil;
+    NSDictionary* mailInfo = nil;
+    for (NSDictionary* dict in self.arrayBasicInfo) {
+        if ([[dict valueForKey:KeyInfoStringKeyName] isEqualToString:@"mail"]) {
+            mailInfo = dict;
+            NSLog(@"邮箱:[%@]",[mailInfo valueForKey:KeyInfoStringInputText]);
+            break;
+        }
+    }
+    if (mailInfo) {
+        mail = [mailInfo valueForKey:KeyInfoStringInputText];
+        NSLog(@"邮箱:[%@]",mail);
+    }
+    return mail;
+}
 
 /* 设置开户行-联行号 */
 - (void) setBankNum:(NSString*)bankNum forBankName:(NSString*)bankName {
@@ -704,6 +752,29 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         isEqualingPwd = YES;
     }
     return isEqualingPwd;
+}
+/* 检查邮箱格式是否正确 */
+- (BOOL) isValidOfMail:(NSString*)mail {
+    BOOL isValied = YES;
+    NSRange range = [mail rangeOfString:@"@"];
+    if (range.location == 0 ||
+        range.length == 0   ||
+        range.location + range.length >= mail.length - 1
+        )
+    {
+        isValied = NO;
+    }
+    if (isValied) {
+        NSRange dotRange = [mail rangeOfString:@"."];
+        if (dotRange.length == 0 ||
+            dotRange.location == range.location + range.length ||
+            dotRange.location + dotRange.length >= mail.length
+            )
+        {
+            isValied = NO;
+        }
+    }
+    return isValied;
 }
 
 
