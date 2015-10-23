@@ -10,8 +10,8 @@
 #import "PublicInformation.h"
 #import "Define_Header.h"
 #import "DynamicPickerView.h"
-#import "../../登陆界面/注册/MySQLiteManager.h"
-#import "../../public/asi-http/ASIFormDataRequest.h"
+#import "MySQLiteManager.h"
+#import "ASIFormDataRequest.h"
 #import "JLActivitor.h"
 
 @interface RateViewController()

@@ -166,7 +166,6 @@
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; settings = {ASSET_TAGS = (); }; };
-		9E4D90A51BCFD86A0096F84E /* DoubleFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */; settings = {ASSET_TAGS = (); }; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
@@ -475,8 +474,6 @@
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
-		9E4D90A31BCFD86A0096F84E /* DoubleFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleFieldCell.h; sourceTree = "<group>"; };
-		9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleFieldCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -695,8 +692,6 @@
 				5E5E36251B8703F900560C0A /* RgBasicInfoTableViewCell.m */,
 				5E5E36261B8703F900560C0A /* RgImageTableViewCell.h */,
 				5E5E36271B8703F900560C0A /* RgImageTableViewCell.m */,
-				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
-				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
 			);
 			path = "注册";
 			sourceTree = "<group>";
@@ -969,6 +964,7 @@
 				5EBF3C401AD3B5BB00091F83 /* Toast */,
 				5EBAA9001ACD3B0200E2ABDD /* DES */,
 				5EBAA9151ACD3F2400E2ABDD /* JSON */,
+				5EDE98B71BDA0D5200131190 /* SQLITE */,
 				5E397AF31AD36429004F206F /* asi-http */,
 				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
 				5E5E362C1B87076200560C0A /* CustomPickerView */,
@@ -1124,6 +1120,15 @@
 			name = JLPayDevice_TY;
 			sourceTree = "<group>";
 		};
+		5EDE98B71BDA0D5200131190 /* SQLITE */ = {
+			isa = PBXGroup;
+			children = (
+				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
+				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
+			);
+			path = SQLITE;
+			sourceTree = "<group>";
+		};
 		5EF3BAA41B69BFF600DCD764 /* 费率选择 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1141,7 +1146,6 @@
 				5EF45B6C1BCBAD5C00C75276 /* cellFieldView */,
 				5EBE9F251BCCE6B70076BA98 /* cellLabelView */,
 				9E4D909E1BCF59C60096F84E /* cellImageView */,
-				9E4D90A21BCFD7DE0096F84E /* cellDoubelFieldView */,
 				5EBE9F261BCCE7AA0076BA98 /* detailAreaVC */,
 				5E8541B21BD4EA8A00C03B41 /* bankNumVC */,
 			);
@@ -1178,15 +1182,6 @@
 				9E4D90A01BCF5B410096F84E /* ImageViewCell.m */,
 			);
 			name = cellImageView;
-			sourceTree = "<group>";
-		};
-		9E4D90A21BCFD7DE0096F84E /* cellDoubelFieldView */ = {
-			isa = PBXGroup;
-			children = (
-				9E4D90A31BCFD86A0096F84E /* DoubleFieldCell.h */,
-				9E4D90A41BCFD86A0096F84E /* DoubleFieldCell.m */,
-			);
-			name = cellDoubelFieldView;
 			sourceTree = "<group>";
 		};
 		9E4D90A61BD0DFA60096F84E /* 8583工具组 */ = {
@@ -1389,7 +1384,6 @@
 				5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */,
 				5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */,
 				5E397B2B1AD36429004F206F /* ASICloudFilesContainerXMLParserDelegate.m in Sources */,
-				9E4D90A51BCFD86A0096F84E /* DoubleFieldCell.m in Sources */,
 				5EBA40FD1AEA3A3200F270C0 /* Photo.m in Sources */,
 				5EB9B1581AD7B92100A73190 /* MLTableAlert.m in Sources */,
 				5EBAA8E81ACD2FA800E2ABDD /* ASCIIString.m in Sources */,
