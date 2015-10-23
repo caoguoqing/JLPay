@@ -761,46 +761,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 
 
-/////// -- 打印数据
-- (void) printLogBasicInfo {
-    NSMutableString* logString = [NSMutableString stringWithString:@"----基本信息----\n"];
-    for (NSDictionary* dict in self.arrayBasicInfo) {
-        [logString appendString:@"{\n"];
-        for (NSString* key in dict.allKeys) {
-            [logString appendFormat:@"\t[%@:%@]\n",key,[dict valueForKey:key]];
-        }
-        [logString appendString:@"}\n"];
-    }
-    [logString appendString:@"----基本信息----"];
-    NSLog(@"%@",logString);
-}
-- (void) printLogAccountInfo {
-    NSMutableString* logString = [NSMutableString stringWithString:@"----账户信息----\n"];
-    for (NSDictionary* dict in self.arrayAccountInfo) {
-        [logString appendString:@"{\n"];
-        for (NSString* key in dict.allKeys) {
-            [logString appendFormat:@"\t[%@:%@]\n",key,[dict valueForKey:key]];
-        }
-        [logString appendString:@"}\n"];
-    }
-    [logString appendString:@"----账户信息----"];
-    NSLog(@"%@",logString);
-}
-- (void) printLogImageInfo {
-    NSMutableString* logString = [NSMutableString stringWithString:@"----图片信息----\n"];
-    for (NSDictionary* dict in self.arrayImageInfo) {
-        [logString appendString:@"{\n"];
-        for (NSString* key in dict.allKeys) {
-            [logString appendFormat:@"\t[%@:%@]\n",key,[dict valueForKey:key]];
-        }
-        [logString appendString:@"}\n"];
-    }
-    [logString appendString:@"----图片信息----"];
-    NSLog(@"%@",logString);
-}
-
-
-
 #pragma mask ------ 界面声明周期
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -820,9 +780,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     CGFloat btnHeight = 45;
     
     activitorFrame = CGRectMake(0, statesNaviHeight, self.view.frame.size.width, self.view.frame.size.height - (statesNaviHeight));
-    CGRect frame = CGRectMake(0,//inset,
+    CGRect frame = CGRectMake(0,
                               statesNaviHeight,
-                              self.view.frame.size.width,// - inset*2,
+                              self.view.frame.size.width,
                               self.view.frame.size.height - statesNaviHeight - btnHeight - inset*2);
     
     [self.tableView setFrame:frame];

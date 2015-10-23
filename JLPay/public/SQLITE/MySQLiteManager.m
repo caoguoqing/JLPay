@@ -105,8 +105,9 @@
         NSFileManager* fileManager = [[NSFileManager alloc] init];
         NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentationDirectory, NSUserDomainMask, YES);
         NSString* documentDirectory = [paths objectAtIndex:0];
+        
         NSString* dataBasePath = [documentDirectory stringByAppendingPathComponent:DBFile];
-        if (![fileManager fileExistsAtPath:dataBasePath]) {
+        if (![fileManager fileExistsAtPath:dataBasePath isDirectory:nil]) {
             // 不存在db文件就拷贝文件到沙盒
             NSString* sourceFile = [[NSBundle mainBundle] pathForResource:[DBFile substringToIndex:[DBFile rangeOfString:@"."].location] ofType:@"db"];
 
