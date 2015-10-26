@@ -113,15 +113,16 @@
 
             if ([fileManager fileExistsAtPath:sourceFile]) {
                 NSError* error;
-                BOOL copied = [fileManager copyItemAtPath:sourceFile toPath:documentDirectory error:&error];
-                if (copied) {
-                    NSLog(@"拷贝db文件到沙盒成功");
-                } else {
-                    NSLog(@"拷贝db文件到沙盒失败:[%@]",error);
-                }
+                [fileManager copyItemAtPath:sourceFile toPath:documentDirectory error:&error];
+//                BOOL copied = [fileManager copyItemAtPath:sourceFile toPath:documentDirectory error:&error];
+//                if (copied) {
+//                    NSLog(@"拷贝db文件到沙盒成功");
+//                } else {
+//                    NSLog(@"拷贝db文件到沙盒失败:[%@]",error);
+//                }
             }
         } else {
-            NSLog(@"db文件[%@]已经存在",dataBasePath);
+//            NSLog(@"db文件[%@]已经存在",dataBasePath);
         }
     }
     return self;

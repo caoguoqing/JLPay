@@ -220,14 +220,12 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 
 #pragma mark =======点击空白区域取消键盘
 
--(void)EndEdit
-{
+-(void)EndEdit {
     UITapGestureRecognizer *tap     = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(End) ];
     [self.view addGestureRecognizer:tap];
 }
 
--(void)End
-{
+-(void)End {
     [self.view endEditing:YES];
 }
 
@@ -426,7 +424,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
  * 返  回 : 无
  *************************************/
 - (IBAction)loadToMainView: (UIButton*)sender {
-    // 添加动画效果
     sender.transform = CGAffineTransformIdentity;
     
     if ([self.userNumberTextField.text length] == 0) {
@@ -442,8 +439,8 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     // 登陆密码加密
     NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
 
-    // 保存登陆信息
-    [self savingLoadingInfo];
+    // 保存登陆信息 -- 不能在这里保存,不然登陆成功后无法判断是切换了账号
+//    [self savingLoadingInfo];
     
     // 登陆
     [self logInWithPin:pin];
@@ -504,6 +501,8 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     if ([retcode intValue] == 0) {
         // 校验是否切换了账号
         [self checkoutLoadingSwitch];
+        // 然后保存当前登陆信息
+        [self savingLoadingInfo];
         
         // 校验并保存商户信息: 解析响应数据
         NSArray* terminals = [self arraySeparatedByTerminalListString:[dataDic valueForKey:@"TermNoList"]];
@@ -595,7 +594,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [array addObjectsFromArray:[terminalsString componentsSeparatedByString:@","]];
     for (int i = 0; i < array.count; i++) {
         NSString* sourceString = [array objectAtIndex:i];
-        // 去掉首位的多余空白字符
+        // 去掉首尾的多余空白字符
         NSString* stringTrimmed = [sourceString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         if (![stringTrimmed isEqualToString:sourceString]) {
             [array replaceObjectAtIndex:i withObject:stringTrimmed];
@@ -603,6 +602,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     }
     return array;
 }
+// -- useless
 - (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
     NSMutableArray* array = [[NSMutableArray alloc] init];
     [array addObjectsFromArray:[termString componentsSeparatedByString:@","]];
@@ -634,6 +634,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     });
 }
 
+#pragma mask ------ UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
     switch (alertView.tag) {

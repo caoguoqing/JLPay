@@ -430,18 +430,23 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 #pragma mask ------ UIAlertViewDelegate 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([alertView.message hasPrefix:@"新用户注册成功"] ||
-        [alertView.message hasPrefix:@"注册信息修改"]) {
+        [alertView.message hasPrefix:@"注册资料完善"]) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         NSString* userName = [self textInputedAtIndexPath:indexPath];
         NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
         // 用户名保存
         [userDefault setValue:userName forKey:UserID];
-        [userDefault synchronize];
         // 清空密码
         if ([userDefault objectIsForcedForKey:UserPW]) {
             NSLog(@"清除配置中保存的密码");
             [userDefault removeObjectForKey:UserPW];
         }
+        // 清空绑定信息
+        if ([userDefault objectIsForcedForKey:KeyInfoDictOfBinded]) {
+            [userDefault removeObjectForKey:KeyInfoDictOfBinded];
+        }
+        [userDefault synchronize];
+        
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -877,7 +882,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
             stitle = @"新用户注册";
             break;
         case RegisterTypeRefused:
-            stitle = @"注册信息修改";
+            stitle = @"注册资料完善";
             break;
             
         case RegisterTypeOldModify:
@@ -896,11 +901,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
             stitle = @"注册";
             break;
         case RegisterTypeRefused:
-            stitle = @"修改";
+            stitle = @"确定";
             break;
             
         case RegisterTypeOldModify:
-            stitle = @"修改";
+            stitle = @"确定";
             break;
         default:
             break;

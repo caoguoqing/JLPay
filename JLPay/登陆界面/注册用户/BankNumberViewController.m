@@ -32,6 +32,7 @@
 
 
 #pragma mask ------ UITextFieldDelegate 
+/* 按键回车: 点击后隐藏键盘 */
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     BOOL enabel = YES;
     if ([string isEqualToString:@"\n"]) {
@@ -64,7 +65,7 @@
     [self requestBankInfoWithBankName:self.bankNameField.text andBranchName:self.branchNameField.text];
 }
 
-#pragma mask ------ HTTP事件
+#pragma mask ------ HTTP请求操作
 - (void) requestBankInfoWithBankName:(NSString*)bankName andBranchName:(NSString*)branchName {
     [self.httpRequest addPostValue:bankName forKey:@"bankName"];
     [self.httpRequest addPostValue:branchName forKey:@"branchName"];
@@ -75,10 +76,11 @@
 
 #pragma mask ------ DynamicPickerViewDelegate
 - (void)pickerView:(DynamicPickerView *)pickerView didPickedRow:(NSInteger)row atComponent:(NSInteger)component {
-    self.selectedIndex = row;
+    self.selectedIndex = (int)row;
     NSDictionary* bankInfo = [self.bankInfos objectAtIndex:row];
     [self.searchButton setTitle:[bankInfo valueForKey:@"openstlNo"] forState:UIControlStateNormal];
 }
+
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
@@ -92,9 +94,12 @@
     for (NSDictionary* dict in self.bankInfos) {
         [bankNums addObject:[dict valueForKey:@"bankName"]];
     }
+    // 没查到银行号列表
     if (bankNums.count == 0) {
         [self alertForMessage:@"查询到的银行列表为空,请重新输入并查询"];
-    } else {
+    }
+    // 查到了银行号列表
+    else {
         CGRect frame = CGRectMake(0,//self.searchButton.frame.origin.x,
                                   self.searchButton.frame.origin.y + self.searchButton.frame.size.height + 10,
                                   self.view.frame.size.width,
@@ -144,7 +149,10 @@
     
     self.selectedIndex = -1;
     
-    UIBarButtonItem* doneItem = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(popVCWithSearchedBankNum)];
+    UIBarButtonItem* doneItem = [[UIBarButtonItem alloc] initWithTitle:@"完成"
+                                                                 style:UIBarButtonItemStyleDone
+                                                                target:self
+                                                                action:@selector(popVCWithSearchedBankNum)];
     self.navigationItem.rightBarButtonItem = doneItem;
 }
 - (void)viewWillAppear:(BOOL)animated {

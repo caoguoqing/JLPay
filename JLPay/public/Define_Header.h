@@ -44,7 +44,7 @@
 #define Setting_Port @"settingport"
 // 环境:8585报文上送的环境
 #define Current_IP    [PublicInformation settingIp]
-#define Current_Port  [PublicInformation settingPort]//8182//9182    ,测试ip：211.90.22.167；9181
+#define Current_Port  [PublicInformation settingPort] //8182//9182    ,测试ip：211.90.22.167；9181
 // 环境:HTTP协议的ip配置
 #define Tcp_IP  @"tcpip"
 #define Tcp_Port @"tcpport"
