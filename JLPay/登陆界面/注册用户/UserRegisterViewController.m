@@ -437,12 +437,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         // 用户名保存
         [userDefault setValue:userName forKey:UserID];
         // 清空密码
-        if ([userDefault objectIsForcedForKey:UserPW]) {
-            NSLog(@"清除配置中保存的密码");
+        if ([userDefault objectForKey:UserPW]) {
             [userDefault removeObjectForKey:UserPW];
         }
         // 清空绑定信息
-        if ([userDefault objectIsForcedForKey:KeyInfoDictOfBinded]) {
+        if ([userDefault objectForKey:KeyInfoDictOfBinded]) {
             [userDefault removeObjectForKey:KeyInfoDictOfBinded];
         }
         [userDefault synchronize];
