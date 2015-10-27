@@ -591,13 +591,16 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 - (NSArray*) arraySeparatedByTerminalListString:(NSString*) terminalsString {
     NSMutableArray* array = [[NSMutableArray alloc] init];
     // 按逗号拆分到数组
-    [array addObjectsFromArray:[terminalsString componentsSeparatedByString:@","]];
-    for (int i = 0; i < array.count; i++) {
-        NSString* sourceString = [array objectAtIndex:i];
-        // 去掉首尾的多余空白字符
-        NSString* stringTrimmed = [sourceString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        if (![stringTrimmed isEqualToString:sourceString]) {
-            [array replaceObjectAtIndex:i withObject:stringTrimmed];
+    if (terminalsString && terminalsString.length > 0) {
+        NSArray* separatedArray = [terminalsString componentsSeparatedByString:@","];
+        [array addObjectsFromArray:separatedArray];
+        for (int i = 0; i < array.count; i++) {
+            NSString* sourceString = [array objectAtIndex:i];
+            // 去掉首尾的多余空白字符
+            NSString* stringTrimmed = [sourceString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if (![stringTrimmed isEqualToString:sourceString]) {
+                [array replaceObjectAtIndex:i withObject:stringTrimmed];
+            }
         }
     }
     return array;
