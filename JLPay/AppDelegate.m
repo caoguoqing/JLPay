@@ -28,11 +28,20 @@
 #pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 -(void)signInSuccessToLogin:(int)select{
     self.window.userInteractionEnabled=YES;
-    
-    UIStoryboard *storyboard            = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
-    // 进入的初始界面为第二个
-    tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
+
+    /* 进入的初始界前要先判断是否绑定设备：
+     *    如果绑定了:就跳转到金额输入界面
+     *    如果没有绑定:就跳转到绑定设备界面
+     */
+    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if (infoBinded == nil) {
+        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
+    } else {
+        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
+    }
+    
     
     self.window.rootViewController      = tabBarController;
     
@@ -45,8 +54,6 @@
     
     // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
     tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
-    
-
 }
 // 跳转到指定的界面
 - (void) loadInViewController:(UIViewController*)viewController {

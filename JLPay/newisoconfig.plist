@@ -253,15 +253,19 @@
 	</dict>
 	<key>35</key>
 	<dict>
+		<key>special</key>
+		<string>99</string>
 		<key>type</key>
-		<string></string>
+		<string>asc</string>
 		<key>length</key>
 		<string></string>
 	</dict>
 	<key>36</key>
 	<dict>
 		<key>type</key>
-		<string></string>
+		<string>asc</string>
+		<key>special</key>
+		<string>999</string>
 		<key>length</key>
 		<string></string>
 	</dict>
@@ -317,9 +321,9 @@
 	<key>44</key>
 	<dict>
 		<key>type</key>
-		<string></string>
+		<string>asc</string>
 		<key>length</key>
-		<string>46</string>
+		<string></string>
 		<key>special</key>
 		<string>99</string>
 	</dict>
@@ -377,9 +381,9 @@
 	<key>52</key>
 	<dict>
 		<key>type</key>
-		<string></string>
+		<string>bcd</string>
 		<key>length</key>
-		<string></string>
+		<string>16</string>
 	</dict>
 	<key>53</key>
 	<dict>
@@ -439,7 +443,7 @@
 		<key>type</key>
 		<string>bcd</string>
 		<key>length</key>
-		<string>11</string>
+		<string></string>
 		<key>special</key>
 		<string>999</string>
 	</dict>
@@ -448,7 +452,7 @@
 		<key>type</key>
 		<string>asc</string>
 		<key>length</key>
-		<string>40</string>
+		<string></string>
 		<key>special</key>
 		<string>999</string>
 	</dict>
@@ -457,7 +461,7 @@
 		<key>type</key>
 		<string>asc</string>
 		<key>length</key>
-		<string>84</string>
+		<string></string>
 		<key>special</key>
 		<string>999</string>
 	</dict>
@@ -466,7 +470,7 @@
 		<key>type</key>
 		<string>asc</string>
 		<key>length</key>
-		<string>10</string>
+		<string></string>
 		<key>special</key>
 		<string>999</string>
 	</dict>
