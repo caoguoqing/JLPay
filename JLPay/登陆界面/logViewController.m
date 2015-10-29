@@ -642,7 +642,9 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [self.loadButton setEnabled:YES];
     switch (alertView.tag) {
         case TagAlertVersionLow:
-            [self gotoDownloadApp];
+            if (TAG_OF_BRANCH_EDITION != 0) { // app store分支不能跳转去下载
+                [self gotoDownloadApp];
+            }
             break;
         case TagAlertRegisterRefuse:
         {
@@ -684,7 +686,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 
 
-#pragma mask ::: getter & setter 
+#pragma mask ::: getter & setter
 // 账号输入框
 - (UITextField *)userNumberTextField {
     if (_userNumberTextField == nil) {

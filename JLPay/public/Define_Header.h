@@ -39,6 +39,13 @@
  */
 #define TestOrProduce                   1
 
+/* 版本分支配置(用于标示发布到appStore还是企业版的app)
+ * 0: master: AppStore
+ * 1: test:   网页企业版
+ * 2: dev:    开发版
+ */
+#define TAG_OF_BRANCH_EDITION           0
+
 // 设置,用来判断是否设置环境ip
 #define Setting_Ip @"settingip"
 #define Setting_Port @"settingport"
