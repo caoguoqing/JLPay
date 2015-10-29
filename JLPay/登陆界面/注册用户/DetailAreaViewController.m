@@ -167,7 +167,6 @@
     }
     // 回退场景
     [self.navigationController popViewControllerAnimated:YES];
-    NSLog(@"pop后的最上层VC:[%@]", self.navigationController.topViewController);
     // 打包要带回的数据
     UserRegisterViewController* viewController = (UserRegisterViewController*)self.navigationController.topViewController;
     [viewController setDetailAddr:self.fieldDetailAddr.text
@@ -369,7 +368,7 @@
     
     [self.view addSubview:self.btnProvince];
     [self.view addSubview:self.btnCity];
-    [self.view addSubview:self.btnArea];
+//    [self.view addSubview:self.btnArea];
     [self.view addSubview:self.fieldDetailAddr];
     [self.view addSubview:self.btnSure];
     [self.view addSubview:self.pickerView];
@@ -415,13 +414,13 @@
     [self.btnCity setFrame:inFrame];
     
     // 区县
-    inFrame.origin.x = insetHorizantal;
-    inFrame.origin.y += inFrame.size.height + insetVertical;
-    inFrame.size.width = mustInputLabelWidth;
-    [self.view addSubview:[self newMustInputLabelInNeed:NO inFrame:inFrame]];
-    inFrame.origin.x += inFrame.size.width;
-    inFrame.size.width = btnWidth;
-    [self.btnArea setFrame:inFrame];
+//    inFrame.origin.x = insetHorizantal;
+//    inFrame.origin.y += inFrame.size.height + insetVertical;
+//    inFrame.size.width = mustInputLabelWidth;
+//    [self.view addSubview:[self newMustInputLabelInNeed:NO inFrame:inFrame]];
+//    inFrame.origin.x += inFrame.size.width;
+//    inFrame.size.width = btnWidth;
+//    [self.btnArea setFrame:inFrame];
 
     // 输入框
     inFrame.origin.x = insetHorizantal;

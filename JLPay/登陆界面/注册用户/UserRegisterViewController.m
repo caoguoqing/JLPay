@@ -672,13 +672,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     for (NSDictionary* dict in self.arrayBasicInfo) {
         if ([[dict valueForKey:KeyInfoStringKeyName] isEqualToString:@"mail"]) {
             mailInfo = dict;
-            NSLog(@"邮箱:[%@]",[mailInfo valueForKey:KeyInfoStringInputText]);
             break;
         }
     }
     if (mailInfo) {
         mail = [mailInfo valueForKey:KeyInfoStringInputText];
-        NSLog(@"邮箱:[%@]",mail);
     }
     return mail;
 }

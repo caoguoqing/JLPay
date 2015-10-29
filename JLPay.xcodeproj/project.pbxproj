@@ -43,7 +43,7 @@
 		5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B531AD36D22004F206F /* libz.1.2.5.dylib */; };
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
 		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
-		5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */; settings = {ASSET_TAGS = (); }; };
+		5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */; };
 		5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */; };
 		5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353F1B70BC4300560C0A /* myCollectionCell.m */; };
 		5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35461B71E93700560C0A /* ChangePinViewController.m */; };
@@ -92,9 +92,9 @@
 		5E82B87A1B310AF000A58751 /* activitor10.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86E1B310AF000A58751 /* activitor10.png */; };
 		5E82B87B1B310AF000A58751 /* activitor11.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B86F1B310AF000A58751 /* activitor11.png */; };
 		5E82B87C1B310AF000A58751 /* activitor12.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E82B8701B310AF000A58751 /* activitor12.png */; };
-		5E8541B51BD4EAD000C03B41 /* BankNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */; settings = {ASSET_TAGS = (); }; };
+		5E8541B51BD4EAD000C03B41 /* BankNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */; };
 		5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D001BB0051400FD461A /* libsqlite3.tbd */; };
-		5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D101BB0E61800FD461A /* libJieLianService.a */; settings = {ASSET_TAGS = (); }; };
+		5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D101BB0E61800FD461A /* libJieLianService.a */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -144,7 +144,7 @@
 		5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE376E1ADF5BC700901980 /* LVKeyboardAccessoryBtn.m */; };
 		5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE37701ADF5BC700901980 /* LVKeyboardView.m */; };
 		5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE37741ADF5C2000901980 /* UIView+Extension.m */; };
-		5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE9F281BCCE7EE0076BA98 /* DetailAreaViewController.m */; settings = {ASSET_TAGS = (); }; };
+		5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE9F281BCCE7EE0076BA98 /* DetailAreaViewController.m */; };
 		5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBF3C3E1AD3B5B400091F83 /* Toast+UIView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC14E641ADCE47700CCD764 /* BrushViewController.m */; };
 		5ECB55921AD4D44800777866 /* newisoconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5ECB55911AD4D44800777866 /* newisoconfig.plist */; };
@@ -160,13 +160,13 @@
 		5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */; };
 		5EF3BAA31B686AE200DCD764 /* DatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA21B686AE200DCD764 /* DatePickerView.m */; };
 		5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA61B69C01900DCD764 /* RateViewController.m */; };
-		5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B741BCBB6D900C75276 /* TextFieldCell.m */; settings = {ASSET_TAGS = (); }; };
-		5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */; settings = {ASSET_TAGS = (); }; };
+		5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B741BCBB6D900C75276 /* TextFieldCell.m */; };
+		5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */; };
 		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
 		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
-		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; settings = {ASSET_TAGS = (); }; };
-		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; settings = {ASSET_TAGS = (); }; };
+		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
+		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1612,7 +1612,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -1647,7 +1647,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
+				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -1657,7 +1657,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -1691,7 +1691,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
+				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
