@@ -132,30 +132,10 @@
 
 - (NSUUID *)UUID {
     return _peripheral.identifier;
-//    if ([_peripheral respondsToSelector:@selector(identifier)]) {
-//    }
-//    if (!_peripheral.UUID) {
-//        return nil;
-//    }
-//    NSString *uuidStr = (__bridge NSString *)CFUUIDCreateString(NULL, _peripheral.UUID);
-//    return [[NSUUID alloc] initWithUUIDString:uuidStr];
 }
 
 - (CBPeripheralState)state {
-//    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
-//    }
     return _peripheral.state;
-//    else {
-//        if ([_peripheral isConnected]) {
-//            return CBPeripheralStateConnected;
-//        }
-//        else if (_connecting){
-//            return CBPeripheralStateConnecting;
-//        }
-//        else {
-//            return CBPeripheralStateDisconnected;
-//        }
-//    }
 }
 
 - (void)writeData:(NSData *)data {

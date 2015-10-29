@@ -337,7 +337,7 @@
     self.totalView.frame = frame;
     
     // 日期按钮
-    frame.origin.x = 0;//inset;
+    frame.origin.x = 0;
     frame.origin.y += frame.size.height + inset/3.0 + inset/3.0;
     frame.size.height = 40;
     frame.size.width = 140;
