@@ -11,6 +11,7 @@
 @interface myCollectionCell : UICollectionViewCell
 
 - (void) setImage:(UIImage*)image;
-- (void) setText:(NSString*)text;
+//- (void) setText:(NSString*)text;
+@property (nonatomic, assign) NSString* title;
 
 @end

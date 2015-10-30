@@ -98,6 +98,8 @@
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
+		5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */; };
+		5EA9214E1BE31B1B00DB0AA8 /* QRCodeButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -162,8 +164,6 @@
 		5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3BAA61B69C01900DCD764 /* RateViewController.m */; };
 		5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B741BCBB6D900C75276 /* TextFieldCell.m */; };
 		5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */; };
-		5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */; };
-		5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
@@ -348,6 +348,10 @@
 		5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleLayerButton.m; sourceTree = "<group>"; };
 		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOFieldFormation.h; sourceTree = "<group>"; };
 		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISOFieldFormation.m; sourceTree = "<group>"; };
+		5EA921491BE3197200DB0AA8 /* OtherPayCollectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherPayCollectViewController.h; sourceTree = "<group>"; };
+		5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherPayCollectViewController.m; sourceTree = "<group>"; };
+		5EA9214C1BE31B1B00DB0AA8 /* QRCodeButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeButtonView.h; sourceTree = "<group>"; };
+		5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeButtonView.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -466,10 +470,6 @@
 		5EF45B741BCBB6D900C75276 /* TextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldCell.m; sourceTree = "<group>"; };
 		5EF45B791BCCAAC700C75276 /* TextLabelCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextLabelCell.h; sourceTree = "<group>"; };
 		5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextLabelCell.m; sourceTree = "<group>"; };
-		5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatPayViewController.h; sourceTree = "<group>"; };
-		5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatPayViewController.m; sourceTree = "<group>"; };
-		5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlipayViewController.h; sourceTree = "<group>"; };
-		5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlipayViewController.m; sourceTree = "<group>"; };
 		5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSignButton.h; sourceTree = "<group>"; };
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
@@ -518,6 +518,7 @@
 				5E5E353F1B70BC4300560C0A /* myCollectionCell.m */,
 				5E08AE711B09949200B8C198 /* DynamicScrollView.h */,
 				5E08AE721B09949200B8C198 /* DynamicScrollView.m */,
+				5EA921481BE3192E00DB0AA8 /* 其他支付收款 */,
 			);
 			path = "增值服务界面";
 			sourceTree = "<group>";
@@ -531,10 +532,6 @@
 				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
 				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
-				5EF4C0D41B15C91600CE3E3F /* WeChatPayViewController.h */,
-				5EF4C0D51B15C91600CE3E3F /* WeChatPayViewController.m */,
-				5EF4C0D71B15C96200CE3E3F /* AlipayViewController.h */,
-				5EF4C0D81B15C96200CE3E3F /* AlipayViewController.m */,
 				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
 				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
 				5E0D18691B09DA710092F4AB /* OtherPayButton.h */,
@@ -825,6 +822,17 @@
 				5EBAA8E51ACD2FA800E2ABDD /* Unpacking8583.m */,
 			);
 			path = "8583打包解包";
+			sourceTree = "<group>";
+		};
+		5EA921481BE3192E00DB0AA8 /* 其他支付收款 */ = {
+			isa = PBXGroup;
+			children = (
+				5EA921491BE3197200DB0AA8 /* OtherPayCollectViewController.h */,
+				5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */,
+				5EA9214C1BE31B1B00DB0AA8 /* QRCodeButtonView.h */,
+				5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */,
+			);
+			path = "其他支付收款";
 			sourceTree = "<group>";
 		};
 		5EB6F9731AC8DD1C00E47AB5 = {
@@ -1431,9 +1439,11 @@
 				5E5FA58E1B477DD100387E69 /* JHLDevice_M60.m in Sources */,
 				5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */,
 				5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */,
+				5EA9214E1BE31B1B00DB0AA8 /* QRCodeButtonView.m in Sources */,
 				5E397B2E1AD36429004F206F /* ASICloudFilesRequest.m in Sources */,
 				5EBA40FA1AEA37AC00F270C0 /* NewVersionView.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
+				5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
 				5E5FA5831B46342600387E69 /* README.md in Sources */,
@@ -1462,7 +1472,6 @@
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
 				5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */,
-				5EF4C0D91B15C96200CE3E3F /* AlipayViewController.m in Sources */,
 				5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */,
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,
 				5EDA83E61B9050FE0096391B /* RFDevice_BB01.m in Sources */,
@@ -1477,7 +1486,6 @@
 				5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */,
-				5EF4C0D61B15C91600CE3E3F /* WeChatPayViewController.m in Sources */,
 				5E5E362A1B8703F900560C0A /* RgBasicInfoTableViewCell.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
@@ -1612,7 +1620,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -1647,7 +1655,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
+				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -1657,7 +1665,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -1691,7 +1699,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
+				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};

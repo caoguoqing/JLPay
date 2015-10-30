@@ -9,6 +9,9 @@
 #import "myCollectionCell.h"
 
 @interface myCollectionCell()
+{
+//    CGFloat fontOfSize;
+}
 @property (nonatomic, strong) UIImageView* imageView;
 @property (nonatomic, strong) UILabel* textLabel;
 
@@ -22,27 +25,6 @@
 - (void)setImage:(UIImage *)image {
     self.imageView.image = image;
 }
-- (void)setText:(NSString *)text {
-    self.textLabel.text = text;
-}
-
-//- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-//    [UIView animateWithDuration:0.3 animations:^{
-//        self.transform = CGAffineTransformMakeScale(0.95, 0.95);
-//    }];
-//}
-//- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-//    [UIView animateWithDuration:0.3 animations:^{
-//        self.transform = CGAffineTransformIdentity;
-//    }];
-//
-//}
-//- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-//    [UIView animateWithDuration:0.3 animations:^{
-//        self.transform = CGAffineTransformIdentity;
-//    }];
-//
-//}
 
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -50,6 +32,7 @@
     if (self) {
         [self addSubview:self.imageView];
         [self addSubview:self.textLabel];
+//        fontOfSize = 12;
     }
     return self;
 }
@@ -58,7 +41,7 @@
     [super layoutSubviews];
     CGRect frame = self.bounds;
     CGFloat inset = 5.0;
-    CGFloat labelHeight = 17.0;
+    CGFloat labelHeight = 15.0;
     // imageView
     if (self.textLabel.text == nil) {
         // imageView
@@ -86,11 +69,11 @@
         self.textLabel.font = font;
         CGSize textSize = [self.textLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName]];
         if (textSize.height > frame.size.height) {
-            font = [UIFont systemFontOfSize:15.0*frame.size.height/textSize.height];
+            font = [UIFont systemFontOfSize:15.0 * frame.size.height/textSize.height];
             self.textLabel.font = font;
         }
     }
-    self.layer.borderWidth = 0.5;
+    self.layer.borderWidth = 0.3;
     self.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
 }
 
@@ -105,10 +88,17 @@
 - (UILabel *)textLabel {
     if (_textLabel == nil) {
         _textLabel = [[UILabel alloc] init];
-//        _textLabel.backgroundColor = [UIColor greenColor];
         _textLabel.textAlignment = NSTextAlignmentCenter;
+        _textLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
+//        _textLabel.font = [UIFont systemFontOfSize:fontOfSize];
+//        _textLabel.backgroundColor = [UIColor orangeColor];
     }
     return _textLabel;
 }
 
+#pragma mask ---- setter
+- (void)setTitle:(NSString *)title {
+    _title = title;
+    self.textLabel.text = _title;
+}
 @end

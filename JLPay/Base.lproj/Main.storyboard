@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="jPT-Yr-IlL">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="jPT-Yr-IlL">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
     </dependencies>
     <scenes>
         <!--登陆-->
@@ -93,6 +93,7 @@
                     <connections>
                         <segue destination="iaz-sx-1dJ" kind="relationship" relationship="viewControllers" id="1of-xI-RZz"/>
                         <segue destination="UH2-IW-g8J" kind="relationship" relationship="viewControllers" id="Us1-gL-mHV"/>
+                        <segue destination="Q2H-dN-ums" kind="relationship" relationship="viewControllers" id="6JB-f5-e8q"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bYU-Ha-gIe" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -117,69 +118,19 @@
             </objects>
             <point key="canvasLocation" x="-523" y="52"/>
         </scene>
-        <!--We Chat Pay View Controller-->
-        <scene sceneID="iK5-cr-5Tw">
-            <objects>
-                <viewController storyboardIdentifier="weChatPay" id="nWZ-Ta-9VG" customClass="WeChatPayViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Cza-CM-On3">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="功能建设中......" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="T8t-PO-nwO">
-                                <rect key="frame" x="92" y="274" width="158" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" id="w0e-Cv-9QV">
-                                <rect key="frame" x="50" y="157" width="221" height="72"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请关注捷联通版本更新" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="n7p-C8-cPy">
-                                <rect key="frame" x="65" y="304" width="191" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" red="0.0060300372280000002" green="0.77248984580000002" blue="0.43582904439999998" alpha="1" colorSpace="calibratedRGB"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="75k-Bu-3Bc" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-83" y="-678"/>
-        </scene>
-        <!--支付宝支付-->
+        <!--第三方收款-->
         <scene sceneID="Vw7-n7-Tbw">
             <objects>
-                <viewController storyboardIdentifier="alipayPay" title="支付宝支付" id="gkC-Bm-0Cz" customClass="AlipayViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="otherPayVC" title="第三方收款" id="gkC-Bm-0Cz" customClass="OtherPayCollectViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3Sb-AT-1vF" customClass="Al">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="功能建设中......" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0Qe-ia-i7D">
-                                <rect key="frame" x="81" y="128" width="158" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请关注捷联通版本更新" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UEx-3J-4r6">
-                                <rect key="frame" x="65" y="164" width="191" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QrP-3R-OZc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="271" y="-678"/>
+            <point key="canvasLocation" x="463" y="3710"/>
         </scene>
         <!--Cust Pay View Controller-->
         <scene sceneID="eaC-D2-oVh">
@@ -399,7 +350,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EJl-fZ-fBl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-490" y="3514"/>
+            <point key="canvasLocation" x="-482" y="3710"/>
         </scene>
         <!--增值服务-->
         <scene sceneID="du3-CL-xUi">
@@ -414,7 +365,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="46S-Jv-gi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-60" y="3514"/>
+            <point key="canvasLocation" x="-52" y="3710"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="XKI-ww-Kom">
@@ -441,6 +392,5 @@
         <image name="iconb" width="32" height="34"/>
         <image name="iconbG" width="32" height="34"/>
         <image name="iconcG" width="32" height="34"/>
-        <image name="logo" width="326" height="108"/>
     </resources>
 </document>
