@@ -63,10 +63,8 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {}
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {}
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    NSLog(@"多少个点击事件:[%lu]",[touches count]);
-    for (UITouch* touch in [touches allObjects]) {
-        CGPoint point = [touch locationInView:self];
-        NSLog(@"坐标 x:%lf, y:%lf",point.x , point.y);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didSelectedView:)]) {
+        [self.delegate didSelectedView:self];
     }
 }
 
@@ -76,7 +74,6 @@
 - (UIImageView *)imageView {
     if (_imageView == nil) {
         _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-//        [_imageView setImage:self.image];
     }
     return _imageView;
 }
@@ -86,7 +83,6 @@
         _titleLabel.font = [UIFont systemFontOfSize:15];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.textColor = [UIColor whiteColor];
-//        [_titleLabel setText:self.title];
     }
     return _titleLabel;
 }

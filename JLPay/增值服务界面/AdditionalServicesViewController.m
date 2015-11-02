@@ -105,12 +105,12 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     myCollectionCell* cell = (myCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
     if ([cell.title isEqualToString:PayCollectTypeAlipay]) {
-        OtherPayCollectViewController* payCollectionVC = [self payCollectionViewControllerWithType:PayCollectTypeAlipay];
-        [self.navigationController pushViewController:payCollectionVC animated:YES];
+//        OtherPayCollectViewController* payCollectionVC = [self payCollectionViewControllerWithType:PayCollectTypeAlipay];
+        [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeAlipay] animated:YES];
     }
     else if ([cell.title isEqualToString:PayCollectTypeWeChatPay]) {
-        OtherPayCollectViewController* payCollectionVC = [self payCollectionViewControllerWithType:PayCollectTypeWeChatPay];
-        [self.navigationController pushViewController:payCollectionVC animated:YES];
+//        OtherPayCollectViewController* payCollectionVC = [self payCollectionViewControllerWithType:PayCollectTypeWeChatPay];
+        [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
     }
     else {
         [self.view makeToast:@"功能正在建设中,请关注版本更新..."];

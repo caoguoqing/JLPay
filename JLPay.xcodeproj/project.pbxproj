@@ -100,6 +100,7 @@
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
 		5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */; };
 		5EA9214E1BE31B1B00DB0AA8 /* QRCodeButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */; };
+		5EA921531BE36F0A00DB0AA8 /* QRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA921521BE36F0A00DB0AA8 /* QRCodeViewController.m */; };
 		5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB4C8221B05937200410E06 /* CustPayViewController.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
@@ -352,6 +353,8 @@
 		5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherPayCollectViewController.m; sourceTree = "<group>"; };
 		5EA9214C1BE31B1B00DB0AA8 /* QRCodeButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeButtonView.h; sourceTree = "<group>"; };
 		5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeButtonView.m; sourceTree = "<group>"; };
+		5EA921511BE36F0A00DB0AA8 /* QRCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCodeViewController.h; sourceTree = "<group>"; };
+		5EA921521BE36F0A00DB0AA8 /* QRCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeViewController.m; sourceTree = "<group>"; };
 		5EB4C8211B05937200410E06 /* CustPayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustPayViewController.h; sourceTree = "<group>"; };
 		5EB4C8221B05937200410E06 /* CustPayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustPayViewController.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -831,8 +834,26 @@
 				5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */,
 				5EA9214C1BE31B1B00DB0AA8 /* QRCodeButtonView.h */,
 				5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */,
+				5EA9214F1BE36EC200DB0AA8 /* 二维码收款 */,
+				5EA921501BE36ECB00DB0AA8 /* 扫一扫收款 */,
 			);
 			path = "其他支付收款";
+			sourceTree = "<group>";
+		};
+		5EA9214F1BE36EC200DB0AA8 /* 二维码收款 */ = {
+			isa = PBXGroup;
+			children = (
+				5EA921511BE36F0A00DB0AA8 /* QRCodeViewController.h */,
+				5EA921521BE36F0A00DB0AA8 /* QRCodeViewController.m */,
+			);
+			path = "二维码收款";
+			sourceTree = "<group>";
+		};
+		5EA921501BE36ECB00DB0AA8 /* 扫一扫收款 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "扫一扫收款";
 			sourceTree = "<group>";
 		};
 		5EB6F9731AC8DD1C00E47AB5 = {
@@ -1463,6 +1484,7 @@
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
 				5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */,
+				5EA921531BE36F0A00DB0AA8 /* QRCodeViewController.m in Sources */,
 				5ED3442A1AD8C1DB0005C890 /* ProgressHUD.m in Sources */,
 				5E397B321AD36429004F206F /* ASIFormDataRequest.m in Sources */,
 				5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */,
