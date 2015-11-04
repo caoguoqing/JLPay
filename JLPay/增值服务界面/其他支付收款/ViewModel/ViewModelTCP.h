@@ -57,7 +57,8 @@
                     andOrderCode:(NSString*)orderCode
                      andDelegate:(id<ViewModelTCPDelegate>)delegate;
 
-
+/* 连接状态 */
+- (BOOL) isConnected;
 
 /* 清空TCP */
 - (void) TCPClear ;

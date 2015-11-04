@@ -150,7 +150,9 @@
 /* 关闭所有节点TCP */
 - (void) closeAllTCPNodes {
     for (ViewModelTCP* tcp in self.TCPNodes) {
-        [tcp TCPClear];
+        if ([tcp isConnected]) {
+            [tcp TCPClear];
+        }
     }
 }
 
@@ -187,6 +189,7 @@
         return;
     }
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
         // 生成一个TCP
         ViewModelTCP* tcp = [[ViewModelTCP alloc] init];
         // TCP请求

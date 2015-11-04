@@ -14,7 +14,7 @@
 #import "TcpClientService.h"
 
 @interface ViewModelTCP()<wallDelegate, Unpacking8583Delegate>
-@property (nonatomic, retain) TcpClientService* tcpHolder;
+@property (nonatomic, strong) TcpClientService* tcpHolder;
 @property (nonatomic, assign) id<ViewModelTCPDelegate>delegate;
 @property (nonatomic, strong) NSString* transType;
 @end
@@ -45,6 +45,18 @@
                              method:transType];
 }
 
+
+#pragma mask ---- 连接状态
+- (BOOL) isConnected {
+    BOOL connected = NO;
+    if (self.tcpHolder) {
+        connected = [self.tcpHolder isConnect];
+    }
+    return connected;
+}
+
+
+
 #pragma mask ---- 清空TCP
 - (void) TCPClear {
     self.delegate = nil;
@@ -58,12 +70,13 @@
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     if ([data length] > 0) {
         // 拆包
+        NSLog(@"响应成功");
         [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
     } else {
+        NSLog(@"响应失败");
         if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
 //            [self.delegate TCPResponseWithState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
             [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
-
         }
     }
     [self TCPClear];
