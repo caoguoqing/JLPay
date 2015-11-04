@@ -13,8 +13,6 @@
 #import "Define_Header.h"
 
 @interface Packing8583() {
-    NSString* tpdu;
-    NSString* header;
     NSString* exchangeType;
 }
 
@@ -38,8 +36,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        tpdu = @"6000060000";
-        header = @"600100310000";
+        self.tpdu = @"6000060000";
+        self.header = @"600100310000";
     }
     return self;
 }
@@ -141,8 +139,8 @@
 // 打包
 - (NSString*) stringPacking {
     NSMutableString* string = [[NSMutableString alloc] init];
-    [string appendString:tpdu];
-    [string appendString:header];
+    [string appendString:self.tpdu];
+    [string appendString:self.header];
     [string appendString:exchangeType];
     [string appendString:[self bitMapHexString]];
     [string appendString:[self allDataString]];

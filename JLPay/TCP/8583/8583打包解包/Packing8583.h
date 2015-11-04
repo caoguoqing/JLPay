@@ -20,10 +20,15 @@
 #pragma mask : 域值设置:需要打包的
 - (void) setFieldAtIndex:(int)index withValue:(NSString*)value;
 
+
 #pragma mask : 打包结果串获取
 -(NSString*) stringPackingWithType:(NSString*)type;
 
 #pragma mask : 清空数据
 -(void) cleanAllFields;
+
+
+@property (nonatomic, retain) NSString* tpdu;
+@property (nonatomic, retain) NSString* header;
 
 @end

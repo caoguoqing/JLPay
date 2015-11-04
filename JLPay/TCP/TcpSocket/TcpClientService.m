@@ -64,6 +64,11 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [sock readDataWithTimeout:readTimeOut tag:0];
 }
 
+// 连接状态
+- (BOOL) isConnect {
+    return [asyncSocket isConnected];
+}
+
 //读取数据
 -(void) onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag{
     NSString* aStr = [PublicInformation stringWithHexBytes2:data];
@@ -75,6 +80,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
         [delegate receiveGetData:aStr method:self.tcpMethodStr];
     }
 }
+
 
 
 - (void)onSocket:(AsyncSocket *)sock didSecure:(BOOL)flag

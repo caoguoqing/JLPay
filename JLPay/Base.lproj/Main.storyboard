@@ -130,7 +130,21 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QrP-3R-OZc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="463" y="3710"/>
+            <point key="canvasLocation" x="405" y="3710"/>
+        </scene>
+        <!--二维码-->
+        <scene sceneID="2aB-eR-5W2">
+            <objects>
+                <viewController storyboardIdentifier="QRCodeVC" title="二维码" id="idI-al-TQq" customClass="QRCodeViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="KOi-pf-CnB">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="apP-aG-q1d" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="813" y="3710"/>
         </scene>
         <!--Cust Pay View Controller-->
         <scene sceneID="eaC-D2-oVh">

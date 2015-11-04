@@ -46,4 +46,7 @@
 -(void)sendWithoutWaitingOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr;
 // 释放socket
 - (void) clearDelegateAndClose ;
+
+// 连接状态
+- (BOOL) isConnect;
 @end

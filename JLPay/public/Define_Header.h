@@ -70,6 +70,15 @@
 #define TranType_Repay              @"TranType_Repay_"                  // 信用卡还款
 #define TranType_Transfer           @"TranType_Transfer_"               // 转账汇款
 
+//#define TranType_QRCode_Request_Alipay     @"TranType_QRCode_Request_Alipay__"          // 二维码获取: 支付宝
+//#define TranType_QRCode_Request_WeChat     @"TranType_QRCode_Request_WeChat__"          // 二维码获取: 微信
+//#define TranType_QRCode_Review_Alipay      @"TranType_QRCode_Review_Alipay__"           // 二维码订单结果查询: 支付宝
+//#define TranType_QRCode_Review_WeChat      @"TranType_QRCode_Review_WeChat__"           // 二维码订单结果查询: 微信
+//
+//#define TranType_BarCode_Trans_Alipay     @"TranType_BarCode_Trans_Alipay__"            // 条形码获取: 支付宝
+//#define TranType_BarCode_Trans_WeChat     @"TranType_BarCode_Trans_WeChat__"            // 条形码获取: 微信
+
+
 /*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/
 #define CardTypeIsTrack             @"CardTypeIsTrack"                  // 值:YES(磁条)/NO(芯片)
 

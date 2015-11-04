@@ -105,11 +105,9 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     myCollectionCell* cell = (myCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
     if ([cell.title isEqualToString:PayCollectTypeAlipay]) {
-//        OtherPayCollectViewController* payCollectionVC = [self payCollectionViewControllerWithType:PayCollectTypeAlipay];
         [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeAlipay] animated:YES];
     }
     else if ([cell.title isEqualToString:PayCollectTypeWeChatPay]) {
-//        OtherPayCollectViewController* payCollectionVC = [self payCollectionViewControllerWithType:PayCollectTypeWeChatPay];
         [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
     }
     else {
@@ -127,12 +125,9 @@ NSString* headerIdentifier = @"headerIdentifier";
 }
 
 
-#pragma mask ----
+#pragma mask ---- 界面生命周期
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // 标题颜色设置为红色
-//    self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName];
-    
     // 设置 title 的字体颜色
     UIColor *color                  = [UIColor redColor];
     NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];

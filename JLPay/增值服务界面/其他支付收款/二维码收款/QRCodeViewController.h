@@ -10,7 +10,7 @@
 
 @interface QRCodeViewController : UIViewController
 
-@property (nonatomic, assign) NSString* orderCode;
-
+@property (nonatomic, retain) NSString* payCollectType;
+@property (nonatomic, retain) NSString* money;
 
 @end

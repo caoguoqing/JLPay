@@ -95,6 +95,9 @@
 		5E8541B51BD4EAD000C03B41 /* BankNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */; };
 		5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D001BB0051400FD461A /* libsqlite3.tbd */; };
 		5E8B0D111BB0E61800FD461A /* libJieLianService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D101BB0E61800FD461A /* libJieLianService.a */; };
+		5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4A41BE74A6E0064BEC4 /* ViewModelTCP.m */; };
+		5E93B4A81BE89D300064BEC4 /* ViewModelQRImageMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4A71BE89D300064BEC4 /* ViewModelQRImageMaker.m */; };
+		5E93B4AB1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4AA1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -343,6 +346,12 @@
 		5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BankNumberViewController.m; sourceTree = "<group>"; };
 		5E8B0D001BB0051400FD461A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		5E8B0D101BB0E61800FD461A /* libJieLianService.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libJieLianService.a; path = JLPayDevice_TY/libJieLianService.a; sourceTree = "<group>"; };
+		5E93B4A31BE74A6E0064BEC4 /* ViewModelTCP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCP.h; sourceTree = "<group>"; };
+		5E93B4A41BE74A6E0064BEC4 /* ViewModelTCP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCP.m; sourceTree = "<group>"; };
+		5E93B4A61BE89D300064BEC4 /* ViewModelQRImageMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelQRImageMaker.h; sourceTree = "<group>"; };
+		5E93B4A71BE89D300064BEC4 /* ViewModelQRImageMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelQRImageMaker.m; sourceTree = "<group>"; };
+		5E93B4A91BE99FD80064BEC4 /* ViewModelTCPEnquiry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPEnquiry.h; sourceTree = "<group>"; };
+		5E93B4AA1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPEnquiry.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -816,6 +825,19 @@
 			name = bankNumVC;
 			sourceTree = "<group>";
 		};
+		5E93B4A21BE74A380064BEC4 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5E93B4A31BE74A6E0064BEC4 /* ViewModelTCP.h */,
+				5E93B4A41BE74A6E0064BEC4 /* ViewModelTCP.m */,
+				5E93B4A61BE89D300064BEC4 /* ViewModelQRImageMaker.h */,
+				5E93B4A71BE89D300064BEC4 /* ViewModelQRImageMaker.m */,
+				5E93B4A91BE99FD80064BEC4 /* ViewModelTCPEnquiry.h */,
+				5E93B4AA1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
 			isa = PBXGroup;
 			children = (
@@ -834,6 +856,7 @@
 				5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */,
 				5EA9214C1BE31B1B00DB0AA8 /* QRCodeButtonView.h */,
 				5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */,
+				5E93B4A21BE74A380064BEC4 /* ViewModel */,
 				5EA9214F1BE36EC200DB0AA8 /* 二维码收款 */,
 				5EA921501BE36ECB00DB0AA8 /* 扫一扫收款 */,
 			);
@@ -1462,8 +1485,10 @@
 				5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */,
 				5EA9214E1BE31B1B00DB0AA8 /* QRCodeButtonView.m in Sources */,
 				5E397B2E1AD36429004F206F /* ASICloudFilesRequest.m in Sources */,
+				5E93B4AB1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m in Sources */,
 				5EBA40FA1AEA37AC00F270C0 /* NewVersionView.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
+				5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */,
 				5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
@@ -1482,6 +1507,7 @@
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5E5E36281B8703F900560C0A /* RegisterViewController.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
+				5E93B4A81BE89D300064BEC4 /* ViewModelQRImageMaker.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
 				5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */,
 				5EA921531BE36F0A00DB0AA8 /* QRCodeViewController.m in Sources */,

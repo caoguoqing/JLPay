@@ -11,8 +11,11 @@
 #import "PublicInformation.h"
 #import "Packing8583.h"
 #import "TcpClientService.h"
+#import "EncodeString.h"
+#import "Define_Header.h"
+#import "QRCodeViewController.h"
 
-@interface OtherPayCollectViewController()<UITextFieldDelegate, QRCodeButtonViewDelegate, wallDelegate>
+@interface OtherPayCollectViewController()<UITextFieldDelegate, QRCodeButtonViewDelegate>
 {
     NSString* QRCodeName;
     NSString* barCodeName;
@@ -21,8 +24,6 @@
 @property (nonatomic, strong) UITextField* fieldMoneyInput;
 @property (nonatomic, strong) QRCodeButtonView* btnViewRQCodeDisplay;
 @property (nonatomic, strong) QRCodeButtonView* btnViewRQCodeScan;
-
-@property (nonatomic, strong) TcpClientService* tcpHolder;
 
 @end
 
@@ -66,35 +67,32 @@
 
 
 #pragma mask ---- QRCodeButtonViewDelegate
+/* 点击了二维码/条码按钮 */
 - (void)didSelectedView:(QRCodeButtonView *)QRCodeView {
-    NSLog(@"点击了视图:[%@]",QRCodeView.title);
     if ([QRCodeView.title isEqualToString:@"二维码"]) {
-        // 获取订单号
-        // 跳转到二维码生成界面去生成二维码
+        // 检查输入
+        if (self.fieldMoneyInput.text.length == 0) {
+            [self alertWithMessage:@"请输入金额!"];
+        } else {
+            // 跳转到二维码生成界面去生成二维码
+            [self pushToVCQRCode];
+        }
     }
     else if ([QRCodeView.title isEqualToString:@"扫一扫"]) {
         // 跳转到条码扫描界面
     }
 }
-
-
-#pragma mask ---- wallDelegate
-- (void)receiveGetData:(NSString *)data method:(NSString *)str {
-    
+/* 跳转到二维码显示界面 */
+- (void) pushToVCQRCode {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    QRCodeViewController* vc = [storyBoard instantiateViewControllerWithIdentifier:@"QRCodeVC"];
+    vc.payCollectType = self.payCollectType;
+    vc.money = [NSString stringWithFormat:@"%.02lf", [self.fieldMoneyInput.text floatValue]];
+    [self.navigationController pushViewController:vc animated:YES];
 }
-- (void)falseReceiveGetDataMethod:(NSString *)str {
-    
-}
 
 
-#pragma mask ---- TCP
-- (NSString*) orderCodeRequestPacking {
-    NSString* packingString = nil;
-    Packing8583* packingHolder = [Packing8583 sharedInstance];
-    
-    packingString = [packingHolder stringPackingWithType:@""];
-    return packingString ;
-}
+
 
 
 
@@ -125,6 +123,14 @@
     return isValid;
 }
 
+
+/* 封装alert */
+- (void) alertWithMessage:(NSString*)message {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
+}
 
 
 #pragma mask ---- 界面生命周期
@@ -159,10 +165,17 @@
     
     frame.origin.x += frame.size.width;
     [self.btnViewRQCodeScan setFrame:frame];
+    
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
+
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.tcpHolder clearDelegateAndClose];
+//    [self.tcpHolder clearDelegateAndClose];
+}
+- (void) backToLastViewController {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
@@ -200,12 +213,6 @@
         [_btnViewRQCodeScan setImage:[UIImage imageNamed:barCodeName]];
     }
     return _btnViewRQCodeScan;
-}
-- (TcpClientService *)tcpHolder {
-    if (_tcpHolder == nil) {
-        _tcpHolder = [TcpClientService getInstance];
-    }
-    return _tcpHolder;
 }
 
 #pragma mask ---- setter

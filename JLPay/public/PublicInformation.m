@@ -537,6 +537,7 @@
         myBuffer[i / 2] = (char)anInt;
     }
     NSString *unicodeString = [NSString stringWithCString:myBuffer encoding:4];
+    free(myBuffer);
     return unicodeString;
 }
 
@@ -669,7 +670,15 @@
     nDate = [nDate substringToIndex:14];
     return nDate;
 }
-
+/* 当前date+time */
++(NSString*) currentDateAndTime {
+    NSString* dateAntTime ;
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    dateAntTime = [dateFormatter stringFromDate:[NSDate date]];
+//    dateAntTime = [dateAntTime substringToIndex:14];
+    return dateAntTime;
+}
 
 +(NSString *)formatDate{
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
