@@ -96,12 +96,18 @@
 }
 #pragma mask ::: 卡号属性赋值
 - (void) setCardNum : (NSString*)cardNum {
+    if (!cardNum || cardNum.length == 0) {
+        return;
+    }
     NSString* preNum = [cardNum substringToIndex:6];
     NSString* sufNum = [cardNum substringFromIndex:[cardNum length] - 4];
     self.cardNumberLabel.text = [[preNum stringByAppendingString:@"******"] stringByAppendingString:sufNum];
 }
 #pragma mask ::: 日期时间赋值 : 093412
 - (void) setTime : (NSString*)time {
+    if (!time) {
+        return;
+    }
     self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
                                [time substringToIndex:2],
                                [time substringWithRange:NSMakeRange(2, 2)],

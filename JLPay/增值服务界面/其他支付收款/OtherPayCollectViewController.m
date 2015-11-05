@@ -69,14 +69,14 @@
 #pragma mask ---- QRCodeButtonViewDelegate
 /* 点击了二维码/条码按钮 */
 - (void)didSelectedView:(QRCodeButtonView *)QRCodeView {
+    // 检查输入
+    if (self.fieldMoneyInput.text.length == 0 || self.fieldMoneyInput.text.floatValue == 0.0) {
+        [self alertWithMessage:@"请输入金额!"];
+        return;
+    }
     if ([QRCodeView.title isEqualToString:@"二维码"]) {
-        // 检查输入
-        if (self.fieldMoneyInput.text.length == 0) {
-            [self alertWithMessage:@"请输入金额!"];
-        } else {
-            // 跳转到二维码生成界面去生成二维码
-            [self pushToVCQRCode];
-        }
+        // 跳转到二维码生成界面去生成二维码
+        [self pushToVCQRCode];
     }
     else if ([QRCodeView.title isEqualToString:@"扫一扫"]) {
         // 跳转到条码扫描界面
@@ -90,6 +90,13 @@
     vc.money = [NSString stringWithFormat:@"%.02lf", [self.fieldMoneyInput.text floatValue]];
     [self.navigationController pushViewController:vc animated:YES];
 }
+/* 跳转到扫一扫条码界面 */
+- (void) pushToVCBarCode {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    QRCodeViewController* vc = [storyBoard instantiateViewControllerWithIdentifier:@"QRCodeVC"];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 
 
 
@@ -176,7 +183,6 @@
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    [self.tcpHolder clearDelegateAndClose];
 }
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];

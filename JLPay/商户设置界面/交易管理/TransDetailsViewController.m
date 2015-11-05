@@ -42,6 +42,7 @@
 @property (nonatomic) CGRect activitorFrame;
 @end
 
+NSInteger logCount = 0;
 
 @implementation TransDetailsViewController
 @synthesize totalView = _totalView;
@@ -249,7 +250,8 @@
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
 
-    [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
+    [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];    
+    
     if (self.dataArrayDisplay.count == 0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
@@ -316,7 +318,6 @@
     } else {
         [self alertShow:@"未绑定设备,请先绑定设备"];
     }
-
 }
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
