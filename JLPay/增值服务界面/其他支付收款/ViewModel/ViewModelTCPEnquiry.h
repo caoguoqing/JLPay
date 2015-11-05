@@ -35,8 +35,9 @@
                                   andMoney:(NSString*)money;
 
 /* 方法: 查询成功后的清理工作及回调 */
-- (void) cleanForEnquiryDone ;
-
+- (void) cleanForEnquiryDone;
+/* 方法: 终止并清理定时器 */
+- (void) terminateTCPEnquiry;
 
 @property (nonatomic, assign) NSNumber* payIsDone;          // 查询结果标记
 // payIsDone 的观察者键

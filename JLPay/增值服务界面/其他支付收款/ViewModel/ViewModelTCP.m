@@ -90,7 +90,7 @@
         [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
 
     }
-    [self TCPClear];
+//    [self TCPClear];
 }
 
 

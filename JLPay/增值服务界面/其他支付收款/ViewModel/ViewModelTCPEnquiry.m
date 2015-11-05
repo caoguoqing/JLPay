@@ -12,13 +12,11 @@
 
 @interface ViewModelTCPEnquiry()<ViewModelTCPDelegate>
 {
-    NSTimeInterval timeOutInterval;
     NSTimeInterval TCPCircleInterval;
     NSString* sTransType;
     NSString* sOrderCode;
     NSString* sMoney;
 }
-@property (nonatomic, retain) NSTimer* timerTimeOut;        // 超时定时器
 @property (nonatomic, retain) NSTimer* timerTCPRequests;    // TCP轮询定时器
 @property (nonatomic, strong) NSMutableArray* TCPNodes;     // TCP节点数组
 
@@ -33,8 +31,6 @@
     sTransType = transType;
     sOrderCode = orderCode;
     sMoney = money;
-    // 启动超时定时器
-    [self startTimeOutTimer];
     // 启动TCP轮询定时器
     [self startTCPCircleTimer];
 }
@@ -54,14 +50,7 @@
 #pragma mask ---- 查询成功后的清理工作及回调
 - (void) cleanForEnquiryDone {
     if (self.payIsDone.boolValue) {
-        // 查询成功了,关闭超时计时器
-        [self stopTimeOutTimer];
-        // 关闭轮询计时器
-        [self stopTCPCircleTimer];
-        // 关闭所有TCP
-        [self closeAllTCPNodes];
-        // 清空所有TCP节点
-        [self removeAllTCPNodes];
+        [self terminateTCPEnquiry];
         // 成功回调
         if (self.delegate && [self.delegate respondsToSelector:@selector(TCPEnquiryResult:withMessage:)]) {
             [self.delegate TCPEnquiryResult:YES withMessage:@"收款成功!"];
@@ -69,29 +58,24 @@
     }
 }
 
+#pragma mask ---- 方法: 终止并清理定时器
+- (void) terminateTCPEnquiry {
+    // 关闭轮询计时器
+    [self stopTCPCircleTimer];
+    // 关闭所有TCP
+    [self closeAllTCPNodes];
+    // 清空所有TCP节点
+    [self removeAllTCPNodes];
+}
+
+
 #pragma mask ---- 初始化
 - (instancetype)init {
     self = [super init];
     if (self) {
-        timeOutInterval = 60; // 超时时间
         TCPCircleInterval = 5; // TCP轮询间隔
     }
     return self;
-}
-
-#pragma mask ---- 超时定时器
-/* 创建并启动定时器 */
-- (void) startTimeOutTimer {
-    self.timerTimeOut = [NSTimer scheduledTimerWithTimeInterval:timeOutInterval target:self selector:@selector(timeOutForTCPEnquiry) userInfo:nil repeats:NO];
-}
-/* 停止定时器 */
-- (void) stopTimeOutTimer {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.timerTimeOut isValid]) {
-            [self.timerTimeOut invalidate];
-            self.timerTimeOut = nil;
-        }
-    });
 }
 
 #pragma mask ---- TCP轮询定时器

@@ -23,7 +23,7 @@ typedef enum {
 } TagAlert;
 
 
-@interface QRCodeViewController()<ViewModelTCPDelegate, MBProgressHUDDelegate, ViewModelTCPEnquiryDelegate>
+@interface QRCodeViewController()<ViewModelTCPDelegate, MBProgressHUDDelegate, ViewModelTCPEnquiryDelegate, UIAlertViewDelegate>
 {
     NSString* orderCode; // 订单号
     NSString* QRCode; // 二维码
@@ -32,6 +32,7 @@ typedef enum {
 @property (nonatomic, strong) UILabel* labelPayType;
 @property (nonatomic, strong) UILabel* labelLog;
 @property (nonatomic, strong) UIImageView* imageViewQRCode;
+@property (nonatomic, strong) UIActivityIndicatorView* activity;
 
 @property (nonatomic, retain) ViewModelTCP* tcpQRCode;
 @property (nonatomic, retain) ViewModelTCPEnquiry* tcpEnquiry;
@@ -48,15 +49,17 @@ typedef enum {
 #pragma mask ---- ViewModelTCPDelegate
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
     [self.progressHUD hide:YES];
+    // 关闭TCP
+    [tcp TCPClear];
     if (state) { // 成功
-        // 关闭TCP
-        [tcp TCPClear];
         // 1.解析拆包的63域:订单号、应答信息、二维码信息
         [self responseMessageInF63:[responseData valueForKey:KeyResponseDataRetData]];
         // 2.更新二维码图片
         [self.imageViewQRCode setImage:[ViewModelQRImageMaker imageForQRCode:QRCode]];
         // 3.开始轮询交易结果
         [self startTCPEnquiry];
+        // 4.启动指示器
+        [self.activity startAnimating];
     } else { // 失败
         [self alertWithMessage:[responseData valueForKey:KeyResponseDataMessage] andTag:TagAlertError];
     }
@@ -65,20 +68,30 @@ typedef enum {
 #pragma mask ---- ViewModelTCPEnquiryDelegate
 /* 收款结果查询回调 */
 - (void)TCPEnquiryResult:(BOOL)result withMessage:(NSString *)message {
+    [self.activity stopAnimating];
     if (result) {
-        [self.labelLog setText:message];
+        [self labelLogReFrameAtDoneMessage:message];
+        // 提示框: 成功
         [self alertWithMessage:message andTag:TagAlertPayDone];
     } else {
         self.labelLog.text = nil;
         [self alertWithMessage:message andTag:TagAlertError];
     }
 }
+- (void) labelLogReFrameAtDoneMessage:(NSString*)message {
+    [self.labelLog setText:message];
+    CGRect newFrame = self.labelLog.frame;
+    newFrame.origin.x = 0;
+    newFrame.size.width = self.view.frame.size.width;
+    self.labelLog.textAlignment = NSTextAlignmentCenter;
+    self.labelLog.frame = newFrame;
+    self.labelLog.textColor = [UIColor greenColor];
+}
 
 #pragma mask ---- MBProgressHUDDelegate
 - (void)hudWasHidden:(MBProgressHUD *)hud {
     [hud removeFromSuperview];
     hud = nil;
-//    self.progressHUD = nil;
 }
 
 #pragma mask ---- NSKeyValueObserving
@@ -90,10 +103,15 @@ typedef enum {
     if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry) {
         NSLog(@"tcp的查询结果值被更新了(观察者)");
         [self.tcpEnquiry cleanForEnquiryDone];
-        [self removeObserver:self.tcpEnquiry forKeyPath:KEYPATH_PAYISDONE_CHANGED];
     }
 }
 
+#pragma mask ---- UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == TagAlertPayDone) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
 
 #pragma mask ---- 界面生命周期
 - (void)viewDidLoad {
@@ -103,8 +121,9 @@ typedef enum {
     [self.view addSubview:self.labelPayType];
     [self.view addSubview:self.imageViewQRCode];
     [self.view addSubview:self.labelLog];
+    [self.view addSubview:self.activity];
     
-    // TCP请求订单号
+    // TCP请求订单号+二维码
     [self startTCPRequest];
     [self hudShowWithMessage:@"二维码加载中..."];
 }
@@ -116,25 +135,34 @@ typedef enum {
     CGFloat imageViewHeight = 260;
     CGFloat imageViewWidth = imageViewHeight;
     
+    // 金额输入框
     CGRect frame = CGRectMake(0,
                               [PublicInformation heightOfNavigationAndStatusInVC:self],
                               self.view.frame.size.width,
                               labelHeight);
     [self.labelMoneyDisplay setFrame:frame];
     
+    // 扫码提示
     frame.origin.y += frame.size.height + inset;
     [self.labelPayType setFrame:frame];
     
+    // 二维码图片
     frame.origin.x = (self.view.frame.size.width - imageViewWidth)/2.0;
     frame.origin.y += frame.size.height + inset/2.0;
     frame.size.width = imageViewWidth;
     frame.size.height = imageViewHeight;
     [self.imageViewQRCode setFrame:frame];
     
-    frame.origin.x = 0;
+    // 指示器
     frame.origin.y += frame.size.height + inset/2.0;
-    frame.size.width = self.view.frame.size.width;
+    frame.size.width = labelHeight;
     frame.size.height = labelHeight;
+    frame.origin.x = self.view.frame.size.width/3.0 - frame.size.width;
+    [self.activity setFrame:frame];
+    
+    // 提示标签
+    frame.origin.x += frame.size.width;
+    frame.size.width = self.view.frame.size.width * 2.0/3.0;
     [self.labelLog setFrame:frame];
 }
 - (void)viewDidAppear:(BOOL)animated {
@@ -143,8 +171,8 @@ typedef enum {
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.tcpQRCode TCPClear];
-    
-    
+    [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
+    [self.tcpEnquiry terminateTCPEnquiry];
 }
 
 #pragma mask ---- TCP报文请求
@@ -243,7 +271,6 @@ typedef enum {
     if (_labelLog == nil) {
         _labelLog = [[UILabel alloc] initWithFrame:CGRectZero];
         _labelLog.textAlignment = NSTextAlignmentLeft;
-        _labelLog.textColor = [UIColor colorWithWhite:0.5 alpha:1];
     }
     return _labelLog;
 }
@@ -254,6 +281,14 @@ typedef enum {
         _imageViewQRCode.image = [UIImage imageNamed:@"QRCodeImage"];
     }
     return _imageViewQRCode;
+}
+- (UIActivityIndicatorView *)activity {
+    if (_activity == nil) {
+        _activity = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
+        _activity.hidesWhenStopped = YES;
+        _activity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    }
+    return _activity;
 }
 - (ViewModelTCP *)tcpQRCode {
     if (_tcpQRCode == nil) {

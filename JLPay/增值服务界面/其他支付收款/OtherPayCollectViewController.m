@@ -170,6 +170,10 @@
     [self.navigationItem setBackBarButtonItem:backBarButton];
 
 }
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.fieldMoneyInput becomeFirstResponder];
+}
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 //    [self.tcpHolder clearDelegateAndClose];
