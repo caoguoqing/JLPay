@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 
+
+
 @class ViewModelTCPEnquiry;
 
 
@@ -31,5 +33,14 @@
 - (void) TCPStartTransEnquiryWithTransType:(NSString*)transType
                               andOrderCode:(NSString*)orderCode
                                   andMoney:(NSString*)money;
+
+/* 方法: 查询成功后的清理工作及回调 */
+- (void) cleanForEnquiryDone ;
+
+
+@property (nonatomic, assign) NSNumber* payIsDone;          // 查询结果标记
+// payIsDone 的观察者键
+#define KEYPATH_PAYISDONE_CHANGED @"payIsDone"
+
 
 @end

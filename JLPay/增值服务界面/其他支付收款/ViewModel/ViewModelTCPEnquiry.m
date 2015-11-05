@@ -9,8 +9,6 @@
 #import "ViewModelTCPEnquiry.h"
 #import "ViewModelTCP.h"
 
-// payIsDone 的观察者键
-#define KEYPATH_PAYISDONE_CHANGED @"KEYPATH_PAYISDONE_CHANGED__"
 
 @interface ViewModelTCPEnquiry()<ViewModelTCPDelegate>
 {
@@ -23,7 +21,6 @@
 @property (nonatomic, retain) NSTimer* timerTimeOut;        // 超时定时器
 @property (nonatomic, retain) NSTimer* timerTCPRequests;    // TCP轮询定时器
 @property (nonatomic, strong) NSMutableArray* TCPNodes;     // TCP节点数组
-@property (nonatomic, assign) NSNumber* payIsDone;          // 查询结果标记
 
 @end
 
@@ -43,53 +40,34 @@
 }
 
 
-
-
 #pragma mask ---- ViewModelTCPDelegate
-//- (void)TCPResponseWithState:(BOOL)state andData:(NSDictionary *)responseData {
-//    if (state) {
-//        [self updatePayDoneResult:YES];
-//    } else {
-////        [tcp TCPClear];
-////        [self removeTCPNode:tcp];
-//    }
-//    // 失败就获取失败信息保存下来,回调时带出去
-//}
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
     if (state) {
         [self updatePayDoneResult:YES];
     } else {
-//        [tcp TCPClear];
+        [self closeTCPNode:tcp];
         [self removeTCPNode:tcp];
     }
-    // 失败就获取失败信息保存下来,回调时带出去
+    // 失败就获取失败信息保存下来,回调时带出去 ..... need finish
 }
 
-#pragma mask ---- NSKeyValueObserving
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context
-{
-    if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.payIsDone) {
-        if (self.payIsDone.boolValue) {
-            // 查询成功了,关闭超时计时器
-            [self stopTimeOutTimer];
-            // 关闭轮询计时器
-            [self stopTCPCircleTimer];
-            // 关闭所有TCP
-            [self closeAllTCPNodes];
-            // 清空所有TCP节点
-            [self removeAllTCPNodes];
-            // 回调
-            NSLog(@"收款成功!");
-            if (self.delegate && [self.delegate respondsToSelector:@selector(TCPEnquiryResult:withMessage:)]) {
-                [self.delegate TCPEnquiryResult:YES withMessage:@"收款成功!"];
-            }
+#pragma mask ---- 查询成功后的清理工作及回调
+- (void) cleanForEnquiryDone {
+    if (self.payIsDone.boolValue) {
+        // 查询成功了,关闭超时计时器
+        [self stopTimeOutTimer];
+        // 关闭轮询计时器
+        [self stopTCPCircleTimer];
+        // 关闭所有TCP
+        [self closeAllTCPNodes];
+        // 清空所有TCP节点
+        [self removeAllTCPNodes];
+        // 成功回调
+        if (self.delegate && [self.delegate respondsToSelector:@selector(TCPEnquiryResult:withMessage:)]) {
+            [self.delegate TCPEnquiryResult:YES withMessage:@"收款成功!"];
         }
     }
 }
-
 
 #pragma mask ---- 初始化
 - (instancetype)init {
@@ -100,8 +78,6 @@
     }
     return self;
 }
-
-
 
 #pragma mask ---- 超时定时器
 /* 创建并启动定时器 */
@@ -137,7 +113,7 @@
 /* 追加TCP节点 */
 - (void) appendTCPNode:(ViewModelTCP*)tcpHolder {
     [self.TCPNodes addObject:tcpHolder];
-    NSLog(@"TCP池中的节点数:[%lu]",self.TCPNodes.count);
+    NSLog(@"TCP池中的节点数:[%lu]",(long)self.TCPNodes.count);
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
@@ -146,6 +122,12 @@
 /* 删除指定节点 */
 - (void) removeTCPNode:(ViewModelTCP*)tcpHolder {
     [self.TCPNodes removeObject:tcpHolder];
+}
+/* 关闭指定的TCP节点 */
+- (void) closeTCPNode:(ViewModelTCP*)tcpHolder {
+    if (tcpHolder && [tcpHolder isConnected]) {
+        [tcpHolder TCPClear];
+    }
 }
 /* 关闭所有节点TCP */
 - (void) closeAllTCPNodes {
@@ -188,16 +170,13 @@
     if (self.TCPNodes.count >= 5) { // TCP池中最多只能有5个
         return;
     }
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//    dispatch_async(dispatch_get_main_queue(), ^{
-        // 生成一个TCP
-        ViewModelTCP* tcp = [[ViewModelTCP alloc] init];
-        // TCP请求
-        NSLog(@"启动一次交易查询...");
-        [tcp TCPRequestWithTransType:sTransType andMoney:sMoney andOrderCode:sOrderCode andDelegate:self];
-        // TCP节点添加到TCP池
-        [self appendTCPNode:tcp];
-//    });
+    // 生成一个TCP
+    ViewModelTCP* tcp = [[ViewModelTCP alloc] init];
+    // TCP请求
+    NSLog(@"启动一次交易查询...");
+    [tcp TCPRequestWithTransType:sTransType andMoney:sMoney andOrderCode:sOrderCode andDelegate:self];
+    // TCP节点添加到TCP池
+    [self appendTCPNode:tcp];
 }
 
 #pragma mask ---- getter
@@ -210,7 +189,6 @@
 - (NSNumber *)payIsDone {
     if (_payIsDone == nil) {
         _payIsDone = [NSNumber numberWithBool:NO];
-        [_payIsDone addObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED options:NSKeyValueObservingOptionNew context:nil];
     }
     return _payIsDone;
 }

@@ -27,7 +27,6 @@ typedef enum {
 {
     NSString* orderCode; // 订单号
     NSString* QRCode; // 二维码
-//    BOOL payIsDone; // 收款完成标记
 }
 @property (nonatomic, strong) UILabel* labelMoneyDisplay;
 @property (nonatomic, strong) UILabel* labelPayType;
@@ -43,7 +42,6 @@ typedef enum {
 
 
 
-
 @implementation QRCodeViewController
 
 
@@ -51,16 +49,13 @@ typedef enum {
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
     [self.progressHUD hide:YES];
     if (state) { // 成功
-        /*
-         * 1.拆出订单号、应答信息、二维码信息
-         * 2.显示二维码
-         * 3.根据订单号查询交易结果(轮询)
-         */
-        // 解析拆包的63域:订单号、应答信息、二维码信息
+        // 关闭TCP
+        [tcp TCPClear];
+        // 1.解析拆包的63域:订单号、应答信息、二维码信息
         [self responseMessageInF63:[responseData valueForKey:KeyResponseDataRetData]];
-        // 更新二维码图片
+        // 2.更新二维码图片
         [self.imageViewQRCode setImage:[ViewModelQRImageMaker imageForQRCode:QRCode]];
-        // 开始轮询交易结果
+        // 3.开始轮询交易结果
         [self startTCPEnquiry];
     } else { // 失败
         [self alertWithMessage:[responseData valueForKey:KeyResponseDataMessage] andTag:TagAlertError];
@@ -86,6 +81,18 @@ typedef enum {
 //    self.progressHUD = nil;
 }
 
+#pragma mask ---- NSKeyValueObserving
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSString *,id> *)change
+                       context:(void *)context
+{
+    if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry) {
+        NSLog(@"tcp的查询结果值被更新了(观察者)");
+        [self.tcpEnquiry cleanForEnquiryDone];
+        [self removeObserver:self.tcpEnquiry forKeyPath:KEYPATH_PAYISDONE_CHANGED];
+    }
+}
 
 
 #pragma mask ---- 界面生命周期
@@ -100,9 +107,6 @@ typedef enum {
     // TCP请求订单号
     [self startTCPRequest];
     [self hudShowWithMessage:@"二维码加载中..."];
-    
-    // 收款完成标记
-//    payIsDone = NO;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -261,6 +265,7 @@ typedef enum {
     if (_tcpEnquiry == nil) {
         _tcpEnquiry = [[ViewModelTCPEnquiry alloc] init];
         [_tcpEnquiry setDelegate:self];
+        [_tcpEnquiry addObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED options:NSKeyValueObservingOptionNew context:nil];
     }
     return _tcpEnquiry;
 }

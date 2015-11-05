@@ -75,16 +75,18 @@
     } else {
         NSLog(@"响应失败");
         if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
-//            [self.delegate TCPResponseWithState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
             [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
         }
     }
-    [self TCPClear];
+    if (!self) {
+        NSLog(@"当前TCP节点对象已经被释放了");
+    }
+//    [self TCPClear];
 }
+
 /* TCP请求失败 */
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
-//        [self.delegate TCPResponseWithState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
         [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
 
     }
@@ -102,11 +104,9 @@
     } else {
         // 解析63域
         NSString* f63 = [dataDict objectForKey:@"63"];
-//        retDataInfo = [self dictRetData:f63];
         retDataInfo = [self dictRetData:[f63 substringFromIndex:4]];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
-//        [self.delegate TCPResponseWithState:state andData:retDataInfo];
         [self.delegate TCPResponse:self withState:state andData:retDataInfo];
     }
 }
