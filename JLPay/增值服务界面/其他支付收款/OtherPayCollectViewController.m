@@ -14,6 +14,7 @@
 #import "EncodeString.h"
 #import "Define_Header.h"
 #import "QRCodeViewController.h"
+#import "CodeScannerViewController.h"
 
 @interface OtherPayCollectViewController()<UITextFieldDelegate, QRCodeButtonViewDelegate>
 {
@@ -80,6 +81,7 @@
     }
     else if ([QRCodeView.title isEqualToString:@"扫一扫"]) {
         // 跳转到条码扫描界面
+        [self pushToVCBarCode];
     }
 }
 /* 跳转到二维码显示界面 */
@@ -93,7 +95,9 @@
 /* 跳转到扫一扫条码界面 */
 - (void) pushToVCBarCode {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    QRCodeViewController* vc = [storyBoard instantiateViewControllerWithIdentifier:@"QRCodeVC"];
+    CodeScannerViewController* vc = [storyBoard instantiateViewControllerWithIdentifier:@"codeScannerVC"];
+    vc.payCollectType = self.payCollectType;
+    vc.money = [NSString stringWithFormat:@"%.02lf", [self.fieldMoneyInput.text floatValue]];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

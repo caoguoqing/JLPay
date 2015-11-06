@@ -98,6 +98,9 @@
 		5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4A41BE74A6E0064BEC4 /* ViewModelTCP.m */; };
 		5E93B4A81BE89D300064BEC4 /* ViewModelQRImageMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4A71BE89D300064BEC4 /* ViewModelQRImageMaker.m */; };
 		5E93B4AB1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4AA1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m */; };
+		5E93B4AF1BEC33C90064BEC4 /* CodeScannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4AE1BEC33C90064BEC4 /* CodeScannerViewController.m */; };
+		5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447EF1BEC8E5B00128452 /* MaskView.m */; };
+		5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F21BEC914800128452 /* ScannerImageView.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -352,6 +355,12 @@
 		5E93B4A71BE89D300064BEC4 /* ViewModelQRImageMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelQRImageMaker.m; sourceTree = "<group>"; };
 		5E93B4A91BE99FD80064BEC4 /* ViewModelTCPEnquiry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPEnquiry.h; sourceTree = "<group>"; };
 		5E93B4AA1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPEnquiry.m; sourceTree = "<group>"; };
+		5E93B4AD1BEC33C90064BEC4 /* CodeScannerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeScannerViewController.h; sourceTree = "<group>"; };
+		5E93B4AE1BEC33C90064BEC4 /* CodeScannerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeScannerViewController.m; sourceTree = "<group>"; };
+		5E9447EE1BEC8E5B00128452 /* MaskView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskView.h; sourceTree = "<group>"; };
+		5E9447EF1BEC8E5B00128452 /* MaskView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskView.m; sourceTree = "<group>"; };
+		5E9447F11BEC914800128452 /* ScannerImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerImageView.h; sourceTree = "<group>"; };
+		5E9447F21BEC914800128452 /* ScannerImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerImageView.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -875,6 +884,12 @@
 		5EA921501BE36ECB00DB0AA8 /* 扫一扫收款 */ = {
 			isa = PBXGroup;
 			children = (
+				5E93B4AD1BEC33C90064BEC4 /* CodeScannerViewController.h */,
+				5E93B4AE1BEC33C90064BEC4 /* CodeScannerViewController.m */,
+				5E9447EE1BEC8E5B00128452 /* MaskView.h */,
+				5E9447EF1BEC8E5B00128452 /* MaskView.m */,
+				5E9447F11BEC914800128452 /* ScannerImageView.h */,
+				5E9447F21BEC914800128452 /* ScannerImageView.m */,
 			);
 			path = "扫一扫收款";
 			sourceTree = "<group>";
@@ -1450,8 +1465,10 @@
 				5E397B381AD36429004F206F /* ASIS3BucketRequest.m in Sources */,
 				5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */,
 				5EBAA8EA1ACD2FA800E2ABDD /* HeaderString.m in Sources */,
+				5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */,
 				5E397B3C1AD36429004F206F /* ASIWebPageRequest.m in Sources */,
 				5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */,
+				5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
 				5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */,
 				5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */,
@@ -1526,6 +1543,7 @@
 				5E397B2A1AD36429004F206F /* ASICloudFilesContainerRequest.m in Sources */,
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
+				5E93B4AF1BEC33C90064BEC4 /* CodeScannerViewController.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
 				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
 				5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */,
