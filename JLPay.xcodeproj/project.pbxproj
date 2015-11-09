@@ -101,6 +101,7 @@
 		5E93B4AF1BEC33C90064BEC4 /* CodeScannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E93B4AE1BEC33C90064BEC4 /* CodeScannerViewController.m */; };
 		5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447EF1BEC8E5B00128452 /* MaskView.m */; };
 		5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F21BEC914800128452 /* ScannerImageView.m */; };
+		5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -361,6 +362,8 @@
 		5E9447EF1BEC8E5B00128452 /* MaskView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskView.m; sourceTree = "<group>"; };
 		5E9447F11BEC914800128452 /* ScannerImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerImageView.h; sourceTree = "<group>"; };
 		5E9447F21BEC914800128452 /* ScannerImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerImageView.m; sourceTree = "<group>"; };
+		5E9447F41BF0957A00128452 /* BarCodeResultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BarCodeResultViewController.h; sourceTree = "<group>"; };
+		5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BarCodeResultViewController.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -890,6 +893,8 @@
 				5E9447EF1BEC8E5B00128452 /* MaskView.m */,
 				5E9447F11BEC914800128452 /* ScannerImageView.h */,
 				5E9447F21BEC914800128452 /* ScannerImageView.m */,
+				5E9447F41BF0957A00128452 /* BarCodeResultViewController.h */,
+				5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */,
 			);
 			path = "扫一扫收款";
 			sourceTree = "<group>";
@@ -1446,6 +1451,7 @@
 				5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */,
 				5EBAA9121ACD3F1B00E2ABDD /* SBJsonParser.m in Sources */,
 				5EBAA8E61ACD2FA800E2ABDD /* ISOHelper.m in Sources */,
+				5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */,
 				5EB9B1B51AD7D6D900A73190 /* settingViewController.m in Sources */,
 				5ED3442D1AD8E10D0005C890 /* MBProgressHUD.m in Sources */,
 				5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */,

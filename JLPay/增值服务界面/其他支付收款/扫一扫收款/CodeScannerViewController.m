@@ -9,23 +9,29 @@
 #import "CodeScannerViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "MaskView.h"
+#import "MBProgressHUD.h"
+#import "ViewModelTCP.h"
+#import "OtherPayCollectViewController.h"
 
 
-const NSString* kScanQRCodeQueueName = @"kScanQRCodeQueueName__";
-static CGFloat fScanViewHeight = 200; // 条码摄取框的高度
-static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
+//const NSString* kScanQRCodeQueueName = @"kScanQRCodeQueueName__";
+//static CGFloat fScanViewHeight = 200; // 条码摄取框的高度
+//static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
 
 
 
 #pragma mask ---- 对象属性
-@interface CodeScannerViewController()<AVCaptureMetadataOutputObjectsDelegate>
+@interface CodeScannerViewController()<AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate,ViewModelTCPDelegate>
 {
-    NSArray* metadataTypes;
+    NSArray* metadataTypes; // 扫码的类型组
+    BOOL enableImageAnimating; // 扫描框动效的开关
 }
 @property (nonatomic, strong) AVCaptureSession* captureSession;         // 媒体管理器
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer* videoLayer;   // 视频显示层
-@property (nonatomic, strong) MaskView* maskView;
+@property (nonatomic, strong) MaskView* maskView; // 遮罩视图: 带扫描框
 
+@property (nonatomic, strong) MBProgressHUD* progressHUD;
+@property (nonatomic, retain) ViewModelTCP* tcpHolder;
 @end
 
 
@@ -39,19 +45,66 @@ static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
   didOutputMetadataObjects:(NSArray *)metadataObjects
             fromConnection:(AVCaptureConnection *)connection
 {
-    
+    [self stopBarCodeScanning];
+    [self.maskView stopImageAnimation];
+    enableImageAnimating = YES;
+    if (metadataObjects && metadataObjects.count > 0) {
+        AVMetadataMachineReadableCodeObject* metadataObject = [metadataObjects objectAtIndex:0];
+        NSString* orderCode = [metadataObject stringValue];
+        NSString* qureTitle = [NSString stringWithFormat:@"条形码:%@",orderCode];
+        NSLog(@"%@",qureTitle);
+//        NSString* otherTitle = @"重新扫描";
+//        [self alertForMessage:qureTitle andOtherChoice:otherTitle];
+        self.progressHUD.labelText = @"收款中...";
+        [self.progressHUD show:YES];
+        
+        [self startTCPTransWithOrderCode:orderCode];
+        
+    } else {
+        [self alertForMessage:@"扫描条形码失败!"];
+    }
 }
 
 
+#pragma mask ---- ViewModelTCPDelegate
+- (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData
+{
+    [self.progressHUD hide:YES];
+    [tcp TCPClear];
+    if (state) {
+        [self alertForMessage:@"收款成功"];
+    }
+    else {
+        NSString* message = [responseData valueForKey:KeyResponseDataMessage];
+        [self alertForMessage:[NSString stringWithFormat:@"收款失败:%@",message]];
+    }
+    // barPayCollectionVC
+}
+#pragma mask ---- TCP
+/* TCP扫码收款交易请求 */
+- (void) startTCPTransWithOrderCode:(NSString*)orderCode {
+    NSString* transType = nil;
+    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
+        transType = TranType_BarCode_Trans_Alipay;
+    }
+    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
+        transType = TranType_BarCode_Trans_WeChat;
+    }
+    if (transType) {
+        [self.tcpHolder TCPRequestWithTransType:transType andMoney:self.money andOrderCode:orderCode andDelegate:self];
+    }
+}
 
 #pragma mask ---- 初始化界面视图
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.clipsToBounds = YES;
+    enableImageAnimating = YES;
     // 条码类型:
     metadataTypes = @[AVMetadataObjectTypeCode128Code,AVMetadataObjectTypeEAN13Code,AVMetadataObjectTypeEAN8Code];
     // 创建背景框视图
     [self.view addSubview:self.maskView];
+    [self.view addSubview:self.progressHUD];
     [self.view.layer insertSublayer:self.videoLayer atIndex:0];
     // 初始化摄像头
     if ([self initBarCodeScanning]) {
@@ -60,7 +113,22 @@ static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
         [self alertForMessage:@"摄像头打开失败!"];
     }
 }
-
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (enableImageAnimating) {
+        [self.maskView startImageAnimation];
+        enableImageAnimating = NO;
+    }
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.maskView stopImageAnimation];
+    [self stopBarCodeScanning];
+    enableImageAnimating = YES;
+}
 
 
 
@@ -80,11 +148,19 @@ static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
 }
 /* 开始扫码 */
 - (void) startBarCodeScanning {
-    [self.captureSession startRunning];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (![self.captureSession isRunning]) {
+            [self.captureSession startRunning];
+        }
+    });
 }
 /* 停止扫码 */
 - (void) stopBarCodeScanning {
-    [self.captureSession stopRunning];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if ([self.captureSession isRunning]) {
+            [self.captureSession stopRunning];
+        }
+    });
 }
 
 /* 视频入口 */
@@ -100,6 +176,8 @@ static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
     [output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
     return output;
 }
+
+#pragma mask ---- UIAlertView & UIAlertViewDelegate
 /* 创建弹窗 */
 - (void) alertForMessage:(NSString*)message {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -107,6 +185,21 @@ static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
         [alert show];
     });
 }
+/* 创建弹窗: +其他选项按钮 */
+- (void) alertForMessage:(NSString*)message andOtherChoice:(NSString*)otherChoice {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:otherChoice, nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
+}
+/* UIAlertViewDelegate */
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString* btnTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if (buttonIndex > 0 && [btnTitle isEqualToString:@"重新扫描"]) {
+        [self startBarCodeScanning];
+    }
+}
+
 
 #pragma mask ---- getter 
 - (MaskView *)maskView {
@@ -132,6 +225,24 @@ static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
         [_videoLayer setFrame:self.view.bounds];
     }
     return _videoLayer;
+}
+- (MBProgressHUD *)progressHUD {
+    if (_progressHUD == nil) {
+//        _progressHUD = [MBProgressHUD HUDForView:self.view];
+        _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
+//        _progressHUD.mode = MBProgressHUDModeCustomView;
+//        _progressHUD.animationType = MBProgressHUDAnimationZoom;
+//        UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
+//        imageView.image = [UIImage imageNamed:@"wx"];
+//        _progressHUD.customView = imageView;
+    }
+    return _progressHUD;
+}
+- (ViewModelTCP *)tcpHolder {
+    if (_tcpHolder == nil) {
+        _tcpHolder = [[ViewModelTCP alloc] init];
+    }
+    return _tcpHolder;
 }
 
 @end

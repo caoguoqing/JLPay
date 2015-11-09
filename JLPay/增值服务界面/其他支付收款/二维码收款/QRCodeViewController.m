@@ -108,9 +108,9 @@ typedef enum {
 
 #pragma mask ---- UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == TagAlertPayDone) {
+//    if (alertView.tag == TagAlertPayDone) {
         [self.navigationController popViewControllerAnimated:YES];
-    }
+//    }
 }
 
 #pragma mask ---- 界面生命周期

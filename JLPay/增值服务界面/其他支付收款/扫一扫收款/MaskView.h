@@ -10,6 +10,9 @@
 
 @interface MaskView : UIView
 
+/* 启动网格动画 */
+- (void) startImageAnimation;
+
 /* 停止网格动画 */
 - (void) stopImageAnimation;
 

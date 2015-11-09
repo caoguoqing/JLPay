@@ -82,6 +82,7 @@
     else if ([QRCodeView.title isEqualToString:@"扫一扫"]) {
         // 跳转到条码扫描界面
         [self pushToVCBarCode];
+        NSLog(@"%s",__func__);
     }
 }
 /* 跳转到二维码显示界面 */
@@ -153,6 +154,7 @@
     [self.view addSubview:self.fieldMoneyInput];
     [self.view addSubview:self.btnViewRQCodeDisplay];
     [self.view addSubview:self.btnViewRQCodeScan];
+    [self.fieldMoneyInput becomeFirstResponder];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -168,7 +170,6 @@
     [self.fieldMoneyInput setLeftView:[self leftViewLabelInFrame:frame]];
     [self.fieldMoneyInput setLeftViewMode:UITextFieldViewModeAlways];
     
-    
     frame.origin.y += frame.size.height + inset;
     frame.size.width = btnWidth;
     frame.size.height = btnHeight;
@@ -183,7 +184,6 @@
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self.fieldMoneyInput becomeFirstResponder];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];

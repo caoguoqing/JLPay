@@ -21,12 +21,18 @@
 @property (nonatomic, strong) UIImageView* cornerRightUp;
 @property (nonatomic, strong) UIImageView* cornerRightDown;
 
+
+
 @end
 
 
 
 @implementation ScannerImageView
 
+/* 启动网格动画 */
+- (void) startImageAnimation {
+    [self.imageViewNet.layer addAnimation:[self animationOfImageMoving:self.frame.size.height] forKey:KEY_IMAGEANIMATION];
+}
 /* 停止网格动画 */
 - (void) stopImageAnimation {
     [self.imageViewNet.layer removeAnimationForKey:KEY_IMAGEANIMATION];
@@ -50,7 +56,6 @@
 #pragma mask ---- 加载子视图
 - (void)layoutSubviews {
     CGFloat cornerWH = 18;
-    
     
     CGRect frame = CGRectMake(0, - self.imageViewNet.image.size.height, self.frame.size.width, self.imageViewNet.image.size.height);
     [self.imageViewNet setFrame:frame];
@@ -88,7 +93,7 @@
     if (_imageViewNet == nil) {
         _imageViewNet = [[UIImageView alloc] initWithFrame:CGRectZero];
         _imageViewNet.image = [UIImage imageNamed:@"scan_net"];
-        [_imageViewNet.layer addAnimation:[self animationOfImageMoving:self.frame.size.height] forKey:KEY_IMAGEANIMATION];
+//        [_imageViewNet.layer addAnimation:[self animationOfImageMoving:self.frame.size.height] forKey:KEY_IMAGEANIMATION];
     }
     return _imageViewNet;
 }
