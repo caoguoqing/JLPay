@@ -32,6 +32,7 @@
      AsyncSocket *asyncSocket;
 }
 @property (nonatomic, assign) id<wallDelegate> delegate;
+//@property (nonatomic, assign) id<wallDelegate> delegate;
 
 @property(nonatomic,retain)NSString *orderInfoStr;
 

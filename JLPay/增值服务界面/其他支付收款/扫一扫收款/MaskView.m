@@ -43,7 +43,6 @@ static CGFloat fInset = 20.0;
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        
         scannerViewWidth = frame.size.width - fInset*2;
         scannerViewHeight = fHeightOfScannerView;
         // 重置frame
@@ -53,7 +52,7 @@ static CGFloat fInset = 20.0;
         newFrame.origin.x = -(borderWidth - fInset);
         newFrame.size.width = actualWidth;
         self.frame = newFrame;
-                
+
         // 边框
         self.layer.borderWidth = borderWidth;
         self.layer.borderColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.4].CGColor;

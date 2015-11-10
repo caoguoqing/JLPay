@@ -175,4 +175,11 @@
 + (NSString*) dotMoneyFromNoDotMoney:(NSString*)noDotMoney;
 
 
+
+#pragma mask 0-------------------------------------------0 设备操作相关
+
+#pragma maks ::: 判断设备是否绑定
+
+
+
 @end

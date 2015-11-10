@@ -16,6 +16,7 @@
     NSString* sTransType;
     NSString* sOrderCode;
     NSString* sMoney;
+    NSInteger tagTCP;
 }
 @property (nonatomic, retain) NSTimer* timerTCPRequests;    // TCP轮询定时器
 @property (nonatomic, strong) NSMutableArray* TCPNodes;     // TCP节点数组
@@ -38,6 +39,7 @@
 
 #pragma mask ---- ViewModelTCPDelegate
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
+    NSLog(@"TCP[%d]返回了,交易结果:[%d]",tcp.tag,state);
     if (state) {
         [self updatePayDoneResult:YES];
     } else {
@@ -73,7 +75,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        TCPCircleInterval = 5; // TCP轮询间隔
+        TCPCircleInterval = 3; // TCP轮询间隔
+        tagTCP = 100;
     }
     return self;
 }
@@ -97,7 +100,8 @@
 /* 追加TCP节点 */
 - (void) appendTCPNode:(ViewModelTCP*)tcpHolder {
     [self.TCPNodes addObject:tcpHolder];
-    NSLog(@"TCP池中的节点数:[%lu]",(long)self.TCPNodes.count);
+//    NSLog(@"TCP池+1[%d]，节点数:[%lu]",tcpHolder.tag,(long)self.TCPNodes.count);
+    NSLog(@"%@ <-- %d",[self allTcpNodesTag],tcpHolder.tag);
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
@@ -105,12 +109,37 @@
 }
 /* 删除指定节点 */
 - (void) removeTCPNode:(ViewModelTCP*)tcpHolder {
-    [self.TCPNodes removeObject:tcpHolder];
+//    [self.TCPNodes removeObject:tcpHolder];
+    for (ViewModelTCP* tcp in self.TCPNodes) {
+        if (tcp.tag == tcpHolder.tag) {
+            [self.TCPNodes removeObject:tcp];
+//            NSLog(@"TCP池-1[%d]，节点数:[%lu]\n",tcpHolder.tag,(long)self.TCPNodes.count);
+            NSLog(@"%@ --> %d",[self allTcpNodesTag],tcpHolder.tag);
+
+        }
+    }
 }
+- (NSString*) allTcpNodesTag {
+    NSMutableString* tags = [[NSMutableString alloc] init];
+    [tags appendString:@"["];
+    for (ViewModelTCP* tcp in self.TCPNodes) {
+        [tags appendFormat:@"%d,",tcp.tag];
+    }
+    if (tags.length > 1) {
+        [tags deleteCharactersInRange:NSMakeRange(tags.length - 1, 1)];
+    }
+    [tags appendString:@"]"];
+    return tags;
+}
+
 /* 关闭指定的TCP节点 */
 - (void) closeTCPNode:(ViewModelTCP*)tcpHolder {
-    if (tcpHolder && [tcpHolder isConnected]) {
-        [tcpHolder TCPClear];
+    for (ViewModelTCP* tcp in self.TCPNodes) {
+        if (tcp.tag == tcpHolder.tag) {
+            if (tcpHolder && [tcpHolder isConnected]) {
+                [tcpHolder TCPClear];
+            }
+        }
     }
 }
 /* 关闭所有节点TCP */
@@ -156,11 +185,18 @@
     }
     // 生成一个TCP
     ViewModelTCP* tcp = [[ViewModelTCP alloc] init];
-    // TCP请求
-    NSLog(@"启动一次交易查询...");
-    [tcp TCPRequestWithTransType:sTransType andMoney:sMoney andOrderCode:sOrderCode andDelegate:self];
-    // TCP节点添加到TCP池
-    [self appendTCPNode:tcp];
+    tcp.tag = tagTCP;
+    tagTCP += 2;
+    
+//    dispatch_async(dispatch_get_main_queue(), ^{
+        // TCP节点添加到TCP池
+        [self appendTCPNode:tcp];
+//    });
+//    dispatch_async(dispatch_get_main_queue(), ^{
+        // TCP请求
+        [tcp TCPRequestWithTransType:sTransType andMoney:sMoney andOrderCode:sOrderCode andDelegate:self];
+//    });
+
 }
 
 #pragma mask ---- getter

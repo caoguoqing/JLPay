@@ -76,9 +76,22 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [sock setDelegate:nil];
     [sock disconnect];
     sock=nil;
-    if (delegate !=nil && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
+    
+    if (self.delegate) {
+//        NSLog(@"[%s]-------delegate = [%@]",__func__, self.delegate);
+        NSLog(@"第一次访问delegate");
+    }
+    if (self.delegate) {
+        NSLog(@"第二次访问delegate");
+    }
+    
+    if (delegate  && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
         [delegate receiveGetData:aStr method:self.tcpMethodStr];
     }
+//    if (delegate != nil && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
+//        [delegate receiveGetData:aStr method:self.tcpMethodStr];
+//    }
+
 }
 
 
@@ -108,7 +121,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock
 {
     //断开连接了
-    NSLog(@"onSocketDidDisconnect:%p", sock);
     if (self.delegate && [self.delegate respondsToSelector:@selector(falseReceiveGetDataMethod:)]) {
         [self.delegate falseReceiveGetDataMethod:@"网络连接失败!"];
     }

@@ -54,6 +54,17 @@ static DeviceManager* _sharedDeviceManager = nil;
     return _sharedDeviceManager;
 }
 
+# pragma mask : 判断是否绑定了设备
++(BOOL) deviceIsBinded {
+    NSDictionary* bindedInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    BOOL binded = YES;
+    if (bindedInfo == nil) {
+        binded = NO;
+    }
+    return binded;
+}
+
+
 
 #pragma mask : 开始扫描设备
 - (void) startScanningDevices {

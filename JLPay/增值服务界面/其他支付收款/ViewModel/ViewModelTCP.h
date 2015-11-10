@@ -49,6 +49,8 @@
 
 @interface ViewModelTCP : NSObject
 
+@property (nonatomic) NSInteger tag;
+
 /*
  * TCP请求: 包括打包
  */

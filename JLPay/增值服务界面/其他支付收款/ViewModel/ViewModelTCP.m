@@ -15,7 +15,7 @@
 
 @interface ViewModelTCP()<wallDelegate, Unpacking8583Delegate>
 @property (nonatomic, strong) TcpClientService* tcpHolder;
-@property (nonatomic, assign) id<ViewModelTCPDelegate>delegate;
+@property (nonatomic, weak) id<ViewModelTCPDelegate>delegate;
 @property (nonatomic, strong) NSString* transType;
 @end
 
@@ -25,8 +25,16 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.tag = 0;
+        self.tcpHolder = [TcpClientService getInstance];
     }
     return self;
+}
+- (void)dealloc {
+    if ([self.tcpHolder isConnect]) {
+        [self.tcpHolder clearDelegateAndClose];
+        self.tcpHolder = nil;
+    }
 }
 
 #pragma mask ---- TCP请求
@@ -43,6 +51,8 @@
                                PORT:Current_Port
                            Delegate:self
                              method:transType];
+//    NSLog(@"当前tcp的tag=[%d]",self.tag);
+
 }
 
 
@@ -68,12 +78,12 @@
 #pragma mask ---- wallDelegate
 /* TCP请求成功 */
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
+//    NSLog(@"当前tcp的tag=[%d]",self.tag);
+
     if ([data length] > 0) {
         // 拆包
-        NSLog(@"响应成功");
         [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
     } else {
-        NSLog(@"响应失败");
         if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
             [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
         }
@@ -87,8 +97,9 @@
 /* TCP请求失败 */
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
+        // 如果断开了连接，这里的self打印出来就跟原始的不一样了
         [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
-
+//        NSLog(@"当前tcp的tag=[%d]",self.tag);
     }
 //    [self TCPClear];
 }
@@ -224,12 +235,12 @@
 
 
 #pragma mask ---- getter
-- (TcpClientService *)tcpHolder {
-    if (_tcpHolder == nil) {
-        _tcpHolder = [TcpClientService getInstance];
-    }
-    return _tcpHolder;
-}
+//- (TcpClientService *)tcpHolder {
+//    if (_tcpHolder == nil) {
+//        _tcpHolder = [TcpClientService getInstance];
+//    }
+//    return _tcpHolder;
+//}
 #pragma mask ---- setter
 
 @end

@@ -14,6 +14,7 @@
 #import "myCollectionCell.h"
 #import "Toast+UIView.h"
 #import "OtherPayCollectViewController.h"
+#import "DeviceManager.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
 
@@ -102,13 +103,24 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
+/* cell 的点击事件 */
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     myCollectionCell* cell = (myCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
     if ([cell.title isEqualToString:PayCollectTypeAlipay]) {
-        [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeAlipay] animated:YES];
+        // 校验设备绑定
+        if (![DeviceManager deviceIsBinded]) {
+            [self alertForMessage:@"设备未绑定，请先绑定设备"];
+        } else {
+            [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeAlipay] animated:YES];
+        }
     }
     else if ([cell.title isEqualToString:PayCollectTypeWeChatPay]) {
-        [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
+        // 校验设备绑定
+        if (![DeviceManager deviceIsBinded]) {
+            [self alertForMessage:@"设备未绑定，请先绑定设备"];
+        } else {
+            [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
+        }
     }
     else {
         [self.view makeToast:@"功能正在建设中,请关注版本更新..."];
@@ -122,6 +134,14 @@ NSString* headerIdentifier = @"headerIdentifier";
     OtherPayCollectViewController* payCollectVC = [storyBoard instantiateViewControllerWithIdentifier:@"otherPayVC"];
     [payCollectVC setPayCollectType:type];
     return payCollectVC;
+}
+
+/* 弹窗 */
+- (void) alertForMessage:(NSString*)message {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:message delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert show];
+    });
 }
 
 
@@ -176,7 +196,7 @@ NSString* headerIdentifier = @"headerIdentifier";
         _titlesArray = [[NSMutableArray alloc] init];
         [_titlesArray addObject:PayCollectTypeAlipay];
         [_titlesArray addObject:PayCollectTypeWeChatPay];
-        [_titlesArray addObject:@"余额查询"];
+        [_titlesArray addObject:@"明细查询"];
     }
     return _titlesArray;
 }
@@ -185,7 +205,7 @@ NSString* headerIdentifier = @"headerIdentifier";
         _imageNamesDict = [[NSMutableDictionary alloc] init];
         [_imageNamesDict setValue:@"03_20" forKey:(NSString*)PayCollectTypeAlipay];
         [_imageNamesDict setValue:@"wxPay" forKey:(NSString*)PayCollectTypeWeChatPay];
-        [_imageNamesDict setValue:@"03_12" forKey:@"余额查询"];
+        [_imageNamesDict setValue:@"03_12" forKey:@"明细查询"];
     }
     return _imageNamesDict;
 }

@@ -231,7 +231,6 @@ NSInteger logCount = 0;
         // 删掉请求,需要时重建
         self.HTTPRequest = nil;
     });
-
 }
 // HTTP 接收失败
 - (void)requestFailed:(ASIHTTPRequest *)request {
@@ -243,7 +242,6 @@ NSInteger logCount = 0;
 
     });
     self.HTTPRequest = nil;
-
 }
 #pragma mask ::: 解析从后台获取的JSON格式明细，并展示到表视图
 - (void) analysisJSONDataToDisplay {

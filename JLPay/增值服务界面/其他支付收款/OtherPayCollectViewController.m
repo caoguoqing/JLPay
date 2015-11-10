@@ -187,6 +187,9 @@
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    if ([self.fieldMoneyInput isFirstResponder]) {
+        [self.fieldMoneyInput resignFirstResponder];
+    }
 }
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
