@@ -12,6 +12,7 @@
 #import "MBProgressHUD.h"
 #import "ViewModelTCP.h"
 #import "OtherPayCollectViewController.h"
+#import "BarCodeResultViewController.h"
 
 
 //const NSString* kScanQRCodeQueueName = @"kScanQRCodeQueueName__";
@@ -71,14 +72,17 @@
 {
     [self.progressHUD hide:YES];
     [tcp TCPClear];
+    BOOL result = NO;
     if (state) {
-        [self alertForMessage:@"收款成功"];
+//        [self alertForMessage:@"收款成功"];
+        result = YES;
     }
     else {
-        NSString* message = [responseData valueForKey:KeyResponseDataMessage];
-        [self alertForMessage:[NSString stringWithFormat:@"收款失败:%@",message]];
+//        NSString* message = [responseData valueForKey:KeyResponseDataMessage];
+//        [self alertForMessage:[NSString stringWithFormat:@"收款失败:%@",message]];
     }
     // barPayCollectionVC
+    [self pushToBarCodeResultVCWithResult:result];
 }
 #pragma mask ---- TCP
 /* TCP扫码收款交易请求 */
@@ -198,6 +202,16 @@
     if (buttonIndex > 0 && [btnTitle isEqualToString:@"重新扫描"]) {
         [self startBarCodeScanning];
     }
+}
+
+/* 跳转界面 */
+- (void) pushToBarCodeResultVCWithResult:(BOOL)result {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    BarCodeResultViewController* resultVC = [storyBoard instantiateViewControllerWithIdentifier:@"barPayCollectionVC"];
+    [resultVC setPayCollectType:self.payCollectType];
+    [resultVC setMoney:self.money];
+    [resultVC setResult:result];
+    [self.navigationController pushViewController:resultVC animated:YES];
 }
 
 
