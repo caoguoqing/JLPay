@@ -49,12 +49,18 @@ static int readTimeOut = 60;    // 超时时间统一60s
     @synchronized([TcpClientService class]){
         if(sharedObj ==nil){
             sharedObj = [[self alloc] init];
-            
         }
     }
     return sharedObj;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
 
 //tcp
 //建立连接
@@ -76,22 +82,12 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [sock setDelegate:nil];
     [sock disconnect];
     sock=nil;
-    
-    if (self.delegate) {
-//        NSLog(@"[%s]-------delegate = [%@]",__func__, self.delegate);
-        NSLog(@"第一次访问delegate");
-    }
-    if (self.delegate) {
-        NSLog(@"第二次访问delegate");
-    }
-    
-    if (delegate  && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
-        [delegate receiveGetData:aStr method:self.tcpMethodStr];
-    }
-//    if (delegate != nil && [delegate respondsToSelector:@selector(receiveGetData: method:)]) {
-//        [delegate receiveGetData:aStr method:self.tcpMethodStr];
-//    }
 
+    if (self.delegate) {
+        if ([self.delegate respondsToSelector:@selector(receiveGetData:method:)]) {
+            [self.delegate receiveGetData:aStr method:self.tcpMethodStr];
+        }
+    }
 }
 
 
@@ -105,7 +101,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
  * 错误处理的方法
  **/
 - (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err
-{    
+{
     // 错误处理方法:
     [sock setDelegate:nil];
     [sock disconnect];

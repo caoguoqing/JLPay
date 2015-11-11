@@ -98,6 +98,7 @@ NSInteger logCount = 0;
     return cell;
 }
 #pragma mask ------ UITableViewDelegate
+/*  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;

@@ -39,7 +39,7 @@
 
 #pragma mask ---- ViewModelTCPDelegate
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
-    NSLog(@"TCP[%d]返回了,交易结果:[%d]",tcp.tag,state);
+    NSLog(@"TCP[%d][%@]返回了,交易结果:[%d]",tcp.tag,tcp,state);
     if (state) {
         [self updatePayDoneResult:YES];
     } else {
@@ -100,8 +100,7 @@
 /* 追加TCP节点 */
 - (void) appendTCPNode:(ViewModelTCP*)tcpHolder {
     [self.TCPNodes addObject:tcpHolder];
-//    NSLog(@"TCP池+1[%d]，节点数:[%lu]",tcpHolder.tag,(long)self.TCPNodes.count);
-    NSLog(@"%@ <-- %d",[self allTcpNodesTag],tcpHolder.tag);
+    NSLog(@"%@ <-- %d[%@]",[self allTcpNodesTag],tcpHolder.tag,tcpHolder);
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
@@ -110,14 +109,15 @@
 /* 删除指定节点 */
 - (void) removeTCPNode:(ViewModelTCP*)tcpHolder {
 //    [self.TCPNodes removeObject:tcpHolder];
+    ViewModelTCP* needDeleteTCP = nil;
     for (ViewModelTCP* tcp in self.TCPNodes) {
         if (tcp.tag == tcpHolder.tag) {
-            [self.TCPNodes removeObject:tcp];
-//            NSLog(@"TCP池-1[%d]，节点数:[%lu]\n",tcpHolder.tag,(long)self.TCPNodes.count);
-            NSLog(@"%@ --> %d",[self allTcpNodesTag],tcpHolder.tag);
-
+            needDeleteTCP = tcp;
+//            [self.TCPNodes removeObject:tcp];
         }
     }
+    [self.TCPNodes removeObject:needDeleteTCP];
+    NSLog(@"%@ --> %d[%@]",[self allTcpNodesTag],tcpHolder.tag,tcpHolder);
 }
 - (NSString*) allTcpNodesTag {
     NSMutableString* tags = [[NSMutableString alloc] init];
@@ -188,15 +188,11 @@
     tcp.tag = tagTCP;
     tagTCP += 2;
     
-//    dispatch_async(dispatch_get_main_queue(), ^{
-        // TCP节点添加到TCP池
-        [self appendTCPNode:tcp];
-//    });
-//    dispatch_async(dispatch_get_main_queue(), ^{
-        // TCP请求
-        [tcp TCPRequestWithTransType:sTransType andMoney:sMoney andOrderCode:sOrderCode andDelegate:self];
-//    });
-
+    // TCP节点添加到TCP池
+    [self appendTCPNode:tcp];
+    
+    // TCP请求
+    [tcp TCPRequestWithTransType:sTransType andMoney:sMoney andOrderCode:sOrderCode andDelegate:self];
 }
 
 #pragma mask ---- getter

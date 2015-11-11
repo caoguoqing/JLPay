@@ -14,7 +14,7 @@
 #import "TcpClientService.h"
 
 @interface ViewModelTCP()<wallDelegate, Unpacking8583Delegate>
-@property (nonatomic, strong) TcpClientService* tcpHolder;
+@property (nonatomic, retain) TcpClientService* tcpHolder;
 @property (nonatomic, weak) id<ViewModelTCPDelegate>delegate;
 @property (nonatomic, strong) NSString* transType;
 @end
@@ -26,7 +26,8 @@
     self = [super init];
     if (self) {
         self.tag = 0;
-        self.tcpHolder = [TcpClientService getInstance];
+//        self.tcpHolder = [TcpClientService getInstance];
+        self.tcpHolder = [[TcpClientService alloc] init];
     }
     return self;
 }
@@ -51,8 +52,6 @@
                                PORT:Current_Port
                            Delegate:self
                              method:transType];
-//    NSLog(@"当前tcp的tag=[%d]",self.tag);
-
 }
 
 
@@ -78,8 +77,6 @@
 #pragma mask ---- wallDelegate
 /* TCP请求成功 */
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
-//    NSLog(@"当前tcp的tag=[%d]",self.tag);
-
     if ([data length] > 0) {
         // 拆包
         [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
@@ -99,7 +96,6 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
         // 如果断开了连接，这里的self打印出来就跟原始的不一样了
         [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
-//        NSLog(@"当前tcp的tag=[%d]",self.tag);
     }
 //    [self TCPClear];
 }

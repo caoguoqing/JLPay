@@ -31,8 +31,8 @@
 @interface TcpClientService : NSObject{
      AsyncSocket *asyncSocket;
 }
+
 @property (nonatomic, assign) id<wallDelegate> delegate;
-//@property (nonatomic, assign) id<wallDelegate> delegate;
 
 @property(nonatomic,retain)NSString *orderInfoStr;
 
@@ -44,7 +44,9 @@
 +(TcpClientService *)getInstance;
 
 -(void)sendOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr;
+
 -(void)sendWithoutWaitingOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr;
+
 // 释放socket
 - (void) clearDelegateAndClose ;
 
