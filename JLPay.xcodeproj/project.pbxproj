@@ -102,6 +102,7 @@
 		5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447EF1BEC8E5B00128452 /* MaskView.m */; };
 		5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F21BEC914800128452 /* ScannerImageView.m */; };
 		5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */; };
+		5E9447FC1BF2F43B00128452 /* ViewModelHttpMPOSDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447FB1BF2F43B00128452 /* ViewModelHttpMPOSDetails.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -364,6 +365,8 @@
 		5E9447F21BEC914800128452 /* ScannerImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerImageView.m; sourceTree = "<group>"; };
 		5E9447F41BF0957A00128452 /* BarCodeResultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BarCodeResultViewController.h; sourceTree = "<group>"; };
 		5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BarCodeResultViewController.m; sourceTree = "<group>"; };
+		5E9447FA1BF2F43B00128452 /* ViewModelHttpMPOSDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelHttpMPOSDetails.h; sourceTree = "<group>"; };
+		5E9447FB1BF2F43B00128452 /* ViewModelHttpMPOSDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelHttpMPOSDetails.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -789,20 +792,9 @@
 		5E82B7E31B253F5F00A58751 /* 交易管理 */ = {
 			isa = PBXGroup;
 			children = (
-				5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */,
-				5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */,
-				5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */,
-				5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */,
-				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
-				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
-				5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */,
-				5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */,
-				5EF3BAA11B686AE200DCD764 /* DatePickerView.h */,
-				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
-				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
-				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
-				5E82B8231B295F4400A58751 /* RevokeViewController.h */,
-				5E82B8241B295F4400A58751 /* RevokeViewController.m */,
+				5E9447F91BF2E78C00128452 /* Model */,
+				5E9447F81BF2E78600128452 /* Controller */,
+				5E9447F71BF2E77800128452 /* Views */,
 			);
 			path = "交易管理";
 			sourceTree = "<group>";
@@ -848,6 +840,43 @@
 				5E93B4AA1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5E9447F71BF2E77800128452 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */,
+				5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */,
+				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
+				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
+				5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */,
+				5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */,
+				5EF3BAA11B686AE200DCD764 /* DatePickerView.h */,
+				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
+				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
+				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		5E9447F81BF2E78600128452 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				5EF3BA9E1B672C6800DCD764 /* TransDetailsViewController.h */,
+				5EF3BA9F1B672C6800DCD764 /* TransDetailsViewController.m */,
+				5E82B8231B295F4400A58751 /* RevokeViewController.h */,
+				5E82B8241B295F4400A58751 /* RevokeViewController.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		5E9447F91BF2E78C00128452 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5E9447FA1BF2F43B00128452 /* ViewModelHttpMPOSDetails.h */,
+				5E9447FB1BF2F43B00128452 /* ViewModelHttpMPOSDetails.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
@@ -1542,6 +1571,7 @@
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
+				5E9447FC1BF2F43B00128452 /* ViewModelHttpMPOSDetails.m in Sources */,
 				5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */,
 				5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */,
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,

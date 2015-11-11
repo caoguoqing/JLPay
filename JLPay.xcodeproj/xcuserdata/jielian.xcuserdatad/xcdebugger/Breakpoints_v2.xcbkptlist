@@ -223,21 +223,5 @@
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x589e;&#x503c;&#x670d;&#x52a1;&#x754c;&#x9762;/&#x5176;&#x4ed6;&#x652f;&#x4ed8;&#x6536;&#x6b3e;/ViewModel/ViewModelTCP.m"
-            timestampString = "468902064.244974"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "91"
-            endingLineNumber = "91"
-            landmarkName = "-receiveGetData:method:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

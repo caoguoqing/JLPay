@@ -100,7 +100,6 @@
 /* 追加TCP节点 */
 - (void) appendTCPNode:(ViewModelTCP*)tcpHolder {
     [self.TCPNodes addObject:tcpHolder];
-    NSLog(@"%@ <-- %d[%@]",[self allTcpNodesTag],tcpHolder.tag,tcpHolder);
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
@@ -108,29 +107,15 @@
 }
 /* 删除指定节点 */
 - (void) removeTCPNode:(ViewModelTCP*)tcpHolder {
-//    [self.TCPNodes removeObject:tcpHolder];
     ViewModelTCP* needDeleteTCP = nil;
     for (ViewModelTCP* tcp in self.TCPNodes) {
         if (tcp.tag == tcpHolder.tag) {
             needDeleteTCP = tcp;
-//            [self.TCPNodes removeObject:tcp];
         }
     }
     [self.TCPNodes removeObject:needDeleteTCP];
-    NSLog(@"%@ --> %d[%@]",[self allTcpNodesTag],tcpHolder.tag,tcpHolder);
 }
-- (NSString*) allTcpNodesTag {
-    NSMutableString* tags = [[NSMutableString alloc] init];
-    [tags appendString:@"["];
-    for (ViewModelTCP* tcp in self.TCPNodes) {
-        [tags appendFormat:@"%d,",tcp.tag];
-    }
-    if (tags.length > 1) {
-        [tags deleteCharactersInRange:NSMakeRange(tags.length - 1, 1)];
-    }
-    [tags appendString:@"]"];
-    return tags;
-}
+
 
 /* 关闭指定的TCP节点 */
 - (void) closeTCPNode:(ViewModelTCP*)tcpHolder {
@@ -154,7 +139,6 @@
 #pragma mask ---- 查询结果标记
 /* 更新标记 */
 - (void) updatePayDoneResult:(BOOL)result {
-    NSLog(@"查询结果更新:[%d]",result);
     self.payIsDone = [NSNumber numberWithBool:result];
 }
 

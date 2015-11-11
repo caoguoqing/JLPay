@@ -101,16 +101,13 @@ typedef enum {
                        context:(void *)context
 {
     if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry) {
-        NSLog(@"tcp的查询结果值被更新了(观察者)");
         [self.tcpEnquiry cleanForEnquiryDone];
     }
 }
 
 #pragma mask ---- UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-//    if (alertView.tag == TagAlertPayDone) {
-        [self.navigationController popViewControllerAnimated:YES];
-//    }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mask ---- 界面生命周期

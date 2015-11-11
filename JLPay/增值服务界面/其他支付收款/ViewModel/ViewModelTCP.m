@@ -26,7 +26,7 @@
     self = [super init];
     if (self) {
         self.tag = 0;
-//        self.tcpHolder = [TcpClientService getInstance];
+        // 注意: 这里的TCP不要用单例模式创建
         self.tcpHolder = [[TcpClientService alloc] init];
     }
     return self;
@@ -88,7 +88,6 @@
     if (!self) {
         NSLog(@"当前TCP节点对象已经被释放了");
     }
-//    [self TCPClear];
 }
 
 /* TCP请求失败 */
@@ -97,7 +96,6 @@
         // 如果断开了连接，这里的self打印出来就跟原始的不一样了
         [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
     }
-//    [self TCPClear];
 }
 
 
@@ -231,12 +229,6 @@
 
 
 #pragma mask ---- getter
-//- (TcpClientService *)tcpHolder {
-//    if (_tcpHolder == nil) {
-//        _tcpHolder = [TcpClientService getInstance];
-//    }
-//    return _tcpHolder;
-//}
 #pragma mask ---- setter
 
 @end

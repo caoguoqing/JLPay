@@ -8,6 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+/* *
+ * 总金额显示框
+ * 分两部分：
+ *  1.总交易金额
+ *  2.交易笔数: 总，消费，撤销
+ *
+ *
+ */
+
+
 @interface TotalAmountDisplayView : UIView
 
 // 设置总金额

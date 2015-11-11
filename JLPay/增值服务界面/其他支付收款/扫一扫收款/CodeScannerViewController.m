@@ -54,8 +54,6 @@
         NSString* orderCode = [metadataObject stringValue];
         NSString* qureTitle = [NSString stringWithFormat:@"条形码:%@",orderCode];
         NSLog(@"%@",qureTitle);
-//        NSString* otherTitle = @"重新扫描";
-//        [self alertForMessage:qureTitle andOtherChoice:otherTitle];
         self.progressHUD.labelText = @"收款中...";
         [self.progressHUD show:YES];
         
@@ -74,12 +72,7 @@
     [tcp TCPClear];
     BOOL result = NO;
     if (state) {
-//        [self alertForMessage:@"收款成功"];
         result = YES;
-    }
-    else {
-//        NSString* message = [responseData valueForKey:KeyResponseDataMessage];
-//        [self alertForMessage:[NSString stringWithFormat:@"收款失败:%@",message]];
     }
     // barPayCollectionVC
     [self pushToBarCodeResultVCWithResult:result];
@@ -242,13 +235,7 @@
 }
 - (MBProgressHUD *)progressHUD {
     if (_progressHUD == nil) {
-//        _progressHUD = [MBProgressHUD HUDForView:self.view];
         _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
-//        _progressHUD.mode = MBProgressHUDModeCustomView;
-//        _progressHUD.animationType = MBProgressHUDAnimationZoom;
-//        UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
-//        imageView.image = [UIImage imageNamed:@"wx"];
-//        _progressHUD.customView = imageView;
     }
     return _progressHUD;
 }

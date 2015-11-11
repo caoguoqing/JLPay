@@ -30,9 +30,9 @@
 @property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮
 
 
-@property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
-@property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
 @property (nonatomic, strong) NSMutableData* reciveData;            // 接收HTTP的返回的数据缓存
+@property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
+@property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
 
 @property (nonatomic, strong) NSMutableArray* years;
 @property (nonatomic, strong) NSMutableArray* months;
@@ -97,8 +97,10 @@ NSInteger logCount = 0;
 
     return cell;
 }
+
+
 #pragma mask ------ UITableViewDelegate
-/*  */
+/* 点击单元格: 展示详细信息 */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
@@ -112,6 +114,7 @@ NSInteger logCount = 0;
 
 
 #pragma mask ------ DatePickerViewDelegate
+/* 日期选择器的回调 */
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
     // 设置按钮日期
     [self dateButtonSetTitle:choosedDate];
@@ -175,18 +178,7 @@ NSInteger logCount = 0;
         [self.tableView reloadData];
     });
 }
-- (void) requestDataOnDate:(NSString*)dateString {
-    NSDictionary* dictInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dateString];
-    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dateString];
-    [_HTTPRequest addRequestHeader:@"termNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedTerminalNum]];
-    [_HTTPRequest addRequestHeader:@"mchntNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedBussinessNum]];
-    [self.HTTPRequest setDelegate:self];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.HTTPRequest startAsynchronous];  // 异步获取数据
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-    });
-}
+
 
 
 /*************************************
@@ -221,6 +213,9 @@ NSInteger logCount = 0;
     }
 }
 
+
+
+#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<  TCP
 #pragma mask ::: ASIHTTPRequest 的数据接收协议
 // HTTP 接收成功
 - (void)requestFinished:(ASIHTTPRequest *)request {
@@ -240,7 +235,7 @@ NSInteger logCount = 0;
         UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alerView show];
         [[JLActivitor sharedInstance] stopAnimating];
-
+        
     });
     self.HTTPRequest = nil;
 }
@@ -248,8 +243,8 @@ NSInteger logCount = 0;
 - (void) analysisJSONDataToDisplay {
     NSError* error;
     NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
-
-    [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];    
+    
+    [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
     
     if (self.dataArrayDisplay.count == 0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -263,6 +258,24 @@ NSInteger logCount = 0;
     }
     self.reciveData = nil;
 }
+#pragma mask ---- HTTP请求
+- (void) requestDataOnDate:(NSString*)dateString {
+    NSDictionary* dictInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dateString];
+    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dateString];
+    [_HTTPRequest addRequestHeader:@"termNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedTerminalNum]];
+    [_HTTPRequest addRequestHeader:@"mchntNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedBussinessNum]];
+    [self.HTTPRequest setDelegate:self];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.HTTPRequest startAsynchronous];  // 异步获取数据
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+    });
+}
+
+#pragma mask >>>>>>>>>>>>>>>>>>>>>>>>>>  TCP
+
+
+#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<  model
 // 扫描明细数组,计算总金额，总笔数
 - (void) calculateTotalAmount {
     CGFloat tAmount = 0.0;
@@ -288,8 +301,36 @@ NSInteger logCount = 0;
     [self.totalView setTotalRows:[NSString stringWithFormat:@"%d", tAcount]];
     [self.totalView setSucRows:[NSString stringWithFormat:@"%d", tSucCount]];
     [self.totalView setRevokeRows:[NSString stringWithFormat:@"%d", tRevokeCount]];
-
 }
+/*************************************
+ * 功  能 : 从明细列表中模糊查询出匹配的记录:卡号或金额;
+ * 参  数 :
+ *          (NSString*)cardOrMoney 需要查询的卡号或金额
+ * 返  回 :
+ *          (NSArray*)             查询到的明细数组
+ *************************************/
+- (NSArray*) detailsSelectedByCardOrMoney:(NSString*)cardOrMoney {
+    NSMutableArray* selectedArray = [[NSMutableArray alloc] init];
+    for (NSDictionary* dataDic in self.oldArraySaving) {
+        NSString* cardNum = [dataDic valueForKey:@"pan"];
+        CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
+        // 金额或卡号后4位能匹配上
+        if (cardOrMoney.length == 4) {
+            if ([cardNum hasSuffix:cardOrMoney] || money == cardOrMoney.floatValue) {
+                [selectedArray addObject:[dataDic copy]];
+            }
+        }
+        else {
+            if (money == cardOrMoney.floatValue) {
+                [selectedArray addObject:[dataDic copy]];
+            }
+        }
+    }
+    return selectedArray;
+}
+
+#pragma mask >>>>>>>>>>>>>>>>>>>>>>>>>>  model
+
 
 
 
@@ -311,7 +352,7 @@ NSInteger logCount = 0;
     [self.navigationItem setBackBarButtonItem:backItem];
     
     // 先校验是否绑定了
-    if ([self deviceBinded]) {
+    if ([DeviceManager deviceIsBinded]) {
         // 请求数据
         [self requestDataOnDate:[self nowDate]];
     } else {
@@ -383,32 +424,6 @@ NSInteger logCount = 0;
 }
 
 
-/*************************************
- * 功  能 : 从明细列表中模糊查询出匹配的记录:卡号或金额;
- * 参  数 :
- *          (NSString*)cardOrMoney 需要查询的卡号或金额
- * 返  回 :
- *          (NSArray*)             查询到的明细数组
- *************************************/
-- (NSArray*) detailsSelectedByCardOrMoney:(NSString*)cardOrMoney {
-    NSMutableArray* selectedArray = [[NSMutableArray alloc] init];
-    for (NSDictionary* dataDic in self.oldArraySaving) {
-        NSString* cardNum = [dataDic valueForKey:@"pan"];
-        CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
-        // 金额或卡号后4位能匹配上
-        if (cardOrMoney.length == 4) {
-            if ([cardNum hasSuffix:cardOrMoney] || money == cardOrMoney.floatValue) {
-                [selectedArray addObject:[dataDic copy]];
-            }
-        }
-        else {
-            if (money == cardOrMoney.floatValue) {
-                [selectedArray addObject:[dataDic copy]];
-            }
-        }
-    }
-    return selectedArray;
-}
 
 /*************************************
  * 功  能 : 简化代码;
@@ -444,15 +459,6 @@ NSInteger logCount = 0;
     [self.dateButton.titleLabel setAttributedText:sublineString];
 }
 
-// 检查是否绑定了设备
-- (BOOL) deviceBinded {
-    BOOL binded = YES;
-    NSDictionary* bindedInfos = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    if (bindedInfos == nil) {
-        binded = NO;
-    }
-    return binded;
-}
 
 
 #pragma mask ::: getter & setter 
@@ -511,7 +517,8 @@ NSInteger logCount = 0;
 - (NSMutableArray *)years {
     if (_years == nil) {
         _years = [[NSMutableArray alloc] init];
-        NSString* nDate = [self nowDate];
+//        NSString* nDate = [self nowDate];
+        NSString* nDate = [PublicInformation nowDate];
         for (int i = [[nDate substringToIndex:4] intValue]; i >= 2015; i--) {
             [_years addObject:[NSString stringWithFormat:@"%d",i]];
         }

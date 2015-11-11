@@ -105,7 +105,7 @@
 }
 #pragma mask ::: 日期时间赋值 : 093412
 - (void) setTime : (NSString*)time {
-    if (!time) {
+    if (!time || time.length == 0) {
         return;
     }
     self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
