@@ -1,0 +1,373 @@
+//
+//  ViewModelTransDetails.m
+//  JLPay
+//
+//  Created by jielian on 15/11/12.
+//  Copyright © 2015年 ShenzhenJielian. All rights reserved.
+//
+
+#import "ViewModelTransDetails.h"
+#import "ASIFormDataRequest.h"
+#import "TransDetailsViewController.h"
+#import "PublicInformation.h"
+
+
+@interface ViewModelTransDetails()<ASIHTTPRequestDelegate>
+{
+    BOOL filter;
+}
+
+@property (nonatomic, strong) NSString* platformName;
+@property (nonatomic, retain) ASIFormDataRequest* http;
+@property (nonatomic, strong) NSMutableArray* transDetails;
+@property (nonatomic, strong) NSMutableArray* filterDetails;
+
+@property (nonatomic, assign) id<ViewModelTransDetailsDelegate> delegate;
+
+
+@end
+
+
+
+@implementation ViewModelTransDetails
+
+
+#pragma mask ---- PUBLIC INTERFACE
+/* 申请明细: 指定类型 */
+- (void) requestDetailsWithPlatform:(NSString*)platform
+                        andDelegate:(id<ViewModelTransDetailsDelegate>)delegate
+                          beginTime:(NSString*)beginTime
+                            endTime:(NSString*)endTime
+                           terminal:(NSString*)terminal
+                          bussiness:(NSString*)bussiness
+{
+    self.platformName = platform;
+    self.delegate = delegate;
+    
+    self.http = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[self urlStringWithPlatform:platform]]];
+    [self.http setDelegate:self];
+    [self.http addRequestHeader:@"queryBeginTime" value:beginTime];
+    [self.http addRequestHeader:@"queryEndTime" value:endTime];
+    [self.http addRequestHeader:@"termNo" value:terminal];
+    [self.http addRequestHeader:@"mchntNo" value:bussiness];
+    [self.http startAsynchronous];
+    
+}
+- (NSString*) urlStringWithPlatform:(NSString*)platform {
+    NSString* url = nil;
+    if ([platform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo",[PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort]];
+    }
+    else if ([platform isEqualToString:NameTradePlatformOtherPay]) {
+        url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getTradeDetail",[PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort]];
+    }
+    return url;
+}
+
+
+/* 清空数据 */
+- (void) clearDetails
+{
+    if (self.transDetails && self.transDetails.count > 0) {
+        [self.transDetails removeAllObjects];
+    }
+    
+}
+
+/* 总笔数 */
+- (NSInteger) totalCountOfTrans
+{
+    NSInteger count = 0;
+    if (!filter) {
+        count = self.transDetails.count;
+    } else {
+        count = self.filterDetails.count;
+    }
+    return count;
+}
+/* 消费笔数 */
+- (NSInteger) countOfNormalTrans
+{
+    NSInteger count = 0;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        for (int i = 0; i < [self totalCountOfTrans]; i++) {
+            NSString* transType = [self transTypeAtIndex:i];
+            if ([transType isEqualToString:@"消费"] ) {
+                count++;
+            }
+        }
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        count = [self totalCountOfTrans];
+    }
+    return count;
+}
+/* 撤销笔数 */
+- (NSInteger) countofCancelTrans
+{
+    NSInteger count = 0;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        for (int i = 0; i < [self totalCountOfTrans]; i++) {
+            NSString* transType = [self transTypeAtIndex:i];
+            if ([transType isEqualToString:@"消费撤销"] ) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+/* 总金额 */
+- (double) totalAmountOfTrans
+{
+    double amount = 0.0;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        for (int i = 0; i < [self totalCountOfTrans]; i++) {
+            NSString* transType = [self transTypeAtIndex:i];
+            if ([transType isEqualToString:@"消费"] &&  // 只有未撤销未冲正的成功消费才计入总金额
+                ![self cancelFlagAtIndex:i] &&
+                ![self revsalFlagAtIndex:i]
+                )
+            {
+                amount += [self moneyAtIndex:i].floatValue;
+            }
+        }
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        for (int i = 0; i < [self totalCountOfTrans]; i++) {
+            amount += [self moneyAtIndex:i].floatValue;
+        }
+    }
+    return amount;
+}
+
+
+/* 条数 */
+- (NSInteger) countOfDetails
+{
+    NSInteger count = 0;
+    if (!filter) {
+        count = self.transDetails.count;
+    } else {
+        count = self.filterDetails.count;
+    }
+    return count;
+}
+
+/* 卡号: 指定序号 */
+- (NSString*) cardNumAtIndex:(NSInteger)index
+{
+    NSString* cardNum = nil;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        NSDictionary* dataNode = nil;
+        if (!filter) {
+            dataNode = [self.transDetails objectAtIndex:index];
+        } else {
+            dataNode = [self.filterDetails objectAtIndex:index];
+        }
+        if (dataNode) {
+            cardNum = [dataNode valueForKey:@"pan"];
+        }
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+    }
+    return cardNum;
+}
+
+/* 金额: 指定序号 */
+- (NSString*) moneyAtIndex:(NSInteger)index
+{
+    NSString* money = nil;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
+    NSString* key = nil;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        key = @"amtTrans";
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        key = @"amtTrans";
+    }
+    if (dataNode) {
+        money = [dataNode valueForKey:key];
+        money = [PublicInformation dotMoneyFromNoDotMoney:money];
+    }
+    return money;
+}
+
+/* 交易类型: 指定序号 */
+- (NSString*) transTypeAtIndex:(NSInteger)index
+{
+    NSString* transType = nil;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
+    NSString* key = nil;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        key = @"txnNum";
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        key = @"txnNum";
+    }
+    if (dataNode) {
+        transType = [dataNode valueForKey:key];
+    }
+    return transType;
+}
+
+/* 交易时间6位: 指定序号 */
+- (NSString*) transTimeAtIndex:(NSInteger)index
+{
+    NSString* transTime = nil;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
+    NSString* key = nil;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        key = @"instTime";
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        key = @"instTime";
+    }
+    if (dataNode) {
+        transTime = [dataNode valueForKey:key];
+    }
+    return transTime;
+}
+
+/* 交易日期8位: 指定序号 */
+- (NSString*) transDateAtIndex:(NSInteger)index
+{
+    NSString* transDate = nil;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
+    NSString* key = nil;
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        key = @"instDate";
+    }
+    else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        key = @"instDate";
+    }
+    if (dataNode) {
+        transDate = [dataNode valueForKey:key];
+    }
+    return transDate;
+}
+
+#pragma mask ---- PRIVATE INTERFACE
+/* 撤销标志 */
+- (BOOL) cancelFlagAtIndex:(NSInteger)index{
+    BOOL isCanceled = NO;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        NSString* cancelFlag = [dataNode valueForKey:@"cancelFlag"];
+        if (cancelFlag.intValue != 0) {
+            isCanceled = YES;
+        }
+    }
+    return isCanceled;
+}
+/* 冲正标志 */
+- (BOOL) revsalFlagAtIndex:(NSInteger)index {
+    BOOL isRevsal = NO;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
+    if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+        NSString* revsalFlag = [dataNode valueForKey:@"revsal_flag"];
+        if (revsalFlag.intValue != 0) {
+            isRevsal = YES;
+        }
+    }
+    return isRevsal;
+}
+
+
+
+#pragma mask ---- ASIHTTPRequestDelegate
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    NSData* responseData = [request responseData];
+    [request clearDelegatesAndCancel];
+    NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:nil];
+    if (!dataDict) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
+            [self.delegate viewModel:self didRequestResult:NO withMessage:@"解析响应数据失败"];
+        }
+    } else {
+        NSString* retcode = [dataDict valueForKey:@"code"];
+        if ([retcode intValue] != 0) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
+                [self.delegate viewModel:self didRequestResult:NO withMessage:[dataDict valueForKey:@"message"]];
+            }
+        } else {
+            NSArray* requestArray = [dataDict valueForKey:@"DetailList"];
+            if (!requestArray || requestArray.count == 0) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
+                    [self.delegate viewModel:self didRequestResult:NO withMessage:[dataDict valueForKey:@"交易明细为空"]];
+                }
+            } else {
+                [self.transDetails addObjectsFromArray:requestArray];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
+                    [self.delegate viewModel:self didRequestResult:YES withMessage:nil];
+                }
+            }
+        }
+    }
+}
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    [request clearDelegatesAndCancel];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
+        [self.delegate viewModel:self didRequestResult:NO withMessage:@"网络异常，请检查网络"];
+    }
+}
+
+#pragma mask ---- 初始化
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        filter = NO;
+    }
+    return self;
+}
+- (void)dealloc {
+    self.delegate = nil;
+    if (self.http) {
+        [self.http clearDelegatesAndCancel];
+    }
+}
+
+#pragma mask ---- getter 
+- (NSMutableArray *)transDetails {
+    if (_transDetails == nil) {
+        _transDetails = [[NSMutableArray alloc] init];
+    }
+    return _transDetails;
+}
+- (NSMutableArray *)filterDetails {
+    if (_filterDetails == nil) {
+        _filterDetails = [[NSMutableArray alloc] init];
+    }
+    return _filterDetails;
+}
+@end
