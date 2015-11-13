@@ -10,34 +10,29 @@
 #import "TotalAmountDisplayView.h"
 #import "DetailsCell.h"
 #import "RevokeViewController.h"
-#import "ASIFormDataRequest.h"
 #import "JLActivitor.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
 #import "SelectIndicatorView.h"
-#import "DoubleLayerButton.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
 
+#import "ViewModelTransDetails.h"
+
 @interface TransDetailsViewController()
-<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate
-,DatePickerViewDelegate,SelectIndicatorViewDelegate>
+<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,
+DatePickerViewDelegate,SelectIndicatorViewDelegate, ViewModelTransDetailsDelegate>
 
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
-
 @property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮
-
-
-@property (nonatomic, strong) NSMutableData* reciveData;            // 接收HTTP的返回的数据缓存
-@property (nonatomic, strong) NSArray* oldArraySaving;              // 保存的刚刚下载下来的数据数组
-@property (nonatomic, strong) NSMutableArray* dataArrayDisplay;     // 用来展示的明细的数组
 
 @property (nonatomic, strong) NSMutableArray* years;
 @property (nonatomic, strong) NSMutableArray* months;
 @property (nonatomic, strong) NSMutableArray* days;
-@property (nonatomic, retain) ASIHTTPRequest* HTTPRequest;      // HTTP入口
+
+@property (nonatomic, retain) ViewModelTransDetails* dataSource; // 数据源
 
 @property (nonatomic) CGRect activitorFrame;
 @end
@@ -48,12 +43,9 @@ NSInteger logCount = 0;
 @synthesize totalView = _totalView;
 @synthesize tableView = _tableView;
 @synthesize searchButton = _searchButton;
-@synthesize dataArrayDisplay = _dataArrayDisplay;
-@synthesize reciveData = _reciveData;
 @synthesize years = _years;
 @synthesize months = _months;
 @synthesize days = _days;
-@synthesize HTTPRequest = _HTTPRequest;
 @synthesize dateButton = _dateButton;
 @synthesize activitorFrame;
 
@@ -62,7 +54,7 @@ NSInteger logCount = 0;
     return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.dataArrayDisplay.count;
+    return [self.dataSource totalCountOfTrans];
 }
 // 加载单元格
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -71,29 +63,12 @@ NSInteger logCount = 0;
     if (cell == nil) {
         cell = [[DetailsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    
-    NSDictionary* dataDic = [self.dataArrayDisplay objectAtIndex:indexPath.row];
-    [cell setCardNum:[dataDic objectForKey:@"pan"]];
-    [cell setTime:[dataDic objectForKey:@"instTime"]];
-    NSString* trantype = [dataDic objectForKey:@"txnNum"];
     UIColor* textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
-    if ([trantype isEqualToString:@"消费"]) {
-        if ([[dataDic valueForKey:@"revsal_flag"] isEqualToString:@"1"]) {
-            trantype = @"消费,已冲正";
-            textColor = [UIColor redColor];
-        }
-        else if ([[dataDic valueForKey:@"cancelFlag"] isEqualToString:@"1"]) {
-            trantype = @"消费,已撤销";
-            textColor = [UIColor redColor];
-        }
-        else {
-            trantype = @"消费成功";
-        }
-    } else {
-        textColor = [UIColor redColor];
-    }
-    [cell setTranType:trantype withColor:textColor];
-    [cell setAmount:[dataDic objectForKey:@"amtTrans"] withColor:textColor];
+
+    [cell setCardNum:[self.dataSource cardNumAtIndex:indexPath.row]];
+    [cell setTime:[self.dataSource transTimeAtIndex:indexPath.row]];
+    [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
+    [cell setAmount:[self.dataSource moneyAtIndex:indexPath.row] withColor:textColor];
 
     return cell;
 }
@@ -106,7 +81,8 @@ NSInteger logCount = 0;
     cell.selected = NO;
 
     RevokeViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"revokeVC"];
-    viewController.dataDic = [self.dataArrayDisplay objectAtIndex:indexPath.row];
+    viewController.dataDic = [self.dataSource nodeDetailAtIndex:indexPath.row];
+    viewController.tradePlatform = self.tradePlatform;
     [self.navigationController pushViewController:viewController animated:YES];
 
 }
@@ -120,10 +96,13 @@ NSInteger logCount = 0;
     [self dateButtonSetTitle:choosedDate];
 
     // 清空列表
-    [self cleanTranDetailsList];
+    [self.dataSource clearDetails];
     
     // 重新获取列表信息
     [self requestDataOnDate:choosedDate];
+    
+    // 启动指示器
+    [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
 }
 
 
@@ -166,19 +145,6 @@ NSInteger logCount = 0;
     [self.view addSubview:pickerView];
 }
 
-// 清空交易明细列表数据
-- (void)cleanTranDetailsList {
-    if (self.dataArrayDisplay.count == 0) {
-        return;
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // 刷新前先清空数据
-        [self.dataArrayDisplay removeAllObjects];
-        [self calculateTotalAmount];
-        [self.tableView reloadData];
-    });
-}
-
 
 
 /*************************************
@@ -195,16 +161,17 @@ NSInteger logCount = 0;
                 [self alertShow:@"查询条件为空,请输入卡号或金额"];
                 return;
             }
-            
-            NSArray* selectedArray = [self detailsSelectedByCardOrMoney:textField.text];
-            if (selectedArray.count == 0) {
-                [self alertShow:@"未查询到匹配的明细"];
-            } else {
+            // 进行模糊条件查询
+            BOOL filtered = [self.dataSource filterDetailsByInput:textField.text];
+            if (filtered) {
                 [self.view makeToast:@"查询成功"];
-                [self.dataArrayDisplay removeAllObjects];
-                [self.dataArrayDisplay addObjectsFromArray:selectedArray];
-                // 重载 table 会将总金额也重载掉,所以要将第一个cell拆到tableView外面去
                 [self.tableView reloadData];
+                [self calculateTotalAmount];
+            } else {
+                [self alertShow:@"未查询到匹配的明细"];
+                [self.dataSource clearDetails];
+                [self.tableView reloadData];
+                [self calculateTotalAmount];
             }
         }
     }
@@ -215,122 +182,43 @@ NSInteger logCount = 0;
 
 
 
-#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<  TCP
-#pragma mask ::: ASIHTTPRequest 的数据接收协议
-// HTTP 接收成功
-- (void)requestFinished:(ASIHTTPRequest *)request {
-    [self.reciveData appendData:[request responseData]];
-    [request clearDelegatesAndCancel];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self analysisJSONDataToDisplay];
-        [[JLActivitor sharedInstance] stopAnimating];
-        // 删掉请求,需要时重建
-        self.HTTPRequest = nil;
-    });
-}
-// HTTP 接收失败
-- (void)requestFailed:(ASIHTTPRequest *)request {
-    [request clearDelegatesAndCancel];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIAlertView* alerView = [[UIAlertView alloc] initWithTitle:@"提示:" message:@"网络异常，请重新查询" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        [alerView show];
-        [[JLActivitor sharedInstance] stopAnimating];
-        
-    });
-    self.HTTPRequest = nil;
-}
-#pragma mask ::: 解析从后台获取的JSON格式明细，并展示到表视图
-- (void) analysisJSONDataToDisplay {
-    NSError* error;
-    NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:self.reciveData options:NSJSONReadingMutableLeaves error:&error];
-    
-    [self.dataArrayDisplay addObjectsFromArray:[[dataDic objectForKey:@"MchntInfoList"] copy]];
-    
-    if (self.dataArrayDisplay.count == 0) {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"当前没有交易明细" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        [alert show];
-    } else {
-        self.oldArraySaving = [self.dataArrayDisplay copy];
-        // 计算总金额
-        [self calculateTotalAmount];
-        // 重载数据
+#pragma mask ---- ViewModelTransDetailsDelegate
+/* 请求的数据返回了 */
+- (void)viewModel:(ViewModelTransDetails *)viewModel didRequestResult:(BOOL)result withMessage:(NSString *)message {
+    [[JLActivitor sharedInstance] stopAnimating];
+    if (result) {
         [self.tableView reloadData];
+        [self calculateTotalAmount];
+    } else {
+        [self.dataSource clearDetails];
+        [self.tableView reloadData];
+        [self calculateTotalAmount];
+        [self alertShow:message];
     }
-    self.reciveData = nil;
 }
-#pragma mask ---- HTTP请求
+
+
+#pragma mask ---- 数据源请求
 - (void) requestDataOnDate:(NSString*)dateString {
-    NSDictionary* dictInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    [self.HTTPRequest addRequestHeader:@"queryBeginTime" value:dateString];
-    [self.HTTPRequest addRequestHeader:@"queryEndTime" value:dateString];
-    [_HTTPRequest addRequestHeader:@"termNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedTerminalNum]];
-    [_HTTPRequest addRequestHeader:@"mchntNo" value:[dictInfo valueForKey:KeyInfoDictOfBindedBussinessNum]];
-    [self.HTTPRequest setDelegate:self];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.HTTPRequest startAsynchronous];  // 异步获取数据
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-    });
+    NSDictionary* bindedInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    NSString* terminal = [bindedInfo valueForKey:KeyInfoDictOfBindedTerminalNum];
+    NSString* bussiness = [bindedInfo valueForKey:KeyInfoDictOfBindedBussinessNum];
+    [self.dataSource requestDetailsWithPlatform:self.tradePlatform
+                                    andDelegate:self
+                                      beginTime:dateString
+                                        endTime:dateString
+                                       terminal:terminal
+                                      bussiness:bussiness];
 }
 
-#pragma mask >>>>>>>>>>>>>>>>>>>>>>>>>>  TCP
-
-
-#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<  model
 // 扫描明细数组,计算总金额，总笔数
 - (void) calculateTotalAmount {
-    CGFloat tAmount = 0.0;
-    int tAcount = 0;
-    int tSucCount = 0;
-    int tRevokeCount = 0;
-    for (int i = 0; i < self.dataArrayDisplay.count; i++) {
-        // 总金额 = 总消费金额 仅限成功的 (退货等交易的没有加进来)
-        NSDictionary* data = [self.dataArrayDisplay objectAtIndex:i];
-        if ([[data valueForKey:@"txnNum"] isEqualToString:@"消费"]) {
-            tSucCount++;
-            if ([[data objectForKey:@"cancelFlag"] isEqualToString:@"0"] &&
-                [[data objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
-                tAmount += [[data objectForKey:@"amtTrans"] floatValue];
-            }
-        } else if ([[data valueForKey:@"txnNum"] isEqualToString:@"消费撤销"]) {
-            tRevokeCount++;
-        }
-        tAcount++;
-    }
-    tAmount /= 100.0;
-    [self.totalView setTotalAmount:[NSString stringWithFormat:@"%.02f", tAmount]];
-    [self.totalView setTotalRows:[NSString stringWithFormat:@"%d", tAcount]];
-    [self.totalView setSucRows:[NSString stringWithFormat:@"%d", tSucCount]];
-    [self.totalView setRevokeRows:[NSString stringWithFormat:@"%d", tRevokeCount]];
-}
-/*************************************
- * 功  能 : 从明细列表中模糊查询出匹配的记录:卡号或金额;
- * 参  数 :
- *          (NSString*)cardOrMoney 需要查询的卡号或金额
- * 返  回 :
- *          (NSArray*)             查询到的明细数组
- *************************************/
-- (NSArray*) detailsSelectedByCardOrMoney:(NSString*)cardOrMoney {
-    NSMutableArray* selectedArray = [[NSMutableArray alloc] init];
-    for (NSDictionary* dataDic in self.oldArraySaving) {
-        NSString* cardNum = [dataDic valueForKey:@"pan"];
-        CGFloat money = [[dataDic valueForKey:@"amtTrans"] floatValue]/100.0;
-        // 金额或卡号后4位能匹配上
-        if (cardOrMoney.length == 4) {
-            if ([cardNum hasSuffix:cardOrMoney] || money == cardOrMoney.floatValue) {
-                [selectedArray addObject:[dataDic copy]];
-            }
-        }
-        else {
-            if (money == cardOrMoney.floatValue) {
-                [selectedArray addObject:[dataDic copy]];
-            }
-        }
-    }
-    return selectedArray;
-}
+    [self.totalView setTotalAmount:[NSString stringWithFormat:@"%.02f",[self.dataSource totalAmountOfTrans]]];
+    [self.totalView setTotalRows:[NSString stringWithFormat:@"%d", [self.dataSource totalCountOfTrans]]];
+    [self.totalView setSucRows:[NSString stringWithFormat:@"%d",[self.dataSource countOfNormalTrans]]];
+    [self.totalView setRevokeRows:[NSString stringWithFormat:@"%d", [self.dataSource countofCancelTrans]]];
 
-#pragma mask >>>>>>>>>>>>>>>>>>>>>>>>>>  model
-
+}
 
 
 
@@ -341,7 +229,9 @@ NSInteger logCount = 0;
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.dateButton];
-    [self.view addSubview:self.searchButton];
+    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        [self.view addSubview:self.searchButton];
+    }
     CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
     self.activitorFrame = CGRectMake(0,
                                      naviAndState,
@@ -354,7 +244,9 @@ NSInteger logCount = 0;
     // 先校验是否绑定了
     if ([DeviceManager deviceIsBinded]) {
         // 请求数据
-        [self requestDataOnDate:[self nowDate]];
+        [self requestDataOnDate:[PublicInformation nowDate]];
+        // 启动指示器
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     } else {
         [self alertShow:@"未绑定设备,请先绑定设备"];
     }
@@ -383,7 +275,7 @@ NSInteger logCount = 0;
     frame.size.height = 40;
     frame.size.width = 140;
     [self.dateButton setFrame:frame];
-    [self dateButtonSetTitle:[self nowDate]];
+    [self dateButtonSetTitle:[PublicInformation nowDate]];
 
     
     // 查询按钮
@@ -413,11 +305,12 @@ NSInteger logCount = 0;
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+//    [self.dataSource clearDetails];
     [[JLActivitor sharedInstance] stopAnimating];
-    if (self.HTTPRequest != nil) {        
-        [self.HTTPRequest clearDelegatesAndCancel];
-        self.HTTPRequest = nil;
-    }
+//    if (self.HTTPRequest != nil) {
+//        [self.HTTPRequest clearDelegatesAndCancel];
+//        self.HTTPRequest = nil;
+//    }
 }
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -434,15 +327,6 @@ NSInteger logCount = 0;
 }
 
 
-// 获取当前系统日期
-- (NSString*) nowDate {
-    NSString* nDate ;
-    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
-    nDate = [dateFormatter stringFromDate:[NSDate date]];
-    nDate = [nDate substringToIndex:8];
-    return nDate;
-}
 
 
 // 给日期按钮设置日期
@@ -502,22 +386,9 @@ NSInteger logCount = 0;
     return _dateButton;
 }
 
-- (NSMutableData *)reciveData {
-    if (_reciveData == nil) {
-        _reciveData = [[NSMutableData alloc] init];
-    }
-    return _reciveData;
-}
-- (NSMutableArray *)dataArrayDisplay {
-    if (_dataArrayDisplay == nil) {
-        _dataArrayDisplay = [[NSMutableArray alloc] init];
-    }
-    return _dataArrayDisplay;
-}
 - (NSMutableArray *)years {
     if (_years == nil) {
         _years = [[NSMutableArray alloc] init];
-//        NSString* nDate = [self nowDate];
         NSString* nDate = [PublicInformation nowDate];
         for (int i = [[nDate substringToIndex:4] intValue]; i >= 2015; i--) {
             [_years addObject:[NSString stringWithFormat:@"%d",i]];
@@ -543,15 +414,12 @@ NSInteger logCount = 0;
     }
     return _days;
 }
-- (ASIHTTPRequest *)HTTPRequest {
-    if (_HTTPRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
-        _HTTPRequest = [[ASIHTTPRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
-        [_HTTPRequest setUseCookiePersistence:NO];
-        [_HTTPRequest setDelegate:self];
-    }
-    return _HTTPRequest;
-}
 
+- (ViewModelTransDetails *)dataSource {
+    if (_dataSource == nil) {
+        _dataSource = [[ViewModelTransDetails alloc] init];
+    }
+    return _dataSource;
+}
 
 @end

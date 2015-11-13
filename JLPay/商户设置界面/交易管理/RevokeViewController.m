@@ -11,12 +11,14 @@
 #import "BrushViewController.h"
 #import "DeviceManager.h"
 #import "DetailsCell.h"
+#import "TransDetailsViewController.h"
 
 @interface RevokeViewController()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate>
 @property (nonatomic, strong) NSMutableDictionary* detailNameIndex;
 @property (nonatomic, strong) NSMutableArray* cellNames;
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) UIButton* revokeButton;
+@property (nonatomic, strong) UIImageView* imageView;
 @end
 
 
@@ -32,46 +34,42 @@
 
 
 - (void)viewDidLoad {
+    // 第三方交易详情要去掉卡号
+    if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+        NSInteger index = 0;
+        for (int i = 0; i < self.cellNames.count; i++) {
+            if ([[self.cellNames objectAtIndex:i] isEqualToString:@"交易卡号"]) {
+                index = i;
+            }
+        }
+        [self.cellNames removeObjectAtIndex:index];
+    }
+    
     [super viewDidLoad];
     self.title = @"交易详情";
     
+    
+    [self.view addSubview:self.imageView];
     [self.view addSubview:self.tableView];
-    [self.view addSubview:self.revokeButton];
 }
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     CGFloat inset = 10;
-//    CGFloat buttonHeight = 45;
     CGFloat naviAndStatusHeight = [[UIApplication sharedApplication] statusBarFrame].size.height + self.navigationController.navigationBar.bounds.size.height;
-    UIImage* image = [UIImage imageNamed:@"logo"];
     CGRect frame = CGRectMake(self.view.bounds.size.width/4.0,
                               inset + naviAndStatusHeight,
                               self.view.bounds.size.width/2.0,
-                              image.size.height/image.size.width * self.view.bounds.size.width/2.0);
+                              self.imageView.image.size.height/self.imageView.image.size.width * self.view.bounds.size.width/2.0);
     // 商标
-    UIImageView* imageView = [[UIImageView alloc] initWithFrame:frame];
-    imageView.image = image;
-    [self.view addSubview:imageView];
+    [self.imageView setFrame:frame];
+    
     // 表视图
     frame.origin.x = 0;
     frame.origin.y += inset + frame.size.height;
     frame.size.width = self.view.bounds.size.width;
     frame.size.height = self.view.bounds.size.height - frame.origin.y - /*inset*2.0 - buttonHeight -*/ self.tabBarController.tabBar.bounds.size.height;
-    [self.tableView setDataSource:self];
-    [self.tableView setDelegate:self];
     self.tableView.frame = frame;
-    // 撤销按钮 -- 暂时取消撤销按钮
-//    frame.origin.y += frame.size.height + inset;
-//    frame.size.height = buttonHeight;
-//    self.revokeButton.frame = frame;
-//    self.revokeButton.enabled = NO;
-//    if ([[_dataDic objectForKey:@"txnNum"] isEqualToString:@"消费"] &&
-//        [[_dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"] &&
-//        [[_dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"] &&
-//        [[_dataDic objectForKey:@"instDate"] isEqualToString:[PublicInformation nowDate]]) {
-//        self.revokeButton.enabled = YES;
-//        [self.revokeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    }
 }
 
 
@@ -95,14 +93,61 @@
     NSString* identifier = @"detailsCell";
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier];
     }
-    CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
-    cell.frame = frame;
-    [self loadDetailCell:cell atIndexPath: indexPath];
+
+    cell.textLabel.text = [self titleAtIndex:indexPath.row];
+    cell.textLabel.font = [UIFont systemFontOfSize:18];
+    cell.detailTextLabel.text = [self valueAtIndex:indexPath.row];
+    
     return cell;
 }
 
+- (NSString*) titleAtIndex:(NSInteger)index {
+    NSString* title = nil;
+    title = [self.cellNames objectAtIndex:index];
+    return title;
+}
+- (NSString*) valueAtIndex:(NSInteger)index {
+    NSString* value = nil;
+    NSString* cellTitle = [self titleAtIndex:index];
+    NSString* key = [self.detailNameIndex objectForKey:cellTitle];
+    if ([cellTitle isEqualToString:@"交易状态"]) {
+        if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
+            if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"]) {
+                value = @"已撤销";
+            } else if (![[self.dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
+                value = @"已冲正";
+            } else {
+                value = @"交易成功";
+            }
+        }
+        else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+            if ([[self.dataDic valueForKey:@"respCode"] intValue] == 0) {
+                value = @"交易成功";
+            } else {
+                value = @"交易失败";
+            }
+        }
+
+    } else { // 格式化数据的显示
+        value = [self.dataDic valueForKey:key];
+        if ([key isEqualToString:@"amtTrans"]) { // 金额
+            value = [NSString stringWithFormat:@"%@ 元", [PublicInformation dotMoneyFromNoDotMoney:value]];
+        }
+        else if ([key isEqualToString:@"pan"]) { // 卡号
+            value = [PublicInformation cuttingOffCardNo:value];
+        }
+        else if ([key isEqualToString:@"instDate"]) { // 交易日期
+            value = [NSString stringWithFormat:@"%@/%@/%@",[value substringToIndex:4],[value substringWithRange:NSMakeRange(4, 2)],[value substringFromIndex:6]];
+        }
+        else if ([key isEqualToString:@"instTime"]) { // 交易时间
+            value = [NSString stringWithFormat:@"%@:%@:%@",[value substringToIndex:2],[value substringWithRange:NSMakeRange(2, 2)],[value substringFromIndex:4]];
+        }
+
+    }
+    return value;
+}
 
 #pragma mask ---- 除了撤销的cell，其他都不能高亮
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -141,21 +186,6 @@
         
     } else {                    // 是:撤销
         // 返回的金额已经是无小数点的金额串12位
-        NSString* amount = [self.dataDic objectForKey:@"amtTrans"];
-        // 保存原始消费金额
-//        [[NSUserDefaults standardUserDefaults] setValue:amount forKey:SuccessConsumerMoney];
-//        CGFloat money = [amount floatValue]/100.0;
-//        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%.02f", money] forKey:Consumer_Money];
-        // 保存原消费流水号
-//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"retrivlRef"] forKey:Consumer_Get_Sort];
-        // 保存原消费批次号 用于撤销报文的61.1域
-//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"fldReserved"] forKey:Last_FldReserved_Number];
-        // 保存原消费系统流水号;用于撤销报文的61.2域 Last_Exchange_Number
-//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic objectForKey:@"sysSeqNum"] forKey:Last_Exchange_Number];
-        // 保存原始交易的终端号\商户号
-//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpTermId"] forKey:LastF41_TerminalNo];
-//        [[NSUserDefaults standardUserDefaults] setValue:[self.dataDic valueForKey:@"cardAccpId"] forKey:LastF42_BussinessNo];
-        // 注册交易类型到本地配置
         [[NSUserDefaults standardUserDefaults] setValue:TranType_ConsumeRepeal forKey:TranType];
         [[NSUserDefaults standardUserDefaults] synchronize];
         // 切换到刷卡界面
@@ -166,70 +196,14 @@
 }
 
 
-#pragma mask ::: 加载明细详情单元格
-- (void) loadDetailCell: (UITableViewCell*)cell atIndexPath: (NSIndexPath*)indexPath{
-    // 先去掉cell 的所有子视图，然后加载
-    for (UIView* view in cell.subviews) {
-        if ([view class] == [UILabel class]) {
-            [view removeFromSuperview];
-        }
-    }
-    
-    CGFloat leftWidth = cell.bounds.size.width / 4.0;
-    NSString* cellName = [self.cellNames objectAtIndex:indexPath.row];
-    // key
-    UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET, 0, leftWidth, cell.bounds.size.height)];
-    label.text = cellName;
-    [cell addSubview:label];
-    
-    // value
-    label = [[UILabel alloc] initWithFrame:CGRectMake(CELL_LEFT_INSET + leftWidth + CELL_LEFT_INSET/2.0,
-                                                      0,
-                                                      cell.bounds.size.width - leftWidth - CELL_LEFT_INSET*2.0,
-                                                      cell.bounds.size.height)];
-    label.font = [UIFont systemFontOfSize:15.0];
-    label.textColor = [UIColor colorWithRed:82.0/255.0 green:82.0/255.0 blue:82.0/255.0 alpha:1.0];
-    // 特定值
-    NSString* key = [self.detailNameIndex objectForKey:cellName];
-    if (key == nil) {
-        if ([cellName isEqualToString:@"交易状态"]) {
-            if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"]) {
-                label.text = @"已撤销";
-                label.textColor = [UIColor redColor];
-            } else if (![[self.dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
-                label.text = @"已冲正";
-                label.textColor = [UIColor redColor];
-            } else {
-                label.text = @"交易成功";
-            }
-        }
-    } else {
-        if ([key isEqualToString:@"amtTrans"]) { // 金额
-            NSString* amount = [self.dataDic objectForKey:key];
-            CGFloat fAmount = [amount floatValue]/100.0;
-            label.text = [NSString stringWithFormat:@"%.02f 元", fAmount];
-        } else if ([key isEqualToString:@"pan"]) { // 卡号
-            NSString* cardNo = [self.dataDic objectForKey:key];
-            label.text = [PublicInformation cuttingOffCardNo:cardNo];
-        } else if ([key isEqualToString:@"instTime"]) {
-            NSString* trantime = [self.dataDic valueForKey:key];
-            label.text = [NSString stringWithFormat:@"%@:%@:%@",[trantime substringToIndex:2],[trantime substringWithRange:NSMakeRange(2, 2)],[trantime substringFromIndex:4]];
-        }
-        else {
-            label.text = [self.dataDic objectForKey:key];
-            if ([key isEqualToString:@"txnNum"] && ![label.text isEqualToString:@"消费"]) {
-                label.textColor = [UIColor redColor];
-            }
-        }
-    }
-    
-    [cell addSubview:label];
-}
-
-
-
-
 #pragma mask ::: getter & setter
+- (UIImageView *)imageView {
+    if (_imageView == nil) {
+        _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+        _imageView.image = [UIImage imageNamed:@"logo"];
+    }
+    return _imageView;
+}
 // 保存单条明细记录数据
 - (NSDictionary *)dataDic {
     if (_dataDic == nil) {
@@ -243,7 +217,11 @@
         _tableView.layer.borderWidth = 0.5;
         _tableView.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
         UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
+        view.backgroundColor = [UIColor clearColor];
         [_tableView setTableFooterView:view];
+        [_tableView setDataSource:self];
+        [_tableView setDelegate:self];
+
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
     return _tableView;
@@ -287,12 +265,12 @@
         [_detailNameIndex setValue:@"txnNum" forKey:@"交易类型"];
         [_detailNameIndex setValue:@"cardAccpId" forKey:@"商户编号"];
         [_detailNameIndex setValue:@"cardAccpName" forKey:@"商户名称"];
+        [_detailNameIndex setValue:@"amtTrans" forKey:@"交易金额"];
+        [_detailNameIndex setValue:@"pan" forKey:@"交易卡号"];
+        [_detailNameIndex setValue:@"instDate" forKey:@"交易日期"];
+        [_detailNameIndex setValue:@"instTime" forKey:@"交易时间"];
         [_detailNameIndex setValue:@"retrivlRef" forKey:@"订单编号"];
         [_detailNameIndex setValue:@"cardAccpTermId" forKey:@"终端编号"];
-        [_detailNameIndex setValue:@"pan" forKey:@"交易卡号"];
-        [_detailNameIndex setValue:@"instTime" forKey:@"交易时间"];
-        [_detailNameIndex setValue:@"instDate" forKey:@"交易日期"];
-        [_detailNameIndex setValue:@"amtTrans" forKey:@"交易金额"];
     }
     return _detailNameIndex;
 }

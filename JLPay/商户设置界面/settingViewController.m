@@ -160,6 +160,8 @@
     
     if ([cellName isEqualToString:@"交易明细"]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
+        TransDetailsViewController* vc = (TransDetailsViewController*)viewController;
+        vc.tradePlatform = NameTradePlatformMPOSSwipe;
     }
     else if ([cellName isEqualToString:@"绑定设备"]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];

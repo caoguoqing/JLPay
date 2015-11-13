@@ -40,6 +40,8 @@
 /* 清空数据 */
 - (void) clearDetails;
 
+/* 过滤: 输入为金额或卡号后4位; 返回过滤结果*/
+- (BOOL) filterDetailsByInput:(NSString*)input;
 
 /* 总笔数 */
 - (NSInteger) totalCountOfTrans;
@@ -66,5 +68,7 @@
 /* 交易日期8位: 指定序号 */
 - (NSString*) transDateAtIndex:(NSInteger)index;
 
+/* 交易详情节点: 指定序号 */
+- (NSDictionary*) nodeDetailAtIndex:(NSInteger)index;
 
 @end

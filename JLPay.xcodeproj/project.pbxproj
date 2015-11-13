@@ -103,6 +103,7 @@
 		5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F21BEC914800128452 /* ScannerImageView.m */; };
 		5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */; };
 		5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448011BF42E2100128452 /* ViewModelTransDetails.m */; };
+		5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448041BF48FB400128452 /* RevokeViewCell.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -367,6 +368,8 @@
 		5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BarCodeResultViewController.m; sourceTree = "<group>"; };
 		5E9448001BF42E2100128452 /* ViewModelTransDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTransDetails.h; sourceTree = "<group>"; };
 		5E9448011BF42E2100128452 /* ViewModelTransDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTransDetails.m; sourceTree = "<group>"; };
+		5E9448031BF48FB400128452 /* RevokeViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevokeViewCell.h; sourceTree = "<group>"; };
+		5E9448041BF48FB400128452 /* RevokeViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RevokeViewCell.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -855,6 +858,8 @@
 				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
 				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
 				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
+				5E9448031BF48FB400128452 /* RevokeViewCell.h */,
+				5E9448041BF48FB400128452 /* RevokeViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1510,6 +1515,7 @@
 				5E5FA5851B46342600387E69 /* ISControlManager.m in Sources */,
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
 				5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */,
+				5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,

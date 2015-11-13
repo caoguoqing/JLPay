@@ -89,9 +89,10 @@
 
 #pragma mask ::: 金额属性赋值 : 000000000010
 - (void) setAmount : (NSString*)amount withColor:(UIColor *)color{
-    CGFloat fAmount = [amount floatValue];
-    fAmount /= 100.0;
-    self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
+//    CGFloat fAmount = [amount floatValue];
+//    fAmount /= 100.0;
+//    self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
+    self.amountLabel.text = [NSString stringWithFormat:@"￥ %@",amount];
     self.amountLabel.textColor = color;
 }
 #pragma mask ::: 卡号属性赋值

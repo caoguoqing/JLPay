@@ -71,8 +71,48 @@
     if (self.transDetails && self.transDetails.count > 0) {
         [self.transDetails removeAllObjects];
     }
-    
+    if (self.filterDetails && self.filterDetails.count > 0) {
+        [self.filterDetails removeAllObjects];
+    }
+    [self.http clearDelegatesAndCancel];
+    filter = NO;
 }
+
+
+/* 过滤: 输入为金额或卡号后4位 */
+- (BOOL) filterDetailsByInput:(NSString*)input
+{
+    BOOL filterReuslt = YES;
+    filter = NO;
+    [self.filterDetails removeAllObjects];
+    
+    // 将所有匹配上卡号后4位的节点追加到过滤数组
+    for (int i = 0; i < [self totalCountOfTrans]; i++) {
+        NSString* cardNum = [self cardNumAtIndex:i];
+        if ([cardNum hasSuffix:input]) {
+            [self.filterDetails addObject:[self.transDetails objectAtIndex:i]];
+        }
+    }
+    // 第一步查询为空才进行下一步查询
+    if (self.filterDetails.count == 0) {
+        // 将所有匹配上金额的节点追加到过滤数组
+        for (int i = 0; i < [self totalCountOfTrans]; i++) {
+            NSString* amount = [self moneyAtIndex:i];
+            if (amount.floatValue == input.floatValue) {
+                [self.filterDetails addObject:[self.transDetails objectAtIndex:i]];
+            }
+        }
+    }
+    
+    if (self.filterDetails.count == 0) {
+        filterReuslt = NO;
+    }
+    filter = YES;
+    return filterReuslt;
+}
+
+
+
 
 /* 总笔数 */
 - (NSInteger) totalCountOfTrans
@@ -137,6 +177,7 @@
             amount += [self moneyAtIndex:i].floatValue;
         }
     }
+    NSLog(@"计算的总金额=[%lf]",amount);
     return amount;
 }
 
@@ -302,11 +343,29 @@
     return isRevsal;
 }
 
+/* 交易详情节点: 指定序号 */
+- (NSDictionary*) nodeDetailAtIndex:(NSInteger)index {
+    NSDictionary* node = nil;
+    if (!filter) {
+        node = [self.transDetails objectAtIndex:index];
+    } else {
+        node = [self.filterDetails objectAtIndex:index];
+    }
+    return node;
+}
+
+
 
 
 #pragma mask ---- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     NSData* responseData = [request responseData];
+    /*
+     HttpMessage = "query success";
+     HttpResult = 0;
+     */
+    NSDictionary* httpResponseHeaders = [request responseHeaders];
+
     [request clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:nil];
     if (!dataDict) {
@@ -314,16 +373,22 @@
             [self.delegate viewModel:self didRequestResult:NO withMessage:@"解析响应数据失败"];
         }
     } else {
-        NSString* retcode = [dataDict valueForKey:@"code"];
+        NSString* retcode = [httpResponseHeaders valueForKey:@"HttpResult"];
         if ([retcode intValue] != 0) {
             if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
-                [self.delegate viewModel:self didRequestResult:NO withMessage:[dataDict valueForKey:@"message"]];
+                [self.delegate viewModel:self didRequestResult:NO withMessage:[httpResponseHeaders valueForKey:@"HttpMessage"]];
             }
         } else {
-            NSArray* requestArray = [dataDict valueForKey:@"DetailList"];
+            NSArray* requestArray = nil;
+            if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
+                requestArray = [dataDict valueForKey:@"MchntInfoList"];
+            }
+            else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+                requestArray = [dataDict valueForKey:@"DetailList"];
+            }
             if (!requestArray || requestArray.count == 0) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(viewModel:didRequestResult:withMessage:)]) {
-                    [self.delegate viewModel:self didRequestResult:NO withMessage:[dataDict valueForKey:@"交易明细为空"]];
+                    [self.delegate viewModel:self didRequestResult:NO withMessage:@"交易明细为空"];
                 }
             } else {
                 [self.transDetails addObjectsFromArray:requestArray];
