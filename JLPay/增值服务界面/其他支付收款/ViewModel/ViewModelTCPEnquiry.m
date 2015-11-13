@@ -39,7 +39,6 @@
 
 #pragma mask ---- ViewModelTCPDelegate
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
-    NSLog(@"TCP[%d][%@]返回了,交易结果:[%d]",tcp.tag,tcp,state);
     if (state) {
         [self updatePayDoneResult:YES];
     } else {

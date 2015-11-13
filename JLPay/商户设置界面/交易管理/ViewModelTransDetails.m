@@ -46,10 +46,20 @@
     
     self.http = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:[self urlStringWithPlatform:platform]]];
     [self.http setDelegate:self];
-    [self.http addRequestHeader:@"queryBeginTime" value:beginTime];
-    [self.http addRequestHeader:@"queryEndTime" value:endTime];
-    [self.http addRequestHeader:@"termNo" value:terminal];
-    [self.http addRequestHeader:@"mchntNo" value:bussiness];
+    if ([platform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        [self.http addRequestHeader:@"queryBeginTime" value:beginTime];
+        [self.http addRequestHeader:@"queryEndTime" value:endTime];
+        [self.http addRequestHeader:@"termNo" value:terminal];
+        [self.http addRequestHeader:@"mchntNo" value:bussiness];
+    }
+    else if ([platform isEqualToString:NameTradePlatformOtherPay]) {
+        [self.http addPostValue:beginTime forKey:@"queryBeginTime"];
+        [self.http addPostValue:endTime forKey:@"queryEndTime"];
+        [self.http addPostValue:terminal forKey:@"termNo"];
+        [self.http addPostValue:bussiness forKey:@"mchntNo"];
+    }
+    
+    
     [self.http startAsynchronous];
     
 }
@@ -110,9 +120,6 @@
     filter = YES;
     return filterReuslt;
 }
-
-
-
 
 /* 总笔数 */
 - (NSInteger) totalCountOfTrans
@@ -177,7 +184,6 @@
             amount += [self moneyAtIndex:i].floatValue;
         }
     }
-    NSLog(@"计算的总金额=[%lf]",amount);
     return amount;
 }
 

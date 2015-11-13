@@ -22,7 +22,6 @@
 @end
 
 
-#define CELL_LEFT_INSET             30.0
 
 @implementation RevokeViewController
 @synthesize dataDic = _dataDic;
@@ -143,6 +142,11 @@
         }
         else if ([key isEqualToString:@"instTime"]) { // 交易时间
             value = [NSString stringWithFormat:@"%@:%@:%@",[value substringToIndex:2],[value substringWithRange:NSMakeRange(2, 2)],[value substringFromIndex:4]];
+        }
+        else if ([key isEqualToString:@"retrivlRef"]) { // 订单编号
+            if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+                value = [self.dataDic valueForKey:@"sysSeqNum"];
+            }
         }
 
     }

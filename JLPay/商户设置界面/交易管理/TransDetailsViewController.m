@@ -305,12 +305,7 @@ NSInteger logCount = 0;
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    [self.dataSource clearDetails];
     [[JLActivitor sharedInstance] stopAnimating];
-//    if (self.HTTPRequest != nil) {
-//        [self.HTTPRequest clearDelegatesAndCancel];
-//        self.HTTPRequest = nil;
-//    }
 }
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];

@@ -15,6 +15,7 @@
 #import "Toast+UIView.h"
 #import "OtherPayCollectViewController.h"
 #import "DeviceManager.h"
+#import "TransDetailsViewController.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
 
@@ -123,7 +124,13 @@ NSString* headerIdentifier = @"headerIdentifier";
         }
     }
     else {
-        [self.view makeToast:@"功能正在建设中,请关注版本更新..."];
+        // 校验设备绑定
+        if (![DeviceManager deviceIsBinded]) {
+            [self alertForMessage:@"设备未绑定，请先绑定设备"];
+        } else {
+            [self.navigationController pushViewController:[self transDetailsViewControllerWithPlatform:NameTradePlatformOtherPay] animated:YES];
+        }
+
     }
 }
 
@@ -133,6 +140,14 @@ NSString* headerIdentifier = @"headerIdentifier";
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     OtherPayCollectViewController* payCollectVC = [storyBoard instantiateViewControllerWithIdentifier:@"otherPayVC"];
     [payCollectVC setPayCollectType:type];
+    return payCollectVC;
+}
+
+/* 交易明细界面 */
+- (TransDetailsViewController*) transDetailsViewControllerWithPlatform:(NSString*)platform {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    TransDetailsViewController* payCollectVC = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
+    [payCollectVC setTradePlatform:platform];
     return payCollectVC;
 }
 

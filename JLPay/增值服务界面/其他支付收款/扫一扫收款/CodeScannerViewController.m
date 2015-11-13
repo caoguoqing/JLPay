@@ -52,8 +52,6 @@
     if (metadataObjects && metadataObjects.count > 0) {
         AVMetadataMachineReadableCodeObject* metadataObject = [metadataObjects objectAtIndex:0];
         NSString* orderCode = [metadataObject stringValue];
-        NSString* qureTitle = [NSString stringWithFormat:@"条形码:%@",orderCode];
-        NSLog(@"%@",qureTitle);
         self.progressHUD.labelText = @"收款中...";
         [self.progressHUD show:YES];
         
