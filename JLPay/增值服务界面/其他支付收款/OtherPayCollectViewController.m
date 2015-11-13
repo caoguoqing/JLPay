@@ -82,7 +82,6 @@
     else if ([QRCodeView.title isEqualToString:@"扫一扫"]) {
         // 跳转到条码扫描界面
         [self pushToVCBarCode];
-        NSLog(@"%s",__func__);
     }
 }
 /* 跳转到二维码显示界面 */

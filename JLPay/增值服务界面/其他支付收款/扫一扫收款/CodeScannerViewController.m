@@ -11,18 +11,16 @@
 #import "MaskView.h"
 #import "MBProgressHUD.h"
 #import "ViewModelTCP.h"
+#import "ViewModelTCPEnquiry.h"
 #import "OtherPayCollectViewController.h"
 #import "BarCodeResultViewController.h"
-
-
-//const NSString* kScanQRCodeQueueName = @"kScanQRCodeQueueName__";
-//static CGFloat fScanViewHeight = 200; // 条码摄取框的高度
-//static CGFloat fInset = 20; // 条码摄取框的水平边界间隔
-
+#import "PublicInformation.h"
 
 
 #pragma mask ---- 对象属性
-@interface CodeScannerViewController()<AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate,ViewModelTCPDelegate>
+@interface CodeScannerViewController()
+<AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate,
+ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 {
     NSArray* metadataTypes; // 扫码的类型组
     BOOL enableImageAnimating; // 扫描框动效的开关
@@ -33,6 +31,9 @@
 
 @property (nonatomic, strong) MBProgressHUD* progressHUD;
 @property (nonatomic, retain) ViewModelTCP* tcpHolder;
+@property (nonatomic, retain) ViewModelTCPEnquiry* tcpEnquiry;
+
+@property (nonatomic, retain) NSTimer* timeOutForTCPEnquiry;
 @end
 
 
@@ -66,15 +67,68 @@
 #pragma mask ---- ViewModelTCPDelegate
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData
 {
-    [self.progressHUD hide:YES];
     [tcp TCPClear];
-    BOOL result = NO;
+    // 交易成功
     if (state) {
-        result = YES;
+        [self.progressHUD hide:YES];
+        [self pushToBarCodeResultVCWithResult:state];
     }
-    // barPayCollectionVC
+    // 交易失败,继续查询结果
+    else {
+        
+        NSString* f63 = [responseData valueForKey:KeyResponseDataRetData];
+        if (f63) {
+            NSString* responseMessage = nil;
+            NSString* orderCode = nil;
+            // 订单号
+            NSLog(@"---1:63:[%@]",f63);
+            orderCode = [f63 substringToIndex:64*2];
+            NSLog(@"---2");
+            orderCode = [PublicInformation stringFromHexString:orderCode];
+            // 响应信息
+            responseMessage = [f63 substringWithRange:NSMakeRange(64*2, 64*2)];
+            
+            NSLog(@"交易结果失败,进行结果轮询:[%@]",orderCode);
+            // 发起结果查询轮询定时器
+            [self startTCPEnquiryWithOrderCode:orderCode];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self startTimerForTCPEnquiry];
+            });
+        }
+    }
+    
+    
+//    [tcp TCPClear];
+//    BOOL result = NO;
+//    if (state) {
+//        result = YES;
+//        [self.progressHUD hide:YES];
+//    }
+//    [self pushToBarCodeResultVCWithResult:result];
+}
+
+#pragma mask ---- NSKeyValueObserving
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSString *,id> *)change
+                       context:(void *)context
+{
+    if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry) {
+        NSNumber* value = [self.tcpEnquiry valueForKey:KEYPATH_PAYISDONE_CHANGED];
+        if (value.boolValue) { // 监控的值变为成功了
+            [self.tcpEnquiry cleanForEnquiryDone];
+        }
+    }
+}
+
+
+#pragma mask ---- ViewModelTCPEnquiryDelegate
+- (void)TCPEnquiryResult:(BOOL)result withMessage:(NSString *)message {
+    [self.progressHUD hide:YES];
     [self pushToBarCodeResultVCWithResult:result];
 }
+
+
 #pragma mask ---- TCP
 /* TCP扫码收款交易请求 */
 - (void) startTCPTransWithOrderCode:(NSString*)orderCode {
@@ -88,6 +142,35 @@
     if (transType) {
         [self.tcpHolder TCPRequestWithTransType:transType andMoney:self.money andOrderCode:orderCode andDelegate:self];
     }
+}
+
+/* TCP扫码收款结果查询 */
+- (void) startTCPEnquiryWithOrderCode:(NSString*)orderCode {
+    NSString* transType = nil;
+    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
+        transType = TranType_BarCode_Review_Alipay;
+    }
+    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
+        transType = TranType_BarCode_Review_WeChat;
+    }
+    if (transType) {
+        [self.tcpEnquiry TCPStartTransEnquiryWithTransType:transType andOrderCode:orderCode andMoney:self.money];
+    }
+}
+/* 关闭交易结果轮询TCP */
+- (void) stopTCPEnquiry {
+//    [self.tcpHolder TCPClear];
+//    [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
+    [self.tcpEnquiry terminateTCPEnquiry];
+    
+    [self.progressHUD hide:YES];
+    [self pushToBarCodeResultVCWithResult:NO];
+}
+
+
+#pragma mask ---- 交易结果轮询超时定时器
+- (void) startTimerForTCPEnquiry {
+    self.timeOutForTCPEnquiry = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(stopTCPEnquiry) userInfo:nil repeats:NO];
 }
 
 #pragma mask ---- 初始化界面视图
@@ -123,6 +206,11 @@
     [self.maskView stopImageAnimation];
     [self stopBarCodeScanning];
     enableImageAnimating = YES;
+    
+    [self.tcpHolder TCPClear];
+    [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
+    [self.tcpEnquiry terminateTCPEnquiry];
+
 }
 
 
@@ -242,6 +330,14 @@
         _tcpHolder = [[ViewModelTCP alloc] init];
     }
     return _tcpHolder;
+}
+- (ViewModelTCPEnquiry *)tcpEnquiry {
+    if (_tcpEnquiry == nil) {
+        _tcpEnquiry = [[ViewModelTCPEnquiry alloc] init];
+        [_tcpEnquiry setDelegate:self];
+        [_tcpEnquiry addObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED options:NSKeyValueObservingOptionNew context:nil];
+    }
+    return _tcpEnquiry;
 }
 
 @end

@@ -88,6 +88,37 @@ typedef enum {
     self.labelLog.textColor = [UIColor greenColor];
 }
 
+#pragma mask ---- TCP报文请求
+/* 二维码请求 */
+- (void) startTCPRequest {
+    NSString* transType = nil;
+    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
+        transType = TranType_QRCode_Request_Alipay;
+    }
+    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
+        transType = TranType_QRCode_Request_WeChat;
+    }
+    [self.tcpQRCode TCPRequestWithTransType:transType
+                                   andMoney:self.money
+                               andOrderCode:nil
+                                andDelegate:self];
+}
+/* 收款结果查询 */
+- (void) startTCPEnquiry {
+    NSString* transType = nil;
+    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
+        transType = TranType_QRCode_Review_Alipay;
+    }
+    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
+        transType = TranType_QRCode_Review_WeChat;
+    }
+    [self.tcpEnquiry TCPStartTransEnquiryWithTransType:transType andOrderCode:orderCode andMoney:self.money];
+    [self.labelLog setText:@"收款结果确认中..."];
+}
+
+
+
+
 #pragma mask ---- MBProgressHUDDelegate
 - (void)hudWasHidden:(MBProgressHUD *)hud {
     [hud removeFromSuperview];
@@ -95,13 +126,17 @@ typedef enum {
 }
 
 #pragma mask ---- NSKeyValueObserving
+/* 观察者观察到得对象的属性变更了 */
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSString *,id> *)change
                        context:(void *)context
 {
-    if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry) {
-        [self.tcpEnquiry cleanForEnquiryDone];
+    if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry ) {
+        NSNumber* value = [self.tcpEnquiry valueForKey:KEYPATH_PAYISDONE_CHANGED];
+        if (value.boolValue) { // 监控的值变为成功了
+            [self.tcpEnquiry cleanForEnquiryDone];
+        }
     }
 }
 
@@ -172,33 +207,6 @@ typedef enum {
     [self.tcpEnquiry terminateTCPEnquiry];
 }
 
-#pragma mask ---- TCP报文请求
-/* 二维码请求 */
-- (void) startTCPRequest {
-    NSString* transType = nil;
-    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
-        transType = TranType_QRCode_Request_Alipay;
-    }
-    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
-        transType = TranType_QRCode_Request_WeChat;
-    }
-    [self.tcpQRCode TCPRequestWithTransType:transType
-                                   andMoney:self.money
-                               andOrderCode:nil
-                                andDelegate:self];
-}
-/* 收款结果查询 */
-- (void) startTCPEnquiry {
-    NSString* transType = nil;
-    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
-        transType = TranType_QRCode_Review_Alipay;
-    }
-    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
-        transType = TranType_QRCode_Review_WeChat;
-    }
-    [self.tcpEnquiry TCPStartTransEnquiryWithTransType:transType andOrderCode:orderCode andMoney:self.money];
-    [self.labelLog setText:@"收款结果确认中..."];
-}
 
 
 #pragma mask ---- PRIVATE INTERFACE

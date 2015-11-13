@@ -3900,7 +3900,7 @@ Failed:
 	
 	NSTimeInterval timeoutExtension = 0.0;
 	
-	if([theDelegate respondsToSelector:@selector(onSocket:shouldTimeoutReadWithTag:elapsed:bytesDone:)])
+	if(theDelegate && [theDelegate respondsToSelector:@selector(onSocket:shouldTimeoutReadWithTag:elapsed:bytesDone:)])
 	{
 		timeoutExtension = [theDelegate onSocket:self shouldTimeoutReadWithTag:theCurrentRead->tag
 		                                                               elapsed:theCurrentRead->timeout

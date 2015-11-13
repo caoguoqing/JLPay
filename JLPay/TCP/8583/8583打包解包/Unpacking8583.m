@@ -80,6 +80,7 @@ static Unpacking8583 *sharedObj2 = nil;
         if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {
             [self.stateDelegate didUnpackDatas:dictFields onState:rebackState withErrorMsg:rebackStr];
         }
+
     }
     @catch (NSException *exception) {
         if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {

@@ -31,19 +31,22 @@
 /* 属性: 代理 */
 @property (nonatomic, weak) id<ViewModelTCPEnquiryDelegate>delegate;
 
+
+#define KEYPATH_PAYISDONE_CHANGED @"payIsDone"              // payIsDone 的观察者键
+@property (nonatomic, assign) NSNumber* payIsDone;          // 查询结果标记
+
+
 /* 方法: 启动查询 */
 - (void) TCPStartTransEnquiryWithTransType:(NSString*)transType
                               andOrderCode:(NSString*)orderCode
                                   andMoney:(NSString*)money;
 
-/* 方法: 查询成功后的清理工作及回调 */
+/* 方法: 查询成功后的清理工作及回调；在 KEYPATH_PAYISDONE_CHANGED 观察者激活后调用 */
 - (void) cleanForEnquiryDone;
-/* 方法: 终止并清理定时器 */
+
+/* 方法: 终止并清理定时器；在调用者销毁前调用 */
 - (void) terminateTCPEnquiry;
 
-@property (nonatomic, assign) NSNumber* payIsDone;          // 查询结果标记
-// payIsDone 的观察者键
-#define KEYPATH_PAYISDONE_CHANGED @"payIsDone"
 
 
 @end

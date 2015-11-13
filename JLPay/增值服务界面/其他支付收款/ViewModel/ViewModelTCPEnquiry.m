@@ -98,6 +98,7 @@
 #pragma mask ---- TCP节点数组
 /* 追加TCP节点 */
 - (void) appendTCPNode:(ViewModelTCP*)tcpHolder {
+    NSLog(@"%@ <- %d",[self allTcpNodeTags], tcpHolder.tag);
     [self.TCPNodes addObject:tcpHolder];
 }
 /* 删除所有节点 */
@@ -113,6 +114,7 @@
         }
     }
     [self.TCPNodes removeObject:needDeleteTCP];
+    NSLog(@"%@ -> %d",[self allTcpNodeTags], tcpHolder.tag);
 }
 
 
@@ -133,6 +135,16 @@
             [tcp TCPClear];
         }
     }
+}
+
+- (NSString*) allTcpNodeTags {
+    NSMutableString* tags = [[NSMutableString alloc] init];
+    [tags appendString:@"["];
+    for (ViewModelTCP* tcp in self.TCPNodes) {
+        [tags appendFormat:@"%d,",tcp.tag];
+    }
+    [tags appendString:@"]"];
+    return tags;
 }
 
 #pragma mask ---- 查询结果标记

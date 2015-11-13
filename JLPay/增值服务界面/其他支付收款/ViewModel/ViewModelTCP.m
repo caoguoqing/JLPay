@@ -14,7 +14,7 @@
 #import "TcpClientService.h"
 
 @interface ViewModelTCP()<wallDelegate, Unpacking8583Delegate>
-@property (nonatomic, retain) TcpClientService* tcpHolder;
+@property (nonatomic, strong) TcpClientService* tcpHolder;
 @property (nonatomic, weak) id<ViewModelTCPDelegate>delegate;
 @property (nonatomic, strong) NSString* transType;
 @end
@@ -104,13 +104,13 @@
 // 解包结果:成功或失败;如果失败,带回错误信息
 - (void) didUnpackDatas:(NSDictionary*)dataDict onState:(BOOL)state withErrorMsg:(NSString*)message {
     NSDictionary* retDataInfo = nil;
-    if (!state) {
-        retDataInfo = [self dictRetErrorMessage:message];
+    NSString* f63 = [dataDict objectForKey:@"63"];
+    if (f63) {
+        retDataInfo = [self dictRetData:[f63 substringFromIndex:4] andErrorMessage:message];
     } else {
-        // 解析63域
-        NSString* f63 = [dataDict objectForKey:@"63"];
-        retDataInfo = [self dictRetData:[f63 substringFromIndex:4]];
+        retDataInfo = [self dictRetData:@"" andErrorMessage:message];
     }
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
         [self.delegate TCPResponse:self withState:state andData:retDataInfo];
     }
@@ -132,7 +132,14 @@
     [dict setObject:self.transType forKey:KeyResponseDataTranType];
     return dict;
 }
-
+/* 封装响应信息: 成功的+失败的 */
+- (NSDictionary*) dictRetData:(NSString*)retData andErrorMessage:(NSString*)errorMessage {
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    [dict setObject:errorMessage forKey:KeyResponseDataMessage];
+    [dict setObject:retData forKey:KeyResponseDataRetData];
+    [dict setObject:self.transType forKey:KeyResponseDataTranType];
+    return dict;
+}
 
 
 #pragma mask ---- 打包
@@ -171,7 +178,9 @@
         processingCode = @"000000";
     }
     else if ([transType isEqualToString:TranType_QRCode_Review_Alipay] ||
-             [transType isEqualToString:TranType_QRCode_Review_WeChat]
+             [transType isEqualToString:TranType_QRCode_Review_WeChat] ||
+             [transType isEqualToString:TranType_BarCode_Review_Alipay] ||
+             [transType isEqualToString:TranType_BarCode_Review_WeChat]
              )
     {
         processingCode = @"310000";
@@ -193,7 +202,9 @@
     if ([transType isEqualToString:TranType_QRCode_Review_Alipay] ||
         [transType isEqualToString:TranType_QRCode_Review_WeChat] ||
         [transType isEqualToString:TranType_BarCode_Trans_Alipay] ||
-        [transType isEqualToString:TranType_BarCode_Trans_WeChat]
+        [transType isEqualToString:TranType_BarCode_Trans_WeChat] ||
+        [transType isEqualToString:TranType_BarCode_Review_Alipay] ||
+        [transType isEqualToString:TranType_BarCode_Review_WeChat]
         )
     {
         [f63 appendString:[EncodeString encodeASC:orderCode]];
@@ -215,11 +226,15 @@
     {
         codeType = @"04";
     }
-    else if ([transType isEqualToString:TranType_BarCode_Trans_WeChat])
+    else if ([transType isEqualToString:TranType_BarCode_Trans_WeChat] ||
+             [transType isEqualToString:TranType_BarCode_Review_WeChat]
+             )
     {
         codeType = @"13";
     }
-    else if ([transType isEqualToString:TranType_BarCode_Trans_Alipay])
+    else if ([transType isEqualToString:TranType_BarCode_Trans_Alipay] ||
+             [transType isEqualToString:TranType_BarCode_Review_Alipay]
+             )
     {
         codeType = @"14";
     }
