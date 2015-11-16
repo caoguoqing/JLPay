@@ -103,7 +103,9 @@
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
-    [self.TCPNodes removeAllObjects];
+    if (self.TCPNodes && self.TCPNodes.count > 0) {
+        [self.TCPNodes removeAllObjects];
+    }
 }
 /* 删除指定节点 */
 - (void) removeTCPNode:(ViewModelTCP*)tcpHolder {

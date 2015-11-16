@@ -33,10 +33,10 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 @property (nonatomic, strong) MaskView* maskView; // 遮罩视图: 带扫描框
 
 @property (nonatomic, strong) MBProgressHUD* progressHUD;
-@property (nonatomic, retain) ViewModelTCP* tcpHolder;
-@property (nonatomic, retain) ViewModelTCPEnquiry* tcpEnquiry;
+@property (nonatomic, strong) ViewModelTCP* tcpHolder;
+@property (nonatomic, strong) ViewModelTCPEnquiry* tcpEnquiry;
 
-@property (nonatomic, retain) NSTimer* timeOutForTCPEnquiry;
+@property (nonatomic, strong) NSTimer* timeOutForTCPEnquiry;
 @end
 
 
@@ -190,10 +190,13 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     if (!codeScanningDone) {
         [self.codeScanner stopScanning];
     }
-    
     [self.maskView stopImageAnimation];
     
-    [self.tcpHolder TCPClear];
+    if ([self.tcpHolder isConnected]) {
+        [self.tcpHolder TCPClear];
+    }
+    [self.progressHUD hide:YES];
+    
     // 注销KVO
     [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
     [self.tcpEnquiry terminateTCPEnquiry];
