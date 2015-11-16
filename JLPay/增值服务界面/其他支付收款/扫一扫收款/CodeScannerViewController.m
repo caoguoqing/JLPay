@@ -15,17 +15,20 @@
 #import "OtherPayCollectViewController.h"
 #import "BarCodeResultViewController.h"
 #import "PublicInformation.h"
+#import "ViewModelCodeScanner.h"
 
 
 #pragma mask ---- 对象属性
 @interface CodeScannerViewController()
-<AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate,
+<
+ViewModelCodeScannerDelegate,
+UIAlertViewDelegate,
 ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 {
     NSArray* metadataTypes; // 扫码的类型组
-    BOOL enableImageAnimating; // 扫描框动效的开关
+    BOOL codeScanningDone;  // 扫码结果
 }
-@property (nonatomic, strong) AVCaptureSession* captureSession;         // 媒体管理器
+@property (nonatomic, retain) ViewModelCodeScanner* codeScanner;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer* videoLayer;   // 视频显示层
 @property (nonatomic, strong) MaskView* maskView; // 遮罩视图: 带扫描框
 
@@ -40,26 +43,21 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 
 @implementation CodeScannerViewController
 
-
-#pragma mask ---- AVCaptureMetadataOutputObjectsDelegate
-/* 流媒体数据的数据获取回调 */
-- (void)     captureOutput:(AVCaptureOutput *)captureOutput
-  didOutputMetadataObjects:(NSArray *)metadataObjects
-            fromConnection:(AVCaptureConnection *)connection
+#pragma mask ---- ViewModelCodeScannerDelegate
+- (void)codeScanner:(ViewModelCodeScanner *)codeScanner
+      resultScanned:(BOOL)result
+        codeScanned:(NSString *)code
+       errorMessage:(NSString *)message
 {
-    [self stopBarCodeScanning];
+    [self.codeScanner stopScanning];
     [self.maskView stopImageAnimation];
-    enableImageAnimating = YES;
-    if (metadataObjects && metadataObjects.count > 0) {
-        AVMetadataMachineReadableCodeObject* metadataObject = [metadataObjects objectAtIndex:0];
-        NSString* orderCode = [metadataObject stringValue];
+    if (result) {
+        codeScanningDone = YES;
         self.progressHUD.labelText = @"收款中...";
         [self.progressHUD show:YES];
-        
-        [self startTCPTransWithOrderCode:orderCode];
-        
+        [self startTCPTransWithOrderCode:code];
     } else {
-        [self alertForMessage:@"扫描条形码失败!"];
+        [self alertForMessage:message];
     }
 }
 
@@ -77,7 +75,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     else {
         
         NSString* f63 = [responseData valueForKey:KeyResponseDataRetData];
-        if (f63) {
+        if (f63 && f63.length > 0) {
             NSString* responseMessage = nil;
             NSString* orderCode = nil;
             // 订单号
@@ -96,15 +94,6 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
             });
         }
     }
-    
-    
-//    [tcp TCPClear];
-//    BOOL result = NO;
-//    if (state) {
-//        result = YES;
-//        [self.progressHUD hide:YES];
-//    }
-//    [self pushToBarCodeResultVCWithResult:result];
 }
 
 #pragma mask ---- NSKeyValueObserving
@@ -159,8 +148,6 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 }
 /* 关闭交易结果轮询TCP */
 - (void) stopTCPEnquiry {
-//    [self.tcpHolder TCPClear];
-//    [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
     [self.tcpEnquiry terminateTCPEnquiry];
     
     [self.progressHUD hide:YES];
@@ -177,37 +164,37 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.clipsToBounds = YES;
-    enableImageAnimating = YES;
-    // 条码类型:
-    metadataTypes = @[AVMetadataObjectTypeCode128Code,AVMetadataObjectTypeEAN13Code,AVMetadataObjectTypeEAN8Code];
+    codeScanningDone = NO;
     // 创建背景框视图
     [self.view addSubview:self.maskView];
     [self.view addSubview:self.progressHUD];
     [self.view.layer insertSublayer:self.videoLayer atIndex:0];
-    // 初始化摄像头
-    if ([self initBarCodeScanning]) {
-        [self startBarCodeScanning];
-    } else {
-        [self alertForMessage:@"摄像头打开失败!"];
-    }
+    // 启动摄像头扫描
+    [self.codeScanner startScanning];
+    
 }
-- (void)viewWillAppear:(BOOL)animated {
+- (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (enableImageAnimating) {
-        [self.maskView startImageAnimation];
-        enableImageAnimating = NO;
+    if (!codeScanningDone) {
+        [self.codeScanner startScanning];
+        if (![self.maskView isImageAnimating]) {
+            [self.maskView startImageAnimation];
+        }
     }
+    // 注册KVO: 轮询结果更新
+    [self.tcpEnquiry addObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED options:NSKeyValueObservingOptionNew context:nil];
 }
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-- (void)viewWillDisappear:(BOOL)animated {
+
+- (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    if (!codeScanningDone) {
+        [self.codeScanner stopScanning];
+    }
+    
     [self.maskView stopImageAnimation];
-    [self stopBarCodeScanning];
-    enableImageAnimating = YES;
     
     [self.tcpHolder TCPClear];
+    // 注销KVO
     [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
     [self.tcpEnquiry terminateTCPEnquiry];
 
@@ -216,49 +203,19 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 
 
 #pragma mask ---- PRIVATE INTERFACE
-/* 初始化摄像头扫码 */
-- (BOOL) initBarCodeScanning {
-    BOOL startedResult = NO;
-    AVCaptureDeviceInput* input = [self inputOfVideo];
-    if (input) {
-        startedResult = YES;
-        [self.captureSession addInput:input];
-        AVCaptureMetadataOutput* output = [self outputOfMetadata];
-        [self.captureSession addOutput:output];
-        [output setMetadataObjectTypes:metadataTypes];
-    }
-    return startedResult;
-}
-/* 开始扫码 */
-- (void) startBarCodeScanning {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (![self.captureSession isRunning]) {
-            [self.captureSession startRunning];
-        }
-    });
-}
-/* 停止扫码 */
-- (void) stopBarCodeScanning {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([self.captureSession isRunning]) {
-            [self.captureSession stopRunning];
-        }
-    });
+/* 摄入框的焦点rect: CGRect(y,x,h,w) */
+- (CGRect) rectOfInterest {
+    CGRect rect = CGRectMake(0, 0, 0, 0);
+    CGSize size = [self.maskView sizeOfScannerView];
+    CGFloat screenW = self.view.frame.size.width;
+    CGFloat screenH = self.view.frame.size.height;
+    rect.origin.y = (screenW - size.width)/2.0 / screenW;
+    rect.origin.x = (screenH - size.height)/2.0 / screenH;
+    rect.size.width = size.height / screenH;
+    rect.size.height = size.width / screenW;
+    return rect;
 }
 
-/* 视频入口 */
-- (AVCaptureDeviceInput*) inputOfVideo {
-    AVCaptureDevice* device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    AVCaptureDeviceInput* input = nil;
-    input = [AVCaptureDeviceInput deviceInputWithDevice:device error:nil];
-    return input;
-}
-/* 流媒体数据出口 */
-- (AVCaptureMetadataOutput*) outputOfMetadata {
-    AVCaptureMetadataOutput* output = [[AVCaptureMetadataOutput alloc] init];
-    [output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-    return output;
-}
 
 #pragma mask ---- UIAlertView & UIAlertViewDelegate
 /* 创建弹窗 */
@@ -279,7 +236,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSString* btnTitle = [alertView buttonTitleAtIndex:buttonIndex];
     if (buttonIndex > 0 && [btnTitle isEqualToString:@"重新扫描"]) {
-        [self startBarCodeScanning];
+//        [self startBarCodeScanning];
     }
 }
 
@@ -305,16 +262,9 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     }
     return _maskView;
 }
-- (AVCaptureSession *)captureSession {
-    if (_captureSession == nil) {
-        _captureSession = [[AVCaptureSession alloc] init];
-    }
-    return _captureSession;
-}
 - (AVCaptureVideoPreviewLayer *)videoLayer {
     if (_videoLayer == nil) {
-        _videoLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
-        [_videoLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+        _videoLayer = [self.codeScanner newPreviewLayerVideoCapture];
         [_videoLayer setFrame:self.view.bounds];
     }
     return _videoLayer;
@@ -335,9 +285,16 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     if (_tcpEnquiry == nil) {
         _tcpEnquiry = [[ViewModelTCPEnquiry alloc] init];
         [_tcpEnquiry setDelegate:self];
-        [_tcpEnquiry addObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED options:NSKeyValueObservingOptionNew context:nil];
     }
     return _tcpEnquiry;
+}
+- (ViewModelCodeScanner *)codeScanner {
+    if (_codeScanner == nil) {
+        _codeScanner = [[ViewModelCodeScanner alloc] init];
+        [_codeScanner setDelegate: self];
+        [_codeScanner setInterestRect:[self rectOfInterest]];
+    }
+    return _codeScanner;
 }
 
 @end

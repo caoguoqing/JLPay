@@ -18,6 +18,7 @@ static CGFloat fInset = 20.0;
 {
     CGFloat scannerViewWidth ;
     CGFloat scannerViewHeight;
+    BOOL animating;
 }
 
 @property (nonatomic, strong) ScannerImageView* scannerView; // 扫码框
@@ -31,11 +32,31 @@ static CGFloat fInset = 20.0;
 
 /* 启动网格动画 */
 - (void) startImageAnimation {
-    [self.scannerView startImageAnimation];
+    if (!animating) {
+        [self.scannerView startImageAnimation];
+        animating = YES;
+    }
 }
 /* 停止网格动画 */
 - (void) stopImageAnimation {
-    [self.scannerView stopImageAnimation];
+    if (animating) {
+        [self.scannerView stopImageAnimation];
+        animating = NO;
+    }
+}
+
+/* 动效 */
+- (BOOL) isImageAnimating {
+    return animating;
+}
+
+/* 获取摄入框的size */
+- (CGSize) sizeOfScannerView {
+    CGSize size = CGSizeMake(0, 0);
+    CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
+    size.width = screenW - fInset*2;
+    size.height = fHeightOfScannerView;
+    return size;
 }
 
 
@@ -43,6 +64,7 @@ static CGFloat fInset = 20.0;
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        animating = NO;
         scannerViewWidth = frame.size.width - fInset*2;
         scannerViewHeight = fHeightOfScannerView;
         // 重置frame

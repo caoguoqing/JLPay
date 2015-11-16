@@ -13,6 +13,9 @@
 
 
 @interface ScannerImageView()
+{
+    BOOL animating;
+}
 
 @property (nonatomic, strong) UIImageView* imageViewNet; // 网格框
 
@@ -29,13 +32,25 @@
 
 @implementation ScannerImageView
 
+/* 判断是否动效 */
+- (BOOL) isImageAnimating {
+    return animating;
+}
+
+
 /* 启动网格动画 */
 - (void) startImageAnimation {
-    [self.imageViewNet.layer addAnimation:[self animationOfImageMoving:self.frame.size.height] forKey:KEY_IMAGEANIMATION];
+    if (!animating) {
+        [self.imageViewNet.layer addAnimation:[self animationOfImageMoving:self.frame.size.height] forKey:KEY_IMAGEANIMATION];
+        animating = YES;
+    }
 }
 /* 停止网格动画 */
 - (void) stopImageAnimation {
-    [self.imageViewNet.layer removeAnimationForKey:KEY_IMAGEANIMATION];
+    if (animating) {
+        [self.imageViewNet.layer removeAnimationForKey:KEY_IMAGEANIMATION];
+        animating = NO;
+    }
 }
 
 
@@ -44,6 +59,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.clipsToBounds = YES;
+        animating = NO;
         [self addSubview:self.imageViewNet];
         [self addSubview:self.cornerLeftUp];
         [self addSubview:self.cornerLeftDown];
@@ -93,7 +109,6 @@
     if (_imageViewNet == nil) {
         _imageViewNet = [[UIImageView alloc] initWithFrame:CGRectZero];
         _imageViewNet.image = [UIImage imageNamed:@"scan_net"];
-//        [_imageViewNet.layer addAnimation:[self animationOfImageMoving:self.frame.size.height] forKey:KEY_IMAGEANIMATION];
     }
     return _imageViewNet;
 }
