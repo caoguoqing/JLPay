@@ -25,8 +25,9 @@ ViewModelCodeScannerDelegate,
 UIAlertViewDelegate,
 ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 {
-    NSArray* metadataTypes; // 扫码的类型组
     BOOL codeScanningDone;  // 扫码结果
+    BOOL payIsDone;         // 收款结果
+    BOOL isTCPEnquirying;   // 轮询标志
 }
 @property (nonatomic, retain) ViewModelCodeScanner* codeScanner;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer* videoLayer;   // 视频显示层
@@ -53,7 +54,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     [self.maskView stopImageAnimation];
     if (result) {
         codeScanningDone = YES;
-        self.progressHUD.labelText = @"收款中...";
+        self.progressHUD.labelText = @"交易处理中...";
         [self.progressHUD show:YES];
         [self startTCPTransWithOrderCode:code];
     } else {
@@ -68,25 +69,19 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     [tcp TCPClear];
     // 交易成功
     if (state) {
+        payIsDone = YES;
         [self.progressHUD hide:YES];
         [self pushToBarCodeResultVCWithResult:state];
     }
     // 交易失败,继续查询结果
     else {
-        
         NSString* f63 = [responseData valueForKey:KeyResponseDataRetData];
         if (f63 && f63.length > 0) {
-            NSString* responseMessage = nil;
             NSString* orderCode = nil;
             // 订单号
-            NSLog(@"---1:63:[%@]",f63);
             orderCode = [f63 substringToIndex:64*2];
-            NSLog(@"---2");
             orderCode = [PublicInformation stringFromHexString:orderCode];
-            // 响应信息
-            responseMessage = [f63 substringWithRange:NSMakeRange(64*2, 64*2)];
             
-            NSLog(@"交易结果失败,进行结果轮询:[%@]",orderCode);
             // 发起结果查询轮询定时器
             [self startTCPEnquiryWithOrderCode:orderCode];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -113,6 +108,8 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 
 #pragma mask ---- ViewModelTCPEnquiryDelegate
 - (void)TCPEnquiryResult:(BOOL)result withMessage:(NSString *)message {
+    payIsDone = YES;
+    isTCPEnquirying = NO;
     [self.progressHUD hide:YES];
     [self pushToBarCodeResultVCWithResult:result];
 }
@@ -145,12 +142,16 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     if (transType) {
         [self.tcpEnquiry TCPStartTransEnquiryWithTransType:transType andOrderCode:orderCode andMoney:self.money];
     }
+    isTCPEnquirying = YES;
 }
 /* 关闭交易结果轮询TCP */
 - (void) stopTCPEnquiry {
+    // 终止并清除轮询TCP队列
     [self.tcpEnquiry terminateTCPEnquiry];
+    isTCPEnquirying = NO;
     
     [self.progressHUD hide:YES];
+    // 跳转到交易结果显示界面
     [self pushToBarCodeResultVCWithResult:NO];
 }
 
@@ -165,6 +166,8 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     [super viewDidLoad];
     self.view.clipsToBounds = YES;
     codeScanningDone = NO;
+    payIsDone = NO;
+    isTCPEnquirying = NO;
     // 创建背景框视图
     [self.view addSubview:self.maskView];
     [self.view addSubview:self.progressHUD];
@@ -187,19 +190,27 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 
 - (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    // 如果还在扫码，关闭扫码
     if (!codeScanningDone) {
         [self.codeScanner stopScanning];
     }
+    // 关闭扫码动效
     [self.maskView stopImageAnimation];
     
-    if ([self.tcpHolder isConnected]) {
-        [self.tcpHolder TCPClear];
+    // 如果交易未成功: 先判断并关闭条码支付TCP，然后判断并关闭TCP结果轮询
+    if (!payIsDone) {
+        if ([self.tcpHolder isConnected]) {
+            [self.tcpHolder TCPClear];
+        }
+        if (isTCPEnquirying) {
+            [self.tcpEnquiry terminateTCPEnquiry];
+        }
     }
+    
     [self.progressHUD hide:YES];
     
     // 注销KVO
     [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
-    [self.tcpEnquiry terminateTCPEnquiry];
 
 }
 

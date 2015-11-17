@@ -72,7 +72,11 @@ static int readTimeOut = 60;    // 超时时间统一60s
 
 // 连接状态
 - (BOOL) isConnect {
-    return [asyncSocket isConnected];
+    BOOL connected = NO;
+    if (asyncSocket) {
+        connected = [asyncSocket isConnected];
+    }
+    return connected;
 }
 
 //读取数据
@@ -129,7 +133,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [asyncSocket writeData:data withTimeout:readTimeOut tag:1];
 }
 
-
+// 发送方法1: 等待delegate回调
 -(void)sendOrderMethod:(NSString *)order IP:(NSString *)ip PORT:(UInt16)port Delegate:(id)selfdelegate method:(NSString *)methodStr{
     self.tcpMethodStr=methodStr;
     self.delegate=selfdelegate;
@@ -139,7 +143,8 @@ static int readTimeOut = 60;    // 超时时间统一60s
     }
     asyncSocket = [[AsyncSocket alloc] initWithDelegate:self];
     NSError *err = nil;
-    
+    NSLog(@"-----%s,[%@]",__func__,asyncSocket);
+
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
         [asyncSocket connectToHost:ip onPort:port error:&err];
     }
@@ -172,6 +177,7 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [self setDelegate:nil];
     [asyncSocket setDelegate:nil];
     [asyncSocket disconnect];
+    NSLog(@"%s,[%@]",__func__,asyncSocket);
     [asyncSocket release];
     asyncSocket = nil;
 }

@@ -12,6 +12,7 @@
 <AVCaptureMetadataOutputObjectsDelegate>
 {
     BOOL scanning;
+    BOOL captured;
     NSArray* metadataTypes;
 }
 @property (nonatomic, retain) AVCaptureSession* captureSession;
@@ -71,12 +72,17 @@
 {
     if (metadataObjects && metadataObjects.count > 0) {
         AVMetadataMachineReadableCodeObject* metadata = [metadataObjects objectAtIndex:0];
-        if (self.delegate && [self.delegate respondsToSelector:@selector(codeScanner:resultScanned:codeScanned:errorMessage:)]) {
-            [self.delegate codeScanner:self resultScanned:YES codeScanned:[metadata stringValue] errorMessage:nil];
+        if (!captured) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(codeScanner:resultScanned:codeScanned:errorMessage:)]) {
+                [self.delegate codeScanner:self resultScanned:YES codeScanned:[metadata stringValue] errorMessage:nil];
+            }
+            captured = YES;
         }
     } else {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(codeScanner:resultScanned:codeScanned:errorMessage:)]) {
-            [self.delegate codeScanner:self resultScanned:NO codeScanned:nil errorMessage:@"扫码失败"];
+        if (!captured) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(codeScanner:resultScanned:codeScanned:errorMessage:)]) {
+                [self.delegate codeScanner:self resultScanned:NO codeScanned:nil errorMessage:@"扫码失败"];
+            }
         }
     }
 }
@@ -85,6 +91,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        captured = NO;
         self.captureSession = [[AVCaptureSession alloc] init];
         metadataTypes = @[AVMetadataObjectTypeCode128Code,AVMetadataObjectTypeEAN13Code,AVMetadataObjectTypeEAN8Code];
         [self initCaptureSession];

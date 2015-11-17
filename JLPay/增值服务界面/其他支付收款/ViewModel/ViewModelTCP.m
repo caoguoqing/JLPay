@@ -68,8 +68,8 @@
 
 #pragma mask ---- 清空TCP
 - (void) TCPClear {
-    self.delegate = nil;
     [self.tcpHolder clearDelegateAndClose];
+    self.delegate = nil;
     self.tcpHolder = nil;
 }
 
@@ -93,7 +93,6 @@
 /* TCP请求失败 */
 - (void)falseReceiveGetDataMethod:(NSString *)str {
     if (self.delegate && [self.delegate respondsToSelector:@selector(TCPResponse:withState:andData:)]) {
-        // 如果断开了连接，这里的self打印出来就跟原始的不一样了
         [self.delegate TCPResponse:self withState:NO andData:[self dictRetErrorMessage:@"网络异常，请检查网络"]];
     }
 }

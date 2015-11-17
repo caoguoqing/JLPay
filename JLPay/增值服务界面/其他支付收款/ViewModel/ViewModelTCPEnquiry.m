@@ -38,14 +38,15 @@
 
 
 #pragma mask ---- ViewModelTCPDelegate
+/* 单个TCP回调结果:  */
 - (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData {
     if (state) {
         [self updatePayDoneResult:YES];
     } else {
+        // 如果失败: 关闭TCP并删除节点
         [self closeTCPNode:tcp];
         [self removeTCPNode:tcp];
     }
-    // 失败就获取失败信息保存下来,回调时带出去 ..... need finish
 }
 
 #pragma mask ---- 查询成功后的清理工作及回调
@@ -103,6 +104,7 @@
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
+    NSLog(@"清空TCP节点");
     if (self.TCPNodes && self.TCPNodes.count > 0) {
         [self.TCPNodes removeAllObjects];
     }
@@ -113,6 +115,7 @@
     for (ViewModelTCP* tcp in self.TCPNodes) {
         if (tcp.tag == tcpHolder.tag) {
             needDeleteTCP = tcp;
+            break;
         }
     }
     [self.TCPNodes removeObject:needDeleteTCP];
@@ -126,6 +129,7 @@
         if (tcp.tag == tcpHolder.tag) {
             if (tcpHolder && [tcpHolder isConnected]) {
                 [tcpHolder TCPClear];
+                break;
             }
         }
     }
@@ -133,9 +137,10 @@
 /* 关闭所有节点TCP */
 - (void) closeAllTCPNodes {
     for (ViewModelTCP* tcp in self.TCPNodes) {
-        if ([tcp isConnected]) {
+//        if ([tcp isConnected]) {
+            NSLog(@"关闭TCP【%@】",tcp);
             [tcp TCPClear];
-        }
+//        }
     }
 }
 

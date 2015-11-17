@@ -2103,7 +2103,7 @@ Failed:
 		
         // Stop the connection attempt timeout timer
 		[self endConnectTimeout];
-        
+        NSLog(@"-----%s,[%@]",__func__,self);
 		if ([theDelegate respondsToSelector:@selector(onSocket:didConnectToHost:port:)])
 		{
 			[theDelegate onSocket:self didConnectToHost:[self connectedHost] port:[self connectedPort]];
@@ -3899,7 +3899,7 @@ Failed:
 	#pragma unused(timer)
 	
 	NSTimeInterval timeoutExtension = 0.0;
-	
+
 	if(theDelegate && [theDelegate respondsToSelector:@selector(onSocket:shouldTimeoutReadWithTag:elapsed:bytesDone:)])
 	{
 		timeoutExtension = [theDelegate onSocket:self shouldTimeoutReadWithTag:theCurrentRead->tag
