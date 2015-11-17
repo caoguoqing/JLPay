@@ -9,8 +9,6 @@
 #import "BrushViewController.h"
 #import "CommunicationManager.h"
 #import "Toast+UIView.h"
-//#import "../ProgressHUD/ProgressHUD.h"
-//#import "../public/ProgressHUD/ProgressHUD.h"
 #import "ProgressHUD.h"
 #import "AppDelegate.h"
 #import "Define_Header.h"
@@ -21,9 +19,6 @@
 #import "QianPiViewController.h"
 #import "DeviceManager.h"
 #import <CoreBluetooth/CoreBluetooth.h>
-
-
-//#import "../TCP/8583/8583打包解包/Packing8583.h"
 #import "Packing8583.h"
 #import "EncodeString.h"
 

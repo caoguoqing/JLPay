@@ -143,7 +143,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     }
     asyncSocket = [[AsyncSocket alloc] initWithDelegate:self];
     NSError *err = nil;
-    NSLog(@"-----%s,[%@]",__func__,asyncSocket);
 
     if ([[ip componentsSeparatedByString:@","] count] > 0) {
         [asyncSocket connectToHost:ip onPort:port error:&err];
@@ -177,7 +176,6 @@ static int readTimeOut = 60;    // 超时时间统一60s
     [self setDelegate:nil];
     [asyncSocket setDelegate:nil];
     [asyncSocket disconnect];
-    NSLog(@"%s,[%@]",__func__,asyncSocket);
     [asyncSocket release];
     asyncSocket = nil;
 }

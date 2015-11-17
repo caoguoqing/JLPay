@@ -178,6 +178,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 }
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.tabBarController.tabBar.hidden = YES;
     if (!codeScanningDone) {
         [self.codeScanner startScanning];
         if (![self.maskView isImageAnimating]) {
@@ -190,6 +191,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 
 - (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    self.tabBarController.tabBar.hidden = NO;
     // 如果还在扫码，关闭扫码
     if (!codeScanningDone) {
         [self.codeScanner stopScanning];
@@ -270,9 +272,9 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     if (_maskView == nil) {
         CGFloat heightStates = [UIApplication sharedApplication].statusBarFrame.size.height;
         CGFloat heightNavi = self.navigationController.navigationBar.frame.size.height;
-        CGFloat heightTabBar = self.tabBarController.tabBar.frame.size.height;
+//        CGFloat heightTabBar = self.tabBarController.tabBar.frame.size.height;
 
-        _maskView = [[MaskView alloc] initWithFrame:CGRectMake(0, heightNavi + heightStates, self.view.frame.size.width, self.view.frame.size.height - heightStates - heightNavi - heightTabBar)];
+        _maskView = [[MaskView alloc] initWithFrame:CGRectMake(0, heightNavi + heightStates, self.view.frame.size.width, self.view.frame.size.height - heightStates - heightNavi /*- heightTabBar*/)];
     }
     return _maskView;
 }

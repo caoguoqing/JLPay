@@ -99,12 +99,10 @@
 #pragma mask ---- TCP节点数组
 /* 追加TCP节点 */
 - (void) appendTCPNode:(ViewModelTCP*)tcpHolder {
-    NSLog(@"%@ <- %d",[self allTcpNodeTags], tcpHolder.tag);
     [self.TCPNodes addObject:tcpHolder];
 }
 /* 删除所有节点 */
 - (void) removeAllTCPNodes {
-    NSLog(@"清空TCP节点");
     if (self.TCPNodes && self.TCPNodes.count > 0) {
         [self.TCPNodes removeAllObjects];
     }
@@ -119,7 +117,6 @@
         }
     }
     [self.TCPNodes removeObject:needDeleteTCP];
-    NSLog(@"%@ -> %d",[self allTcpNodeTags], tcpHolder.tag);
 }
 
 
@@ -137,10 +134,7 @@
 /* 关闭所有节点TCP */
 - (void) closeAllTCPNodes {
     for (ViewModelTCP* tcp in self.TCPNodes) {
-//        if ([tcp isConnected]) {
-            NSLog(@"关闭TCP【%@】",tcp);
-            [tcp TCPClear];
-//        }
+        [tcp TCPClear];
     }
 }
 

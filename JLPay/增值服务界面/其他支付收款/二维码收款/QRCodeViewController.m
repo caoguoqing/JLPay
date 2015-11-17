@@ -161,7 +161,8 @@ typedef enum {
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
+    self.tabBarController.tabBar.hidden = YES;
+    
     CGFloat inset = 20;
     CGFloat labelHeight = 35;
     CGFloat imageViewHeight = 260;
@@ -197,11 +198,9 @@ typedef enum {
     frame.size.width = self.view.frame.size.width * 2.0/3.0;
     [self.labelLog setFrame:frame];
 }
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    self.tabBarController.tabBar.hidden = NO;
     [self.tcpQRCode TCPClear];
     [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
     [self.tcpEnquiry terminateTCPEnquiry];
