@@ -8,6 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+
+/*************[交易类型]**************/
+#define TranType                    @"TranType"
+#define TranType_Consume            @"190000"                           // 消费 同8583 bit3域值
+#define TranType_ConsumeRepeal      @"280000"                           // 消费撤销
+#define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
+#define TranType_TuiHuo             @"200000"                           // 退货交易
+#define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
+#define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
+#define TranType_BatchUpload        @"TranType_BatchUpload"             // 披上送，IC卡交易完成后上送
+#define TranType_Repay              @"TranType_Repay_"                  // 信用卡还款
+#define TranType_Transfer           @"TranType_Transfer_"               // 转账汇款
+#define TranType_YuE                @"300000"                           // 余额查询
+
+
+
+
 @interface Packing8583 : NSObject
 
 

@@ -59,24 +59,18 @@
 
 
 /*************[交易类型]**************/
-#define TranType                    @"TranType"
-#define TranType_Consume            @"190000"                           // 消费 同8583 bit3域值
-#define TranType_ConsumeRepeal      @"280000"                           // 消费撤销
-#define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
-#define TranType_TuiHuo             @"200000"                           // 退货交易
-#define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
-#define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
-#define TranType_BatchUpload        @"TranType_BatchUpload"             // 披上送，IC卡交易完成后上送
-#define TranType_Repay              @"TranType_Repay_"                  // 信用卡还款
-#define TranType_Transfer           @"TranType_Transfer_"               // 转账汇款
+//#define TranType                    @"TranType"
+//#define TranType_Consume            @"190000"                           // 消费 同8583 bit3域值
+//#define TranType_ConsumeRepeal      @"280000"                           // 消费撤销
+//#define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
+//#define TranType_TuiHuo             @"200000"                           // 退货交易
+//#define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
+//#define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
+//#define TranType_BatchUpload        @"TranType_BatchUpload"             // 披上送，IC卡交易完成后上送
+//#define TranType_Repay              @"TranType_Repay_"                  // 信用卡还款
+//#define TranType_Transfer           @"TranType_Transfer_"               // 转账汇款
+//#define TranType_YuE                @"300000"                           // 余额查询
 
-//#define TranType_QRCode_Request_Alipay     @"TranType_QRCode_Request_Alipay__"          // 二维码获取: 支付宝
-//#define TranType_QRCode_Request_WeChat     @"TranType_QRCode_Request_WeChat__"          // 二维码获取: 微信
-//#define TranType_QRCode_Review_Alipay      @"TranType_QRCode_Review_Alipay__"           // 二维码订单结果查询: 支付宝
-//#define TranType_QRCode_Review_WeChat      @"TranType_QRCode_Review_WeChat__"           // 二维码订单结果查询: 微信
-//
-//#define TranType_BarCode_Trans_Alipay     @"TranType_BarCode_Trans_Alipay__"            // 条形码获取: 支付宝
-//#define TranType_BarCode_Trans_WeChat     @"TranType_BarCode_Trans_WeChat__"            // 条形码获取: 微信
 
 
 /*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/
@@ -220,101 +214,19 @@
 //        O_F60.2 原交易签到批次号
 #define Last_FldReserved_Number @"fldReserved"
 
-// 参数更新(解密key)
-//#define DECRYPT_KEY @"31313131313131313232323232323232"
-
-// ----- 暂时没用到 :主密钥
-//#define Main_Work_key [PublicInformation getMainSecret]
-
-//#define IsOrRefresh_MainKey @"refreshkey"
-//#define Refresh_Later_MainKey @"laterkey"
-
-// 签到获取的pinkey
-//#define Sign_in_PinKey @"pinkey"
-//#define Sign_in_MacKey @"mackey"
 
 // 保存本次消费的流水号
 #define Current_Liushui_Number @"liushuinumber"
 
-// 消费获取的搜索参考号
-//#define Consumer_Get_Sort @"cankaohao"
-
-// 主秘钥明文，保存
-//#define main_key_plain @"mainkeyplain"
-
-// 是否消费
-//#define Is_Or_Consumer @"isconsumer"
-
-// 初始化终端成功，可以签到
-//#define Init_Terminal_Success @"initterminal"
 
 // 下载的工作密钥
 #define WorkKey @"workkey"
-
-// 签到标志
-//#define DeviceBeingSignedIn   @"DeviceBeingSignedIn"
-
-// 查询的金额
-//#define SearchCard_Money @"searchmoney"
-
-// 刷卡记录
-//#define TheCarcd_Record [PublicInformation returnposCard]//@"cardcord"
-
-// 保存终端号
-//#define The_terminal_Number @"terminalaaaaa"
-
-// 交易类型
-//#define ExchangeMoney_Type @"exchangetype"
-
-//缓存卡号信息
-//#define Save_All_NonCardInfo @"allcardinfo"
 
 
 // 8583报文配置
 #define TPDU @"6000060000"
 #define HEADER @"600100310000"
 
-
-
-/*************[支付宝 相关的参数:]**************/
-
-////支付宝二维码串
-//#define ErWeiMaChuan @"erweimachuan"
-////支付宝扫码输入金额
-//#define ZhifubaoSaomaMoney @"saomamoney"
-////支付宝订单号
-//#define ZhiFuBaoOrderNumber @"ordernumber"
-////支付宝查询
-//
-////支付宝查询流水号
-//#define Zhifubao_search_liushui @"zhifubaosearchliushui"
-////支付宝账号
-//#define Zhifubao_Number @"zhifubaonumber"
-////支付宝查询订单号
-//#define Zhifubao_Search_Order @"searchorder"
-//
-////支付宝条码支付，缓存消费记录
-//#define ZhifubaoTiaomaRecord @"zhifubaotiaomarecord"
-//
-////支付宝订单号状态切换(条码、扫码成功 state=1；撤销、退款 state=0)
-//#define ZhifubaoDingdanState @"dingdanstate"
-//
-////支付宝撤销流水号\支付宝退款
-//#define ZhifubaoChexiaoLiushui @"chexiaoliushui"
-//
-////支付宝撤销\退款,账号
-//
-////支付宝撤销\退款,订单号
-//#define ZhifubaoChexiaoDingdanNum @"chexiaodingdannumber"
-//
-////支付宝撤销\退款,撤销金额
-//#define ZhifubaoChexiaoMoney @"chexiaomoney"
-//
-////支付宝pos小票中得 商户名称
-//#define Zhifubao_Merchant @"zhifubaomerchant"
-
-//14域，卡有效期
-//#define Card_DeadLineTime @"deadline"
 
 
 /*************[注册审核未通过:响应配置信息]**************/

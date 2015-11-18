@@ -86,6 +86,10 @@
         [F60 appendString:@"99"];
     } else if ([tranType isEqualToString:TranType_DownWorkKey]) {
         [F60 appendString:@"00"];
+    } else if ([tranType isEqualToString:TranType_YuE]) {
+        [F60 appendString:@"01"];
+    } else {
+        [F60 appendString:@"00"];
     }
     // 60.2 N6 批次号
     [F60 appendString:[PublicInformation returnSignSort]];

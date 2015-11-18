@@ -12,6 +12,7 @@
 #import "DeviceManager.h"
 #import "DetailsCell.h"
 #import "TransDetailsViewController.h"
+#import "Packing8583.h"
 
 @interface RevokeViewController()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate>
 @property (nonatomic, strong) NSMutableDictionary* detailNameIndex;

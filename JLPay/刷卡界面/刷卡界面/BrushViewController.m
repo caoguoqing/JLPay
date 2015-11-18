@@ -7,48 +7,44 @@
 //
 
 #import "BrushViewController.h"
-#import "CommunicationManager.h"
-#import "Toast+UIView.h"
-#import "ProgressHUD.h"
-#import "AppDelegate.h"
 #import "Define_Header.h"
 #import "CustomIOSAlertView.h"
 #import "CustPayViewController.h"
-#import "TcpClientService.h"
-#import "Unpacking8583.h"
 #import "QianPiViewController.h"
 #import "DeviceManager.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "Packing8583.h"
-#import "EncodeString.h"
+#import "ViewModelTCPPosTrans.h"
 
 
 
 @interface BrushViewController()
 <
     CustomIOSAlertViewDelegate,
-    wallDelegate,
-    Unpacking8583Delegate,
+    ViewModelTCPPosTransDelegate,
     UIAlertViewDelegate,
     DeviceManagerDelegate,
     CBCentralManagerDelegate
 >
 {
     BOOL blueToothPowerOn;
-    CBCentralManager* blueManager;
+    CBCentralManager* blueManager; // 用来检测手机蓝牙是否开启
 }
-@property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的转轮
+
+@property (nonatomic, strong) ViewModelTCPPosTrans* tcpViewModel;           // TCP交易中转
+
+@property (nonatomic, retain) NSMutableDictionary* cardInfoOfReading;       // 读到得卡数据
+
+@property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的指示器
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
+
 @property (nonatomic, strong) UILabel* waitingLabel;                        // 动态文本框
 @property (nonatomic, strong) UILabel* moneyLabel;                          // 金额显示框
 @property (nonatomic, assign) CGFloat leftInset;                            // 动态文本区域的左边静态文本区域的右边界长度
+
 @property (nonatomic, assign) int timeOut;                                  // 交易超时时间
 @property (nonatomic, strong) NSTimer* waitingTimer;                        // 控制定时器
-@property (nonatomic, strong) NSTimer* timeCountingTimer;                   // 计时器的定时器
-@property (nonatomic, retain) TcpClientService* tcpHander;                  // Socket
 
-@property (nonatomic, retain) NSMutableDictionary* cardInfoOfReading;       // 读到得卡数据
-@property (nonatomic, strong) NSDictionary* responseOriginInfo;             // 8583原始交易信息
 
 @end
 
@@ -56,7 +52,7 @@
  * ---- 功能
  *      1.刷卡
  *      2.输入密码
- *      3.发送消费/撤销/退货报文
+ *      3.发送交易报文(消费、查询、批上传)
  *      4.接收返回报文
 *************************************/
 
@@ -73,9 +69,7 @@
 @synthesize waitingTimer = _waitingTimer;
 @synthesize stringOfTranType = _stringOfTranType;
 @synthesize moneyLabel = _moneyLabel;
-@synthesize tcpHander = _tcpHander;
 @synthesize cardInfoOfReading = _cardInfoOfReading;
-@synthesize responseOriginInfo;
 
 /*************************************
  * 功  能 : 界面的初始化;
@@ -150,11 +144,12 @@
     // 移除定时器
     [self stopTimer];
     // 取消 TCP 响应的协议
-    [self.tcpHander clearDelegateAndClose];
+    [self.tcpViewModel terminateTransWithTransType:self.stringOfTranType];
     // 断开设备
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
 }
 
+#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<< 设备操作
 
 
 #pragma mask -----------------------------------------  DeviceManagerDelegate
@@ -165,39 +160,40 @@
           withMessage:(NSString *)msg
           andCardInfo:(NSDictionary *)cardInfo
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // 先停止计时器
-        if ([self.waitingTimer isValid]) {
-            [self.waitingTimer invalidate];
-            self.waitingTimer = nil;
-        }
-        // 失败就退出
-        if (!yesOrNot) {
-            [self alertForFailedMessage:msg];
-            return;
-        }
+    // 先停止计时器
+    [self stopTimer];
+    // 停止指示器
+    [self stopActivity];
+    
+    // 失败就退出
+    if (!yesOrNot) {
+        [self alertForFailedMessage:msg];
+        return;
+    }
         
-        if (self.cardInfoOfReading.count > 0) {
-            [self.cardInfoOfReading removeAllObjects];
-            self.cardInfoOfReading = nil;
-        }
-        [self.cardInfoOfReading addEntriesFromDictionary:cardInfo];
-        // 成功就继续,输入密码或直接发起交易
-        NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
-        if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
-            [self sendTranPackage:[self packingOnTranType:self.stringOfTranType] onTranType:self.stringOfTranType];
-        }
-        else if ([deviceType isEqualToString:DeviceType_JLpay_TY01]) {
-            [self sendTranPackage:[self packingOnTranType:self.stringOfTranType] onTranType:self.stringOfTranType];
-        }
-        else if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
-            [self makePasswordAlertView];
-        }
-        else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
-            [self makePasswordAlertView];
-        }
+    if (self.cardInfoOfReading.count > 0) {
+        [self.cardInfoOfReading removeAllObjects];
+        self.cardInfoOfReading = nil;
+    }
+    // 添加读取到得卡数据
+    [self.cardInfoOfReading addEntriesFromDictionary:cardInfo];
+    // 添加金额
+    [self.cardInfoOfReading setValue:self.sIntMoney forKey:@"4"];
 
-    });
+    // 成功就继续,输入密码或直接发起交易
+    NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
+        [self startTrans];
+    }
+    else if ([deviceType isEqualToString:DeviceType_JLpay_TY01]) {
+        [self startTrans];
+    }
+    else if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
+        [self makePasswordAlertView];
+    }
+    else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
+        [self makePasswordAlertView];
+    }
 }
 
 #pragma mask : 识别设备回调
@@ -235,7 +231,8 @@
         } else {
             [self.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
         }
-        [self sendTranPackage:[self packingOnTranType:self.stringOfTranType] onTranType:self.stringOfTranType];
+        // 发起交易
+        [self startTrans];
     } else {
         [self alertForFailedMessage:error];
     }
@@ -285,8 +282,10 @@
     self.passwordAlertView.delegate = self;
     [self.passwordAlertView setUseMotionEffects:YES];
     [self.passwordAlertView setButtonTitles:[NSArray arrayWithObjects:@"取消", @"确定", nil]];
-    [self.passwordAlertView show];
     [self.view addSubview:self.passwordAlertView];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.passwordAlertView show];
+    });
 }
 
 
@@ -306,157 +305,42 @@
 }
 
 
-/* 上送交易报文 */
-- (void) sendTranPackage:(NSString*)package onTranType:(NSString*)tranType {
+#pragma mask >>>>>>>>>>>>>>>>>>>>>>>>>>> 设备操作
+
+
+
+#pragma mask ---- ViewModelTCPPosTransDelegate 
+/* 交易结果回调 */
+- (void)viewModel:(ViewModelTCPPosTrans *)viewModel
+      transResult:(BOOL)result
+      withMessage:(NSString *)message
+  andResponseInfo:(NSDictionary *)responseInfo
+{
+    [viewModel terminateTransWithTransType:self.stringOfTranType];
+    [self stopTimer];
+    [self stopActivity];
+    if (result) {
+        // 成功: 如果是查余额，跳转到余额显示界面；否则跳转到签名界面
+        [self pushToSignVCWithInfo:responseInfo];
+    } else {
+        // 失败
+        [self alertForFailedMessage:message];
+    }
+}
+
+
+
+#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<< TCP
+- (void) startTrans {
     self.timeOut = 0;
     // 调起交易超时计时器
     [self startTimerWithSelector:@selector(waitingForDeviceCusting)];
-    
-    // Socket 异步发送消费报文 -- 报文发送需要放在主线程
+    // 启动指示器
+    [self startActivity];
+    // 发起交易
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tcpHander sendOrderMethod:package
-                                     IP:Current_IP
-                                   PORT:Current_Port
-                               Delegate:self
-                                 method:tranType];
-        
+        [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading andDelegate:self];
     });
-}
-
-/* 打包8583报文包:根据交易类型 */
-- (NSString*) packingOnTranType:(NSString*)tranType {
-    NSString* packing = nil;
-    // 消费
-    if ([tranType isEqualToString:TranType_Consume]) {
-        packing = [self packingConsume];
-    }
-    // 撤销
-    else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
-        
-    }
-    return packing;
-}
-// 消费
-- (NSString*) packingConsume {
-    NSString* packing = nil;
-    Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:2 withValue:[self.cardInfoOfReading valueForKey:@"2"]];
-    [packingHolder setFieldAtIndex:3 withValue:TranType_Consume];
-    [packingHolder setFieldAtIndex:4 withValue:self.sIntMoney];
-    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
-    [packingHolder setFieldAtIndex:14 withValue:[self.cardInfoOfReading valueForKey:@"14"]];
-    [packingHolder setFieldAtIndex:22 withValue:[self.cardInfoOfReading valueForKey:@"22"]];
-    [packingHolder setFieldAtIndex:23 withValue:[self.cardInfoOfReading valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"82"];
-    [packingHolder setFieldAtIndex:26 withValue:@"12"];
-    [packingHolder setFieldAtIndex:35 withValue:[self.cardInfoOfReading valueForKey:@"35"]];
-    [packingHolder setFieldAtIndex:36 withValue:[self.cardInfoOfReading valueForKey:@"36"]];
-    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
-    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
-    [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:@"156"]];
-    [packingHolder setFieldAtIndex:52 withValue:[self.cardInfoOfReading valueForKey:@"52"]];
-    [packingHolder setFieldAtIndex:53 withValue:[self.cardInfoOfReading valueForKey:@"53"]];
-    [packingHolder setFieldAtIndex:55 withValue:[self.cardInfoOfReading valueForKey:@"55"]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_Consume]];
-    [packingHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
-
-
-    packing = [packingHolder stringPackingWithType:@"0200"];
-    return packing;
-}
-// 批上送
-- (NSString*) packingBatchUpLoadWithLastInfo:(NSDictionary*)lastInfo {
-    NSString* packing = nil;
-    Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:2 withValue:[lastInfo valueForKey:@"2"]];
-    [packingHolder setFieldAtIndex:3 withValue:[lastInfo valueForKey:@"3"]];
-    [packingHolder setFieldAtIndex:4 withValue:[lastInfo valueForKey:@"4"]];
-    [packingHolder setFieldAtIndex:11 withValue:[lastInfo valueForKey:@"11"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"82"];
-    [packingHolder setFieldAtIndex:26 withValue:@"12"];
-    [packingHolder setFieldAtIndex:41 withValue:[lastInfo valueForKey:@"41"]];
-    [packingHolder setFieldAtIndex:42 withValue:[lastInfo valueForKey:@"42"]];
-    [packingHolder setFieldAtIndex:49 withValue:[lastInfo valueForKey:@"49"]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60ByLast60:[lastInfo valueForKey:@"60"]]];
-
-    [packingHolder setFieldAtIndex:22 withValue:[self.cardInfoOfReading valueForKey:@"22"]];
-    [packingHolder setFieldAtIndex:23 withValue:[self.cardInfoOfReading valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:55 withValue:[self.cardInfoOfReading valueForKey:@"55"]];
-    [packingHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
-    
-    packing = [packingHolder stringPackingWithType:@"0320"];
-    return packing;
-}
-
-
-#pragma mask ::: ------ 消费报文上送的接收协议 walldelegate
-// 接收响应报文成功
-- (void)receiveGetData:(NSString *)data method:(NSString *)str {
-    if ([self.waitingTimer isValid]) {
-        [self.waitingTimer invalidate];
-        self.waitingTimer = nil;
-    }
-    if ([data length] > 0) {
-        [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
-    } else {
-        [self alertForFailedMessage:@"网络异常，请检查网络"];
-    }
-
-}
-// 接收响应报文失败
-- (void)falseReceiveGetDataMethod:(NSString *)str {
-    if ([self.waitingTimer isValid]) {
-        [self.waitingTimer invalidate];
-        self.waitingTimer = nil;
-    }
-    // 批上送交易失败不做任何操作
-    if ([str isEqualToString:TranType_BatchUpload]) { // batchUpload
-        // 交易成功，跳转到签名界面
-        if ([self.activity isAnimating]) {
-            [self.activity stopAnimating];
-        }
-        // 跳转签名界面
-        [self pushToSignVCWithInfo:self.cardInfoOfReading];
-        return;
-    }
-    [self alertForFailedMessage:[NSString stringWithFormat:@"交易失败:%@",str]];
-}
-
-
-#pragma mask ::: ------ 拆包结果的处理协议
-- (void)didUnpackDatas:(NSDictionary *)dataDict onState:(BOOL)state withErrorMsg:(NSString *)message {
-    NSString* cardType = [self.cardInfoOfReading valueForKey:@"22"];
-    NSString* msgType = [dataDict valueForKey:@"msgType"];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activity stopAnimating];
-    });
-    
-    if ([msgType isEqualToString:@"0330"]) {
-        [self pushToSignVCWithInfo:self.responseOriginInfo];
-    } else {
-        // 交易成功
-        if (state) {
-            // 批上送:IC卡消费、撤销、退货
-            [self setResponseOriginInfo:dataDict];
-            if ([cardType hasPrefix:@"05"]) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.activity startAnimating];
-                });
-                NSString* batchPackage = [self packingBatchUpLoadWithLastInfo:dataDict];
-                [self sendTranPackage:batchPackage onTranType:TranType_BatchUpload];
-            }
-            // 跳转签名:磁条卡
-            else {
-                [self pushToSignVCWithInfo:dataDict];
-            }
-        }
-        // 交易失败
-        else {
-            [self alertForFailedMessage:message];
-        }
-    }
-    
 }
 
 
@@ -469,6 +353,8 @@
     }
 }
 
+
+#pragma mask ---- PRIVATE INTERFACE
 
 // 跳转界面: 跳转到签名界面
 - (void) pushToSignVCWithInfo:(NSDictionary*)transInfo {
@@ -532,13 +418,27 @@
 }
 // -- 停止定时器
 - (void) stopTimer {
-    if ([self.waitingTimer isValid]) {
-        [self.waitingTimer invalidate];
-        self.waitingTimer = nil;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.waitingTimer isValid]) {
+            [self.waitingTimer invalidate];
+            self.waitingTimer = nil;
+        }
+    });
 }
-
-
+// -- 启动指示器
+- (void) startActivity {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activity startAnimating];
+    });
+}
+// -- 停止指示器
+- (void) stopActivity {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.activity isAnimating]) {
+            [self.activity stopAnimating];
+        }
+    });
+}
 
 
 
@@ -624,9 +524,6 @@
 - (void) alertForFailedMessage: (NSString*) messageStr {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"交易失败" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.activity isAnimating]) {
-            [self.activity stopAnimating];
-        }
         [alert show];
     });
 }
@@ -646,7 +543,12 @@
 
 
 #pragma mask ------------------------ getter
-
+- (ViewModelTCPPosTrans *)tcpViewModel {
+    if (_tcpViewModel == nil) {
+        _tcpViewModel = [[ViewModelTCPPosTrans alloc] init];
+    }
+    return _tcpViewModel;
+}
 - (UIActivityIndicatorView *)activity {
     if (_activity == nil) {
         _activity                   = [[UIActivityIndicatorView alloc] init];
@@ -684,13 +586,6 @@
         _stringOfTranType = [[NSUserDefaults standardUserDefaults] valueForKey:TranType];
     }
     return _stringOfTranType;
-}
-// TCP Socket入口
-- (TcpClientService *)tcpHander {
-    if (_tcpHander == nil) {
-        _tcpHander = [TcpClientService getInstance];
-    }
-    return _tcpHander;
 }
 // 读卡数据字典
 - (NSMutableDictionary *)cardInfoOfReading {

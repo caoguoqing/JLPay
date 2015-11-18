@@ -8,6 +8,7 @@
 
 #import "PublicInformation.h"
 #import "Define_Header.h"
+#import "Packing8583.h"
 #import "Unpacking8583.h"
 
 @implementation PublicInformation

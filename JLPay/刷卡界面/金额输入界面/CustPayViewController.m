@@ -12,6 +12,7 @@
 #import "BrushViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "DeleteButton.h"
+#import "Packing8583.h"
 
 
 #define ImageForBrand   @"logo"                                             // 商标图片

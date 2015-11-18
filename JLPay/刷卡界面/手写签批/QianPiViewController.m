@@ -13,6 +13,7 @@
 #import "PosInformationViewController.h"
 #import "Define_Header.h"
 #import "PublicInformation.h"
+#import "Packing8583.h"
 
 @interface QianPiViewController ()<UIAlertViewDelegate>
 @property (strong,nonatomic)  MyView *drawView;
