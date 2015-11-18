@@ -174,10 +174,10 @@
             </objects>
             <point key="canvasLocation" x="1227" y="3765"/>
         </scene>
-        <!--Cust Pay View Controller-->
+        <!--金额输入界面-->
         <scene sceneID="eaC-D2-oVh">
             <objects>
-                <viewController id="BRz-xC-VH6" customClass="CustPayViewController" sceneMemberID="viewController">
+                <viewController title="金额输入界面" id="BRz-xC-VH6" customClass="CustPayViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Lcl-B9-CJ7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -187,12 +187,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xiP-pQ-rat" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-83" y="52"/>
+            <point key="canvasLocation" x="-73" y="52"/>
         </scene>
-        <!--Brush View Controller-->
+        <!--刷卡界面-->
         <scene sceneID="CbX-sW-fA8">
             <objects>
-                <viewController storyboardIdentifier="brush" hidesBottomBarWhenPushed="YES" id="Jd9-aa-lz6" customClass="BrushViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="brush" title="刷卡界面" hidesBottomBarWhenPushed="YES" id="Jd9-aa-lz6" customClass="BrushViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="7BT-Rt-cdi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -202,7 +202,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4fU-iG-yJp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="344" y="52"/>
+            <point key="canvasLocation" x="356" y="52"/>
         </scene>
         <!--商户管理-->
         <scene sceneID="pSU-mK-gDv">

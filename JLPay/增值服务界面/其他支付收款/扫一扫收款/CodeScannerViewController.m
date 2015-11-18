@@ -250,10 +250,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 }
 /* UIAlertViewDelegate */
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    NSString* btnTitle = [alertView buttonTitleAtIndex:buttonIndex];
-    if (buttonIndex > 0 && [btnTitle isEqualToString:@"重新扫描"]) {
-//        [self startBarCodeScanning];
-    }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 /* 跳转界面 */

@@ -8,22 +8,19 @@
 
 #import "CustPayViewController.h"
 #import "Define_Header.h"
-#import "Define_Header.h"
 #import "MoneyCalculated.h"
 #import "BrushViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
-
+#import "DeleteButton.h"
 
 
 #define ImageForBrand   @"logo"                                             // 商标图片
-#define NameForBrand    @"捷联通"                                            // 商标名字
-
 
 
 @interface CustPayViewController ()<UIAlertViewDelegate, CBCentralManagerDelegate>
 {
-    BOOL blueToothPowerOn;
-    CBCentralManager* blueManager;
+    BOOL blueToothPowerOn;  // 蓝牙打开状态标记
+    CBCentralManager* blueManager; // 蓝牙设备操作入口
 }
 @property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额

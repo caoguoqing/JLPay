@@ -960,7 +960,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"开户行联行号",@(YES),@"请输入开户行名并选择联行号",@"",@"",@(NO),@"speSettleDs",@"openStlno", nil] forKeys:bankNoKeys]];
         [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账户名",@"不超过40位字符",@(YES),@"",@(NO),@(NO),@"settleAcctNm",@(30), nil] forKeys:keys]];
         [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账号",@"不超过30位账号",@(YES),@"",@(NO),@(NO),@"settleAcct",@(40), nil] forKeys:keys]];
-        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"代理商用户名",@"(可不填)不超过20位字符",@(NO),@"",@(NO),@(NO),@"ageUserName",@(20), nil] forKeys:keys]];
+        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"代理商用户名",@"(选填)代理商手机号或用户名",@(NO),@"",@(NO),@(NO),@"ageUserName",@(20), nil] forKeys:keys]];
         _arrayAccountInfo = [NSArray arrayWithArray:accountInfos];
     }
     return _arrayAccountInfo;

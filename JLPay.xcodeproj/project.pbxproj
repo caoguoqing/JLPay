@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */; };
 		5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE721B09949200B8C198 /* DynamicScrollView.m */; };
-		5E0D186B1B09DA710092F4AB /* OtherPayButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186A1B09DA710092F4AB /* OtherPayButton.m */; };
 		5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -195,8 +194,6 @@
 		5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalServicesViewController.m; sourceTree = "<group>"; };
 		5E08AE711B09949200B8C198 /* DynamicScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicScrollView.h; sourceTree = "<group>"; };
 		5E08AE721B09949200B8C198 /* DynamicScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicScrollView.m; sourceTree = "<group>"; };
-		5E0D18691B09DA710092F4AB /* OtherPayButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherPayButton.h; sourceTree = "<group>"; };
-		5E0D186A1B09DA710092F4AB /* OtherPayButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherPayButton.m; sourceTree = "<group>"; };
 		5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButton.h; sourceTree = "<group>"; };
 		5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteButton.m; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
@@ -559,18 +556,10 @@
 		5E0D18661B09D9240092F4AB /* 刷卡界面 */ = {
 			isa = PBXGroup;
 			children = (
+				5E9448091BFB214300128452 /* 金额输入界面 */,
+				5E94480D1BFB224F00128452 /* 刷卡界面 */,
 				5E82B7DC1B214B5300A58751 /* 密码输入框 */,
 				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
-				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
-				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
-				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
-				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
-				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
-				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
-				5E0D18691B09DA710092F4AB /* OtherPayButton.h */,
-				5E0D186A1B09DA710092F4AB /* OtherPayButton.m */,
-				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
-				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
 			);
 			path = "刷卡界面";
 			sourceTree = "<group>";
@@ -887,6 +876,76 @@
 				5E9448011BF42E2100128452 /* ViewModelTransDetails.m */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		5E9448091BFB214300128452 /* 金额输入界面 */ = {
+			isa = PBXGroup;
+			children = (
+				5E94480C1BFB21E600128452 /* model */,
+				5E94480B1BFB21E100128452 /* controller */,
+				5E94480A1BFB21D800128452 /* views */,
+			);
+			path = "金额输入界面";
+			sourceTree = "<group>";
+		};
+		5E94480A1BFB21D800128452 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
+				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
+		5E94480B1BFB21E100128452 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
+				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
+		5E94480C1BFB21E600128452 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
+				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		5E94480D1BFB224F00128452 /* 刷卡界面 */ = {
+			isa = PBXGroup;
+			children = (
+				5E9448101BFB227C00128452 /* model */,
+				5E94480F1BFB227600128452 /* controller */,
+				5E94480E1BFB227100128452 /* views */,
+			);
+			path = "刷卡界面";
+			sourceTree = "<group>";
+		};
+		5E94480E1BFB227100128452 /* views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
+		5E94480F1BFB227600128452 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				5EC14E631ADCE47700CCD764 /* BrushViewController.h */,
+				5EC14E641ADCE47700CCD764 /* BrushViewController.m */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
+		5E9448101BFB227C00128452 /* model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = model;
 			sourceTree = "<group>";
 		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
@@ -1540,7 +1599,6 @@
 				5E82B8641B310AAD00A58751 /* JLActivity.m in Sources */,
 				5E5FA5871B46342600387E69 /* ISMFiDataPath.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
-				5E0D186B1B09DA710092F4AB /* OtherPayButton.m in Sources */,
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
 				5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */,
 				5E397B361AD36429004F206F /* ASIS3Bucket.m in Sources */,
