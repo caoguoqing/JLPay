@@ -105,6 +105,7 @@
 		5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448041BF48FB400128452 /* RevokeViewCell.m */; };
 		5E9448081BF9AA9400128452 /* ViewModelCodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448071BF9AA9400128452 /* ViewModelCodeScanner.m */; };
 		5E9448131BFC278D00128452 /* ViewModelTCPPosTrans.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */; };
+		5E9448161BFC7C4D00128452 /* ViewModelDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448151BFC7C4D00128452 /* ViewModelDeviceManager.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -373,6 +374,8 @@
 		5E9448071BF9AA9400128452 /* ViewModelCodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelCodeScanner.m; sourceTree = "<group>"; };
 		5E9448111BFC278D00128452 /* ViewModelTCPPosTrans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPPosTrans.h; sourceTree = "<group>"; };
 		5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPPosTrans.m; sourceTree = "<group>"; };
+		5E9448141BFC7C4D00128452 /* ViewModelDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelDeviceManager.h; sourceTree = "<group>"; };
+		5E9448151BFC7C4D00128452 /* ViewModelDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelDeviceManager.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -949,6 +952,8 @@
 			children = (
 				5E9448111BFC278D00128452 /* ViewModelTCPPosTrans.h */,
 				5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */,
+				5E9448141BFC7C4D00128452 /* ViewModelDeviceManager.h */,
+				5E9448151BFC7C4D00128452 /* ViewModelDeviceManager.m */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -1618,6 +1623,7 @@
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
 				5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */,
 				5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */,
+				5E9448161BFC7C4D00128452 /* ViewModelDeviceManager.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
 				5E5FA5831B46342600387E69 /* README.md in Sources */,

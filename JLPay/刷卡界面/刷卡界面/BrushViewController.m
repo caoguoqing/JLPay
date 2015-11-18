@@ -330,7 +330,7 @@
 
 
 
-#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<< TCP
+#pragma mask ---- TCP
 - (void) startTrans {
     self.timeOut = 0;
     // 调起交易超时计时器
@@ -344,7 +344,7 @@
 }
 
 
-#pragma mask ------------------ CBCentrolManagerDelegate
+#pragma mask ---- CBCentrolManagerDelegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     if (central.state == CBCentralManagerStatePoweredOn) {
         blueToothPowerOn = YES;
