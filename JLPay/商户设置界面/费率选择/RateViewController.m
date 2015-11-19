@@ -150,16 +150,10 @@ const NSInteger tagAlertDidSaved = 15;
     [self.pickerView setDatas:[self provincesInDataSource] atComponent:0];
     [self.pickerView setDatas:[self citiesInDataSource] atComponent:1];
 
-    // 数据是有的。为什么没有加载视图
     // 展示picker
     framePicker.origin.y = sender.frame.origin.y + sender.frame.size.height + 10;
     [self.pickerView setFrame:framePicker];
     [self.pickerView show];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//    });
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        sleep(0.1);
-//    });
     [self.pickerView selectRow:0 atComponent:0];
 }
 
@@ -659,6 +653,7 @@ const NSInteger tagAlertDidSaved = 15;
         [_btnRate.titleLabel setFont:[UIFont systemFontOfSize:fontOfText]];
         _btnRate.layer.borderColor = [UIColor grayColor].CGColor;
         _btnRate.layer.borderWidth = 0.5;
+        _btnRate.layer.cornerRadius = 4.0;
         
         [_btnRate addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_btnRate addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
@@ -674,6 +669,7 @@ const NSInteger tagAlertDidSaved = 15;
         [_btnArea.titleLabel setFont:[UIFont systemFontOfSize:fontOfText]];
         _btnArea.layer.borderColor = [UIColor grayColor].CGColor;
         _btnArea.layer.borderWidth = 0.5;
+        _btnArea.layer.cornerRadius = 4.0;
         
         [_btnArea addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_btnArea addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
@@ -689,6 +685,7 @@ const NSInteger tagAlertDidSaved = 15;
         [_btnBusiness.titleLabel setFont:[UIFont systemFontOfSize:fontOfText]];
         _btnBusiness.layer.borderColor = [UIColor grayColor].CGColor;
         _btnBusiness.layer.borderWidth = 0.5;
+        _btnBusiness.layer.cornerRadius = 4.0;
         
         [_btnBusiness addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_btnBusiness addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];

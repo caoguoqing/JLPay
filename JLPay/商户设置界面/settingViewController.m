@@ -12,6 +12,8 @@
 #import "Define_Header.h"
 #import "DeviceSignInViewController.h"
 #import "RateViewController.h"
+#import "BrushViewController.h"
+#import "Packing8583.h"
 
 #define LeftInsetOfCellCent             0.1f                    // 单元格元素的左边界距离
 #define ImageViewWidthInCellCent        0.1f                    // 单元格内的imageView.width占宽带比例
@@ -178,6 +180,13 @@
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"rateViewController"];
         [viewController setTitle:cellName];
     }
+    else if ([cellName isEqualToString:@"余额查询"]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"brush"];
+        BrushViewController* brushVC = (BrushViewController*)viewController;
+        brushVC.stringOfTranType = TranType_YuE;
+//        [viewController setTitle:cellName];
+    }
+
     if (viewController) {
         [self.navigationController pushViewController:viewController animated:YES];
     }
@@ -309,16 +318,16 @@
  *          (CGFloat)width   用来计算缩放比例的宽度
  * 返  回 : 无
  *************************************/
-- (UIImage*) resizeImage:(UIImage*)image byWidth:(CGFloat)width {
-    UIImage* newImage;
-    CGFloat newHeight = [image size].height * width/[image size].width;
-    CGSize newSize = CGSizeMake(width, newHeight);
-    UIGraphicsBeginImageContext(newSize);
-    [image drawInRect:CGRectMake(0, 0, width, newHeight)];
-    newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return newImage;
-}
+//- (UIImage*) resizeImage:(UIImage*)image byWidth:(CGFloat)width {
+//    UIImage* newImage;
+//    CGFloat newHeight = [image size].height * width/[image size].width;
+//    CGSize newSize = CGSizeMake(width, newHeight);
+//    UIGraphicsBeginImageContext(newSize);
+//    [image drawInRect:CGRectMake(0, 0, width, newHeight)];
+//    newImage = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    return newImage;
+//}
 
 // pragma mask ::: 去掉多余的单元格的分割线
 - (void) setExtraCellLineHidden: (UITableView*)tableView {
@@ -347,9 +356,8 @@
                       @"交易明细",
                       @"绑定设备",
                       @"费率选择",
-                      // @"额度查询",
+                      @"余额查询",
                       @"修改密码",
-                      // @"意见反馈",
                       @"帮助和关于", nil];
     }
     return _cellNames;
@@ -363,9 +371,7 @@
         [_cellNamesAndImages setValue:@"01_18" forKey:@"修改密码"];
         [_cellNamesAndImages setValue:@"01_24" forKey:@"帮助和关于"];
         [_cellNamesAndImages setValue:@"01_12" forKey:@"费率选择"];
-
-        // @"额度查询":@"01_16",
-        // @"意见反馈":@"01_20",
+        [_cellNamesAndImages setValue:@"01_16" forKey:@"余额查询"];
     }
     return _cellNamesAndImages;
 }
