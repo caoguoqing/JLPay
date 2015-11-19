@@ -250,7 +250,21 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zjF-ak-M03" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="501" y="1168"/>
+            <point key="canvasLocation" x="509" y="1144"/>
+        </scene>
+        <!--余额查询-->
+        <scene sceneID="Byg-OV-Qj9">
+            <objects>
+                <viewController storyboardIdentifier="balanceEquiryVC" title="余额查询" id="L2r-1O-iy4" customClass="BalanceEnquiryViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="HcO-eC-iz5">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="geF-nM-gE3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="495" y="1507"/>
         </scene>
         <!--Revoke View Controller-->
         <scene sceneID="02K-Lq-H3K">
@@ -264,7 +278,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z1h-Zu-VUa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="895" y="1168"/>
+            <point key="canvasLocation" x="903" y="1144"/>
         </scene>
         <!--费率选择-->
         <scene sceneID="nbC-PC-HiT">
@@ -278,7 +292,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K1G-Z5-c2r" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="529" y="2360"/>
+            <point key="canvasLocation" x="521" y="2316"/>
         </scene>
         <!--帮助与关于-->
         <scene sceneID="E1O-iD-uy6">
@@ -315,7 +329,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FAW-Tf-mFu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="711" y="2944"/>
+            <point key="canvasLocation" x="599" y="2884"/>
         </scene>
         <!--帮助通用界面-->
         <scene sceneID="q9p-UP-Lwz">
@@ -329,7 +343,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="A3i-68-Vwu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1401" y="2944"/>
+            <point key="canvasLocation" x="1393" y="2884"/>
         </scene>
         <!--关于我们-->
         <scene sceneID="yET-zN-pMu">
@@ -343,7 +357,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Atc-h8-Ies" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1063" y="2944"/>
+            <point key="canvasLocation" x="1039" y="2884"/>
         </scene>
         <!--修改密码-->
         <scene sceneID="pqA-R7-zmF">
@@ -357,7 +371,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NFN-sY-AyL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="599" y="2640"/>
+            <point key="canvasLocation" x="555" y="2632"/>
         </scene>
         <!--商户管理-->
         <scene sceneID="fq6-ud-Js9">

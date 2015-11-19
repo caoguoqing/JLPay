@@ -833,6 +833,9 @@
     if ([color isEqualToString:@"red"]) {
         retColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
     }
+    else if ([color isEqualToString:@"green"]) {
+        retColor = [UIColor colorWithRed:53.0/255.0 green:176.0/255.0 blue:41.0/255.0 alpha:1.0];
+    }
     return retColor;
 }
 

@@ -105,7 +105,9 @@
 		5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448041BF48FB400128452 /* RevokeViewCell.m */; };
 		5E9448081BF9AA9400128452 /* ViewModelCodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448071BF9AA9400128452 /* ViewModelCodeScanner.m */; };
 		5E9448131BFC278D00128452 /* ViewModelTCPPosTrans.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */; };
-		5E9448161BFC7C4D00128452 /* ViewModelDeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448151BFC7C4D00128452 /* ViewModelDeviceManager.m */; };
+		5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448191BFD5FBE00128452 /* BalanceEnquiryViewController.m */; };
+		5E9448201BFDA1E400128452 /* BusinessInfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E94481F1BFDA1E400128452 /* BusinessInfoTableViewCell.m */; };
+		5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448221BFDB21700128452 /* NormalTableViewCell.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -374,8 +376,12 @@
 		5E9448071BF9AA9400128452 /* ViewModelCodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelCodeScanner.m; sourceTree = "<group>"; };
 		5E9448111BFC278D00128452 /* ViewModelTCPPosTrans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPPosTrans.h; sourceTree = "<group>"; };
 		5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPPosTrans.m; sourceTree = "<group>"; };
-		5E9448141BFC7C4D00128452 /* ViewModelDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelDeviceManager.h; sourceTree = "<group>"; };
-		5E9448151BFC7C4D00128452 /* ViewModelDeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelDeviceManager.m; sourceTree = "<group>"; };
+		5E9448181BFD5FBE00128452 /* BalanceEnquiryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BalanceEnquiryViewController.h; sourceTree = "<group>"; };
+		5E9448191BFD5FBE00128452 /* BalanceEnquiryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BalanceEnquiryViewController.m; sourceTree = "<group>"; };
+		5E94481E1BFDA1E400128452 /* BusinessInfoTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessInfoTableViewCell.h; sourceTree = "<group>"; };
+		5E94481F1BFDA1E400128452 /* BusinessInfoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessInfoTableViewCell.m; sourceTree = "<group>"; };
+		5E9448211BFDB21700128452 /* NormalTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalTableViewCell.h; sourceTree = "<group>"; };
+		5E9448221BFDB21700128452 /* NormalTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalTableViewCell.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -573,11 +579,11 @@
 		5E0D18681B09D9BB0092F4AB /* 商户设置界面 */ = {
 			isa = PBXGroup;
 			children = (
-				5EB9B1B31AD7D6D900A73190 /* settingViewController.h */,
-				5EB9B1B41AD7D6D900A73190 /* settingViewController.m */,
+				5E94481B1BFDA15F00128452 /* 主界面 */,
 				5E82B7E31B253F5F00A58751 /* 交易管理 */,
 				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E82B87D1B31610700A58751 /* 连接机具 */,
+				5E9448171BFD5AF500128452 /* 余额查询 */,
 				5E5E35441B71E90400560C0A /* 修改密码 */,
 				5E5E35AA1B7DD33800560C0A /* 帮助与关于 */,
 			);
@@ -952,10 +958,46 @@
 			children = (
 				5E9448111BFC278D00128452 /* ViewModelTCPPosTrans.h */,
 				5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */,
-				5E9448141BFC7C4D00128452 /* ViewModelDeviceManager.h */,
-				5E9448151BFC7C4D00128452 /* ViewModelDeviceManager.m */,
 			);
 			name = model;
+			sourceTree = "<group>";
+		};
+		5E9448171BFD5AF500128452 /* 余额查询 */ = {
+			isa = PBXGroup;
+			children = (
+				5E9448181BFD5FBE00128452 /* BalanceEnquiryViewController.h */,
+				5E9448191BFD5FBE00128452 /* BalanceEnquiryViewController.m */,
+			);
+			path = "余额查询";
+			sourceTree = "<group>";
+		};
+		5E94481B1BFDA15F00128452 /* 主界面 */ = {
+			isa = PBXGroup;
+			children = (
+				5E94481D1BFDA1AC00128452 /* views */,
+				5E94481C1BFDA1A800128452 /* controller */,
+			);
+			path = "主界面";
+			sourceTree = "<group>";
+		};
+		5E94481C1BFDA1A800128452 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				5EB9B1B31AD7D6D900A73190 /* settingViewController.h */,
+				5EB9B1B41AD7D6D900A73190 /* settingViewController.m */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
+		5E94481D1BFDA1AC00128452 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				5E94481E1BFDA1E400128452 /* BusinessInfoTableViewCell.h */,
+				5E94481F1BFDA1E400128452 /* BusinessInfoTableViewCell.m */,
+				5E9448211BFDB21700128452 /* NormalTableViewCell.h */,
+				5E9448221BFDB21700128452 /* NormalTableViewCell.m */,
+			);
+			name = views;
 			sourceTree = "<group>";
 		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
@@ -1558,8 +1600,10 @@
 				5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */,
 				5E9448081BF9AA9400128452 /* ViewModelCodeScanner.m in Sources */,
 				5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */,
+				5E9448201BFDA1E400128452 /* BusinessInfoTableViewCell.m in Sources */,
 				5EBAA9121ACD3F1B00E2ABDD /* SBJsonParser.m in Sources */,
 				5EBAA8E61ACD2FA800E2ABDD /* ISOHelper.m in Sources */,
+				5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */,
 				5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */,
 				5EB9B1B51AD7D6D900A73190 /* settingViewController.m in Sources */,
 				5ED3442D1AD8E10D0005C890 /* MBProgressHUD.m in Sources */,
@@ -1591,6 +1635,7 @@
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
 				5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */,
 				5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */,
+				5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,
@@ -1623,7 +1668,6 @@
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
 				5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */,
 				5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */,
-				5E9448161BFC7C4D00128452 /* ViewModelDeviceManager.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
 				5E5FA5831B46342600387E69 /* README.md in Sources */,

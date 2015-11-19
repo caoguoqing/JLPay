@@ -195,12 +195,11 @@
     Packing8583* packingHolder = [Packing8583 sharedInstance];
     [packingHolder setFieldAtIndex:2 withValue:[info valueForKey:@"2"]];
     [packingHolder setFieldAtIndex:3 withValue:TranType_YuE];
-//    [packingHolder setFieldAtIndex:4 withValue:[info valueForKey:@"4"]];
     [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
     [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
     [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
     [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"00"];
+    [packingHolder setFieldAtIndex:25 withValue:@"82"];
     [packingHolder setFieldAtIndex:26 withValue:@"12"];
     [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
     [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];

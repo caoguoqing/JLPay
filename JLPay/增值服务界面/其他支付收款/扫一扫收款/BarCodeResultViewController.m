@@ -7,6 +7,7 @@
 //
 
 #import "BarCodeResultViewController.h"
+#import "PublicInformation.h"
 
 @interface BarCodeResultViewController()
 {
@@ -39,7 +40,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"收款结果";
-    curGreenColor = [UIColor colorWithRed:53.0/255.0 green:176.0/255.0 blue:41.0/255.0 alpha:1];
+    curGreenColor = [PublicInformation returnCommonAppColor:@"green"];
     [self.view addSubview:self.imageView];
     [self.view addSubview:self.labelResult];
     [self.view addSubview:self.labelMoney];

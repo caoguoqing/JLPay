@@ -15,7 +15,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "Packing8583.h"
 #import "ViewModelTCPPosTrans.h"
-
+#import "BalanceEnquiryViewController.h"
 
 
 @interface BrushViewController()
@@ -320,11 +320,16 @@
     [self stopTimer];
     [self stopActivity];
     if (result) {
-        // 成功: 如果是查余额，跳转到余额显示界面；否则跳转到签名界面
-        [self pushToSignVCWithInfo:responseInfo];
+        // 成功: 跳转界面: 小票、余额显示
+        if ([self.stringOfTranType isEqualToString:TranType_YuE]) {
+            [self pushToYuEVCWithInfo:responseInfo];
+        } else {
+            [self pushToSignVCWithInfo:responseInfo];
+        }
     } else {
         // 失败
-        [self alertForFailedMessage:message];
+        NSString* alertMessage = [NSString stringWithFormat:@"交易失败:%@",message];
+        [self alertForFailedMessage:alertMessage];
     }
 }
 
@@ -366,6 +371,16 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.navigationController pushViewController:qianpi animated:YES];
+    });
+}
+
+// 跳转界面: 跳转余额显示界面
+- (void) pushToYuEVCWithInfo:(NSDictionary*)transInfo {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    BalanceEnquiryViewController* balanceEnquiryVC = [storyBoard instantiateViewControllerWithIdentifier:@"balanceEquiryVC"];
+    balanceEnquiryVC.transInfo = [transInfo copy];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController pushViewController:balanceEnquiryVC animated:YES];
     });
 }
 
@@ -472,13 +487,17 @@
     // 金额图片
     UIImageView* imageView = [[UIImageView alloc] initWithFrame:frame];
     imageView.image = [UIImage imageNamed:@"jine"];
-    [self.view addSubview:imageView];
+    if (![self.stringOfTranType isEqualToString:TranType_YuE]) {
+        [self.view addSubview:imageView];
+    }
     // 刷卡金额: 0.00 元
     frame.origin.x += frame.size.width + 4;
     frame.size.width =  self.view.frame.size.width - fleftInset*2 - frame.size.width - 4;
     self.moneyLabel.frame = frame;
     self.moneyLabel.font = [UIFont boldSystemFontOfSize:uifont];
-    [self.view addSubview:self.moneyLabel];
+    if (![self.stringOfTranType isEqualToString:TranType_YuE]) {
+        [self.view addSubview:self.moneyLabel];
+    }
     
     // 动态滚轮
     frame.origin.x = fleftInset;
@@ -593,6 +612,18 @@
         _cardInfoOfReading = [NSMutableDictionary dictionary];
     }
     return _cardInfoOfReading;
+}
+- (NSString *)sIntMoney {
+    if (_sIntMoney == nil) {
+        _sIntMoney = [NSString stringWithFormat:@"%012d",0];
+    }
+    return _sIntMoney;
+}
+- (NSString *)sFloatMoney {
+    if (_sFloatMoney == nil) {
+        _sFloatMoney = [NSString stringWithFormat:@"%.02lf",0.0];
+    }
+    return _sFloatMoney ;
 }
 
 

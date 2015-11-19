@@ -394,10 +394,12 @@
 	</dict>
 	<key>54</key>
 	<dict>
+		<key>special</key>
+		<string>999</string>
 		<key>type</key>
-		<string></string>
+		<string>asc</string>
 		<key>length</key>
-		<string>22</string>
+		<string></string>
 	</dict>
 	<key>55</key>
 	<dict>
