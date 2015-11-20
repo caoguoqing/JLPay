@@ -121,7 +121,7 @@ static CGFloat fInset = 20.0;
         _labelNotice.text = @"将条形码放入扫描框内，即可自动扫描";
         _labelNotice.textColor = [UIColor whiteColor];
         _labelNotice.textAlignment = NSTextAlignmentCenter;
-        _labelNotice.font = [UIFont systemFontOfSize:13];
+        _labelNotice.font = [UIFont systemFontOfSize:16];
     }
     return _labelNotice;
 }
