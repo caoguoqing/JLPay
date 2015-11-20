@@ -48,8 +48,8 @@
     self.transType = transType;
     // 打包并发送请求
     [self.tcpHolder sendOrderMethod:[self stringPackingWithTransType:transType andMoney:money andOrderCode:orderCode]
-                                 IP:Current_IP
-                               PORT:Current_Port
+                                 IP:[PublicInformation getServerDomain]
+                               PORT:[PublicInformation getTcpPort].intValue
                            Delegate:self
                              method:transType];
 }

@@ -50,7 +50,16 @@
         return;
     }
     // 2.发送交易
-    [self.tcpHolder sendOrderMethod:stringPacking IP:Current_IP PORT:Current_Port Delegate:self method:transType];
+    [self.tcpHolder sendOrderMethod:stringPacking
+                                 IP:[PublicInformation getServerDomain]
+                               PORT:[PublicInformation getTcpPort].intValue
+                           Delegate:self
+                             method:transType];
+//    [self.tcpHolder sendOrderMethod:stringPacking
+//                                 IP:Current_IP
+//                               PORT:Current_Port
+//                           Delegate:self
+//                             method:transType];
 }
 
 #pragma mask ---- 终止交易
@@ -97,7 +106,11 @@
             curTransType = TranType_BatchUpload;
             // 3.如果IC卡交易:继续上送批上送，批上送不关心响应结果
             NSString* packing = [self stringPackingByInfo:dataDict];
-            [self.tcpHolder sendOrderMethod:packing IP:Current_IP PORT:Current_Port Delegate:self method:curTransType];
+            [self.tcpHolder sendOrderMethod:packing
+                                         IP:[PublicInformation getServerDomain]
+                                       PORT:[PublicInformation getTcpPort].intValue
+                                   Delegate:self
+                                     method:curTransType];
         }
         else
         {

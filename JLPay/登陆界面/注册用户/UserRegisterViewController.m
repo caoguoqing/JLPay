@@ -979,7 +979,9 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 }
 - (ASIFormDataRequest *)httpRequestRegister {
     if (_httpRequestRegister == nil) {
-        NSMutableString* urlString = [NSMutableString stringWithFormat:@"http://%@:%@/jlagent/",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSMutableString* urlString = [NSMutableString stringWithFormat:@"http://%@:%@/jlagent/",
+                                      [PublicInformation getServerDomain],
+                                      [PublicInformation getHTTPPort]];
         [urlString appendString:[self requestTypeForRegisterType:self.registerType]];
         _httpRequestRegister = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
         [_httpRequestRegister setPostFormat:ASIMultipartFormDataPostFormat];

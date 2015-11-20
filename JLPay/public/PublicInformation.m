@@ -300,6 +300,37 @@
     return [portStr intValue];
 }
 
+/* 获取服务器域名 */
++ (NSString*) getServerDomain {
+    return @"unitepay.com.cn";
+}
+/* 获取TCP端口 */
++ (NSString*) getTcpPort {
+    NSString* port = nil;
+    if (TestOrProduce == 1) {
+        port = @"28088";
+    }
+    else if (TestOrProduce == 7) {
+        port = @"9088";
+    }
+    else {
+        port = @"80";
+    }
+    return port;
+}
+/* 获取HTTP端口 */
++ (NSString*) getHTTPPort {
+    NSString* port = nil;
+    if (TestOrProduce == 7) {
+        port = @"8088";
+    }
+    else {
+        port = @"80";
+    }
+    return port;
+}
+
+
 // 从配置中获取数据后台地址
 +(NSString*) getDataSourceIP{
     NSString* ip;

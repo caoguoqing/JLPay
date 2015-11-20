@@ -320,7 +320,8 @@
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ModifyPassword",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ModifyPassword",
+                               [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
         NSURL* url = [NSURL URLWithString:urlString];
         _httpRequest = [ASIFormDataRequest requestWithURL:url];
         [_httpRequest setDelegate:self];

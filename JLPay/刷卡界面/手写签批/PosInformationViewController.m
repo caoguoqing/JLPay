@@ -75,8 +75,8 @@
 #pragma mark ------------图片上传
 -(void)chatUploadImage{
     NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
-                              [PublicInformation getDataSourceIP],
-                              [PublicInformation getDataSourcePort]];
+                              [PublicInformation getServerDomain],
+                              [PublicInformation getHTTPPort]];
     
     [NSThread detachNewThreadSelector:@selector(uploadRequestMethod:) toTarget:self withObject:uploadString];
 }
@@ -108,7 +108,6 @@
     [self.uploadRequest setRequestHeaders:headerInfo];
     // 小票图片data
     NSData* imageData = UIImageJPEGRepresentation(self.scrollAllImg, 1.0);
-    NSLog(@"上传小票的大小:[%uKbit]",imageData.length/1024);
     [self.uploadRequest appendPostData:imageData];
     // 同步发送HTTP请求
     [self.uploadRequest startAsynchronous];
@@ -530,8 +529,8 @@
 - (ASIFormDataRequest *)uploadRequest {
     if (_uploadRequest == nil) {
         NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
-                                  [PublicInformation getDataSourceIP],
-                                  [PublicInformation getDataSourcePort]];
+                                  [PublicInformation getServerDomain],
+                                  [PublicInformation getHTTPPort]];
         NSURL* url = [NSURL URLWithString:uploadString];
         _uploadRequest = [[ASIFormDataRequest alloc] initWithURL:url];
         [_uploadRequest setShouldAttemptPersistentConnection:YES];

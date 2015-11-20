@@ -66,10 +66,12 @@
 - (NSString*) urlStringWithPlatform:(NSString*)platform {
     NSString* url = nil;
     if ([platform isEqualToString:NameTradePlatformMPOSSwipe]) {
-        url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo",[PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort]];
+        url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo",
+               [PublicInformation getServerDomain], [PublicInformation getHTTPPort]];
     }
     else if ([platform isEqualToString:NameTradePlatformOtherPay]) {
-        url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getTradeDetail",[PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort]];
+        url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getTradeDetail",
+               [PublicInformation getServerDomain], [PublicInformation getHTTPPort]];
     }
     return url;
 }

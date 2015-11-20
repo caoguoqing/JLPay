@@ -554,8 +554,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [[TcpClientService getInstance] sendOrderMethod:package
-                                                     IP:Current_IP
-                                                   PORT:Current_Port
+                                                     IP:[PublicInformation getServerDomain]
+                                                   PORT:[PublicInformation getTcpPort].intValue
                                                Delegate:self
                                                  method:transType];
     });

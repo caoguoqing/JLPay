@@ -748,7 +748,8 @@ const NSInteger tagAlertDidSaved = 15;
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getInstMchtInfo", [PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getInstMchtInfo",
+                               [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
         _httpRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
         [_httpRequest setDelegate:self];
     }

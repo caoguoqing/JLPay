@@ -932,16 +932,8 @@
 			children = (
 				5E9448101BFB227C00128452 /* model */,
 				5E94480F1BFB227600128452 /* controller */,
-				5E94480E1BFB227100128452 /* views */,
 			);
 			path = "刷卡界面";
-			sourceTree = "<group>";
-		};
-		5E94480E1BFB227100128452 /* views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = views;
 			sourceTree = "<group>";
 		};
 		5E94480F1BFB227600128452 /* controller */ = {

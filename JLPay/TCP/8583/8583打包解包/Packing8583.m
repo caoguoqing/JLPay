@@ -171,7 +171,6 @@
 
 // 取数据字典中所有值,打包成串
 - (NSString*) allDataString {
-    NSLog(@"所有需打包的8583域值:[%@]",self.dictionaryFieldNamesAndValues);
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];

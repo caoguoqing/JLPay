@@ -758,7 +758,9 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService", [PublicInformation getDataSourceIP], [PublicInformation getDataSourcePort] ];
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService",
+                               [PublicInformation getServerDomain],//[PublicInformation getDataSourceIP],
+                               [PublicInformation getHTTPPort]];//[PublicInformation getDataSourcePort] ];
         _httpRequest = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
         [_httpRequest setDelegate:self];
     }

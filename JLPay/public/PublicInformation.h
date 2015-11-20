@@ -68,12 +68,22 @@
 +(NSString *)signinPin;
 +(NSString *)signinMac;
 
+/* 获取服务器域名 */
++ (NSString*) getServerDomain;
+/* 获取TCP端口 */
++ (NSString*) getTcpPort;
+/* 获取HTTP端口 */
++ (NSString*) getHTTPPort;
+
 // 从配置中获取后台主机ip跟port
 +(NSString *)settingIp;
 +(int)settingPort;
 // 从配置中获取数据后台地址
 +(NSString*) getDataSourceIP;
 +(NSString*) getDataSourcePort;
+
+
+
 
 //十六进制转化二进制
 +(NSString *)getBinaryByhex:(NSString *)hex;
