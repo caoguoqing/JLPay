@@ -17,7 +17,6 @@
 #import "ThreeDesUtil.h"
 #import "ASIFormDataRequest.h"
 #import "AppDelegate.h"
-#import "RegisterViewController.h"
 #import "UserRegisterViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
