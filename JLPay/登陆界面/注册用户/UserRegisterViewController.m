@@ -228,7 +228,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
             [actionSheet addButtonWithTitle:@"拍摄"];
         }
-        [actionSheet addButtonWithTitle:@"从相册选择"];
+//        [actionSheet addButtonWithTitle:@"从相册选择"];
         [actionSheet showInView:self.view];
     }
 }

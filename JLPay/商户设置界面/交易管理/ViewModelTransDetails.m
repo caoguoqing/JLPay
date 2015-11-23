@@ -206,18 +206,29 @@
 - (NSString*) cardNumAtIndex:(NSInteger)index
 {
     NSString* cardNum = nil;
+    NSDictionary* dataNode = nil;
+    if (!filter) {
+        dataNode = [self.transDetails objectAtIndex:index];
+    } else {
+        dataNode = [self.filterDetails objectAtIndex:index];
+    }
     if ([self.platformName isEqualToString:NameTradePlatformMPOSSwipe]) {
-        NSDictionary* dataNode = nil;
-        if (!filter) {
-            dataNode = [self.transDetails objectAtIndex:index];
-        } else {
-            dataNode = [self.filterDetails objectAtIndex:index];
-        }
         if (dataNode) {
             cardNum = [dataNode valueForKey:@"pan"];
+            cardNum = [PublicInformation cuttingOffCardNo:cardNum];
         }
     }
     else if ([self.platformName isEqualToString:NameTradePlatformOtherPay]) {
+        // 第三方支付没有卡号，用渠道类型展示
+        if (dataNode) {
+            cardNum = [dataNode valueForKey:@"channelType"];
+            if ([[cardNum substringWithRange:NSMakeRange(1, 1)] isEqualToString:@"3"]) {
+                cardNum = @"微信";
+            }
+            else if ([[cardNum substringWithRange:NSMakeRange(1, 1)] isEqualToString:@"4"]) {
+                cardNum = @"支付宝";
+            }
+        }
     }
     return cardNum;
 }
@@ -242,6 +253,7 @@
     if (dataNode) {
         money = [dataNode valueForKey:key];
         money = [PublicInformation dotMoneyFromNoDotMoney:money];
+//        money = [@"￥ " stringByAppendingString:money];
     }
     return money;
 }
@@ -288,6 +300,8 @@
     }
     if (dataNode) {
         transTime = [dataNode valueForKey:key];
+        NSString* formatTime = [NSString stringWithFormat:@"%@:%@:%@",[transTime substringToIndex:2],[transTime substringWithRange:NSMakeRange(2, 2)],[transTime substringFromIndex:4]];
+        transTime = formatTime;
     }
     return transTime;
 }

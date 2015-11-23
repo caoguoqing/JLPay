@@ -68,7 +68,7 @@ NSInteger logCount = 0;
     [cell setCardNum:[self.dataSource cardNumAtIndex:indexPath.row]];
     [cell setTime:[self.dataSource transTimeAtIndex:indexPath.row]];
     [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
-    [cell setAmount:[self.dataSource moneyAtIndex:indexPath.row] withColor:textColor];
+    [cell setAmount:[NSString stringWithFormat:@"￥ %@",[self.dataSource moneyAtIndex:indexPath.row]] withColor:textColor];
 
     return cell;
 }

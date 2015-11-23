@@ -28,6 +28,45 @@
 #define OtherFont           12.0                // 其他描述信息字体大小
 
 
+
+#pragma mask ::: 金额属性赋值 : 000000000010
+- (void) setAmount : (NSString*)amount withColor:(UIColor *)color{
+    //    CGFloat fAmount = [amount floatValue];
+    //    fAmount /= 100.0;
+    //    self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
+//    self.amountLabel.text = [NSString stringWithFormat:@"￥ %@",amount];
+    self.amountLabel.text = amount;
+    self.amountLabel.textColor = color;
+}
+#pragma mask ::: 卡号属性赋值
+- (void) setCardNum : (NSString*)cardNum {
+    if (!cardNum || cardNum.length == 0) {
+        return;
+    }
+//    NSString* preNum = [cardNum substringToIndex:6];
+//    NSString* sufNum = [cardNum substringFromIndex:[cardNum length] - 4];
+//    self.cardNumberLabel.text = [[preNum stringByAppendingString:@"******"] stringByAppendingString:sufNum];
+    self.cardNumberLabel.text = cardNum;
+}
+#pragma mask ::: 日期时间赋值 : 093412
+- (void) setTime : (NSString*)time {
+    if (!time || time.length == 0) {
+        return;
+    }
+    self.tranTimeLabel.text = time;
+//    self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
+//                               [time substringToIndex:2],
+//                               [time substringWithRange:NSMakeRange(2, 2)],
+//                               [time substringFromIndex:4]];
+}
+#pragma mask ::: 设置交易类型标记
+- (void) setTranType:(NSString *)tranType withColor:(UIColor *)color{
+    self.tranTypeLabel.text = tranType;
+    self.tranTypeLabel.textColor = color;
+}
+
+
+
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
@@ -87,38 +126,6 @@
     [super layoutSubviews];
 }
 
-#pragma mask ::: 金额属性赋值 : 000000000010
-- (void) setAmount : (NSString*)amount withColor:(UIColor *)color{
-//    CGFloat fAmount = [amount floatValue];
-//    fAmount /= 100.0;
-//    self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
-    self.amountLabel.text = [NSString stringWithFormat:@"￥ %@",amount];
-    self.amountLabel.textColor = color;
-}
-#pragma mask ::: 卡号属性赋值
-- (void) setCardNum : (NSString*)cardNum {
-    if (!cardNum || cardNum.length == 0) {
-        return;
-    }
-    NSString* preNum = [cardNum substringToIndex:6];
-    NSString* sufNum = [cardNum substringFromIndex:[cardNum length] - 4];
-    self.cardNumberLabel.text = [[preNum stringByAppendingString:@"******"] stringByAppendingString:sufNum];
-}
-#pragma mask ::: 日期时间赋值 : 093412
-- (void) setTime : (NSString*)time {
-    if (!time || time.length == 0) {
-        return;
-    }
-    self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
-                               [time substringToIndex:2],
-                               [time substringWithRange:NSMakeRange(2, 2)],
-                               [time substringFromIndex:4]];
-}
-#pragma mask ::: 设置交易类型标记
-- (void) setTranType:(NSString *)tranType withColor:(UIColor *)color{
-    self.tranTypeLabel.text = tranType;
-    self.tranTypeLabel.textColor = color;
-}
 
 
 

@@ -396,6 +396,7 @@
 - (void) waitingForDeviceOpenning {
     if (self.timeOut < 0) { // 超时了
         [self stopTimer];
+        [self stopActivity];
         [self alertForFailedMessage:@"连接设备超时!"]; // 点击确定就会退出场景
         return;
     }
