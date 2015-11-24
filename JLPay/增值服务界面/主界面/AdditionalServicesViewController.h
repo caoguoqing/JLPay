@@ -7,7 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DynamicScrollView.h"
+
+
+static NSString* SupplementaryIdentifier = @"SupplementaryIdentifier__";
+static NSString* SupplementaryIdentifierStay = @"SupplementaryIdentifierStay__";
+static NSString* CellItemIdentifier = @"CellItemIdentifier__";
+
+
 @interface AdditionalServicesViewController : UIViewController
+
+
 
 @end

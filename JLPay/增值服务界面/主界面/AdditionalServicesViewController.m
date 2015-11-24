@@ -16,14 +16,18 @@
 #import "OtherPayCollectViewController.h"
 #import "DeviceManager.h"
 #import "TransDetailsViewController.h"
+#import "DynamicScrollView.h"
+
+#import "AdditionalCollectionLayout.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
 
 
-@interface AdditionalServicesViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
-{
-    CGFloat insetHorizantol;
-}
+@interface AdditionalServicesViewController ()
+<
+    UICollectionViewDataSource,
+    UICollectionViewDelegate
+>
 @property (nonatomic, strong) UICollectionView* collectionView;
 
 @property (nonatomic, strong) NSMutableDictionary* imageNamesDict;
@@ -53,10 +57,8 @@ NSString* headerIdentifier = @"headerIdentifier";
 /* 每个item的数据源设置 */
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 
-    myCollectionCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
-    if (cell == nil) {
-        return nil;
-    }
+    myCollectionCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:(NSString*)CellItemIdentifier forIndexPath:indexPath];
+    
     NSString* key = [self.titlesArray objectAtIndex:indexPath.row];
     [cell setImage:[UIImage imageNamed:[self.imageNamesDict valueForKey:key]]];
     if (![key isEqualToString:@"添加"]) {
@@ -71,34 +73,25 @@ NSString* headerIdentifier = @"headerIdentifier";
            viewForSupplementaryElementOfKind:(NSString *)kind
                                  atIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionReusableView* headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                    withReuseIdentifier:headerIdentifier
-                                                           forIndexPath:indexPath];
-    CGFloat headerHeight = self.view.bounds.size.width * 305.0/712.0;
-    UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, headerHeight)];
-    imageView.image = [UIImage imageNamed:@"01_03"];
-    [headerView addSubview:imageView];
-    return headerView;
+    UICollectionReusableView* headerOrFooterView = nil;
+    NSLog(@"========[%s],kind = [%@]",__func__, kind);
+    if ([kind isEqualToString:SupplementaryIdentifier]) {
+        headerOrFooterView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:SupplementaryIdentifier forIndexPath:indexPath];
+        UIImageView* supplementaryImageView = [[UIImageView alloc] init];
+        supplementaryImageView.image = [UIImage imageNamed:@"01_03"];
+        supplementaryImageView.bounds = headerOrFooterView.bounds;
+        supplementaryImageView.center = CGPointMake(headerOrFooterView.bounds.size.width/2.0, headerOrFooterView.bounds.size.height/2.0);
+        [headerOrFooterView addSubview:supplementaryImageView];
+
+    }
+    else if ([kind isEqualToString:SupplementaryIdentifierStay]) {
+        headerOrFooterView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:SupplementaryIdentifierStay forIndexPath:indexPath];
+        headerOrFooterView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
+    }
+    
+    return headerOrFooterView;
 }
 
-#pragma mask ------ UICollectionViewDelegateFlowLayout
-/* 单个item的尺寸 */
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat width = (collectionView.frame.size.width - insetHorizantol*2)/ 3.0000;
-    return CGSizeMake(width, width);
-}
-/* 每个section的四维边界 */
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(0.0, insetHorizantol, 0.0, insetHorizantol);
-}
-/* item内部视图的边界值 */
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 0.0;
-}
-/* section内行间距 */
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 0.0;
-}
 
 #pragma mask ------ UICollectionViewDelegate
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -123,7 +116,7 @@ NSString* headerIdentifier = @"headerIdentifier";
             [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
         }
     }
-    else {
+    else if ([cell.title isEqualToString:@"明细查询"]){
         // 校验设备绑定
         if (![DeviceManager deviceIsBinded]) {
             [self alertForMessage:@"设备未绑定，请先绑定设备"];
@@ -172,7 +165,6 @@ NSString* headerIdentifier = @"headerIdentifier";
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self.view addSubview:self.collectionView];
-    insetHorizantol = 1.000000;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -195,13 +187,18 @@ NSString* headerIdentifier = @"headerIdentifier";
 #pragma mask ::: getter & setter 
 - (UICollectionView *)collectionView {
     if (_collectionView == nil) {
-        CGFloat headerHeight = self.view.bounds.size.width * 305.0/712.0;
-        UICollectionViewFlowLayout* flowLayout = [[UICollectionViewFlowLayout alloc] init];
-        [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
-        flowLayout.headerReferenceSize = CGSizeMake(self.view.bounds.size.width, headerHeight + 8);//insetHorizantol*5);
-        _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:flowLayout];
-        [_collectionView registerClass:[myCollectionCell class] forCellWithReuseIdentifier:cellIdentifier];
-        [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerIdentifier];
+        AdditionalCollectionLayout* flowLayout = [[AdditionalCollectionLayout alloc] init];
+        
+        CGFloat heightNaviAndStatus = [PublicInformation heightOfNavigationAndStatusInVC:self];
+        CGFloat heightTabBar = self.tabBarController.tabBar.frame.size.height;
+        CGRect frame = CGRectMake(0, heightNaviAndStatus, self.view.frame.size.width, self.view.frame.size.height - heightNaviAndStatus - heightTabBar);
+        
+        _collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:flowLayout];
+        
+        [_collectionView registerClass:[myCollectionCell class] forCellWithReuseIdentifier:(NSString*)CellItemIdentifier];
+        [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:SupplementaryIdentifier];
+        [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:SupplementaryIdentifierStay];
+        
         [_collectionView setBackgroundColor:[UIColor whiteColor]];
     }
     return _collectionView;

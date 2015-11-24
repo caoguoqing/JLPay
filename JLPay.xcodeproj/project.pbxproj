@@ -104,6 +104,7 @@
 		5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448191BFD5FBE00128452 /* BalanceEnquiryViewController.m */; };
 		5E9448201BFDA1E400128452 /* BusinessInfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E94481F1BFDA1E400128452 /* BusinessInfoTableViewCell.m */; };
 		5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448221BFDB21700128452 /* NormalTableViewCell.m */; };
+		5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E94486C1C03F3F600128452 /* AdditionalCollectionLayout.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
@@ -370,6 +371,8 @@
 		5E94481F1BFDA1E400128452 /* BusinessInfoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessInfoTableViewCell.m; sourceTree = "<group>"; };
 		5E9448211BFDB21700128452 /* NormalTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalTableViewCell.h; sourceTree = "<group>"; };
 		5E9448221BFDB21700128452 /* NormalTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalTableViewCell.m; sourceTree = "<group>"; };
+		5E94486B1C03F3F600128452 /* AdditionalCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalCollectionLayout.h; sourceTree = "<group>"; };
+		5E94486C1C03F3F600128452 /* AdditionalCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalCollectionLayout.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
@@ -985,6 +988,7 @@
 		5E9448671BFF1B0700128452 /* 主界面 */ = {
 			isa = PBXGroup;
 			children = (
+				5E94486E1C0431EB00128452 /* model */,
 				5E9448691BFF1B7C00128452 /* view */,
 				5E9448681BFF1B7600128452 /* controller */,
 			);
@@ -1007,6 +1011,8 @@
 				5E08AE721B09949200B8C198 /* DynamicScrollView.m */,
 				5E5E353E1B70BC4300560C0A /* myCollectionCell.h */,
 				5E5E353F1B70BC4300560C0A /* myCollectionCell.m */,
+				5E94486B1C03F3F600128452 /* AdditionalCollectionLayout.h */,
+				5E94486C1C03F3F600128452 /* AdditionalCollectionLayout.m */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -1020,6 +1026,13 @@
 				5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */,
 			);
 			path = "主界面";
+			sourceTree = "<group>";
+		};
+		5E94486E1C0431EB00128452 /* model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = model;
 			sourceTree = "<group>";
 		};
 		5E9D9BA11BA904AE00A7E8CC /* 8583打包解包 */ = {
@@ -1694,6 +1707,7 @@
 				5E5FA5841B46342600387E69 /* ISBLEDataPath.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
+				5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */,
 				5E93B4A81BE89D300064BEC4 /* ViewModelQRImageMaker.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
 				5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */,
