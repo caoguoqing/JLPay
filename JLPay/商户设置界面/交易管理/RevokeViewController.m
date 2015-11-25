@@ -19,9 +19,6 @@
 @property (nonatomic, strong) UIButton* revokeButton;
 @property (nonatomic, strong) UIImageView* imageView;
 
-//@property (nonatomic, strong) NSMutableDictionary* detailNameIndex;
-//@property (nonatomic, strong) NSMutableArray* cellNames;
-
 @property (nonatomic, strong) NSArray* cellNamesForPOS;
 @property (nonatomic, strong) NSArray* cellNamesForOtherPay;
 @property (nonatomic, strong) NSDictionary* detailTransInfoForPOS;
@@ -33,24 +30,12 @@
 
 @implementation RevokeViewController
 @synthesize dataDic = _dataDic;
-//@synthesize detailNameIndex = _detailNameIndex;
 @synthesize tableView = _tableView;
 @synthesize revokeButton = _revokeButton;
-//@synthesize cellNames = _cellNames;
 
 
 
 - (void)viewDidLoad {
-    // 第三方交易详情要去掉卡号
-//    if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
-//        NSInteger index = 0;
-//        for (int i = 0; i < self.cellNames.count; i++) {
-//            if ([[self.cellNames objectAtIndex:i] isEqualToString:@"交易卡号"]) {
-//                index = i;
-//            }
-//        }
-//        [self.cellNames removeObjectAtIndex:index];
-//    }
     
     [super viewDidLoad];
     self.title = @"交易详情";
@@ -360,37 +345,5 @@
 
 
 
-//- (NSMutableArray *)cellNames {
-//    if (_cellNames == nil) {
-//        _cellNames = [[NSMutableArray alloc] init];
-//        [_cellNames addObject:@"交易类型"];
-//        [_cellNames addObject:@"商户编号"];
-//        [_cellNames addObject:@"商户名称"];
-//        [_cellNames addObject:@"交易金额"];
-//        [_cellNames addObject:@"交易卡号"];
-//        [_cellNames addObject:@"交易日期"];
-//        [_cellNames addObject:@"交易时间"];
-//        [_cellNames addObject:@"交易状态"];
-//        [_cellNames addObject:@"订单编号"];
-//        [_cellNames addObject:@"终端编号"];
-//    }
-//    return _cellNames;
-//}
-// 数据字典:保存字段描述和字段名
-//- (NSDictionary *)detailNameIndex {
-//    if (_detailNameIndex == nil) {
-//        _detailNameIndex = [[NSMutableDictionary alloc] init];
-//        [_detailNameIndex setValue:@"txnNum" forKey:@"交易类型"];
-//        [_detailNameIndex setValue:@"cardAccpId" forKey:@"商户编号"];
-//        [_detailNameIndex setValue:@"cardAccpName" forKey:@"商户名称"];
-//        [_detailNameIndex setValue:@"amtTrans" forKey:@"交易金额"];
-//        [_detailNameIndex setValue:@"pan" forKey:@"交易卡号"];
-//        [_detailNameIndex setValue:@"instDate" forKey:@"交易日期"];
-//        [_detailNameIndex setValue:@"instTime" forKey:@"交易时间"];
-//        [_detailNameIndex setValue:@"retrivlRef" forKey:@"订单编号"];
-//        [_detailNameIndex setValue:@"cardAccpTermId" forKey:@"终端编号"];
-//    }
-//    return _detailNameIndex;
-//}
 
 @end

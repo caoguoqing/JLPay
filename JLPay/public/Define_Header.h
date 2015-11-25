@@ -66,26 +66,26 @@
 
 
 /*************[商户相关的参数:]**************/
-// 终端号，商户号,商户名称
+//// 终端号，商户号,商户名称
 #define Terminal_Number @"terminal"
-#define Business_Number @"business"
-#define Business_Name @"businessname"
-// 终端个数
-#define Terminal_Count @"termCount"
-// 终端号列表-数组
-#define Terminal_Numbers @"terminals"
-// 账号
-#define UserID  @"userID"
-// 账号 -- 保存标记
-#define NeedSavingUserID @"NeedSavingUserID"
-// 密码
-#define UserPW  @"userPW"
-// 密码 -- 保存标记
-#define NeedSavingUserPW @"NeedSavingUserPW"
-// 密码 -- 显示全文本标记
-#define NeedDisplayUserPW @"NeedDisplayUserPW"
-// 邮箱
-#define Business_Email @"commEmail"
+//#define Business_Number @"business"
+//#define Business_Name @"businessname"
+//// 终端个数
+//#define Terminal_Count @"termCount"
+//// 终端号列表-数组
+//#define Terminal_Numbers @"terminals"
+//// 账号
+//#define UserID  @"userID"
+//// 账号 -- 保存标记
+//#define NeedSavingUserID @"NeedSavingUserID"
+//// 密码
+//#define UserPW  @"userPW"
+//// 密码 -- 保存标记
+//#define NeedSavingUserPW @"NeedSavingUserPW"
+//// 密码 -- 显示全文本标记
+//#define NeedDisplayUserPW @"NeedDisplayUserPW"
+//// 邮箱
+//#define Business_Email @"commEmail"
 // 操作员号
 #define Manager_Number @"001"
 // 费率 - key; 值为int{0,1,2,3};
@@ -185,7 +185,6 @@
 #define Two_Track_Data @"trackdata"
 // F36:   三磁道数据
 #define F36_ThreeTrackData      @"F36_ThreeTrackData_"
-
 // F37:   检索参考号
 #define Reference_Number_37 @"Reference_Number_37_"
 // F38:   授权码:AUTH NO

@@ -48,4 +48,7 @@
 @property (nonatomic, retain) NSString* tpdu;
 @property (nonatomic, retain) NSString* header;
 
+@property (nonatomic, readonly) NSString* MAINKEY; // 主密钥明文
+
+
 @end

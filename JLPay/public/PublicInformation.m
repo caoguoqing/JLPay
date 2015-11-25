@@ -10,6 +10,7 @@
 #import "Define_Header.h"
 #import "Packing8583.h"
 #import "Unpacking8583.h"
+#import "ModelUserLoginInformation.h"
 
 @implementation PublicInformation
 
@@ -203,22 +204,22 @@
     return terminalNumber;
 }
 +(NSString *)returnBusiness{
-    NSString *businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
-    if (businessNumber && ![businessNumber isEqualToString:@""] && ![businessNumber isEqualToString:@"(null)"]) {
-        businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
-    }else{
-        businessNumber=@"886584000000001";      // 72环境商户号
-    }
-    return businessNumber;
+//    NSString *businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
+//    if (businessNumber && ![businessNumber isEqualToString:@""] && ![businessNumber isEqualToString:@"(null)"]) {
+//        businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
+//    }else{
+//        businessNumber=@"886584000000001";      // 72环境商户号
+//    }
+    return [ModelUserLoginInformation businessNumber];
 }
 +(NSString *)returnBusinessName{
-    NSString *businessName=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Name];
-    if (businessName && ![businessName isEqualToString:@""] && ![businessName isEqualToString:@"(null)"]) {
-        businessName=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Name];
-    }else{
-        businessName=@"测试商户";
-    }
-    return businessName;
+//    NSString *businessName=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Name];
+//    if (businessName && ![businessName isEqualToString:@""] && ![businessName isEqualToString:@"(null)"]) {
+//        businessName=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Name];
+//    }else{
+//        businessName=@"测试商户";
+//    }
+    return [ModelUserLoginInformation businessName];
 }
 // 返回IC卡序列号
 +(NSString *)returnICCardSeqNo{

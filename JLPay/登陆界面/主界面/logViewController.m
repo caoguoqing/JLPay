@@ -19,7 +19,7 @@
 #import "AppDelegate.h"
 #import "UserRegisterViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
-
+#import "ModelUserLoginInformation.h"
 
 
 #pragma mask    ---- 常量设置区 ----
@@ -130,14 +130,15 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 
 // 加载用户名
 - (void) loadUserNameField {
-    NSString* userName = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+//    NSString* userName = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
+    NSString* userName = [ModelUserLoginInformation userID];
     if (userName) {
         [self.userNumberTextField setText:userName];
     }
 }
 // 加载密码
 - (void) loadUserPasswordField {
-    NSString* userPwdPin = [[NSUserDefaults standardUserDefaults] valueForKey:UserPW];
+    NSString* userPwdPin = [ModelUserLoginInformation userPWD];
     if (userPwdPin && userPwdPin.length > 0) {
         [self.userPasswordTextField setText:[self pswDecryptByPin:userPwdPin]];
     }
@@ -437,9 +438,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     
     // 登陆密码加密
     NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
-
-    // 保存登陆信息 -- 不能在这里保存,不然登陆成功后无法判断是切换了账号
-//    [self savingLoadingInfo];
     
     // 登陆
     [self logInWithPin:pin];
@@ -542,9 +540,12 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 // 校验是否切换了账号:如果切换,清空配置
 - (void) checkoutLoadingSwitch {
     NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-    NSString* lastUserID = [userDefault valueForKey:UserID];
+    NSString* lastUserID = [ModelUserLoginInformation userID];
     
     if (![lastUserID isEqualToString:self.userNumberTextField.text]) {
+        [ModelUserLoginInformation deleteLoginUpInformation];
+        [ModelUserLoginInformation deleteLoginDownInformation];
+        
         [userDefault removeObjectForKey:KeyInfoDictOfBinded];
         [userDefault synchronize];
     }
@@ -552,39 +553,30 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 
 #pragma mask ::: 保存登陆信息
 - (void) savingLoadingInfo {
-    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-    [userDefault setObject:self.userNumberTextField.text forKey:UserID];
-    [userDefault setBool:self.switchSavePin.on forKey:NeedSavingUserPW];
-    [userDefault setBool:self.switchSecurity.on forKey:NeedDisplayUserPW];
-    if ([self.switchSavePin isOn]) {
-        NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
-        [userDefault setValue:pin forKey:UserPW];
-    } else {
-        [userDefault removeObjectForKey:UserPW];
+    NSString* pin = nil;
+    if (self.switchSavePin.isOn) {
+        pin = [self pinEncryptBySource:self.userPasswordTextField.text];
     }
-    [userDefault synchronize];
+    [ModelUserLoginInformation newLoginUpInfoWithUserID:self.userNumberTextField.text
+                                                userPWD:pin
+                                        needSaveUserPWD:self.switchSavePin.isOn
+                                     needDisplayUserPWD:self.switchSecurity.isOn];
+    
+    
 }
 
 #pragma mask ::: 保存商户信息
-- (void) savingBussinessInfo:(NSDictionary*)bussinessInfo {
-    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-    [userDefault setObject:[bussinessInfo objectForKey:@"mchtNo"] forKey:Business_Number];      // 商户编号
-    [userDefault setObject:[bussinessInfo objectForKey:@"mchtNm"] forKey:Business_Name];        // 商户名称
-    [userDefault setObject:[bussinessInfo objectForKey:@"commEmail"] forKey:Business_Email];    // 邮箱
-    [userDefault setObject:[bussinessInfo objectForKey:@"termCount"] forKey:Terminal_Count];    // 终端个数
-    [userDefault synchronize];
-    
-    int termCount = [[bussinessInfo objectForKey:@"termCount"] intValue];
-    if (termCount > 0) {
-        // 终端编号组的编号
-        NSString* terminalNumbersString = [bussinessInfo objectForKey:@"TermNoList"];
-        // 将终端号列表字符串拆成数组保存到 Terminal_Numbers
-        NSArray* array = [self terminalArrayBySeparateWithString: terminalNumbersString inPart:termCount];
-        [userDefault setObject:array forKey:Terminal_Numbers];
-    } else {
-        [userDefault removeObjectForKey:Terminal_Numbers];
+- (void) savingBussinessInfo:(NSDictionary*)bussinessInfo {    
+    NSArray* terminals = nil;
+    NSString* termCount = [bussinessInfo objectForKey:@"termCount"];
+    if (termCount.intValue > 0) {
+        terminals = [self terminalArrayBySeparateWithString:[bussinessInfo objectForKey:@"TermNoList"] inPart:termCount.intValue];
     }
-    [userDefault synchronize];
+    [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[bussinessInfo objectForKey:@"mchtNm"]
+                                                 businessNumber:[bussinessInfo objectForKey:@"mchtNo"]
+                                                  businessEmail:[bussinessInfo objectForKey:@"commEmail"]
+                                                  terminalCount:termCount terminalNumbers:terminals];
+
 }
 #pragma mask ::: 分隔终端号字符串
 - (NSArray*) arraySeparatedByTerminalListString:(NSString*) terminalsString {
@@ -768,14 +760,14 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 - (UISwitch *)switchSavePin {
     if (_switchSavePin == nil) {
         _switchSavePin = [[UISwitch alloc] initWithFrame:CGRectZero];
-        [_switchSavePin setOn:[[NSUserDefaults standardUserDefaults] boolForKey:NeedSavingUserPW]];
+        [_switchSavePin setOn:[ModelUserLoginInformation needSaveUserPWD]];
     }
     return _switchSavePin;
 }
 - (UISwitch *)switchSecurity {
     if (_switchSecurity == nil) {
         _switchSecurity = [[UISwitch alloc] initWithFrame:CGRectZero];
-        [_switchSecurity setOn:[[NSUserDefaults standardUserDefaults] boolForKey:NeedDisplayUserPW]];
+        [_switchSecurity setOn:[ModelUserLoginInformation needDisplayUserPWD]];
     }
     return _switchSecurity;
 }

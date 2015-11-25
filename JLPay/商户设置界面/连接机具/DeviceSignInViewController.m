@@ -16,6 +16,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "Packing8583.h"
 #import "EncodeString.h"
+#import "ModelUserLoginInformation.h"
 
 @interface DeviceSignInViewController()
 <
@@ -677,7 +678,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [infoDictWillBeSaved setValue:identifier forKey:KeyInfoDictOfBindedDeviceIdentifier];
     [infoDictWillBeSaved setValue:self.selectedSNVersionNum forKey:KeyInfoDictOfBindedDeviceSNVersion];
     [infoDictWillBeSaved setValue:self.selectedTerminalNum forKey:KeyInfoDictOfBindedTerminalNum];
-    [infoDictWillBeSaved setValue:[userDefault valueForKey:Business_Number] forKey:KeyInfoDictOfBindedBussinessNum];
+    [infoDictWillBeSaved setValue:[ModelUserLoginInformation businessNumber] forKey:KeyInfoDictOfBindedBussinessNum];
     
     [userDefault setValue:self.selectedTerminalNum forKey:Terminal_Number];
     [userDefault setObject:infoDictWillBeSaved forKey:KeyInfoDictOfBinded];
@@ -722,7 +723,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (NSMutableArray *)terminalNums {
     if (_terminalNums == nil) {
         _terminalNums = [[NSMutableArray alloc] init];
-        NSArray* terms = [[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Numbers];
+        NSArray* terms = [ModelUserLoginInformation terminalNumbers];
         if (!terms || terms.count == 0) {
             [_terminalNums addObject:@"无"];
         } else {

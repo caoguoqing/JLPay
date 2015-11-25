@@ -8,12 +8,12 @@
 
 #import "ChangePinViewController.h"
 #import "PublicInformation.h"
-//#import "../../asi-http/ASIFormDataRequest.h"
-#import "../../public/asi-http/ASIFormDataRequest.h"
+#import "ASIFormDataRequest.h"
 #import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 #import "Define_Header.h"
+#import "ModelUserLoginInformation.h"
 
 @interface ChangePinViewController()<ASIHTTPRequestDelegate> {
     CGFloat textFontSize;
@@ -45,7 +45,7 @@
  * 返  回:
  ******************************/
 - (void) requestForChangingPin {
-    [self.httpRequest addPostValue:[[NSUserDefaults standardUserDefaults] valueForKey:UserID] forKey:@"userName"];
+    [self.httpRequest addPostValue:[ModelUserLoginInformation userID] forKey:@"userName"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{

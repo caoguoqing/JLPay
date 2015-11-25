@@ -23,16 +23,6 @@
     self.imageView.image = image;
 }
 
-
-
-- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
-    [super applyLayoutAttributes:layoutAttributes];
-    
-    NSLog(@"当前cell 的布局属性{%@}",layoutAttributes);
-    
-    NSLog(@"当前cell 的center:(%lf,%lf)",layoutAttributes.center.x, layoutAttributes.center.y);
-}
-
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {

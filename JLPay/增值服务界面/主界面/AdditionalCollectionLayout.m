@@ -56,7 +56,6 @@
                                                                      atIndexPath:(NSIndexPath *)indexPath
 {
     
-    NSLog(@"========[%s],kind = [%@]",__func__, elementKind);
     UICollectionViewLayoutAttributes* attributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:elementKind withIndexPath:indexPath];
     if ([elementKind isEqualToString:UICollectionElementKindSectionHeader]) {
         attributes.size = supplementarySize;
@@ -84,10 +83,8 @@
     [attributes addObject:[self layoutAttributesForSupplementaryViewOfKind:SupplementaryIdentifier atIndexPath:indexPath]];
     [attributes addObject:[self layoutAttributesForSupplementaryViewOfKind:SupplementaryIdentifierStay atIndexPath:indexPath]];
 
-    
     return attributes;
 }
-
 
 
 - (NSInteger) rowsOfCells {

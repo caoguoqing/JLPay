@@ -16,7 +16,7 @@
 #import "BrushViewController.h"
 #import "Packing8583.h"
 
-
+#import "ModelUserLoginInformation.h"
 
 
 @interface settingViewController ()<UIAlertViewDelegate>
@@ -121,10 +121,13 @@
     // 下面是 cell 的装载
     if (indexPath.row == 0) {
         BusinessInfoTableViewCell* businessInfoCell = (BusinessInfoTableViewCell*)cell;
-        NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-        [businessInfoCell setUserId:[userDefault objectForKey:UserID]];
-        [businessInfoCell setBusinessName:[userDefault objectForKey:Business_Name]];
-        [businessInfoCell setBusinessNo:[userDefault objectForKey:Business_Number]];
+//        NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+//        [businessInfoCell setUserId:[userDefault objectForKey:UserID]];
+//        [businessInfoCell setBusinessName:[userDefault objectForKey:Business_Name]];
+//        [businessInfoCell setBusinessNo:[userDefault objectForKey:Business_Number]];
+        [businessInfoCell setUserId:[ModelUserLoginInformation userID]];
+        [businessInfoCell setBusinessName:[ModelUserLoginInformation businessName]];
+        [businessInfoCell setBusinessNo:[ModelUserLoginInformation businessNumber]];
     } else {
         NormalTableViewCell* normalCell = (NormalTableViewCell*)cell;
         NSString *labelName         = [self.cellNames objectAtIndex:indexPath.row];

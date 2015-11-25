@@ -17,6 +17,8 @@
 #import "JLActivitor.h"
 #import "Define_Header.h"
 
+#import "ModelUserLoginInformation.h"
+
 
 @interface UserRegisterViewController()
 <UITableViewDataSource, UITableViewDelegate, TextFieldCellDelegate, UIActionSheetDelegate,
@@ -434,12 +436,18 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         NSString* userName = [self textInputedAtIndexPath:indexPath];
         NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-        // 用户名保存
-        [userDefault setValue:userName forKey:UserID];
-        // 清空密码
-        if ([userDefault objectForKey:UserPW]) {
-            [userDefault removeObjectForKey:UserPW];
-        }
+//         用户名保存
+//        [userDefault setValue:userName forKey:UserID];
+//         清空密码
+//        if ([userDefault objectForKey:UserPW]) {
+//            [userDefault removeObjectForKey:UserPW];
+//        }
+        // 清空登陆+商户信息
+        [ModelUserLoginInformation deleteLoginUpInformation];
+        [ModelUserLoginInformation deleteLoginDownInformation];
+        // 保存需要的登陆信息
+        [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
+        
         // 清空绑定信息
         if ([userDefault objectForKey:KeyInfoDictOfBinded]) {
             [userDefault removeObjectForKey:KeyInfoDictOfBinded];

@@ -16,7 +16,6 @@
 #import "OtherPayCollectViewController.h"
 #import "DeviceManager.h"
 #import "TransDetailsViewController.h"
-#import "DynamicScrollView.h"
 
 #import "AdditionalCollectionLayout.h"
 
@@ -74,7 +73,6 @@ NSString* headerIdentifier = @"headerIdentifier";
                                  atIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionReusableView* headerOrFooterView = nil;
-    NSLog(@"========[%s],kind = [%@]",__func__, kind);
     if ([kind isEqualToString:SupplementaryIdentifier]) {
         headerOrFooterView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:SupplementaryIdentifier forIndexPath:indexPath];
         UIImageView* supplementaryImageView = [[UIImageView alloc] init];
