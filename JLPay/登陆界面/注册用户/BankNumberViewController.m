@@ -268,7 +268,7 @@
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getOpenBankNo",[PublicInformation getDataSourceIP],[PublicInformation getDataSourcePort]];
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getOpenBankNo",[PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
         _httpRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
         [_httpRequest setDelegate:self];
     }

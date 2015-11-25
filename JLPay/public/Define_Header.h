@@ -37,7 +37,7 @@
  * 8: 内网开发环境-http
  * 9: 外网测试62
  */
-#define TestOrProduce                   7
+#define TestOrProduce                   1
 
 
 /* 版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -48,14 +48,14 @@
 #define TAG_OF_BRANCH_EDITION           2
 
 // 设置,用来判断是否设置环境ip
-#define Setting_Ip @"settingip"
-#define Setting_Port @"settingport"
-// 环境:8585报文上送的环境
-#define Current_IP    [PublicInformation settingIp]
-#define Current_Port  [PublicInformation settingPort] //8182//9182    ,测试ip：211.90.22.167；9181
-// 环境:HTTP协议的ip配置
-#define Tcp_IP  @"tcpip"
-#define Tcp_Port @"tcpport"
+//#define Setting_Ip @"settingip"
+//#define Setting_Port @"settingport"
+//// 环境:8585报文上送的环境
+//#define Current_IP    [PublicInformation settingIp]
+//#define Current_Port  [PublicInformation settingPort] //8182//9182    ,测试ip：211.90.22.167；9181
+//// 环境:HTTP协议的ip配置
+//#define Tcp_IP  @"tcpip"
+//#define Tcp_Port @"tcpport"
 
 
 
@@ -68,28 +68,9 @@
 /*************[商户相关的参数:]**************/
 //// 终端号，商户号,商户名称
 #define Terminal_Number @"terminal"
-//#define Business_Number @"business"
-//#define Business_Name @"businessname"
-//// 终端个数
-//#define Terminal_Count @"termCount"
-//// 终端号列表-数组
-//#define Terminal_Numbers @"terminals"
-//// 账号
-//#define UserID  @"userID"
-//// 账号 -- 保存标记
-//#define NeedSavingUserID @"NeedSavingUserID"
-//// 密码
-//#define UserPW  @"userPW"
-//// 密码 -- 保存标记
-//#define NeedSavingUserPW @"NeedSavingUserPW"
-//// 密码 -- 显示全文本标记
-//#define NeedDisplayUserPW @"NeedDisplayUserPW"
-//// 邮箱
-//#define Business_Email @"commEmail"
+
 // 操作员号
-#define Manager_Number @"001"
-// 费率 - key; 值为int{0,1,2,3};
-#define Key_RateOfPay   @"Key_RateOfPay"
+//#define Manager_Number @"001"
 
 
 /*************[设备操作相关的参数:]**************/
@@ -124,6 +105,8 @@
 #define KeyInfoDictOfJiGouBusinessNum           @"KeyInfoDictOfJiGouBusinessNum"
 #define KeyInfoDictOfJiGouTerminalNum           @"KeyInfoDictOfJiGouTerminalNum"
 #define KeyInfoDictOfJiGouBusinessName          @"KeyInfoDictOfJiGouBusinessName"
+// 费率 - key; 值为int{0,1,2,3};
+#define Key_RateOfPay   @"Key_RateOfPay"
 
 
 

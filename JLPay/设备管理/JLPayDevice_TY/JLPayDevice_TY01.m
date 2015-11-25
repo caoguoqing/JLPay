@@ -81,7 +81,9 @@ TYJieLianDelegate
 
 #pragma mask : 断开设备
 - (void)closeAllDevices{
-    [self.deviceManager disConnectDevice];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.deviceManager disConnectDevice];
+    });
 }
 
 
@@ -144,7 +146,9 @@ TYJieLianDelegate
     for (NSDictionary* dict in self.deviceList) {
         if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
             CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
-            [self.deviceManager connectDevice:peripheral];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [self.deviceManager connectDevice:peripheral];
+            });
             break;
         }
     }
@@ -208,6 +212,8 @@ TYJieLianDelegate
         [dict setObject:peripheral forKey:KeyDataPathNodeDataPath];
         [dict setValue:peripheral.identifier.UUIDString forKey:KeyDataPathNodeIdentifier];
         [self.deviceList addObject:dict];
+        // 扫描到一个设备就关闭扫描
+        [self.deviceManager stopScanning];
         // 引发回调
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDiscoverDeviceOnID:)]) {
             [self.delegate didDiscoverDeviceOnID:peripheral.identifier.UUIDString];

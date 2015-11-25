@@ -76,11 +76,11 @@
 + (NSString*) getHTTPPort;
 
 // 从配置中获取后台主机ip跟port
-+(NSString *)settingIp;
-+(int)settingPort;
-// 从配置中获取数据后台地址
-+(NSString*) getDataSourceIP;
-+(NSString*) getDataSourcePort;
+//+(NSString *)settingIp;
+//+(int)settingPort;
+//// 从配置中获取数据后台地址
+//+(NSString*) getDataSourceIP;
+//+(NSString*) getDataSourcePort;
 
 
 
