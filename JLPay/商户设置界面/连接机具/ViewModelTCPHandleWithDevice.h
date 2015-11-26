@@ -18,18 +18,25 @@
 
 @optional
 /* 回调: 主密钥 */
-- (void) didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString*)mainKey;
+- (void) didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString*)mainKey orErrorMessage:(NSString*)errorMessge;
 /* 回调: 工作密钥 */
-- (void) didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString*)workKey;
+- (void) didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString*)workKey orErrorMessage:(NSString*)errorMessge;
 
 @end
 
 
 @interface ViewModelTCPHandleWithDevice : NSObject
 
+@property (nonatomic, assign) id<ViewModelTCPHandleWithDeviceDelegate>delegate;
+
+/* 获取公共入口 */
++ (ViewModelTCPHandleWithDevice*) getInstance;
+
 /* 下载主密钥 */
 - (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum;
 /* 下载工作密钥 */
 - (void) downloadWorkKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum;
 
+/* 终止下载 */
+- (void) stopDownloading;
 @end
