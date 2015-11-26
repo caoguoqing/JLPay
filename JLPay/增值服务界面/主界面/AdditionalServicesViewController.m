@@ -16,7 +16,7 @@
 #import "OtherPayCollectViewController.h"
 #import "DeviceManager.h"
 #import "TransDetailsViewController.h"
-
+#import "ModelDeviceBindedInformation.h"
 #import "AdditionalCollectionLayout.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
@@ -100,7 +100,7 @@ NSString* headerIdentifier = @"headerIdentifier";
     myCollectionCell* cell = (myCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
     if ([cell.title isEqualToString:PayCollectTypeAlipay]) {
         // 校验设备绑定
-        if (![DeviceManager deviceIsBinded]) {
+        if (![ModelDeviceBindedInformation hasBindedDevice]) {
             [self alertForMessage:@"设备未绑定，请先绑定设备"];
         } else {
             [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeAlipay] animated:YES];
@@ -108,7 +108,7 @@ NSString* headerIdentifier = @"headerIdentifier";
     }
     else if ([cell.title isEqualToString:PayCollectTypeWeChatPay]) {
         // 校验设备绑定
-        if (![DeviceManager deviceIsBinded]) {
+        if (![ModelDeviceBindedInformation hasBindedDevice]) {
             [self alertForMessage:@"设备未绑定，请先绑定设备"];
         } else {
             [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
@@ -116,7 +116,7 @@ NSString* headerIdentifier = @"headerIdentifier";
     }
     else if ([cell.title isEqualToString:@"明细查询"]){
         // 校验设备绑定
-        if (![DeviceManager deviceIsBinded]) {
+        if (![ModelDeviceBindedInformation hasBindedDevice]) {
             [self alertForMessage:@"设备未绑定，请先绑定设备"];
         } else {
             [self.navigationController pushViewController:[self transDetailsViewControllerWithPlatform:NameTradePlatformOtherPay] animated:YES];

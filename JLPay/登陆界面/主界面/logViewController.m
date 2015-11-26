@@ -20,6 +20,7 @@
 #import "UserRegisterViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "ModelUserLoginInformation.h"
+#import "ModelDeviceBindedInformation.h"
 
 
 #pragma mask    ---- 常量设置区 ----
@@ -539,15 +540,17 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 // 校验是否切换了账号:如果切换,清空配置
 - (void) checkoutLoadingSwitch {
-    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+//    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
     NSString* lastUserID = [ModelUserLoginInformation userID];
     
     if (![lastUserID isEqualToString:self.userNumberTextField.text]) {
+        // 清空登陆信息
         [ModelUserLoginInformation deleteLoginUpInformation];
         [ModelUserLoginInformation deleteLoginDownInformation];
-        
-        [userDefault removeObjectForKey:KeyInfoDictOfBinded];
-        [userDefault synchronize];
+        // 清空设备绑定信息
+        [ModelDeviceBindedInformation cleanDeviceBindedInfo];
+//        [userDefault removeObjectForKey:KeyInfoDictOfBinded];
+//        [userDefault synchronize];
     }
 }
 

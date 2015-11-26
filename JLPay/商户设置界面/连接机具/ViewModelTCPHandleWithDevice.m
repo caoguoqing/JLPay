@@ -41,12 +41,14 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 - (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum {
     sTerminalNumber = terminalNum;
     sBusinessNumber = businessNum;
+    NSLog(@"开始下载主密钥");
     [self sendTransPackage:[self stringPackingMainKeyDownload] withTransType:TranType_DownMainKey];
 }
 /* 下载工作密钥 */
 - (void) downloadWorkKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum {
     sTerminalNumber = terminalNum;
     sBusinessNumber = businessNum;
+    NSLog(@"开始下载工作密钥");
     [self sendTransPackage:[self stringPackingWorkKeyDownload] withTransType:TranType_DownWorkKey];
 }
 /* 终止下载 */
@@ -106,10 +108,12 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 /* 成功回调 */
 - (void) rebackWithAnalysedKey:(NSString*)key {
     if ([sTranType isEqualToString:TranType_DownMainKey]) {
+        NSLog(@"主密钥[%@]下载回调",key);
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDownloadedMainKeyResult:withMainKey:orErrorMessage:)]) {
             [self.delegate didDownloadedMainKeyResult:YES withMainKey:key orErrorMessage:nil];
         }
     } else {
+        NSLog(@"工作密钥[%@]下载回调",key);
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDownloadedWorkKeyResult:withWorkKey:orErrorMessage:)]) {
             [self.delegate didDownloadedWorkKeyResult:YES withWorkKey:key orErrorMessage:nil];
         }

@@ -89,12 +89,12 @@
  *  KeyInfoDictOfBindedTerminalNum          - 终端号
  *  KeyInfoDictOfBindedBussinessNum         - 商户号
    ------------------------------*/
-#define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"          // 字典
-#define KeyInfoDictOfBindedDeviceType           @"KeyInfoDictOfBindedDeviceType"
-#define KeyInfoDictOfBindedDeviceIdentifier     @"KeyInfoDictOfBindedDeviceIdentifier"
-#define KeyInfoDictOfBindedDeviceSNVersion      @"KeyInfoDictOfBindedDeviceSNVersion"
-#define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
-#define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
+//#define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"          // 字典
+//#define KeyInfoDictOfBindedDeviceType           @"KeyInfoDictOfBindedDeviceType"
+//#define KeyInfoDictOfBindedDeviceIdentifier     @"KeyInfoDictOfBindedDeviceIdentifier"
+//#define KeyInfoDictOfBindedDeviceSNVersion      @"KeyInfoDictOfBindedDeviceSNVersion"
+//#define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
+//#define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
 
 /* ------------------------------ 信息字典: 选择的机构信息
  *  KeyInfoDictOfJiGouBusinessNum           - 机构商户号

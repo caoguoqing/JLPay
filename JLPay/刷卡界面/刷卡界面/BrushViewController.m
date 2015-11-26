@@ -16,7 +16,7 @@
 #import "Packing8583.h"
 #import "ViewModelTCPPosTrans.h"
 #import "BalanceEnquiryViewController.h"
-
+#import "ModelDeviceBindedInformation.h"
 
 @interface BrushViewController()
 <
@@ -120,8 +120,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     // 1.先检查是否绑定设备
-    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    if (infoBinded == nil) {
+//    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if (![ModelDeviceBindedInformation hasBindedDevice]) {
         [self alertForFailedMessage:@"未绑定设备,请先绑定设备!"];
         return;
     }
@@ -198,8 +198,8 @@
 
 #pragma mask : 识别设备回调
 - (void)didDiscoverDeviceOnID:(NSString *)identifier {
-    NSDictionary* dictDeviceInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    if ([identifier isEqualToString:[dictDeviceInfo valueForKey:KeyInfoDictOfBindedDeviceIdentifier]]) {
+//    NSDictionary* dictDeviceInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if ([identifier isEqualToString:[ModelDeviceBindedInformation deviceIDBinded]]) {
         // 连接设备
         [[DeviceManager sharedInstance] stopScanningDevices];
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
@@ -256,8 +256,9 @@
     [self startTimerWithSelector:@selector(waitingForDeviceSwiping)];
     
     // 刷卡:刷卡回调中要注销定时器
-    NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
-    [[DeviceManager sharedInstance] cardSwipeWithMoney:self.sIntMoney yesOrNot:NO onSNVersion:SNVersion];
+//    NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
+    
+    [[DeviceManager sharedInstance] cardSwipeWithMoney:self.sIntMoney yesOrNot:NO onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
 }
 
 
@@ -265,8 +266,8 @@
 - (void) encryptPinWithSource:(NSString*)source {
     NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
     if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
-        NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
-        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:SNVersion];
+//        NSString* SNVersion = [[[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded] valueForKey:KeyInfoDictOfBindedDeviceSNVersion];
+        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
     }
     else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
         

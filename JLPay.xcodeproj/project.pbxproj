@@ -43,6 +43,7 @@
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
 		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
 		5E4A1FF21C055C3000E7DFD5 /* ModelUserLoginInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */; };
+		5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */; };
 		5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */; };
 		5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */; };
 		5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353F1B70BC4300560C0A /* myCollectionCell.m */; };
@@ -267,6 +268,8 @@
 		5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoneyCalculated.m; sourceTree = "<group>"; };
 		5E4A1FF01C055C3000E7DFD5 /* ModelUserLoginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUserLoginInformation.h; sourceTree = "<group>"; };
 		5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUserLoginInformation.m; sourceTree = "<group>"; };
+		5E4A1FF41C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelDeviceBindedInformation.h; sourceTree = "<group>"; };
+		5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelDeviceBindedInformation.m; sourceTree = "<group>"; };
 		5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicPickerView.h; path = CustomPickerView/DynamicPickerView.h; sourceTree = "<group>"; };
 		5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DynamicPickerView.m; path = CustomPickerView/DynamicPickerView.m; sourceTree = "<group>"; };
 		5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectIndicatorView.h; sourceTree = "<group>"; };
@@ -656,6 +659,15 @@
 				5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */,
 			);
 			path = "用户登陆信息";
+			sourceTree = "<group>";
+		};
+		5E4A1FF31C06F2A400E7DFD5 /* 设备绑定信息 */ = {
+			isa = PBXGroup;
+			children = (
+				5E4A1FF41C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.h */,
+				5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */,
+			);
+			path = "设备绑定信息";
 			sourceTree = "<group>";
 		};
 		5E5E35441B71E90400560C0A /* 修改密码 */ = {
@@ -1242,6 +1254,7 @@
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
 				5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */,
+				5E4A1FF31C06F2A400E7DFD5 /* 设备绑定信息 */,
 				5E4A1FEF1C055BF000E7DFD5 /* 用户登陆信息 */,
 				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5E82B8611B310A7D00A58751 /* 捷联通指示器 */,
@@ -1674,6 +1687,7 @@
 				5EBAA8E81ACD2FA800E2ABDD /* ASCIIString.m in Sources */,
 				5EBA40F71AEA366000F270C0 /* QianPiViewController.m in Sources */,
 				5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */,
+				5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */,
 				5E82B7E21B214B8F00A58751 /* passwordView.m in Sources */,
 				5EB6F9881AC8DD1C00E47AB5 /* logViewController.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,

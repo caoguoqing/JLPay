@@ -8,6 +8,23 @@
 
 #import "ModelUserLoginInformation.h"
 
+
+/* ---------- 键名定义区 ---------- */
+static NSString* KeyLoginUpInfo = @"KeyLoginUpInfo__";
+static NSString* KeyLoginUpInfoUserID = @"KeyLoginUpInfoUserID__";
+static NSString* KeyLoginUpInfoUserPWD = @"KeyLoginUpInfoUserPWD__";
+static NSString* KeyLoginUpInfoNeedSaveUserPWD = @"KeyLoginUpInfoNeedSaveUserPWD__";
+static NSString* KeyLoginUpInfoNeedDisplayUserPWD = @"KeyLoginUpInfoNeedDisplayUserPWD__";
+
+static NSString* KeyLoginDownInfo = @"KeyLoginDownInfo__";
+static NSString* KeyLoginDownInfoBusinessName = @"KeyLoginDownInfoBusinessName__";
+static NSString* KeyLoginDownInfoBusinessNumber = @"KeyLoginDownInfoBusinessNumber__";
+static NSString* KeyLoginDownInfoBusinessEmail = @"KeyLoginDownInfoBusinessEmail__";
+static NSString* KeyLoginDownInfoTerminalCount = @"KeyLoginDownInfoTerminalCount__";
+static NSString* KeyLoginDownInfoTerminalNumbers = @"KeyLoginDownInfoTerminalNumbers__";
+/* ------------------------------ */
+
+
 @implementation ModelUserLoginInformation
 
 

@@ -18,6 +18,7 @@
 #import "Define_Header.h"
 
 #import "ModelUserLoginInformation.h"
+#import "ModelDeviceBindedInformation.h"
 
 
 @interface UserRegisterViewController()
@@ -435,7 +436,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [alertView.message hasPrefix:@"注册资料完善"]) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         NSString* userName = [self textInputedAtIndexPath:indexPath];
-        NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+//        NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
 //         用户名保存
 //        [userDefault setValue:userName forKey:UserID];
 //         清空密码
@@ -449,10 +450,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
         
         // 清空绑定信息
-        if ([userDefault objectForKey:KeyInfoDictOfBinded]) {
-            [userDefault removeObjectForKey:KeyInfoDictOfBinded];
-        }
-        [userDefault synchronize];
+        [ModelDeviceBindedInformation cleanDeviceBindedInfo];
+//        if ([userDefault objectForKey:KeyInfoDictOfBinded]) {
+//            [userDefault removeObjectForKey:KeyInfoDictOfBinded];
+//        }
+//        [userDefault synchronize];
         
         [self.navigationController popViewControllerAnimated:YES];
     }

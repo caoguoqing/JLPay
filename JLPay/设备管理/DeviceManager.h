@@ -17,7 +17,7 @@
 +(DeviceManager*) sharedInstance;
 
 # pragma mask : 判断是否绑定了设备
-+(BOOL) deviceIsBinded;
+//+(BOOL) deviceIsBinded;
 
 # pragma mask : 设置并创建指定的设备入口
 - (void) makeDeviceEntryWithType:(NSString*)devitype ;

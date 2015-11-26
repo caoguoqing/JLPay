@@ -10,6 +10,7 @@
 #import "logViewController.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
+#import "ModelDeviceBindedInformation.h"
 
 #define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
 
@@ -35,8 +36,8 @@
      *    如果绑定了:就跳转到金额输入界面
      *    如果没有绑定:就跳转到绑定设备界面
      */
-    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    if (infoBinded == nil) {
+//    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if (![ModelDeviceBindedInformation hasBindedDevice]) {
         tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
     } else {
         tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];

@@ -17,6 +17,7 @@
 #import "Packing8583.h"
 
 #import "ModelUserLoginInformation.h"
+#import "ModelDeviceBindedInformation.h"
 
 
 @interface settingViewController ()<UIAlertViewDelegate>
@@ -45,8 +46,8 @@
     [self setExtraCellLineHidden:self.tableView];
     
     // 只校验一次: 如果未绑定设备就直接跳转到设备绑定界面
-    NSDictionary* infoDict = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    if (infoDict == nil) {
+//    NSDictionary* infoDict = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    if (![ModelDeviceBindedInformation hasBindedDevice]) {
         UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:viewController animated:YES];
     }

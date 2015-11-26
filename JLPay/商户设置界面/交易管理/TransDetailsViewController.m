@@ -16,7 +16,7 @@
 #import "SelectIndicatorView.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
-
+#import "ModelDeviceBindedInformation.h"
 #import "ViewModelTransDetails.h"
 
 @interface TransDetailsViewController()
@@ -200,9 +200,9 @@ NSInteger logCount = 0;
 
 #pragma mask ---- 数据源请求
 - (void) requestDataOnDate:(NSString*)dateString {
-    NSDictionary* bindedInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-    NSString* terminal = [bindedInfo valueForKey:KeyInfoDictOfBindedTerminalNum];
-    NSString* bussiness = [bindedInfo valueForKey:KeyInfoDictOfBindedBussinessNum];
+//    NSDictionary* bindedInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
+    NSString* terminal = [ModelDeviceBindedInformation terminalNoBinded];
+    NSString* bussiness = [ModelDeviceBindedInformation businessNoBinded];
     [self.dataSource requestDetailsWithPlatform:self.tradePlatform
                                     andDelegate:self
                                       beginTime:dateString
@@ -242,7 +242,7 @@ NSInteger logCount = 0;
     [self.navigationItem setBackBarButtonItem:backItem];
     
     // 先校验是否绑定了
-    if ([DeviceManager deviceIsBinded]) {
+    if ([ModelDeviceBindedInformation hasBindedDevice]) {
         // 请求数据
         [self requestDataOnDate:[PublicInformation nowDate]];
         // 启动指示器
