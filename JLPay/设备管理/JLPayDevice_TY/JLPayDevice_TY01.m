@@ -8,8 +8,7 @@
 
 #import "JLPayDevice_TY01.h"
 #import "JieLianService.h"
-//#import "../../Define_Header.h"
-#import "../../public/Define_Header.h"
+#import "Define_Header.h"
 
 @interface JLPayDevice_TY01()
 <
@@ -65,13 +64,9 @@ TYJieLianDelegate
 
 #pragma mask : 扫描设备
 - (void)startScanningDevices {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // 防止断开设备未完成，先等待0.5秒
-        [NSThread sleepForTimeInterval:0.5];
-        [self.deviceManager stopScanning];
-        [self.deviceList removeAllObjects];
-        [self.deviceManager StartScanning];
-    });
+    [self.deviceManager stopScanning];
+    [self.deviceList removeAllObjects];
+    [self.deviceManager StartScanning];
 }
 
 #pragma mask : 扫描停止

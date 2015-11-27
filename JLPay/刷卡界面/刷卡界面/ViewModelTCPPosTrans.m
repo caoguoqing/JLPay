@@ -55,11 +55,6 @@
                                PORT:[PublicInformation getTcpPort].intValue
                            Delegate:self
                              method:transType];
-//    [self.tcpHolder sendOrderMethod:stringPacking
-//                                 IP:Current_IP
-//                               PORT:Current_Port
-//                           Delegate:self
-//                             method:transType];
 }
 
 #pragma mask ---- 终止交易

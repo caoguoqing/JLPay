@@ -18,9 +18,7 @@
 
 @interface DeviceSignInViewController()
 <
-//wallDelegate,
 DeviceManagerDelegate,
-//Unpacking8583Delegate,
 ViewModelTCPHandleWithDeviceDelegate,
 UITableViewDataSource,UITableViewDelegate,CBCentralManagerDelegate,
 UIActionSheetDelegate,UIAlertViewDelegate
@@ -34,8 +32,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @property (nonatomic, strong) NSMutableArray* terminalNums;         // 终端号列表
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 终端号:已勾选的
 @property (nonatomic, strong) NSString* selectedSNVersionNum;       // SN号:已勾选的
-@property (nonatomic, strong) NSString* terminalNumBinded;          // 终端号:已绑定的
-@property (nonatomic, strong) NSString* SNVersionNumBinded;         // SN号:已绑定的
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
@@ -52,8 +48,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @synthesize waitingTimer;
 @synthesize selectedTerminalNum;
 @synthesize activitorFrame;
-@synthesize terminalNumBinded;
-@synthesize SNVersionNumBinded;
 @synthesize selectedDevice;
 
 #pragma mask ::: 主视图加载
@@ -103,15 +97,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     self.sureButton.layer.cornerRadius = frame.size.height/2.0;
     
     // 加载已绑定信息:如果已经绑定过
-//    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        self.terminalNumBinded = [ModelDeviceBindedInformation terminalNoBinded];
-        if (!self.terminalNumBinded || self.terminalNumBinded.length == 0) self.terminalNumBinded = @"无";
-        self.SNVersionNumBinded = [ModelDeviceBindedInformation deviceSNBinded];
-        if (!self.SNVersionNumBinded || self.SNVersionNumBinded.length == 0) self.SNVersionNumBinded = @"无";
-
-        self.selectedTerminalNum = self.terminalNumBinded;
-        self.selectedSNVersionNum = self.SNVersionNumBinded;
+        self.selectedTerminalNum = [ModelDeviceBindedInformation terminalNoBinded];
+        self.selectedSNVersionNum = [ModelDeviceBindedInformation deviceSNBinded];
     }
     
     // 更新切换视图标记:切换到金额输入界面
@@ -137,7 +125,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 切换到金额输入界面
         [self.tabBarController setSelectedIndex:0];
     }
-
 }
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -243,18 +230,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
     NSMutableString* headerTitle = [[NSMutableString alloc] init];
     if (section == 0) {
         [headerTitle appendString: @"(已绑定终端号: "];
-        if (self.terminalNumBinded) {
-            [headerTitle appendFormat:@"%@)",self.terminalNumBinded];
-        } else {
-            [headerTitle appendFormat:@"无)"];
-        }
+            [headerTitle appendFormat:@"%@)",[self terminalBinded]];
     } else if (section == 1) {
         [headerTitle appendString: @"(已绑定设备 SN: "];
-        if (self.SNVersionNumBinded) {
-            [headerTitle appendFormat:@"%@)",self.SNVersionNumBinded];
-        } else {
-            [headerTitle appendFormat:@"无)"];
-        }
+            [headerTitle appendFormat:@"%@)",[self SNVersionNumBinded]];
     }
     return headerTitle;
 }
@@ -326,10 +305,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (![self.SNVersionNums containsObject:SNVersion]) {
         [self.SNVersionNums addObject:SNVersion];
     }
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
+    [self reloadTableView];
 }
 // 设备丢失:SN
 - (void)deviceDisconnectOnSNVersion:(NSString *)SNVersion {
@@ -339,9 +315,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (self.SNVersionNums.count == 0) {
         [self.SNVersionNums addObject:@"无"];
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
+    [self reloadTableView];
 }
 
 // 设置主密钥的回调
@@ -349,7 +323,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 主密钥下载成功了就继续签到
     if (yesOrNot) {
         [self downloadWorkKey];
-//        [[ViewModelTCPHandleWithDevice getInstance] downloadWorkKeyWithBusinessNum:[ModelUserLoginInformation businessNumber] andTerminalNum:self.selectedTerminalNum];
     } else {
         [self stopActivity];
         [self alertForMessage:@"绑定设备失败!"];
@@ -361,12 +334,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [self stopActivity];
     if (yesOrNot) {
         // 更新批次号
-        [self updateSignSort];
-        // 保存已绑定设备的信息到本地列表
+        [PublicInformation updateSignSort];
         [self saveBindedDevice];
-        // 更新tool显示
-        [self updateBindedTerminalNum:self.selectedTerminalNum];
-        [self updateBindedSNNum:self.selectedSNVersionNum];
+        [self reloadTableView];
         [self alertForMessage:@"绑定设备成功!"];
     } else {
         [self alertForMessage:@"绑定设备失败!"];
@@ -391,7 +361,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString *)mainKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
-        NSLog(@"开始写主密钥:[%@]",mainKey);
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [self stopActivity];
@@ -402,8 +371,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString *)workKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
-        NSLog(@"开始写工作密钥:[%@]",workKey);
-
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [self stopActivity];
@@ -464,16 +431,11 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self alertForMessage:@"请选择设备SN号"];
         return;
     }
-    
-    // 保存已选择的终端号/SN号到本地
-    [[NSUserDefaults standardUserDefaults] setObject:self.selectedTerminalNum forKey:Terminal_Number];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     // 下载主密钥 -- 需要判断设备是否连接
     int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
     if (beingConnect == 1) {
         [self startActivity];
         [self downloadMainKey];
-//        [[ViewModelTCPHandleWithDevice getInstance] downloadMainKeyWithBusinessNum:[ModelUserLoginInformation businessNumber] andTerminalNum:self.selectedTerminalNum];
     } else {
         [self alertForMessage:@"设备未连接"];
     }
@@ -483,9 +445,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (IBAction) buttonTouchToOpenDevices:(id)sender {
     [self.SNVersionNums removeAllObjects];
     [self.SNVersionNums addObject:@"无"];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
+    [self reloadTableView];
     if (!blueToothIsOn) {
         [self alertForBleMessage:@"手机蓝牙未打开,请先打开蓝牙"];
         return;
@@ -516,32 +476,28 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 
 #pragma mask --------- private interface
-// 更新批次号
-- (void) updateSignSort {
-    NSString* signSort = [PublicInformation returnSignSort];
-    int intSignSort = [signSort intValue] + 1;
-    if (intSignSort > 999999) {
-        intSignSort = 1;
+// 刷新tableView
+- (void) reloadTableView {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+}
+// 获取绑定的终端号
+- (NSString*) terminalBinded {
+    NSString* terminal = @"无";
+    if ([ModelDeviceBindedInformation hasBindedDevice]) {
+        terminal = [ModelDeviceBindedInformation terminalNoBinded];
     }
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d", intSignSort] forKey:Get_Sort_Number];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    return terminal;
 }
-
-// 更新"已绑定终端号"
-- (void) updateBindedTerminalNum:(NSString*)terminalNum {
-    self.terminalNumBinded = terminalNum;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
+// 绑定的设备sn号
+- (NSString*) SNVersionNumBinded {
+    NSString* SNVersion = @"无";
+    if ([ModelDeviceBindedInformation hasBindedDevice]) {
+        SNVersion = [ModelDeviceBindedInformation deviceSNBinded];
+    }
+    return SNVersion;
 }
-// 更新"已绑定SN号"
-- (void) updateBindedSNNum:(NSString*)SNNum {
-    self.SNVersionNumBinded = SNNum;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
-}
-
 
 // 弹出设备类型选择框
 - (void) actionSheetShowForSelectingDevice {
@@ -577,26 +533,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (!identifier) {
         return;
     }
-//    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-//    // 先清空配置
-////    [];
-////    if ([userDefault objectForKey:KeyInfoDictOfBinded]) {
-////        [userDefault removeObjectForKey:KeyInfoDictOfBinded];
-////        [userDefault synchronize];
-////    }
-//    // 再设置当前选择的信息
-//    NSMutableDictionary* infoDictWillBeSaved = [[NSMutableDictionary alloc] init];
-//    [infoDictWillBeSaved setValue:[userDefault valueForKey:DeviceType] forKey:KeyInfoDictOfBindedDeviceType];
-//    [infoDictWillBeSaved setValue:identifier forKey:KeyInfoDictOfBindedDeviceIdentifier];
-//    [infoDictWillBeSaved setValue:self.selectedSNVersionNum forKey:KeyInfoDictOfBindedDeviceSNVersion];
-//    [infoDictWillBeSaved setValue:self.selectedTerminalNum forKey:KeyInfoDictOfBindedTerminalNum];
-//    [infoDictWillBeSaved setValue:[ModelUserLoginInformation businessNumber] forKey:KeyInfoDictOfBindedBussinessNum];
-//    
-//    [userDefault setValue:self.selectedTerminalNum forKey:Terminal_Number];
-//    [userDefault setObject:infoDictWillBeSaved forKey:KeyInfoDictOfBinded];
-//    [userDefault synchronize];
-    
-    
     [ModelDeviceBindedInformation saveBindedDeviceInfoWithDeviceType:self.selectedDevice
                                                             deviceID:identifier
                                                             deviceSN:self.selectedSNVersionNum

@@ -230,11 +230,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/ViewModelTCPPosTrans.m"
-            timestampString = "469702835.125285"
+            timestampString = "470286272.707239"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "197"
+            endingLineNumber = "197"
             landmarkName = "-packingBatchUpByInfo:"
             landmarkType = "5">
          </BreakpointContent>

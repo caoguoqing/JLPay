@@ -67,7 +67,7 @@
 
 /*************[商户相关的参数:]**************/
 //// 终端号，商户号,商户名称
-#define Terminal_Number @"terminal"
+//#define Terminal_Number @"terminal"
 
 // 操作员号
 //#define Manager_Number @"001"

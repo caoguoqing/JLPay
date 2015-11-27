@@ -11,6 +11,7 @@
 #import "Packing8583.h"
 #import "Unpacking8583.h"
 #import "ModelUserLoginInformation.h"
+#import "ModelDeviceBindedInformation.h"
 
 @implementation PublicInformation
 
@@ -112,13 +113,23 @@
 
 //签到批次号
 +(NSString *)returnSignSort{
-    NSString *sortStr=[[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
-    if (sortStr && ![sortStr isEqualToString:@""] && ![sortStr isEqualToString:@"(null)"]) {
-        sortStr=[[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
-    }else{
-        sortStr=@"000000";
+    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+    NSString* curSortNum = [userDefault valueForKey:Get_Sort_Number];
+    if (curSortNum && curSortNum.length > 0) {
+        if (curSortNum.intValue > 999999) {
+            curSortNum = @"000001";
+        }
+    } else {
+        curSortNum = @"000001";
     }
-    return sortStr;
+    return curSortNum;
+}
+// 更新批次号
++(void) updateSignSort {
+    NSString* sortNum = [self returnSignSort];
+    sortNum = [NSString stringWithFormat:@"%06d",sortNum.intValue + 1];
+    [[NSUserDefaults standardUserDefaults] setObject:sortNum forKey:Get_Sort_Number];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 //原交易批次号,用于撤销时获取
@@ -195,13 +206,13 @@
 }
 
 +(NSString *)returnTerminal{
-    NSString *terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
-    if (terminalNumber && ![terminalNumber isEqualToString:@""] && ![terminalNumber isEqualToString:@"(null)"]) {
-        terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
-    }else{
-        terminalNumber=@"10006057";     // 72环境终端号
-    }
-    return terminalNumber;
+//    NSString *terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
+//    if (terminalNumber && ![terminalNumber isEqualToString:@""] && ![terminalNumber isEqualToString:@"(null)"]) {
+//        terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
+//    }else{
+//        terminalNumber=@"10006057";     // 72环境终端号
+//    }
+    return [ModelDeviceBindedInformation terminalNoBinded];
 }
 +(NSString *)returnBusiness{
 //    NSString *businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];

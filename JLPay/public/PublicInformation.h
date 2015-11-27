@@ -32,8 +32,12 @@
 //消费成功的金额,方便撤销支付
 +(NSString *)returnConsumerMoney;
 
-//签到批次号
+// 签到批次号
 +(NSString *)returnSignSort;
+// 更新批次号
++(void) updateSignSort;
+
+
 //原交易批次号,用于撤销时获取
 +(NSString *)returnFdReserved;
 

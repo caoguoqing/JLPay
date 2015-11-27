@@ -56,6 +56,7 @@
     [bindedinfo setObject:deviceSN forKey:KeyInfoDictOfBindedDeviceSNVersion];
     [bindedinfo setObject:terminalNumber forKey:KeyInfoDictOfBindedTerminalNum];
     [bindedinfo setObject:businessNumber forKey:KeyInfoDictOfBindedBussinessNum];
+    NSLog(@"保存绑定的设备信息:{%@}",bindedinfo);
     [self saveBindedInfo:bindedinfo];
     [self updateDeviceBindedFlag:YES];
 }
@@ -123,11 +124,11 @@
     return info;
 }
 + (void) saveBindedInfo:(NSDictionary*)info {
-    [[NSUserDefaults standardUserDefaults] setObject:info forKey:KeyDeviceBinded];
+    [[NSUserDefaults standardUserDefaults] setObject:info forKey:KeyInfoDictOfBinded];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 + (void) cleanBindedInfo {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:KeyDeviceBinded];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:KeyInfoDictOfBinded];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

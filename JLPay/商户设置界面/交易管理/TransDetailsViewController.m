@@ -229,6 +229,8 @@ NSInteger logCount = 0;
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.dateButton];
+    [self dateButtonSetTitle:[PublicInformation nowDate]];
+
     if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
         [self.view addSubview:self.searchButton];
     }
@@ -275,7 +277,6 @@ NSInteger logCount = 0;
     frame.size.height = 40;
     frame.size.width = 140;
     [self.dateButton setFrame:frame];
-    [self dateButtonSetTitle:[PublicInformation nowDate]];
 
     
     // 查询按钮

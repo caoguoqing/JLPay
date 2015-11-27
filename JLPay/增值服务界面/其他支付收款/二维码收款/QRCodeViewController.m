@@ -165,7 +165,7 @@ typedef enum {
     
     CGFloat inset = 20;
     CGFloat labelHeight = 35;
-    CGFloat imageViewHeight = 260;
+    CGFloat imageViewHeight = 230;
     CGFloat imageViewWidth = imageViewHeight;
     
     // 金额输入框
