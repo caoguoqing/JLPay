@@ -350,7 +350,7 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 批次号 - 值
-    text = [[NSUserDefaults standardUserDefaults] valueForKey:Get_Sort_Number];
+    text = [PublicInformation returnSignSort];
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];

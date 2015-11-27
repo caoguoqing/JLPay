@@ -132,7 +132,7 @@ static NSMutableArray *colors;
     // -电子签名
     aframe.origin.x += aframe.size.width;
     aframe.origin.y = 5;
-    aframe.size.width = Screen_Width - aframe.origin.x;
+    aframe.size.width = [UIScreen mainScreen].bounds.size.width - aframe.origin.x;
     aframe.size.height = 40;
     UILabel *signLab=[[UILabel alloc] initWithFrame:aframe];
     signLab.text=@"-电子签名";
@@ -142,7 +142,7 @@ static NSMutableArray *colors;
     [titleView  addSubview:signLab];
     
     // 签名有效范围
-    returnView=[[UIView alloc] initWithFrame:CGRectMake(10, 50, Screen_Width-20, Screen_Height- 50 - 40 - 20)];
+    returnView=[[UIView alloc] initWithFrame:CGRectMake(10, 50, [UIScreen mainScreen].bounds.size.width -20, [UIScreen mainScreen].bounds.size.height - 50 - 40 - 20)];
     returnView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:returnView];
     returnView.userInteractionEnabled=YES;

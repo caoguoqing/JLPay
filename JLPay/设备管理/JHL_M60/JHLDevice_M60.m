@@ -11,8 +11,7 @@
 #import "ISDataPath.h"
 #import "ISBLEDataPath.h"
 #import "ISMFiDataPath.h"
-//#import "../../Define_Header.h"
-#import "../../public/Define_Header.h"
+#import "Define_Header.h"
 
 @interface JHLDevice_M60()<ISControlManagerDeviceList,ISControlManagerDelegate>{
     FieldTrackData TransData;       //磁道数据
@@ -45,6 +44,8 @@
 #define KeyDataPathNodeDataPath         @"KeyDataPathNodeDataPath"      // 设备dataPath
 #define KeyDataPathNodeIdentifier       @"KeyDataPathNodeIdentifier"    // 设备ID
 #define KeyDataPathNodeSNVersion        @"KeyDataPathNodeSNVersion"     // 设备SN号
+// 设备操作的等待超时时间
+#define DeviceWaitingTime           20
 
 
 

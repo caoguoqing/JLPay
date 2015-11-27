@@ -56,7 +56,6 @@
     [bindedinfo setObject:deviceSN forKey:KeyInfoDictOfBindedDeviceSNVersion];
     [bindedinfo setObject:terminalNumber forKey:KeyInfoDictOfBindedTerminalNum];
     [bindedinfo setObject:businessNumber forKey:KeyInfoDictOfBindedBussinessNum];
-    NSLog(@"保存绑定的设备信息:{%@}",bindedinfo);
     [self saveBindedInfo:bindedinfo];
     [self updateDeviceBindedFlag:YES];
 }

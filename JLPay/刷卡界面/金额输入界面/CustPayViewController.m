@@ -195,13 +195,7 @@
     [viewcon setStringOfTranType:TranType_Consume];
     [viewcon setSFloatMoney:self.money];
     [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.money]];
-    
-    
-    // 保存的是字符串型的金额 ----- 暂时无用了
-    [[NSUserDefaults standardUserDefaults] setValue:self.money forKey:Consumer_Money];
-    [[NSUserDefaults standardUserDefaults] setValue:TranType_Consume forKey:TranType];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
+        
     // 跳转
     [self.navigationController pushViewController:viewcon animated:YES];
     

@@ -16,24 +16,21 @@
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
+
 // 数据库文件 - 全国地名及代码
 #define DBFILENAME_AREACODE             @"test.db"
-
 
 // 日志打印选项: 打印(1);不打印(0);
 #define NeedPrintLog                    1
 
-
 #define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
-#define Screen_Width  [UIScreen mainScreen].bounds.size.width
-#define Screen_Height  [UIScreen mainScreen].bounds.size.height
 
 /* 
  * 环境: 
  * 1: 生产环境(1),
+ * 7: 内网测试72 (TCP + HTTP)
  * 0: 内网测试62,
  * 5: 内网测试50
- * 7: 内网测试72
  * 8: 内网开发环境-http
  * 9: 外网测试62
  */
@@ -47,30 +44,6 @@
  */
 #define TAG_OF_BRANCH_EDITION           2
 
-// 设置,用来判断是否设置环境ip
-//#define Setting_Ip @"settingip"
-//#define Setting_Port @"settingport"
-//// 环境:8585报文上送的环境
-//#define Current_IP    [PublicInformation settingIp]
-//#define Current_Port  [PublicInformation settingPort] //8182//9182    ,测试ip：211.90.22.167；9181
-//// 环境:HTTP协议的ip配置
-//#define Tcp_IP  @"tcpip"
-//#define Tcp_Port @"tcpport"
-
-
-
-
-/*************[卡片类型:用来标记刷卡是读芯片还是磁条]**************/
-#define CardTypeIsTrack             @"CardTypeIsTrack"                  // 值:YES(磁条)/NO(芯片)
-
-
-
-/*************[商户相关的参数:]**************/
-//// 终端号，商户号,商户名称
-//#define Terminal_Number @"terminal"
-
-// 操作员号
-//#define Manager_Number @"001"
 
 
 /*************[设备操作相关的参数:]**************/
@@ -81,20 +54,6 @@
 #define DeviceType_RF_BB01          @"蓝牙刷卡头"
 #define DeviceType_JLpay_TY01       @"JLpay蓝牙刷卡器"
 
-
-/* ------------------------------ 信息字典: 商户绑定设备的信息
- *  KeyInfoDictOfBindedDeviceType           - 设备类型
- *  KeyInfoDictOfBindedDeviceIdentifier     - 设备id
- *  KeyInfoDictOfBindedDeviceSNVersion      - 设备SN
- *  KeyInfoDictOfBindedTerminalNum          - 终端号
- *  KeyInfoDictOfBindedBussinessNum         - 商户号
-   ------------------------------*/
-//#define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"          // 字典
-//#define KeyInfoDictOfBindedDeviceType           @"KeyInfoDictOfBindedDeviceType"
-//#define KeyInfoDictOfBindedDeviceIdentifier     @"KeyInfoDictOfBindedDeviceIdentifier"
-//#define KeyInfoDictOfBindedDeviceSNVersion      @"KeyInfoDictOfBindedDeviceSNVersion"
-//#define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
-//#define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
 
 /* ------------------------------ 信息字典: 选择的机构信息
  *  KeyInfoDictOfJiGouBusinessNum           - 机构商户号
@@ -107,95 +66,6 @@
 #define KeyInfoDictOfJiGouBusinessName          @"KeyInfoDictOfJiGouBusinessName"
 // 费率 - key; 值为int{0,1,2,3};
 #define Key_RateOfPay   @"Key_RateOfPay"
-
-
-
-
-
-// 设备操作的等待超时时间
-#define DeviceWaitingTime           20                          
-
-
-
-// 文件名: 8583报文域值属性字典
-#define FileNameISO8583FieldsAttri  @"newisoconfig"
-
-/*************[保存的 原交易信息]**************/
-
-// 消费成功的金额,方便撤销支付
-#define  SuccessConsumerMoney       @"successmoney"
-// 原交易流水号,消费交易的流水号
-#define  Last_Exchange_Number       @"lastnumber"
-// 3,交易处理码                    -- 跟上一笔交易保持一致  Processing Code
-#define  LastF03_ProcessingCode     @"LastProcessingCode_F03__"
-// 11,流水号 bcd 6                 -- 跟上一笔交易保持一致    System Trace
-#define  LastF11_SystemTrace        @"LastSystemTrace_F11__"
-// 22,服务点输入方式码              -- 跟上一笔交易保持一致    Service Entry Code
-#define  LastF22_ServiceEntryCode   @"LastServiceEntryCode_F22__"
-// 37,原交易参考号
-#define  LastF37_ReferenceNum       @"LastF37_ReferenceNum__"
-// 41 终端号
-#define  LastF41_TerminalNo         @"LastF41_TerminalNo__"
-// 42 商户号
-#define  LastF42_BussinessNo        @"LastF42_BussinessNo__"
-// 60,                           -- 跟上一笔交易保持一致   Reserved Private
-#define  LastF60_Reserved           @"LastReserved_F60__"
-
-
-/*************[8583 交易使用的配置信息 交易信息]**************/
-
-// F02:   银行卡号
-#define Card_Number @"card"
-//        获取带星的卡号
-#define GetCurrentCard_NotAll @"notallcard"
-// F04:   交易输入的金额
-#define Consumer_Money @"money"
-//        保存撤销金额
-#define Save_Return_Money @"renturnmoney"
-// F11:   交易流水号，每次交易加1
-#define Exchange_Number @"exchangenumber"
-// F12:   交易时间
-#define Trans_Time_12      @"Trans_Time_12_"
-// F13:   交易日期
-#define Trans_Date_13      @"Trans_Date_13_"
-// F14:   卡片有效期
-#define EXP_DATE_14     @"EXP_DATE_14_"
-// F22:   服务点输入方式
-#define Service_Entry_22    @"Service_Entry_22_"
-// F23:   芯片卡序列号
-#define ICCardSeq_23    @"ICCardSeq_23_"
-// F35:   二磁道数据
-#define Two_Track_Data @"trackdata"
-// F36:   三磁道数据
-#define F36_ThreeTrackData      @"F36_ThreeTrackData_"
-// F37:   检索参考号
-#define Reference_Number_37 @"Reference_Number_37_"
-// F38:   授权码:AUTH NO
-#define AuthNo_38       @"AuthNo_38_"
-// F44.1:   发卡行标识
-#define ISS_NO_44_1         @"ISS_NO_44_1_"
-// F44.2:   结算行标识
-#define ACQ_NO_44_2         @"ACQ_NO_44_2_"
-// F55:   芯片卡数据55域数据
-#define ICCData_55      @"ICCData_55_"
-// F60.2: 批次号,签到默认6-bcd，从签到中获取
-#define Get_Sort_Number @"sortnumber"
-//        O_F60.2 原交易签到批次号
-#define Last_FldReserved_Number @"fldReserved"
-
-
-// 保存本次消费的流水号
-#define Current_Liushui_Number @"liushuinumber"
-
-
-// 下载的工作密钥
-#define WorkKey @"workkey"
-
-
-// 8583报文配置
-#define TPDU @"6000060000"
-#define HEADER @"600100310000"
-
 
 
 /*************[注册审核未通过:响应配置信息]**************/

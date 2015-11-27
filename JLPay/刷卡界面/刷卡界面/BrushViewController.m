@@ -129,7 +129,6 @@
         return;
     }
     // 3.扫描设备
-//    [[DeviceManager sharedInstance] stopScanningDevices];
     [[DeviceManager sharedInstance] startScanningDevices];
     
     // 4.先在主线程打开activitor 和 提示信息
@@ -358,7 +357,6 @@
 - (void) pushToSignVCWithInfo:(NSDictionary*)transInfo {
     QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
     [qianpi qianpiType:1];
-    [qianpi getCurretnLiushui:[[NSUserDefaults standardUserDefaults] valueForKey:Current_Liushui_Number]];
     [qianpi leftTitle:self.sFloatMoney];
     [qianpi setTransInformation:transInfo];
     

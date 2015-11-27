@@ -13,182 +13,62 @@
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 
+
+
+
+static NSString* SignBatchNo = @"SignBatchNo__";
+
+
 @implementation PublicInformation
 
 
-//bbpos已连接
-+(BOOL)bbPosHaveConnect{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"bbpos_connected"];
-}
-
-
-//+(NSString *)returnBBposKeyStr{
-//     NSString *masterKey=@"CED0505457484395C6FAB0358A9E6E65";
-//     NSString *rightKey =@"C0C0C0C000000000C0C0C0C000000000";
-//    NSString *csnStr=[[NSUserDefaults standardUserDefaults] valueForKey:The_terminal_Number];//@"01100000000030070000000000000000";//@"0110000000003007";//
-//     //3des加密
-//     NSString *firstStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:masterKey];
-//     //异或运算
-//     Byte *left=(Byte *)[[PublicInformation NewhexStrToNSData:masterKey] bytes];
-//     Byte *right=(Byte *)[[PublicInformation NewhexStrToNSData:rightKey] bytes];
-//     
-//     Byte pwdPlaintext[16];
-//     for (int i = 0; i < 16; i++) {
-//     pwdPlaintext[i] = (Byte)(left[i] ^ right[i]);
-//     }
-//     
-//     NSData *theData = [[NSData alloc] initWithBytes:pwdPlaintext length:sizeof(pwdPlaintext)];
-//     NSString *resultStr=[PublicInformation stringWithHexBytes2:theData];
-//    
-//     //再次3des加密
-//     NSString *secondStr=[[Unpacking8583 getInstance] threeDesEncrypt:csnStr keyValue:resultStr];
-//     //工作秘钥拼接
-//     NSString *workKeyStr=[NSString stringWithFormat:@"%@%@",[firstStr substringWithRange:NSMakeRange(0, 16)],[secondStr substringWithRange:NSMakeRange(0, 16)]];
-//    return workKeyStr;
-//}
-
-+(int)returnSelectIndex{
-    int deviceSelect;
-    NSString *deviceStr=[[NSUserDefaults standardUserDefaults] valueForKey:@"selected"];
-    //NSLog(@"deviceStr====%@",deviceStr);
-    if (deviceStr && ![deviceStr isEqualToString:@""] && ![deviceStr isEqualToString:@"(null)"]) {
-        //第一次设置默认刷卡头，n38
-        deviceSelect=[deviceStr intValue];
-    }else{
-        deviceSelect=2;
-    }
-    return deviceSelect;
-}
-
-//当前带星卡号
-+(NSString *)getXingCard{
-    
-    return [[NSUserDefaults standardUserDefaults] valueForKey:GetCurrentCard_NotAll];
-}
-
-//更新主密钥
-//+(NSString *)getMainSecret{
-//    NSString *mainkey=@"";
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:IsOrRefresh_MainKey]) {
-//        mainkey=[[NSUserDefaults standardUserDefaults] valueForKey:Refresh_Later_MainKey];
-//    }else{
-//        mainkey=@"EF2AE9F834BFCDD5260B974A70AD1A4A";
-//    }
-//    return mainkey;
-//}
-
-//原交易流水号,消费交易的流水号
-+(NSString *)returnLiushuiHao{
-    NSString *liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number];
-    if (liushuiStr && ![liushuiStr isEqualToString:@""] && ![liushuiStr isEqualToString:@"(null)"]) {
-        liushuiStr=[[NSUserDefaults standardUserDefaults] valueForKey:Last_Exchange_Number];
-    }else{
-        liushuiStr=@"000000";
-    }
-    return liushuiStr;
-}
-
-//消费成功的搜索参考号
-//+(NSString *)returnConsumerSort{
-//    NSString *consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
-//    if (consumerStr && ![consumerStr isEqualToString:@""] && ![consumerStr isEqualToString:@"(null)"]) {
-//        consumerStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Get_Sort];
-//    }else{
-//        consumerStr=@"";
-//    }
-//    return consumerStr;
-//}
-
-//消费成功的金额,方便撤销支付
-+(NSString *)returnConsumerMoney{
-    NSString *successStr=[[NSUserDefaults standardUserDefaults] valueForKey:SuccessConsumerMoney];
-    if (successStr && ![successStr isEqualToString:@""] && ![successStr isEqualToString:@"(null)"]) {
-        successStr=[[NSUserDefaults standardUserDefaults] valueForKey:SuccessConsumerMoney];
-    }else{
-        successStr=@"";
-    }
-    return successStr;
-}
-
-
-//签到批次号
+// 签到批次号
 +(NSString *)returnSignSort{
     NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-    NSString* curSortNum = [userDefault valueForKey:Get_Sort_Number];
-    if (curSortNum && curSortNum.length > 0) {
-        if (curSortNum.intValue > 999999) {
-            curSortNum = @"000001";
-        }
-    } else {
-        curSortNum = @"000001";
+    NSString* curBatchNo = [userDefault valueForKey:SignBatchNo];
+    if (!curBatchNo || curBatchNo.length == 0) {
+        curBatchNo = [self updateSignSort];
     }
-    return curSortNum;
+    return curBatchNo;
 }
+
 // 更新批次号
-+(void) updateSignSort {
-    NSString* sortNum = [self returnSignSort];
-    sortNum = [NSString stringWithFormat:@"%06d",sortNum.intValue + 1];
-    [[NSUserDefaults standardUserDefaults] setObject:sortNum forKey:Get_Sort_Number];
-    [[NSUserDefaults standardUserDefaults] synchronize];
++(NSString*) updateSignSort {
+    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
+    NSString* curBatchNo = [userDefault objectForKey:SignBatchNo];
+    NSString* newBatchNo = nil;
+    if (!curBatchNo || curBatchNo.length == 0) {
+        curBatchNo = @"000001";
+        newBatchNo = curBatchNo;
+    } else {
+        int batchNo = curBatchNo.intValue + 1;
+        if (batchNo > 999999) {
+            batchNo = 1;
+        }
+        newBatchNo = [NSString stringWithFormat:@"%06d", batchNo];
+    }
+    // save batch number
+    [userDefault setObject:newBatchNo forKey:SignBatchNo];
+    [userDefault synchronize];
+    
+    return newBatchNo;
 }
 
-//原交易批次号,用于撤销时获取
-+(NSString *)returnFdReserved{
-    NSString *FdReserved=[[NSUserDefaults standardUserDefaults] valueForKey:Last_FldReserved_Number];
-    if (FdReserved && ![FdReserved isEqualToString:@""] && ![FdReserved isEqualToString:@"(null)"]) {
-        FdReserved=[[NSUserDefaults standardUserDefaults] valueForKey:Last_FldReserved_Number];
-    }else{
-        FdReserved=@"000000";
-    }
-    return FdReserved;
-}
-
-//二磁道数据
-+(NSString *)returnTwoTrack{
-    NSString *trackStr=[[NSUserDefaults standardUserDefaults] valueForKey:Two_Track_Data];
-    if (trackStr && ![trackStr isEqualToString:@""] && ![trackStr isEqualToString:@"(null)"]) {
-        trackStr=[[NSUserDefaults standardUserDefaults] valueForKey:Two_Track_Data];
-    }else{
-        trackStr=@"";
-    }
-    return trackStr;
-}
-
-//银行卡号
-+(NSString *)returnposCard{
-    NSString *cardStr=[[NSUserDefaults standardUserDefaults] valueForKey:Card_Number];
-    if (cardStr && ![cardStr isEqualToString:@""] && ![cardStr isEqualToString:@"(null)"]) {
-        cardStr=[[NSUserDefaults standardUserDefaults] valueForKey:Card_Number];
-    }else{
-        cardStr=@"";
-    }
-    return cardStr;
-}
-
-//刷卡金额
-+(NSString *)returnMoney{
-    NSString *moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-    if (moneyStr && ![moneyStr isEqualToString:@"0.00"] && ![moneyStr isEqualToString:@"(null)"]) {
-        moneyStr=[[NSUserDefaults standardUserDefaults] valueForKey:Consumer_Money];
-    }else{
-        moneyStr=@"1";
-    }
-    return moneyStr;
-}
 
 //流水号,每次交易，递增,bcd,6(000008)
 +(NSString *)exchangeNumber{
     int number;
-    NSString *exchangeStr=[[NSUserDefaults standardUserDefaults] valueForKey:Exchange_Number];
+    static NSString* exchangeNumber = @"exchangeNumber__";
+    NSString *exchangeStr=[[NSUserDefaults standardUserDefaults] valueForKey:exchangeNumber];
     if (exchangeStr && ![exchangeStr isEqualToString:@""] && ![exchangeStr isEqualToString:@"(null)"]) {
-        number =[[[NSUserDefaults standardUserDefaults] valueForKey:Exchange_Number] intValue] + 1;
+        number =[[[NSUserDefaults standardUserDefaults] valueForKey:exchangeNumber] intValue] + 1;
     }else{
         number=1;
     }
     if (number > 999999) {
         number =1;
     }
-    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d",number] forKeyPath:Exchange_Number];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%06d",number] forKeyPath:exchangeNumber];
     [[NSUserDefaults standardUserDefaults] synchronize];
     return [NSString stringWithFormat:@"%06d",number];
 }
@@ -206,111 +86,14 @@
 }
 
 +(NSString *)returnTerminal{
-//    NSString *terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
-//    if (terminalNumber && ![terminalNumber isEqualToString:@""] && ![terminalNumber isEqualToString:@"(null)"]) {
-//        terminalNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Terminal_Number];
-//    }else{
-//        terminalNumber=@"10006057";     // 72环境终端号
-//    }
     return [ModelDeviceBindedInformation terminalNoBinded];
 }
 +(NSString *)returnBusiness{
-//    NSString *businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
-//    if (businessNumber && ![businessNumber isEqualToString:@""] && ![businessNumber isEqualToString:@"(null)"]) {
-//        businessNumber=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Number];
-//    }else{
-//        businessNumber=@"886584000000001";      // 72环境商户号
-//    }
     return [ModelUserLoginInformation businessNumber];
 }
 +(NSString *)returnBusinessName{
-//    NSString *businessName=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Name];
-//    if (businessName && ![businessName isEqualToString:@""] && ![businessName isEqualToString:@"(null)"]) {
-//        businessName=[[NSUserDefaults standardUserDefaults] valueForKey:Business_Name];
-//    }else{
-//        businessName=@"测试商户";
-//    }
     return [ModelUserLoginInformation businessName];
 }
-// 返回IC卡序列号
-+(NSString *)returnICCardSeqNo{
-    NSString *returnStr=[[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23];
-    if (returnStr && ![returnStr isEqualToString:@""] && ![returnStr isEqualToString:@"(null)"]) {
-        returnStr = [[NSUserDefaults standardUserDefaults] valueForKey:ICCardSeq_23];
-    }else{
-        returnStr=@"0001";
-    }
-    return returnStr;
-}
-
-//签到保存mackey，pinkey
-//+(NSString *)signinPin{//3A78137C68EA4E670A441384ABC5251E
-//    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_PinKey];
-//}
-//+(NSString *)signinMac{//104E324600A3F13DD2E7757053356383
-//    return [[NSUserDefaults standardUserDefaults] valueForKey:Sign_in_MacKey];
-//}
-
-// 金融交易后台ip
-//+(NSString *)settingIp{
-//    NSString *ipStr;
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Ip]) {
-//        ipStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_IP];
-//    }else{
-//        if (TestOrProduce == 0) {
-//            // 62环境: TCP[192.168.1.62/28080]  HTTP[192.168.1.62/80]
-//            ipStr   = @"192.168.1.62";
-//        }
-//        else if (TestOrProduce == 1) {
-//            // 生产环境: TCP[202.104.101.126/28088]  HTTP[202.104.101.126/80]
-//            ipStr = @"202.104.101.126";
-//        }
-//        else if (TestOrProduce == 5) {
-//            // 50环境: TCP[192.168.1.62/28080]  HTTP[192.168.1.62/80]
-//            ipStr = @"192.168.1.50";
-//        }
-//        else if (TestOrProduce == 7) {
-//            // 72环境: TCP[202.104.101.126/9088]  HTTP[202.104.101.126/80]
-//            ipStr = @"202.104.101.126";
-//        }
-//        else if (TestOrProduce == 8) {
-//            // 内网开发环境: TCP[../..]  HTTP[192.188.8.120/80]
-//            ipStr = @"192.188.8.120";
-//        }
-//        else if (TestOrProduce == 9) {
-//            // 外网环境: TCP[.../6280]  HTTP[.../6288]  ping  szjl2014.eicp.net
-//            ipStr = @"183.16.198.55";
-//        }
-//        
-//    }
-//    return ipStr;
-//}
-//+(int)settingPort{
-//    NSString *portStr;
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
-//        portStr=[[NSUserDefaults standardUserDefaults] valueForKey:Tcp_Port];
-//    }else{
-//        if (TestOrProduce == 0) {
-//            portStr = @"28080";
-//        }
-//        else if (TestOrProduce == 1) {
-//            portStr = @"28088";
-//        }
-//        else if (TestOrProduce == 5) {
-//            portStr = @"28080";
-//        }
-//        else if (TestOrProduce == 7) {
-//            portStr = @"9088";
-//        }
-//        else if (TestOrProduce == 8) {
-//            portStr = @"80";
-//        }
-//        else if (TestOrProduce == 9) {
-//            portStr = @"6280";
-//        }
-//    }
-//    return [portStr intValue];
-//}
 
 /* 获取服务器域名 */
 + (NSString*) getServerDomain {
@@ -342,52 +125,6 @@
     return port;
 }
 
-
-// 从配置中获取数据后台地址
-//+(NSString*) getDataSourceIP{
-//    NSString* ip;
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"Setting_Ip"]) {
-//        ip = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_IP"];
-//    } else {
-//        if (TestOrProduce == 0) {
-//            ip = @"192.168.1.62";
-//        }
-//        else if (TestOrProduce == 1) {
-//            ip = @"202.104.101.126";
-//        }
-//        else if (TestOrProduce == 5) {
-//            ip = @"192.168.1.50";
-//        }
-//        else if (TestOrProduce == 7) {
-//            ip = @"202.104.101.126";
-//        }
-//        else if (TestOrProduce == 8) {
-//            ip = @"192.188.8.120";
-//        }
-//        else if (TestOrProduce == 9) {
-//            ip = @"183.16.198.55";
-//        }
-//    }
-//    return ip;
-//}
-//+(NSString*) getDataSourcePort{
-//    NSString* port;
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:Setting_Port]) {
-//        port = [[NSUserDefaults standardUserDefaults] valueForKey:@"DataSource_Port"];
-//    }else{
-//        port = @"80";
-//        if (TestOrProduce == 9) {
-//            port = @"6288";
-//        }
-//        else if (TestOrProduce == 7) {
-//            port = @"8088";
-//        }
-//        else if (TestOrProduce == 8) {
-//            port = @"80";
-//        }
-//    }
-//    return port;
-//}
 
 
 
@@ -640,7 +377,7 @@
 
 + (UIImage *) createImageWithColor: (UIColor *) color
 {
-    CGRect rect=CGRectMake(0, 0, Screen_Width, 44);
+    CGRect rect=CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 44);
     UIGraphicsBeginImageContext(rect.size);
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [color CGColor]);
@@ -720,7 +457,6 @@
     NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
     dateAntTime = [dateFormatter stringFromDate:[NSDate date]];
-//    dateAntTime = [dateAntTime substringToIndex:14];
     return dateAntTime;
 }
 
@@ -851,21 +587,6 @@
 }
 
 
-// 操作员号
-+(NSString*) returnOperatorNum {
-    return @"99";
-}
-// 操作员密码
-+(NSString*) returnOperatorPassword {
-    return @"12345678";
-}
-
-
-// 读卡的方式 : YES(磁条) NO(芯片)
-+(BOOL) returnCardType_Track {
-    BOOL trackOrIC = [[NSUserDefaults standardUserDefaults] boolForKey:CardTypeIsTrack];
-    return trackOrIC;
-}
 /* app通用ui颜色:
  *      red
  *      green
@@ -1020,9 +741,7 @@
                        andHeightScale:(CGFloat)hScale
 {
     CGRect newRect = CGRectMake(0, 0, image.size.width*wScale, image.size.height*hScale);
-//    UIGraphicsBeginImageContextWithOptions(newRect.size, NO, image.scale);
     UIGraphicsBeginImageContextWithOptions(newRect.size, NO, [UIScreen mainScreen].scale);
-//    UIGraphicsBeginImageContext(newRect.size);
     [image drawInRect:newRect];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

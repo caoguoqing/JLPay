@@ -18,12 +18,18 @@
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ViewModelTransDetails.h"
+#import "PullRefrashView.h"
 
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,
+UIScrollViewDelegate,
 DatePickerViewDelegate,SelectIndicatorViewDelegate, ViewModelTransDetailsDelegate>
-
+{
+    CGPoint lastScrollPoint;
+    CGFloat heightPullRefrashView;
+}
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
+@property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
 @property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮
@@ -85,6 +91,21 @@ NSInteger logCount = 0;
     viewController.tradePlatform = self.tradePlatform;
     [self.navigationController pushViewController:viewController animated:YES];
 
+}
+
+#pragma mask ---- UIScrollViewDelegate
+/* 开始拉动表格 */
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    NSLog(@"拉动表格中...[%lf,%lf]", scrollView.contentOffset.x, scrollView.contentOffset.y);
+    
+}
+/* 松开拉动 */
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (scrollView.contentOffset.y <= -heightPullRefrashView) {
+        scrollView.contentInset = UIEdgeInsetsMake(heightPullRefrashView, 0, 0, 0);
+    } else {
+        scrollView.contentInset = UIEdgeInsetsZero;
+    }
 }
 
 
@@ -226,6 +247,8 @@ NSInteger logCount = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"交易明细";
+    heightPullRefrashView = 50;
+    lastScrollPoint = CGPointZero;
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.dateButton];
@@ -298,8 +321,14 @@ NSInteger logCount = 0;
     frame.origin.y += 1;
     frame.size.height = self.view.bounds.size.height - frame.origin.y - self.tabBarController.tabBar.bounds.size.height;
     self.tableView.frame = frame;
+    frame.origin.y = -heightPullRefrashView;
+    frame.origin.x = 0;
+    frame.size.height = heightPullRefrashView;
+    [self.pullRefrashView setFrame:frame];
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -348,12 +377,19 @@ NSInteger logCount = 0;
     }
     return _totalView;
 }
+- (PullRefrashView *)pullRefrashView {
+    if (_pullRefrashView == nil) {
+        _pullRefrashView = [[PullRefrashView alloc] initWithFrame:CGRectZero];
+    }
+    return _pullRefrashView;
+}
 - (UITableView *)tableView {
     if (_tableView == nil) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
         view.backgroundColor = [UIColor clearColor];
         [_tableView setTableFooterView:view];
+        [_tableView addSubview:self.pullRefrashView];
     }
     return _tableView;
 }
