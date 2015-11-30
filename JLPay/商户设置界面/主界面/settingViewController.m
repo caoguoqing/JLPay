@@ -51,6 +51,14 @@
         UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:viewController animated:YES];
     }
+    
+    
+    UIRefreshControl* refresh = [[UIRefreshControl alloc] init];
+    refresh.tintColor = [UIColor grayColor];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"下拉即可刷新"];
+    self.refreshControl = refresh;
+    
+    
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

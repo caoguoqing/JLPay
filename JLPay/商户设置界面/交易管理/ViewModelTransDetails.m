@@ -59,7 +59,8 @@
         [self.http addPostValue:bussiness forKey:@"mchntNo"];
     }
     
-    
+    [self.transDetails removeAllObjects];
+    [self.filterDetails removeAllObjects];
     [self.http startAsynchronous];
     
 }

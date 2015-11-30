@@ -14,6 +14,7 @@
     NSString* pullDownText;
     NSString* waitingText;
     CGFloat heightContentView;
+    BOOL refreshing;
 }
 @property (nonatomic, retain) UIImageView* imageView;
 @property (nonatomic, retain) UIActivityIndicatorView* activity;
@@ -26,22 +27,24 @@
 
 /* 调为下拉状态 */
 - (void) turnPullUp {
+    refreshing = NO;
     self.activity.hidden = YES;
     self.imageView.hidden = NO;
     self.textLabel.text = pullUpText;
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.2 animations:^{
         self.imageView.transform = CGAffineTransformMakeRotation(M_PI);
     }];
 }
 
 /* 调为上拉状态 */
 - (void) turnPullDown {
+    refreshing = NO;
     self.activity.hidden = YES;
     self.imageView.hidden = NO;
     self.textLabel.text = pullDownText;
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.2 animations:^{
         self.imageView.transform = CGAffineTransformIdentity;
     }];
 }
@@ -51,6 +54,12 @@
     self.imageView.hidden = YES;
     [self.activity startAnimating];
     self.textLabel.text = waitingText;
+    refreshing = YES;
+}
+
+/* 查询状态 */
+- (BOOL) isRefreshing {
+    return refreshing;
 }
 
 
@@ -59,9 +68,10 @@
     self = [super initWithFrame:frame];
     if (self) {
         heightContentView = 40.0;
-        pullUpText = @"下拉即可刷新";
-        pullDownText = @"松开即可刷新";
+        pullUpText = @"松开即可刷新";
+        pullDownText = @"下拉即可刷新";
         waitingText = @"努力加载中";
+        refreshing = NO;
         [self addSubview:self.imageView];
         [self addSubview:self.textLabel];
         [self addSubview:self.activity];
@@ -108,7 +118,8 @@
     if (_textLabel == nil) {
         _textLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _textLabel.textAlignment = NSTextAlignmentLeft;
-        _textLabel.text = pullUpText;
+        _textLabel.text = pullDownText;
+        _textLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
     }
     return _textLabel;
 }

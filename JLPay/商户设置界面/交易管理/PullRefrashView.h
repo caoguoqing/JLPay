@@ -18,4 +18,7 @@
 /* 调为等待状态 */
 - (void) turnWaiting;
 
+/* 查询状态 */
+- (BOOL) isRefreshing;
+
 @end

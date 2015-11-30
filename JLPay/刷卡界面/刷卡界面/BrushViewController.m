@@ -145,6 +145,7 @@
     [self.tcpViewModel terminateTransWithTransType:self.stringOfTranType];
     // 断开设备
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
+    [blueManager setDelegate:nil];
 }
 
 #pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<< 设备操作

@@ -27,6 +27,7 @@ DatePickerViewDelegate,SelectIndicatorViewDelegate, ViewModelTransDetailsDelegat
 {
     CGPoint lastScrollPoint;
     CGFloat heightPullRefrashView;
+    CGFloat maxPullDownOffset;
 }
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
@@ -94,20 +95,70 @@ NSInteger logCount = 0;
 }
 
 #pragma mask ---- UIScrollViewDelegate
-/* 开始拉动表格 */
+/* 表格滚动中(拖动、回弹都在这个回调中) */
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"拉动表格中...[%lf,%lf]", scrollView.contentOffset.x, scrollView.contentOffset.y);
+    // 下滚动
+    if (lastScrollPoint.y - scrollView.contentOffset.y > 0) {
+        if (maxPullDownOffset > scrollView.contentOffset.y) {
+            maxPullDownOffset = scrollView.contentOffset.y;
+        }
+        // 拖动中
+        if (scrollView.dragging) {
+            if (scrollView.contentOffset.y < -heightPullRefrashView) {
+                [self.pullRefrashView turnPullUp];
+            }
+        }
+        // 松开拖动
+        else {
+        }
+    }
+    // 上滚动
+    else if (lastScrollPoint.y - scrollView.contentOffset.y < 0) {
+        // 拖动中
+        if (scrollView.dragging) {
+            if (scrollView.contentOffset.y > -heightPullRefrashView) {
+                [self.pullRefrashView turnPullDown];
+            }
+        }
+        // 松开拖动
+        else {
+            if (scrollView.contentOffset.y <= -heightPullRefrashView) {
+                [self stayPullRefreshView];
+            }
+        }
+    }
+    
+    lastScrollPoint = scrollView.contentOffset;
+}
+/* 结束减速 */
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (maxPullDownOffset <= -heightPullRefrashView) {
+        [self.pullRefrashView turnWaiting];
+        // 重新获取明细数据
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self requestDataOnDate:[self dateOfDateButton]];
+            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+        });
+    }
     
 }
-/* 松开拉动 */
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (scrollView.contentOffset.y <= -heightPullRefrashView) {
-        scrollView.contentInset = UIEdgeInsetsMake(heightPullRefrashView, 0, 0, 0);
-    } else {
-        scrollView.contentInset = UIEdgeInsetsZero;
-    }
+/* 下拉刷新视图占位 */
+- (void) stayPullRefreshView {
+    UIEdgeInsets edgeInset = UIEdgeInsetsZero;
+    edgeInset.top = heightPullRefrashView;
+    [UIView animateWithDuration:0.2 animations:^{
+        self.tableView.contentInset = edgeInset;
+        self.tableView.contentOffset = CGPointMake(0.0, -heightPullRefrashView);
+    }];
 }
-
+/* 下拉刷新视图复位 */
+- (void) resetPullRefreshView {
+    [self.pullRefrashView turnPullDown];
+    [UIView animateWithDuration:0.2 animations:^{
+        self.tableView.contentInset = UIEdgeInsetsZero;
+        self.tableView.contentOffset = CGPointMake(0, 0);
+    }];
+}
 
 
 #pragma mask ------ DatePickerViewDelegate
@@ -207,6 +258,9 @@ NSInteger logCount = 0;
 /* 请求的数据返回了 */
 - (void)viewModel:(ViewModelTransDetails *)viewModel didRequestResult:(BOOL)result withMessage:(NSString *)message {
     [[JLActivitor sharedInstance] stopAnimating];
+    if ([self.pullRefrashView isRefreshing]) {
+        [self resetPullRefreshView];
+    }
     if (result) {
         [self.tableView reloadData];
         [self calculateTotalAmount];
@@ -221,7 +275,6 @@ NSInteger logCount = 0;
 
 #pragma mask ---- 数据源请求
 - (void) requestDataOnDate:(NSString*)dateString {
-//    NSDictionary* bindedInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     NSString* terminal = [ModelDeviceBindedInformation terminalNoBinded];
     NSString* bussiness = [ModelDeviceBindedInformation businessNoBinded];
     [self.dataSource requestDetailsWithPlatform:self.tradePlatform
@@ -249,6 +302,7 @@ NSInteger logCount = 0;
     self.title = @"交易明细";
     heightPullRefrashView = 50;
     lastScrollPoint = CGPointZero;
+    maxPullDownOffset = 0;
     [self.view addSubview:self.totalView];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.dateButton];
@@ -368,7 +422,13 @@ NSInteger logCount = 0;
     [self.dateButton.titleLabel setAttributedText:sublineString];
 }
 
-
+// 获取日期按钮的日期
+- (NSString*) dateOfDateButton {
+    NSMutableString* dateString = [[NSMutableString alloc] init];
+    NSString* string = [self.dateButton titleForState:UIControlStateNormal];
+    [dateString appendFormat:@"%@",[string stringByReplacingOccurrencesOfString:@"-" withString:@""]];
+    return dateString;
+}
 
 #pragma mask ::: getter & setter 
 - (TotalAmountDisplayView *)totalView {
