@@ -47,8 +47,6 @@ static JLActivitor* _JLactivitor = nil;
         self.frame = [UIScreen mainScreen].bounds;
         [self addSubview:self.imageView];
         self.backgroundColor = [UIColor colorWithRed:135.0/255.0 green:135.0/255.0 blue:135.0/255.0 alpha:0.4];
-//        UIWindow* keywindow = [[UIApplication sharedApplication] keyWindow];
-//        [keywindow addSubview:self];
     }
     return self;
 }
@@ -64,7 +62,7 @@ static JLActivitor* _JLactivitor = nil;
     [[[UIApplication sharedApplication] keyWindow] addSubview:self];
     self.frame = frame;
     
-    self.acounting = 0;
+    self.acounting = 1;
     if (self.hidden) {
         self.hidden = NO;
         [self.superview bringSubviewToFront:self];
@@ -81,6 +79,7 @@ static JLActivitor* _JLactivitor = nil;
     [self.timer invalidate];
     self.timer = nil;
     self.acounting = 1;
+    [self turningAround:nil];
     if (!self.hidden) {
         self.hidden = YES;
     }

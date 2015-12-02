@@ -216,19 +216,20 @@ SwipeListener
 
 # pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
 - (void)cardSwipeWithMoney:(NSString *)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString *)SNVersion {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        int breakout = 0;
-        while (![self.deviceManager sendDataEnable]) {
-            if (breakout++ > 30 * 10) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败:设备连接异常" andCardInfo:nil];
-                }
-                return ;
+    int breakout = 0;
+    while (![self.deviceManager sendDataEnable]) {
+        if (breakout++ > 30 * 10) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败:设备连接异常" andCardInfo:nil];
             }
-            [NSThread sleepForTimeInterval:0.1];
+            return ;
         }
+        [NSThread sleepForTimeInterval:0.1];
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString* detect = [self.deviceSetter writeDetectCard];
-        if (detect && [detect hasPrefix:@"00"]) {
+        if (detect && [detect hasPrefix:@"00"]) { // 有卡插入
             NSDictionary* cardInfo = [self getICCardDataWithMoney:(long)[money intValue]];
             if (cardInfo) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
@@ -240,9 +241,8 @@ SwipeListener
 
                 }
             }
-        } else {
-            NSLog(@"等待刷卡或插卡....");
         }
+        // else waiting for card swipe
     });
 }
 
@@ -327,8 +327,8 @@ SwipeListener
         NSString* SNVersion = [self.deviceSetter getSN];
         // SN号格式处理:转换大写、去掉后面FF...字符串
         SNVersion = [PublicInformation clearSpaceCharAtContentOfString:[SNVersion uppercaseString]];
-        if ([SNVersion containsString:@"FF"]) {
-            NSRange range = [SNVersion rangeOfString:@"FF"];
+        NSRange range = [SNVersion rangeOfString:@"FF"];
+        if (range.length > 0) {
             SNVersion = [SNVersion substringToIndex:range.location];
         }
         if (!SNVersion || SNVersion.length == 0) {
@@ -414,7 +414,6 @@ SwipeListener
     [self.deviceManager icOff];
     
     NSMutableDictionary* cardInfo = [[NSMutableDictionary alloc] init];
-    
     // 数据 - 卡号
     NSString* panStr = [self.deviceManager getIcPan];
     if (panStr && panStr.length > 0) {

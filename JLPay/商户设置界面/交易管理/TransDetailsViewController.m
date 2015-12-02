@@ -102,14 +102,8 @@ NSInteger logCount = 0;
         if (maxPullDownOffset > scrollView.contentOffset.y) {
             maxPullDownOffset = scrollView.contentOffset.y;
         }
-        // 拖动中
-        if (scrollView.dragging) {
-            if (scrollView.contentOffset.y < -heightPullRefrashView) {
-                [self.pullRefrashView turnPullUp];
-            }
-        }
-        // 松开拖动
-        else {
+        if (scrollView.contentOffset.y < -heightPullRefrashView) {
+            [self.pullRefrashView turnPullUp];
         }
     }
     // 上滚动
@@ -124,6 +118,8 @@ NSInteger logCount = 0;
         else {
             if (scrollView.contentOffset.y <= -heightPullRefrashView) {
                 [self stayPullRefreshView];
+            } else {
+                [self.pullRefrashView turnPullDown];
             }
         }
     }
@@ -132,15 +128,19 @@ NSInteger logCount = 0;
 }
 /* 结束减速 */
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (maxPullDownOffset <= -heightPullRefrashView) {
-        [self.pullRefrashView turnWaiting];
-        // 重新获取明细数据
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self requestDataOnDate:[self dateOfDateButton]];
-            [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-        });
+    if (scrollView.contentOffset.y <= -heightPullRefrashView) {
+        if (maxPullDownOffset <= -heightPullRefrashView) {
+            [self.pullRefrashView turnWaiting];
+            // 重新获取明细数据
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+            });
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self requestDataOnDate:[self dateOfDateButton]];
+            });
+        }
     }
-    
+    maxPullDownOffset = 0;
 }
 /* 下拉刷新视图占位 */
 - (void) stayPullRefreshView {

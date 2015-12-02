@@ -46,19 +46,10 @@
     [self setExtraCellLineHidden:self.tableView];
     
     // 只校验一次: 如果未绑定设备就直接跳转到设备绑定界面
-//    NSDictionary* infoDict = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     if (![ModelDeviceBindedInformation hasBindedDevice]) {
         UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:viewController animated:YES];
     }
-    
-    
-    UIRefreshControl* refresh = [[UIRefreshControl alloc] init];
-    refresh.tintColor = [UIColor grayColor];
-    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"下拉即可刷新"];
-    self.refreshControl = refresh;
-    
-    
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -71,6 +62,8 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+
+#pragma mask ---- UITableViewDelegate & UITableViewDataSource
 
 /*************************************
  * 功  能 : 设置 tableView 的 section 个数;
@@ -130,10 +123,6 @@
     // 下面是 cell 的装载
     if (indexPath.row == 0) {
         BusinessInfoTableViewCell* businessInfoCell = (BusinessInfoTableViewCell*)cell;
-//        NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-//        [businessInfoCell setUserId:[userDefault objectForKey:UserID]];
-//        [businessInfoCell setBusinessName:[userDefault objectForKey:Business_Name]];
-//        [businessInfoCell setBusinessNo:[userDefault objectForKey:Business_Number]];
         [businessInfoCell setUserId:[ModelUserLoginInformation userID]];
         [businessInfoCell setBusinessName:[ModelUserLoginInformation businessName]];
         [businessInfoCell setBusinessNo:[ModelUserLoginInformation businessNumber]];

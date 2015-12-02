@@ -180,7 +180,7 @@
     [self.cardInfoOfReading setValue:self.sIntMoney forKey:@"4"];
 
     // 成功就继续,输入密码或直接发起交易
-    NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
     if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
         [self startTrans];
     }
@@ -259,7 +259,9 @@
 
 #pragma mask ::: 进行加密
 - (void) encryptPinWithSource:(NSString*)source {
-    NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+    NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
+//    NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+
     if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
         [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
     }
@@ -268,17 +270,14 @@
     }
 }
 
-
-
-
 #pragma mask ::: 初始化并加载密码输入提示框
 - (void) makePasswordAlertView {
     // innerView 放在 alertView 中创建
     self.passwordAlertView.delegate = self;
     [self.passwordAlertView setUseMotionEffects:YES];
     [self.passwordAlertView setButtonTitles:[NSArray arrayWithObjects:@"取消", @"确定", nil]];
-    [self.view addSubview:self.passwordAlertView];
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.view addSubview:self.passwordAlertView];
         [self.passwordAlertView show];
     });
 }
@@ -405,7 +404,9 @@
         [self stopTimer];
         [self alertForFailedMessage:@"设备刷卡超时"]; // 点击确定就会退出场景
     } else {
-        [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,请刷卡...%02d秒",self.timeOut++]];
+        [self.waitingLabel setText:[NSString stringWithFormat:@"刷卡中,IC卡请勿拔卡...%02d秒",self.timeOut++]];
+//        [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,请刷卡...%02d秒",self.timeOut++]];
+
     }
 }
 /*************************************
@@ -414,7 +415,7 @@
  * 返  回 : 无
  *************************************/
 - (void) waitingForDeviceCusting {
-    [self.waitingLabel setText:[NSString stringWithFormat:@"交易处理中...%02d秒",self.timeOut++]];
+    [self.waitingLabel setText:[NSString stringWithFormat:@"交易处理中,请收好卡片...%02d秒",self.timeOut++]];
 }
 
 

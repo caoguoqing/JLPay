@@ -659,8 +659,6 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         }
     }
     
-    
-    
     NSString* retString = [NSString stringWithCString:newString encoding:NSUTF8StringEncoding];
     free(newString);
     return retString;
@@ -671,10 +669,16 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     if (!cardNo || cardNo.length < 13) {
         return nil;
     }
-    NSMutableString* cuttingCardNo = [NSMutableString stringWithCapacity:6+6+4];
+    NSInteger lengthCardNo = [cardNo length];
+    NSInteger lengthCutting = lengthCardNo - 6 - 4;
+    
+    NSMutableString* cuttingCardNo = [NSMutableString stringWithCapacity:lengthCardNo];
+    // 头6位 + 中间n位* + 尾4位
     [cuttingCardNo appendString:[cardNo substringToIndex:6]];
-    [cuttingCardNo appendString:@"******"];
-    [cuttingCardNo appendString:[cardNo substringFromIndex:cardNo.length - 4]];
+    for (int i = 0; i < lengthCutting; i++) {
+        [cuttingCardNo appendString:@"*"];
+    }
+    [cuttingCardNo appendString:[cardNo substringFromIndex:lengthCardNo - 4]];
     return cuttingCardNo;
 }
 

@@ -183,7 +183,6 @@
 
 // 重新整理所有域值的格式:根据plist
 - (void) resetFormatValueOfFieldsDictionary {
-    NSLog(@"交易报文所有域:{%@}",self.dictionaryFieldNamesAndValues);
     for (NSString* key in self.dictionaryFieldNamesAndValues.allKeys) {
         NSString* value = [self.dictionaryFieldNamesAndValues valueForKey:key];
         NSString* formationValue = [[ISOFieldFormation sharedInstance] formatStringWithSource:value atIndex:key.intValue];

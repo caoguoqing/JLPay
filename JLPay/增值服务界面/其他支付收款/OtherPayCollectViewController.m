@@ -44,8 +44,8 @@
         enable = YES;
     }
     else if ([self isValidOfNumberString:string]) { // 检查是否为金额有效键
-        if ([textField.text containsString:@"."]) { // 已经有小数点
-            NSRange dotRange = [textField.text rangeOfString:@"."];
+        NSRange dotRange = [textField.text rangeOfString:@"."];
+        if (dotRange.length > 0) { // 已经有小数点
             // 只有当前输入为纯数字且未满2位小数时,有效
             if (![string isEqualToString:@"."] && (textField.text.length - dotRange.location - dotRange.length < 2)) {
                 enable = YES;

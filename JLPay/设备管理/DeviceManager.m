@@ -13,6 +13,7 @@
 #import "JHL_M60/JHLDevice_M60.h"
 #import "RF_BB01/RFDevice_BB01.h"
 #import "JLPayDevice_TY01.h"
+#import "ModelDeviceBindedInformation.h"
 
 /*
  *  厂商设备添加流程:
@@ -53,18 +54,6 @@ static DeviceManager* _sharedDeviceManager = nil;
     }
     return _sharedDeviceManager;
 }
-
-# pragma mask : 判断是否绑定了设备
-//+(BOOL) deviceIsBinded {
-//    NSDictionary* bindedInfo = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
-//    BOOL binded = YES;
-//    if (bindedInfo == nil) {
-//        binded = NO;
-//    }
-//    return binded;
-//}
-
-
 
 #pragma mask : 开始扫描设备
 - (void) startScanningDevices {
@@ -108,7 +97,6 @@ static DeviceManager* _sharedDeviceManager = nil;
 }
 #pragma mask : SN号读取
 - (void) readSNVersions{
-    NSLog(@"读取所有SN号");
     [self.device readSNVersions];
 }
 
@@ -253,7 +241,7 @@ static DeviceManager* _sharedDeviceManager = nil;
 #pragma mask : 获取配置中的设备类型
 - (NSString *)deviceType {
     if (_deviceType == nil) {
-        _deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
+        _deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
     }
     return _deviceType;
 }

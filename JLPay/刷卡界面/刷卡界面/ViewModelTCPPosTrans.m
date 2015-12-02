@@ -199,8 +199,6 @@
 }
 /* 打包: 余额查询 */
 - (NSString*) packingYuEByInfo:(NSDictionary*)info {
-    NSLog(@"打包余额查询");
-
     NSString* packing = nil;
     Packing8583* packingHolder = [Packing8583 sharedInstance];
     [packingHolder setFieldAtIndex:2 withValue:[info valueForKey:@"2"]];

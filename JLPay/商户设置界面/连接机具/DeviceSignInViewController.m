@@ -391,8 +391,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 保存选择的设备类型
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     self.selectedDevice = title;
-    [[NSUserDefaults standardUserDefaults] setValue:title forKey:DeviceType];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     [[DeviceManager sharedInstance] makeDeviceEntryWithType:title];
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {

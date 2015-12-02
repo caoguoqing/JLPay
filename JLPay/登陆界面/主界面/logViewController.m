@@ -719,7 +719,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         _loadButton.backgroundColor     = [UIColor colorWithRed:234.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
         _loadButton.layer.cornerRadius  = ViewCornerRadius;
         _loadButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
-        [_loadButton setTitle:@"登陆" forState:UIControlStateNormal];
+        [_loadButton setTitle:@"登    陆" forState:UIControlStateNormal];
         [_loadButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         [_loadButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
 

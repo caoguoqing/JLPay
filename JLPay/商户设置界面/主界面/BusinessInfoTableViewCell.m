@@ -49,6 +49,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+//        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
         self.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
         [self addSubview:self.headImageView];
         [self addSubview:self.labelUserId];
@@ -72,7 +74,7 @@
     CGFloat heightLabelBig = heightLabelLit * 3.0/2.0;
     
     CGFloat heightImage = self.frame.size.height - insetImageTop * 2;
-    CGFloat widthLabel = self.frame.size.width - insetImageLeft * 2 - heightImage;
+    CGFloat widthLabel = self.frame.size.width - insetImageLeft * 2 - heightImage - 35/* 为AccessoryDisclosure预留 */;
     
     CGRect frame = CGRectMake(insetImageLeft, insetImageTop, heightImage, heightImage);
     // 头像图片

@@ -164,8 +164,8 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 - (NSString*) mainKeyAnalysedByF62:(NSString*)f62 {
     NSString* mainKey = nil;
     // 截取主密钥密文
-    if ([f62 containsString:@"DF02"]) {
-        NSRange sKeyRange = [f62 rangeOfString:@"DF02"];
+    NSRange sKeyRange = [f62 rangeOfString:@"DF02"];
+    if (sKeyRange.length > 0) {
         NSInteger location = sKeyRange.location + sKeyRange.length;
         if (location + 2 < f62.length) {
             NSString* sHexLength = [f62 substringWithRange:NSMakeRange(location, 2)];
