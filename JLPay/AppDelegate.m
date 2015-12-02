@@ -20,7 +20,6 @@
 
 
 @implementation AppDelegate
-//@synthesize device                      = _device;
 
 
 /*
@@ -36,7 +35,6 @@
      *    如果绑定了:就跳转到金额输入界面
      *    如果没有绑定:就跳转到绑定设备界面
      */
-//    NSDictionary* infoBinded = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfBinded];
     if (![ModelDeviceBindedInformation hasBindedDevice]) {
         tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
     } else {
