@@ -9,15 +9,13 @@
 #import "SettlementSwitchView.h"
 #import "PublicInformation.h"
 
-
-static NSString* const stringSettlementOrigin = @"结算方式: ";
 static NSString* const stringSettlementT_1 = @"T+1";
 static NSString* const stringSettlementT_0 = @"T+0";
-static NSString* const stringSettlementD_1 = @"D+1";
-static NSString* const stringSettlementD_0 = @"D+0";
 
 @interface SettlementSwitchView()
-
+{
+    SETTLEMENTTYPE curSettlementTYpe;
+}
 @property (nonatomic, strong) UILabel* labelSettlementDisplay; // 显示标签
 @property (nonatomic, strong) UIButton* buttonSwitch;   // 切换按钮
 
@@ -28,6 +26,7 @@ static NSString* const stringSettlementD_0 = @"D+0";
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        curSettlementTYpe = SETTLEMENTTYPE_T_1;
         [self addSubview:self.labelSettlementDisplay];
         [self addSubview:self.buttonSwitch];
     }
@@ -40,6 +39,7 @@ static NSString* const stringSettlementD_0 = @"D+0";
     [self.labelSettlementDisplay sizeToFit];
     self.labelSettlementDisplay.layer.position = CGPointMake(0.0, 0.0);
     self.labelSettlementDisplay.layer.anchorPoint = CGPointMake(0.0, 0.0);
+    self.labelSettlementDisplay.textColor = (self.enableSwitching)?([UIColor colorWithWhite:0.3 alpha:1]):([UIColor grayColor]);
     
     [self.buttonSwitch.titleLabel setFont:fontLabelText];
     [self.buttonSwitch sizeToFit];
@@ -48,14 +48,70 @@ static NSString* const stringSettlementD_0 = @"D+0";
     [self.buttonSwitch setBounds:bound];
     self.buttonSwitch.layer.position = CGPointMake(self.labelSettlementDisplay.bounds.size.width, 0.0);
     self.buttonSwitch.layer.anchorPoint = CGPointMake(0.0, 0.0);
+    if (self.enableSwitching) {
+        self.buttonSwitch.hidden = NO;
+    } else {
+        self.buttonSwitch.hidden = YES;
+    }
+}
+
+#pragma mask ---- 点击切换
+- (void) clickToSwichSettlementType {
+    // 根据当前值切换
+    curSettlementTYpe = curSettlementTYpe << 1;
+    if (![self enumExistsSettlemenType:curSettlementTYpe]) {
+        curSettlementTYpe = SETTLEMENTTYPE_T_1;
+    }
+    [self.labelSettlementDisplay setText:[self textSettlementDisplayWithType:curSettlementTYpe]];
+    [self setNeedsLayout];
+}
+
+#pragma mask ---- PRIVATE INTERFACE
+/* 当前结算方式文本: 指定结算方式枚举量 */
+- (NSString*) textCurrentSettlementType:(SETTLEMENTTYPE)settlementType {
+    NSString* text = nil;
+    switch (settlementType) {
+        case SETTLEMENTTYPE_T_0:
+            text = stringSettlementT_0;
+            break;
+        case SETTLEMENTTYPE_T_1:
+            text = stringSettlementT_1;
+            break;
+        default:
+            text = stringSettlementT_1;
+            break;
+    }
+    return text;
+}
+/* 组织结算方式的提示文本 */
+- (NSString*) textSettlementDisplayWithType:(SETTLEMENTTYPE)settlementType {
+    NSString* text = nil;
+    if (self.enableSwitching) {
+        text = [NSString stringWithFormat:@"结算方式: %@,", [self textCurrentSettlementType:settlementType]];
+    } else {
+        text = [NSString stringWithFormat:@"结算方式: %@", [self textCurrentSettlementType:settlementType]];
+    }
+    return text;
+}
+/* 检查枚举是否存在指定的类型 */
+- (BOOL) enumExistsSettlemenType:(NSInteger)type {
+    BOOL exists = NO;
+    switch (type) {
+        case SETTLEMENTTYPE_T_0:
+        case SETTLEMENTTYPE_T_1:
+            exists = YES;
+            break;
+        default:
+            break;
+    }
+    return exists;
 }
 
 #pragma mask ---- getter
 - (UILabel *)labelSettlementDisplay {
     if (_labelSettlementDisplay == nil) {
         _labelSettlementDisplay = [[UILabel alloc] initWithFrame:CGRectZero];
-        _labelSettlementDisplay.text = [NSString stringWithFormat:@"%@%@,",stringSettlementOrigin,stringSettlementT_1];
-        _labelSettlementDisplay.textColor = [UIColor colorWithWhite:0.3 alpha:1];
+        _labelSettlementDisplay.text = [self textSettlementDisplayWithType:curSettlementTYpe];
         _labelSettlementDisplay.textAlignment = NSTextAlignmentLeft;
     }
     return _labelSettlementDisplay;
@@ -65,6 +121,7 @@ static NSString* const stringSettlementD_0 = @"D+0";
         _buttonSwitch = [[UIButton alloc] initWithFrame:CGRectZero];
         [_buttonSwitch setTitle:@"切换" forState:UIControlStateNormal];
         [_buttonSwitch setTitleColor:[UIColor brownColor] forState:UIControlStateNormal];
+        [_buttonSwitch addTarget:self action:@selector(clickToSwichSettlementType) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonSwitch;
 }

@@ -429,6 +429,7 @@
 - (SettlementSwitchView *)settlementView {
     if (_settlementView == nil) {
         _settlementView = [[SettlementSwitchView alloc] initWithFrame:CGRectZero];
+        _settlementView.enableSwitching = YES;
     }
     return _settlementView;
 }

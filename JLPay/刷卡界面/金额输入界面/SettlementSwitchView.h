@@ -12,13 +12,18 @@
 /* - 结算方式切换视图 - */
 
 /* 结算方式枚举量 */
+//typedef NS_ENUM(uint, SETTLEMENTTYPE) {
+//    SETTLEMENTTYPE_T_1,
+//    SETTLEMENTTYPE_T_0
+//} ;
 typedef enum {
-    SETTLEMENTTYPE_T_1 = 0, // T+1
-    SETTLEMENTTYPE_T_0, // T+0
-    SETTLEMENTTYPE_D_1, // D+1
-    SETTLEMENTTYPE_D_0 // D+0
+    SETTLEMENTTYPE_T_1 = 1 << 0, // T+1
+    SETTLEMENTTYPE_T_0 = 1 << 1, // T+0
 } SETTLEMENTTYPE;
 
 @interface SettlementSwitchView : UIView
+
+
+@property (nonatomic, assign) BOOL enableSwitching; // 是否允许切换
 
 @end
