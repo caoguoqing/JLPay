@@ -180,6 +180,7 @@
 		5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B741BCBB6D900C75276 /* TextFieldCell.m */; };
 		5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
+		5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EFD09811C1139B40062AD34 /* Default-568h@2x.png */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
 /* End PBXBuildFile section */
@@ -517,6 +518,7 @@
 		5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextLabelCell.m; sourceTree = "<group>"; };
 		5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSignButton.h; sourceTree = "<group>"; };
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
+		5EFD09811C1139B40062AD34 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
@@ -1168,6 +1170,7 @@
 		5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				5EFD09811C1139B40062AD34 /* Default-568h@2x.png */,
 				5E5E35A81B7C7A3200560C0A /* test.db */,
 				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
 				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
@@ -1645,6 +1648,7 @@
 				5ECB55921AD4D44800777866 /* newisoconfig.plist in Resources */,
 				5E82B87A1B310AF000A58751 /* activitor10.png in Resources */,
 				5EB9B1561AD7B92100A73190 /* MLTableAlertShadowMask.png in Resources */,
+				5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */,
 				5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */,
 				5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */,
 				5E82B8761B310AF000A58751 /* activitor06.png in Resources */,
