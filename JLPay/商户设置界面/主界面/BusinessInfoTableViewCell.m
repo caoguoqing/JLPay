@@ -49,8 +49,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-//        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
         self.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
         [self addSubview:self.headImageView];
         [self addSubview:self.labelUserId];

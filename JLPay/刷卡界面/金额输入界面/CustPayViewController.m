@@ -13,6 +13,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "DeleteButton.h"
 #import "Packing8583.h"
+#import "SettlementSwitchView.h"
 
 
 #define ImageForBrand   @"logo"                                             // 商标图片
@@ -23,13 +24,15 @@
     BOOL blueToothPowerOn;  // 蓝牙打开状态标记
     CBCentralManager* blueManager; // 蓝牙设备操作入口
 }
-@property (nonatomic, strong) UILabel           *acountOfMoney;             // 金额显示标签栏
+@property (nonatomic, strong) UILabel           *labelDisplayMoney;         // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
+
+@property (nonatomic, strong) SettlementSwitchView* settlementView;         // 结算方式切换视图
 @end
 
 @implementation CustPayViewController
-@synthesize acountOfMoney               = _acountOfMoney;
+@synthesize labelDisplayMoney               = _labelDisplayMoney;
 @synthesize money                       = _money;
 @synthesize moneyCalculated             = _moneyCalculated;
 
@@ -239,37 +242,31 @@
  * 返  回 : 无
  *************************************/
 - (void) addSubViews {
-    // 数字按钮组的字体大小
-    CGFloat numFontSize                 = 30.0;
-    CGFloat statusBarHeight             = [[UIApplication sharedApplication] statusBarFrame].size.height;
-    // 视图的有效高度
-    CGFloat visibleHeight               = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
-    // 分割线宽度
-    CGFloat  bornerWith                 = 1;
-    
-    
-    // 重新排版的各子视图的宽、高
-    CGFloat inset                       = 5.0;
-    
-    // 数字按钮宽度
-    CGFloat numBtnWidth                 = self.view.bounds.size.width/3.0;
+    // 字体大小: 数字按钮组的
+    CGFloat numFontSize = 30.0;
+    CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    // 有效高度: 视图的
+    CGFloat visibleHeight = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
+    // 宽度: 分割线
+    CGFloat  bornerWith = 1;
+    // 间隔值
+    CGFloat inset = 5.0;
+    // 宽度: 数字按钮
+    CGFloat numBtnWidth = self.view.bounds.size.width/3.0;
     // 金额显示框的高度:固定高度
-    CGFloat displayMoneyHeight          = numBtnWidth * 3.0/4.0 * 3.0/4.0;
-    
-    CGSize  logoImgSize                  = [UIImage imageNamed:ImageForBrand].size;
-    CGFloat logoImgWidth                = self.view.bounds.size.width / 2.0;
-    CGFloat logoImgHeight               = logoImgWidth * logoImgSize.height/logoImgSize.width;
+    CGFloat displayMoneyHeight = numBtnWidth * 3.0/4.0 * 3.0/4.0;
     // logo imageView高度
+    CGSize  logoImgSize = [UIImage imageNamed:ImageForBrand].size;
+    CGFloat logoImgWidth = self.view.bounds.size.width / 2.0;
+    CGFloat logoImgHeight = logoImgWidth * logoImgSize.height/logoImgSize.width;
     CGFloat logoImgViewHeight           = (visibleHeight - displayMoneyHeight*4)/3.0;
     if (logoImgViewHeight < logoImgHeight + inset*2.0) {
         logoImgViewHeight = logoImgHeight + inset*2.0;
     }
-    
-    // 刷卡按钮的高度
+    // 高度: 刷卡按钮的
     CGFloat swipeBtnHeight = displayMoneyHeight;
     // 数字按钮高度
     CGFloat numBtnHeight = displayMoneyHeight;
-    
     if (numBtnWidth * 5 + inset * 2 + bornerWith > visibleHeight - logoImgViewHeight - displayMoneyHeight) {
         numBtnHeight = (visibleHeight - logoImgViewHeight - displayMoneyHeight - bornerWith - inset*2)/5.0;
         if (numBtnHeight < 60.0) {
@@ -287,7 +284,7 @@
     imageView.image                     = [UIImage imageNamed:ImageForBrand];
     [self.view addSubview:imageView];
     
-    // 金额显示框
+    // 金额背景框
     frame.origin.x                      = 0 + bornerWith;
     frame.origin.y                      += frame.size.height+ (logoImgViewHeight - logoImgHeight)/2.0 + bornerWith;
     frame.size.width                    = self.view.bounds.size.width - bornerWith*2;
@@ -297,16 +294,16 @@
     [self.view addSubview:moneyView];
     // moneyLabel
     CGRect innerFrame                   = CGRectMake(0, 0, frame.size.width - 45, frame.size.height);
-    self.acountOfMoney.frame            = innerFrame;
-    self.acountOfMoney.text             = @"0.00";
-    self.acountOfMoney.textAlignment    = NSTextAlignmentRight;
-    CGSize fontSize = [self.acountOfMoney.text sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:37] forKey:NSFontAttributeName]];
+    self.labelDisplayMoney.frame            = innerFrame;
+    self.labelDisplayMoney.text             = @"0.00";
+    self.labelDisplayMoney.textAlignment    = NSTextAlignmentRight;
+    CGSize fontSize = [self.labelDisplayMoney.text sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:37] forKey:NSFontAttributeName]];
     // 金额字体大小占 frame 高度的 2/3
-    self.acountOfMoney.font             = [UIFont boldSystemFontOfSize: (innerFrame.size.height*2.0/3.0 / fontSize.height * 37)];
+    self.labelDisplayMoney.font             = [UIFont boldSystemFontOfSize: (innerFrame.size.height*2.0/3.0 / fontSize.height * 37)];
     
     
     
-    [moneyView addSubview:self.acountOfMoney];
+    [moneyView addSubview:self.labelDisplayMoney];
     // moneyImageView 金额符号Label : 字体大小为金额字体大小的 3/4, 因为字体为汉字，显示要比英文字母高一点，所以将y降低一个 inset，高度也减少一个 inset
     innerFrame.origin.x                 += innerFrame.size.width + inset;
     innerFrame.origin.y                 += inset;
@@ -317,6 +314,8 @@
     moneySymbolLabel.textAlignment      = NSTextAlignmentLeft;
     moneySymbolLabel.font               = [UIFont boldSystemFontOfSize:(innerFrame.size.height*2.0/3.0 / fontSize.height * 37)/4.0*3.0];
     [moneyView addSubview:moneySymbolLabel];
+    
+    
     
     // 数字按键组     4/8
     NSArray * numbers                   = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"delete",nil];
@@ -425,14 +424,20 @@
 - (void)setMoney:(NSString*)money {
     if (![_money isEqualToString: money]) {
         _money                          = money;
-        _acountOfMoney.text             = _money;
+        _labelDisplayMoney.text             = _money;
     }
 }
-- (UILabel *)acountOfMoney {
-    if (_acountOfMoney == nil) {
-        _acountOfMoney = [[UILabel alloc] initWithFrame:CGRectZero];
+- (UILabel *)labelDisplayMoney {
+    if (_labelDisplayMoney == nil) {
+        _labelDisplayMoney = [[UILabel alloc] initWithFrame:CGRectZero];
     }
-    return _acountOfMoney;
+    return _labelDisplayMoney;
+}
+- (SettlementSwitchView *)settlementView {
+    if (_settlementView == nil) {
+        _settlementView = [[SettlementSwitchView alloc] initWithFrame:CGRectZero];
+    }
+    return _settlementView;
 }
 
 @end

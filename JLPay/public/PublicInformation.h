@@ -108,6 +108,9 @@
 // 去掉字符串中间的空白字符
 + (NSString*) clearSpaceCharAtContentOfString:(NSString*)string ;
 
+/* 重置字体大小: 指定size+占比 */
++ (CGFloat) resizeFontInSize:(CGSize)size andScale:(CGFloat)scale;
+
 #pragma mask 0-------------------------------------------0 图片相关
 // 缩放图片
 + (UIImage*) imageScaledBySourceImage:(UIImage*)image

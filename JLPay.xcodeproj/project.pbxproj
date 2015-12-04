@@ -181,6 +181,7 @@
 		5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF45B7A1BCCAAC700C75276 /* TextLabelCell.m */; };
 		5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */; };
 		5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EFD09811C1139B40062AD34 /* Default-568h@2x.png */; };
+		5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09841C1141BE0062AD34 /* SettlementSwitchView.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
 /* End PBXBuildFile section */
@@ -519,6 +520,8 @@
 		5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherSignButton.h; sourceTree = "<group>"; };
 		5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherSignButton.m; sourceTree = "<group>"; };
 		5EFD09811C1139B40062AD34 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5EFD09831C1141BE0062AD34 /* SettlementSwitchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettlementSwitchView.h; sourceTree = "<group>"; };
+		5EFD09841C1141BE0062AD34 /* SettlementSwitchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettlementSwitchView.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
@@ -910,6 +913,8 @@
 			children = (
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
+				5EFD09831C1141BE0062AD34 /* SettlementSwitchView.h */,
+				5EFD09841C1141BE0062AD34 /* SettlementSwitchView.m */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -1675,6 +1680,7 @@
 				5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */,
 				5EBAA9111ACD3F1B00E2ABDD /* SBJsonBase.m in Sources */,
 				5E5E354F1B7380DB00560C0A /* UserRegisterViewController.m in Sources */,
+				5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */,
 				5E397B341AD36429004F206F /* ASIInputStream.m in Sources */,
 				5EBAA8EB1ACD2FA800E2ABDD /* ErrorType.m in Sources */,
 				5E397B3D1AD36429004F206F /* Reachability.m in Sources */,

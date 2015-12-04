@@ -664,6 +664,16 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return retString;
 }
 
+/* 重置字体大小: 指定size+占比 */
++ (CGFloat) resizeFontInSize:(CGSize)size andScale:(CGFloat)scale {
+    CGFloat resize = 0.0;
+    CGFloat testFontSize = 20;
+    CGSize testSize = [@"test" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:testFontSize] forKey:NSFontAttributeName]];
+    resize = testFontSize * (size.height/testSize.height) * scale;
+    return resize;
+}
+
+
 #pragma mask ::: 卡号截取 e.g. 621790******3368
 + (NSString*) cuttingOffCardNo:(NSString*)cardNo {
     if (!cardNo || cardNo.length < 13) {
