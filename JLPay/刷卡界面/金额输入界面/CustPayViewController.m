@@ -243,7 +243,6 @@
  *************************************/
 - (void) addSubViews {
     // 字体大小: 数字按钮组的
-    CGFloat numFontSize = 30.0;
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     // 有效高度: 视图的
     CGFloat visibleHeight = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
@@ -253,139 +252,130 @@
     CGFloat inset = 5.0;
     // 宽度: 数字按钮
     CGFloat numBtnWidth = self.view.bounds.size.width/3.0;
-    // 金额显示框的高度:固定高度
-    CGFloat displayMoneyHeight = numBtnWidth * 3.0/4.0 * 3.0/4.0;
     // logo imageView高度
     CGSize  logoImgSize = [UIImage imageNamed:ImageForBrand].size;
     CGFloat logoImgWidth = self.view.bounds.size.width / 2.0;
     CGFloat logoImgHeight = logoImgWidth * logoImgSize.height/logoImgSize.width;
-    CGFloat logoImgViewHeight           = (visibleHeight - displayMoneyHeight*4)/3.0;
-    if (logoImgViewHeight < logoImgHeight + inset*2.0) {
-        logoImgViewHeight = logoImgHeight + inset*2.0;
+    /* ---------
+     1.计算好logo的最小高度
+     2.计算数字按钮最大高度
+     3.计算金额显示框最大高度
+     4.计算金额显示框最小高度
+     --------- */
+    CGFloat minHeightLogoImageView = logoImgHeight + inset*2;
+    CGFloat maxHeightNumButton = numBtnWidth * 3.0/4.0 * 4.0/5.0;
+    CGFloat maxHeightMoneyDisplay = maxHeightNumButton * 1.5;
+    CGFloat minHeightMoneyDisplay = minHeightLogoImageView;
+    
+    // 初始高度值: 图标、金额框、数字按钮
+    CGFloat heightLogoImageView = minHeightLogoImageView;
+    CGFloat heightMoneyDisplay = minHeightMoneyDisplay;
+    CGFloat heightNumButton = (visibleHeight - minHeightLogoImageView - minHeightMoneyDisplay)/5.0;
+    // 如果数字按钮高度大于最大值:置为最大值,金额框、logo视图各分多出来的高度的一半
+    if (heightNumButton > maxHeightNumButton) {
+        CGFloat difference = (heightNumButton - maxHeightNumButton)*5;
+        heightNumButton = maxHeightNumButton;
+        heightLogoImageView += difference/2.0;
+        heightMoneyDisplay += difference/2.0;
     }
-    // 高度: 刷卡按钮的
-    CGFloat swipeBtnHeight = displayMoneyHeight;
-    // 数字按钮高度
-    CGFloat numBtnHeight = displayMoneyHeight;
-    if (numBtnWidth * 5 + inset * 2 + bornerWith > visibleHeight - logoImgViewHeight - displayMoneyHeight) {
-        numBtnHeight = (visibleHeight - logoImgViewHeight - displayMoneyHeight - bornerWith - inset*2)/5.0;
-        if (numBtnHeight < 60.0) {
-            swipeBtnHeight = 60.0;
-            numBtnHeight = (numBtnHeight * 5.0 - 60.0)/4.0;
-        }
-    }
+    CGFloat yCenterPre = 0 + statusBarHeight;
+    //////////////////////
+
     
     // 图标
-    CGRect  frame                       = CGRectMake((self.view.bounds.size.width - logoImgWidth)/2,
-                                                     0 + statusBarHeight + (logoImgViewHeight - logoImgHeight)/2.0,
-                                                     logoImgWidth,
-                                                     logoImgHeight);
+    CGRect  frame                       = CGRectMake(0, 0, logoImgWidth, logoImgHeight);
     UIImageView *imageView              = [[UIImageView alloc] initWithFrame:frame];
     imageView.image                     = [UIImage imageNamed:ImageForBrand];
+    imageView.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightLogoImageView/2.0);
+    yCenterPre += heightLogoImageView;
     [self.view addSubview:imageView];
     
     // 金额背景框
-    frame.origin.x                      = 0 + bornerWith;
-    frame.origin.y                      += frame.size.height+ (logoImgViewHeight - logoImgHeight)/2.0 + bornerWith;
-    frame.size.width                    = self.view.bounds.size.width - bornerWith*2;
-    frame.size.height                   = displayMoneyHeight;
+    frame.size.width = self.view.bounds.size.width - bornerWith*2;
+    frame.size.height                   = heightMoneyDisplay - bornerWith*2;
     UIView  *moneyView                  = [[UIView alloc] initWithFrame:frame];
-    moneyView.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0];
+    moneyView.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0]; // 灰色
+    moneyView.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightMoneyDisplay/2.0);
     [self.view addSubview:moneyView];
+    
     // moneyLabel
-    CGRect innerFrame                   = CGRectMake(0, 0, frame.size.width - 45, frame.size.height);
-    self.labelDisplayMoney.frame            = innerFrame;
-    self.labelDisplayMoney.text             = @"0.00";
-    self.labelDisplayMoney.textAlignment    = NSTextAlignmentRight;
-    CGSize fontSize = [self.labelDisplayMoney.text sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:37] forKey:NSFontAttributeName]];
-    // 金额字体大小占 frame 高度的 2/3
-    self.labelDisplayMoney.font             = [UIFont boldSystemFontOfSize: (innerFrame.size.height*2.0/3.0 / fontSize.height * 37)];
-    
-    
-    
+    CGRect innerFrame = CGRectMake(0, 0, frame.size.width - 45, frame.size.height);
+    self.labelDisplayMoney.frame = innerFrame;
+    self.labelDisplayMoney.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:innerFrame.size andScale:7.0/12.0]];
     [moneyView addSubview:self.labelDisplayMoney];
+    
+    // 结算方式切换视图
+    innerFrame.origin.x += inset;
+    innerFrame.origin.y += inset;
+    innerFrame.size.height = 20;
+    [self.settlementView setFrame:innerFrame];
+    [moneyView addSubview:self.settlementView];
+    
     // moneyImageView 金额符号Label : 字体大小为金额字体大小的 3/4, 因为字体为汉字，显示要比英文字母高一点，所以将y降低一个 inset，高度也减少一个 inset
-    innerFrame.origin.x                 += innerFrame.size.width + inset;
-    innerFrame.origin.y                 += inset;
+    innerFrame.origin.x                 = 0 + innerFrame.size.width + inset;
+    innerFrame.origin.y                 = 0 + inset;
     innerFrame.size.width               = frame.size.width - innerFrame.origin.x;
-    innerFrame.size.height              -= inset;
+    innerFrame.size.height              = frame.size.height;
     UILabel *moneySymbolLabel           = [[UILabel alloc] initWithFrame:innerFrame];
     moneySymbolLabel.text               = @"￥";
     moneySymbolLabel.textAlignment      = NSTextAlignmentLeft;
-    moneySymbolLabel.font               = [UIFont boldSystemFontOfSize:(innerFrame.size.height*2.0/3.0 / fontSize.height * 37)/4.0*3.0];
+    moneySymbolLabel.font               = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:7.0/12.0 * 2.0/3.0]];
     [moneyView addSubview:moneySymbolLabel];
+    yCenterPre += heightMoneyDisplay;
     
-    
-    
-    // 数字按键组     4/8
-    NSArray * numbers                   = [NSArray arrayWithObjects:@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"delete",nil];
-    frame.origin.x                      = 0;
-    frame.origin.y                      += frame.size.height + bornerWith*2.0;
+    // 数字按键组
+    NSArray * numbers                   = @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@".",@"0",@"delete"];
     frame.size.width                    = numBtnWidth;
-    frame.size.height                   = numBtnHeight;
-    CGRect numbersFrame                 = CGRectMake(frame.origin.x, frame.origin.y, self.view.bounds.size.width, numBtnHeight*4.0);
-    NSInteger index                     = 0;
-    for (int i = 0; i<4; i++) {
-        frame.origin.x                  = 0.0;
-        for (int j = 0; j<3; j++) {
-            // frame 都已经准备好，可以直接装填数字按钮组了
-            id button;
-            // “撤销”按钮
-            if (i == 3 && j == 2) {
-                button                                          = [[DeleteButton alloc] initWithFrame:frame];
-                [(DeleteButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-                [(DeleteButton*)button  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
-                [(DeleteButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
-                // 给撤销按钮添加一个长按事件:将金额清零,金额栈也清0
-                UILongPressGestureRecognizer *longPress         = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressButtonOfDelete:)];
-                longPress.minimumPressDuration                  = 0.8;
-                [(DeleteButton*)button addGestureRecognizer:longPress];
-                // addSubview
-                [self.view addSubview:button];
-            }
-            // 数字按钮
-            else {
-                button                                          = [[UIButton alloc] initWithFrame:frame];
-                [button setTitle:[numbers objectAtIndex:index] forState:UIControlStateNormal];
-                [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize];
-                ((UIButton*)button).titleLabel.font             = [UIFont boldSystemFontOfSize:numFontSize * [self resizeFontWithButton:button inFrame:frame]];
-                [(UIButton*)button  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-                [(UIButton*)button  addTarget:self action:@selector(touchUp:) forControlEvents:UIControlEventTouchUpInside];
-                [(UIButton*)button  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
-                [self.view addSubview:button];
-            }
-            /////////////////////
-            
-            index++;
-            frame.origin.x              += frame.size.width;
+    frame.size.height                   = heightNumButton;
+    CGRect numbersFrame                 = CGRectMake(0, yCenterPre, self.view.bounds.size.width, heightNumButton*4);
+    for (int i = 0; i < numbers.count; i++) {
+        NSString* titleButton = [numbers objectAtIndex:i];
+        CGPoint curCenterPoint = CGPointMake(0 + numBtnWidth * (i % 3) + numBtnWidth/2.0, yCenterPre + heightNumButton * (i / 3) + heightNumButton/2.0);
+        // 数字按钮+小数点按钮
+        if (titleButton.length == 1) {
+            UIButton* numberButton = [[UIButton alloc] initWithFrame:frame];
+            numberButton.center = curCenterPoint;
+            [numberButton setTitle:titleButton forState:UIControlStateNormal];
+            [numberButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            numberButton.titleLabel.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:2.0/3.0]];
+            [numberButton  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+            [numberButton  addTarget:self action:@selector(touchUp:) forControlEvents:UIControlEventTouchUpInside];
+            [numberButton  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
+            [self.view addSubview:numberButton];
         }
-        frame.origin.y                  += numBtnHeight;
+        // 删除按钮
+        else {
+            DeleteButton* deleteButton = [[DeleteButton alloc] initWithFrame:frame];
+            deleteButton.center = curCenterPoint;
+            [deleteButton  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+            [deleteButton  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
+            [deleteButton  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
+            // 给撤销按钮添加一个长按事件:将金额清零,金额栈也清0
+            UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressButtonOfDelete:)];
+            longPress.minimumPressDuration = 0.8;
+            [deleteButton addGestureRecognizer:longPress];
+            [self.view addSubview:deleteButton];
+        }
     }
     // 分割线
     [self drawLineInRect:numbersFrame];
+    yCenterPre += heightNumButton*4;
     
-    
-    
-    // 刷卡按钮       3/8/3.3 * 1.3
-    frame.origin.x                      = 0 + inset;
-    frame.origin.y                      += (visibleHeight - frame.origin.y + statusBarHeight - swipeBtnHeight)/2.0;
+    // 刷卡按钮
     frame.size.width                    = self.view.bounds.size.width - inset*2;
-    frame.size.height                   = swipeBtnHeight;
+    frame.size.height                   = heightNumButton - inset*2;
     UIButton *brushButton               = [[UIButton alloc] initWithFrame:frame];
+    brushButton.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightNumButton/2.0);
     brushButton.layer.cornerRadius      = 8.0;
-    brushButton.backgroundColor         = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+    brushButton.backgroundColor         = [PublicInformation returnCommonAppColor:@"red"];
     [brushButton setTitle:@"开始刷卡" forState:UIControlStateNormal];
     [brushButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [brushButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [brushButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    
-    brushButton.titleLabel.font         = [UIFont boldSystemFontOfSize:32];
-    // 添加 action
+    brushButton.titleLabel.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:0.7]];
     [brushButton addTarget:self action:@selector(beginBrush:) forControlEvents:UIControlEventTouchDown];
     [brushButton addTarget:self action:@selector(toBrushClick:) forControlEvents:UIControlEventTouchUpInside];
     [brushButton addTarget:self action:@selector(outBrush:) forControlEvents:UIControlEventTouchUpOutside];
-    
     [brushButton setSelected:YES];
     [self.view addSubview:brushButton];
 }
@@ -430,6 +420,9 @@
 - (UILabel *)labelDisplayMoney {
     if (_labelDisplayMoney == nil) {
         _labelDisplayMoney = [[UILabel alloc] initWithFrame:CGRectZero];
+        _labelDisplayMoney.text = @"0.00";
+        _labelDisplayMoney.textColor = [UIColor blackColor];
+        _labelDisplayMoney.textAlignment = NSTextAlignmentRight;
     }
     return _labelDisplayMoney;
 }

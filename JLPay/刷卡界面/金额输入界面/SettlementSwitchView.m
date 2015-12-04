@@ -43,6 +43,9 @@ static NSString* const stringSettlementD_0 = @"D+0";
     
     [self.buttonSwitch.titleLabel setFont:fontLabelText];
     [self.buttonSwitch sizeToFit];
+    CGRect bound = self.buttonSwitch.bounds;
+    bound.size.height = self.frame.size.height;
+    [self.buttonSwitch setBounds:bound];
     self.buttonSwitch.layer.position = CGPointMake(self.labelSettlementDisplay.bounds.size.width, 0.0);
     self.buttonSwitch.layer.anchorPoint = CGPointMake(0.0, 0.0);
 }
@@ -52,7 +55,7 @@ static NSString* const stringSettlementD_0 = @"D+0";
     if (_labelSettlementDisplay == nil) {
         _labelSettlementDisplay = [[UILabel alloc] initWithFrame:CGRectZero];
         _labelSettlementDisplay.text = [NSString stringWithFormat:@"%@%@,",stringSettlementOrigin,stringSettlementT_1];
-        _labelSettlementDisplay.textColor = [UIColor blackColor];
+        _labelSettlementDisplay.textColor = [UIColor colorWithWhite:0.3 alpha:1];
         _labelSettlementDisplay.textAlignment = NSTextAlignmentLeft;
     }
     return _labelSettlementDisplay;
@@ -61,7 +64,7 @@ static NSString* const stringSettlementD_0 = @"D+0";
     if (_buttonSwitch == nil) {
         _buttonSwitch = [[UIButton alloc] initWithFrame:CGRectZero];
         [_buttonSwitch setTitle:@"切换" forState:UIControlStateNormal];
-        [_buttonSwitch setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+        [_buttonSwitch setTitleColor:[UIColor brownColor] forState:UIControlStateNormal];
     }
     return _buttonSwitch;
 }

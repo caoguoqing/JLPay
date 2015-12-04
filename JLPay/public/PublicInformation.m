@@ -590,7 +590,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 /* app通用ui颜色:
  *      red
  *      green
- *
+ *      
  */
 +(UIColor*) returnCommonAppColor:(NSString*)color {
     UIColor* retColor = nil;
