@@ -9,8 +9,10 @@
 #import "SettlementSwitchView.h"
 #import "PublicInformation.h"
 
+
 static NSString* const stringSettlementT_1 = @"T+1";
 static NSString* const stringSettlementT_0 = @"T+0";
+
 
 @interface SettlementSwitchView()
 {
@@ -40,6 +42,8 @@ static NSString* const stringSettlementT_0 = @"T+0";
     self.labelSettlementDisplay.layer.position = CGPointMake(0.0, 0.0);
     self.labelSettlementDisplay.layer.anchorPoint = CGPointMake(0.0, 0.0);
     self.labelSettlementDisplay.textColor = (self.enableSwitching)?([UIColor colorWithWhite:0.3 alpha:1]):([UIColor grayColor]);
+    self.labelSettlementDisplay.text = [self textSettlementDisplayWithType:curSettlementTYpe];
+
     
     [self.buttonSwitch.titleLabel setFont:fontLabelText];
     [self.buttonSwitch sizeToFit];
@@ -62,11 +66,16 @@ static NSString* const stringSettlementT_0 = @"T+0";
     if (![self enumExistsSettlemenType:curSettlementTYpe]) {
         curSettlementTYpe = SETTLEMENTTYPE_T_1;
     }
+    // 更新显示文本
     [self.labelSettlementDisplay setText:[self textSettlementDisplayWithType:curSettlementTYpe]];
     [self setNeedsLayout];
+    // 回调
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didSwitchedSettlementType:)]) {
+        [self.delegate didSwitchedSettlementType:curSettlementTYpe];
+    }
 }
 
-#pragma mask ---- PRIVATE INTERFACE
+#pragma mask ---- 获取结算方式的描述文本
 /* 当前结算方式文本: 指定结算方式枚举量 */
 - (NSString*) textCurrentSettlementType:(SETTLEMENTTYPE)settlementType {
     NSString* text = nil;
@@ -83,6 +92,9 @@ static NSString* const stringSettlementT_0 = @"T+0";
     }
     return text;
 }
+
+#pragma mask ---- PRIVATE INTERFACE
+
 /* 组织结算方式的提示文本 */
 - (NSString*) textSettlementDisplayWithType:(SETTLEMENTTYPE)settlementType {
     NSString* text = nil;
@@ -111,7 +123,6 @@ static NSString* const stringSettlementT_0 = @"T+0";
 - (UILabel *)labelSettlementDisplay {
     if (_labelSettlementDisplay == nil) {
         _labelSettlementDisplay = [[UILabel alloc] initWithFrame:CGRectZero];
-        _labelSettlementDisplay.text = [self textSettlementDisplayWithType:curSettlementTYpe];
         _labelSettlementDisplay.textAlignment = NSTextAlignmentLeft;
     }
     return _labelSettlementDisplay;

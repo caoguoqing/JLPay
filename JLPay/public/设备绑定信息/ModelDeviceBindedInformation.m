@@ -22,9 +22,7 @@
 #define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
 #define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
 
-
-
-#define KeyDeviceBinded @"KeyDeviceBinded__"  // 设备绑定标记
+#define KeyDeviceBinded @"KeyDeviceBinded__"  // 设备绑定标记: YES:已绑定设备；NO:未绑定设备；
 
 
 
