@@ -39,10 +39,17 @@
                           };
         
         self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-        self.title = @"结算信息";
-        [self.navigationController.navigationBar setTintColor:[UIColor redColor]];
     }
     return self;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"结算信息";
+    // 修改标题栏的字体颜色
+    UIColor* color = [UIColor redColor];
+    NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
+    self.navigationController.navigationBar.titleTextAttributes = textAttri;
+    
 }
 
 #pragma mask ---- UITableViewDataSource
@@ -105,7 +112,9 @@
     nextStepButton.layer.cornerRadius = 8.0;
     return view;
 }
-
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
+}
 
 
 

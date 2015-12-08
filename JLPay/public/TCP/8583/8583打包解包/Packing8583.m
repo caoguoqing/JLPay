@@ -11,6 +11,7 @@
 #import "PublicInformation.h"
 #import "ISOFieldFormation.h"
 #import "Define_Header.h"
+#import "ModelFeeRates.h"
 
 @interface Packing8583() {
     NSString* exchangeType;
@@ -98,20 +99,32 @@
     // 60.4 N1 手机统一送1
     [F60 appendString:@"1"];
     // 60.5 N1 费率:
-    BOOL hasJiGou = [self isSavedJiGouInfo];
-    if (hasJiGou) {
-        [F60 appendString:@"9"];
-    } else {
+    if (![tranType isEqualToString:TranType_Consume]) { // 非消费交易: 0
         [F60 appendString:@"0"];
     }
-    // 60.6 N15 商户号:
-    if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
-        [F60 appendString:[self businessNumInJiGou]];
+    else { // 消费交易: 根据多费率、多商户不同
+        BOOL hasJiGou = [self isSavedJiGouInfo];
+        if (hasJiGou) {
+            [F60 appendString:@"9"];
+        } else {
+            if ([ModelFeeRates isSavedFeeRate]) {
+                NSString* valueOfFeeRate = [ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]];
+                NSLog(@"已保存指定费率:[%@]",valueOfFeeRate);
+                [F60 appendString:valueOfFeeRate];
+            } else {
+                [F60 appendString:@"0"];
+            }
+        }
+        // 60.6 N15 商户号:
+        if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
+            [F60 appendString:[self businessNumInJiGou]];
+        }
+        // 60.7 N8 终端号:
+        if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
+            [F60 appendString:[self terminalNumInJiGou]];
+        }
     }
-    // 60.7 N8 终端号:
-    if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
-        [F60 appendString:[self terminalNumInJiGou]];
-    }
+    
 
     
     return F60;
@@ -171,6 +184,7 @@
 
 // 取数据字典中所有值,打包成串
 - (NSString*) allDataString {
+    NSLog(@"打包的所有域:{%@}",self.dictionaryFieldNamesAndValues);
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];

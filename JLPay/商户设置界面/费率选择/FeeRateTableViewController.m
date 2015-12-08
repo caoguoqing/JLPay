@@ -77,7 +77,6 @@
     CGFloat heightButton = 40;
 
     UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-//    view.backgroundColor = [UIColor yellowColor];
     // 加载费率显示标签
     frame.origin.x = inset * 3;
     frame.origin.y = inset;
@@ -113,19 +112,6 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    // 先取消前面点击的cell
-//    if (selectedCellIndex >= 0) {
-//        UITableViewCell* cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:selectedCellIndex inSection:indexPath.section]];
-//        cell.accessoryType = UITableViewCellAccessoryNone;
-//    }
-//    // 如果不是重复点击就标记cell
-//    if (selectedCellIndex != indexPath.row) {
-//        UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-//        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-//        selectedCellIndex = indexPath.row;
-//    } else {
-//        selectedCellIndex = -1;
-//    }
     if (indexPath.row == selectedCellIndex) {
         selectedCellIndex = -1;
     } else {
@@ -169,7 +155,6 @@
     label.text = @"已保存费率:";
     label.textAlignment = NSTextAlignmentLeft;
     label.textColor = [UIColor grayColor];
-//    label.backgroundColor = [UIColor orangeColor];
     [label sizeToFit];
     return label;
 }
@@ -178,7 +163,6 @@
     if (_labelFeeRateName == nil) {
         _labelFeeRateName = [[UILabel alloc] initWithFrame:CGRectZero];
         _labelFeeRateName.textAlignment = NSTextAlignmentLeft;
-//        _labelFeeRateName.backgroundColor = [UIColor greenColor];
     }
     return _labelFeeRateName;
 }
@@ -200,6 +184,8 @@
         [self.tableView reloadData];
     }
 }
+
+
 - (IBAction) touchDown:(UIButton*)sender {
     sender.transform = CGAffineTransformMakeScale(0.95, 0.95);
 }
