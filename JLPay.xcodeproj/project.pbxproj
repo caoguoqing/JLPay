@@ -183,6 +183,7 @@
 		5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EFD09811C1139B40062AD34 /* Default-568h@2x.png */; };
 		5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09841C1141BE0062AD34 /* SettlementSwitchView.m */; };
 		5EFD09881C153B5A0062AD34 /* HTTPRequestSettlementInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09871C153B5A0062AD34 /* HTTPRequestSettlementInfo.m */; };
+		5EFD098B1C1577160062AD34 /* SettlementInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
 /* End PBXBuildFile section */
@@ -525,6 +526,8 @@
 		5EFD09841C1141BE0062AD34 /* SettlementSwitchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettlementSwitchView.m; sourceTree = "<group>"; };
 		5EFD09861C153B5A0062AD34 /* HTTPRequestSettlementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequestSettlementInfo.h; sourceTree = "<group>"; };
 		5EFD09871C153B5A0062AD34 /* HTTPRequestSettlementInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestSettlementInfo.m; sourceTree = "<group>"; };
+		5EFD09891C1577160062AD34 /* SettlementInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettlementInfoViewController.h; sourceTree = "<group>"; };
+		5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettlementInfoViewController.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
@@ -927,6 +930,8 @@
 			children = (
 				5EB4C8211B05937200410E06 /* CustPayViewController.h */,
 				5EB4C8221B05937200410E06 /* CustPayViewController.m */,
+				5EFD09891C1577160062AD34 /* SettlementInfoViewController.h */,
+				5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */,
 			);
 			name = controller;
 			sourceTree = "<group>";
@@ -1809,6 +1814,7 @@
 				5EF4C0E01B1706CB00CE3E3F /* OtherSignButton.m in Sources */,
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */,
+				5EFD098B1C1577160062AD34 /* SettlementInfoViewController.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
 				5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */,

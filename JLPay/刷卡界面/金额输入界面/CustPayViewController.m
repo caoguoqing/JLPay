@@ -14,6 +14,7 @@
 #import "DeleteButton.h"
 #import "Packing8583.h"
 #import "SettlementSwitchView.h"
+#import "SettlementInfoViewController.h"
 #import "HTTPRequestSettlementInfo.h"
 #import "ModelDeviceBindedInformation.h"
 
@@ -26,6 +27,7 @@
 {
     BOOL blueToothPowerOn;  // 蓝牙打开状态标记
     CBCentralManager* blueManager; // 蓝牙设备操作入口
+    BOOL isSettlementT_0;
 }
 @property (nonatomic, strong) UILabel           *labelDisplayMoney;         // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
@@ -48,6 +50,7 @@
     UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
     [self.navigationItem setBackBarButtonItem:backBarButton];
     
+    isSettlementT_0 = NO;
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
@@ -71,7 +74,12 @@
     // 更新结算方式的标记
     if (self.settlementInformation) {
         [self.settlementView setEnableSwitching:[[self.settlementInformation objectForKey:kSettleInfoNameT_0_Enable] boolValue]];
+        [self.settlementView switchNormal];
     }
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.navigationController.navigationBarHidden = NO;
 }
 
 #pragma mask ---- HTTP && HTTPRequestSettlementInfoDelegate
@@ -99,16 +107,18 @@
     switch (settlementType) {
         case SETTLEMENTTYPE_T_0:
         {
+            isSettlementT_0 = YES;
             // 提示T+0信息
             [self alertInformationForT_0];
         }
             break;
         case SETTLEMENTTYPE_T_1:
         {
-            // do nothing
+            isSettlementT_0 = NO;
         }
             break;
         default:
+            isSettlementT_0 = YES;
             break;
     }
 }
@@ -247,14 +257,21 @@
         return;
     }
     
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
-    [viewcon setStringOfTranType:TranType_Consume];
-    [viewcon setSFloatMoney:self.money];
-    [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.money]];
-        
-    // 跳转
-    [self.navigationController pushViewController:viewcon animated:YES];
+//    if (self.settlementInformation && [[self.settlementInformation objectForKey:kSettleInfoNameT_0_Enable] boolValue]) {
+    if (isSettlementT_0) {
+        SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithStyle:UITableViewStylePlain];
+        settlementVC.settlementInformation = [NSDictionary dictionaryWithDictionary:[self.settlementInformation copy]];
+        settlementVC.sFloatMoney = self.money;
+        [self.navigationController pushViewController:settlementVC animated:YES];
+    } else {
+        // 跳转刷卡界面
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+        [viewcon setStringOfTranType:TranType_Consume];
+        [viewcon setSFloatMoney:self.money];
+        [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.money]];
+        [self.navigationController pushViewController:viewcon animated:YES];
+    }
     
     // 重置金额
     self.money = @"0.00";

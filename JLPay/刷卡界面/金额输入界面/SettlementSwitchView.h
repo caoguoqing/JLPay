@@ -35,6 +35,9 @@ typedef enum {
 
 @property (nonatomic, assign) BOOL enableSwitching; // 是否允许切换
 
+/* 切换回正常状态 */
+- (void) switchNormal;
+
 /* 当前结算方式文本: 指定结算方式枚举量 */
 - (NSString*) textCurrentSettlementType:(SETTLEMENTTYPE)settlementType ;
 

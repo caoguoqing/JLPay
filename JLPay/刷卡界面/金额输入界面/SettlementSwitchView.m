@@ -59,6 +59,22 @@ static NSString* const stringSettlementT_0 = @"T+0";
     }
 }
 
+/* 切换回正常状态 */
+- (void) switchNormal {
+    switch (curSettlementTYpe) {
+        case SETTLEMENTTYPE_T_0:
+            [self clickToSwichSettlementType];
+            break;
+        case SETTLEMENTTYPE_T_1:
+            // do nothing
+            break;
+        default:
+            // do nothing
+            break;
+    }
+}
+
+
 #pragma mask ---- 点击切换
 - (void) clickToSwichSettlementType {
     // 根据当前值切换
