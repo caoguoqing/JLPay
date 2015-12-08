@@ -12,6 +12,7 @@
 #import "TransDetailsViewController.h"
 #import "Define_Header.h"
 #import "DeviceSignInViewController.h"
+#import "FeeRateTableViewController.h"
 #import "RateViewController.h"
 #import "BrushViewController.h"
 #import "Packing8583.h"
@@ -178,7 +179,8 @@
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"费率选择"]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"rateViewController"];
+//        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"rateViewController"];
+        viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"余额查询"]) {
@@ -225,7 +227,7 @@
                       @"账号名称",
                       @"交易明细",
                       @"绑定设备",
-//                      @"费率选择",
+                      @"费率选择",
 //                      @"余额查询",
                       @"修改密码",
                       @"帮助和关于", nil];

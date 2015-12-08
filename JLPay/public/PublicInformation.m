@@ -108,6 +108,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (TestOrProduce == 7) {
         port = @"9088";
     }
+    else if (TestOrProduce == 3) {
+        port = @"60701";
+    }
     else {
         port = @"80";
     }
@@ -118,6 +121,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     NSString* port = nil;
     if (TestOrProduce == 7) {
         port = @"8088";
+    }
+    else if (TestOrProduce == 3) {
+        port = @"60780";
     }
     else {
         port = @"80";

@@ -184,6 +184,8 @@
 		5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09841C1141BE0062AD34 /* SettlementSwitchView.m */; };
 		5EFD09881C153B5A0062AD34 /* HTTPRequestSettlementInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09871C153B5A0062AD34 /* HTTPRequestSettlementInfo.m */; };
 		5EFD098B1C1577160062AD34 /* SettlementInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */; };
+		5EFD09911C1681BA0062AD34 /* ModelFeeRates.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09901C1681BA0062AD34 /* ModelFeeRates.m */; };
+		5EFD09941C16A8530062AD34 /* FeeRateTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
 /* End PBXBuildFile section */
@@ -528,6 +530,10 @@
 		5EFD09871C153B5A0062AD34 /* HTTPRequestSettlementInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestSettlementInfo.m; sourceTree = "<group>"; };
 		5EFD09891C1577160062AD34 /* SettlementInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettlementInfoViewController.h; sourceTree = "<group>"; };
 		5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettlementInfoViewController.m; sourceTree = "<group>"; };
+		5EFD098F1C1681BA0062AD34 /* ModelFeeRates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelFeeRates.h; sourceTree = "<group>"; };
+		5EFD09901C1681BA0062AD34 /* ModelFeeRates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelFeeRates.m; sourceTree = "<group>"; };
+		5EFD09921C16A8530062AD34 /* FeeRateTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeeRateTableViewController.h; sourceTree = "<group>"; };
+		5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeeRateTableViewController.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
@@ -1453,8 +1459,9 @@
 		5EF3BAA41B69BFF600DCD764 /* 费率选择 */ = {
 			isa = PBXGroup;
 			children = (
-				5EF3BAA51B69C01900DCD764 /* RateViewController.h */,
-				5EF3BAA61B69C01900DCD764 /* RateViewController.m */,
+				5EFD098E1C1680E40062AD34 /* controller */,
+				5EFD098D1C1680DF0062AD34 /* view */,
+				5EFD098C1C1680CE0062AD34 /* model */,
 			);
 			path = "费率选择";
 			sourceTree = "<group>";
@@ -1490,6 +1497,33 @@
 				5E5E35481B735A6300560C0A /* 忘记密码 */,
 			);
 			path = "登陆界面";
+			sourceTree = "<group>";
+		};
+		5EFD098C1C1680CE0062AD34 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				5EFD098F1C1681BA0062AD34 /* ModelFeeRates.h */,
+				5EFD09901C1681BA0062AD34 /* ModelFeeRates.m */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		5EFD098D1C1680DF0062AD34 /* view */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		5EFD098E1C1680E40062AD34 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				5EFD09921C16A8530062AD34 /* FeeRateTableViewController.h */,
+				5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */,
+				5EF3BAA51B69C01900DCD764 /* RateViewController.h */,
+				5EF3BAA61B69C01900DCD764 /* RateViewController.m */,
+			);
+			name = controller;
 			sourceTree = "<group>";
 		};
 		9E4D909E1BCF59C60096F84E /* cellImageView */ = {
@@ -1727,6 +1761,7 @@
 				5E397B3C1AD36429004F206F /* ASIWebPageRequest.m in Sources */,
 				5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */,
 				5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */,
+				5EFD09911C1681BA0062AD34 /* ModelFeeRates.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
 				5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */,
 				5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */,
@@ -1808,6 +1843,7 @@
 				5E93B4AF1BEC33C90064BEC4 /* CodeScannerViewController.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
 				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
+				5EFD09941C16A8530062AD34 /* FeeRateTableViewController.m in Sources */,
 				5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
 				5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */,
