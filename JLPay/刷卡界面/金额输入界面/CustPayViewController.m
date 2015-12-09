@@ -23,7 +23,8 @@
 
 
 @interface CustPayViewController ()
-<UIAlertViewDelegate, CBCentralManagerDelegate, HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
+<UIAlertViewDelegate, CBCentralManagerDelegate,UINavigationBarDelegate,
+HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 {
     BOOL blueToothPowerOn;  // 蓝牙打开状态标记
     CBCentralManager* blueManager; // 蓝牙设备操作入口
@@ -34,7 +35,7 @@
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
 
 @property (nonatomic, strong) SettlementSwitchView* settlementView;         // 结算方式切换视图
-@property (nonatomic, retain) HTTPRequestSettlementInfo* settlementHTTP;    // 商户结算信息的http
+//@property (nonatomic, retain) HTTPRequestSettlementInfo* settlementHTTP;    // 商户结算信息的http
 @property (nonatomic, strong) NSDictionary* settlementInformation;          // 商户的结算信息
 @end
 
@@ -47,8 +48,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self addSubViews];
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
+    [self setBackBarButtonNoTitle];
+    [self.navigationController.navigationBar setDelegate:self];
     
     isSettlementT_0 = NO;
     blueToothPowerOn = NO;
@@ -57,8 +58,12 @@
     // 申请结算信息
     [self startHTTPRequestForSettlementInfo];
 }
-- (void) backToLastViewController {
-    [self.navigationController popViewControllerAnimated:YES];
+- (void) setBackBarButtonNoTitle {
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToRootViewController:)];
+        [self.navigationItem setBackBarButtonItem:backBarButton];
+}
+- (IBAction) backToRootViewController:(id)sender {
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 
@@ -82,27 +87,47 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBarHidden = NO;
+    
+    [[HTTPRequestSettlementInfo sharedInstance] requestTerminate];
 }
+
+#pragma mask ---- UINavigationBarDelegate
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
+    // 在 navigationController 系列视图界面,回退始终是回退到根视图界面
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    return YES;
+}
+
 
 #pragma mask ---- HTTP && HTTPRequestSettlementInfoDelegate
 /* 请求数据 */
 - (void) startHTTPRequestForSettlementInfo {
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        [self.settlementHTTP requestSettlementInfoWithBusinessNumber:[ModelDeviceBindedInformation businessNoBinded]
-                                                      terminalNumber:[ModelDeviceBindedInformation terminalNoBinded]
-                                                            delegate:self];
+//        [self.settlementHTTP requestSettlementInfoWithBusinessNumber:[ModelDeviceBindedInformation businessNoBinded]
+//                                                      terminalNumber:[ModelDeviceBindedInformation terminalNoBinded]
+//                                                            delegate:self];
+        [[HTTPRequestSettlementInfo sharedInstance] requestSettlementInfoWithBusinessNumber:[ModelDeviceBindedInformation businessNoBinded] delegate:self];
     }
 }
 /* 回调 */
-- (void) didRequestedResult:(BOOL)result settlementInfo:(NSDictionary *)settlementInfo orErrorMessage:(NSString *)errorMessage
-{
-    if (result) {
-        self.settlementInformation = [NSDictionary dictionaryWithDictionary:[settlementInfo copy]];
-    } else {
-        NSString* alert = [NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage];
-        [self alertShow:alert];
-    }
+- (void)didRequestedSuccessWithSettlementInfo:(NSDictionary *)settlementInfo {
+    self.settlementInformation = [NSDictionary dictionaryWithDictionary:[settlementInfo copy]];
 }
+- (void)didRequestedFailedWithErrorMessage:(NSString *)errorMessage {
+    NSString* alert = [NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage];
+    [self alertShow:alert];
+}
+
+
+//- (void) didRequestedResult:(BOOL)result settlementInfo:(NSDictionary *)settlementInfo orErrorMessage:(NSString *)errorMessage
+//{
+//    if (result) {
+//        self.settlementInformation = [NSDictionary dictionaryWithDictionary:[settlementInfo copy]];
+//    } else {
+//        NSString* alert = [NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage];
+//        [self alertShow:alert];
+//    }
+//}
 
 #pragma mask ---- SettlementSwitchViewDelegate
 - (void)didSwitchedSettlementType:(SETTLEMENTTYPE)settlementType {
@@ -259,7 +284,6 @@
         return;
     }
     
-//    if (self.settlementInformation && [[self.settlementInformation objectForKey:kSettleInfoNameT_0_Enable] boolValue]) {
     if (isSettlementT_0) {
         SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithStyle:UITableViewStylePlain];
         settlementVC.settlementInformation = [NSDictionary dictionaryWithDictionary:[self.settlementInformation copy]];
@@ -280,12 +304,6 @@
     self.moneyCalculated = nil;
 }
 
-
-
-#pragma mask ::: 自定义返回上层界面按钮的功能
-- (IBAction) backToPreVC :(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
-}
 
 /*************************************
  * 功  能 : 重新计算数字按钮组的文本的高度跟button高度的比例;
@@ -507,11 +525,11 @@
     }
     return _settlementView;
 }
-- (HTTPRequestSettlementInfo *)settlementHTTP {
-    if (_settlementHTTP == nil) {
-        _settlementHTTP = [[HTTPRequestSettlementInfo alloc] init];
-    }
-    return _settlementHTTP;
-}
+//- (HTTPRequestSettlementInfo *)settlementHTTP {
+//    if (_settlementHTTP == nil) {
+//        _settlementHTTP = [[HTTPRequestSettlementInfo alloc] init];
+//    }
+//    return _settlementHTTP;
+//}
 
 @end

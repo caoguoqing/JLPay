@@ -729,6 +729,18 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return dotMoney;
 }
 
+#pragma mask ::: 金额: 小数点格式 -> 12位无小数点格式
++ (NSString*) intMoneyFromDotMoney:(NSString*)dotMoney {
+    NSString* intMoney = nil;
+    if ([dotMoney rangeOfString:@"."].length > 0) {
+        NSRange dotRange = [dotMoney rangeOfString:@"."];
+        NSString* intPart = (dotRange.location > 0)?([dotMoney substringToIndex:dotRange.location]):(@"0");
+        NSString* dotPart = (dotRange.location + dotRange.length == dotMoney.length)?(@"0"):([dotMoney substringFromIndex:dotRange.location + dotRange.length]);
+        intMoney = [NSString stringWithFormat:@"%010d.%02d",intPart.intValue, dotPart.intValue];
+    }
+    return intMoney;
+}
+
 
 #pragma mask ::: 金额: c小数点格式 -> 12位无小数点格式
 + (NSString*) moneyStringWithCString:(char*)cstring {

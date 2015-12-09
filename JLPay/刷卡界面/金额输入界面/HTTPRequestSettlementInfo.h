@@ -14,30 +14,30 @@ static NSString* const kSettleInfoNameAmountLimit = @"kSettleInfoNameAmountLimit
 static NSString* const kSettleInfoNameAmountAvilable = @"kSettleInfoNameAmountAvilabel"; // 当日可用限额
 static NSString* const kSettleInfoNameMinCustAmount = @"kSettleInfoNameMinCustAmount"; // T+0最小消费金额
 static NSString* const kSettleInfoNameT_0_Fee = @"kSettleInfoNameT_0_Fee"; // T+0费率
-static NSString* const kSettleInfoNameT_1_Fee = @"kSettleInfoNameT_1_Fee"; // T+1费率
 
 
 @class HTTPRequestSettlementInfo;
 @protocol HTTPRequestSettlementInfoDelegate <NSObject>
 
-/*
- * result: 成功/失败;
- * settlementInfo: (result)?(not-nil):(nil);
- * errorMessage:   (result)?(nil):(not-nil);
- */
-- (void) didRequestedResult:(BOOL)result
-             settlementInfo:(NSDictionary*)settlementInfo
-             orErrorMessage:(NSString*)errorMessage;
+/* 成功 */
+- (void) didRequestedSuccessWithSettlementInfo:(NSDictionary*)settlementInfo;
+/* 失败 */
+- (void) didRequestedFailedWithErrorMessage:(NSString*)errorMessage;
+
 
 @end
 
 
 @interface HTTPRequestSettlementInfo : NSObject
 
+/* 公共入口 */
++ (instancetype) sharedInstance;
+
 /* 申请结算信息，指定: 商户号、终端号 */
 - (void) requestSettlementInfoWithBusinessNumber:(NSString*)businessNumber
-                                  terminalNumber:(NSString*)terminalNumber
                                         delegate:(id<HTTPRequestSettlementInfoDelegate>)delegate;
 
+/* 终止 */
+- (void) requestTerminate;
 
 @end

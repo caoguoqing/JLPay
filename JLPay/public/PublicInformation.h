@@ -135,5 +135,8 @@
 #pragma mask ::: 金额: 12位无小数点格式 -> 小数点格式
 + (NSString*) dotMoneyFromNoDotMoney:(NSString*)noDotMoney;
 
+#pragma mask ::: 金额: 小数点格式 -> 12位无小数点格式
++ (NSString*) intMoneyFromDotMoney:(NSString*)dotMoney;
+
 
 @end

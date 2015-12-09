@@ -9,6 +9,8 @@
 #import "SettlementInfoViewController.h"
 #import "HTTPRequestSettlementInfo.h"
 #import "PublicInformation.h"
+#import "BrushViewController.h"
+#import "Packing8583.h"
 
 @interface SettlementInfoViewController()
 <UITableViewDataSource, UITableViewDelegate>
@@ -40,9 +42,28 @@
         
         self.title = @"结算信息";
         self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+        
+        self.tableView.canCancelContentTouches = NO;
+        self.tableView.delaysContentTouches = NO;
+        
     }
     return self;
 }
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self setBackBarButtonNoTitle];
+}
+
+- (void) setBackBarButtonNoTitle {
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToRootViewController:)];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
+}
+- (IBAction) backToRootViewController:(id)sender  {
+    NSLog(@"%s:跳转到rootview", __func__);
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 
 #pragma mask ---- UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -101,14 +122,26 @@
     nextStepButton.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
     [nextStepButton setTitle:@"下一步" forState:UIControlStateNormal];
     [nextStepButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [nextStepButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     nextStepButton.layer.cornerRadius = 8.0;
+    
+    [nextStepButton addTarget:self action:@selector(touchToPushToBrushVC:) forControlEvents:UIControlEventTouchUpInside];
     return view;
 }
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
     return NO;
 }
 
-
+#pragma mask ---- 跳转到刷卡界面
+- (IBAction) touchToPushToBrushVC:(UIButton*)sender {
+    // 跳转刷卡界面
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+    [viewcon setStringOfTranType:TranType_Consume];
+    [viewcon setSFloatMoney:self.sFloatMoney];
+    [viewcon setSIntMoney:[PublicInformation intMoneyFromDotMoney:self.sFloatMoney]];
+    [self.navigationController pushViewController:viewcon animated:YES];
+}
 
 
 @end

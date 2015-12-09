@@ -84,11 +84,11 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     bgImageView.image               = [UIImage imageNamed:@"bg"];
     [self.view addSubview:bgImageView];
     _moveHeightByWindow             = 0.0;
-    // 登陆按钮
+    // 加载子视图
     [self addSubViews];
     [self EndEdit];
     
-    // 设置 title 的字体颜色
+    // 设置标题栏 title 的字体颜色
     UIColor *color                  = [UIColor redColor];
     NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = dict;

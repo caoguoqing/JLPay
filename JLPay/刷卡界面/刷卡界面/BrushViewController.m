@@ -91,7 +91,21 @@
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+    
+    [self setBackBarButtonNoTitle];
 }
+- (void) setBackBarButtonNoTitle {
+    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToRootViewController:)];
+//    [self.navigationController.navigationBar setDelegate:self];
+    [self.navigationItem setBackBarButtonItem:backBarButton];
+}
+- (IBAction) backToRootViewController :(id)sender {
+    NSLog(@"%s:跳转到rootview", __func__);
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+
+
 
 #pragma mask ::: 子视图的属性设置
 -(void)viewWillAppear:(BOOL)animated
@@ -105,6 +119,14 @@
         self.navigationController.navigationBarHidden = NO;
     }
 }
+
+
+#pragma mask ---- UINavigationBarDelegate
+//- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
+//    NSLog(@"----%s",__func__);
+//    return YES;
+//}
+
 #pragma mask ::: 界面显示后的事件注册及处理
 /*************************************
  * 功  能 : 进入界面后，各个轮询事件就开始了;
