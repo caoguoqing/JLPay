@@ -96,6 +96,10 @@
  */
 +(UIColor*) returnCommonAppColor:(NSString*)color;
 
+#pragma mask 0-------------------------------------------0 App信息相关
+/* 版本号 */
++ (NSString*) AppVersionNumber;
+
 
 // app状态栏高度
 +(CGFloat) returnStatusHeight;
@@ -130,7 +134,6 @@
 
 #pragma mask ::: 金额: 12位无小数点格式 -> 小数点格式
 + (NSString*) dotMoneyFromNoDotMoney:(NSString*)noDotMoney;
-
 
 
 @end

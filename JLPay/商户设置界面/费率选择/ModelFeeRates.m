@@ -9,37 +9,9 @@
 #import "ModelFeeRates.h"
 
 static NSString* const kFeeRateNameSaved = @"kFeeRateNameSaved__"; // 键名: 保存
-//static NSString* const vFee
 
-
-//@interface ModelFeeRates()
-//
-//@property (nonatomic, strong) NSArray* keysOfFeeRates; // 键数组
-//@property (nonatomic, strong) NSDictionary* keyAndValuesOfFeeRates; // 键值对字典
-//@property (nonatomic, strong) NSString* valueOfFeeRateSaved; // 保存的键值
-//
-//@end
-
-
-//static ModelFeeRates* modelFeeRates = nil;
 
 @implementation ModelFeeRates
-
-//+ (instancetype) getInstance {
-//    @synchronized(self) {
-//        modelFeeRates = [[ModelFeeRates alloc] init];
-//    }
-//    return modelFeeRates;
-//}
-//
-//
-//- (instancetype)init {
-//    self = [super init];
-//    if (self) {
-//        self.valueOfFeeRateSaved = nil;
-//    }
-//    return self;
-//}
 
 
 #pragma mask --- PUBLIC INTERFACE
@@ -66,7 +38,6 @@ static NSString* const kFeeRateNameSaved = @"kFeeRateNameSaved__"; // 键名: �
     }
     NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
     [userDefault setObject:feeRateName forKey:kFeeRateNameSaved];
-//    [userDefault setObject:[self valueOfFeeRateName:feeRateName] forKey:kFeeRateNameSaved];
 
     [userDefault synchronize];
 }

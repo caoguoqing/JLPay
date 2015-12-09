@@ -767,4 +767,14 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     UIGraphicsEndImageContext();
     return newImage;
 }
+
+/* 版本号 */
++ (NSString*) AppVersionNumber {
+    NSString* versionNumber = nil;
+    versionNumber = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
+    NSLog(@"app的版本号:[%@]",versionNumber);
+    return versionNumber;
+}
+
+
 @end

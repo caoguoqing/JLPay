@@ -21,6 +21,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
+#import "ModelHTTPRequestLogin.h"
 
 
 #pragma mask    ---- 常量设置区 ----

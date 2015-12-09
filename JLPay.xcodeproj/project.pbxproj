@@ -186,6 +186,7 @@
 		5EFD098B1C1577160062AD34 /* SettlementInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */; };
 		5EFD09911C1681BA0062AD34 /* ModelFeeRates.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09901C1681BA0062AD34 /* ModelFeeRates.m */; };
 		5EFD09941C16A8530062AD34 /* FeeRateTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */; };
+		5EFD099A1C17D0E40062AD34 /* ModelHTTPRequestLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09991C17D0E40062AD34 /* ModelHTTPRequestLogin.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
 /* End PBXBuildFile section */
@@ -534,6 +535,8 @@
 		5EFD09901C1681BA0062AD34 /* ModelFeeRates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelFeeRates.m; sourceTree = "<group>"; };
 		5EFD09921C16A8530062AD34 /* FeeRateTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeeRateTableViewController.h; sourceTree = "<group>"; };
 		5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeeRateTableViewController.m; sourceTree = "<group>"; };
+		5EFD09981C17D0E40062AD34 /* ModelHTTPRequestLogin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelHTTPRequestLogin.h; sourceTree = "<group>"; };
+		5EFD09991C17D0E40062AD34 /* ModelHTTPRequestLogin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelHTTPRequestLogin.m; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iMagPay.framework; sourceTree = "<group>"; };
@@ -1075,10 +1078,9 @@
 		5E94486A1BFF1C8700128452 /* 主界面 */ = {
 			isa = PBXGroup;
 			children = (
-				5EB6F9861AC8DD1C00E47AB5 /* logViewController.h */,
-				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
-				5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */,
-				5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */,
+				5EFD09971C17D00C0062AD34 /* view */,
+				5EFD09951C17D0040062AD34 /* model */,
+				5EFD09961C17D0080062AD34 /* controller */,
 			);
 			path = "主界面";
 			sourceTree = "<group>";
@@ -1526,6 +1528,33 @@
 			name = controller;
 			sourceTree = "<group>";
 		};
+		5EFD09951C17D0040062AD34 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				5EFD09981C17D0E40062AD34 /* ModelHTTPRequestLogin.h */,
+				5EFD09991C17D0E40062AD34 /* ModelHTTPRequestLogin.m */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		5EFD09961C17D0080062AD34 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				5EB6F9861AC8DD1C00E47AB5 /* logViewController.h */,
+				5EB6F9871AC8DD1C00E47AB5 /* logViewController.m */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
+		5EFD09971C17D00C0062AD34 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				5EF4C0DE1B1706CB00CE3E3F /* OtherSignButton.h */,
+				5EF4C0DF1B1706CB00CE3E3F /* OtherSignButton.m */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
 		9E4D909E1BCF59C60096F84E /* cellImageView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1832,6 +1861,7 @@
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
+				5EFD099A1C17D0E40062AD34 /* ModelHTTPRequestLogin.m in Sources */,
 				5EF45B751BCBB6D900C75276 /* TextFieldCell.m in Sources */,
 				5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */,
 				5E397B2F1AD36429004F206F /* ASIDataCompressor.m in Sources */,
