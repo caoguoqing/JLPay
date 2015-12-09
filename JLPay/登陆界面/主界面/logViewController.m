@@ -15,7 +15,6 @@
 #import "EncodeString.h"
 #import "DesUtil.h"
 #import "ThreeDesUtil.h"
-#import "ASIFormDataRequest.h"
 #import "AppDelegate.h"
 #import "UserRegisterViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -39,9 +38,9 @@ typedef enum : NSUInteger {
 
 
 
-const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012345678";
+static NSString* const KeyEncryptLoading = @"123456789012345678901234567890123456789012345678";
 
-@interface logViewController ()<UITextFieldDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
+@interface logViewController ()<UITextFieldDelegate, ModelHTTPRequestLoginDelegate, UIAlertViewDelegate>
 {
     NSInteger tagFieldUserName;
     NSInteger tagFieldUserPwd;
@@ -57,7 +56,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 @property (nonatomic, strong) UISwitch*    switchSecurity;
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
-@property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // http请求
 @property (nonatomic, retain) NSDictionary* dictLastRegisterInfo;   // 审核未通过的注册信息
 @end
 
@@ -71,7 +69,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 @synthesize signInButton            = _signInButton;
 @synthesize pinChangeButton         = _pinChangeButton;
 @synthesize moveHeightByWindow      = _moveHeightByWindow;
-@synthesize httpRequest = _httpRequest;
 @synthesize switchSavePin = _switchSavePin;
 @synthesize switchSecurity = _switchSecurity;
 @synthesize dictLastRegisterInfo ;
@@ -122,13 +119,13 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.httpRequest clearDelegatesAndCancel];
-    self.httpRequest = nil;
+    [[ModelHTTPRequestLogin sharedInstance] terminateLogin];
     [self.loadButton setEnabled:YES];
 }
 - (void) backToLastViewController {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
 
 // 加载用户名
 - (void) loadUserNameField {
@@ -176,7 +173,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     return enable;
 }
 
-
 /*************************************
  * 功  能 : 键盘弹出来时判断是否要上移界面：因遮蔽了控件;
  * 参  数 : 无
@@ -218,17 +214,16 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     }
 }
 
-
 #pragma mark =======点击空白区域取消键盘
-
 -(void)EndEdit {
-    UITapGestureRecognizer *tap     = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(End) ];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(End)];
     [self.view addGestureRecognizer:tap];
 }
-
 -(void)End {
     [self.view endEditing:YES];
 }
+
+
 
 
 
@@ -437,11 +432,10 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         return;
     }
     
-    // 登陆密码加密
-    NSString* pin = [self pinEncryptBySource:self.userPasswordTextField.text];
-    
     // 登陆
-    [self logInWithPin:pin];
+    [[ModelHTTPRequestLogin sharedInstance] loginWithUserID:self.userNumberTextField.text
+                                                 andUserPWD:[self pinEncryptBySource:self.userPasswordTextField.text]
+                                                   delegate:self];
 }
 
 /*************************************
@@ -468,82 +462,52 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
-#pragma mask ::: 上送登陆报文
-- (void)logInWithPin: (NSString*)pin {
-    // 账号参数
-    [self.httpRequest addPostValue:self.userNumberTextField.text forKey:@"userName"];
-    // 密码参数
-    [self.httpRequest addPostValue:pin forKey:@"passWord"];
-    // 操作系统版本 0:IOS, 1:Android
-    [self.httpRequest addPostValue:@"0" forKey:@"sysFlag"];
-    // 版本号参数
-    NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-    NSString* versionNum = [NSString stringWithFormat:@"%@%@%@",[versionString substringToIndex:1],[versionString substringWithRange:NSMakeRange(2, 1)],[versionString substringFromIndex:versionString.length - 1]];
-    // 发起HTTP请求
-    [self.httpRequest addPostValue:versionNum forKey:@"versionNum"];
-    [self.httpRequest startAsynchronous];
-}
-
-#pragma mask ::: HTTP响应协议
--(void)requestFinished:(ASIHTTPRequest *)request {
+#pragma mask ::: ModelHTTPRequestLoginDelegate
+/* 登陆成功 */
+- (void)didLoginSuccessWithLoginInfo:(NSDictionary *)loginInfo {
     [self.loadButton setEnabled:YES];
-    NSData* data = [request responseData];
-    NSError* error;
-    NSDictionary* dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
-    [request clearDelegatesAndCancel];
-    self.httpRequest = nil;
-    NSString* retcode = [dataDic objectForKey:@"code"];
-    NSString* retMsg = [retcode stringByAppendingString:[dataDic objectForKey:@"message"]];
     
-    // 登陆成功
-    if ([retcode intValue] == 0) {
-        // 校验是否切换了账号
-        [self checkoutLoadingSwitch];
-        // 然后保存当前登陆信息
-        [self savingLoadingInfo];
-        
-        // 校验并保存商户信息: 解析响应数据
-        NSArray* terminals = [self arraySeparatedByTerminalListString:[dataDic valueForKey:@"TermNoList"]];
-        NSString* termNums = [dataDic valueForKey:@"termCount"];
-        if (terminals.count == termNums.intValue) {
-            [self savingBussinessInfo:dataDic];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[app_delegate window] makeToast:@"登陆成功"];
-            });
-            // 切换到主场景
-            [app_delegate signInSuccessToLogin:1];
-        } else {
-            [self alertShowMessage:@"登陆校验失败:终端号个数返回异常" andTag:TagAlertOther];
-        }
-    }
-    // 登陆失败
-    else { // ([retcode intValue] != 0)
-        TagAlert tagalert = TagAlertOther;
-        // 当前版本过低
-        if ([retcode isEqualToString:@"701"]) {
-            retMsg = [retMsg stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
-            tagalert = TagAlertVersionLow;
-        }
-        // 注册审核拒绝
-        else if ([retcode isEqualToString:@"802"]) {
-            self.dictLastRegisterInfo = [dataDic objectForKey:@"registerInfoList"];
-            tagalert = TagAlertRegisterRefuse;
-        }
-        [self alertShowMessage:retMsg andTag:tagalert];
-    }
-}
--(void)requestFailed:(ASIHTTPRequest *)request {
-    [self.loadButton setEnabled:YES];
-    [request clearDelegatesAndCancel];
-    self.httpRequest = nil;
-    [self alertShowMessage:@"网络异常，请检查网络" andTag:TagAlertOther];
+    // 校验是否切换了账号
+    [self checkoutLoadingSwitch];
+    // 保存当前登陆信息
+    [self savingLoadingInfo];
+    // 保存响应的商户信息
+    [self savingBussinessInfo:loginInfo];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[app_delegate window] makeToast:@"登陆成功"];
+    });
+    // 切换到主场景
+    [app_delegate signInSuccessToLogin:1];
 }
 
-// 校验是否切换了账号:如果切换,清空配置
+/* 登陆失败 */
+- (void)didLoginFailWithErrorMessage:(NSString *)errorMessage andErrorType:(LoginErrorCodeType)errorType {
+    [self.loadButton setEnabled:YES];
+
+    TagAlert tagalert = TagAlertOther;
+    NSString* retMessage = [NSString stringWithString:errorMessage];
+    switch (errorType) {
+        case LoginErrorCodeTypeDefault:
+            break;
+        case LoginErrorCodeTypeLowVersion:
+            retMessage = [retMessage stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
+            tagalert = TagAlertVersionLow;
+            break;
+        case LoginErrorCodeTypeRegistRefuse:
+            self.dictLastRegisterInfo = [ModelHTTPRequestLogin sharedInstance].lastRegisterInfo;
+            tagalert = TagAlertRegisterRefuse;
+            break;
+        default:
+            retMessage = @"登陆失败";
+            break;
+    }
+    [self alertShowMessage:retMessage andTag:tagalert];
+}
+
+#pragma mask ::: 校验是否切换了账号:如果切换,清空配置
 - (void) checkoutLoadingSwitch {
     NSString* lastUserID = [ModelUserLoginInformation userID];
-    
-    if (![lastUserID isEqualToString:self.userNumberTextField.text]) {
+    if (!lastUserID || ![lastUserID isEqualToString:self.userNumberTextField.text]) {
         // 清空登陆信息
         [ModelUserLoginInformation deleteLoginUpInformation];
         [ModelUserLoginInformation deleteLoginDownInformation];
@@ -562,21 +526,20 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
                                                 userPWD:pin
                                         needSaveUserPWD:self.switchSavePin.isOn
                                      needDisplayUserPWD:self.switchSecurity.isOn];
-    
-    
 }
 
 #pragma mask ::: 保存商户信息
-- (void) savingBussinessInfo:(NSDictionary*)bussinessInfo {    
+- (void) savingBussinessInfo:(NSDictionary*)loginInfo {
     NSArray* terminals = nil;
-    NSString* termCount = [bussinessInfo objectForKey:@"termCount"];
+    NSString* termCount = [loginInfo objectForKey:kFieldNameLoginDownTerminalCount];
     if (termCount.intValue > 0) {
-        terminals = [self arraySeparatedByTerminalListString:[bussinessInfo objectForKey:@"TermNoList"]];
+        terminals = [self arraySeparatedByTerminalListString:[loginInfo objectForKey:kFieldNameLoginDownTerminalList]];
     }
-    [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[bussinessInfo objectForKey:@"mchtNm"]
-                                                 businessNumber:[bussinessInfo objectForKey:@"mchtNo"]
-                                                  businessEmail:[bussinessInfo objectForKey:@"commEmail"]
-                                                  terminalCount:termCount terminalNumbers:terminals];
+    [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[loginInfo objectForKey:kFieldNameLoginDownBusinessName]
+                                                 businessNumber:[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]
+                                                  businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
+                                                  terminalCount:termCount
+                                                terminalNumbers:terminals];
 
 }
 #pragma mask ::: 分隔终端号字符串
@@ -637,6 +600,8 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
             break;
     }
 }
+
+
 // 下载app
 - (void) gotoDownloadApp {
     NSString* urlString = @"http://www.cccpay.cn/center.html";
@@ -654,12 +619,12 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 // 加密登陆密码
 - (NSString*) pinEncryptBySource:(NSString*)source {
     NSString* formationSource = [EncodeString encodeASC:source];
-    NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:(NSString*)KeyEncryptLoading];
+    NSString* pin = [ThreeDesUtil encryptUse3DES:formationSource key:KeyEncryptLoading];
     return pin;
 }
 // 解密登陆密码
 - (NSString*) pswDecryptByPin:(NSString*)pin {
-    NSString* password = [ThreeDesUtil decryptUse3DES:pin key:(NSString*)KeyEncryptLoading];
+    NSString* password = [ThreeDesUtil decryptUse3DES:pin key:KeyEncryptLoading];
     password = [PublicInformation stringFromHexString:password];
     return password;
 }
@@ -734,16 +699,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 
     }
     return _pinChangeButton;
-}
-- (ASIFormDataRequest *)httpRequest {
-    if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService",
-                               [PublicInformation getServerDomain],//[PublicInformation getDataSourceIP],
-                               [PublicInformation getHTTPPort]];//[PublicInformation getDataSourcePort] ];
-        _httpRequest = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
-        [_httpRequest setDelegate:self];
-    }
-    return _httpRequest;
 }
 - (UISwitch *)switchSavePin {
     if (_switchSavePin == nil) {

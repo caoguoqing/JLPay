@@ -51,6 +51,7 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
 - (void) terminateLogin {
     self.delegate = nil;
     [self.httpRequest clearDelegatesAndCancel];
+    self.httpRequest = nil;
 }
 
 #pragma mask ---- HTTP & ASIHTTPRequestDelegate
@@ -77,10 +78,20 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
     if (!error) {
         NSString* code = [loginInfo objectForKey:kFieldNameLoginDownCode];
         NSString* message = [loginInfo objectForKey:kFieldNameLoginDownMessage];
-        
+        NSLog(@"登陆响应代码:[%@]",code);
         /* 响应码: 登陆成功 */
         if ([code intValue] == 0) {
-            [self rebackSuccessWithLoginInfo:loginInfo];
+            // 校验终端个数跟列表中是否一致
+            NSArray* terminals = [[NSArray alloc] init];
+            if ([[loginInfo objectForKey:kFieldNameLoginDownTerminalList] componentsSeparatedByString:@","]) {
+                terminals = [NSArray arrayWithArray:[[loginInfo objectForKey:kFieldNameLoginDownTerminalList] componentsSeparatedByString:@","]];
+            }
+            if ([[loginInfo objectForKey:kFieldNameLoginDownTerminalCount] intValue] == terminals.count)
+            {
+                [self rebackSuccessWithLoginInfo:loginInfo];
+            } else {
+                [self rebackFailWithMessage:@"终端个数返回异常" andErrorType:LoginErrorCodeTypeDefault];
+            }
         }
         /* 响应码: 版本过低 */
         else if ([code intValue] == LoginErrorCodeTypeLowVersion) {
@@ -99,11 +110,14 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
     else {
         [self rebackFailWithMessage:@"解析登陆响应数据失败" andErrorType:LoginErrorCodeTypeDefault];
     }
+    
+    self.httpRequest = nil;
 }
 
 /* 回调: HTTP响应失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
+    self.httpRequest = nil;
     [self rebackFailWithMessage:@"网络异常,请检查网络" andErrorType:LoginErrorCodeTypeDefault];
 }
 
@@ -111,7 +125,7 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
 #pragma mask ---- PRIVATE INTERFACE
 /* 获取App版本号: 无小数点格式 */
 - (NSString*) intStringOfAppVersion {
-    NSString* version = nil;
+    NSString* version = [PublicInformation AppVersionNumber];
     version = [version stringByReplacingOccurrencesOfString:@"." withString:@""];
     NSLog(@"去掉小数点的版本号:[%@]",version);
     return version;
@@ -148,6 +162,7 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
                                [PublicInformation getServerDomain],
                                [PublicInformation getHTTPPort]];
         _httpRequest = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+        _httpRequest.delegate = self;
     }
     return _httpRequest;
 }

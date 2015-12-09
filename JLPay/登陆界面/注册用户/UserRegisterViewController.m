@@ -436,13 +436,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [alertView.message hasPrefix:@"注册资料完善"]) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         NSString* userName = [self textInputedAtIndexPath:indexPath];
-//        NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-//         用户名保存
-//        [userDefault setValue:userName forKey:UserID];
-//         清空密码
-//        if ([userDefault objectForKey:UserPW]) {
-//            [userDefault removeObjectForKey:UserPW];
-//        }
         // 清空登陆+商户信息
         [ModelUserLoginInformation deleteLoginUpInformation];
         [ModelUserLoginInformation deleteLoginDownInformation];
@@ -450,12 +443,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
         
         // 清空绑定信息
-        [ModelDeviceBindedInformation cleanDeviceBindedInfo];
-//        if ([userDefault objectForKey:KeyInfoDictOfBinded]) {
-//            [userDefault removeObjectForKey:KeyInfoDictOfBinded];
-//        }
-//        [userDefault synchronize];
-        
+        [ModelDeviceBindedInformation cleanDeviceBindedInfo];        
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
