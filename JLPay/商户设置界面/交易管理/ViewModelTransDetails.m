@@ -254,7 +254,6 @@
     if (dataNode) {
         money = [dataNode valueForKey:key];
         money = [PublicInformation dotMoneyFromNoDotMoney:money];
-//        money = [@"￥ " stringByAppendingString:money];
     }
     return money;
 }
@@ -383,6 +382,7 @@
 #pragma mask ---- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     NSData* responseData = [request responseData];
+    NSLog(@"响应数据:[%@]",[request responseString]);
     /*
      HttpMessage = "query success";
      HttpResult = 0;

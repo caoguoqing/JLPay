@@ -70,6 +70,8 @@
     UIColor* color = [UIColor redColor];
     NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
     self.navigationController.navigationBar.titleTextAttributes = textAttri;
+    self.navigationController.navigationBar.tintColor = color;
+
     
     // 更新结算方式的标记
     if (self.settlementInformation) {

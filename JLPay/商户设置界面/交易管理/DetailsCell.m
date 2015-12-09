@@ -31,10 +31,6 @@
 
 #pragma mask ::: 金额属性赋值 : 000000000010
 - (void) setAmount : (NSString*)amount withColor:(UIColor *)color{
-    //    CGFloat fAmount = [amount floatValue];
-    //    fAmount /= 100.0;
-    //    self.amountLabel.text = [NSString stringWithFormat:@"￥ %.02f", fAmount];
-//    self.amountLabel.text = [NSString stringWithFormat:@"￥ %@",amount];
     self.amountLabel.text = amount;
     self.amountLabel.textColor = color;
 }
@@ -43,9 +39,6 @@
     if (!cardNum || cardNum.length == 0) {
         return;
     }
-//    NSString* preNum = [cardNum substringToIndex:6];
-//    NSString* sufNum = [cardNum substringFromIndex:[cardNum length] - 4];
-//    self.cardNumberLabel.text = [[preNum stringByAppendingString:@"******"] stringByAppendingString:sufNum];
     self.cardNumberLabel.text = cardNum;
 }
 #pragma mask ::: 日期时间赋值 : 093412
@@ -54,10 +47,6 @@
         return;
     }
     self.tranTimeLabel.text = time;
-//    self.tranTimeLabel.text = [NSString stringWithFormat:@"%@:%@:%@",
-//                               [time substringToIndex:2],
-//                               [time substringWithRange:NSMakeRange(2, 2)],
-//                               [time substringFromIndex:4]];
 }
 #pragma mask ::: 设置交易类型标记
 - (void) setTranType:(NSString *)tranType withColor:(UIColor *)color{
@@ -100,13 +89,11 @@
     frame.size.height = (self.bounds.size.height - verticalInset)/ 2.0;  // 高度为 cell.height * 1/2
     self.amountLabel.frame = frame;
     [self addSubview:self.amountLabel];
-//    self.amountLabel.backgroundColor = [UIColor orangeColor];
     
     // label:标示该笔交易的交易类型
     frame.origin.y += frame.size.height;
     self.tranTypeLabel.frame = frame;
     [self addSubview:self.tranTypeLabel];
-//    self.tranTypeLabel.backgroundColor = [UIColor redColor];
     
     
     // cardNo.
@@ -115,14 +102,11 @@
     frame.size.height = (self.frame.size.height -  verticalInset * 2.0)/2.0;
     self.cardNumberLabel.frame = frame;
     [self addSubview:self.cardNumberLabel];
-//    self.cardNumberLabel.backgroundColor = [UIColor greenColor];
-    
     
     // tranTime
     frame.origin.y += frame.size.height;
     self.tranTimeLabel.frame = frame;
     [self addSubview:self.tranTimeLabel];
-//    self.tranTimeLabel.backgroundColor = [UIColor grayColor];
     [super layoutSubviews];
 }
 

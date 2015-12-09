@@ -38,18 +38,10 @@
                           kSettleInfoNameT_0_Fee:@"T+0增加费率:"
                           };
         
+        self.title = @"结算信息";
         self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
     }
     return self;
-}
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.title = @"结算信息";
-    // 修改标题栏的字体颜色
-    UIColor* color = [UIColor redColor];
-    NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
-    self.navigationController.navigationBar.titleTextAttributes = textAttri;
-    
 }
 
 #pragma mask ---- UITableViewDataSource

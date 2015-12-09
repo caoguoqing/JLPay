@@ -131,7 +131,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
 
 // 加载用户名
 - (void) loadUserNameField {
-//    NSString* userName = [[NSUserDefaults standardUserDefaults] valueForKey:UserID];
     NSString* userName = [ModelUserLoginInformation userID];
     if (userName) {
         [self.userNumberTextField setText:userName];
@@ -538,9 +537,9 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     self.httpRequest = nil;
     [self alertShowMessage:@"网络异常，请检查网络" andTag:TagAlertOther];
 }
+
 // 校验是否切换了账号:如果切换,清空配置
 - (void) checkoutLoadingSwitch {
-//    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
     NSString* lastUserID = [ModelUserLoginInformation userID];
     
     if (![lastUserID isEqualToString:self.userNumberTextField.text]) {
@@ -549,8 +548,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
         [ModelUserLoginInformation deleteLoginDownInformation];
         // 清空设备绑定信息
         [ModelDeviceBindedInformation cleanDeviceBindedInfo];
-//        [userDefault removeObjectForKey:KeyInfoDictOfBinded];
-//        [userDefault synchronize];
     }
 }
 
@@ -573,7 +570,7 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
     NSArray* terminals = nil;
     NSString* termCount = [bussinessInfo objectForKey:@"termCount"];
     if (termCount.intValue > 0) {
-        terminals = [self terminalArrayBySeparateWithString:[bussinessInfo objectForKey:@"TermNoList"] inPart:termCount.intValue];
+        terminals = [self arraySeparatedByTerminalListString:[bussinessInfo objectForKey:@"TermNoList"]];
     }
     [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[bussinessInfo objectForKey:@"mchtNm"]
                                                  businessNumber:[bussinessInfo objectForKey:@"mchtNo"]
@@ -595,19 +592,6 @@ const NSString* KeyEncryptLoading = @"123456789012345678901234567890123456789012
             if (![stringTrimmed isEqualToString:sourceString]) {
                 [array replaceObjectAtIndex:i withObject:stringTrimmed];
             }
-        }
-    }
-    return array;
-}
-// -- useless
-- (NSArray*) terminalArrayBySeparateWithString: (NSString*) termString inPart: (int)count {
-    NSMutableArray* array = [[NSMutableArray alloc] init];
-    [array addObjectsFromArray:[termString componentsSeparatedByString:@","]];
-    for (int i = 0; i < array.count; i++) {
-        NSString* sourceString = [array objectAtIndex:i];
-        NSString* stringTrimmed = [sourceString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        if (![stringTrimmed isEqualToString:sourceString]) {
-            [array replaceObjectAtIndex:i withObject:stringTrimmed];
         }
     }
     return array;

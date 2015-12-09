@@ -254,10 +254,24 @@ NSInteger logCount = 0;
 
 
 
-#pragma mask ---- ViewModelTransDetailsDelegate
+#pragma mask ---- 数据源请求 & 回调: ViewModelTransDetailsDelegate
+/* HTTP请求数据 */
+- (void) requestDataOnDate:(NSString*)dateString {
+    NSString* terminal = [ModelDeviceBindedInformation terminalNoBinded];
+    NSString* bussiness = [ModelDeviceBindedInformation businessNoBinded];
+    NSLog(@"请求明细数据:终端号:[%@],商户号:[%@]",terminal,bussiness);
+    [self.dataSource requestDetailsWithPlatform:self.tradePlatform
+                                    andDelegate:self
+                                      beginTime:dateString
+                                        endTime:dateString
+                                       terminal:terminal
+                                      bussiness:bussiness];
+}
+
 /* 请求的数据返回了 */
 - (void)viewModel:(ViewModelTransDetails *)viewModel didRequestResult:(BOOL)result withMessage:(NSString *)message {
     [[JLActivitor sharedInstance] stopAnimating];
+    NSLog(@"tcp回调结果:[%d]",result);
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }
@@ -270,19 +284,6 @@ NSInteger logCount = 0;
         [self calculateTotalAmount];
         [self alertShow:message];
     }
-}
-
-
-#pragma mask ---- 数据源请求
-- (void) requestDataOnDate:(NSString*)dateString {
-    NSString* terminal = [ModelDeviceBindedInformation terminalNoBinded];
-    NSString* bussiness = [ModelDeviceBindedInformation businessNoBinded];
-    [self.dataSource requestDetailsWithPlatform:self.tradePlatform
-                                    andDelegate:self
-                                      beginTime:dateString
-                                        endTime:dateString
-                                       terminal:terminal
-                                      bussiness:bussiness];
 }
 
 // 扫描明细数组,计算总金额，总笔数
@@ -404,8 +405,6 @@ NSInteger logCount = 0;
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
 }
-
-
 
 
 // 给日期按钮设置日期
