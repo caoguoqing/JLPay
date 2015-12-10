@@ -259,7 +259,6 @@ NSInteger logCount = 0;
 - (void) requestDataOnDate:(NSString*)dateString {
     NSString* terminal = [ModelDeviceBindedInformation terminalNoBinded];
     NSString* bussiness = [ModelDeviceBindedInformation businessNoBinded];
-    NSLog(@"请求明细数据:终端号:[%@],商户号:[%@]",terminal,bussiness);
     [self.dataSource requestDetailsWithPlatform:self.tradePlatform
                                     andDelegate:self
                                       beginTime:dateString
@@ -271,7 +270,6 @@ NSInteger logCount = 0;
 /* 请求的数据返回了 */
 - (void)viewModel:(ViewModelTransDetails *)viewModel didRequestResult:(BOOL)result withMessage:(NSString *)message {
     [[JLActivitor sharedInstance] stopAnimating];
-    NSLog(@"tcp回调结果:[%d]",result);
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }

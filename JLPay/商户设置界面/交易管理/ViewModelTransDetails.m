@@ -382,11 +382,6 @@
 #pragma mask ---- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     NSData* responseData = [request responseData];
-    NSLog(@"响应数据:[%@]",[request responseString]);
-    /*
-     HttpMessage = "query success";
-     HttpResult = 0;
-     */
     NSDictionary* httpResponseHeaders = [request responseHeaders];
 
     [request clearDelegatesAndCancel];

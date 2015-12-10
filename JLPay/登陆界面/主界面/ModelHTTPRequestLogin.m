@@ -78,7 +78,6 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
     if (!error) {
         NSString* code = [loginInfo objectForKey:kFieldNameLoginDownCode];
         NSString* message = [loginInfo objectForKey:kFieldNameLoginDownMessage];
-        NSLog(@"登陆响应代码:[%@]",code);
         /* 响应码: 登陆成功 */
         if ([code intValue] == 0) {
             // 校验终端个数跟列表中是否一致
@@ -127,7 +126,6 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
 - (NSString*) intStringOfAppVersion {
     NSString* version = [PublicInformation AppVersionNumber];
     version = [version stringByReplacingOccurrencesOfString:@"." withString:@""];
-    NSLog(@"去掉小数点的版本号:[%@]",version);
     return version;
 }
 

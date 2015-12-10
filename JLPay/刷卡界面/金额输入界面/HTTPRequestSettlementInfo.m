@@ -86,9 +86,7 @@ static HTTPRequestSettlementInfo* settlementRequester = nil;
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* responseInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
-    
-    NSLog(@"结算信息:{%@}",responseInfo);
-    
+
     if (!error) {
         NSString* code = [responseInfo objectForKey:kFieldNameResponseCode];
         if (code.intValue == 0) {

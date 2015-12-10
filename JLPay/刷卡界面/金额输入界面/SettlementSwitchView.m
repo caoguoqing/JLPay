@@ -15,9 +15,10 @@ static NSString* const stringSettlementT_0 = @"T+0";
 
 
 @interface SettlementSwitchView()
-{
-    SETTLEMENTTYPE curSettlementTYpe;
-}
+//{
+//    SETTLEMENTTYPE curSettlementTYpe;
+//}
+@property (nonatomic, assign) SETTLEMENTTYPE curSettlementType;
 @property (nonatomic, strong) UILabel* labelSettlementDisplay; // 显示标签
 @property (nonatomic, strong) UIButton* buttonSwitch;   // 切换按钮
 
@@ -28,22 +29,27 @@ static NSString* const stringSettlementT_0 = @"T+0";
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        curSettlementTYpe = SETTLEMENTTYPE_T_1;
+        self.enableSwitching = NO;
+        self.curSettlementType = SETTLEMENTTYPE_T_1;
+        
         [self addSubview:self.labelSettlementDisplay];
         [self addSubview:self.buttonSwitch];
+        
+        [self addObserver:self forKeyPath:@"enableSwitching" options:NSKeyValueObservingOptionNew context:nil];
+        [self addObserver:self forKeyPath:@"curSettlementType" options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
 }
 - (void)layoutSubviews {
     [super layoutSubviews];
+    // 重载包括: frame, 颜色, 字体等
     UIFont* fontLabelText = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:self.frame.size andScale:1.0]];
+    self.labelSettlementDisplay.text = [self textSettlementDisplayWithType:self.curSettlementType];
     [self.labelSettlementDisplay setFont:fontLabelText];
     [self.labelSettlementDisplay sizeToFit];
     self.labelSettlementDisplay.layer.position = CGPointMake(0.0, 0.0);
     self.labelSettlementDisplay.layer.anchorPoint = CGPointMake(0.0, 0.0);
     self.labelSettlementDisplay.textColor = (self.enableSwitching)?([UIColor colorWithWhite:0.3 alpha:1]):([UIColor grayColor]);
-    self.labelSettlementDisplay.text = [self textSettlementDisplayWithType:curSettlementTYpe];
-
     
     [self.buttonSwitch.titleLabel setFont:fontLabelText];
     [self.buttonSwitch sizeToFit];
@@ -59,11 +65,23 @@ static NSString* const stringSettlementT_0 = @"T+0";
     }
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"enableSwitching"] ||
+        [keyPath isEqualToString:@"curSettlementType"]
+        )
+    {
+        // 重载视图
+        [self setNeedsLayout];
+    }
+}
+
 /* 切换回正常状态 */
 - (void) switchNormal {
-    switch (curSettlementTYpe) {
+    switch (self.curSettlementType) {
         case SETTLEMENTTYPE_T_0:
-            [self clickToSwichSettlementType];
+            [self clickToSwichSettlementType];  // 要回调
+//            [self switchSettlementType];
             break;
         case SETTLEMENTTYPE_T_1:
             // do nothing
@@ -78,16 +96,10 @@ static NSString* const stringSettlementT_0 = @"T+0";
 #pragma mask ---- 点击切换
 - (void) clickToSwichSettlementType {
     // 根据当前值切换
-    curSettlementTYpe = curSettlementTYpe << 1;
-    if (![self enumExistsSettlemenType:curSettlementTYpe]) {
-        curSettlementTYpe = SETTLEMENTTYPE_T_1;
-    }
-    // 更新显示文本
-    [self.labelSettlementDisplay setText:[self textSettlementDisplayWithType:curSettlementTYpe]];
-    [self setNeedsLayout];
+    [self switchSettlementType];
     // 回调
     if (self.delegate && [self.delegate respondsToSelector:@selector(didSwitchedSettlementType:)]) {
-        [self.delegate didSwitchedSettlementType:curSettlementTYpe];
+        [self.delegate didSwitchedSettlementType:self.curSettlementType];
     }
 }
 
@@ -120,6 +132,15 @@ static NSString* const stringSettlementT_0 = @"T+0";
         text = [NSString stringWithFormat:@"结算方式: %@", [self textCurrentSettlementType:settlementType]];
     }
     return text;
+}
+
+/* 切换枚举值 */
+- (void) switchSettlementType {
+    if (![self enumExistsSettlemenType:self.curSettlementType << 1]) {
+        self.curSettlementType = SETTLEMENTTYPE_T_1;
+    } else {
+        self.curSettlementType = self.curSettlementType << 1;
+    }
 }
 /* 检查枚举是否存在指定的类型 */
 - (BOOL) enumExistsSettlemenType:(NSInteger)type {
