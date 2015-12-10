@@ -11,6 +11,7 @@
 #import "Toast+UIView.h"
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
+#import "CustomNavigationController.h"
 
 #define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
 
@@ -63,6 +64,12 @@
 
 #pragma mask ::: app 的入口;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    logViewController* logVC = [storyBoard instantiateViewControllerWithIdentifier:@"logVC"];
+    CustomNavigationController* navigationController = [[CustomNavigationController alloc] initWithRootViewController:logVC];
+    
+    self.window.rootViewController = navigationController;
     
     return YES;
 }

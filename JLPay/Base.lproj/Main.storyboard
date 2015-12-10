@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="jPT-Yr-IlL">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="ufw-MO-OCX">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <scenes>
         <!--登陆-->
         <scene sceneID="cyo-gP-zsV">
             <objects>
-                <viewController id="ufw-MO-OCX" customClass="logViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="logVC" id="ufw-MO-OCX" customClass="logViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LM9-YZ-Cna">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -176,7 +176,7 @@
         <!--金额输入界面-->
         <scene sceneID="eaC-D2-oVh">
             <objects>
-                <viewController title="金额输入界面" id="BRz-xC-VH6" customClass="CustPayViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="custPayVC" title="金额输入界面" id="BRz-xC-VH6" customClass="CustPayViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Lcl-B9-CJ7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -206,7 +206,7 @@
         <!--商户管理-->
         <scene sceneID="pSU-mK-gDv">
             <objects>
-                <tableViewController id="4Kl-b5-UNw" customClass="settingViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="settingVC" id="4Kl-b5-UNw" customClass="settingViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="bqE-aa-pge">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -410,7 +410,7 @@
         <!--增值服务-->
         <scene sceneID="du3-CL-xUi">
             <objects>
-                <viewController id="cEQ-CM-f1g" customClass="AdditionalServicesViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="additionalServiceVC" id="cEQ-CM-f1g" customClass="AdditionalServicesViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Sx9-n8-0MA">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -421,24 +421,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="46S-Jv-gi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-52" y="3710"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="XKI-ww-Kom">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="jPT-Yr-IlL" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ips-ur-Abh">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="ufw-MO-OCX" kind="relationship" relationship="rootViewController" id="ydw-Gw-DQE"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="6zP-bA-cIy" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2531" y="1881"/>
         </scene>
     </scenes>
     <resources>
