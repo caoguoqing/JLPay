@@ -12,6 +12,7 @@
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
 #import "CustomNavigationController.h"
+#import "ViewNavigationMaker.h"
 
 #define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
 
@@ -23,38 +24,55 @@
 @implementation AppDelegate
 
 
+
 /*
  *登陆成功后进入Tabbar
  */
 #pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 -(void)signInSuccessToLogin:(int)select{
-    self.window.userInteractionEnabled=YES;
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
-
-    /* 进入的初始界前要先判断是否绑定设备：
-     *    如果绑定了:就跳转到金额输入界面
-     *    如果没有绑定:就跳转到绑定设备界面
-     */
-    if (![ModelDeviceBindedInformation hasBindedDevice]) {
-        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
-    } else {
-        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
-    }
     
+    UITabBarController* tabBarController = [[UITabBarController alloc] initWithNibName:nil bundle:nil];
+    [tabBarController.tabBar setTintColor:[PublicInformation returnCommonAppColor:@"red"]];
     
-    self.window.rootViewController      = tabBarController;
+    NSMutableArray* viewControllers = [[NSMutableArray alloc] init];
+    [viewControllers addObject:[ViewNavigationMaker newCustPayNavigation]];
+    [viewControllers addObject:[ViewNavigationMaker newBusinessNavigation]];
+    [viewControllers addObject:[ViewNavigationMaker newAddServiceNavigation]];
     
-    // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
-    NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
-    for (int i = 0; i< tabBarController.tabBar.items.count; i++) {
-        UITabBarItem* item              = [tabBarController.tabBar.items objectAtIndex:i];
-        item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    }
+    [tabBarController setViewControllers:viewControllers];
+    [tabBarController setSelectedIndex:select];
     
-    // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
-    tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
+    [self.window setRootViewController:tabBarController];
+    
+//    self.window.userInteractionEnabled=YES;
+//    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
+//
+//    /* 进入的初始界前要先判断是否绑定设备：
+//     *    如果绑定了:就跳转到金额输入界面
+//     *    如果没有绑定:就跳转到绑定设备界面
+//     */
+//    if (![ModelDeviceBindedInformation hasBindedDevice]) {
+//        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
+//    } else {
+//        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
+//    }
+//    
+//    
+//    self.window.rootViewController      = tabBarController;
+//    
+//    // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
+//    NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
+//    for (int i = 0; i< tabBarController.tabBar.items.count; i++) {
+//        UITabBarItem* item              = [tabBarController.tabBar.items objectAtIndex:i];
+//        item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+//    }
+//    
+//    // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
+//    tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
 }
+
+
 // 跳转到指定的界面
 - (void) loadInViewController:(UIViewController*)viewController {
     self.window.rootViewController      = viewController;
