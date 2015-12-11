@@ -269,7 +269,6 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     if (_maskView == nil) {
         CGFloat heightStates = [UIApplication sharedApplication].statusBarFrame.size.height;
         CGFloat heightNavi = self.navigationController.navigationBar.frame.size.height;
-//        CGFloat heightTabBar = self.tabBarController.tabBar.frame.size.height;
 
         _maskView = [[MaskView alloc] initWithFrame:CGRectMake(0, heightNavi + heightStates, self.view.frame.size.width, self.view.frame.size.height - heightStates - heightNavi /*- heightTabBar*/)];
     }

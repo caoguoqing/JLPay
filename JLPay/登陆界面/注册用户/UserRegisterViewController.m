@@ -768,12 +768,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.registerButton setTitle:[self buttonTitleForRegisterType:self.registerType] forState:UIControlStateNormal]; // 设置按钮标题
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
+    
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-
     
     CGFloat statesNaviHeight = [PublicInformation returnStatusHeight] + self.navigationController.navigationBar.frame.size.height;
     CGFloat inset = 12;

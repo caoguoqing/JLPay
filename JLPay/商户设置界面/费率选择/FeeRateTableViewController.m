@@ -43,6 +43,10 @@
     }
     return self;
 }
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+}
 
 #pragma mask ---- UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

@@ -163,7 +163,6 @@
     // 导航栏的退出按钮置空
     UIButton*leftBackBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     leftBackBtn.frame=CGRectMake(0,0,0,0);
-    leftBackBtn.backgroundColor=[UIColor clearColor];
     UIBarButtonItem *backBarBtn=[[UIBarButtonItem alloc] initWithCustomView:leftBackBtn];
     self.navigationItem.leftBarButtonItem=backBarBtn;
     
@@ -498,6 +497,10 @@
     return textLabel;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO];
+}
 // 视图退出,要取消
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];

@@ -12,6 +12,7 @@
 #import "ISOFieldFormation.h"
 #import "Define_Header.h"
 #import "ModelFeeRates.h"
+#import "ModelSettlementInformation.h"
 
 @interface Packing8583() {
     NSString* exchangeType;
@@ -76,59 +77,24 @@
 
 
 // -- F60
-+ (NSString*) makeF60OnTrantype:(NSString*)tranType {
++ (NSString*) makeF60OnTrantype:(NSString*)transType {
     NSMutableString* F60 = [[NSMutableString alloc] init];
     // 60.1 N2 交易类型
-    if ([tranType isEqualToString:TranType_Consume]) {
-        [F60 appendString:@"22"];
-    } else if ([tranType isEqualToString:TranType_ConsumeRepeal]) {
-        [F60 appendString:@"23"];
-    } else if ([tranType isEqualToString:TranType_DownMainKey]) {
-        [F60 appendString:@"99"];
-    } else if ([tranType isEqualToString:TranType_DownWorkKey]) {
-        [F60 appendString:@"00"];
-    } else if ([tranType isEqualToString:TranType_YuE]) {
-        [F60 appendString:@"01"];
-    } else {
-        [F60 appendString:@"00"];
-    }
+    [F60 appendString:[self f60_1typeWithTransType:transType]];
     // 60.2 N6 批次号
-    [F60 appendString:[PublicInformation returnSignSort]];
-    // 60.3 N3 操作类型
-    [F60 appendString:@"003"];
-    // 60.4 N1 手机统一送1
-    [F60 appendString:@"1"];
-    // 60.5 N1 费率:
-    if (![tranType isEqualToString:TranType_Consume]) { // 非消费交易: 0
-        [F60 appendString:@"0"];
-    }
-    else { // 消费交易: 根据多费率、多商户不同
-        BOOL hasJiGou = [self isSavedJiGouInfo];
-        if (hasJiGou) {
-            [F60 appendString:@"9"];
-        } else {
-            if ([ModelFeeRates isSavedFeeRate]) {
-                NSString* valueOfFeeRate = [ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]];
-                NSLog(@"已保存指定费率:[%@]",valueOfFeeRate);
-                [F60 appendString:valueOfFeeRate];
-            } else {
-                [F60 appendString:@"0"];
-            }
-        }
-        // 60.6 N15 商户号:
-        if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
-            [F60 appendString:[self businessNumInJiGou]];
-        }
-        // 60.7 N8 终端号:
-        if (hasJiGou && [tranType isEqualToString:TranType_Consume]) {
-            [F60 appendString:[self terminalNumInJiGou]];
-        }
-    }
-    
+    [F60 appendString:[self f60_2BatchNo]];
+    // 60.3 N3 网络管理信息码
+    [F60 appendString:[self f60_3EncodeCodeWithTransType:transType]];
+    // 60.4 N1 手机: T+1:1, T+0:2
+    [F60 appendString:[self f60_4feeTypeWithTransType:transType]];
+    // 60.5 N1(+15+8) 费率:
+    [F60 appendString:[self f60_5feeWithTransType:transType]];
 
-    
     return F60;
 }
+
+
+
 + (NSString*) makeF60ByLast60:(NSString*)last60 {
     // 只需要修改 60.3 改为 203 // 0019 22 000000 000 500000000
     NSMutableString* new60 = [[NSMutableString alloc] init];
@@ -141,6 +107,80 @@
 
 
 #pragma mask -------------- PRIVATE INTERFACE
+// 60.1 N2 交易类型
++ (NSString*) f60_1typeWithTransType:(NSString*)transType {
+    NSString* f60_1type = @"00";
+    if ([transType isEqualToString:TranType_Consume]) {
+        f60_1type = @"22";
+    } else if ([transType isEqualToString:TranType_ConsumeRepeal]) {
+        f60_1type = @"23";
+    } else if ([transType isEqualToString:TranType_DownMainKey]) {
+        f60_1type = @"99";
+    } else if ([transType isEqualToString:TranType_DownWorkKey]) {
+        f60_1type = @"00";
+    } else if ([transType isEqualToString:TranType_YuE]) {
+        f60_1type = @"01";
+    }
+    return f60_1type;
+}
+// 60.2 N6 批次号
++ (NSString*) f60_2BatchNo {
+    return [PublicInformation returnSignSort];
+}
+// 60.3 N3 网络管理信息码
++ (NSString*) f60_3EncodeCodeWithTransType:(NSString*)transType {
+    NSString* f60_3 = nil;
+    if ([transType isEqualToString:TranType_Consume] ||
+        [transType isEqualToString:TranType_DownMainKey] ||
+        [transType isEqualToString:TranType_DownWorkKey]
+        )
+    {
+        f60_3 = @"003";
+    }
+    else {
+        f60_3 = @"000";
+    }
+    return f60_3;
+}
+// 60.4 N1 手机: T+1:1, T+0:2
++ (NSString*) f60_4feeTypeWithTransType:(NSString*)transType {
+    if ([transType isEqualToString:TranType_Consume]) {
+        if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
+            return @"2";
+        } else {
+            return @"1";
+        }
+    }
+    else {
+        return @"1";
+    }
+}
+// 60.5 N1(+15+8) 费率:
++ (NSString*) f60_5feeWithTransType:(NSString*)transType {
+    NSMutableString* f60_5Fee = [[NSMutableString alloc] init];
+    
+    if (![transType isEqualToString:TranType_Consume]) {
+        [f60_5Fee appendString:@"0"];
+    }
+    else {
+        if ([self isSavedJiGouInfo]) {
+            [f60_5Fee appendString:@"9"];
+            [f60_5Fee appendString:[self businessNumInJiGou]];
+            [f60_5Fee appendString:[self terminalNumInJiGou]];
+        }
+        else {
+            if ([ModelFeeRates isSavedFeeRate]) {
+                [f60_5Fee appendString:[ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]]];
+            }
+            else {
+                [f60_5Fee appendString:@"0"];
+            }
+        }
+    }
+    return f60_5Fee;
+}
+
+
 
 // 执行排序
 - (NSArray*) arraySortBySourceArray:(NSArray*)array {

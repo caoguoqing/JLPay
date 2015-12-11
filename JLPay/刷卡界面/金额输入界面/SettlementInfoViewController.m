@@ -11,6 +11,8 @@
 #import "PublicInformation.h"
 #import "BrushViewController.h"
 #import "Packing8583.h"
+#import "Define_Header.h"
+#import "ModelSettlementInformation.h"
 
 @interface SettlementInfoViewController()
 <UITableViewDataSource, UITableViewDelegate>
@@ -25,8 +27,8 @@
 
 @implementation SettlementInfoViewController
 
-- (instancetype)initWithStyle:(UITableViewStyle)style {
-    self = [super initWithStyle:style];
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         keysOfCells = @[@"sFloatMoney",
                         kSettleInfoNameAmountLimit,
@@ -45,25 +47,20 @@
         
         self.tableView.canCancelContentTouches = NO;
         self.tableView.delaysContentTouches = NO;
-        
     }
     return self;
 }
 
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setBackBarButtonNoTitle];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    
+    if (NeedPrintLog) {
+        NSLog(@"传入的金额:[%@]",self.sFloatMoney);
+    }
 }
-
-- (void) setBackBarButtonNoTitle {
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToRootViewController:)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-}
-- (IBAction) backToRootViewController:(id)sender  {
-    NSLog(@"%s:跳转到rootview", __func__);
-    [self.navigationController popToRootViewControllerAnimated:YES];
-}
-
 
 #pragma mask ---- UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -90,11 +87,19 @@
     }
     // 费率
     else if ([keyOfCell isEqualToString:kSettleInfoNameT_0_Fee]) {
-        cell.detailTextLabel.text = [self formatFee:[self.settlementInformation valueForKey:kSettleInfoNameT_0_Fee]];
+        cell.detailTextLabel.text = [self formatFee:[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
     }
-    // 各种限额
-    else {
-        cell.detailTextLabel.text = [self.settlementInformation valueForKey:keyOfCell];
+    // t0当前可刷
+    else if ([keyOfCell isEqualToString:kSettleInfoNameAmountAvilable]) {
+        cell.detailTextLabel.text = [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable];
+    }
+    // t0单日限额
+    else if ([keyOfCell isEqualToString:kSettleInfoNameAmountLimit]) {
+        cell.detailTextLabel.text = [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit];
+    }
+    // t0最小刷卡额
+    else if ([keyOfCell isEqualToString:kSettleInfoNameMinCustAmount]) {
+        cell.detailTextLabel.text = [[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount];
     }
     return cell;
 }
@@ -143,5 +148,8 @@
     [self.navigationController pushViewController:viewcon animated:YES];
 }
 
+- (void)setSFloatMoney:(NSString *)sFloatMoney {
+    _sFloatMoney = [NSString stringWithString:sFloatMoney];
+}
 
 @end

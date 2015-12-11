@@ -31,9 +31,9 @@
 
 // 枚举: 弹窗标记
 typedef enum : NSUInteger {
-    TagAlertVersionLow = 211,
-    TagAlertRegisterRefuse,
-    TagAlertOther
+    TagAlertVersionLow = 701,
+    TagAlertRegisterRefuse = 802,
+    TagAlertOther = 999
 } TagAlert;
 
 
@@ -89,13 +89,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     [self EndEdit];
     
     // 设置标题栏 title 的字体颜色
-    UIColor *color                  = [UIColor redColor];
-    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
-    self.navigationController.navigationBar.titleTextAttributes = dict;
-    self.navigationController.navigationBar.tintColor = color;
+    self.navigationController.navigationBar.tintColor = [UIColor redColor];
     // 回退场景按钮标题: 设置为空标题
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     // 注册信息字典:
     self.dictLastRegisterInfo = nil;
 }
@@ -121,9 +117,6 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     [super viewWillDisappear:animated];
     [[ModelHTTPRequestLogin sharedInstance] terminateLogin];
     [self.loadButton setEnabled:YES];
-}
-- (void) backToLastViewController {
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
@@ -477,7 +470,11 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         [[app_delegate window] makeToast:@"登陆成功"];
     });
     // 切换到主场景
-    [app_delegate signInSuccessToLogin:1];
+    if ([ModelDeviceBindedInformation hasBindedDevice]) {
+        [app_delegate signInSuccessToLogin:0];
+    } else {
+        [app_delegate signInSuccessToLogin:1];
+    }
 }
 
 /* 登陆失败 */

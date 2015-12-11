@@ -10,11 +10,6 @@
 
 @interface SettlementInfoViewController : UITableViewController
 
-@property (nonatomic, strong) NSDictionary* settlementInformation;      // 结算信息
-
-
-//@property (nonatomic, strong) NSString* stringOfTranType;               // 交易类型:消费、撤销、退货
-//@property (nonatomic, strong) NSString* sIntMoney;                      // 无小数点格式金额
 @property (nonatomic, strong) NSString* sFloatMoney;                    // 有小数点格式金额
 
 

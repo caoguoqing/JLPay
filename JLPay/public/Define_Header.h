@@ -25,6 +25,7 @@
 
 #define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
 
+
 /* 
  * 环境: 
  * 1: 生产环境(1),
@@ -35,7 +36,7 @@
  * 8: 内网开发环境-http
  * 9: 外网测试62
  */
-#define TestOrProduce                   7
+#define TestOrProduce                   3
 
 
 /* 版本分支配置(用于标示发布到appStore还是企业版的app)

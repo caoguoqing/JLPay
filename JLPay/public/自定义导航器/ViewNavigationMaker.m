@@ -7,12 +7,22 @@
 //
 
 #import "ViewNavigationMaker.h"
+#import "logViewController.h"
+#import "BrushViewController.h"
 #import "CustPayViewController.h"
 #import "settingViewController.h"
 #import "AdditionalServicesViewController.h"
 
 
 @implementation ViewNavigationMaker
+
+/* 创建一个登陆导航器 */
++ (CustomNavigationController*) newLoginNavigation {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    logViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"logVC"];
+    CustomNavigationController*  navigation = [[CustomNavigationController alloc] initWithRootViewController:viewController];
+    return navigation;
+}
 
 
 /* 创建一个收款导航器 */
@@ -25,6 +35,8 @@
                                                           image:[UIImage imageNamed:@"iconaG"]
                                                   selectedImage:[UIImage imageNamed:@"icona"]];
     
+    
+    [navigation setArrayOfPopRootViewControllers:@[[[BrushViewController alloc] init]]];
     
     return navigation;
 }

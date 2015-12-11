@@ -71,6 +71,7 @@
 		5E5FA58E1B477DD100387E69 /* JHLDevice_M60.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */; };
 		5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C21C197A3800A58865 /* CustomNavigationController.m */; };
 		5E7852C61C198E5400A58865 /* ViewNavigationMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */; };
+		5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
 		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
@@ -332,6 +333,8 @@
 		5E7852C21C197A3800A58865 /* CustomNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomNavigationController.m; sourceTree = "<group>"; };
 		5E7852C41C198E5400A58865 /* ViewNavigationMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewNavigationMaker.h; sourceTree = "<group>"; };
 		5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewNavigationMaker.m; sourceTree = "<group>"; };
+		5E7852C81C1AB35D00A58865 /* ModelSettlementInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelSettlementInformation.h; sourceTree = "<group>"; };
+		5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelSettlementInformation.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
 		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = "JLPay/设备管理/JHL/JHLDevice.h"; sourceTree = SOURCE_ROOT; };
@@ -808,6 +811,15 @@
 				5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */,
 			);
 			path = "自定义导航器";
+			sourceTree = "<group>";
+		};
+		5E7852C71C1AB2F900A58865 /* 商户结算信息 */ = {
+			isa = PBXGroup;
+			children = (
+				5E7852C81C1AB35D00A58865 /* ModelSettlementInformation.h */,
+				5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */,
+			);
+			path = "商户结算信息";
 			sourceTree = "<group>";
 		};
 		5E82B78A1B1BEF3600A58751 /* 设备管理 */ = {
@@ -1303,9 +1315,10 @@
 				5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */,
 				5E4A1FF31C06F2A400E7DFD5 /* 设备绑定信息 */,
 				5E4A1FEF1C055BF000E7DFD5 /* 用户登陆信息 */,
+				5E7852C71C1AB2F900A58865 /* 商户结算信息 */,
 				5E7852C01C197A0200A58865 /* 自定义导航器 */,
-				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5E82B8611B310A7D00A58751 /* 捷联通指示器 */,
+				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5EB9B1371AD79EC600A73190 /* SDK */,
 				5EBF3C401AD3B5BB00091F83 /* Toast */,
 				5EBAA9001ACD3B0200E2ABDD /* DES */,
@@ -1779,6 +1792,7 @@
 				5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */,
 				5E9448081BF9AA9400128452 /* ViewModelCodeScanner.m in Sources */,
 				5EF45B7B1BCCAAC700C75276 /* TextLabelCell.m in Sources */,
+				5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */,
 				5E9448201BFDA1E400128452 /* BusinessInfoTableViewCell.m in Sources */,
 				5EBAA9121ACD3F1B00E2ABDD /* SBJsonParser.m in Sources */,
 				5EBAA8E61ACD2FA800E2ABDD /* ISOHelper.m in Sources */,

@@ -154,6 +154,8 @@
     [self.view addSubview:self.btnViewRQCodeDisplay];
     [self.view addSubview:self.btnViewRQCodeScan];
     [self.fieldMoneyInput becomeFirstResponder];
+    
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -177,9 +179,6 @@
     frame.origin.x += frame.size.width;
     [self.btnViewRQCodeScan setFrame:frame];
     
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -189,9 +188,6 @@
     if ([self.fieldMoneyInput isFirstResponder]) {
         [self.fieldMoneyInput resignFirstResponder];
     }
-}
-- (void) backToLastViewController {
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

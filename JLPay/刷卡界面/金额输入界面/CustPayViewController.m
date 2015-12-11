@@ -17,6 +17,7 @@
 #import "SettlementInfoViewController.h"
 #import "HTTPRequestSettlementInfo.h"
 #import "ModelDeviceBindedInformation.h"
+#import "ModelSettlementInformation.h"
 
 
 #define ImageForBrand   @"logo"                                             // 商标图片
@@ -28,14 +29,12 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 {
     BOOL blueToothPowerOn;  // 蓝牙打开状态标记
     CBCentralManager* blueManager; // 蓝牙设备操作入口
-    BOOL isSettlementT_0;
 }
 @property (nonatomic, strong) UILabel           *labelDisplayMoney;         // 金额显示标签栏
 @property (nonatomic)         NSString*         money;                      // 金额
 @property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
 
 @property (nonatomic, strong) SettlementSwitchView* settlementView;         // 结算方式切换视图
-@property (nonatomic, strong) NSDictionary* settlementInformation;          // 商户的结算信息
 @end
 
 @implementation CustPayViewController
@@ -47,40 +46,31 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self addSubViews];
-    [self setBackBarButtonNoTitle];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    self.navigationController.navigationBar.tintColor = [UIColor redColor];
     
-    isSettlementT_0 = NO;
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
-    // 申请结算信息
-    [self startHTTPRequestForSettlementInfo];
-}
-- (void) setBackBarButtonNoTitle {
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = YES;
-    // 修改标题栏的字体颜色
-    UIColor* color = [UIColor redColor];
-    NSDictionary* textAttri = [NSDictionary dictionaryWithObject:color forKey:NSForegroundColorAttributeName];
-    self.navigationController.navigationBar.titleTextAttributes = textAttri;
-    self.navigationController.navigationBar.tintColor = color;
-
     
     // 更新结算方式的标记 - T+1
-    if ([[self.settlementInformation objectForKey:kSettleInfoNameT_0_Enable] boolValue]) {
+    if ([[ModelSettlementInformation sharedInstance] T_0EnableOrNot]) {
         [self.settlementView switchNormal];
     }
+    
+    // 申请结算信息
+    [self startHTTPRequestForSettlementInfo];
+
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBarHidden = NO;
-    
     [[HTTPRequestSettlementInfo sharedInstance] requestTerminate];
 }
 
@@ -95,7 +85,7 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 }
 /* 回调: 成功 */
 - (void)didRequestedSuccessWithSettlementInfo:(NSDictionary *)settlementInfo {
-    self.settlementInformation = settlementInfo;
+    [[ModelSettlementInformation sharedInstance] saveSettlementInfo:settlementInfo];
     [self.settlementView setEnableSwitching:[[settlementInfo objectForKey:kSettleInfoNameT_0_Enable] boolValue]];
 
 }
@@ -111,34 +101,24 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 - (void)didSwitchedSettlementType:(SETTLEMENTTYPE)settlementType {
     switch (settlementType) {
         case SETTLEMENTTYPE_T_0:
-        {
-            isSettlementT_0 = YES;
             // 提示T+0信息
             [self alertInformationForT_0];
-        }
-            break;
-        case SETTLEMENTTYPE_T_1:
-        {
-            isSettlementT_0 = NO;
-        }
             break;
         default:
-            isSettlementT_0 = YES;
             break;
     }
+    [[ModelSettlementInformation sharedInstance] updateSettlementType:settlementType];
 }
 - (void) alertInformationForT_0 {
-    if (self.settlementInformation) {
-        NSMutableString* alert = [[NSMutableString alloc] init];
+    NSMutableString* alert = [[NSMutableString alloc] init];
+    
+    [alert appendFormat:@"T+0最小刷卡限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
+    [alert appendFormat:@"T+0当日可刷额度: %@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+    [alert appendFormat:@"T+0单日限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
+    [alert appendFormat:@"T+0增加费率: +%@%%",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
         
-        [alert appendFormat:@"T+0单日限额: %@\n",[self.settlementInformation objectForKey:kSettleInfoNameAmountLimit]];
-        [alert appendFormat:@"T+0当日可刷额度: %@\n",[self.settlementInformation objectForKey:kSettleInfoNameAmountAvilable]];
-        [alert appendFormat:@"T+0最小刷卡限额: %@\n",[self.settlementInformation objectForKey:kSettleInfoNameMinCustAmount]];
-        [alert appendFormat:@"T+0增加费率: +%@%%",[self.settlementInformation objectForKey:kSettleInfoNameT_0_Fee]];
-        
-        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        [alertView show];
-    }
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alertView show];
 }
 
 #pragma mask ---- CBCentrolManagerDelegate
@@ -262,10 +242,9 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
         return;
     }
     
-    if (isSettlementT_0) {
-        SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithStyle:UITableViewStylePlain];
-        settlementVC.settlementInformation = [NSDictionary dictionaryWithDictionary:[self.settlementInformation copy]];
-        settlementVC.sFloatMoney = self.money;
+    if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
+        SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithNibName:nil bundle:nil];
+        [settlementVC setSFloatMoney:[NSString stringWithString:self.money]];
         [self.navigationController pushViewController:settlementVC animated:YES];
     } else {
         // 跳转刷卡界面
@@ -482,8 +461,8 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 /* 金额值的 setter 方法 */
 - (void)setMoney:(NSString*)money {
     if (![_money isEqualToString: money]) {
-        _money                          = money;
-        _labelDisplayMoney.text             = _money;
+        _money = money;
+        _labelDisplayMoney.text = _money;
     }
 }
 - (UILabel *)labelDisplayMoney {

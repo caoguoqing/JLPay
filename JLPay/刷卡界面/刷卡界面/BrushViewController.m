@@ -81,8 +81,7 @@
  *************************************/
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.navigationController setNavigationBarHidden:NO];
-    [self.navigationController.navigationBar setTintColor:[UIColor redColor]];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     // 加载子视图
     [self setTitle:@"刷卡"];
     [self addSubViews];
@@ -92,19 +91,7 @@
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
-    [self setBackBarButtonNoTitle];
 }
-- (void) setBackBarButtonNoTitle {
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToRootViewController:)];
-//    [self.navigationController.navigationBar setDelegate:self];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-}
-- (IBAction) backToRootViewController :(id)sender {
-    NSLog(@"%s:跳转到rootview", __func__);
-    [self.navigationController popToRootViewControllerAnimated:YES];
-}
-
-
 
 
 #pragma mask ::: 子视图的属性设置
@@ -115,17 +102,9 @@
     
     [[DeviceManager sharedInstance] setDelegate:self];
     
-    if (self.navigationController.navigationBarHidden) {
-        self.navigationController.navigationBarHidden = NO;
-    }
+    self.navigationController.navigationBarHidden = NO;
 }
 
-
-#pragma mask ---- UINavigationBarDelegate
-//- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
-//    NSLog(@"----%s",__func__);
-//    return YES;
-//}
 
 #pragma mask ::: 界面显示后的事件注册及处理
 /*************************************
@@ -145,18 +124,22 @@
         [self alertForFailedMessage:@"未绑定设备,请先绑定设备!"];
         return;
     }
+
     // 2.检查蓝牙是否开启
     if (!blueToothPowerOn) {
         [self alertForFailedMessage:@"手机蓝牙未打开,请打开蓝牙"];
         return;
     }
+
     // 3.扫描设备
     [[DeviceManager sharedInstance] startScanningDevices];
+
     
     // 4.先在主线程打开activitor 和 提示信息
     [self.activity startAnimating];
     self.timeOut = 30; // 扫描设备的超时时间为30
     [self startTimerWithSelector:@selector(waitingForDeviceOpenning)];
+
 }
 #pragma mask ::: 释放资源
 - (void)viewWillDisappear:(BOOL)animated {
@@ -282,8 +265,6 @@
 #pragma mask ::: 进行加密
 - (void) encryptPinWithSource:(NSString*)source {
     NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-//    NSString* deviceType = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceType];
-
     if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
         [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
     }
@@ -570,7 +551,7 @@
  *************************************/
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     // 要么是交易失败，要么设备未连接，都要弹出界面
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 

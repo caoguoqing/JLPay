@@ -155,11 +155,13 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 设置 title 的字体颜色
-    UIColor *color                  = [UIColor redColor];
-    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
-    self.navigationController.navigationBar.titleTextAttributes = dict;
-    self.navigationController.navigationBar.tintColor = color;
+//    UIColor *color                  = [UIColor redColor];
+//    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
+//    self.navigationController.navigationBar.titleTextAttributes = dict;
+    self.navigationController.navigationBar.tintColor = [UIColor redColor];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
 
+    // 不要自动将 y0 指向导航器下面
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self.view addSubview:self.collectionView];
@@ -172,12 +174,6 @@ NSString* headerIdentifier = @"headerIdentifier";
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
     
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-
-}
-- (void) backToLastViewController {
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

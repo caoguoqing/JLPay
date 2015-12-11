@@ -11,6 +11,9 @@
 
 @interface ViewNavigationMaker : NSObject
 
+/* 创建一个登陆导航器 */
++ (CustomNavigationController*) newLoginNavigation;
+
 /* 创建一个收款导航器 */
 + (CustomNavigationController*) newCustPayNavigation;
 

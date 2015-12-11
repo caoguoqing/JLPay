@@ -51,7 +51,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -62,14 +61,13 @@
     [super viewWillAppear:animated];
     //隐藏navigationController
     [self.navigationController setNavigationBarHidden:YES animated:NO];
-    //隐藏状态栏
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
-    self.navigationController.navigationBar.hidden=NO;
 }
 
+// 隐藏状态栏
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
@@ -79,6 +77,7 @@ static NSMutableArray *colors;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     
     isHiddenType=0;
     
@@ -211,7 +210,6 @@ static NSMutableArray *colors;
     [self.labelForSigning removeFromSuperview];
     //先截图
     self.uploadImage=[self getNormalImage:returnView];
-//    [self exchange];
     
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"签名成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert setBackgroundColor:[UIColor colorWithWhite:0.8 alpha:0.2]];

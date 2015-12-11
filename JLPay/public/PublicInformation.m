@@ -736,7 +736,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         NSRange dotRange = [dotMoney rangeOfString:@"."];
         NSString* intPart = (dotRange.location > 0)?([dotMoney substringToIndex:dotRange.location]):(@"0");
         NSString* dotPart = (dotRange.location + dotRange.length == dotMoney.length)?(@"0"):([dotMoney substringFromIndex:dotRange.location + dotRange.length]);
-        intMoney = [NSString stringWithFormat:@"%010d.%02d",intPart.intValue, dotPart.intValue];
+        intMoney = [NSString stringWithFormat:@"%012d",intPart.intValue * 100 + dotPart.intValue];
     }
     return intMoney;
 }
@@ -784,8 +784,15 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 + (NSString*) AppVersionNumber {
     NSString* versionNumber = nil;
     versionNumber = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-    NSLog(@"app的版本号:[%@]",versionNumber);
+    if (NeedPrintLog) {
+        NSLog(@"app的版本号:[%@]",versionNumber);
+    }
     return versionNumber;
+}
+
+/* 创建一个空的回退bar按钮 */
++ (UIBarButtonItem*) newBarItemWithNullTitle {
+    return [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 

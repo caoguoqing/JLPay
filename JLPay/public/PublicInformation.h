@@ -138,5 +138,8 @@
 #pragma mask ::: 金额: 小数点格式 -> 12位无小数点格式
 + (NSString*) intMoneyFromDotMoney:(NSString*)dotMoney;
 
+#pragma mask 0-------------------------------------------0 界面相关
+/* 创建一个空的回退bar按钮 */
++ (UIBarButtonItem*) newBarItemWithNullTitle;
 
 @end

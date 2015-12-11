@@ -9,7 +9,7 @@
 #import "HTTPRequestSettlementInfo.h"
 #import "ASIFormDataRequest.h"
 #import "PublicInformation.h"
-
+#import "Define_Header.h"
 
 static NSString* const kFieldNameRequestBusinessNum = @"mchtNo";
 
@@ -86,7 +86,9 @@ static HTTPRequestSettlementInfo* settlementRequester = nil;
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* responseInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
-
+    if (NeedPrintLog) {
+        NSLog(@"查询到的结算信息:[%@]",responseInfo);
+    }
     if (!error) {
         NSString* code = [responseInfo objectForKey:kFieldNameResponseCode];
         if (code.intValue == 0) {
@@ -121,15 +123,15 @@ static HTTPRequestSettlementInfo* settlementRequester = nil;
     }
     // 日结算额
     NSString* dayTotal = [responseInfo objectForKey:kFieldNameResponseDayTotal];
-    [settlementInfo setObject:dayTotal forKey:kSettleInfoNameAmountLimit];
+    [settlementInfo setObject:[NSString stringWithFormat:@"%.02lf",[dayTotal floatValue]] forKey:kSettleInfoNameAmountLimit];
     // 日可刷限额
     NSString* cumMoney = [responseInfo objectForKey:kFieldNameResponseCumMoney];
-    [settlementInfo setObject:[NSString stringWithFormat:@"%d", dayTotal.intValue - cumMoney.intValue] forKey:kSettleInfoNameAmountAvilable];
+    [settlementInfo setObject:[NSString stringWithFormat:@"%.02lf", dayTotal.floatValue - cumMoney.floatValue] forKey:kSettleInfoNameAmountAvilable];
     // t+0手续费
     NSString* t0Fee = [responseInfo objectForKey:kFieldNameResponseT0Fee];
     [settlementInfo setObject:[NSString stringWithFormat:@"%.02lf",t0Fee.floatValue] forKey:kSettleInfoNameT_0_Fee];
     // 最低刷卡额
-    [settlementInfo setObject:@"500" forKey:kSettleInfoNameMinCustAmount];
+    [settlementInfo setObject:@"500.00" forKey:kSettleInfoNameMinCustAmount];
 
     return settlementInfo;
 }

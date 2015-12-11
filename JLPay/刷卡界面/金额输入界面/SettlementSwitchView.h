@@ -7,18 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ModelSettlementInformation.h"
 
 
 /* - 结算方式切换视图 - */
-
-
-
-/* 结算方式枚举量 */
-typedef enum {
-    SETTLEMENTTYPE_T_1 = 1 << 0, // T+1
-    SETTLEMENTTYPE_T_0 = 1 << 1, // T+0
-} SETTLEMENTTYPE;
-
 
 @class SettlementSwitchView;
 @protocol SettlementSwitchViewDelegate <NSObject>

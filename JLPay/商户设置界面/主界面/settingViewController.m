@@ -36,11 +36,8 @@
 - (void)viewDidLoad {
     self.tableView.rowHeight        = 50.f;                               // 设置cell的行高
     
-    // 设置 title 的字体颜色
-    UIColor *color                  = [UIColor redColor];
-    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
-    self.navigationController.navigationBar.titleTextAttributes = dict;
-    self.navigationController.navigationBar.tintColor = color;
+    self.navigationController.navigationBar.tintColor = [UIColor redColor];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     
     [super viewDidLoad];
     // 将多余的cell的下划线置空
@@ -54,13 +51,6 @@
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    // 置空 UINavigationController 的返回按钮的标题
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-}
-
-- (void) backToLastViewController {
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
@@ -179,7 +169,6 @@
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"费率选择"]) {
-//        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"rateViewController"];
         viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
         [viewController setTitle:cellName];
     }

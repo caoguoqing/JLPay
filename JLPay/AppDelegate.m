@@ -25,69 +25,29 @@
 
 
 
-/*
- *登陆成功后进入Tabbar
- */
 #pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 -(void)signInSuccessToLogin:(int)select{
     
     UITabBarController* tabBarController = [[UITabBarController alloc] initWithNibName:nil bundle:nil];
     [tabBarController.tabBar setTintColor:[PublicInformation returnCommonAppColor:@"red"]];
     
-    NSMutableArray* viewControllers = [[NSMutableArray alloc] init];
-    [viewControllers addObject:[ViewNavigationMaker newCustPayNavigation]];
-    [viewControllers addObject:[ViewNavigationMaker newBusinessNavigation]];
-    [viewControllers addObject:[ViewNavigationMaker newAddServiceNavigation]];
+    NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
+    [navigationControllers addObject:[ViewNavigationMaker newCustPayNavigation]];
+    [navigationControllers addObject:[ViewNavigationMaker newBusinessNavigation]];
+//    [navigationControllers addObject:[ViewNavigationMaker newAddServiceNavigation]];
     
-    [tabBarController setViewControllers:viewControllers];
+    [tabBarController setViewControllers:navigationControllers];
     [tabBarController setSelectedIndex:select];
     
     [self.window setRootViewController:tabBarController];
-    
-//    self.window.userInteractionEnabled=YES;
-//    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    UITabBarController* tabBarController = [storyboard instantiateViewControllerWithIdentifier:@"tabbar"];
-//
-//    /* 进入的初始界前要先判断是否绑定设备：
-//     *    如果绑定了:就跳转到金额输入界面
-//     *    如果没有绑定:就跳转到绑定设备界面
-//     */
-//    if (![ModelDeviceBindedInformation hasBindedDevice]) {
-//        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:1];
-//    } else {
-//        tabBarController.selectedViewController = [tabBarController.viewControllers objectAtIndex:0];
-//    }
-//    
-//    
-//    self.window.rootViewController      = tabBarController;
-//    
-//    // tabBarItem 的默认图片可以在 storyBoard 中设置, 但是 selected 图片还是要在代码中动态创建
-//    NSArray* selectedImageArray         = [NSArray arrayWithObjects:@"icona", @"iconb", @"iconc", nil];
-//    for (int i = 0; i< tabBarController.tabBar.items.count; i++) {
-//        UITabBarItem* item              = [tabBarController.tabBar.items objectAtIndex:i];
-//        item.selectedImage              = [[UIImage imageNamed:[selectedImageArray objectAtIndex:i]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-//    }
-//    
-//    // 当点击了 tabBarItem 后，对应的 文字描述 也要变成红色
-//    tabBarController.tabBar.tintColor   = [UIColor colorWithRed:238.0/255.0 green:40.0/255.0 blue:50.0/255.0 alpha:1];
 }
 
 
-// 跳转到指定的界面
-- (void) loadInViewController:(UIViewController*)viewController {
-    self.window.rootViewController      = viewController;
-}
-
-
-
-#pragma mask ::: app 的入口;
+#pragma mask ::: app 完成加载;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    logViewController* logVC = [storyBoard instantiateViewControllerWithIdentifier:@"logVC"];
-    CustomNavigationController* navigationController = [[CustomNavigationController alloc] initWithRootViewController:logVC];
-    
-    self.window.rootViewController = navigationController;
+    // 因为根视图控制用的 storyboard 的,所以可以不用生成新的 keywindow
+    self.window.rootViewController = [ViewNavigationMaker newLoginNavigation];
     
     return YES;
 }

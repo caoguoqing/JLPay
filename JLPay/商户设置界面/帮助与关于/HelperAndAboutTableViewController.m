@@ -8,6 +8,7 @@
 
 #import "HelperAndAboutTableViewController.h"
 #import "BangdingViewController.h"
+#import "PublicInformation.h"
 
 @interface HelperAndAboutTableViewController ()
 @property (nonatomic, strong) NSMutableArray* cellTitles;
@@ -24,14 +25,10 @@
     [super viewDidLoad];
     UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
     [self.tableView setTableFooterView:view];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    UIBarButtonItem* backBarButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-    [self.navigationItem setBackBarButtonItem:backBarButton];
-}
-- (void) backToLastViewController {
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

@@ -14,10 +14,8 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-//@property(nonatomic, strong)    DeviceManager*  device;
+#pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 - (void)signInSuccessToLogin:(int)select;
-// 跳转到指定的界面
-- (void) loadInViewController:(UIViewController*)viewController ;
 
 @end
 

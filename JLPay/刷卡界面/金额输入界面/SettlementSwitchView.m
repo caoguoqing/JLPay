@@ -10,14 +10,8 @@
 #import "PublicInformation.h"
 
 
-static NSString* const stringSettlementT_1 = @"T+1";
-static NSString* const stringSettlementT_0 = @"T+0";
-
 
 @interface SettlementSwitchView()
-//{
-//    SETTLEMENTTYPE curSettlementTYpe;
-//}
 @property (nonatomic, assign) SETTLEMENTTYPE curSettlementType;
 @property (nonatomic, strong) UILabel* labelSettlementDisplay; // 显示标签
 @property (nonatomic, strong) UIButton* buttonSwitch;   // 切换按钮
@@ -30,7 +24,7 @@ static NSString* const stringSettlementT_0 = @"T+0";
     self = [super initWithFrame:frame];
     if (self) {
         self.enableSwitching = NO;
-        self.curSettlementType = SETTLEMENTTYPE_T_1;
+        self.curSettlementType = [[ModelSettlementInformation sharedInstance] curSettlementType];
         
         [self addSubview:self.labelSettlementDisplay];
         [self addSubview:self.buttonSwitch];
@@ -81,10 +75,6 @@ static NSString* const stringSettlementT_0 = @"T+0";
     switch (self.curSettlementType) {
         case SETTLEMENTTYPE_T_0:
             [self clickToSwichSettlementType];  // 要回调
-//            [self switchSettlementType];
-            break;
-        case SETTLEMENTTYPE_T_1:
-            // do nothing
             break;
         default:
             // do nothing
@@ -103,23 +93,6 @@ static NSString* const stringSettlementT_0 = @"T+0";
     }
 }
 
-#pragma mask ---- 获取结算方式的描述文本
-/* 当前结算方式文本: 指定结算方式枚举量 */
-- (NSString*) textCurrentSettlementType:(SETTLEMENTTYPE)settlementType {
-    NSString* text = nil;
-    switch (settlementType) {
-        case SETTLEMENTTYPE_T_0:
-            text = stringSettlementT_0;
-            break;
-        case SETTLEMENTTYPE_T_1:
-            text = stringSettlementT_1;
-            break;
-        default:
-            text = stringSettlementT_1;
-            break;
-    }
-    return text;
-}
 
 #pragma mask ---- PRIVATE INTERFACE
 
@@ -127,33 +100,16 @@ static NSString* const stringSettlementT_0 = @"T+0";
 - (NSString*) textSettlementDisplayWithType:(SETTLEMENTTYPE)settlementType {
     NSString* text = nil;
     if (self.enableSwitching) {
-        text = [NSString stringWithFormat:@"结算方式: %@,", [self textCurrentSettlementType:settlementType]];
+        text = [NSString stringWithFormat:@"结算方式: %@,", [ModelSettlementInformation nameOfSettlementType:settlementType]];
     } else {
-        text = [NSString stringWithFormat:@"结算方式: %@", [self textCurrentSettlementType:settlementType]];
+        text = [NSString stringWithFormat:@"结算方式: %@", [ModelSettlementInformation nameOfSettlementType:settlementType]];
     }
     return text;
 }
 
 /* 切换枚举值 */
 - (void) switchSettlementType {
-    if (![self enumExistsSettlemenType:self.curSettlementType << 1]) {
-        self.curSettlementType = SETTLEMENTTYPE_T_1;
-    } else {
-        self.curSettlementType = self.curSettlementType << 1;
-    }
-}
-/* 检查枚举是否存在指定的类型 */
-- (BOOL) enumExistsSettlemenType:(NSInteger)type {
-    BOOL exists = NO;
-    switch (type) {
-        case SETTLEMENTTYPE_T_0:
-        case SETTLEMENTTYPE_T_1:
-            exists = YES;
-            break;
-        default:
-            break;
-    }
-    return exists;
+    self.curSettlementType = [[ModelSettlementInformation sharedInstance] settlementTypeSwitched];
 }
 
 #pragma mask ---- getter
