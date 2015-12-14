@@ -29,6 +29,7 @@
 - (void) turnPullUp {
     refreshing = NO;
     self.activity.hidden = YES;
+    [self.activity stopAnimating];
     self.imageView.hidden = NO;
     self.textLabel.text = pullUpText;
     
@@ -41,6 +42,7 @@
 - (void) turnPullDown {
     refreshing = NO;
     self.activity.hidden = YES;
+    [self.activity stopAnimating];
     self.imageView.hidden = NO;
     self.textLabel.text = pullDownText;
     

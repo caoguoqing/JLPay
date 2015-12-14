@@ -163,18 +163,22 @@
         [f60_5Fee appendString:@"0"];
     }
     else {
-        if ([self isSavedJiGouInfo]) {
-            [f60_5Fee appendString:@"9"];
-            [f60_5Fee appendString:[self businessNumInJiGou]];
-            [f60_5Fee appendString:[self terminalNumInJiGou]];
-        }
-        else {
-            if ([ModelFeeRates isSavedFeeRate]) {
-                [f60_5Fee appendString:[ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]]];
+        if ([[ModelSettlementInformation sharedInstance] curSettlementType] != SETTLEMENTTYPE_T_0) {
+            if ([self isSavedJiGouInfo]) {
+                [f60_5Fee appendString:@"9"];
+                [f60_5Fee appendString:[self businessNumInJiGou]];
+                [f60_5Fee appendString:[self terminalNumInJiGou]];
             }
             else {
-                [f60_5Fee appendString:@"0"];
+                if ([ModelFeeRates isSavedFeeRate]) {
+                    [f60_5Fee appendString:[ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]]];
+                }
+                else {
+                    [f60_5Fee appendString:@"0"];
+                }
             }
+        } else {
+            [f60_5Fee appendString:@"0"];
         }
     }
     return f60_5Fee;
@@ -224,7 +228,9 @@
 
 // 取数据字典中所有值,打包成串
 - (NSString*) allDataString {
-    NSLog(@"打包的所有域:{%@}",self.dictionaryFieldNamesAndValues);
+    if (NeedPrintLog) {
+        NSLog(@"打包的所有域:{%@}",self.dictionaryFieldNamesAndValues);
+    }
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];

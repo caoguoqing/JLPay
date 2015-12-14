@@ -81,12 +81,14 @@
     CGFloat heightButton = 40;
 
     UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+//    view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
     // 加载费率显示标签
     frame.origin.x = inset * 3;
-    frame.origin.y = inset;
+    frame.origin.y = inset * 3;
     frame.size.height = 20;
     UILabel* labelFeeRateDisplay = [self labelForFeeRateDisplayInFrame:frame];
     [view addSubview:labelFeeRateDisplay];
+//    labelFeeRateDisplay.backgroundColor = [UIColor colorWithWhite:0.7 alpha:1];
     // 加载费率标签
     frame.origin.x += labelFeeRateDisplay.frame.size.width;
     frame.size.width -= frame.origin.x;
@@ -99,8 +101,8 @@
     } else {
         self.labelFeeRateName.text = @"无";
         self.labelFeeRateName.textColor = [UIColor grayColor];
-        
     }
+//    self.labelFeeRateName.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
 
     // 加载清空按钮
     frame.origin.y += frame.size.height + inset * 3;

@@ -31,8 +31,8 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         keysOfCells = @[@"sFloatMoney",
-                        kSettleInfoNameAmountLimit,
                         kSettleInfoNameAmountAvilable,
+                        kSettleInfoNameAmountLimit,
                         kSettleInfoNameMinCustAmount,
                         kSettleInfoNameT_0_Fee];
         titlesForKeys = @{@"sFloatMoney":@"刷卡金额:",

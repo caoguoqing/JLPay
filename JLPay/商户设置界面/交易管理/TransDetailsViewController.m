@@ -317,9 +317,6 @@ NSInteger logCount = 0;
                                      naviAndState,
                                      self.view.bounds.size.width,
                                      self.view.bounds.size.height - naviAndState - self.tabBarController.tabBar.bounds.size.height);
-
-//    UIBarButtonItem* backItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(backToLastViewController)];
-//    [self.navigationItem setBackBarButtonItem:backItem];
     
     // 先校验是否绑定了
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
@@ -331,10 +328,6 @@ NSInteger logCount = 0;
         [self alertShow:@"未绑定设备,请先绑定设备"];
     }
 }
-//- (void) backToLastViewController {
-//    [self.navigationController popViewControllerAnimated:YES];
-//}
-
 
 
 - (void)viewWillAppear:(BOOL)animated {

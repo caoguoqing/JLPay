@@ -18,6 +18,7 @@
 #import "HTTPRequestSettlementInfo.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
+#import "DotMoneyCalculating.h"
 
 
 #define ImageForBrand   @"logo"                                             // 商标图片
@@ -31,16 +32,17 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     CBCentralManager* blueManager; // 蓝牙设备操作入口
 }
 @property (nonatomic, strong) UILabel           *labelDisplayMoney;         // 金额显示标签栏
-@property (nonatomic)         NSString*         money;                      // 金额
-@property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
+//@property (nonatomic)         NSString*         money;                      // 金额
+//@property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
 
+@property (nonatomic, strong) DotMoneyCalculating* dotMoneyCalculating;
 @property (nonatomic, strong) SettlementSwitchView* settlementView;         // 结算方式切换视图
 @end
 
 @implementation CustPayViewController
 @synthesize labelDisplayMoney               = _labelDisplayMoney;
-@synthesize money                       = _money;
-@synthesize moneyCalculated             = _moneyCalculated;
+//@synthesize money                       = _money;
+//@synthesize moneyCalculated             = _moneyCalculated;
 
 
 - (void)viewDidLoad {
@@ -112,9 +114,9 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 - (void) alertInformationForT_0 {
     NSMutableString* alert = [[NSMutableString alloc] init];
     
-    [alert appendFormat:@"T+0最小刷卡限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
     [alert appendFormat:@"T+0当日可刷额度: %@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
     [alert appendFormat:@"T+0单日限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
+    [alert appendFormat:@"T+0最小刷卡限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
     [alert appendFormat:@"T+0增加费率: +%@%%",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
         
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -176,7 +178,8 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 向金额对象压入输入的数字
-    self.money = [self.moneyCalculated moneyByAddedNumber:sender.titleLabel.text];
+//    self.money = [self.moneyCalculated moneyByAddedNumber:sender.titleLabel.text];
+    self.labelDisplayMoney.text = [self.dotMoneyCalculating moneyByAddedNumber:sender.titleLabel.text];
 }
 
 
@@ -185,7 +188,8 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 获取撤销后的上一次输入的金额
-    self.money = [self.moneyCalculated moneyByRevoked];
+//    self.money = [self.moneyCalculated moneyByRevoked];
+    self.labelDisplayMoney.text = [self.dotMoneyCalculating moneyByRevoked];
 }
 
 /*************************************
@@ -195,8 +199,8 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
  *************************************/
 - (IBAction)longPressButtonOfDelete:(UILongPressGestureRecognizer*)sender {
     while (YES) {
-        self.money = [self.moneyCalculated moneyByRevoked];
-        if ([self.money isEqualToString:@"0.00"]) {
+        self.labelDisplayMoney.text = [self.dotMoneyCalculating moneyByRevoked];
+        if ([self.labelDisplayMoney.text isEqualToString:@"0.00"]) {
             break;
         }
     }
@@ -232,7 +236,7 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
     sender.transform = CGAffineTransformIdentity;
-    if ([self.money floatValue] < 0.0001) {
+    if ([self.labelDisplayMoney.text floatValue] < 0.0001) {
         [self alertShow:@"请输入金额!"];
         return;
     }
@@ -244,21 +248,21 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     
     if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
         SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithNibName:nil bundle:nil];
-        [settlementVC setSFloatMoney:[NSString stringWithString:self.money]];
+        [settlementVC setSFloatMoney:[NSString stringWithString:self.labelDisplayMoney.text]];
         [self.navigationController pushViewController:settlementVC animated:YES];
     } else {
         // 跳转刷卡界面
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
         BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
         [viewcon setStringOfTranType:TranType_Consume];
-        [viewcon setSFloatMoney:self.money];
-        [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.money]];
+        [viewcon setSFloatMoney:self.labelDisplayMoney.text];
+        [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.labelDisplayMoney.text]];
         [self.navigationController pushViewController:viewcon animated:YES];
     }
     
     // 重置金额
-    self.money = @"0.00";
-    self.moneyCalculated = nil;
+    self.labelDisplayMoney.text = @"0.00";
+    self.dotMoneyCalculating = nil;
 }
 
 
@@ -452,19 +456,25 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 
 
 #pragma mask --- setter & getter
-- (MoneyCalculated *)moneyCalculated {
-    if (_moneyCalculated == nil) {
-        _moneyCalculated = [[MoneyCalculated alloc] initWithLimit:6];   // 金额限制在6位
+- (DotMoneyCalculating *)dotMoneyCalculating {
+    if (_dotMoneyCalculating == nil) {
+        _dotMoneyCalculating = [[DotMoneyCalculating alloc] init];
     }
-    return _moneyCalculated;
+    return _dotMoneyCalculating;
 }
+//- (MoneyCalculated *)moneyCalculated {
+//    if (_moneyCalculated == nil) {
+//        _moneyCalculated = [[MoneyCalculated alloc] initWithLimit:6];   // 金额限制在6位
+//    }
+//    return _moneyCalculated;
+//}
 /* 金额值的 setter 方法 */
-- (void)setMoney:(NSString*)money {
-    if (![_money isEqualToString: money]) {
-        _money = money;
-        _labelDisplayMoney.text = _money;
-    }
-}
+//- (void)setMoney:(NSString*)money {
+//    if (![_money isEqualToString: money]) {
+//        _money = money;
+//        _labelDisplayMoney.text = _money;
+//    }
+//}
 - (UILabel *)labelDisplayMoney {
     if (_labelDisplayMoney == nil) {
         _labelDisplayMoney = [[UILabel alloc] initWithFrame:CGRectZero];

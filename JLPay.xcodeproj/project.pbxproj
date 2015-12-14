@@ -72,6 +72,7 @@
 		5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C21C197A3800A58865 /* CustomNavigationController.m */; };
 		5E7852C61C198E5400A58865 /* ViewNavigationMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */; };
 		5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */; };
+		5E7852CD1C1E6C8900A58865 /* DotMoneyCalculating.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
 		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
@@ -335,6 +336,8 @@
 		5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewNavigationMaker.m; sourceTree = "<group>"; };
 		5E7852C81C1AB35D00A58865 /* ModelSettlementInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelSettlementInformation.h; sourceTree = "<group>"; };
 		5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelSettlementInformation.m; sourceTree = "<group>"; };
+		5E7852CB1C1E6C8900A58865 /* DotMoneyCalculating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotMoneyCalculating.h; sourceTree = "<group>"; };
+		5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DotMoneyCalculating.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
 		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = "JLPay/设备管理/JHL/JHLDevice.h"; sourceTree = SOURCE_ROOT; };
@@ -977,6 +980,8 @@
 		5E94480C1BFB21E600128452 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				5E7852CB1C1E6C8900A58865 /* DotMoneyCalculating.h */,
+				5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */,
 				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
 				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
 				5EFD09861C153B5A0062AD34 /* HTTPRequestSettlementInfo.h */,
@@ -1905,6 +1910,7 @@
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5E93B4AF1BEC33C90064BEC4 /* CodeScannerViewController.m in Sources */,
+				5E7852CD1C1E6C8900A58865 /* DotMoneyCalculating.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
 				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
 				5EFD09941C16A8530062AD34 /* FeeRateTableViewController.m in Sources */,
