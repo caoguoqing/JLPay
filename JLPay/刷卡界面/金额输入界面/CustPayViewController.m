@@ -8,7 +8,6 @@
 
 #import "CustPayViewController.h"
 #import "Define_Header.h"
-#import "MoneyCalculated.h"
 #import "BrushViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "DeleteButton.h"
@@ -31,18 +30,15 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     BOOL blueToothPowerOn;  // 蓝牙打开状态标记
     CBCentralManager* blueManager; // 蓝牙设备操作入口
 }
-@property (nonatomic, strong) UILabel           *labelDisplayMoney;         // 金额显示标签栏
-//@property (nonatomic)         NSString*         money;                      // 金额
-//@property (nonatomic, strong) MoneyCalculated*  moneyCalculated;            // 更新的金额计算类
+@property (nonatomic, strong) UILabel *labelDisplayMoney;         // 金额显示标签栏
+@property (nonatomic, strong) UIView* backViewOfMoney; // 用来优化结算方式视图的点击体验
 
 @property (nonatomic, strong) DotMoneyCalculating* dotMoneyCalculating;
 @property (nonatomic, strong) SettlementSwitchView* settlementView;         // 结算方式切换视图
 @end
 
 @implementation CustPayViewController
-@synthesize labelDisplayMoney               = _labelDisplayMoney;
-//@synthesize money                       = _money;
-//@synthesize moneyCalculated             = _moneyCalculated;
+@synthesize labelDisplayMoney = _labelDisplayMoney;
 
 
 - (void)viewDidLoad {
@@ -53,7 +49,6 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -68,7 +63,6 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     
     // 申请结算信息
     [self startHTTPRequestForSettlementInfo];
-
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -76,7 +70,15 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     [[HTTPRequestSettlementInfo sharedInstance] requestTerminate];
 }
 
-
+/* 重载点击事件: 优化点击的体验 */
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    UITouch* touch = [touches anyObject];
+    CGPoint curPoint = [touch locationInView:self.view];
+    /* 判断是否在T+0切换视图中 */
+    if ([self moneyBackViewContainsPoint:curPoint]) {
+        [self.settlementView clickToSwichSettlementType];
+    }
+}
 
 #pragma mask ---- HTTP && HTTPRequestSettlementInfoDelegate
 /* 请求数据 */
@@ -178,7 +180,6 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 向金额对象压入输入的数字
-//    self.money = [self.moneyCalculated moneyByAddedNumber:sender.titleLabel.text];
     self.labelDisplayMoney.text = [self.dotMoneyCalculating moneyByAddedNumber:sender.titleLabel.text];
 }
 
@@ -188,7 +189,6 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 获取撤销后的上一次输入的金额
-//    self.money = [self.moneyCalculated moneyByRevoked];
     self.labelDisplayMoney.text = [self.dotMoneyCalculating moneyByRevoked];
 }
 
@@ -240,11 +240,23 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
         [self alertShow:@"请输入金额!"];
         return;
     }
-    
     if (!blueToothPowerOn) {
         [self alertShow:@"手机蓝牙未打开,请打开蓝牙"];
         return;
     }
+    if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
+        if (self.labelDisplayMoney.text.floatValue < [[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount].floatValue) {
+            NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
+            [self alertShow:log];
+            return;
+        }
+        if (self.labelDisplayMoney.text.floatValue > [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable].floatValue) {
+            NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+            [self alertShow:log];
+            return;
+        }
+    }
+    
     
     if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
         SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithNibName:nil bundle:nil];
@@ -256,7 +268,8 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
         BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
         [viewcon setStringOfTranType:TranType_Consume];
         [viewcon setSFloatMoney:self.labelDisplayMoney.text];
-        [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.labelDisplayMoney.text]];
+//        [viewcon setSIntMoney:[self sIntMoneyOfFloatMoney:self.labelDisplayMoney.text]];
+        [viewcon setSIntMoney:[PublicInformation intMoneyFromDotMoney:self.labelDisplayMoney.text]];
         [self.navigationController pushViewController:viewcon animated:YES];
     }
     
@@ -345,23 +358,25 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     // 金额背景框
     frame.size.width = self.view.bounds.size.width - bornerWith*2;
     frame.size.height                   = heightMoneyDisplay - bornerWith*2;
-    UIView  *moneyView                  = [[UIView alloc] initWithFrame:frame];
-    moneyView.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0]; // 灰色
-    moneyView.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightMoneyDisplay/2.0);
-    [self.view addSubview:moneyView];
+//    UIView  *moneyView                  = [[UIView alloc] initWithFrame:frame];
+//    moneyView.backgroundColor           = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0]; // 灰色
+    [self.backViewOfMoney setFrame:frame];
+    self.backViewOfMoney.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightMoneyDisplay/2.0);
+    [self.view addSubview:self.backViewOfMoney];
     
     // moneyLabel
     CGRect innerFrame = CGRectMake(0, 0, frame.size.width - 45, frame.size.height);
     self.labelDisplayMoney.frame = innerFrame;
     self.labelDisplayMoney.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:innerFrame.size andScale:6.0/12.0]];
-    [moneyView addSubview:self.labelDisplayMoney];
+    [self.backViewOfMoney addSubview:self.labelDisplayMoney];
     
     // 结算方式切换视图
-    innerFrame.origin.x += inset;
-    innerFrame.origin.y += inset;
+    innerFrame.origin.x += inset ;//+ moneyView.frame.origin.x;
+    innerFrame.origin.y += inset ;//+ moneyView.frame.origin.y;
     innerFrame.size.height = 20;
     [self.settlementView setFrame:innerFrame];
-    [moneyView addSubview:self.settlementView];
+//    [self.view addSubview:self.settlementView];
+    [self.backViewOfMoney addSubview:self.settlementView];
     
     // moneyImageView 金额符号Label : 字体大小为金额字体大小的 3/4, 因为字体为汉字，显示要比英文字母高一点，所以将y降低一个 inset，高度也减少一个 inset
     innerFrame.origin.x                 = 0 + innerFrame.size.width + inset;
@@ -372,7 +387,7 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     moneySymbolLabel.text               = @"￥";
     moneySymbolLabel.textAlignment      = NSTextAlignmentLeft;
     moneySymbolLabel.font               = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:7.0/12.0 * 2.0/3.0]];
-    [moneyView addSubview:moneySymbolLabel];
+    [self.backViewOfMoney addSubview:moneySymbolLabel];
     yCenterPre += heightMoneyDisplay;
     
     // 数字按键组
@@ -439,19 +454,29 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     [alert show];
 }
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+/* 判断坐标点是否在T+0切换视图内 */
+- (BOOL) moneyBackViewContainsPoint:(CGPoint)point {
+    BOOL contains = NO;
+    if (point.x >= self.backViewOfMoney.frame.origin.x &&
+        point.x <= self.backViewOfMoney.frame.origin.x + self.backViewOfMoney.frame.size.width &&
+        point.y >= self.backViewOfMoney.frame.origin.y &&
+        point.y <= self.backViewOfMoney.frame.origin.y + self.backViewOfMoney.frame.size.height
+        )
+    {
+        contains = YES;
+    }
+    return contains;
 }
+
 
 // 小数点型金额转换为整型金额
-- (NSString*) sIntMoneyOfFloatMoney:(NSString*)floatMoney {
-    NSString* sIntMoney = nil;
-    NSString* sInt = [floatMoney substringToIndex:[floatMoney rangeOfString:@"."].location];
-    NSString* sFloat = [floatMoney substringFromIndex:[floatMoney rangeOfString:@"."].location + 1];
-    sIntMoney = [NSString stringWithFormat:@"%012d",sInt.intValue * 100 + sFloat.intValue];
-    return sIntMoney;
-}
+//- (NSString*) sIntMoneyOfFloatMoney:(NSString*)floatMoney {
+//    NSString* sIntMoney = nil;
+//    NSString* sInt = [floatMoney substringToIndex:[floatMoney rangeOfString:@"."].location];
+//    NSString* sFloat = [floatMoney substringFromIndex:[floatMoney rangeOfString:@"."].location + 1];
+//    sIntMoney = [NSString stringWithFormat:@"%012d",sInt.intValue * 100 + sFloat.intValue];
+//    return sIntMoney;
+//}
 
 
 
@@ -462,19 +487,6 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     }
     return _dotMoneyCalculating;
 }
-//- (MoneyCalculated *)moneyCalculated {
-//    if (_moneyCalculated == nil) {
-//        _moneyCalculated = [[MoneyCalculated alloc] initWithLimit:6];   // 金额限制在6位
-//    }
-//    return _moneyCalculated;
-//}
-/* 金额值的 setter 方法 */
-//- (void)setMoney:(NSString*)money {
-//    if (![_money isEqualToString: money]) {
-//        _money = money;
-//        _labelDisplayMoney.text = _money;
-//    }
-//}
 - (UILabel *)labelDisplayMoney {
     if (_labelDisplayMoney == nil) {
         _labelDisplayMoney = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -490,6 +502,13 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
         [_settlementView setDelegate:self];
     }
     return _settlementView;
+}
+- (UIView *)backViewOfMoney {
+    if (_backViewOfMoney == nil) {
+        _backViewOfMoney = [[UIView alloc] initWithFrame:CGRectZero];
+        _backViewOfMoney.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0]; // 灰色
+    }
+    return _backViewOfMoney;
 }
 
 @end

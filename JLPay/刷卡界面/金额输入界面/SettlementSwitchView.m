@@ -85,6 +85,9 @@
 
 #pragma mask ---- 点击切换
 - (void) clickToSwichSettlementType {
+    if (!self.enableSwitching) {
+        return;
+    }
     // 根据当前值切换
     [self switchSettlementType];
     // 回调

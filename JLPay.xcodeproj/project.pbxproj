@@ -41,7 +41,6 @@
 		5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B4B1AD3677E004F206F /* libxml2.dylib */; };
 		5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B531AD36D22004F206F /* libz.1.2.5.dylib */; };
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
-		5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */; };
 		5E4A1FF21C055C3000E7DFD5 /* ModelUserLoginInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */; };
 		5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */; };
 		5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */; };
@@ -276,8 +275,6 @@
 		5E397B4B1AD3677E004F206F /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		5E397B531AD36D22004F206F /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		5E397B551AD37B4B004F206F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoneyCalculated.h; sourceTree = "<group>"; };
-		5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoneyCalculated.m; sourceTree = "<group>"; };
 		5E4A1FF01C055C3000E7DFD5 /* ModelUserLoginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUserLoginInformation.h; sourceTree = "<group>"; };
 		5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUserLoginInformation.m; sourceTree = "<group>"; };
 		5E4A1FF41C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelDeviceBindedInformation.h; sourceTree = "<group>"; };
@@ -982,8 +979,6 @@
 			children = (
 				5E7852CB1C1E6C8900A58865 /* DotMoneyCalculating.h */,
 				5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */,
-				5E3ECBB41B3A925400E762BD /* MoneyCalculated.h */,
-				5E3ECBB51B3A925400E762BD /* MoneyCalculated.m */,
 				5EFD09861C153B5A0062AD34 /* HTTPRequestSettlementInfo.h */,
 				5EFD09871C153B5A0062AD34 /* HTTPRequestSettlementInfo.m */,
 			);
@@ -1844,7 +1839,6 @@
 				5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
-				5E3ECBB61B3A925400E762BD /* MoneyCalculated.m in Sources */,
 				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
 				5E5FA5861B46342600387E69 /* ISDataPath.m in Sources */,

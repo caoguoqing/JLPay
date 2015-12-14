@@ -27,6 +27,9 @@
 
 @property (nonatomic, assign) BOOL enableSwitching; // 是否允许切换
 
+#pragma mask ---- 点击切换
+- (void) clickToSwichSettlementType;
+
 /* 切换回正常状态 */
 - (void) switchNormal;
 

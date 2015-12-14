@@ -8,6 +8,7 @@
 
 #import "ModelSettlementInformation.h"
 #import "HTTPRequestSettlementInfo.h"
+#import "Define_Header.h"
 
 
 static NSString* const stringSettlementT_1 = @"T+1";
@@ -122,7 +123,12 @@ static ModelSettlementInformation* modelSettlement = nil;
 
 /* T+0最低消费金额 */
 - (NSString*) T_0MinSettlementAmount {
-    return @"500.00";
+    if (TestOrProduce == 1) {
+        return @"500.00";
+    }
+    else {
+        return @"1.00";
+    }
 }
 
 /* T+0增加费率 */
