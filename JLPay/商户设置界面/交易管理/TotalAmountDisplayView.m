@@ -81,7 +81,6 @@
     label.textAlignment = NSTextAlignmentLeft;
     label.font = [UIFont boldSystemFontOfSize:TextDesFont];
     label.textColor = CellTextColor;
-//    label.backgroundColor = [UIColor purpleColor];
     [view addSubview:label];
     
     // self.totalAmountLabel
@@ -89,7 +88,6 @@
     innerFrame.size.width = frame.size.width / 4.0 * 3.0 - LeftInset;
     innerFrame.size.height = frame.size.height - innerFrame.size.height;
     self.totalAmountLabel.frame = innerFrame;
-//    self.totalAmountLabel.backgroundColor = [UIColor greenColor];
     [view addSubview:self.totalAmountLabel];
     
     // ￥
@@ -102,7 +100,6 @@
     label.textColor = CellTextColor;
     label.text = @"￥";
     label.font = [UIFont boldSystemFontOfSize:AmountFlagFont];
-//    label.backgroundColor = [UIColor orangeColor];
     [view addSubview:label];
     
     return view;

@@ -77,6 +77,12 @@
     return url;
 }
 
+/* 终止请求 */
+- (void) terminateRequesting {
+    [self.http clearDelegatesAndCancel];
+}
+
+
 
 /* 清空数据 */
 - (void) clearDetails

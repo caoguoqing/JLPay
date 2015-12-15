@@ -103,7 +103,6 @@
 		5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F21BEC914800128452 /* ScannerImageView.m */; };
 		5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */; };
 		5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448011BF42E2100128452 /* ViewModelTransDetails.m */; };
-		5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448041BF48FB400128452 /* RevokeViewCell.m */; };
 		5E9448081BF9AA9400128452 /* ViewModelCodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448071BF9AA9400128452 /* ViewModelCodeScanner.m */; };
 		5E9448131BFC278D00128452 /* ViewModelTCPPosTrans.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448121BFC278D00128452 /* ViewModelTCPPosTrans.m */; };
 		5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448191BFD5FBE00128452 /* BalanceEnquiryViewController.m */; };
@@ -112,7 +111,6 @@
 		5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E94486C1C03F3F600128452 /* AdditionalCollectionLayout.m */; };
 		5E9448731C0460D800128452 /* ViewModelTCPHandleWithDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448721C0460D800128452 /* ViewModelTCPHandleWithDevice.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
-		5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
 		5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA9214A1BE3197200DB0AA8 /* OtherPayCollectViewController.m */; };
 		5EA9214E1BE31B1B00DB0AA8 /* QRCodeButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA9214D1BE31B1B00DB0AA8 /* QRCodeButtonView.m */; };
@@ -383,8 +381,6 @@
 		5E9447F51BF0957A00128452 /* BarCodeResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BarCodeResultViewController.m; sourceTree = "<group>"; };
 		5E9448001BF42E2100128452 /* ViewModelTransDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTransDetails.h; sourceTree = "<group>"; };
 		5E9448011BF42E2100128452 /* ViewModelTransDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTransDetails.m; sourceTree = "<group>"; };
-		5E9448031BF48FB400128452 /* RevokeViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevokeViewCell.h; sourceTree = "<group>"; };
-		5E9448041BF48FB400128452 /* RevokeViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RevokeViewCell.m; sourceTree = "<group>"; };
 		5E9448061BF9AA9400128452 /* ViewModelCodeScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelCodeScanner.h; sourceTree = "<group>"; };
 		5E9448071BF9AA9400128452 /* ViewModelCodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelCodeScanner.m; sourceTree = "<group>"; };
 		5E9448111BFC278D00128452 /* ViewModelTCPPosTrans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPPosTrans.h; sourceTree = "<group>"; };
@@ -401,8 +397,6 @@
 		5E9448721C0460D800128452 /* ViewModelTCPHandleWithDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPHandleWithDevice.m; sourceTree = "<group>"; };
 		5E9D9BA21BA9050D00A7E8CC /* Packing8583.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Packing8583.h; sourceTree = "<group>"; };
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
-		5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleLayerButton.h; sourceTree = "<group>"; };
-		5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubleLayerButton.m; sourceTree = "<group>"; };
 		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOFieldFormation.h; sourceTree = "<group>"; };
 		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISOFieldFormation.m; sourceTree = "<group>"; };
 		5EA921491BE3197200DB0AA8 /* OtherPayCollectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherPayCollectViewController.h; sourceTree = "<group>"; };
@@ -904,8 +898,6 @@
 		5E9447F71BF2E77800128452 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				5E9D9BDD1BABA62F00A7E8CC /* DoubleLayerButton.h */,
-				5E9D9BDE1BABA62F00A7E8CC /* DoubleLayerButton.m */,
 				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
 				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
 				5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */,
@@ -914,8 +906,6 @@
 				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
 				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
 				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
-				5E9448031BF48FB400128452 /* RevokeViewCell.h */,
-				5E9448041BF48FB400128452 /* RevokeViewCell.m */,
 				5EDD1E7C1C084BB800D78A5C /* PullRefrashView.h */,
 				5EDD1E7D1C084BB800D78A5C /* PullRefrashView.m */,
 			);
@@ -1830,8 +1820,6 @@
 				5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */,
 				5E5FA5851B46342600387E69 /* ISControlManager.m in Sources */,
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
-				5E9D9BDF1BABA62F00A7E8CC /* DoubleLayerButton.m in Sources */,
-				5E9448051BF48FB400128452 /* RevokeViewCell.m in Sources */,
 				5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,

@@ -35,6 +35,8 @@
                             endTime:(NSString*)endTime
                            terminal:(NSString*)terminal
                           bussiness:(NSString*)bussiness;
+/* 终止请求 */
+- (void) terminateRequesting;
 
 
 /* 清空数据 */
