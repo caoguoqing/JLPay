@@ -130,12 +130,13 @@
 // 60.3 N3 网络管理信息码
 + (NSString*) f60_3EncodeCodeWithTransType:(NSString*)transType {
     NSString* f60_3 = nil;
-    if ([transType isEqualToString:TranType_Consume] ||
-        [transType isEqualToString:TranType_DownMainKey] ||
-        [transType isEqualToString:TranType_DownWorkKey]
-        )
+    if ([transType isEqualToString:TranType_DownMainKey] ||
+        [transType isEqualToString:TranType_DownWorkKey])
     {
         f60_3 = @"003";
+    }
+    else if ([transType isEqualToString:TranType_BatchUpload]) {
+        f60_3 = @"201";
     }
     else {
         f60_3 = @"000";

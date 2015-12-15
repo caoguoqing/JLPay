@@ -13,7 +13,6 @@
 #import "JLActivitor.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
-#import "SelectIndicatorView.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
@@ -23,7 +22,7 @@
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,
 UIScrollViewDelegate,
-DatePickerViewDelegate,SelectIndicatorViewDelegate, ViewModelTransDetailsDelegate>
+DatePickerViewDelegate, ViewModelTransDetailsDelegate>
 {
     CGPoint lastScrollPoint;
     CGFloat heightPullRefrashView;

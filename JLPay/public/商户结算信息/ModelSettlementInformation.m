@@ -127,7 +127,7 @@ static ModelSettlementInformation* modelSettlement = nil;
         return @"500.00";
     }
     else {
-        return @"1.00";
+        return @"0.01";
     }
 }
 

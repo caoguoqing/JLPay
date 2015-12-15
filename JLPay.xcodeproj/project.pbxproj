@@ -10,6 +10,7 @@
 		5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */; };
 		5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE721B09949200B8C198 /* DynamicScrollView.m */; };
 		5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */; };
+		5E0EBA6C1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -44,7 +45,6 @@
 		5E4A1FF21C055C3000E7DFD5 /* ModelUserLoginInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */; };
 		5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */; };
 		5E54D6541BB6D7E7005FF3C4 /* DynamicPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */; };
-		5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */; };
 		5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E353F1B70BC4300560C0A /* myCollectionCell.m */; };
 		5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E35461B71E93700560C0A /* ChangePinViewController.m */; };
 		5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5E354B1B735B1100560C0A /* ForgetPinViewConroller.m */; };
@@ -72,6 +72,7 @@
 		5E7852C61C198E5400A58865 /* ViewNavigationMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */; };
 		5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */; };
 		5E7852CD1C1E6C8900A58865 /* DotMoneyCalculating.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */; };
+		5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
 		5E82B7DF1B214B8200A58751 /* CustomIOSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B7DE1B214B8200A58751 /* CustomIOSAlertView.m */; };
@@ -209,6 +210,8 @@
 		5E08AE721B09949200B8C198 /* DynamicScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicScrollView.m; sourceTree = "<group>"; };
 		5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButton.h; sourceTree = "<group>"; };
 		5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteButton.m; sourceTree = "<group>"; };
+		5E0EBA6A1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelMPOSDetails.h; sourceTree = "<group>"; };
+		5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelMPOSDetails.m; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -279,8 +282,6 @@
 		5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelDeviceBindedInformation.m; sourceTree = "<group>"; };
 		5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicPickerView.h; path = CustomPickerView/DynamicPickerView.h; sourceTree = "<group>"; };
 		5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DynamicPickerView.m; path = CustomPickerView/DynamicPickerView.m; sourceTree = "<group>"; };
-		5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectIndicatorView.h; sourceTree = "<group>"; };
-		5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectIndicatorView.m; sourceTree = "<group>"; };
 		5E5E353E1B70BC4300560C0A /* myCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myCollectionCell.h; sourceTree = "<group>"; };
 		5E5E353F1B70BC4300560C0A /* myCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myCollectionCell.m; sourceTree = "<group>"; };
 		5E5E35451B71E93700560C0A /* ChangePinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePinViewController.h; sourceTree = "<group>"; };
@@ -333,6 +334,8 @@
 		5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelSettlementInformation.m; sourceTree = "<group>"; };
 		5E7852CB1C1E6C8900A58865 /* DotMoneyCalculating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotMoneyCalculating.h; sourceTree = "<group>"; };
 		5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DotMoneyCalculating.m; sourceTree = "<group>"; };
+		5E7852CF1C1FBCEF00A58865 /* HTTPInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPInstance.h; sourceTree = "<group>"; };
+		5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPInstance.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
 		5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager.m; sourceTree = "<group>"; };
 		5E82B78E1B1BFCC200A58751 /* JHLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JHLDevice.h; path = "JLPay/设备管理/JHL/JHLDevice.h"; sourceTree = SOURCE_ROOT; };
@@ -816,6 +819,16 @@
 			path = "商户结算信息";
 			sourceTree = "<group>";
 		};
+		5E7852CE1C1FBC7000A58865 /* HTTP */ = {
+			isa = PBXGroup;
+			children = (
+				5E397AF31AD36429004F206F /* asi-http */,
+				5E7852CF1C1FBCEF00A58865 /* HTTPInstance.h */,
+				5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */,
+			);
+			path = HTTP;
+			sourceTree = "<group>";
+		};
 		5E82B78A1B1BEF3600A58751 /* 设备管理 */ = {
 			isa = PBXGroup;
 			children = (
@@ -898,14 +911,12 @@
 		5E9447F71BF2E77800128452 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
-				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
-				5E5E353B1B70593E00560C0A /* SelectIndicatorView.h */,
-				5E5E353C1B70593E00560C0A /* SelectIndicatorView.m */,
-				5EF3BAA11B686AE200DCD764 /* DatePickerView.h */,
-				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
 				5EF3BA9B1B67258F00DCD764 /* TotalAmountDisplayView.h */,
 				5EF3BA9C1B67258F00DCD764 /* TotalAmountDisplayView.m */,
+				5E82B7EE1B256C6B00A58751 /* DetailsCell.h */,
+				5E82B7EF1B256C6B00A58751 /* DetailsCell.m */,
+				5EF3BAA11B686AE200DCD764 /* DatePickerView.h */,
+				5EF3BAA21B686AE200DCD764 /* DatePickerView.m */,
 				5EDD1E7C1C084BB800D78A5C /* PullRefrashView.h */,
 				5EDD1E7D1C084BB800D78A5C /* PullRefrashView.m */,
 			);
@@ -926,6 +937,8 @@
 		5E9447F91BF2E78C00128452 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				5E0EBA6A1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.h */,
+				5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */,
 				5E9448001BF42E2100128452 /* ViewModelTransDetails.h */,
 				5E9448011BF42E2100128452 /* ViewModelTransDetails.m */,
 			);
@@ -1315,7 +1328,7 @@
 				5EBAA9151ACD3F2400E2ABDD /* JSON */,
 				5EDE98B71BDA0D5200131190 /* SQLITE */,
 				5E397B3E1AD364A9004F206F /* TCP */,
-				5E397AF31AD36429004F206F /* asi-http */,
+				5E7852CE1C1FBC7000A58865 /* HTTP */,
 				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
 				5E5E362C1B87076200560C0A /* CustomPickerView */,
 				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
@@ -1777,6 +1790,7 @@
 				5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */,
 				5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */,
 				5E397B341AD36429004F206F /* ASIInputStream.m in Sources */,
+				5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */,
 				5EBAA8EB1ACD2FA800E2ABDD /* ErrorType.m in Sources */,
 				5E397B3D1AD36429004F206F /* Reachability.m in Sources */,
 				5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */,
@@ -1799,6 +1813,7 @@
 				5EBA40F71AEA366000F270C0 /* QianPiViewController.m in Sources */,
 				5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */,
 				5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */,
+				5E0EBA6C1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m in Sources */,
 				5E82B7E21B214B8F00A58751 /* passwordView.m in Sources */,
 				5EB6F9881AC8DD1C00E47AB5 /* logViewController.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
@@ -1876,7 +1891,6 @@
 				5ED3442A1AD8C1DB0005C890 /* ProgressHUD.m in Sources */,
 				5E397B321AD36429004F206F /* ASIFormDataRequest.m in Sources */,
 				5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */,
-				5E5E353D1B70593E00560C0A /* SelectIndicatorView.m in Sources */,
 				5E9448731C0460D800128452 /* ViewModelTCPHandleWithDevice.m in Sources */,
 				5EBAA9141ACD3F1B00E2ABDD /* SBJsonWriter.m in Sources */,
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,

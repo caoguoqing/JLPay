@@ -36,7 +36,7 @@
  * 8: 内网开发环境-http
  * 9: 外网测试62
  */
-#define TestOrProduce                   3
+#define TestOrProduce                   1
 
 
 /* 版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -48,13 +48,34 @@
 
 
 
+/* 枚举量: 交易平台类型
+ * TransPlatformType
+ *
+ */
+typedef enum {
+    TransPlatformType_MPOS = 1, // MPOS 刷卡交易
+    TransPlatformType_OtherPay  // 第三方支付交易
+} TransPlatformType ;
+
+
+
+
+
+
+
+
+
 /*************[设备操作相关的参数:]**************/
-// 厂商设备类型
-#define DeviceType                  @"DeviceType"               
-#define DeviceType_JHL_A60          @"A60音频刷卡头A"
-#define DeviceType_JHL_M60          @"M60蓝牙刷卡器"
-#define DeviceType_RF_BB01          @"蓝牙刷卡头"
-#define DeviceType_JLpay_TY01       @"JLpay蓝牙刷卡器"
+//// 厂商设备类型
+//#define DeviceType                  @"DeviceType"               
+//#define DeviceType_JHL_A60          @"A60音频刷卡头A"
+//#define DeviceType_JHL_M60          @"M60蓝牙刷卡器"
+//#define DeviceType_RF_BB01          @"蓝牙刷卡头"
+//#define DeviceType_JLpay_TY01       @"JLpay蓝牙刷卡器"
+//
+
+
+
 
 
 /* ------------------------------ 信息字典: 选择的机构信息
@@ -69,23 +90,5 @@
 // 费率 - key; 值为int{0,1,2,3};
 #define Key_RateOfPay   @"Key_RateOfPay"
 
-
-/*************[注册审核未通过:响应配置信息]**************/
-//#define  RESIGN_mchntNm                 @"RESIGN_mchntNm"
-//#define  RESIGN_userName                @"RESIGN_userName"
-//#define  RESIGN_passWord                @"RESIGN_passWord"
-//#define  RESIGN_identifyNo              @"RESIGN_identifyNo"
-//#define  RESIGN_telNo                   @"RESIGN_telNo"
-//#define  RESIGN_speSettleDs             @"RESIGN_speSettleDs"
-//#define  RESIGN_settleAcct              @"RESIGN_settleAcct"
-//#define  RESIGN_settleAcctNm            @"RESIGN_settleAcctNm"
-//#define  RESIGN_areaNo                  @"RESIGN_areaNo"
-//#define  RESIGN_addr                    @"RESIGN_addr"
-//#define  RESIGN_ageUserName             @"RESIGN_ageUserName"
-//#define  RESIGN_mail                    @"RESIGN_mail"
-//#define  RESIGN_03                      @"RESIGN_03"
-//#define  RESIGN_06                      @"RESIGN_06"
-//#define  RESIGN_08                      @"RESIGN_08"
-//#define  RESIGN_09                      @"RESIGN_09"
 
 #endif
