@@ -14,6 +14,8 @@ static NSString* const kSettleInfoNameAmountLimit = @"kSettleInfoNameAmountLimit
 static NSString* const kSettleInfoNameAmountAvilable = @"kSettleInfoNameAmountAvilabel"; // 当日可用限额
 static NSString* const kSettleInfoNameMinCustAmount = @"kSettleInfoNameMinCustAmount"; // T+0最小消费金额
 static NSString* const kSettleInfoNameT_0_Fee = @"kSettleInfoNameT_0_Fee"; // T+0费率
+static NSString* const kSettleInfoNameCompareMoney = @"kSettleInfoNameCompareMoney"; // T+0比较金额
+static NSString* const kSettleInfoNameExtraFee = @"kSettleInfoNameExtraFee"; // 额外手续费
 
 
 @class HTTPRequestSettlementInfo;

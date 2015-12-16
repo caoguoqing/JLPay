@@ -34,12 +34,15 @@
                         kSettleInfoNameAmountAvilable,
                         kSettleInfoNameAmountLimit,
                         kSettleInfoNameMinCustAmount,
-                        kSettleInfoNameT_0_Fee];
+                        kSettleInfoNameT_0_Fee
+                        ];
         titlesForKeys = @{@"sFloatMoney":@"刷卡金额:",
                           kSettleInfoNameAmountLimit:@"T+0单日限额:",
                           kSettleInfoNameAmountAvilable:@"T+0当日可刷额度:",
                           kSettleInfoNameMinCustAmount:@"T+0最小刷卡限额:",
-                          kSettleInfoNameT_0_Fee:@"T+0增加费率:"
+                          kSettleInfoNameT_0_Fee:@"增加手续费:"
+//                          kSettleInfoNameCompareMoney:@"T+0增加费率:",
+//                          kSettleInfoNameExtraFee:@"T+0增加费率:"
                           };
         
         self.title = @"结算信息";
@@ -83,7 +86,7 @@
     
     // 刷卡金额
     if ([keyOfCell isEqualToString:@"sFloatMoney"]) {
-        cell.detailTextLabel.text = [self valueForKey:keyOfCell];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[self valueForKey:keyOfCell]];// [self valueForKey:keyOfCell];
     }
     // 费率
     else if ([keyOfCell isEqualToString:kSettleInfoNameT_0_Fee]) {
@@ -91,15 +94,15 @@
     }
     // t0当前可刷
     else if ([keyOfCell isEqualToString:kSettleInfoNameAmountAvilable]) {
-        cell.detailTextLabel.text = [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
     }
     // t0单日限额
     else if ([keyOfCell isEqualToString:kSettleInfoNameAmountLimit]) {
-        cell.detailTextLabel.text = [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
     }
     // t0最小刷卡额
     else if ([keyOfCell isEqualToString:kSettleInfoNameMinCustAmount]) {
-        cell.detailTextLabel.text = [[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
     }
     return cell;
 }
@@ -107,7 +110,12 @@
 
 /* 格式化: 费率 */
 - (NSString*) formatFee:(NSString*)fee {
-    return [NSString stringWithFormat:@"+%@%%",fee];
+    NSString* formationFee = [NSString stringWithFormat:@"+%@%%",fee];
+    if (self.sFloatMoney.floatValue <= [[[ModelSettlementInformation sharedInstance] T_0CompareMoney] floatValue]) {
+        formationFee = [formationFee stringByAppendingFormat:@"+%@￥",[[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
+    }
+//    formationFee = @"+0.20%+100.00￥";
+    return formationFee;
 }
 
 

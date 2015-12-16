@@ -117,9 +117,12 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
 - (void) alertInformationForT_0 {
     NSMutableString* alert = [[NSMutableString alloc] init];
     
-    [alert appendFormat:@"T+0当日可刷额度: %@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
-    [alert appendFormat:@"T+0单日限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
-    [alert appendFormat:@"T+0最小刷卡限额: %@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
+    [alert appendFormat:@"T+0刷卡金额小于等于%@￥时需收取额外手续费: %@￥\n\n",
+     [[ModelSettlementInformation sharedInstance] T_0CompareMoney],
+     [[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
+    [alert appendFormat:@"T+0当日可刷额度: %@￥\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+    [alert appendFormat:@"T+0单日限额: %@￥\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
+    [alert appendFormat:@"T+0最小刷卡限额: %@￥\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
     [alert appendFormat:@"T+0增加费率: +%@%%",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
         
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -247,12 +250,12 @@ HTTPRequestSettlementInfoDelegate, SettlementSwitchViewDelegate>
     }
     if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
         if (self.labelDisplayMoney.text.floatValue < [[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount].floatValue) {
-            NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
+            NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@￥",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
             [self alertShow:log];
             return;
         }
         if (self.labelDisplayMoney.text.floatValue > [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable].floatValue) {
-            NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+            NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
             [self alertShow:log];
             return;
         }

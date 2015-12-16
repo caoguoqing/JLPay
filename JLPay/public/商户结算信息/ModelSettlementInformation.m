@@ -141,6 +141,26 @@ static ModelSettlementInformation* modelSettlement = nil;
     return rate;
 }
 
+/* T+0比较金额 */
+- (NSString*) T_0CompareMoney {
+    NSString* compareMoney = @"0.00";
+    if (self.settlementInformation) {
+        compareMoney = [self.settlementInformation objectForKey:kSettleInfoNameCompareMoney];
+        compareMoney = [NSString stringWithFormat:@"%.02lf", compareMoney.floatValue];
+    }
+    return compareMoney;
+}
+/* T+0额外手续费 */
+- (NSString*) T_0CompareExtraFee {
+    NSString* extraFee = @"0.00";
+    if (self.settlementInformation) {
+        extraFee = [self.settlementInformation objectForKey:kSettleInfoNameExtraFee];
+        extraFee = [NSString stringWithFormat:@"%.02lf", extraFee.floatValue];
+    }
+    return extraFee;
+}
+
+
 
 #pragma mask ---- PRIVATE INTERFACE
 /* 检查枚举是否存在指定的类型 */

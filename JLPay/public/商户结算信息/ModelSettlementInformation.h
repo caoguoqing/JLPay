@@ -51,6 +51,9 @@ typedef enum {
 /* T+0增加费率 */
 - (NSString*) T_0SettlementFeeRate;
 
-
+/* T+0比较金额 */
+- (NSString*) T_0CompareMoney;
+/* T+0额外手续费 */
+- (NSString*) T_0CompareExtraFee;
 
 @end

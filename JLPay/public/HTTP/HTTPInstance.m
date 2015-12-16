@@ -10,6 +10,9 @@
 
 @interface HTTPInstance()
 <ASIHTTPRequestDelegate>
+{
+    NSString* urlString;
+}
 @property (nonatomic, assign) id<HTTPInstanceDelegate>delegate;
 @property (nonatomic, retain) ASIFormDataRequest* httpRequester;
 
@@ -21,33 +24,25 @@ static HTTPInstance* pubHttpInstance = nil;
 @implementation HTTPInstance
 
 
-+ (instancetype) requestWithURLString:(NSString*)URLString {
-    @synchronized(self) {
-        if (pubHttpInstance == nil) {
-            pubHttpInstance = [[HTTPInstance alloc] initWithURLString:URLString];
-        }
-        return pubHttpInstance;
-    }
-}
-
 - (instancetype) initWithURLString:(NSString*)URLString {
     self = [super init];
     if (self) {
         if (URLString) {
-            self.httpRequester = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:URLString]];
-            [self.httpRequester setDelegate:self];
+            urlString = URLString;
         }
     }
     return self;
 }
 
-
 /* 开始请求 */
-- (void) startRequestingWithDelegate:(id<HTTPInstanceDelegate>)delegate {
+- (void) startRequestingWithDelegate:(id<HTTPInstanceDelegate>)delegate
+                       packingHandle:(void (^)(ASIFormDataRequest* http))packingBlock
+{
     self.delegate = delegate;
     if (self.httpRequester) {
         // 在代理中打包请求的参数
-        [delegate willPackParamsOnRequester:self.httpRequester];
+        packingBlock(self.httpRequester);
+        [self.httpRequester setDelegate:self];
         [self.httpRequester startAsynchronous];
     } else {
         [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"HTTP请求失败"];
@@ -57,11 +52,14 @@ static HTTPInstance* pubHttpInstance = nil;
 - (void) terminateRequesting {
     self.delegate = nil;
     [self.httpRequester clearDelegatesAndCancel];
+    self.httpRequester = nil;
 }
 
 #pragma mask ---- ASIHTTPRequestDelegate
 - (void) requestFinished:(ASIHTTPRequest *)request {
     NSData* data = [request responseData];
+    NSDictionary* resHeader = [request responseHeaders];
+
     [self.httpRequester clearDelegatesAndCancel];
     NSError* error;
     NSDictionary* resData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
@@ -74,8 +72,8 @@ static HTTPInstance* pubHttpInstance = nil;
         errorCode = [resData objectForKey:@"code"];
         errorMessage = [resData objectForKey:@"message"];
         if (!errorCode) {
-            errorCode = [resData objectForKey:@"HttpResult"];
-            errorMessage = [resData objectForKey:@"HttpMessage"];
+            errorCode = [resHeader objectForKey:@"HttpResult"];
+            errorMessage = [resHeader objectForKey:@"HttpMessage"];
         }
         if (errorCode) {
             if (errorCode.integerValue == 0) {
@@ -91,12 +89,13 @@ static HTTPInstance* pubHttpInstance = nil;
             [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"响应数据无响应码"];
         }
     }
+    self.httpRequester = nil;
 }
 
 - (void) requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequester clearDelegatesAndCancel];
-    NSLog(@"网络异常:[%@]",request.error);
     [self rebackFailCode:HTTPErrorCodeConnectFail andMessage:@"网络异常"];
+    self.httpRequester = nil;
 }
 
 
@@ -122,6 +121,14 @@ static HTTPInstance* pubHttpInstance = nil;
     if (self.delegate && [self.delegate respondsToSelector:@selector(httpInstance:didRequestingFailedWithError:)]) {
         [self.delegate httpInstance:self didRequestingFailedWithError:[self errorInfoMadeByCode:[NSString stringWithFormat:@"%d", errorCode] andMessage:message]];
     }
+}
+
+#pragma mask ---- getter
+- (ASIFormDataRequest *)httpRequester {
+    if (_httpRequester == nil) {
+        _httpRequester = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+    }
+    return _httpRequester;
 }
 
 @end

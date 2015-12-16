@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma mask --- -------- 准备废弃 ---------
 
 @class ViewModelTransDetails;
 

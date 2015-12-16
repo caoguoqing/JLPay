@@ -24,9 +24,7 @@
 /* 申请明细: 指定类型 */
 - (void) requestDetailsWithDelegate:(id<ViewModelMPOSDetailsDelegate>)delegate
                           beginTime:(NSString*)beginTime
-                            endTime:(NSString*)endTime
-                           terminal:(NSString*)terminal
-                           business:(NSString*)business;
+                            endTime:(NSString*)endTime;
 /* 终止请求 */
 - (void) terminateRequesting;
 

@@ -16,29 +16,30 @@
 #import "Toast+UIView.h"
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
-#import "ViewModelTransDetails.h"
+#import "ViewModelMPOSDetails.h"
 #import "PullRefrashView.h"
 
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,
 UIScrollViewDelegate,
-DatePickerViewDelegate, ViewModelTransDetailsDelegate>
+DatePickerViewDelegate,
+ViewModelMPOSDetailsDelegate
+>
 {
     CGPoint lastScrollPoint;
     CGFloat heightPullRefrashView;
     CGFloat maxPullDownOffset;
 }
-@property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
-@property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
+
+#pragma mask : view
 @property (nonatomic, strong) UITableView* tableView;               // 列出明细的表视图
 @property (nonatomic, strong) UIButton* searchButton;               // 查询按钮
 @property (nonatomic, strong) UIButton* dateButton;                 // 日期按钮
+@property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
+@property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
 
-@property (nonatomic, strong) NSMutableArray* years;
-@property (nonatomic, strong) NSMutableArray* months;
-@property (nonatomic, strong) NSMutableArray* days;
-
-@property (nonatomic, retain) ViewModelTransDetails* dataSource; // 数据源
+#pragma mask : model
+@property (nonatomic, retain) ViewModelMPOSDetails* dataSource;
 
 @property (nonatomic) CGRect activitorFrame;
 @end
@@ -49,9 +50,6 @@ NSInteger logCount = 0;
 @synthesize totalView = _totalView;
 @synthesize tableView = _tableView;
 @synthesize searchButton = _searchButton;
-@synthesize years = _years;
-@synthesize months = _months;
-@synthesize days = _days;
 @synthesize dateButton = _dateButton;
 @synthesize activitorFrame;
 
@@ -71,10 +69,12 @@ NSInteger logCount = 0;
     }
     UIColor* textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
 
-    [cell setCardNum:[self.dataSource cardNumAtIndex:indexPath.row]];
+    [cell setCardNum:[PublicInformation cuttingOffCardNo:[self.dataSource cardNumAtIndex:indexPath.row]]];
     [cell setTime:[self.dataSource transTimeAtIndex:indexPath.row]];
+    // 颜色和交易类型要重置
     [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
-    [cell setAmount:[NSString stringWithFormat:@"￥ %@",[self.dataSource moneyAtIndex:indexPath.row]] withColor:textColor];
+    // 颜色和金额要重置
+    [cell setAmount:[NSString stringWithFormat:@"￥ %@",[PublicInformation dotMoneyFromNoDotMoney:[self.dataSource moneyAtIndex:indexPath.row]]] withColor:textColor];
 
     return cell;
 }
@@ -236,6 +236,7 @@ NSInteger logCount = 0;
             BOOL filtered = [self.dataSource filterDetailsByInput:textField.text];
             if (filtered) {
                 [self.view makeToast:@"查询成功"];
+                [self.dataSource prepareSelector];
                 [self.tableView reloadData];
                 [self calculateTotalAmount];
             } else {
@@ -253,39 +254,35 @@ NSInteger logCount = 0;
 
 
 
-#pragma mask ---- 数据源请求 & 回调: ViewModelTransDetailsDelegate
+#pragma mask ---- 数据源请求 & 回调: ViewModelMPOSDetailsDelegate
 /* HTTP请求数据 */
 - (void) requestDataOnDate:(NSString*)dateString {
-    NSString* terminal = [ModelDeviceBindedInformation terminalNoBinded];
-    NSString* bussiness = [ModelDeviceBindedInformation businessNoBinded];
-    [self.dataSource requestDetailsWithPlatform:self.tradePlatform
-                                    andDelegate:self
-                                      beginTime:dateString
-                                        endTime:dateString
-                                       terminal:terminal
-                                      bussiness:bussiness];
+    [self.dataSource requestDetailsWithDelegate:self beginTime:dateString endTime:dateString];
 }
 
-/* 请求的数据返回了 */
-- (void)viewModel:(ViewModelTransDetails *)viewModel didRequestResult:(BOOL)result withMessage:(NSString *)message {
+- (void)didRequestingSuccessful {
     [[JLActivitor sharedInstance] stopAnimating];
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }
-    if (result) {
-        [self.tableView reloadData];
-        [self calculateTotalAmount];
-    } else {
-        [self.dataSource clearDetails];
-        [self.tableView reloadData];
-        [self calculateTotalAmount];
-        [self alertShow:message];
+    [self.dataSource prepareSelector];
+    [self.tableView reloadData];
+    [self calculateTotalAmount];
+}
+- (void)didRequestingFailWithCode:(HTTPErrorCode)errorCode andMessage:(NSString *)message {
+    [[JLActivitor sharedInstance] stopAnimating];
+    if ([self.pullRefrashView isRefreshing]) {
+        [self resetPullRefreshView];
     }
+    [self.dataSource prepareSelector];
+    [self.tableView reloadData];
+    [self calculateTotalAmount];
+    [self alertShow:message];
 }
 
 // 扫描明细数组,计算总金额，总笔数
 - (void) calculateTotalAmount {
-    [self.totalView setTotalAmount:[NSString stringWithFormat:@"%.02f",[self.dataSource totalAmountOfTrans]]];
+    [self.totalView setTotalAmount:[PublicInformation dotMoneyFromNoDotMoney:[self.dataSource totalAmountOfTrans]]];
     [self.totalView setTotalRows:[NSString stringWithFormat:@"%d", [self.dataSource totalCountOfTrans]]];
     [self.totalView setSucRows:[NSString stringWithFormat:@"%d",[self.dataSource countOfNormalTrans]]];
     [self.totalView setRevokeRows:[NSString stringWithFormat:@"%d", [self.dataSource countofCancelTrans]]];
@@ -301,22 +298,10 @@ NSInteger logCount = 0;
     heightPullRefrashView = 50;
     lastScrollPoint = CGPointZero;
     maxPullDownOffset = 0;
-    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     
-    [self.view addSubview:self.totalView];
-    [self.view addSubview:self.tableView];
-    [self.view addSubview:self.dateButton];
-    [self dateButtonSetTitle:[PublicInformation nowDate]];
-
-    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
-        [self.view addSubview:self.searchButton];
-    }
-    CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    self.activitorFrame = CGRectMake(0,
-                                     naviAndState,
-                                     self.view.bounds.size.width,
-                                     self.view.bounds.size.height - naviAndState - self.tabBarController.tabBar.bounds.size.height);
+    [self loadsSubviews];
     
+    self.dataSource = [[ViewModelMPOSDetails alloc] init];
     // 先校验是否绑定了
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
         // 请求数据
@@ -331,15 +316,48 @@ NSInteger logCount = 0;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.dataSource terminateRequesting];
+    [[JLActivitor sharedInstance] stopAnimating];
+}
+
+- (void) loadsSubviews {
     // 总金额显示框
     CGFloat inset = 15;
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    
+    [self.view addSubview:self.totalView];
+    [self.view addSubview:self.tableView];
+    [self.tableView addSubview:self.pullRefrashView];
+    [self.view addSubview:self.dateButton];
+    [self dateButtonSetTitle:[PublicInformation nowDate]];
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        [self.view addSubview:self.searchButton];
+    }
+    
+    
+    CGFloat naviAndState = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
+    self.activitorFrame = CGRectMake(0,
+                                     naviAndState,
+                                     self.view.bounds.size.width,
+                                     self.view.bounds.size.height - naviAndState - self.tabBarController.tabBar.bounds.size.height);
+
     CGRect frame = CGRectMake(0,
                               self.navigationController.navigationBar.bounds.size.height + statusBarHeight,
                               self.view.bounds.size.width,
                               (self.view.frame.size.height - self.navigationController.navigationBar.bounds.size.height)/4.0);
     self.totalView.frame = frame;
+    [self.view addSubview:self.totalView];
     
     // 日期按钮
     frame.origin.x = 0;
@@ -347,13 +365,13 @@ NSInteger logCount = 0;
     frame.size.height = 40;
     frame.size.width = 140;
     [self.dateButton setFrame:frame];
-
+    
     
     // 查询按钮
     frame.origin.x = self.view.bounds.size.width - inset - frame.size.height;
     frame.origin.y -= inset/3.0 ;
     frame.size.width = frame.size.height;
-    self.searchButton.frame = frame;
+    [self.searchButton setFrame:frame];
     
     // 分割线
     frame.origin.x = 0;
@@ -375,19 +393,7 @@ NSInteger logCount = 0;
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    
 }
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [[JLActivitor sharedInstance] stopAnimating];
-}
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-}
-
 
 
 /*************************************
@@ -438,9 +444,7 @@ NSInteger logCount = 0;
     if (_tableView == nil) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
-        view.backgroundColor = [UIColor clearColor];
         [_tableView setTableFooterView:view];
-        [_tableView addSubview:self.pullRefrashView];
     }
     return _tableView;
 }
@@ -467,42 +471,6 @@ NSInteger logCount = 0;
         [_dateButton addTarget:self action:@selector(touchToFrushData:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _dateButton;
-}
-
-- (NSMutableArray *)years {
-    if (_years == nil) {
-        _years = [[NSMutableArray alloc] init];
-        NSString* nDate = [PublicInformation nowDate];
-        for (int i = [[nDate substringToIndex:4] intValue]; i >= 2015; i--) {
-            [_years addObject:[NSString stringWithFormat:@"%d",i]];
-        }
-    }
-    return _years;
-}
-- (NSMutableArray *)months {
-    if (_months == nil) {
-        _months = [[NSMutableArray alloc] init];
-        for (int i = 0; i < 12; i++) {
-            [_months addObject:[NSString stringWithFormat:@"%d",i+1]];
-        }
-    }
-    return _months;
-}
-- (NSMutableArray *)days {
-    if (_days == nil) {
-        _days = [[NSMutableArray alloc] init];
-        for (int i = 0; i < 31; i++) {
-            [_days addObject:[NSString stringWithFormat:@"%d",i+1]];
-        }
-    }
-    return _days;
-}
-
-- (ViewModelTransDetails *)dataSource {
-    if (_dataSource == nil) {
-        _dataSource = [[ViewModelTransDetails alloc] init];
-    }
-    return _dataSource;
 }
 
 @end

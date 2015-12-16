@@ -38,10 +38,6 @@ static NSString* const kDetailsKeyRefuseReason = @"refuseReason";
 {
     BOOL filtered;
     NSString* filterInputed;
-    NSString* requestBeginTime;
-    NSString* requestEndTime;
-    NSString* requestTerminal;
-    NSString* requestBusiness;
 }
 @property (nonatomic, strong) HTTPInstance* http;
 @property (nonatomic, assign) id<ViewModelMPOSDetailsDelegate>delegate;
@@ -72,17 +68,15 @@ static NSString* const kDetailsKeyRefuseReason = @"refuseReason";
 - (void) requestDetailsWithDelegate:(id<ViewModelMPOSDetailsDelegate>)delegate
                           beginTime:(NSString*)beginTime
                             endTime:(NSString*)endTime
-                           terminal:(NSString*)terminal
-                           business:(NSString*)business
 {
     
     self.delegate = delegate;
-    requestBeginTime = beginTime;
-    requestEndTime = endTime;
-    requestTerminal = terminal;
-    requestBusiness = business;
-    
-    [self.http startRequestingWithDelegate:self];
+    [self.http startRequestingWithDelegate:self packingHandle:^(ASIFormDataRequest *http) {
+        [http addRequestHeader:@"queryBeginTime" value:beginTime];
+        [http addRequestHeader:@"queryEndTime" value:endTime];
+        [http addRequestHeader:@"termNo" value:[PublicInformation returnTerminal]];
+        [http addRequestHeader:@"mchntNo" value:[PublicInformation returnBusiness]];
+    }];
 }
 
 /* 终止请求 */
@@ -97,16 +91,8 @@ static NSString* const kDetailsKeyRefuseReason = @"refuseReason";
 
 
 #pragma mask ---- HTTPInstanceDelegate
-- (void)willPackParamsOnRequester:(ASIHTTPRequest *)http {
-    [http addRequestHeader:@"queryBeginTime" value:requestBeginTime];
-    [http addRequestHeader:@"queryEndTime" value:requestEndTime];
-    [http addRequestHeader:@"termNo" value:requestTerminal];
-    [http addRequestHeader:@"mchntNo" value:requestBusiness];
-}
-
 - (void)httpInstance:(HTTPInstance *)httpInstance didRequestingFinishedWithInfo:(NSDictionary *)info {
     self.detailsOrigin = [NSArray arrayWithArray:[info objectForKey:@"MchntInfoList"]];
-    
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRequestingSuccessful)]) {
         [self.delegate didRequestingSuccessful];
     }
@@ -248,6 +234,7 @@ static NSString* const kDetailsKeyRefuseReason = @"refuseReason";
 
 /* 交易详情节点: 指定序号 */
 - (NSDictionary*) nodeDetailAtIndex:(NSInteger)index {
+    NSLog(@"序号[%d]的明细节点{%@}",index,[self.detailsDisplayed objectAtIndex:index]);
     return [self.detailsDisplayed objectAtIndex:index];
 }
 

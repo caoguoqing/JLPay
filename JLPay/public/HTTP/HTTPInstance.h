@@ -28,7 +28,7 @@ typedef enum {
 @protocol HTTPInstanceDelegate <NSObject>
 
 /* 回调: 在回调中进行自定义参数打包 */
-- (void) willPackParamsOnRequester:(ASIHTTPRequest*)http;
+//- (void) willPackParamsOnRequester:(ASIHTTPRequest*)http;
 
 /* 请求成功: 返回参数在字典中 */
 - (void) httpInstance:(HTTPInstance*)httpInstance didRequestingFinishedWithInfo:(NSDictionary*)info;
@@ -41,12 +41,14 @@ typedef enum {
 
 @interface HTTPInstance : NSObject
 
-+ (instancetype) requestWithURLString:(NSString*)URLString;
+//+ (instancetype) requestWithURLString:(NSString*)URLString;
+//@property (nonatomic, readonly) void (^packingForHttp)(HTTPInstance* http);
 
-- (instancetype) initWithURLString:(NSString*)URLString;
+- (instancetype) initWithURLString:(NSString*)URLString ;
 
 /* 开始请求 */
-- (void) startRequestingWithDelegate:(id<HTTPInstanceDelegate>)delegate;
+- (void) startRequestingWithDelegate:(id<HTTPInstanceDelegate>)delegate
+                       packingHandle:(void (^)(ASIFormDataRequest* http))packingBlock;
 /* 终止请求 */
 - (void) terminateRequesting;
 
