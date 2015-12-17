@@ -123,12 +123,12 @@ static ModelSettlementInformation* modelSettlement = nil;
 
 /* T+0最低消费金额 */
 - (NSString*) T_0MinSettlementAmount {
-    if (TestOrProduce == 1) {
-        return @"500.00";
+    NSString* minAmount = @"500.00";
+    if (self.settlementInformation) {
+        minAmount = [self.settlementInformation objectForKey:kSettleInfoNameMinCustAmount];
+        minAmount = [NSString stringWithFormat:@"%.02lf",minAmount.floatValue];
     }
-    else {
-        return @"0.01";
-    }
+    return minAmount;
 }
 
 /* T+0增加费率 */

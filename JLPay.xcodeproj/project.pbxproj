@@ -11,6 +11,7 @@
 		5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE721B09949200B8C198 /* DynamicScrollView.m */; };
 		5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */; };
 		5E0EBA6C1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */; };
+		5E0EBA731C228A0400DCAC59 /* IntMoneyCalculating.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA721C228A0400DCAC59 /* IntMoneyCalculating.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -71,7 +72,6 @@
 		5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C21C197A3800A58865 /* CustomNavigationController.m */; };
 		5E7852C61C198E5400A58865 /* ViewNavigationMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */; };
 		5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */; };
-		5E7852CD1C1E6C8900A58865 /* DotMoneyCalculating.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */; };
 		5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
 		5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78F1B1BFCC200A58751 /* JHLDevice.m */; };
@@ -212,6 +212,8 @@
 		5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteButton.m; sourceTree = "<group>"; };
 		5E0EBA6A1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelMPOSDetails.h; sourceTree = "<group>"; };
 		5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelMPOSDetails.m; sourceTree = "<group>"; };
+		5E0EBA711C228A0400DCAC59 /* IntMoneyCalculating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntMoneyCalculating.h; sourceTree = "<group>"; };
+		5E0EBA721C228A0400DCAC59 /* IntMoneyCalculating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntMoneyCalculating.m; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -332,8 +334,6 @@
 		5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewNavigationMaker.m; sourceTree = "<group>"; };
 		5E7852C81C1AB35D00A58865 /* ModelSettlementInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelSettlementInformation.h; sourceTree = "<group>"; };
 		5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelSettlementInformation.m; sourceTree = "<group>"; };
-		5E7852CB1C1E6C8900A58865 /* DotMoneyCalculating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotMoneyCalculating.h; sourceTree = "<group>"; };
-		5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DotMoneyCalculating.m; sourceTree = "<group>"; };
 		5E7852CF1C1FBCEF00A58865 /* HTTPInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPInstance.h; sourceTree = "<group>"; };
 		5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPInstance.m; sourceTree = "<group>"; };
 		5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager.h; sourceTree = "<group>"; };
@@ -990,8 +990,8 @@
 		5E94480C1BFB21E600128452 /* model */ = {
 			isa = PBXGroup;
 			children = (
-				5E7852CB1C1E6C8900A58865 /* DotMoneyCalculating.h */,
-				5E7852CC1C1E6C8900A58865 /* DotMoneyCalculating.m */,
+				5E0EBA711C228A0400DCAC59 /* IntMoneyCalculating.h */,
+				5E0EBA721C228A0400DCAC59 /* IntMoneyCalculating.m */,
 				5EFD09861C153B5A0062AD34 /* HTTPRequestSettlementInfo.h */,
 				5EFD09871C153B5A0062AD34 /* HTTPRequestSettlementInfo.m */,
 			);
@@ -1846,6 +1846,7 @@
 				5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
+				5E0EBA731C228A0400DCAC59 /* IntMoneyCalculating.m in Sources */,
 				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,
 				5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
@@ -1914,7 +1915,6 @@
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5E93B4AF1BEC33C90064BEC4 /* CodeScannerViewController.m in Sources */,
-				5E7852CD1C1E6C8900A58865 /* DotMoneyCalculating.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
 				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
 				5EFD09941C16A8530062AD34 /* FeeRateTableViewController.m in Sources */,

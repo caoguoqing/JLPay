@@ -558,7 +558,7 @@
 - (UIProgressView *)progressView {
     if (_progressView == nil) {
         _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
-        _progressView.progressTintColor = [UIColor greenColor];
+//        _progressView.progressTintColor = [UIColor greenColor];
     }
     return _progressView;
 }
