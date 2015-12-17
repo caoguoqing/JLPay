@@ -142,4 +142,7 @@
 /* 创建一个空的回退bar按钮 */
 + (UIBarButtonItem*) newBarItemWithNullTitle;
 
+/* 拉丝提示 */
++ (void) makeToast:(NSString*)message;
+
 @end

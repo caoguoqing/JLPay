@@ -13,7 +13,6 @@
 #import "JLActivitor.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
-#import "Toast+UIView.h"
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ViewModelMPOSDetails.h"
@@ -229,18 +228,19 @@ NSInteger logCount = 0;
         if (buttonIndex == 1) { // 查询
             UITextField* textField = [alertView textFieldAtIndex:0];
             if (textField.text == nil || [textField.text length] == 0) {
-                [self alertShow:@"查询条件为空,请输入卡号或金额"];
+//                [self alertShow:@"查询条件为空,请输入卡号或金额"];
+                [PublicInformation makeToast:@"查询条件为空,请输入卡号或金额"];
                 return;
             }
             // 进行模糊条件查询
             BOOL filtered = [self.dataSource filterDetailsByInput:textField.text];
             if (filtered) {
-                [self.view makeToast:@"查询成功"];
+                [PublicInformation makeToast:@"查询成功"];
                 [self.dataSource prepareSelector];
                 [self.tableView reloadData];
                 [self calculateTotalAmount];
             } else {
-                [self alertShow:@"未查询到匹配的明细"];
+                [PublicInformation makeToast:@"未查询到匹配的明细"];
                 [self.dataSource clearDetails];
                 [self.tableView reloadData];
                 [self calculateTotalAmount];
@@ -266,6 +266,9 @@ NSInteger logCount = 0;
         [self resetPullRefreshView];
     }
     [self.dataSource prepareSelector];
+    if ([self.dataSource totalCountOfTrans] == 0) {
+        [PublicInformation makeToast:@"查询日期无交易明细"];
+    }
     [self.tableView reloadData];
     [self calculateTotalAmount];
 }
@@ -277,7 +280,8 @@ NSInteger logCount = 0;
     [self.dataSource prepareSelector];
     [self.tableView reloadData];
     [self calculateTotalAmount];
-    [self alertShow:message];
+//    [self alertShow:message];
+    [PublicInformation makeToast:message];
 }
 
 // 扫描明细数组,计算总金额，总笔数

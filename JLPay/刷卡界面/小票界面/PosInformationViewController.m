@@ -11,16 +11,20 @@
 #import "PosInformationViewController.h"
 #import "AppDelegate.h"
 #import "PublicInformation.h"
-#import "ASIHTTPRequest.h"
+//#import "ASIHTTPRequest.h"
 #import "Define_Header.h"
 #import "ASIFormDataRequest.h"
-#import "Photo.h"
+//#import "Photo.h"
 #import "Toast+UIView.h"
 #import "JsonToString.h"
-#import "JLActivity.h"
+//#import "JLActivity.h"
+#import "MBProgressHUD.h"
 
 
 @interface PosInformationViewController ()<ASIHTTPRequestDelegate>
+{
+    BOOL imageUploaded;
+}
 @property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
 
 @property (nonatomic, strong) UIButton* sureButton;
@@ -46,10 +50,6 @@
 }
 
 
-/* 重新上传 */
--(void)uploadMethod{
-    [self chatUploadImage];
-}
 
 
 - (IBAction) touchDown:(UIButton*)sender {
@@ -69,21 +69,14 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         sender.transform = CGAffineTransformIdentity;
     });
-    [self chatUploadImage];
+    [self uploadRequestMethod];
 }
 
 #pragma mark ------------图片上传
--(void)chatUploadImage{
-    NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
-                              [PublicInformation getServerDomain],
-                              [PublicInformation getHTTPPort]];
-    
-    [NSThread detachNewThreadSelector:@selector(uploadRequestMethod:) toTarget:self withObject:uploadString];
-}
+
 /*** 签名图片上传接口 ***/
--(void)uploadRequestMethod:(NSString *)url{
+-(void)uploadRequestMethod {
     [self.uploadRequest setDelegate:self];
-    
     /*
      uploadRequstMchntNo	商户编号        15位
      uploadRequestMchntNM	商户名称        不超过100位
@@ -115,57 +108,36 @@
 
 /* HTTP回调: 响应成功 */
 - (void)requestFinished:(ASIHTTPRequest *)request {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.sureButton setEnabled:YES];
-    });
-    [request clearDelegatesAndCancel];
-    self.uploadRequest = nil;
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:request.responseString]];
     
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
-        //缓存图片路径
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[app_delegate window] makeToast:@"小票上传成功"];
-            // 成功后就退出到root视图界面
-            [self.navigationController popToRootViewControllerAnimated:YES];
-        });
+        imageUploaded = YES;
+        [PublicInformation makeToast:@"小票上传成功"];
     }else{
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"小票上传失败，请稍后重试" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        imageUploaded = NO;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [alert show];
+            [self.sureButton setEnabled:YES];
         });
+        [PublicInformation makeToast:@"小票上传失败，请稍后重试"];
     }
+    [request clearDelegatesAndCancel];
+    self.uploadRequest = nil;
+
 }
 /* HTTP回调: 响应失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {
+    imageUploaded = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.sureButton setEnabled:YES];
     });
     [request clearDelegatesAndCancel];
     self.uploadRequest = nil;
-    NSError *error = [request error];
-    if (error) {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络异常，请检查网络" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [alert show];
-        });
-    }
+    [PublicInformation makeToast:@"网络异常，请检查网络后重新上传"];
 }
 
 
 
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
-    self.title=@"POS-签购单";
-    // 导航栏的退出按钮置空
-    UIButton*leftBackBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    leftBackBtn.frame=CGRectMake(0,0,0,0);
-    UIBarButtonItem *backBarBtn=[[UIBarButtonItem alloc] initWithCustomView:leftBackBtn];
-    self.navigationItem.leftBarButtonItem=backBarBtn;
-    
+- (void) loadsSubviews {
     // 小字体
     UIFont* littleFont = [UIFont systemFontOfSize:10.f];
     NSDictionary* littleTextAttri = [NSDictionary dictionaryWithObject:littleFont forKey:NSFontAttributeName];
@@ -188,7 +160,7 @@
     scrollVi.backgroundColor=[UIColor whiteColor];
     scrollVi.bounces = NO;
     
-    #pragma mask : 开始加载滚动视图的子视图
+#pragma mask : 开始加载滚动视图的子视图
     //POS-签购单 商户存根
     NSString* text = @"POS-签购单";
     CGRect frame = CGRectMake(0, 0, scrollVi.bounds.size.width, [text sizeWithAttributes:bigTextAttri].height);
@@ -246,7 +218,7 @@
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 卡号 - 名
     text = @"卡号(CARD NO)";
     frame.origin.y += inset + frame.size.height;
@@ -259,7 +231,7 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 交易类型 - 名
     text = @"交易类型(TRANS TYPE)";
     frame.origin.y += inset + frame.size.height;
@@ -272,7 +244,7 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 金额 - 名
     text = @"金额(AMOUNT)";
     frame.origin.y += inset + frame.size.height;
@@ -286,7 +258,7 @@
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 日期/时间 - 名
     text = @"日期/时间(DATE/TIME)";
     frame.origin.y += frame.size.height + inset;
@@ -313,7 +285,7 @@
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
     
-
+    
     // 发卡行号 - 名
     text = @"发卡行号(ISS NO)";
     frame.origin.y += frame.size.height + inset;
@@ -327,7 +299,7 @@
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 收单行号 - 名
     text = @"收单行号(ACQ NO)";
     frame.origin.y += frame.size.height + inset;
@@ -354,7 +326,7 @@
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 凭证号 - 名
     text = @"凭证号(VOUCHER NO)";
     frame.origin.y += frame.size.height + inset;
@@ -391,12 +363,12 @@
     // 交易参考号 - 值
     text = [self.transInformation valueForKey:@"37"];
     text = [PublicInformation stringFromHexString:text];
-
+    
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
     [scrollVi addSubview:textLabel];
-
+    
     // 有效期 - 名
     text = @"有效期(EXP DATE)";
     frame.origin.y += frame.size.height + inset;
@@ -440,7 +412,7 @@
     UIImageView *signImg=[[UIImageView alloc] initWithFrame:frame];
     signImg.image = posImg;
     [scrollVi addSubview:signImg];
-
+    
     // 描述信息
     text = @"本人确认以上交易,同意将其计入本卡账户.";
     frame.origin.y += inset + frame.size.height;
@@ -467,7 +439,7 @@
     frame.size.height = inset*2;
     [self.progressView setFrame:frame];
     [self.view addSubview:self.progressView];
-
+    
     // 确定按钮
     frame.origin.x = inset * 2.0;
     frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height + inset * 2.0;
@@ -479,6 +451,29 @@
     // 将滚动视图的内容装填成图片.jpg
     self.scrollAllImg = [self getNormalImage:scrollVi];
 }
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
+    self.title=@"POS-签购单";
+    
+    imageUploaded = NO;
+    
+    // 导航栏的退出按钮置空
+    UIButton*leftBackBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    leftBackBtn.frame=CGRectMake(0,0,0,0);
+    UIBarButtonItem *backBarBtn=[[UIBarButtonItem alloc] initWithCustomView:leftBackBtn];
+    self.navigationItem.leftBarButtonItem=backBarBtn;
+    
+    // 导航栏添加"完成"按钮
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(checkUploadedAndPopView)]];
+    
+    [self loadsSubviews];
+    
+}
+
+
 // 简化代码:label可以用同一个产出方式
 - (UILabel*) newTextLabelWithText:(NSString*)text
                           inFrame:(CGRect)frame
@@ -501,6 +496,12 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
 }
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!imageUploaded) {
+        [self uploadRequestMethod];
+    }
+}
 // 视图退出,要取消
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -508,6 +509,15 @@
     self.uploadRequest = nil;
 }
 
+/* 检查上传结果并退出 */
+- (void) checkUploadedAndPopView {
+    if (imageUploaded) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
+    else {
+        [PublicInformation makeToast:@"小票未上传,请上传小票"];
+    }
+}
 
 #pragma mark ----------------屏幕截图
 //获取当前屏幕内容
@@ -548,6 +558,7 @@
 - (UIProgressView *)progressView {
     if (_progressView == nil) {
         _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
+        _progressView.progressTintColor = [UIColor greenColor];
     }
     return _progressView;
 }
@@ -556,7 +567,7 @@
         _sureButton = [[UIButton alloc] init];
         _sureButton.layer.cornerRadius = 10.0;
         [_sureButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_sureButton setTitle:@"确定" forState:UIControlStateNormal];
+        [_sureButton setTitle:@"上传" forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
@@ -565,6 +576,7 @@
         [_sureButton addTarget:self action:@selector(touchOut:) forControlEvents:UIControlEventTouchUpOutside];
         [_sureButton addTarget:self action:@selector(requireMethod:) forControlEvents:UIControlEventTouchUpInside];
 
+        _sureButton.enabled = NO;
     }
     return _sureButton;
 }

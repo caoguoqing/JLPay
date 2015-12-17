@@ -466,9 +466,10 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     [self savingLoadingInfo];
     // 保存响应的商户信息
     [self savingBussinessInfo:loginInfo];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[app_delegate window] makeToast:@"登陆成功"];
-    });
+    [PublicInformation makeToast:@"登陆成功"];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [[app_delegate window] makeToast:@"登陆成功"];
+//    });
     // 切换到主场景
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
         [app_delegate signInSuccessToLogin:0];

@@ -51,6 +51,11 @@
 /* 总金额: int */
 - (NSString*) totalAmountOfTrans;
 
+/* ----- 原始值 ----- */
+
+/* 交易详情节点: 指定序号 */
+- (NSDictionary*) nodeDetailAtIndex:(NSInteger)index;
+
 /* 卡号: 指定序号 */
 - (NSString*) cardNumAtIndex:(NSInteger)index;
 
@@ -60,19 +65,24 @@
 /* 交易类型: 指定序号 */
 - (NSString*) transTypeAtIndex:(NSInteger)index;
 
-/* 交易时间8位: 指定序号 */
-- (NSString*) transTimeAtIndex:(NSInteger)index;
-
-/* 交易日期8位: 指定序号 */
+/* 交易日期: 指定序号 YYYYMMDD */
 - (NSString*) transDateAtIndex:(NSInteger)index;
-
-/* 交易详情节点: 指定序号 */
-- (NSDictionary*) nodeDetailAtIndex:(NSInteger)index;
 
 /* 撤销类型:  */
 - (NSString*) cancelFlagAtIndex:(NSInteger)index;
 
 /* 冲正类型:  */
 - (NSString*) revsalFlagAtIndex:(NSInteger)index;
+
+
+/* ----- 格式化值 ----- */
+/* 交易时间: 指定序号 hh:mm:ss */
+- (NSString*) transTimeAtIndex:(NSInteger)index;
+
+/* 显示字段名数组: 交易详情 */
++ (NSArray*) titlesNeedDisplayedForNode:(NSDictionary*)detailNode;
+/* 显示字段名对应的值 */
++ (NSString*) valueForTitleNeedDisplayed:(NSString*)title ofNode:(NSDictionary*)detailNode;
+
 
 @end

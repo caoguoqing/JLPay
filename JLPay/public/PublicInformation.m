@@ -12,7 +12,7 @@
 #import "Unpacking8583.h"
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
-
+#import "Toast+UIView.h"
 
 
 
@@ -795,5 +795,11 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
+/* 拉丝提示 */
++ (void) makeToast:(NSString *)message {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[app_delegate window] makeToast:message];
+    });
+}
 
 @end

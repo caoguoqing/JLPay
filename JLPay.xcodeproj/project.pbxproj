@@ -596,6 +596,7 @@
 				5E94480D1BFB224F00128452 /* 刷卡界面 */,
 				5E82B7DC1B214B5300A58751 /* 密码输入框 */,
 				5EBA40EE1AEA366000F270C0 /* 手写签批 */,
+				5E0EBA701C225A1C00DCAC59 /* 小票界面 */,
 			);
 			path = "刷卡界面";
 			sourceTree = "<group>";
@@ -612,6 +613,15 @@
 				5E5E35AA1B7DD33800560C0A /* 帮助与关于 */,
 			);
 			path = "商户设置界面";
+			sourceTree = "<group>";
+		};
+		5E0EBA701C225A1C00DCAC59 /* 小票界面 */ = {
+			isa = PBXGroup;
+			children = (
+				5EBA40F11AEA366000F270C0 /* PosInformationViewController.h */,
+				5EBA40F21AEA366000F270C0 /* PosInformationViewController.m */,
+			);
+			path = "小票界面";
 			sourceTree = "<group>";
 		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
@@ -1293,8 +1303,6 @@
 			children = (
 				5EBA40EF1AEA366000F270C0 /* MyView.h */,
 				5EBA40F01AEA366000F270C0 /* MyView.m */,
-				5EBA40F11AEA366000F270C0 /* PosInformationViewController.h */,
-				5EBA40F21AEA366000F270C0 /* PosInformationViewController.m */,
 				5EBA40F31AEA366000F270C0 /* QianPiViewController.h */,
 				5EBA40F41AEA366000F270C0 /* QianPiViewController.m */,
 			);

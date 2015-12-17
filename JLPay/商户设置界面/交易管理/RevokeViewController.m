@@ -13,16 +13,13 @@
 #import "DetailsCell.h"
 #import "TransDetailsViewController.h"
 #import "Packing8583.h"
+#import "ViewModelMPOSDetails.h"
 
 @interface RevokeViewController()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate>
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) UIButton* revokeButton;
 @property (nonatomic, strong) UIImageView* imageView;
 
-@property (nonatomic, strong) NSArray* cellNamesForPOS;
-@property (nonatomic, strong) NSArray* cellNamesForOtherPay;
-@property (nonatomic, strong) NSDictionary* detailTransInfoForPOS;
-@property (nonatomic, strong) NSDictionary* detailTransInfoForOtherPay;
 
 @end
 
@@ -72,10 +69,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger number = 0;
     if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
-        number = self.cellNamesForPOS.count;
+        number = [ViewModelMPOSDetails titlesNeedDisplayedForNode:self.dataDic].count;
     }
     else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
-        number = self.cellNamesForOtherPay.count;
     }
     return number;
 }
@@ -93,9 +89,10 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier];
     }
 
-    cell.textLabel.text = [self titleAtIndex:indexPath.row];
-    cell.textLabel.font = [UIFont systemFontOfSize:18];
-    cell.detailTextLabel.text = [self valueAtIndex:indexPath.row];
+    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        [cell.textLabel setText:[[ViewModelMPOSDetails titlesNeedDisplayedForNode:self.dataDic] objectAtIndex:indexPath.row]];
+        [cell.detailTextLabel setText:[ViewModelMPOSDetails valueForTitleNeedDisplayed:cell.textLabel.text ofNode:self.dataDic]];
+    }
     
     return cell;
 }
@@ -106,80 +103,6 @@
 }
 
 
-
-
-#pragma mask ---- 数据提取: 标题
-- (NSString*) titleAtIndex:(NSInteger)index {
-    NSString* title = nil;
-    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
-        title = [self.cellNamesForPOS objectAtIndex:index];
-    }
-    else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
-        title = [self.cellNamesForOtherPay objectAtIndex:index];
-    }
-    return title;
-}
-- (NSString*) keyForTitle:(NSString*)title {
-    NSString* key = nil;
-    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
-        key = [self.detailTransInfoForPOS valueForKey:title];
-    }
-    else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
-        key = [self.detailTransInfoForOtherPay valueForKey:title];
-    }
-    return key;
-}
-#pragma mask ---- 数据提取: 值
-- (NSString*) valueAtIndex:(NSInteger)index {
-    NSString* value = nil;
-    // 标题
-    NSString* cellTitle = [self titleAtIndex:index];
-    // 键: 标题对应的键
-    NSString* key = [self keyForTitle:cellTitle];
-    // 格式化需要展示的值
-    if ([cellTitle isEqualToString:@"交易状态"]) {
-        if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
-            if (![[self.dataDic objectForKey:@"cancelFlag"] isEqualToString:@"0"]) {
-                value = @"已撤销";
-            } else if (![[self.dataDic objectForKey:@"revsal_flag"] isEqualToString:@"0"]) {
-                value = @"已冲正";
-            } else {
-                value = @"交易成功";
-            }
-        }
-        else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
-            if ([[self.dataDic valueForKey:@"respCode"] intValue] == 0) {
-                value = @"交易成功";
-            } else {
-                value = @"交易失败";
-            }
-        }
-
-    } else { // 格式化数据的显示
-        value = [self.dataDic valueForKey:key];
-        if ([key isEqualToString:@"amtTrans"]) { // 金额
-            value = [NSString stringWithFormat:@"%@ 元", [PublicInformation dotMoneyFromNoDotMoney:value]];
-        }
-        else if ([key isEqualToString:@"pan"]) { // 卡号
-            value = [PublicInformation cuttingOffCardNo:value];
-        }
-        else if ([key isEqualToString:@"instDate"]) { // 交易日期
-            value = [NSString stringWithFormat:@"%@/%@/%@",[value substringToIndex:4],[value substringWithRange:NSMakeRange(4, 2)],[value substringFromIndex:6]];
-        }
-        else if ([key isEqualToString:@"instTime"]) { // 交易时间
-            value = [NSString stringWithFormat:@"%@:%@:%@",[value substringToIndex:2],[value substringWithRange:NSMakeRange(2, 2)],[value substringFromIndex:4]];
-        }
-        else if ([key isEqualToString:@"channelType"]) { // 渠道类型
-            if ([[value substringFromIndex:1] isEqualToString:@"3"]) {
-                value = @"微信";
-            }
-            else if ([[value substringFromIndex:1] isEqualToString:@"4"]) {
-                value = @"支付宝";
-            }
-        }
-    }
-    return value;
-}
 
 
 
@@ -270,80 +193,6 @@
     }
     return _revokeButton;
 }
-
-#pragma mask ---- model
-/* 标题数组: POS刷卡交易 */
-- (NSArray *)cellNamesForPOS {
-    if (_cellNamesForPOS == nil) {
-        NSMutableArray* array = [[NSMutableArray alloc] init];
-        [array addObject:@"交易类型"];
-        [array addObject:@"商户编号"];
-        [array addObject:@"商户名称"];
-        [array addObject:@"交易金额"];
-        [array addObject:@"交易卡号"];
-        [array addObject:@"交易日期"];
-        [array addObject:@"交易时间"];
-        [array addObject:@"交易状态"];
-        [array addObject:@"订单编号"];
-        [array addObject:@"终端编号"];
-        _cellNamesForPOS = [NSArray arrayWithArray:array];
-    }
-    return _cellNamesForPOS;
-}
-/* 标题数组: 第三方交易 */
-- (NSArray *)cellNamesForOtherPay {
-    if (_cellNamesForOtherPay == nil) {
-        NSMutableArray* array = [[NSMutableArray alloc] init];
-        [array addObject:@"交易类型"];
-        [array addObject:@"渠道类型"];
-        [array addObject:@"商户编号"];
-        [array addObject:@"商户名称"];
-        [array addObject:@"交易金额"];
-        [array addObject:@"交易日期"];
-        [array addObject:@"交易时间"];
-        [array addObject:@"交易状态"];
-        [array addObject:@"订单编号"];
-        [array addObject:@"终端编号"];
-        _cellNamesForOtherPay = [NSArray arrayWithArray:array];
-    }
-    return _cellNamesForOtherPay;
-}
-
-// 数据字典:保存字段描述和字段名
-- (NSDictionary *) detailTransInfoForPOS {
-    if (_detailTransInfoForPOS == nil) {
-        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-        [dict setValue:@"txnNum" forKey:@"交易类型"];
-        [dict setValue:@"cardAccpId" forKey:@"商户编号"];
-        [dict setValue:@"cardAccpName" forKey:@"商户名称"];
-        [dict setValue:@"amtTrans" forKey:@"交易金额"];
-        [dict setValue:@"pan" forKey:@"交易卡号"];
-        [dict setValue:@"instDate" forKey:@"交易日期"];
-        [dict setValue:@"instTime" forKey:@"交易时间"];
-        [dict setValue:@"retrivlRef" forKey:@"订单编号"];
-        [dict setValue:@"cardAccpTermId" forKey:@"终端编号"];
-        _detailTransInfoForPOS = [NSDictionary dictionaryWithDictionary:dict];
-    }
-    return _detailTransInfoForPOS;
-}
-- (NSDictionary *) detailTransInfoForOtherPay {
-    if (_detailTransInfoForOtherPay == nil) {
-        NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-        [dict setValue:@"txnNum" forKey:@"交易类型"];
-        [dict setValue:@"channelType" forKey:@"渠道类型"];
-        [dict setValue:@"cardAccpId" forKey:@"商户编号"];
-        [dict setValue:@"cardAccpName" forKey:@"商户名称"];
-        [dict setValue:@"amtTrans" forKey:@"交易金额"];
-        [dict setValue:@"instDate" forKey:@"交易日期"];
-        [dict setValue:@"instTime" forKey:@"交易时间"];
-        [dict setValue:@"sysSeqNum" forKey:@"订单编号"];
-        [dict setValue:@"cardAccpTermId" forKey:@"终端编号"];
-        _detailTransInfoForOtherPay = [NSDictionary dictionaryWithDictionary:dict];
-    }
-    return _detailTransInfoForOtherPay;
-}
-
-
 
 
 @end
