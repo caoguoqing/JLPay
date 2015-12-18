@@ -769,7 +769,8 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
     
-    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+//    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemNullTitleInViewController:self]];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

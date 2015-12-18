@@ -293,7 +293,8 @@
     [alertV close];
     if (buttonIndex == 0) { // 取消
         // 弹出刷卡界面,回到上层界面
-        [self.navigationController popViewControllerAnimated:YES];
+//        [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popToRootViewControllerAnimated:YES];
     } else {                // 确定-开始设备加密
         // 进行加密
         [self encryptPinWithSource:self.passwordAlertView.password];

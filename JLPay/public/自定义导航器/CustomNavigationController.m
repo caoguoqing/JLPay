@@ -37,16 +37,18 @@
 #pragma mask ---- UINavigationBarDelegate
 /* 即将回退 */
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
+    
     NSLog(@"\n\n-----\n%s\ntitle=[%@]\ntopViewController=[%@]\n------\n",__func__,item.title,[self topViewController]);
     
-    if ([self containedInViewControllersOfViewController:[self topViewController]]) {
-        [self popToRootViewControllerAnimated:YES];
-        return YES;
-    }
-    else {
+//    if ([self containedInViewControllersOfViewController:[self topViewController]]) {
+//        [self popToRootViewControllerAnimated:YES];
+//        return YES;
+//    }
+//    else {
         [self popViewControllerAnimated:YES];
-        return YES;
-    }
+//        return YES;
+//    }
+    return YES;
 }
 
 

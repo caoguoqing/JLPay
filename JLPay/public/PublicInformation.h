@@ -142,6 +142,7 @@
 #pragma mask 0-------------------------------------------0 界面相关
 /* 创建一个空的回退bar按钮 */
 + (UIBarButtonItem*) newBarItemWithNullTitle;
++ (UIBarButtonItem*) newBarItemNullTitleInViewController:(UIViewController*)viewController;
 
 /* 拉丝提示 */
 + (void) makeToast:(NSString*)message;
