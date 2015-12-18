@@ -116,10 +116,11 @@
 + (CGFloat) resizeFontInSize:(CGSize)size andScale:(CGFloat)scale;
 
 #pragma mask 0-------------------------------------------0 图片相关
-// 缩放图片
+/* 缩放图片 */
 + (UIImage*) imageScaledBySourceImage:(UIImage*)image
                        withWidthScale:(CGFloat)wScale
                        andHeightScale:(CGFloat)hScale;
+
 
 #pragma mask 0-------------------------------------------0 8583交易相关
 

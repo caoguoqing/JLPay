@@ -12,6 +12,8 @@
 		5E0D186E1B09E8FE0092F4AB /* DeleteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */; };
 		5E0EBA6C1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */; };
 		5E0EBA731C228A0400DCAC59 /* IntMoneyCalculating.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA721C228A0400DCAC59 /* IntMoneyCalculating.m */; };
+		5E0EBA761C23D79E00DCAC59 /* ViewModelOtherPayDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA751C23D79E00DCAC59 /* ViewModelOtherPayDetails.m */; };
+		5E0EBA7C1C23DC0200DCAC59 /* TriangleLeftTurnView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA7B1C23DC0200DCAC59 /* TriangleLeftTurnView.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -214,6 +216,10 @@
 		5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelMPOSDetails.m; sourceTree = "<group>"; };
 		5E0EBA711C228A0400DCAC59 /* IntMoneyCalculating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntMoneyCalculating.h; sourceTree = "<group>"; };
 		5E0EBA721C228A0400DCAC59 /* IntMoneyCalculating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntMoneyCalculating.m; sourceTree = "<group>"; };
+		5E0EBA741C23D79E00DCAC59 /* ViewModelOtherPayDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelOtherPayDetails.h; sourceTree = "<group>"; };
+		5E0EBA751C23D79E00DCAC59 /* ViewModelOtherPayDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelOtherPayDetails.m; sourceTree = "<group>"; };
+		5E0EBA7A1C23DC0200DCAC59 /* TriangleLeftTurnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleLeftTurnView.h; sourceTree = "<group>"; };
+		5E0EBA7B1C23DC0200DCAC59 /* TriangleLeftTurnView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TriangleLeftTurnView.m; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -812,10 +818,10 @@
 		5E7852C01C197A0200A58865 /* 自定义导航器 */ = {
 			isa = PBXGroup;
 			children = (
-				5E7852C11C197A3800A58865 /* CustomNavigationController.h */,
-				5E7852C21C197A3800A58865 /* CustomNavigationController.m */,
 				5E7852C41C198E5400A58865 /* ViewNavigationMaker.h */,
 				5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */,
+				5E7852C11C197A3800A58865 /* CustomNavigationController.h */,
+				5E7852C21C197A3800A58865 /* CustomNavigationController.m */,
 			);
 			path = "自定义导航器";
 			sourceTree = "<group>";
@@ -949,6 +955,8 @@
 			children = (
 				5E0EBA6A1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.h */,
 				5E0EBA6B1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m */,
+				5E0EBA741C23D79E00DCAC59 /* ViewModelOtherPayDetails.h */,
+				5E0EBA751C23D79E00DCAC59 /* ViewModelOtherPayDetails.m */,
 				5E9448001BF42E2100128452 /* ViewModelTransDetails.h */,
 				5E9448011BF42E2100128452 /* ViewModelTransDetails.m */,
 			);
@@ -1467,6 +1475,8 @@
 				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
 				5EBA40FB1AEA3A3200F270C0 /* Photo.h */,
 				5EBA40FC1AEA3A3200F270C0 /* Photo.m */,
+				5E0EBA7A1C23DC0200DCAC59 /* TriangleLeftTurnView.h */,
+				5E0EBA7B1C23DC0200DCAC59 /* TriangleLeftTurnView.m */,
 			);
 			path = "自定义控件";
 			sourceTree = "<group>";
@@ -1796,6 +1806,7 @@
 				5EBAA9111ACD3F1B00E2ABDD /* SBJsonBase.m in Sources */,
 				5E5E354F1B7380DB00560C0A /* UserRegisterViewController.m in Sources */,
 				5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */,
+				5E0EBA7C1C23DC0200DCAC59 /* TriangleLeftTurnView.m in Sources */,
 				5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */,
 				5E397B341AD36429004F206F /* ASIInputStream.m in Sources */,
 				5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */,
@@ -1843,6 +1854,7 @@
 				5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */,
 				5E5FA5851B46342600387E69 /* ISControlManager.m in Sources */,
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
+				5E0EBA761C23D79E00DCAC59 /* ViewModelOtherPayDetails.m in Sources */,
 				5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,

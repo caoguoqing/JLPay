@@ -134,9 +134,13 @@
     }
     // 跳转界面
     NSDictionary* bankInfo = [self.bankInfos objectAtIndex:self.selectedIndex];
+    for (UIViewController* viewC in self.navigationController.viewControllers) {
+        if (viewC.class == [UserRegisterViewController class]) {
+            UserRegisterViewController* registerVC = (UserRegisterViewController*)viewC;
+            [registerVC setBankNum:[bankInfo valueForKey:@"openstlNo"] forBankName:[bankInfo valueForKey:@"bankName"]];
+        }
+    }
     [self.navigationController popViewControllerAnimated:YES];
-    UserRegisterViewController* registerVC = (UserRegisterViewController*)[self.navigationController topViewController];
-    [registerVC setBankNum:[bankInfo valueForKey:@"openstlNo"] forBankName:[bankInfo valueForKey:@"bankName"]];
 }
 
 #pragma mask ------ 界面声明周期
@@ -150,7 +154,7 @@
     self.selectedIndex = -1;
     
     UIBarButtonItem* doneItem = [[UIBarButtonItem alloc] initWithTitle:@"完成"
-                                                                 style:UIBarButtonItemStyleDone
+                                                                 style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(popVCWithSearchedBankNum)];
     self.navigationItem.rightBarButtonItem = doneItem;

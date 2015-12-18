@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#pragma mask --- -------- 准备废弃 ---------
+#pragma mask ---!!!!!!!!!!!!! 准备废弃 !!!!!!!!!!!!!!!!!!!!!!!!!!
 
 @class ViewModelTransDetails;
 
@@ -16,7 +16,7 @@
 
 @required
 /* 
- * 数据申请的结果回调 
+ * 数据申请的结果回调
  * 成功: controller就可以使用数据源了
  * 失败: controller要做错误处理
  */

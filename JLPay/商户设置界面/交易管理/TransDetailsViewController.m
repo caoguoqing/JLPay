@@ -17,6 +17,7 @@
 #import "ModelDeviceBindedInformation.h"
 #import "ViewModelMPOSDetails.h"
 #import "PullRefrashView.h"
+#import "TriangleLeftTurnView.h"
 
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,
@@ -360,6 +361,7 @@ NSInteger logCount = 0;
                               self.navigationController.navigationBar.bounds.size.height + statusBarHeight,
                               self.view.bounds.size.width,
                               (self.view.frame.size.height - self.navigationController.navigationBar.bounds.size.height)/4.0);
+    // 总金额、总笔数视图
     self.totalView.frame = frame;
     [self.view addSubview:self.totalView];
     
@@ -369,7 +371,6 @@ NSInteger logCount = 0;
     frame.size.height = 40;
     frame.size.width = 140;
     [self.dateButton setFrame:frame];
-    
     
     // 查询按钮
     frame.origin.x = self.view.bounds.size.width - inset - frame.size.height;
