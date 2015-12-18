@@ -97,8 +97,7 @@ SettlementSwitchViewDelegate>
 /* 回调: 失败 */
 - (void)didRequestedFailedWithErrorMessage:(NSString *)errorMessage {
     [self.settlementView setEnableSwitching:NO];
-    NSString* alert = [NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage];
-    [self alertShow:alert];
+    [PublicInformation makeToast:[NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage]];
 }
 
 

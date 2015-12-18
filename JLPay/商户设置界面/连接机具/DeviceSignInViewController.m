@@ -294,7 +294,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 // SN号读取结果
 - (void)didReadSNVersion:(NSString *)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
     if (!yesOrNo) {
-        [self alertForMessage:error];
+        [PublicInformation makeCentreToast:error];
         return;
     }
     [self stopDeviceTimer];
@@ -325,7 +325,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self downloadWorkKey];
     } else {
         [self stopActivity];
-        [self alertForMessage:@"绑定设备失败!"];
+        [PublicInformation makeCentreToast:@"绑定设备失败!"];
     }
 }
 // 设置工作密钥的回调
@@ -337,9 +337,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [PublicInformation updateSignSort];
         [self saveBindedDevice];
         [self reloadTableView];
-        [self alertForMessage:@"绑定设备成功!"];
+        [PublicInformation makeCentreToast:@"绑定设备成功!"];
+        needCheckoutToCustVC = YES;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController popViewControllerAnimated:YES];
+        });
     } else {
-        [self alertForMessage:@"绑定设备失败!"];
+        [PublicInformation makeCentreToast:@"绑定设备失败!"];
     }
 }
 
@@ -364,7 +368,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [self stopActivity];
-        [self alertForMessage:[NSString stringWithFormat:@"下载主密钥失败:%@",errorMessge]];
+        [PublicInformation makeToast:[NSString stringWithFormat:@"下载主密钥失败:%@",errorMessge]];
     }
 }
 /* 工作密钥下载回调 */
@@ -374,7 +378,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [self stopActivity];
-        [self alertForMessage:[NSString stringWithFormat:@"下载工作密钥失败:%@",errorMessge]];
+        [PublicInformation makeToast:[NSString stringWithFormat:@"下载工作密钥失败:%@",errorMessge]];
     }
 }
 
@@ -395,7 +399,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (!blueToothIsOn) {
-        [self alertForBleMessage:@"手机蓝牙未打开,请打开蓝牙"];
+        [PublicInformation makeCentreToast:@"手机蓝牙未打开,请打开蓝牙"];
         return;
     }
     if (buttonIndex != 0) {
@@ -422,11 +426,11 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
     // 设置选择的终端号到本地配置 并签到
     if (self.selectedTerminalNum == nil) {
-        [self alertForMessage:@"请选择终端号"];
+        [PublicInformation makeCentreToast:@"请选择终端号"];
         return;
     }
     if (self.selectedSNVersionNum == nil) {
-        [self alertForMessage:@"请选择设备SN号"];
+        [PublicInformation makeCentreToast:@"请选择设备SN号"];
         return;
     }
     // 下载主密钥 -- 需要判断设备是否连接
@@ -435,7 +439,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self startActivity];
         [self downloadMainKey];
     } else {
-        [self alertForMessage:@"设备未连接"];
+        [PublicInformation makeCentreToast:@"设备未连接"];
     }
     
 }
@@ -445,7 +449,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [self.SNVersionNums addObject:@"无"];
     [self reloadTableView];
     if (!blueToothIsOn) {
-        [self alertForBleMessage:@"手机蓝牙未打开,请先打开蓝牙"];
+        [PublicInformation makeCentreToast:@"手机蓝牙未打开,请先打开蓝牙"];
         return;
     }
     if (self.selectedDevice == nil) {
@@ -571,7 +575,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void) waitingTimeoutWithMsg {
     [[JLActivitor sharedInstance] stopAnimating];
     [self stopDeviceTimer];
-    [self alertForMessage:@"设备连接超时"];
+    [PublicInformation makeCentreToast:@"设备连接超时"];
 }
 
 

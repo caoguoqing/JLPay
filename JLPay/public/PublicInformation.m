@@ -801,5 +801,12 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         [[app_delegate window] makeToast:message];
     });
 }
++ (void) makeCentreToast:(NSString*)message {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[app_delegate window] makeToast:message duration:1.5 position:@"center"];
+    });
+}
+
+
 
 @end

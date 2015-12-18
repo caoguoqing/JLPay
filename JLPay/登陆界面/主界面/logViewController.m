@@ -416,12 +416,13 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     sender.transform = CGAffineTransformIdentity;
     
     if ([self.userNumberTextField.text length] == 0) {
-        [self alertShowMessage:@"请输入账号" andTag:TagAlertOther];
-
+        [PublicInformation makeToast:@"请输入账号"];
+        [sender setEnabled:YES];
         return;
     }
     if ([self.userPasswordTextField.text length] == 0) {
-        [self alertShowMessage:@"请输入密码" andTag:TagAlertOther];
+        [PublicInformation makeToast:@"请输入密码"];
+        [sender setEnabled:YES];
         return;
     }
     
@@ -467,9 +468,6 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     // 保存响应的商户信息
     [self savingBussinessInfo:loginInfo];
     [PublicInformation makeToast:@"登陆成功"];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [[app_delegate window] makeToast:@"登陆成功"];
-//    });
     // 切换到主场景
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
         [app_delegate signInSuccessToLogin:0];
@@ -484,22 +482,25 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 
     TagAlert tagalert = TagAlertOther;
     NSString* retMessage = [NSString stringWithString:errorMessage];
+    // 部分提示信息成拉丝效果，部分为弹窗效果
     switch (errorType) {
         case LoginErrorCodeTypeDefault:
+            [PublicInformation makeToast:retMessage];
             break;
         case LoginErrorCodeTypeLowVersion:
             retMessage = [retMessage stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
             tagalert = TagAlertVersionLow;
+            [self alertShowMessage:retMessage andTag:tagalert];
             break;
         case LoginErrorCodeTypeRegistRefuse:
             self.dictLastRegisterInfo = [ModelHTTPRequestLogin sharedInstance].lastRegisterInfo;
             tagalert = TagAlertRegisterRefuse;
+            [self alertShowMessage:retMessage andTag:tagalert];
             break;
         default:
-            retMessage = @"登陆失败";
+            [PublicInformation makeToast:@"登陆失败"];
             break;
     }
-    [self alertShowMessage:retMessage andTag:tagalert];
 }
 
 #pragma mask ::: 校验是否切换了账号:如果切换,清空配置

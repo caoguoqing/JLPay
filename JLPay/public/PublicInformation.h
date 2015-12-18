@@ -144,5 +144,6 @@
 
 /* 拉丝提示 */
 + (void) makeToast:(NSString*)message;
++ (void) makeCentreToast:(NSString*)message;
 
 @end
