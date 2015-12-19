@@ -7,12 +7,14 @@
 //
 
 #import "AppDelegate.h"
+#import "CustPayViewController.h"
 #import "logViewController.h"
+#import "settingViewController.h"
+
 #import "Toast+UIView.h"
 #import "Define_Header.h"
+
 #import "ModelDeviceBindedInformation.h"
-#import "CustomNavigationController.h"
-#import "ViewNavigationMaker.h"
 
 #define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
 
@@ -32,9 +34,8 @@
     [tabBarController.tabBar setTintColor:[PublicInformation returnCommonAppColor:@"red"]];
     
     NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
-    [navigationControllers addObject:[ViewNavigationMaker newCustPayNavigation]];
-    [navigationControllers addObject:[ViewNavigationMaker newBusinessNavigation]];
-//    [navigationControllers addObject:[ViewNavigationMaker newAddServiceNavigation]];
+    [navigationControllers addObject:[self newNavigationOfCustPayVC]];
+    [navigationControllers addObject:[self newNavigationOfBusinessVC]];
     
     [tabBarController setViewControllers:navigationControllers];
     [tabBarController setSelectedIndex:select];
@@ -46,8 +47,8 @@
 #pragma mask ::: app 完成加载;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    // 因为根视图控制用的 storyboard 的,所以可以不用生成新的 keywindow
-    self.window.rootViewController = [ViewNavigationMaker newLoginNavigation];
+    self.window.rootViewController = [self newNavigationOfLoginVC];
+
     
     return YES;
 }
@@ -77,6 +78,41 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+
+#pragma mask ---- PRIVATE INTERFACE
+/* 创建导航器: 登陆系列 */
+- (UINavigationController*) newNavigationOfLoginVC {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    logViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"logVC"];
+    UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    return navigation;
+}
+
+/* 创建导航器: 刷卡系列 */
+- (UINavigationController*) newNavigationOfCustPayVC {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    CustPayViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"custPayVC"];
+    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    
+    navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户收款"
+                                                          image:[UIImage imageNamed:@"iconaG"]
+                                                  selectedImage:[UIImage imageNamed:@"icona"]];
+    return navigation;
+}
+/* 创建导航器: 商户设置系列 */
+- (UINavigationController*) newNavigationOfBusinessVC {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    settingViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"settingVC"];
+    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    
+    navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户管理"
+                                                          image:[UIImage imageNamed:@"iconbG"]
+                                                  selectedImage:[UIImage imageNamed:@"iconb"]];
+    
+    
+    return navigation;
 }
 
 

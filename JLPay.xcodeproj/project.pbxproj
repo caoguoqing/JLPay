@@ -71,8 +71,6 @@
 		5E5FA5871B46342600387E69 /* ISMFiDataPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA57B1B46342600387E69 /* ISMFiDataPath.m */; };
 		5E5FA5881B46342600387E69 /* libReliableBurstData_arm64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA57C1B46342600387E69 /* libReliableBurstData_arm64.a */; };
 		5E5FA58E1B477DD100387E69 /* JHLDevice_M60.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */; };
-		5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C21C197A3800A58865 /* CustomNavigationController.m */; };
-		5E7852C61C198E5400A58865 /* ViewNavigationMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */; };
 		5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */; };
 		5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */; };
 		5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */; };
@@ -334,10 +332,6 @@
 		5E5FA57E1B46342600387E69 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		5E5FA58C1B477DD100387E69 /* JHLDevice_M60.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHLDevice_M60.h; sourceTree = "<group>"; };
 		5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHLDevice_M60.m; sourceTree = "<group>"; };
-		5E7852C11C197A3800A58865 /* CustomNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomNavigationController.h; sourceTree = "<group>"; };
-		5E7852C21C197A3800A58865 /* CustomNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomNavigationController.m; sourceTree = "<group>"; };
-		5E7852C41C198E5400A58865 /* ViewNavigationMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewNavigationMaker.h; sourceTree = "<group>"; };
-		5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewNavigationMaker.m; sourceTree = "<group>"; };
 		5E7852C81C1AB35D00A58865 /* ModelSettlementInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelSettlementInformation.h; sourceTree = "<group>"; };
 		5E7852C91C1AB35D00A58865 /* ModelSettlementInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelSettlementInformation.m; sourceTree = "<group>"; };
 		5E7852CF1C1FBCEF00A58865 /* HTTPInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPInstance.h; sourceTree = "<group>"; };
@@ -813,17 +807,6 @@
 				5E5FA5731B46342600387E69 /* README.md */,
 			);
 			path = ILAlertView;
-			sourceTree = "<group>";
-		};
-		5E7852C01C197A0200A58865 /* 自定义导航器 */ = {
-			isa = PBXGroup;
-			children = (
-				5E7852C41C198E5400A58865 /* ViewNavigationMaker.h */,
-				5E7852C51C198E5400A58865 /* ViewNavigationMaker.m */,
-				5E7852C11C197A3800A58865 /* CustomNavigationController.h */,
-				5E7852C21C197A3800A58865 /* CustomNavigationController.m */,
-			);
-			path = "自定义导航器";
 			sourceTree = "<group>";
 		};
 		5E7852C71C1AB2F900A58865 /* 商户结算信息 */ = {
@@ -1335,7 +1318,6 @@
 				5E4A1FF31C06F2A400E7DFD5 /* 设备绑定信息 */,
 				5E4A1FEF1C055BF000E7DFD5 /* 用户登陆信息 */,
 				5E7852C71C1AB2F900A58865 /* 商户结算信息 */,
-				5E7852C01C197A0200A58865 /* 自定义导航器 */,
 				5E82B8611B310A7D00A58751 /* 捷联通指示器 */,
 				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5EB9B1371AD79EC600A73190 /* SDK */,
@@ -1807,7 +1789,6 @@
 				5E5E354F1B7380DB00560C0A /* UserRegisterViewController.m in Sources */,
 				5EFD09851C1141BE0062AD34 /* SettlementSwitchView.m in Sources */,
 				5E0EBA7C1C23DC0200DCAC59 /* TriangleLeftTurnView.m in Sources */,
-				5E7852C31C197A3800A58865 /* CustomNavigationController.m in Sources */,
 				5E397B341AD36429004F206F /* ASIInputStream.m in Sources */,
 				5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */,
 				5EBAA8EB1ACD2FA800E2ABDD /* ErrorType.m in Sources */,
@@ -1846,7 +1827,6 @@
 				5E9447F31BEC914800128452 /* ScannerImageView.m in Sources */,
 				5E397B3C1AD36429004F206F /* ASIWebPageRequest.m in Sources */,
 				5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */,
-				5E7852C61C198E5400A58865 /* ViewNavigationMaker.m in Sources */,
 				5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */,
 				5EFD09911C1681BA0062AD34 /* ModelFeeRates.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
@@ -2070,7 +2050,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -2105,7 +2085,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
+				PROVISIONING_PROFILE = "6bdab874-323d-47aa-8a39-6ca4d7462b9a";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -2115,7 +2095,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: liang luo (6E6R3DRW63)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -2149,7 +2129,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "78908e13-1909-4a5f-9e66-072c4d93978b";
+				PROVISIONING_PROFILE = "6bdab874-323d-47aa-8a39-6ca4d7462b9a";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};

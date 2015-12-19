@@ -795,7 +795,10 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 + (UIBarButtonItem*) newBarItemNullTitleInViewController:(UIViewController*)viewController {
-    return [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:viewController.navigationController action:@selector(popViewControllerAnimated:)];
+    return [[UIBarButtonItem alloc] initWithTitle:@""
+                                            style:UIBarButtonItemStylePlain
+                                           target:viewController.navigationController
+                                           action:@selector(popViewControllerAnimated:)];
 }
 
 /* 拉丝提示 */
