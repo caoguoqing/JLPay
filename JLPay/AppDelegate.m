@@ -9,8 +9,9 @@
 #import "AppDelegate.h"
 #import "CustPayViewController.h"
 #import "logViewController.h"
+#import "BrushViewController.h"
 #import "settingViewController.h"
-
+#import "CustomNavigationController.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
 
@@ -87,6 +88,7 @@
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     logViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"logVC"];
     UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    [navigation.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName]];
     return navigation;
 }
 
@@ -94,8 +96,13 @@
 - (UINavigationController*) newNavigationOfCustPayVC {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     CustPayViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"custPayVC"];
-    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    BrushViewController* brushVC = [[BrushViewController alloc] init];
     
+//    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    CustomNavigationController* navigation = [[CustomNavigationController alloc] initWithRootViewController:viewController viewControllersShouldPopToRoot:@[brushVC]];
+    
+    [navigation.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName]];
+
     navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户收款"
                                                           image:[UIImage imageNamed:@"iconaG"]
                                                   selectedImage:[UIImage imageNamed:@"icona"]];
@@ -106,7 +113,8 @@
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     settingViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"settingVC"];
     UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
-    
+    [navigation.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName]];
+
     navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户管理"
                                                           image:[UIImage imageNamed:@"iconbG"]
                                                   selectedImage:[UIImage imageNamed:@"iconb"]];

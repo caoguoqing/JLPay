@@ -36,7 +36,7 @@
  * 8: 内网开发环境-http
  * 9: 外网测试62
  */
-#define TestOrProduce                   1
+#define TestOrProduce                   3
 
 
 /* 版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -58,21 +58,6 @@ typedef enum {
 } TransPlatformType ;
 
 
-
-
-
-
-
-
-
-/*************[设备操作相关的参数:]**************/
-//// 厂商设备类型
-//#define DeviceType                  @"DeviceType"               
-//#define DeviceType_JHL_A60          @"A60音频刷卡头A"
-//#define DeviceType_JHL_M60          @"M60蓝牙刷卡器"
-//#define DeviceType_RF_BB01          @"蓝牙刷卡头"
-//#define DeviceType_JLpay_TY01       @"JLpay蓝牙刷卡器"
-//
 
 
 

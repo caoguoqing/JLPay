@@ -58,16 +58,19 @@ SettlementSwitchViewDelegate>
     self.navigationController.navigationBarHidden = YES;
     
     // 更新结算方式的标记 - T+1
-    if ([[ModelSettlementInformation sharedInstance] T_0EnableOrNot]) {
-        [self.settlementView switchNormal];
-    }
+    [self.settlementView setEnableSwitching:[[ModelSettlementInformation sharedInstance] T_0EnableOrNot]];
+    [self.settlementView switchNormal];
+    [[ModelSettlementInformation sharedInstance] updateSettlementType:SETTLEMENTTYPE_T_1];
+
     
     // 申请结算信息
     [self startHTTPRequestForSettlementInfo];
 }
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBarHidden = NO;
+
     [[HTTPRequestSettlementInfo sharedInstance] requestTerminate];
 }
 
@@ -97,6 +100,7 @@ SettlementSwitchViewDelegate>
 /* 回调: 失败 */
 - (void)didRequestedFailedWithErrorMessage:(NSString *)errorMessage {
     [self.settlementView setEnableSwitching:NO];
+    [[ModelSettlementInformation sharedInstance] cleanSettlementInfo];
     [PublicInformation makeToast:[NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage]];
 }
 

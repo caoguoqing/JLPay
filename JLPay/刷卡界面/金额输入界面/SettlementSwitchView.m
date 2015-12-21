@@ -112,7 +112,8 @@
 
 /* 切换枚举值 */
 - (void) switchSettlementType {
-    self.curSettlementType = [[ModelSettlementInformation sharedInstance] settlementTypeSwitched];
+    [[ModelSettlementInformation sharedInstance] switchingSettleType];
+    self.curSettlementType = [[ModelSettlementInformation sharedInstance] curSettlementType];
 }
 
 #pragma mask ---- getter

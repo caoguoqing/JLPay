@@ -24,15 +24,18 @@ typedef enum {
 
 /* 当前结算方式 */
 - (SETTLEMENTTYPE) curSettlementType;
-/* 切换结算方式 */
-- (SETTLEMENTTYPE) settlementTypeSwitched;
-
 /* 更新结算方式 */
 - (void) updateSettlementType:(SETTLEMENTTYPE)settlementType;
 
+/* 切换结算方式 -- 暂时用不到 */
+//- (SETTLEMENTTYPE) settlementTypeSwitched;
+- (void) switchingSettleType;
+
+
 /* 保存结算信息 */
 - (void) saveSettlementInfo:(NSDictionary*)settlementInfo;
-
+/* 清空保存的结算信息 */
+- (void) cleanSettlementInfo;
 
 
 #pragma mask ---- 结算信息

@@ -82,6 +82,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    
     // 加载子视图
     [self setTitle:@"刷卡"];
     [self addSubViews];
@@ -92,6 +93,7 @@
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
 }
+
 
 
 #pragma mask ::: 子视图的属性设置
@@ -152,6 +154,8 @@
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
     [blueManager setDelegate:nil];
 }
+
+
 
 #pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<< 设备操作
 
