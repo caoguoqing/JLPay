@@ -78,6 +78,8 @@
 /* ----- 格式化值 ----- */
 /* 交易时间: 指定序号 hh:mm:ss */
 - (NSString*) transTimeAtIndex:(NSInteger)index;
+/* 交易日期: 指定序号 YYYY/MM/DD */
+- (NSString*) formatDateAtIndex:(NSInteger)index;
 
 /* 显示字段名数组: 交易详情 */
 + (NSArray*) titlesNeedDisplayedForNode:(NSDictionary*)detailNode;

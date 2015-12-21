@@ -29,6 +29,7 @@ ViewModelMPOSDetailsDelegate
     CGPoint lastScrollPoint;
     CGFloat heightPullRefrashView;
     CGFloat maxPullDownOffset;
+    NSInteger tagButton;
 }
 
 #pragma mask : view
@@ -71,7 +72,10 @@ NSInteger logCount = 0;
     UIColor* textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
 
     [cell setCardNum:[PublicInformation cuttingOffCardNo:[self.dataSource cardNumAtIndex:indexPath.row]]];
-    [cell setTime:[self.dataSource transTimeAtIndex:indexPath.row]];
+    [cell setTime:[NSString stringWithFormat:@"%@   %@",
+                   [self.dataSource formatDateAtIndex:indexPath.row],
+                   [self.dataSource transTimeAtIndex:indexPath.row]]];
+//    [cell setTime:[self.dataSource transTimeAtIndex:indexPath.row]];
     // 颜色和交易类型要重置
     [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
     // 颜色和金额要重置
@@ -136,9 +140,7 @@ NSInteger logCount = 0;
                 [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
             });
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [self requestDataOnDate:[self dateOfDateButton]];
-//                [self requestDataOnStartDate:[self dateOfDateButton] endDate:[self dateOfDateButton]];
-                [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonBegin]];
+                [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
             });
         }
     }
@@ -166,15 +168,14 @@ NSInteger logCount = 0;
 #pragma mask ------ DatePickerViewDelegate
 /* 日期选择器的回调 */
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
-    // 设置按钮日期
-//    [self dateButtonSetTitle:choosedDate];
-    [self setTitleDate:choosedDate forButton:self.dateButtonBegin];
+    // 设置按钮日期: 起始+终止
+    [self dateButtonsSetDate:choosedDate];
 
     // 清空列表
     [self.dataSource clearDetails];
     
     // 重新获取列表信息
-    [self requestDataOnStartDate:choosedDate endDate:choosedDate];
+    [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
     
     // 启动指示器
     [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
@@ -203,6 +204,8 @@ NSInteger logCount = 0;
 }
 - (IBAction) touchToFrushData:(id)sender {
     UIButton* button = (UIButton*)sender;
+    tagButton = button.tag;
+    NSLog(@"点击的日期按钮的tag = %d",tagButton);
     button.transform = CGAffineTransformIdentity;
 
     CGRect frame = CGRectMake(0,
@@ -233,7 +236,7 @@ NSInteger logCount = 0;
         if (buttonIndex == 1) { // 查询
             UITextField* textField = [alertView textFieldAtIndex:0];
             if (textField.text == nil || [textField.text length] == 0) {
-                [PublicInformation makeToast:@"查询条件为空,请输入卡号或金额"];
+                [PublicInformation makeCentreToast:@"查询条件为空,请输入卡号或金额"];
                 return;
             }
             // 进行模糊条件查询
@@ -284,7 +287,6 @@ NSInteger logCount = 0;
     [self.dataSource prepareSelector];
     [self.tableView reloadData];
     [self calculateTotalAmount];
-//    [self alertShow:message];
     [PublicInformation makeToast:message];
 }
 
@@ -306,14 +308,13 @@ NSInteger logCount = 0;
     heightPullRefrashView = 50;
     lastScrollPoint = CGPointZero;
     maxPullDownOffset = 0;
-    
     [self loadsSubviews];
+    tagButton = self.dateButtonBegin.tag;
     
     self.dataSource = [[ViewModelMPOSDetails alloc] init];
     // 先校验是否绑定了
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
         // 请求数据
-//        [self requestDataOnDate:[PublicInformation nowDate]];
         [self requestDataOnStartDate:[PublicInformation nowDate] endDate:[PublicInformation nowDate]];
         // 启动指示器
         [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
@@ -337,10 +338,14 @@ NSInteger logCount = 0;
 }
 
 - (void) loadsSubviews {
+    [self setTitleDate:[PublicInformation nowDate] forButton:self.dateButtonBegin];
+    [self setTitleDate:[PublicInformation nowDate] forButton:self.dateButtonEnd];
+    
     // 总金额显示框
     CGFloat inset = 15;
-    CGFloat widthDateButton = 140;
+    CGFloat widthDateButton = [@"2020-20-20" sizeWithAttributes:[NSDictionary dictionaryWithObject:self.dateButtonBegin.titleLabel.font forKey:NSFontAttributeName]].width; //140;
     CGFloat heightDateButton = 40;
+    CGFloat widthImageView = 26;
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
@@ -363,33 +368,34 @@ NSInteger logCount = 0;
 
     
     // 起始日期按钮
-    frame.origin.x = 0;
-    frame.origin.y += frame.size.height + inset/3.0 + inset/3.0;
+    frame.origin.x = inset; //0;
+    frame.origin.y += frame.size.height + (50 - heightDateButton)/2.0;
     frame.size.height = heightDateButton;
     frame.size.width = widthDateButton;
     [self.dateButtonBegin setFrame:frame];
     [self.view addSubview:self.dateButtonBegin];
-    [self setTitleDate:[PublicInformation nowDate] forButton:self.dateButtonBegin];
 
     
-    // --------------- 这里要添加一个方向指示视图，还要添加一个终止日期按钮
-    frame.origin.x += frame.size.width + inset/3.0;
-    frame.size.width = frame.size.height;
+    // 方向指示视图
     UIImageView* nextImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"next"]];
-    [nextImage setFrame:frame];
+    [nextImage setFrame:CGRectMake(0, 0, widthImageView, widthImageView)];
+    nextImage.center = CGPointMake(self.dateButtonBegin.center.x + self.dateButtonBegin.bounds.size.width/2.0 + widthImageView/2.0,
+                                   self.dateButtonBegin.center.y);
     [self.view addSubview:nextImage];
-    // ---------------
+    
+    // 终止日期
+    frame.origin.x += frame.size.width + widthImageView;
+    [self.dateButtonEnd setFrame:frame];
+    [self.view addSubview:self.dateButtonEnd];
 
     // 查询按钮
     frame.origin.x = self.view.bounds.size.width - inset - frame.size.height;
-    frame.origin.y -= inset/3.0 ;
     frame.size.width = frame.size.height;
     [self.searchButton setFrame:frame];
     if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
         [self.view addSubview:self.searchButton];
     }
 
-    
     // 分割线
     frame.origin.x = 0;
     frame.origin.y += frame.size.height + inset/3.0 - 1;
@@ -424,10 +430,22 @@ NSInteger logCount = 0;
     [alert show];
 }
 
-
-
-
 // 给日期按钮设置日期
+- (void) dateButtonsSetDate:(NSString*)dateString {
+    if (tagButton == self.dateButtonBegin.tag) {
+        [self setTitleDate:dateString forButton:self.dateButtonBegin];
+        if (dateString.intValue > [self dateOfDateButton:self.dateButtonEnd].intValue) {
+            [self setTitleDate:dateString forButton:self.dateButtonEnd];
+        }
+    }
+    else {
+        [self setTitleDate:dateString forButton:self.dateButtonEnd];
+        if (dateString.intValue < [self dateOfDateButton:self.dateButtonBegin].intValue) {
+            [self setTitleDate:dateString forButton:self.dateButtonBegin];
+        }
+    }
+}
+// 给指定日期按钮设置日期
 - (void) setTitleDate:(NSString*)titleDate forButton:(UIButton*)button {
     NSString* year = [titleDate substringToIndex:4];
     NSString* month = [titleDate substringWithRange:NSMakeRange(4, 2)];
@@ -440,19 +458,6 @@ NSInteger logCount = 0;
     [sublineString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, fortmatString.length)];
     [button.titleLabel setAttributedText:sublineString];
 }
-
-//- (void) dateButtonSetTitle:(NSString*)dateString {
-//    NSString* year = [dateString substringToIndex:4];
-//    NSString* month = [dateString substringWithRange:NSMakeRange(4, 2)];
-//    NSString* day = [dateString substringFromIndex:4+2];
-//    NSString* fortmatString = [NSString stringWithFormat:@"%@-%@-%@",year,month,day];
-//    [self.dateButtonBegin setTitle:fortmatString forState:UIControlStateNormal];
-//    
-//    // titleLabel 文字添加下划线
-//    NSMutableAttributedString* sublineString = [[NSMutableAttributedString alloc] initWithString:fortmatString];
-//    [sublineString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, fortmatString.length)];
-//    [self.dateButtonBegin.titleLabel setAttributedText:sublineString];
-//}
 
 // 获取日期按钮的日期
 - (NSString*) dateOfDateButton:(UIButton*)button {
@@ -500,11 +505,12 @@ NSInteger logCount = 0;
         _dateButtonBegin = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButtonBegin.layer.cornerRadius = 5.0;
         [_dateButtonBegin setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
-        
+        _dateButtonBegin.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(0, 20) andScale:1]];
         
         [_dateButtonBegin addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_dateButtonBegin addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
         [_dateButtonBegin addTarget:self action:@selector(touchToFrushData:) forControlEvents:UIControlEventTouchUpInside];
+        _dateButtonBegin.tag = 99;
     }
     return _dateButtonBegin;
 }
@@ -513,11 +519,12 @@ NSInteger logCount = 0;
         _dateButtonEnd = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButtonEnd.layer.cornerRadius = 5.0;
         [_dateButtonEnd setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
-        
+        _dateButtonEnd.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(0, 20) andScale:1]];
         
         [_dateButtonEnd addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_dateButtonEnd addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
         [_dateButtonEnd addTarget:self action:@selector(touchToFrushData:) forControlEvents:UIControlEventTouchUpInside];
+        _dateButtonEnd.tag = 199;
     }
     return _dateButtonEnd;
 }

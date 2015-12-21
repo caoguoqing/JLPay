@@ -233,6 +233,16 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
             [time substringFromIndex:4]];
     return time;
 }
+/* 交易日期: 指定序号 YYYY/MM/DD */
+- (NSString*) formatDateAtIndex:(NSInteger)index {
+    NSString* dateString = [self transDateAtIndex:index];
+    dateString = [NSString stringWithFormat:@"%@/%@/%@",
+                  [dateString substringToIndex:4],
+                  [dateString substringWithRange:NSMakeRange(4, 2)],
+                  [dateString substringFromIndex:4+2]];
+    return dateString;
+}
+
 
 /* 交易日期8位: 指定序号 */
 - (NSString*) transDateAtIndex:(NSInteger)index {

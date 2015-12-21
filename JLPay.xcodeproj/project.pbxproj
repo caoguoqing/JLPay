@@ -1559,10 +1559,10 @@
 		5EFD098E1C1680E40062AD34 /* controller */ = {
 			isa = PBXGroup;
 			children = (
-				5EFD09921C16A8530062AD34 /* FeeRateTableViewController.h */,
-				5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */,
 				5EF3BAA51B69C01900DCD764 /* RateViewController.h */,
 				5EF3BAA61B69C01900DCD764 /* RateViewController.m */,
+				5EFD09921C16A8530062AD34 /* FeeRateTableViewController.h */,
+				5EFD09931C16A8530062AD34 /* FeeRateTableViewController.m */,
 			);
 			name = controller;
 			sourceTree = "<group>";

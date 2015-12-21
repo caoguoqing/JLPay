@@ -496,6 +496,7 @@ const NSInteger tagAlertDidSaved = 15;
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.clearButton];
     [self.view addSubview:self.pickerView];
+    self.view.backgroundColor = [UIColor whiteColor];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

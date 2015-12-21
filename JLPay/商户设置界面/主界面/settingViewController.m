@@ -12,8 +12,8 @@
 #import "TransDetailsViewController.h"
 #import "Define_Header.h"
 #import "DeviceSignInViewController.h"
-#import "FeeRateTableViewController.h"
 #import "RateViewController.h"
+#import "FeeRateTableViewController.h"
 #import "BrushViewController.h"
 #import "Packing8583.h"
 
@@ -169,7 +169,8 @@
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"费率选择"]) {
-        viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
+//        viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
+        viewController = [[RateViewController alloc] initWithNibName:nil bundle:nil];
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:@"余额查询"]) {
