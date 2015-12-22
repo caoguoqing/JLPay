@@ -14,6 +14,7 @@
 #import "TransDetailsViewController.h"
 #import "Packing8583.h"
 #import "ViewModelMPOSDetails.h"
+#import "ViewModelOtherPayDetails.h"
 
 @interface RevokeViewController()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate>
 @property (nonatomic, strong) UITableView* tableView;
@@ -72,6 +73,7 @@
         number = [ViewModelMPOSDetails titlesNeedDisplayedForNode:self.dataDic].count;
     }
     else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+        number = [ViewModelOtherPayDetails titlesNeedDisplayedForNode:self.dataDic].count;
     }
     return number;
 }
@@ -92,6 +94,10 @@
     if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
         [cell.textLabel setText:[[ViewModelMPOSDetails titlesNeedDisplayedForNode:self.dataDic] objectAtIndex:indexPath.row]];
         [cell.detailTextLabel setText:[ViewModelMPOSDetails valueForTitleNeedDisplayed:cell.textLabel.text ofNode:self.dataDic]];
+    }
+    else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+        [cell.textLabel setText:[[ViewModelOtherPayDetails titlesNeedDisplayedForNode:self.dataDic] objectAtIndex:indexPath.row]];
+        [cell.detailTextLabel setText:[ViewModelOtherPayDetails valueForTitleNeedDisplayed:cell.textLabel.text ofNode:self.dataDic]];
     }
     
     return cell;

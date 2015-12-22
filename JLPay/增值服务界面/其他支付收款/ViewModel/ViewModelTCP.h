@@ -43,7 +43,6 @@
  *    KeyResponseDataTranType
  * }
  */
-//- (void) TCPResponseWithState:(BOOL)state andData:(NSDictionary*)responseData;
 - (void) TCPResponse:(ViewModelTCP*)tcp withState:(BOOL)state andData:(NSDictionary*)responseData;
 
 @end

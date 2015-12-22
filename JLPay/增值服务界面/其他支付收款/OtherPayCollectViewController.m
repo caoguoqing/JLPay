@@ -103,10 +103,6 @@
 
 
 
-
-
-
-
 #pragma mask ---- PRIVATE INTERFACE
 /* 左视图: 金额输入框 */
 - (UILabel*) leftViewLabelInFrame:(CGRect)frame {
@@ -209,7 +205,7 @@
 - (QRCodeButtonView *)btnViewRQCodeDisplay {
     if (_btnViewRQCodeDisplay == nil) {
         _btnViewRQCodeDisplay = [[QRCodeButtonView alloc] initWithFrame:CGRectZero];
-        [_btnViewRQCodeDisplay setBackgroundColor:[UIColor colorWithRed:47.0/255.0 green:53.0/255.0 blue:61.0/255.0 alpha:1]];
+        [_btnViewRQCodeDisplay setBackgroundColor:[PublicInformation returnCommonAppColor:@"blueBlack"]];
         [_btnViewRQCodeDisplay setDelegate:self];
         [_btnViewRQCodeDisplay setTitle:@"二维码"];
         [_btnViewRQCodeDisplay setImage:[UIImage imageNamed:QRCodeName]];
@@ -219,7 +215,7 @@
 - (QRCodeButtonView *)btnViewRQCodeScan {
     if (_btnViewRQCodeScan == nil) {
         _btnViewRQCodeScan = [[QRCodeButtonView alloc] initWithFrame:CGRectZero];
-        [_btnViewRQCodeScan setBackgroundColor:[UIColor colorWithRed:47.0/255.0 green:53.0/255.0 blue:61.0/255.0 alpha:1]];
+        [_btnViewRQCodeScan setBackgroundColor:[PublicInformation returnCommonAppColor:@"blueBlack"]];
         [_btnViewRQCodeScan setDelegate:self];
         [_btnViewRQCodeScan setTitle:@"扫一扫"];
         [_btnViewRQCodeScan setImage:[UIImage imageNamed:barCodeName]];

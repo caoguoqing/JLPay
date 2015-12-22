@@ -37,6 +37,7 @@
     NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
     [navigationControllers addObject:[self newNavigationOfCustPayVC]];
     [navigationControllers addObject:[self newNavigationOfBusinessVC]];
+//    [navigationControllers addObject:[self newNavigationOfAdditionalVC]];
     
     [tabBarController setViewControllers:navigationControllers];
     [tabBarController setSelectedIndex:select];
@@ -118,6 +119,20 @@
     navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户管理"
                                                           image:[UIImage imageNamed:@"iconbG"]
                                                   selectedImage:[UIImage imageNamed:@"iconb"]];
+    
+    
+    return navigation;
+}
+/* 创建导航器: 增值服务系列 */
+- (UINavigationController*) newNavigationOfAdditionalVC {
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    settingViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"additionalServiceVC"];
+    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
+    [navigation.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName]];
+    
+    navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"增值服务"
+                                                          image:[UIImage imageNamed:@"iconcG"]
+                                                  selectedImage:[UIImage imageNamed:@"iconc"]];
     
     
     return navigation;

@@ -150,7 +150,7 @@
     NSString* strPacking = nil;
     NSString* stringDateAndTime = [PublicInformation currentDateAndTime];
     Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setHeader:@"600100310000"]; // 600100310000 603100114301
+    [packingHolder setHeader:@"600100310000"];
     [packingHolder setFieldAtIndex:3 withValue:[self processingCodeWithTransType:transType]];
     [packingHolder setFieldAtIndex:4 withValue:[self sIntMoneyOfFloatMoney:money]];
     [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];

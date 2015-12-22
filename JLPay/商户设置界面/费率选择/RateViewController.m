@@ -161,11 +161,11 @@ const NSInteger tagAlertDidSaved = 15;
 - (IBAction) touchToSelectBusiness:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
     if (!self.rateCodePicked) {
-        [self alertShowWithMessage:@"未选择费率" atTag:tagAlertRateNotNull];
+        [PublicInformation makeCentreToast:@"请先选择费率!"];
         return;
     }
     else if (!self.cityCodePicked) {
-        [self alertShowWithMessage:@"未选择地区" atTag:tagAlertAreaNotNull];
+        [PublicInformation makeCentreToast:@"请先选择地区!"];
         return;
     }
     // 重新获取商户列表到选择器
@@ -176,7 +176,7 @@ const NSInteger tagAlertDidSaved = 15;
 - (IBAction) touchToSaveBusinessNumAndTerminalNum:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
     if (!self.businessNumPicked || !self.terminalNumPicked) {
-        [self alertShowWithMessage:@"未选择机构商户" atTag:tagAlertBusinessNotNull];
+        [PublicInformation makeCentreToast:@"未选择机构商户!"];
         return;
     }
     // 保存选择的商户信息到配置
@@ -199,14 +199,14 @@ const NSInteger tagAlertDidSaved = 15;
     if (jigouInfoSaved) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:KeyInfoDictOfJiGou];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [self alertShowWithMessage:@"已清空保存的商户信息" atTag:tagAlertBusinessNotNull];
+        [PublicInformation makeCentreToast:@"已清空保存的商户信息"];
     }
     [self labSavedChangeByNewBusinessName:@"无"];
 }
 
 
 #pragma mask --- DynamicPickerViewDelegate
-/* 回调: 点解了cell */
+/* 回调: 点击了cell */
 - (void)pickerView:(DynamicPickerView *)pickerView didSelectedRow:(NSInteger)row atComponent:(NSInteger)component {
     if ([pickerView.pickerType isEqualToString:(NSString*)kPickerTypeArea] && component == 0) {
         // 检索出省份key
@@ -261,6 +261,18 @@ const NSInteger tagAlertDidSaved = 15;
 
 
 #pragma mask --- ASIHTTPRequestDelegate
+/* business 查询: 指定费率、地区代码、商户号 */
+- (void) requestBusinessArrayOnRate:(NSString*)rate
+                           areaCode:(NSString*)areaCode
+                        businessNum:(NSString*)businessNum
+{
+    [self.httpRequest addPostValue:rate forKey:@"feeType"];
+    [self.httpRequest addPostValue:areaCode forKey:@"areaCode"];
+    [self.httpRequest addPostValue:businessNum forKey:@"mchtNo"];
+    [self.httpRequest startAsynchronous];
+    [self startActivitor];
+}
+/* 回调: 成功 */
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [self stopActivitor];
     [request clearDelegatesAndCancel];
@@ -280,11 +292,12 @@ const NSInteger tagAlertDidSaved = 15;
         [self alertShowWithMessage:@"查询商户列表为空,请重新选择费率或地区" atTag:tagAlertHttpError];
     }
 }
+/* 回调: 失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self stopActivitor];
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
-    [self alertShowWithMessage:@"查询商户列表失败" atTag:tagAlertHttpError];
+    [PublicInformation makeCentreToast:@"查询商户列表失败"];
 }
 
 /* 重载picker: 商户 */
@@ -338,18 +351,6 @@ const NSInteger tagAlertDidSaved = 15;
     }
 }
 
-
-/* business 查询: 指定费率、地区代码、商户号 */
-- (void) requestBusinessArrayOnRate:(NSString*)rate
-                           areaCode:(NSString*)areaCode
-                        businessNum:(NSString*)businessNum
-{
-    [self.httpRequest addPostValue:rate forKey:@"feeType"];
-    [self.httpRequest addPostValue:areaCode forKey:@"areaCode"];
-    [self.httpRequest addPostValue:businessNum forKey:@"mchtNo"];
-    [self.httpRequest startAsynchronous];
-    [self startActivitor];
-}
 
 /* 启动指示器 */
 - (void) startActivitor {

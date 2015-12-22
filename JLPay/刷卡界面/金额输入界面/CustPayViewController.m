@@ -101,7 +101,7 @@ SettlementSwitchViewDelegate>
 - (void)didRequestedFailedWithErrorMessage:(NSString *)errorMessage {
     [self.settlementView setEnableSwitching:NO];
     [[ModelSettlementInformation sharedInstance] cleanSettlementInfo];
-    [PublicInformation makeToast:[NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage]];
+//    [PublicInformation makeToast:[NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage]];
 }
 
 

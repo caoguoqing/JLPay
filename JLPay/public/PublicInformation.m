@@ -596,7 +596,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 /* app通用ui颜色:
  *      red
  *      green
- *      
+ *      blueBlack
  */
 +(UIColor*) returnCommonAppColor:(NSString*)color {
     UIColor* retColor = nil;
@@ -605,6 +605,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if ([color isEqualToString:@"green"]) {
         retColor = [UIColor colorWithRed:53.0/255.0 green:176.0/255.0 blue:41.0/255.0 alpha:1.0];
+    }
+    else if ([color isEqualToString:@"blueBlack"]) {
+        retColor = [UIColor colorWithRed:47.0/255.0 green:53.0/255.0 blue:61.0/255.0 alpha:1];
     }
     return retColor;
 }

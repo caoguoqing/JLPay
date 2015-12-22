@@ -8,6 +8,7 @@
 
 #import "ViewModelMPOSDetails.h"
 #import "PublicInformation.h"
+#import "Define_Header.h"
 
 
 static NSString* const kDetailsFilterKeyCardNo = @"pan";
@@ -55,7 +56,6 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
 {
     BOOL filtered;
     NSString* filterInputed;
-//    NSDictionary* titlesAndKeysNeedDisplayed;
 }
 @property (nonatomic, strong) HTTPInstance* http;
 @property (nonatomic, assign) id<ViewModelMPOSDetailsDelegate>delegate;
@@ -72,7 +72,6 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
     self = [super init];
     if (self) {
         filtered = NO;
-//        titlesAndKeysNeedDisplayed = [self newTilesAndKeysNeedDisplayed];
         self.detailsDisplayed = [[NSMutableArray alloc] init];
         
         NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo",
@@ -263,7 +262,9 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
 
 /* 交易详情节点: 指定序号 */
 - (NSDictionary*) nodeDetailAtIndex:(NSInteger)index {
-    NSLog(@"序号[%d]的明细节点{%@}",index,[self.detailsDisplayed objectAtIndex:index]);
+    if (NeedPrintLog) {
+        NSLog(@"序号[%d]的明细节点{%@}",index,[self.detailsDisplayed objectAtIndex:index]);
+    }
     return [self.detailsDisplayed objectAtIndex:index];
 }
 

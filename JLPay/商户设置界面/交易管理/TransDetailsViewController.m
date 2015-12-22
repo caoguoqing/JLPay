@@ -16,6 +16,7 @@
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ViewModelMPOSDetails.h"
+#import "ViewModelOtherPayDetails.h"
 #import "PullRefrashView.h"
 #import "TriangleLeftTurnView.h"
 
@@ -41,7 +42,8 @@ ViewModelMPOSDetailsDelegate
 @property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
 
 #pragma mask : model
-@property (nonatomic, retain) ViewModelMPOSDetails* dataSource;
+//@property (nonatomic, retain) ViewModelMPOSDetails* dataSource;
+@property (nonatomic, retain) id dataSource;
 
 @property (nonatomic) CGRect activitorFrame;
 @end
@@ -71,15 +73,26 @@ NSInteger logCount = 0;
     }
     UIColor* textColor = [UIColor colorWithRed:69.0/255.0 green:69.0/255.0 blue:69.0/255.0 alpha:1.0];
 
-    [cell setCardNum:[PublicInformation cuttingOffCardNo:[self.dataSource cardNumAtIndex:indexPath.row]]];
-    [cell setTime:[NSString stringWithFormat:@"%@   %@",
-                   [self.dataSource formatDateAtIndex:indexPath.row],
-                   [self.dataSource transTimeAtIndex:indexPath.row]]];
-//    [cell setTime:[self.dataSource transTimeAtIndex:indexPath.row]];
-    // 颜色和交易类型要重置
-    [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
-    // 颜色和金额要重置
-    [cell setAmount:[NSString stringWithFormat:@"￥ %@",[PublicInformation dotMoneyFromNoDotMoney:[self.dataSource moneyAtIndex:indexPath.row]]] withColor:textColor];
+    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        [cell setCardNum:[PublicInformation cuttingOffCardNo:[self.dataSource cardNumAtIndex:indexPath.row]]];
+        [cell setTime:[NSString stringWithFormat:@"%@   %@",
+                       [self.dataSource formatDateAtIndex:indexPath.row],
+                       [self.dataSource transTimeAtIndex:indexPath.row]]];
+        // 颜色和交易类型要重置
+        [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
+        // 颜色和金额要重置
+        [cell setAmount:[NSString stringWithFormat:@"￥ %@",[PublicInformation dotMoneyFromNoDotMoney:[self.dataSource moneyAtIndex:indexPath.row]]] withColor:textColor];
+    }
+    else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+        [cell setTime:[NSString stringWithFormat:@"%@   %@",
+                       [self.dataSource formatDateAtIndex:indexPath.row],
+                       [self.dataSource transTimeAtIndex:indexPath.row]]];
+        // 颜色和交易类型要重置
+        [cell setTranType:[self.dataSource transTypeAtIndex:indexPath.row] withColor:textColor];
+        // 颜色和金额要重置
+        [cell setAmount:[NSString stringWithFormat:@"￥ %@",[PublicInformation dotMoneyFromNoDotMoney:[self.dataSource moneyAtIndex:indexPath.row]]] withColor:textColor];
+    }
+    
 
     return cell;
 }
@@ -205,7 +218,6 @@ NSInteger logCount = 0;
 - (IBAction) touchToFrushData:(id)sender {
     UIButton* button = (UIButton*)sender;
     tagButton = button.tag;
-    NSLog(@"点击的日期按钮的tag = %d",tagButton);
     button.transform = CGAffineTransformIdentity;
 
     CGRect frame = CGRectMake(0,
@@ -311,7 +323,12 @@ NSInteger logCount = 0;
     [self loadsSubviews];
     tagButton = self.dateButtonBegin.tag;
     
-    self.dataSource = [[ViewModelMPOSDetails alloc] init];
+    if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
+        self.dataSource = [[ViewModelMPOSDetails alloc] init];
+    } else if ([self.tradePlatform isEqualToString:NameTradePlatformOtherPay]) {
+        self.dataSource = [[ViewModelOtherPayDetails alloc] init];
+    }
+    
     // 先校验是否绑定了
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
         // 请求数据
@@ -344,8 +361,10 @@ NSInteger logCount = 0;
     // 总金额显示框
     CGFloat inset = 15;
     CGFloat widthDateButton = [@"2020-20-20" sizeWithAttributes:[NSDictionary dictionaryWithObject:self.dateButtonBegin.titleLabel.font forKey:NSFontAttributeName]].width; //140;
-    CGFloat heightDateButton = 40;
-    CGFloat widthImageView = 26;
+    CGFloat heightDateButton = 26;
+    CGFloat widthImageView = 18;
+    CGFloat heightSearchButton = 40;
+    CGFloat heightSettingsArea = 50;
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
@@ -366,30 +385,35 @@ NSInteger logCount = 0;
     self.totalView.frame = frame;
     [self.view addSubview:self.totalView];
 
-    
+    CGFloat originY = frame.size.height + frame.origin.y;
     // 起始日期按钮
     frame.origin.x = inset; //0;
-    frame.origin.y += frame.size.height + (50 - heightDateButton)/2.0;
+    frame.origin.y = originY + (heightSettingsArea - heightDateButton)/2.0;
     frame.size.height = heightDateButton;
     frame.size.width = widthDateButton;
     [self.dateButtonBegin setFrame:frame];
     [self.view addSubview:self.dateButtonBegin];
-
     
     // 方向指示视图
-    UIImageView* nextImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"next"]];
-    [nextImage setFrame:CGRectMake(0, 0, widthImageView, widthImageView)];
-    nextImage.center = CGPointMake(self.dateButtonBegin.center.x + self.dateButtonBegin.bounds.size.width/2.0 + widthImageView/2.0,
+//    UIImageView* nextImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"next"]];
+    UILabel* nextLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthImageView, widthImageView)];
+    nextLabel.text = @"至";
+    nextLabel.textAlignment = NSTextAlignmentCenter;
+    nextLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(widthImageView, widthImageView) andScale:1]];
+//    [nextImage setFrame:CGRectMake(0, 0, widthImageView, widthImageView)];
+    nextLabel.center = CGPointMake(self.dateButtonBegin.center.x + self.dateButtonBegin.bounds.size.width/2.0 + inset/3.0*2.0 + widthImageView/2.0,
                                    self.dateButtonBegin.center.y);
-    [self.view addSubview:nextImage];
+    [self.view addSubview:nextLabel];
     
     // 终止日期
-    frame.origin.x += frame.size.width + widthImageView;
+    frame.origin.x += frame.size.width + widthImageView + inset/3.0*2.0 * 2.0;
     [self.dateButtonEnd setFrame:frame];
     [self.view addSubview:self.dateButtonEnd];
 
     // 查询按钮
     frame.origin.x = self.view.bounds.size.width - inset - frame.size.height;
+    frame.origin.y = originY + (heightSettingsArea - heightSearchButton)/2.0;
+    frame.size.height = heightSearchButton;
     frame.size.width = frame.size.height;
     [self.searchButton setFrame:frame];
     if ([self.tradePlatform isEqualToString:NameTradePlatformMPOSSwipe]) {
@@ -398,7 +422,7 @@ NSInteger logCount = 0;
 
     // 分割线
     frame.origin.x = 0;
-    frame.origin.y += frame.size.height + inset/3.0 - 1;
+    frame.origin.y = originY + heightSettingsArea - 1;
     frame.size.width = self.view.bounds.size.width;
     frame.size.height = 0.5;
     UIView* line = [[UIView alloc] initWithFrame:frame];
@@ -504,8 +528,11 @@ NSInteger logCount = 0;
     if (_dateButtonBegin == nil) {
         _dateButtonBegin = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButtonBegin.layer.cornerRadius = 5.0;
+//        _dateButtonBegin.backgroundColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
+//        [_dateButtonBegin setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_dateButtonBegin setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
         _dateButtonBegin.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(0, 20) andScale:1]];
+        
         
         [_dateButtonBegin addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_dateButtonBegin addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
@@ -518,6 +545,8 @@ NSInteger logCount = 0;
     if (_dateButtonEnd == nil) {
         _dateButtonEnd = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButtonEnd.layer.cornerRadius = 5.0;
+//        _dateButtonEnd.backgroundColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
+//        [_dateButtonEnd setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_dateButtonEnd setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
         _dateButtonEnd.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(0, 20) andScale:1]];
         

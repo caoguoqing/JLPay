@@ -15,7 +15,7 @@
 #import "Define_Header.h"
 #import "ModelUserLoginInformation.h"
 
-@interface ChangePinViewController()<ASIHTTPRequestDelegate> {
+@interface ChangePinViewController()<ASIHTTPRequestDelegate, UITextFieldDelegate> {
     CGFloat textFontSize;
 }
 @property (nonatomic, strong) UITextField* userOldPwdField;
@@ -70,9 +70,10 @@
     [self.httpRequest clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     if ([[dataDict valueForKey:@"code"] intValue] == 0) {
-        [self alertViewWithMessage:@"修改密码成功!"];
+        [PublicInformation makeCentreToast:@"修改密码成功!"];
+        [self.navigationController popViewControllerAnimated:YES];
     } else {
-        [self alertViewWithMessage:[NSString stringWithFormat:@"修改密码失败:%@",[dataDict valueForKey:@"message"]]];
+        [PublicInformation makeCentreToast:[NSString stringWithFormat:@"修改密码失败:%@",[dataDict valueForKey:@"message"]]];
     }
     self.httpRequest = nil;
 }
@@ -80,12 +81,19 @@
     [self.httpRequest clearDelegatesAndCancel];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.activitor stopAnimating];
-        [self alertViewWithMessage:@"网络异常,请检查网络"];
+        [PublicInformation makeCentreToast:@"网络异常,请检查网络"];
     });
     self.httpRequest = nil;
 }
 
-
+#pragma mask ---- UITextFieldDelegate
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([string isEqualToString:@"\n"]) {
+        [textField resignFirstResponder];
+    }
+    return YES;
+}
 
 #pragma mask ---- “修改”按钮的点击事件
 - (IBAction) touchDown:(UIButton*)sender {
@@ -232,19 +240,19 @@
 - (BOOL) checkInPut {
     BOOL valid = YES;
     if ([self.userOldPwdField.text length] == 0) {
-        [self alertViewWithMessage:@"旧密码不能为空"];
+        [PublicInformation makeCentreToast:@"旧密码不能为空"];
         valid = NO;
     } else if ([self.userNewPwdField.text length] == 0) {
-        [self alertViewWithMessage:@"新密码不能为空"];
+        [PublicInformation makeCentreToast:@"新密码不能为空"];
         valid = NO;
     } else if ([self.userOldPwdField.text isEqualToString:self.userNewPwdField.text]) {
-        [self alertViewWithMessage:@"新密码不能跟旧密码一样"];
+        [PublicInformation makeCentreToast:@"新密码不能跟旧密码一样"];
         valid = NO;
     } else if (self.userNewPwdField.text.length > 8) {
-        [self alertViewWithMessage:@"密码长度不能大于8位"];
+        [PublicInformation makeCentreToast:@"密码长度不能大于8位"];
         valid = NO;
     } else if (![self.userNewPwdField.text isEqualToString:self.userResureNewPwdField.text]) {
-        [self alertViewWithMessage:@"确认密码有误,跟新密码不一致"];
+        [PublicInformation makeCentreToast:@"确认密码有误,跟新密码不一致"];
         valid = NO;
     }
     return valid;
@@ -266,7 +274,7 @@
         _userOldPwdField.secureTextEntry = YES;
         _userOldPwdField.textColor = [UIColor blackColor];
         [_userOldPwdField setClearButtonMode:UITextFieldViewModeWhileEditing];
-
+        [_userOldPwdField setDelegate:self];
     }
     return _userOldPwdField;
 }
@@ -279,6 +287,7 @@
         _userNewPwdField.secureTextEntry = YES;
         _userNewPwdField.textColor = [UIColor blackColor];
         [_userNewPwdField setClearButtonMode:UITextFieldViewModeWhileEditing];
+        [_userNewPwdField setDelegate:self];
     }
     return _userNewPwdField;
 }
@@ -291,6 +300,7 @@
         _userResureNewPwdField.secureTextEntry = YES;
         _userResureNewPwdField.textColor = [UIColor blackColor];
         [_userResureNewPwdField setClearButtonMode:UITextFieldViewModeWhileEditing];
+        [_userResureNewPwdField setDelegate:self];
 
     }
     return _userResureNewPwdField;

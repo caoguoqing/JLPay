@@ -515,7 +515,7 @@
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
     else {
-        [PublicInformation makeToast:@"小票未上传,请上传小票"];
+        [PublicInformation makeCentreToast:@"小票未上传,请上传小票!"];
     }
 }
 
