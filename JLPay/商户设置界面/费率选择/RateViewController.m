@@ -572,6 +572,8 @@ const NSInteger tagAlertDidSaved = 15;
     self.httpRequest = nil;
 }
 
+
+
 /* 保存的商户号: 从配置中读取 */
 - (NSString*) businessNameSaved {
     NSString* businessName = nil;
@@ -701,6 +703,7 @@ const NSInteger tagAlertDidSaved = 15;
         [_sureButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
         [_sureButton setTitle:@"保存" forState:UIControlStateNormal];
         [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         _sureButton.layer.cornerRadius = 8.0;
         [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_sureButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
@@ -714,6 +717,7 @@ const NSInteger tagAlertDidSaved = 15;
         [_clearButton setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:1]];
         [_clearButton setTitle:@"清空" forState:UIControlStateNormal];
         [_clearButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_clearButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         _clearButton.layer.cornerRadius = 8.0;
         [_clearButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
         [_clearButton addTarget:self action:@selector(touchUpOutSide:) forControlEvents:UIControlEventTouchUpOutside];
