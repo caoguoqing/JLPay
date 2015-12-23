@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 
 
+/*
+ * 动态保存在内存，而非本地配置
+ */
+
+
 typedef enum {
     SETTLEMENTTYPE_T_1 = 1 << 0, // T+1
     SETTLEMENTTYPE_T_0 = 1 << 1  // T+0

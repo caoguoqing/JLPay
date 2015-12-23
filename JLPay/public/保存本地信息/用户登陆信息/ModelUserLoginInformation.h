@@ -13,9 +13,6 @@
 /***** 本类保存的信息只有一份 *****/
 
 
-
-
-
 @interface ModelUserLoginInformation : NSObject
 
 #pragma mask ---- 增

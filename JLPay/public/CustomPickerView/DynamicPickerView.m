@@ -10,9 +10,7 @@
 #import <Foundation/Foundation.h>
 
 @interface DynamicPickerView() <UIPickerViewDelegate, UIPickerViewDataSource>
-{
-//    CGFloat fontSize ;
-}
+
 
 @property (nonatomic, strong) UIButton* btnSure;                    // 按钮: 确定
 @property (nonatomic, strong) UIButton* btnCancel;                  // 按钮: 取消
@@ -196,7 +194,6 @@
     CGFloat heightPicker = self.frame.size.height - heightBtn;
     CGFloat widthPicker = self.frame.size.width;
     CGFloat widthSeperView = widthPicker - widthBtn * 2;
-    
     
     CGRect inFrame = CGRectMake(0, 0, widthBtn, heightBtn);
     // 按钮: 取消
