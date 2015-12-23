@@ -10,15 +10,24 @@
 #import "PublicInformation.h"
 #import "Define_Header.h"
 #import "DynamicPickerView.h"
-#import "MySQLiteManager.h"
-#import "ASIFormDataRequest.h"
 #import "JLActivitor.h"
 
+#import "ModelFeeBusinessInformation.h"
+#import "HTTPRequestFeeBusiness.h"
+#import "ModelAreaCodeSelector.h"
+
 @interface RateViewController()
-< DynamicPickerViewDelegate , ASIHTTPRequestDelegate, UIAlertViewDelegate>
+< DynamicPickerViewDelegate ,
+HTTPRequestFeeBusinessDelegate,
+UIAlertViewDelegate>
 {
     CGFloat fontOfText;
     CGRect framePicker;
+    
+    NSInteger indexFeePicked;
+    NSInteger indexProvincePicked;
+    NSInteger indexCityPicked;
+    NSInteger indexBusinessPicked;
 }
 @property (nonatomic, strong) UILabel*  labRate;                    // 标签: 费率
 @property (nonatomic, strong) UILabel*  labArea;                    // 标签: 地区
@@ -34,47 +43,20 @@
 
 @property (nonatomic, assign) CGRect activitorFrame ;               // 指示器的frame
 
-@property (nonatomic, strong) NSMutableArray* arrayRates;
+@property (nonatomic, strong) NSArray* arrayFeeNames;               // 数据源: 费率名组
+@property (nonatomic, strong) NSArray* arrayProvinces;              // 数据源: 省组
+@property (nonatomic, strong) NSArray* arrayCities;                 // 数据源: 市组
+@property (nonatomic, strong) NSArray* arrayBusinesses;             // 数据源: 商户组
 
-@property (nonatomic, strong) NSArray* arrayProvinces;              // 数据源: 省
-@property (nonatomic, strong) NSArray* arrayCities;                 // 数据源: 市
-@property (nonatomic, strong) NSArray* arrayBusinesses;             // 数据源: 商户
-
-@property (nonatomic, strong) NSString* rateCodePicked;             // 费率: 选择的
-@property (nonatomic, strong) NSString* cityCodePicked;             // 城市: 选择的
-@property (nonatomic, strong) NSString* businessNumPicked;          // 商户号: 选择的
-@property (nonatomic, strong) NSString* terminalNumPicked;          // 终端号: 选择的
-
-@property (nonatomic, retain) ASIFormDataRequest* httpRequest;      // HTTP操作入口
+@property (nonatomic, retain) HTTPRequestFeeBusiness* httpFeeBusiness;
 
 @end
 
-// KEY: 费率数据字典
-const NSString* kRateInfoDesc = @"keyDesc";
-const NSString* kRateInfoRate = @"rate";
 
 // KEY: 选择器类型
-const NSString* kPickerTypeRate = @"PickerTypeRate";
-const NSString* kPickerTypeArea = @"PickerTypeArea";
-const NSString* kPickerTypeBusiness = @"PickerTypeBusiness";
-
-// KEY: 数据库字段名
-const NSString* kDBFieldValue = @"VALUE";
-const NSString* kDBFieldKey = @"KEY";
-const NSString* kDBFieldDescr = @"DESCR";
-
-// KEY: 商户数据字典
-const NSString* kBusinessInfoMchtNm = @"mchtNm";
-const NSString* kBusinessInfoMchtNo = @"mchtNo";
-const NSString* kBusinessInfoTermNo = @"termNo";
-
-// KEY: 提示框: 标签
-const NSInteger tagAlertRateNotNull = 11;
-const NSInteger tagAlertAreaNotNull = 12;
-const NSInteger tagAlertBusinessNotNull = 13;
-const NSInteger tagAlertHttpError = 14;
-const NSInteger tagAlertDidSaved = 15;
-
+static NSString* const kPickerTypeRate = @"PickerTypeRate";
+static NSString* const kPickerTypeArea = @"PickerTypeArea";
+static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
 
 @implementation RateViewController
 @synthesize labRate = _labRate;
@@ -87,15 +69,9 @@ const NSInteger tagAlertDidSaved = 15;
 @synthesize sureButton = _sureButton;
 @synthesize clearButton = _clearButton;
 @synthesize pickerView = _pickerView;
-@synthesize arrayRates = _arrayRates;
-@synthesize httpRequest = _httpRequest;
 @synthesize arrayProvinces;
 @synthesize arrayCities;
 @synthesize arrayBusinesses;
-@synthesize rateCodePicked;
-@synthesize cityCodePicked;
-@synthesize businessNumPicked;
-@synthesize terminalNumPicked;
 @synthesize activitorFrame;
 
 
@@ -114,22 +90,15 @@ const NSInteger tagAlertDidSaved = 15;
 - (IBAction) touchToSelectRate:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
 
-    // 给picker加载费率数组
-    NSMutableArray* datas = [[NSMutableArray alloc] init];
-    for (NSDictionary* dict in self.arrayRates) {
-        NSString* keyDesc = [dict valueForKey:(NSString*)kRateInfoDesc];
-        [datas addObject:keyDesc];
-    }
     // 给picker设置数据源
     [self.pickerView clearDatas];
     [self.pickerView setPickerType:(NSString*)kPickerTypeRate];
-    [self.pickerView setDatas:datas atComponent:0];
+    [self.pickerView setDatas:[ModelFeeBusinessInformation feeNamesList] atComponent:0];
     
     // 展示picker
     framePicker.origin.y = sender.frame.origin.y + sender.frame.size.height + 10;
     [self.pickerView setFrame:framePicker];
     [self.pickerView show];
-    
 }
 
 /* 抬起: 在内部: 选择地区 */
@@ -160,45 +129,36 @@ const NSInteger tagAlertDidSaved = 15;
 /* 抬起: 在内部: 选择商户 */
 - (IBAction) touchToSelectBusiness:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
-    if (!self.rateCodePicked) {
-        [PublicInformation makeCentreToast:@"请先选择费率!"];
-        return;
-    }
-    else if (!self.cityCodePicked) {
-        [PublicInformation makeCentreToast:@"请先选择地区!"];
-        return;
-    }
-    // 重新获取商户列表到选择器
-    [self requestBusinessArrayOnRate:self.rateCodePicked areaCode:self.cityCodePicked businessNum:[PublicInformation returnBusiness]];
+    [self checkAndStartBusinessRequest];
 }
 
 /* 抬起: 在内部: 保存选择的商户号+终端号 */
 - (IBAction) touchToSaveBusinessNumAndTerminalNum:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
-    if (!self.businessNumPicked || !self.terminalNumPicked) {
+    
+    if (indexBusinessPicked < 0) {
         [PublicInformation makeCentreToast:@"未选择机构商户!"];
         return;
     }
     // 保存选择的商户信息到配置
-    NSMutableDictionary* jigouInfo = [[NSMutableDictionary alloc] init];
-    [jigouInfo setValue:self.businessNumPicked forKey:KeyInfoDictOfJiGouBusinessNum];
-    [jigouInfo setValue:self.terminalNumPicked forKey:KeyInfoDictOfJiGouTerminalNum];
-    [jigouInfo setValue:[self.btnBusiness titleForState:UIControlStateNormal] forKey:KeyInfoDictOfJiGouBusinessName];
-    [[NSUserDefaults standardUserDefaults] setObject:jigouInfo forKey:KeyInfoDictOfJiGou];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    [self savingSelectedFeeBusinessInfos];
     
     // 修改保存商户标签
     [self labSavedChangeByNewBusinessName:[self.btnBusiness titleForState:UIControlStateNormal]];
-    [self alertShowWithMessage:@"已保存机构商户信息,请继续刷卡" atTag:tagAlertDidSaved];
+    
+    // 提示更新
+    [PublicInformation makeCentreToast:@"已保存机构商户信息,请继续刷卡"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.navigationController popViewControllerAnimated:YES];
+    });
 }
 
 /* 抬起: 在内部: 清空已保存的商户号+终端号 */
 - (IBAction) touchToClearSavedBusinessAndTerminal:(UIButton*)sender {
     sender.transform = CGAffineTransformIdentity;
-    NSDictionary* jigouInfoSaved = [[NSUserDefaults standardUserDefaults] objectForKey:KeyInfoDictOfJiGou];
-    if (jigouInfoSaved) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:KeyInfoDictOfJiGou];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    if ([ModelFeeBusinessInformation isSaved]) {
+        [ModelFeeBusinessInformation clearFeeBusinessInfoSaved];
         [PublicInformation makeCentreToast:@"已清空保存的商户信息"];
     }
     [self labSavedChangeByNewBusinessName:@"无"];
@@ -222,82 +182,56 @@ const NSInteger tagAlertDidSaved = 15;
 - (void)pickerView:(DynamicPickerView *)pickerView didPickedRow:(NSInteger)row atComponent:(NSInteger)component {
     // 费率
     if ([pickerView.pickerType isEqualToString:(NSString*)kPickerTypeRate]) {
-        self.rateCodePicked = [self rateAtIndex:row];
-        if (self.rateCodePicked != nil && self.cityCodePicked != nil) {
-            [self requestBusinessArrayOnRate:self.rateCodePicked areaCode:self.cityCodePicked businessNum:[PublicInformation returnBusiness]];
+        indexFeePicked = row;
+        if (indexCityPicked >= 0) {
+            [self checkAndStartBusinessRequest];
         }
-        // 重设按钮标题
-        NSString* rateName = [self rateNameAtIndex:row];
-        [self.btnRate setTitle:rateName forState:UIControlStateNormal];
+        [self updateFeeButtonTitle];
     }
     // 地区
     else if ([pickerView.pickerType isEqualToString:(NSString*)kPickerTypeArea]) {
         if (component == 0) {
-            // 重设按钮标题
-            NSString* province = [self provinceAtIndex:row];
-            [self.btnArea setTitle:province forState:UIControlStateNormal];
+            indexProvincePicked = row;
         }
         else if (component == 1) {
-            // 重设按钮标题
-            NSString* city = [self cityAtIndex:row];
-            NSString* title = [self.btnArea titleForState:UIControlStateNormal];
-            [self.btnArea setTitle:[title stringByAppendingString:city] forState:UIControlStateNormal];
-            // 执行HTTP
-            self.cityCodePicked = [self codeCityAtIndex:row];
-            if (self.rateCodePicked != nil && self.cityCodePicked != nil) {
-                [self requestBusinessArrayOnRate:self.rateCodePicked areaCode:self.cityCodePicked businessNum:[PublicInformation returnBusiness]];
-            }
+            indexCityPicked = row;
+            [self updateAreaButtonTitle];
+            [self checkAndStartBusinessRequest];
         }
     }
     // 商户
     else if ([pickerView.pickerType isEqualToString:(NSString*)kPickerTypeBusiness]) {
-        // 重设按钮标题
-        NSString* businessName = [self businessAtIndex:row];
-        self.businessNumPicked = [self businessNumAtIndex:row];
-        self.terminalNumPicked = [self terminalNumAtIndex:row];
-        [self.btnBusiness setTitle:businessName forState:UIControlStateNormal];
+        indexBusinessPicked = row;
+        [self updateBusinessButtonTitle];
     }
 }
 
 
-#pragma mask --- ASIHTTPRequestDelegate
+#pragma mask --- HTTPRequestFeeBusiness && HTTPRequestFeeBusinessDelegate
 /* business 查询: 指定费率、地区代码、商户号 */
 - (void) requestBusinessArrayOnRate:(NSString*)rate
                            areaCode:(NSString*)areaCode
-                        businessNum:(NSString*)businessNum
 {
-    [self.httpRequest addPostValue:rate forKey:@"feeType"];
-    [self.httpRequest addPostValue:areaCode forKey:@"areaCode"];
-    [self.httpRequest addPostValue:businessNum forKey:@"mchtNo"];
-    [self.httpRequest startAsynchronous];
+    [self.httpFeeBusiness requestFeeBusinessOnFeeType:rate
+                                             areaCode:areaCode
+                                             delegate:self];
     [self startActivitor];
 }
-/* 回调: 成功 */
-- (void)requestFinished:(ASIHTTPRequest *)request {
+- (void)didRequestSuccessWithInfo:(NSDictionary *)responseInfo {
     [self stopActivitor];
-    [request clearDelegatesAndCancel];
-    self.httpRequest = nil;
-    NSData* responseData = [request responseData];
-    NSError* error;
-    self.arrayBusinesses = [[NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableLeaves error:&error] objectForKey:@"merchInfoList"];
-    if (self.arrayBusinesses && self.arrayBusinesses.count > 0) {
-        // 重载picker
-        [self loadBusinessesInPicker];
-    } else {
-        self.arrayBusinesses = nil;
-        self.businessNumPicked = nil;
-        self.terminalNumPicked = nil;
-        
+    NSArray* feeBusinessList = [responseInfo objectForKey:kFeeBusinessListName];
+    if (!feeBusinessList || feeBusinessList.count == 0) {
         [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
-        [self alertShowWithMessage:@"查询商户列表为空,请重新选择费率或地区" atTag:tagAlertHttpError];
+        [PublicInformation makeCentreToast:@"查询商户列表为空,请重新选择费率或地区"];
+    } else {
+        self.arrayBusinesses = [NSArray arrayWithArray:feeBusinessList];
+        [self loadBusinessesInPicker];
     }
 }
-/* 回调: 失败 */
-- (void)requestFailed:(ASIHTTPRequest *)request {
+- (void)didRequestFailWithMessage:(NSString *)errorMessage {
     [self stopActivitor];
-    [request clearDelegatesAndCancel];
-    self.httpRequest = nil;
-    [PublicInformation makeCentreToast:@"查询商户列表失败"];
+    [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
+    [PublicInformation makeCentreToast:[NSString stringWithFormat:@"查询商户列表失败:%@",errorMessage]];
 }
 
 /* 重载picker: 商户 */
@@ -315,178 +249,17 @@ const NSInteger tagAlertDidSaved = 15;
 }
 
 
-#pragma mask --- UIAlertViewDelegate 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    NSString* btnTitle = [alertView buttonTitleAtIndex:buttonIndex];
-    if (alertView.tag == tagAlertDidSaved && [btnTitle isEqualToString:@"确定"]) {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-}
-
-
-#pragma mask : === 数据源相关操作
-/* DB查询: 所有省份 */
-- (void) provincesSelectedFromDB {
-    NSString* sqlString = @"select value,key,descr from cst_sys_param where owner = 'PROVINCE' and descr = '156' ";
-    self.arrayProvinces = [[MySQLiteManager SQLiteManagerWithDBFile:DBFILENAME_AREACODE] selectedDatasWithSQLString:sqlString];
-    
-    // 去除省末尾的多余空格
-    for (NSDictionary* dict in self.arrayProvinces) {
-        NSString* province = [dict valueForKey:(NSString*)kDBFieldValue];
-        province = [PublicInformation clearSpaceCharAtLastOfString:province];
-        [dict setValue:province forKey:(NSString*)kDBFieldValue];
-    }
-}
-
-/* DB查询: 所有市;指定省; */
-- (void) citiesSelectedFromDBInProvinceCode:(NSString*)provinceCode {
-    NSString* sqlString = [NSString stringWithFormat:@"select value,key,descr from cst_sys_param where owner = 'CITY' and descr = '%@'", provinceCode];
-    self.arrayCities = [[MySQLiteManager SQLiteManagerWithDBFile:DBFILENAME_AREACODE] selectedDatasWithSQLString:sqlString];
-    
-    // 去除省末尾的多余空格
-    for (NSDictionary* dict in self.arrayCities) {
-        NSString* city = [dict valueForKey:(NSString*)kDBFieldValue];
-        city = [PublicInformation clearSpaceCharAtLastOfString:city];
-        [dict setValue:city forKey:(NSString*)kDBFieldValue];
-    }
-}
-
-
-/* 启动指示器 */
-- (void) startActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-    });
-}
-/* 关闭指示器 */
-- (void) stopActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
-    });
-}
-
-
-
-/* 数组提取: 省 */
-- (NSArray*) provincesInDataSource {
-    NSMutableArray* provinces = [[NSMutableArray alloc] init];
-    for (NSDictionary* dict in self.arrayProvinces) {
-        [provinces addObject:[dict valueForKey:(NSString*)kDBFieldValue]];
-    }
-    return provinces;
-}
-
-/* 数组提取: 市 */
-- (NSArray*) citiesInDataSource {
-    NSMutableArray* cities = [[NSMutableArray alloc] init];
-    for (NSDictionary* dict in self.arrayCities) {
-        [cities addObject:[dict valueForKey:(NSString*)kDBFieldValue]];
-    }
-    return cities;
-}
-/* 数组提取: 商户 */
-- (NSArray*) businessesInDataSource {
-    NSMutableArray* businesses = [[NSMutableArray alloc] init];
-    for (NSDictionary* dict in self.arrayBusinesses) {
-        [businesses addObject:[dict valueForKey:(NSString*)kBusinessInfoMchtNm]];
-    }
-    return businesses;
-}
-
-
-/* province code获取: 指定序号 */
-- (NSString*) codeProvinceAtIndex:(NSInteger)index {
-    NSString* codeProvince = nil;
-    NSDictionary* provinceInfo = [self.arrayProvinces objectAtIndex:index];
-    if (provinceInfo) {
-        codeProvince = [provinceInfo valueForKey:(NSString*)kDBFieldKey];
-    }
-    return codeProvince;
-}
-/* province 获取: 指定序号 */
-- (NSString*) provinceAtIndex:(NSInteger)index {
-    NSString* province = nil;
-    NSDictionary* provinceInfo = [self.arrayProvinces objectAtIndex:index];
-    if (provinceInfo) {
-        province = [provinceInfo valueForKey:(NSString*)kDBFieldValue];
-    }
-    return province;
-}
-
-
-/* city code获取: 指定序号 */
-- (NSString*) codeCityAtIndex:(NSInteger)index {
-    NSString* codeCity = nil;
-    NSDictionary* cityInfo = [self.arrayCities objectAtIndex:index];
-    if (cityInfo) {
-        codeCity = [cityInfo valueForKey:(NSString*)kDBFieldKey];
-    }
-    return codeCity;
-}
-/* city 获取: 指定序号 */
-- (NSString*) cityAtIndex:(NSInteger)index {
-    NSString* city = nil;
-    NSDictionary* cityInfo = [self.arrayCities objectAtIndex:index];
-    if (cityInfo) {
-        city = [cityInfo valueForKey:(NSString*)kDBFieldValue];
-    }
-    return city;
-}
-
-/* rate value提取: 指定序号 */
-- (NSString*) rateAtIndex:(NSInteger)index {
-    NSString* rate = nil;
-    NSDictionary* rateInfo = [self.arrayRates objectAtIndex:index];
-    if (rateInfo) {
-        rate = [rateInfo valueForKey:(NSString*)kRateInfoRate];
-    }
-    return rate;
-}
-/* rate 提取: 指定序号 */
-- (NSString*) rateNameAtIndex:(NSInteger)index {
-    NSString* rate = nil;
-    NSDictionary* rateInfo = [self.arrayRates objectAtIndex:index];
-    if (rateInfo) {
-        rate = [rateInfo valueForKey:(NSString*)kRateInfoDesc];
-    }
-    return rate;
-}
-
-/* business 提取: 指定序号 */
-- (NSString*) businessAtIndex:(NSInteger)index {
-    NSString* business = nil;
-    NSDictionary* businessInfo = [self.arrayBusinesses objectAtIndex:index];
-    if (businessInfo) {
-        business = [businessInfo valueForKey:(NSString*)kBusinessInfoMchtNm];
-    }
-    return business;
-}
-/* business code 提取: 指定序号 */
-- (NSString*) businessNumAtIndex:(NSInteger)index {
-    NSString* businessNum = nil;
-    NSDictionary* businessInfo = [self.arrayBusinesses objectAtIndex:index];
-    if (businessInfo) {
-        businessNum = [businessInfo valueForKey:(NSString*)kBusinessInfoMchtNo];
-    }
-    return businessNum;
-}
-/* terminal code 提取: 指定序号 */
-- (NSString*) terminalNumAtIndex:(NSInteger)index {
-    NSString* terminalNum = nil;
-    NSDictionary* businessInfo = [self.arrayBusinesses objectAtIndex:index];
-    if (businessInfo) {
-        terminalNum = [businessInfo valueForKey:(NSString*)kBusinessInfoTermNo];
-    }
-    return terminalNum;
-
-}
-
 
 #pragma mask --- 视图控制部分
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"费率选择";
     fontOfText = 15;
+    indexFeePicked = -1;
+    indexProvincePicked = -1;
+    indexCityPicked = -1;
+    indexBusinessPicked = -1;
+    
     [self.view addSubview:self.labRate];
     [self.view addSubview:self.btnRate];
     [self.view addSubview:self.labArea];
@@ -546,7 +319,7 @@ const NSInteger tagAlertDidSaved = 15;
     // 标签: 已选择的商户
     frame.origin.y += frame.size.height ;//+ inset;
     frame.size.height = labelHeight;
-
+    
     [self.labSaved setFrame:frame];
     
     // 按钮: 清空
@@ -568,21 +341,150 @@ const NSInteger tagAlertDidSaved = 15;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self stopActivitor];
-    [self.httpRequest clearDelegatesAndCancel];
-    self.httpRequest = nil;
+    [self.httpFeeBusiness terminateRequest];
 }
 
 
 
+#pragma mask : === 数据源相关操作
+/* DB查询: 所有省份 */
+- (void) provincesSelectedFromDB {
+    self.arrayProvinces = [NSArray arrayWithArray: [ModelAreaCodeSelector allProvincesSelected]];
+}
+
+/* DB查询: 所有市;指定省; */
+- (void) citiesSelectedFromDBInProvinceCode:(NSString*)provinceCode {
+    self.arrayCities = [NSArray arrayWithArray:[ModelAreaCodeSelector allCitiesSelectedAtProvinceCode:provinceCode]];
+}
+
+/* 数组提取: 省 */
+- (NSArray*) provincesInDataSource {
+    NSMutableArray* provinces = [[NSMutableArray alloc] init];
+    for (NSDictionary* dict in self.arrayProvinces) {
+        [provinces addObject:[PublicInformation clearSpaceCharAtLastOfString:dict[kFieldNameValue]]];
+    }
+    return provinces;
+}
+
+/* 数组提取: 市 */
+- (NSArray*) citiesInDataSource {
+    NSMutableArray* cities = [[NSMutableArray alloc] init];
+    for (NSDictionary* dict in self.arrayCities) {
+        [cities addObject:[PublicInformation clearSpaceCharAtLastOfString:dict[kFieldNameValue]]];
+    }
+    return cities;
+}
+
+
+/* province code获取: 指定序号 */
+- (NSString*) codeProvinceAtIndex:(NSInteger)index {
+    NSString* codeProvince = nil;
+    NSDictionary* provinceInfo = [self.arrayProvinces objectAtIndex:index];
+    if (provinceInfo) {
+        codeProvince = [provinceInfo valueForKey:kFieldNameKey];
+    }
+    return codeProvince;
+}
+/* province 获取: 指定序号 */
+- (NSString*) provinceAtIndex:(NSInteger)index {
+    NSString* province = nil;
+    NSDictionary* provinceInfo = [self.arrayProvinces objectAtIndex:index];
+    if (provinceInfo) {
+        province = [PublicInformation clearSpaceCharAtLastOfString:provinceInfo[kFieldNameValue]];
+    }
+    return province;
+}
+
+
+/* city code获取: 指定序号 */
+- (NSString*) codeCityAtIndex:(NSInteger)index {
+    NSString* codeCity = nil;
+    NSDictionary* cityInfo = [self.arrayCities objectAtIndex:index];
+    if (cityInfo) {
+        codeCity = [cityInfo valueForKey:kFieldNameKey];
+    }
+    return codeCity;
+}
+/* city 获取: 指定序号 */
+- (NSString*) cityAtIndex:(NSInteger)index {
+    NSString* city = nil;
+    NSDictionary* cityInfo = [self.arrayCities objectAtIndex:index];
+    if (cityInfo) {
+        city = [PublicInformation clearSpaceCharAtLastOfString:[cityInfo valueForKey:kFieldNameValue]];
+    }
+    return city;
+}
+
+
+/* rate value提取: 指定序号 */
+- (NSString*) rateAtIndex:(NSInteger)index {
+    NSString* rate = nil;
+    NSString* feeName = [[ModelFeeBusinessInformation feeNamesList] objectAtIndex:index];
+    rate =[ModelFeeBusinessInformation feeTypeOfFeeName:feeName];
+    return rate;
+}
+/* rate 提取: 指定序号 */
+- (NSString*) rateNameAtIndex:(NSInteger)index {
+    return [[ModelFeeBusinessInformation feeNamesList] objectAtIndex:index];
+}
+
+/* 数组提取: 商户 */
+- (NSArray*) businessesInDataSource {
+    NSMutableArray* businesses = [[NSMutableArray alloc] init];
+    for (NSDictionary* dict in self.arrayBusinesses) {
+        [businesses addObject:[dict valueForKey:(NSString*)kFeeBusinessBusinessName]];
+    }
+    return businesses;
+}
+
+/* business 提取: 指定序号 */
+- (NSString*) businessAtIndex:(NSInteger)index {
+    NSString* business = nil;
+    NSDictionary* businessInfo = [self.arrayBusinesses objectAtIndex:index];
+    if (businessInfo) {
+        business = [businessInfo valueForKey:kFeeBusinessBusinessName];
+    }
+    return business;
+}
+/* business code 提取: 指定序号 */
+- (NSString*) businessNumAtIndex:(NSInteger)index {
+    NSString* businessNum = nil;
+    NSDictionary* businessInfo = [self.arrayBusinesses objectAtIndex:index];
+    if (businessInfo) {
+        businessNum = [businessInfo valueForKey:kFeeBusinessBusinessNum];
+    }
+    return businessNum;
+}
+/* terminal code 提取: 指定序号 */
+- (NSString*) terminalNumAtIndex:(NSInteger)index {
+    NSString* terminalNum = nil;
+    NSDictionary* businessInfo = [self.arrayBusinesses objectAtIndex:index];
+    if (businessInfo) {
+        terminalNum = [businessInfo valueForKey:kFeeBusinessTerminalNum];
+    }
+    return terminalNum;
+
+}
+
+#pragma mask ---- PRIVATE INTERFACE
+
+/* 启动指示器 */
+- (void) startActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+    });
+}
+/* 关闭指示器 */
+- (void) stopActivitor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[JLActivitor sharedInstance] stopAnimating];
+    });
+}
+
+
 /* 保存的商户号: 从配置中读取 */
 - (NSString*) businessNameSaved {
-    NSString* businessName = nil;
-    NSUserDefaults* userDefault = [NSUserDefaults standardUserDefaults];
-    NSDictionary* jigouInfo = [userDefault objectForKey:KeyInfoDictOfJiGou];
-    if (jigouInfo != nil) {
-        businessName = [jigouInfo valueForKey:KeyInfoDictOfJiGouBusinessName];
-    }
-    return businessName;
+    return [ModelFeeBusinessInformation businessNameSaved];
 }
 /* 更改商户名标签 */
 - (void) labSavedChangeByNewBusinessName:(NSString*)newBusinessName {
@@ -593,14 +495,63 @@ const NSInteger tagAlertDidSaved = 15;
     [self.labSaved setText:newText];
 }
 
-
-- (void) alertShowWithMessage:(NSString*)msg atTag:(NSInteger)tag {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert setTag:tag];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [alert show];
-    });
+/* 保存信息 */
+- (void) savingSelectedFeeBusinessInfos {
+    NSLog(@"保存商户信息");
+    NSMutableDictionary* feeBusinessInfo = [[NSMutableDictionary alloc] init];
+    feeBusinessInfo[kFeeBusinessInfoFeeSaved] = [ModelFeeBusinessInformation feeNamesList][indexFeePicked];
+    feeBusinessInfo[kFeeBusinessInfoAreaCode] = [self codeCityAtIndex:indexCityPicked];
+    feeBusinessInfo[kFeeBusinessInfoBusinessName] = [self businessAtIndex:indexBusinessPicked];
+    feeBusinessInfo[kFeeBusinessInfoBusinessCode] = [self businessNumAtIndex:indexBusinessPicked];
+    feeBusinessInfo[kFeeBusinessInfoTerminalNum] = [self terminalNumAtIndex:indexBusinessPicked];
+    NSLog(@"打包的要保存的商户信息:[%@]",feeBusinessInfo);
+    [ModelFeeBusinessInformation savingFeeBusinessInfo:feeBusinessInfo];
 }
+
+/* 更新费率按钮标题 */
+- (void) updateFeeButtonTitle {
+    if (indexFeePicked >= 0) {
+        [self.btnRate setTitle:[self rateNameAtIndex:indexFeePicked] forState:UIControlStateNormal];
+    } else {
+        [self.btnRate setTitle:@"-费率-" forState:UIControlStateNormal];
+    }
+}
+/* 更新商户按钮标题 */
+- (void) updateBusinessButtonTitle {
+    if (indexBusinessPicked >= 0) {
+        [self.btnBusiness setTitle:[self businessAtIndex:indexBusinessPicked] forState:UIControlStateNormal];
+    } else {
+        [self.btnBusiness setTitle:@"-商户名-" forState:UIControlStateNormal];
+    }
+}
+/* 更新地区按钮标题 */
+- (void) updateAreaButtonTitle {
+    if (indexProvincePicked >=0 && indexCityPicked >= 0) {
+        [self.btnArea setTitle:[NSString stringWithFormat:@"%@%@",
+                                [self provinceAtIndex:indexProvincePicked],
+                                [self cityAtIndex:indexCityPicked]]
+                      forState:UIControlStateNormal];
+    } else {
+        [self.btnArea setTitle:@"-省-市-" forState:UIControlStateNormal];
+    }
+}
+
+/* 检查并发起商户信息查询 */
+- (void) checkAndStartBusinessRequest {
+    if (indexFeePicked < 0) {
+        [PublicInformation makeCentreToast:@"费率未选择,请先选择!"];
+        return;
+    }
+    if (indexProvincePicked < 0 || indexCityPicked < 0) {
+        [PublicInformation makeCentreToast:@"地区未选择,请先选择!"];
+        return;
+    }
+    
+    NSString* feeName = [[ModelFeeBusinessInformation feeNamesList] objectAtIndex:indexFeePicked];
+    NSString* feeType = [ModelFeeBusinessInformation feeTypeOfFeeName:feeName];
+    [self requestBusinessArrayOnRate:feeType areaCode:[self codeCityAtIndex:indexCityPicked]];
+}
+
 
 
 #pragma mask --- getter & setter 
@@ -734,32 +685,11 @@ const NSInteger tagAlertDidSaved = 15;
     return _pickerView;
 }
 
-- (NSMutableArray *)arrayRates {
-    if (_arrayRates == nil) {
-        _arrayRates = [[NSMutableArray alloc] init];
-        NSDictionary* dict0 = [NSDictionary dictionaryWithObjects:@[@"0.38不封顶",@"0"]
-                                                         forKeys:@[kRateInfoDesc,kRateInfoRate]];
-        NSDictionary* dict1 = [NSDictionary dictionaryWithObjects:@[@"0.78不封顶",@"1"]
-                                                          forKeys:@[kRateInfoDesc,kRateInfoRate]];
-        NSDictionary* dict2 = [NSDictionary dictionaryWithObjects:@[@"0.78封顶",@"2"]
-                                                          forKeys:@[kRateInfoDesc,kRateInfoRate]];
-        NSDictionary* dict3 = [NSDictionary dictionaryWithObjects:@[@"1.25不封顶",@"3"]
-                                                          forKeys:@[kRateInfoDesc,kRateInfoRate]];
-        [_arrayRates addObject:dict0];
-        [_arrayRates addObject:dict1];
-        [_arrayRates addObject:dict2];
-        [_arrayRates addObject:dict3];
+- (HTTPRequestFeeBusiness *)httpFeeBusiness {
+    if (_httpFeeBusiness == nil) {
+        _httpFeeBusiness = [[HTTPRequestFeeBusiness alloc] init];
     }
-    return _arrayRates;
-}
-- (ASIFormDataRequest *)httpRequest {
-    if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getInstMchtInfo",
-                               [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
-        _httpRequest = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
-        [_httpRequest setDelegate:self];
-    }
-    return _httpRequest;
+    return _httpFeeBusiness;
 }
 
 @end

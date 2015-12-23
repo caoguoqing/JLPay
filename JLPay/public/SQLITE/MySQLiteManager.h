@@ -10,6 +10,10 @@
 #import <sqlite3.h>
 
 
+// 数据库文件 - 全国地名及代码
+#define DBFILENAME_AREACODE             @"test.db"
+
+
 /*
  * 使用第三方库 sqlite3
  * 1.初始化:使用准备好的db文件

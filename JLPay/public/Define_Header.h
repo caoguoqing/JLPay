@@ -17,8 +17,8 @@
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
 
-// 数据库文件 - 全国地名及代码
-#define DBFILENAME_AREACODE             @"test.db"
+//// 数据库文件 - 全国地名及代码
+//#define DBFILENAME_AREACODE             @"test.db"
 
 // 日志打印选项: 打印(1);不打印(0);
 #define NeedPrintLog                    1

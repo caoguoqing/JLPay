@@ -16,6 +16,8 @@
 		5E0EBA7C1C23DC0200DCAC59 /* TriangleLeftTurnView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA7B1C23DC0200DCAC59 /* TriangleLeftTurnView.m */; };
 		5E0EBA801C27CFC900DCAC59 /* CustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA7F1C27CFC900DCAC59 /* CustomNavigationController.m */; };
 		5E0EBA881C2A36A400DCAC59 /* ModelFeeBusinessInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA871C2A36A400DCAC59 /* ModelFeeBusinessInformation.m */; };
+		5E0EBA8B1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */; };
+		5E0EBA8F1C2A79C000DCAC59 /* ModelAreaCodeSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -224,6 +226,10 @@
 		5E0EBA7F1C27CFC900DCAC59 /* CustomNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomNavigationController.m; sourceTree = "<group>"; };
 		5E0EBA861C2A36A400DCAC59 /* ModelFeeBusinessInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelFeeBusinessInformation.h; sourceTree = "<group>"; };
 		5E0EBA871C2A36A400DCAC59 /* ModelFeeBusinessInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelFeeBusinessInformation.m; sourceTree = "<group>"; };
+		5E0EBA891C2A526100DCAC59 /* HTTPRequestFeeBusiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequestFeeBusiness.h; sourceTree = "<group>"; };
+		5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestFeeBusiness.m; sourceTree = "<group>"; };
+		5E0EBA8D1C2A79C000DCAC59 /* ModelAreaCodeSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelAreaCodeSelector.h; sourceTree = "<group>"; };
+		5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelAreaCodeSelector.m; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -648,6 +654,15 @@
 				5E0EBA871C2A36A400DCAC59 /* ModelFeeBusinessInformation.m */,
 			);
 			path = "指定费率商户信息";
+			sourceTree = "<group>";
+		};
+		5E0EBA8C1C2A799900DCAC59 /* 地区代码 */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBA8D1C2A79C000DCAC59 /* ModelAreaCodeSelector.h */,
+				5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */,
+			);
+			path = "地区代码";
 			sourceTree = "<group>";
 		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
@@ -1512,6 +1527,7 @@
 		5EDE98B71BDA0D5200131190 /* SQLITE */ = {
 			isa = PBXGroup;
 			children = (
+				5E0EBA8C1C2A799900DCAC59 /* 地区代码 */,
 				5E5E35A01B7C79E200560C0A /* MySQLiteManager.h */,
 				5E5E35A11B7C79E200560C0A /* MySQLiteManager.m */,
 			);
@@ -1564,6 +1580,8 @@
 		5EFD098C1C1680CE0062AD34 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				5E0EBA891C2A526100DCAC59 /* HTTPRequestFeeBusiness.h */,
+				5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */,
 				5EFD098F1C1681BA0062AD34 /* ModelFeeRates.h */,
 				5EFD09901C1681BA0062AD34 /* ModelFeeRates.m */,
 			);
@@ -1826,6 +1844,7 @@
 				5E9448201BFDA1E400128452 /* BusinessInfoTableViewCell.m in Sources */,
 				5EBAA9121ACD3F1B00E2ABDD /* SBJsonParser.m in Sources */,
 				5EBAA8E61ACD2FA800E2ABDD /* ISOHelper.m in Sources */,
+				5E0EBA8B1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m in Sources */,
 				5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */,
 				5E0EBA881C2A36A400DCAC59 /* ModelFeeBusinessInformation.m in Sources */,
 				5E9447F61BF0957A00128452 /* BarCodeResultViewController.m in Sources */,
@@ -1879,6 +1898,7 @@
 				5E5E35471B71E93700560C0A /* ChangePinViewController.m in Sources */,
 				5E82B8641B310AAD00A58751 /* JLActivity.m in Sources */,
 				5E5FA5871B46342600387E69 /* ISMFiDataPath.m in Sources */,
+				5E0EBA8F1C2A79C000DCAC59 /* ModelAreaCodeSelector.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
 				5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */,

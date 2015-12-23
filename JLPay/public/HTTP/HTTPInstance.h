@@ -22,6 +22,7 @@ typedef enum {
     HTTPErrorCodeConnectFail = 01,          // 连接失败
     HTTPErrorCodeUnpackingFail = 02,        // 解析拆包失败
     HTTPErrorCodeResponseNormal = 10        // HTTP响应错误码(普通)
+    // 701,802还未定义
 } HTTPErrorCode;
 
 
