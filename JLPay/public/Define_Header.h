@@ -21,7 +21,7 @@
 //#define DBFILENAME_AREACODE             @"test.db"
 
 // 日志打印选项: 打印(1);不打印(0);
-#define NeedPrintLog                    1
+#define NeedPrintLog                    0
 
 #define app_delegate  (AppDelegate*)([UIApplication sharedApplication].delegate)
 

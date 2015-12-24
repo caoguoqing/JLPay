@@ -585,6 +585,17 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return timeString;
 }
 
+/* 间隔天数: 两个日期 */
++ (int) daysCountDistanceDate:(NSString*)date otherDate:(NSString*)otherDate {
+    NSDateFormatter* dateFormater = [[NSDateFormatter alloc] init];
+    [dateFormater setDateFormat:@"yyyyMMdd"];
+    NSDate* minDate = [dateFormater dateFromString:(date.intValue < otherDate.intValue)?(date):(otherDate)];
+    NSDate* maxDate = [dateFormater dateFromString:(date.intValue > otherDate.intValue)?(date):(otherDate)];
+    NSTimeInterval timesInterval = [maxDate timeIntervalSinceDate:minDate];
+    return (int)timesInterval / (60*60*24);
+}
+
+
 
 // 获取当前交易的交易类型
 +(NSString *)returnTranType{

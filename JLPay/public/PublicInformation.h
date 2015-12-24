@@ -84,6 +84,9 @@
 
 +(NSString *) NEWreturnUploadTime:(NSString  *)timeStr;
 
+/* 间隔天数: 两个日期 */
++ (int) daysCountDistanceDate:(NSString*)date otherDate:(NSString*)otherDate ;
+
 // 获取当前交易的交易类型
 +(NSString *)returnTranType;
 

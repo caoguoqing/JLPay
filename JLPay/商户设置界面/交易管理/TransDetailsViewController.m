@@ -42,7 +42,6 @@ ViewModelMPOSDetailsDelegate
 @property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
 
 #pragma mask : model
-//@property (nonatomic, retain) ViewModelMPOSDetails* dataSource;
 @property (nonatomic, retain) id dataSource;
 
 @property (nonatomic) CGRect activitorFrame;
@@ -181,17 +180,20 @@ NSInteger logCount = 0;
 #pragma mask ------ DatePickerViewDelegate
 /* 日期选择器的回调 */
 - (void)datePickerView:(DatePickerView *)datePickerView didChoosedDate:(id)choosedDate {
-    // 设置按钮日期: 起始+终止
-    [self dateButtonsSetDate:choosedDate];
-
-    // 清空列表
-    [self.dataSource clearDetails];
-    
-    // 重新获取列表信息
-    [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
-    
-    // 启动指示器
-    [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+    /* 检查输入日期是否满足条件 */
+    if ([self isValidOnPickedDate:choosedDate]) {
+        // 设置按钮日期: 起始+终止
+        [self dateButtonsSetDate:choosedDate];
+        
+        // 清空列表
+        [self.dataSource clearDetails];
+        
+        // 重新获取列表信息
+        [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
+        
+        // 启动指示器
+        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+    }
 }
 
 
@@ -395,12 +397,10 @@ NSInteger logCount = 0;
     [self.view addSubview:self.dateButtonBegin];
     
     // 方向指示视图
-//    UIImageView* nextImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"next"]];
     UILabel* nextLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, widthImageView, widthImageView)];
     nextLabel.text = @"至";
     nextLabel.textAlignment = NSTextAlignmentCenter;
     nextLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(widthImageView, widthImageView) andScale:1]];
-//    [nextImage setFrame:CGRectMake(0, 0, widthImageView, widthImageView)];
     nextLabel.center = CGPointMake(self.dateButtonBegin.center.x + self.dateButtonBegin.bounds.size.width/2.0 + inset/3.0*2.0 + widthImageView/2.0,
                                    self.dateButtonBegin.center.y);
     [self.view addSubview:nextLabel];
@@ -453,6 +453,33 @@ NSInteger logCount = 0;
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
 }
+
+/* 检查选择的日期是否满足条件 */
+- (BOOL) isValidOnPickedDate:(NSString*)date {
+    BOOL valid = YES;
+    int dateInterval = [PublicInformation daysCountDistanceDate:date otherDate:[PublicInformation nowDate]];
+
+    if (date.intValue > [PublicInformation nowDate].intValue) {
+        if (tagButton == self.dateButtonBegin.tag) {
+            [PublicInformation makeCentreToast:@"起始日期不能大于当前系统日期!"];
+        }
+        else if (tagButton == self.dateButtonEnd.tag) {
+            [PublicInformation makeCentreToast:@"终止日期不能大于当前系统日期!"];
+        }
+        valid = NO;
+    }
+    else if (dateInterval > 90) {
+        if (tagButton == self.dateButtonBegin.tag) {
+            [PublicInformation makeCentreToast:@"起始日期不能早于当前日期3个月!"];
+        }
+        else if (tagButton == self.dateButtonEnd.tag) {
+            [PublicInformation makeCentreToast:@"终止日期不能早于当前日期3个月!"];
+        }
+        valid = NO;
+    }
+    return valid;
+}
+
 
 // 给日期按钮设置日期
 - (void) dateButtonsSetDate:(NSString*)dateString {
