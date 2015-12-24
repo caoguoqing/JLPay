@@ -18,10 +18,12 @@
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
 #import "IntMoneyCalculating.h"
+#import "ModelFeeBusinessInformation.h"
 
 
 #define ImageForBrand   @"logo"                                             // 商标图片
 
+static NSInteger const tagAlertFeeBusiness = 10; // 指定费率商户的提示tag
 
 @interface CustPayViewController ()
 <UIAlertViewDelegate, CBCentralManagerDelegate,
@@ -101,7 +103,6 @@ SettlementSwitchViewDelegate>
 - (void)didRequestedFailedWithErrorMessage:(NSString *)errorMessage {
     [self.settlementView setEnableSwitching:NO];
     [[ModelSettlementInformation sharedInstance] cleanSettlementInfo];
-//    [PublicInformation makeToast:[NSString stringWithFormat:@"结算信息查询失败[%@]", errorMessage]];
 }
 
 
@@ -245,47 +246,68 @@ SettlementSwitchViewDelegate>
  *************************************/
 - (IBAction)toBrushClick:(UIButton *)sender {
     sender.transform = CGAffineTransformIdentity;
+    if ([self checkInputsBeforeSwipe]) {
+        [self pushSwipeOrOtherDisplayVC];
+    }
+}
+
+/* 刷卡前检查输入 */
+- (BOOL) checkInputsBeforeSwipe {
+    BOOL inputsValid = YES;
     if ([self.labelDisplayMoney.text floatValue] < 0.0001) {
         [PublicInformation makeToast:@"请输入金额!"];
-        return;
+        inputsValid = NO;
     }
-    if (!blueToothPowerOn) {
+    else if (!blueToothPowerOn) {
         [PublicInformation makeToast:@"手机蓝牙未打开,请打开蓝牙!"];
-        return;
+        inputsValid = NO;
     }
-    if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
+    else if (![ModelDeviceBindedInformation hasBindedDevice]) {
+        [PublicInformation makeToast:@"设备未绑定,请先绑定设备!"];
+        inputsValid = NO;
+    }
+    else if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
         if (self.labelDisplayMoney.text.floatValue < [[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount].floatValue) {
             NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@￥",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
             [PublicInformation makeToast:log];
-            return;
+            inputsValid = NO;
         }
-        if (self.labelDisplayMoney.text.floatValue > [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable].floatValue) {
+        else if (self.labelDisplayMoney.text.floatValue > [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable].floatValue) {
             NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
             [PublicInformation makeToast:log];
-            return;
+            inputsValid = NO;
         }
     }
-    
-    
+    else if ([ModelFeeBusinessInformation isSaved]) {
+        NSString* alert = [NSString stringWithFormat:@"已设置指定费率的商户:\n[%@]\n是否继续刷卡?", [ModelFeeBusinessInformation businessNameSaved]];
+        [self alertViewForFeeBusinessMessage:alert];
+        inputsValid = NO;
+    }
+    return inputsValid;
+}
+
+/* 跳转界面: 根据t+0条件切换不同界面 */
+- (void) pushSwipeOrOtherDisplayVC {
+    UIViewController* viewController = nil;
     if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
-        SettlementInfoViewController* settlementVC = [[SettlementInfoViewController alloc] initWithNibName:nil bundle:nil];
+        viewController = [[SettlementInfoViewController alloc] initWithNibName:nil bundle:nil];
+        SettlementInfoViewController* settlementVC = (SettlementInfoViewController*)viewController;
         [settlementVC setSFloatMoney:[NSString stringWithString:self.labelDisplayMoney.text]];
-        [self.navigationController pushViewController:settlementVC animated:YES];
     } else {
         // 跳转刷卡界面
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-        BrushViewController *viewcon = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+        viewController = [storyboard instantiateViewControllerWithIdentifier:@"brush"];
+        BrushViewController* viewcon = (BrushViewController*)viewController;
         [viewcon setStringOfTranType:TranType_Consume];
         [viewcon setSFloatMoney:self.labelDisplayMoney.text];
         [viewcon setSIntMoney:[PublicInformation intMoneyFromDotMoney:self.labelDisplayMoney.text]];
-        [self.navigationController pushViewController:viewcon animated:YES];
     }
+    [self.navigationController pushViewController:viewController animated:YES];
     
     // 重置金额
     self.labelDisplayMoney.text = @"0.00";
     self.intMoneyCalculating = nil;
 }
-
 
 /*************************************
  * 功  能 : 重新计算数字按钮组的文本的高度跟button高度的比例;
@@ -463,12 +485,33 @@ SettlementSwitchViewDelegate>
     [self.view addSubview:brushButton];
 }
 
+#pragma mask ---- UIAlertView && UIAlertViewDelegate
 
 // 简化代码:简单的弹窗提示
 - (void) alertShow: (NSString*) msg {
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     [alert show];
 }
+
+- (void) alertViewForFeeBusinessMessage:(NSString*)message {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"继续", nil];
+    [alert setTag:tagAlertFeeBusiness];
+    [alert show];
+}
+
+- (void) alertShow:(NSString*)message forTag:(NSInteger)tag {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:message delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    [alert setTag:tag];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == tagAlertFeeBusiness && [[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"继续"] ) {
+        // 如果保存了指定商户，要先提示，然后点击确定后跳转刷卡界面
+        [self pushSwipeOrOtherDisplayVC];
+    }
+}
+
 
 /* 判断坐标点是否在T+0切换视图内 */
 - (BOOL) moneyBackViewContainsPoint:(CGPoint)point {
@@ -483,8 +526,6 @@ SettlementSwitchViewDelegate>
     }
     return contains;
 }
-
-
 
 
 

@@ -68,12 +68,12 @@ typedef enum {
  *  KeyInfoDictOfJiGouTerminalNum           - 机构终端号
  *  KeyInfoDictOfJiGouBusinessName          - 机构商户名
  ------------------------------*/
-#define KeyInfoDictOfJiGou                      @"KeyInfoDictOfJiGou"               // 字典
-#define KeyInfoDictOfJiGouBusinessNum           @"KeyInfoDictOfJiGouBusinessNum"
-#define KeyInfoDictOfJiGouTerminalNum           @"KeyInfoDictOfJiGouTerminalNum"
-#define KeyInfoDictOfJiGouBusinessName          @"KeyInfoDictOfJiGouBusinessName"
-// 费率 - key; 值为int{0,1,2,3};
-#define Key_RateOfPay   @"Key_RateOfPay"
+//#define KeyInfoDictOfJiGou                      @"KeyInfoDictOfJiGou"               // 字典
+//#define KeyInfoDictOfJiGouBusinessNum           @"KeyInfoDictOfJiGouBusinessNum"
+//#define KeyInfoDictOfJiGouTerminalNum           @"KeyInfoDictOfJiGouTerminalNum"
+//#define KeyInfoDictOfJiGouBusinessName          @"KeyInfoDictOfJiGouBusinessName"
+//// 费率 - key; 值为int{0,1,2,3};
+//#define Key_RateOfPay   @"Key_RateOfPay"
 
 
 #endif

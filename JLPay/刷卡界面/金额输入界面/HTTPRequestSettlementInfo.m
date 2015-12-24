@@ -23,7 +23,7 @@ static NSString* const kFieldNameResponseCumMoney = @"cumMoney"; // 已刷T+0金
 static NSString* const kFieldNameResponseCompareMoney = @"compareMoney";// 比较金额(刷卡金额小于此需要+额外的手续费)
 static NSString* const kFieldNameResponseExtraFee = @"extraFee";  // 额外的手续费
 
-static NSString* const T_0MinCustMoney = @"1.00";
+static NSString* const T_0MinCustMoney = @"500.00";
 
 @interface HTTPRequestSettlementInfo() <ASIHTTPRequestDelegate>
 

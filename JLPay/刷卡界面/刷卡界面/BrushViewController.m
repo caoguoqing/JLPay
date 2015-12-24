@@ -17,6 +17,7 @@
 #import "ViewModelTCPPosTrans.h"
 #import "BalanceEnquiryViewController.h"
 #import "ModelDeviceBindedInformation.h"
+#import "ModelSettlementInformation.h"
 
 @interface BrushViewController()
 <
@@ -593,7 +594,9 @@
 - (UILabel *)moneyLabel {
     if (_moneyLabel == nil) {
         _moneyLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        _moneyLabel.text = [NSString stringWithFormat:@"金额: %@ 元",self.sFloatMoney];
+        NSString* settleType = [ModelSettlementInformation nameOfSettlementType:[[ModelSettlementInformation sharedInstance] curSettlementType]] ;
+        
+        _moneyLabel.text = [NSString stringWithFormat:@"金额: %@ 元,(%@)",self.sFloatMoney, settleType];
     }
     return _moneyLabel;
 }

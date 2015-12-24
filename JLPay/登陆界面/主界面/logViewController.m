@@ -21,6 +21,7 @@
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelHTTPRequestLogin.h"
+#import "ModelFeeBusinessInformation.h"
 
 
 #pragma mask    ---- 常量设置区 ----
@@ -512,6 +513,8 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         [ModelUserLoginInformation deleteLoginDownInformation];
         // 清空设备绑定信息
         [ModelDeviceBindedInformation cleanDeviceBindedInfo];
+        // 清空设置的指定费率商户信息
+        [ModelFeeBusinessInformation clearFeeBusinessInfoSaved];
     }
 }
 

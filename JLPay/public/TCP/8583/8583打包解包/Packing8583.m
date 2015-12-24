@@ -13,6 +13,7 @@
 #import "Define_Header.h"
 #import "ModelFeeRates.h"
 #import "ModelSettlementInformation.h"
+#import "ModelFeeBusinessInformation.h"
 
 @interface Packing8583() {
     NSString* exchangeType;
@@ -164,23 +165,38 @@
         [f60_5Fee appendString:@"0"];
     }
     else {
-        if ([[ModelSettlementInformation sharedInstance] curSettlementType] != SETTLEMENTTYPE_T_0) {
-            if ([self isSavedJiGouInfo]) {
-                [f60_5Fee appendString:@"9"];
-                [f60_5Fee appendString:[self businessNumInJiGou]];
-                [f60_5Fee appendString:[self terminalNumInJiGou]];
-            }
-            else {
-                if ([ModelFeeRates isSavedFeeRate]) {
-                    [f60_5Fee appendString:[ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]]];
-                }
-                else {
-                    [f60_5Fee appendString:@"0"];
-                }
-            }
-        } else {
+        if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
             [f60_5Fee appendString:@"0"];
         }
+        else {
+            if ([ModelFeeBusinessInformation isSaved]) {
+                [f60_5Fee appendString:@"9"];
+                [f60_5Fee appendString:[ModelFeeBusinessInformation businessNumSaved]];
+                [f60_5Fee appendString:[ModelFeeBusinessInformation terminalNumSaved]];
+            }
+//            if ([self isSavedJiGouInfo]) {
+//                [f60_5Fee appendString:@"9"];
+//                [f60_5Fee appendString:[self businessNumInJiGou]];
+//                [f60_5Fee appendString:[self terminalNumInJiGou]];
+//            }
+            else if ([ModelFeeRates isSavedFeeRate]) {
+                [f60_5Fee appendString:[ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]]];
+            }
+            else {
+                [f60_5Fee appendString:@"0"];
+            }
+            
+//            else {
+//                if ([ModelFeeRates isSavedFeeRate]) {
+//                }
+//                else {
+//                }
+//            }
+        }
+//        if ([[ModelSettlementInformation sharedInstance] curSettlementType] != SETTLEMENTTYPE_T_0) {
+//        } else {
+//            [f60_5Fee appendString:@"0"];
+//        }
     }
     return f60_5Fee;
 }
@@ -254,36 +270,36 @@
 }
 
 
-/* 是否保存了机构商户信息 */
-+ (BOOL) isSavedJiGouInfo {
-    BOOL isSaved = NO;
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
-    if (jigouInfo) {
-        isSaved = YES;
-    }
-    return isSaved;
-}
-/* 商户号提取: 从机构商户配置中 */
-+ (NSString*) businessNumInJiGou {
-    NSString* businessJigou = nil;
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
-    if (jigouInfo) {
-        businessJigou = [jigouInfo valueForKey:KeyInfoDictOfJiGouBusinessNum];
-    }
-    return businessJigou;
-}
-/* 终端号提取: 从机构商户配置中 */
-+ (NSString*) terminalNumInJiGou {
-    NSString* terminalJigou = nil;
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
-    if (jigouInfo) {
-        terminalJigou = [jigouInfo valueForKey:KeyInfoDictOfJiGouTerminalNum];
-    }
-    return terminalJigou;
-}
+///* 是否保存了机构商户信息 */
+//+ (BOOL) isSavedJiGouInfo {
+//    BOOL isSaved = NO;
+//    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+//    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
+//    if (jigouInfo) {
+//        isSaved = YES;
+//    }
+//    return isSaved;
+//}
+///* 商户号提取: 从机构商户配置中 */
+//+ (NSString*) businessNumInJiGou {
+//    NSString* businessJigou = nil;
+//    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+//    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
+//    if (jigouInfo) {
+//        businessJigou = [jigouInfo valueForKey:KeyInfoDictOfJiGouBusinessNum];
+//    }
+//    return businessJigou;
+//}
+///* 终端号提取: 从机构商户配置中 */
+//+ (NSString*) terminalNumInJiGou {
+//    NSString* terminalJigou = nil;
+//    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+//    NSDictionary* jigouInfo = [userDefaults objectForKey:KeyInfoDictOfJiGou];
+//    if (jigouInfo) {
+//        terminalJigou = [jigouInfo valueForKey:KeyInfoDictOfJiGouTerminalNum];
+//    }
+//    return terminalJigou;
+//}
 
 
 #pragma mask -------------- getter & setter
