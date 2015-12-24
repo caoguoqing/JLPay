@@ -196,7 +196,9 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
         else if (component == 1) {
             indexCityPicked = row;
             [self updateAreaButtonTitle];
-            [self checkAndStartBusinessRequest];
+            if (indexFeePicked >= 0) {
+                [self checkAndStartBusinessRequest];
+            }
         }
     }
     // 商户
@@ -223,6 +225,7 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
     if (!feeBusinessList || feeBusinessList.count == 0) {
         [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
         [PublicInformation makeCentreToast:@"查询商户列表为空,请重新选择费率或地区"];
+        [self resetIndexBusinessPicked];
     } else {
         self.arrayBusinesses = [NSArray arrayWithArray:feeBusinessList];
         [self loadBusinessesInPicker];
@@ -232,6 +235,11 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
     [self stopActivitor];
     [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
     [PublicInformation makeCentreToast:[NSString stringWithFormat:@"查询商户列表失败:%@",errorMessage]];
+    [self resetIndexBusinessPicked];
+}
+/* 重置 indexBusinessPicked */
+- (void) resetIndexBusinessPicked {
+    indexBusinessPicked = -1;
 }
 
 /* 重载picker: 商户 */
@@ -414,6 +422,13 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
     }
     return city;
 }
+/* 重新查询指定序号的地区代码 */
+- (NSString*) cityCodeReselect {
+    NSString* provinceCode = [self codeProvinceAtIndex:indexProvincePicked];
+    [self citiesSelectedFromDBInProvinceCode:provinceCode];
+    return [self codeCityAtIndex:indexCityPicked];
+}
+
 
 
 /* rate value提取: 指定序号 */
@@ -497,14 +512,12 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
 
 /* 保存信息 */
 - (void) savingSelectedFeeBusinessInfos {
-    NSLog(@"保存商户信息");
     NSMutableDictionary* feeBusinessInfo = [[NSMutableDictionary alloc] init];
     feeBusinessInfo[kFeeBusinessInfoFeeSaved] = [ModelFeeBusinessInformation feeNamesList][indexFeePicked];
-    feeBusinessInfo[kFeeBusinessInfoAreaCode] = [self codeCityAtIndex:indexCityPicked];
+    feeBusinessInfo[kFeeBusinessInfoAreaCode] = [self cityCodeReselect];
     feeBusinessInfo[kFeeBusinessInfoBusinessName] = [self businessAtIndex:indexBusinessPicked];
     feeBusinessInfo[kFeeBusinessInfoBusinessCode] = [self businessNumAtIndex:indexBusinessPicked];
     feeBusinessInfo[kFeeBusinessInfoTerminalNum] = [self terminalNumAtIndex:indexBusinessPicked];
-    NSLog(@"打包的要保存的商户信息:[%@]",feeBusinessInfo);
     [ModelFeeBusinessInformation savingFeeBusinessInfo:feeBusinessInfo];
 }
 
