@@ -74,14 +74,6 @@ static ModelSettlementInformation* modelSettlement = nil;
     settlementType__ = settlementType;
 }
 
-/* 切换结算方式 --- 暂时用不到 */
-//- (SETTLEMENTTYPE) settlementTypeSwitched {
-//    settlementType__ = settlementType__ << 1;
-//    if (![self enumExistsSettlemenType:settlementType__]) {
-//        settlementType__ = SETTLEMENTTYPE_T_1;
-//    }
-//    return settlementType__;
-//}
 - (void) switchingSettleType {
     settlementType__ = settlementType__ << 1;
     if (![self enumExistsSettlemenType:settlementType__]) {
@@ -94,7 +86,6 @@ static ModelSettlementInformation* modelSettlement = nil;
     if (settlementInfo) {
         self.settlementInformation = [NSDictionary dictionaryWithDictionary:settlementInfo];
     }
-//    settlementType__ = SETTLEMENTTYPE_T_1;
 }
 /* 清空保存的结算信息 */
 - (void) cleanSettlementInfo {

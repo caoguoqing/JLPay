@@ -140,12 +140,7 @@ static HTTPRequestSettlementInfo* settlementRequester = nil;
     NSString* extraFee = [responseInfo objectForKey:kFieldNameResponseExtraFee];
     [settlementInfo setObject:[NSString stringWithFormat:@"%.02lf",extraFee.floatValue] forKey:kSettleInfoNameExtraFee];
     // 最低刷卡额
-    if (TestOrProduce == 1) {
-        [settlementInfo setObject:T_0MinCustMoney forKey:kSettleInfoNameMinCustAmount];
-    }
-    else {
-        [settlementInfo setObject:@"1.00" forKey:kSettleInfoNameMinCustAmount];
-    }
+    [settlementInfo setObject:T_0MinCustMoney forKey:kSettleInfoNameMinCustAmount];
 
     return settlementInfo;
 }

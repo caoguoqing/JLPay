@@ -30,13 +30,16 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 @property (nonatomic, strong) NSMutableArray* SNVersionNums;        // SN号列表
 @property (nonatomic, strong) NSMutableArray* terminalNums;         // 终端号列表
+
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 终端号:已勾选的
 @property (nonatomic, strong) NSString* selectedSNVersionNum;       // SN号:已勾选的
+
+@property (nonatomic, strong) NSString* selectedDevice;             // 已选取的设备类型
+
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
-@property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时时间
+@property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时定时器
 @property (nonatomic) CGRect activitorFrame;
-@property (nonatomic, strong) NSString* selectedDevice;             // 已选取的设备类型
 @end
 
 
@@ -54,10 +57,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"绑定设备";
-    [self.view addSubview:self.sureButton];
-    [self.view addSubview:self.tableView];
-    self.tableView.dataSource = self;
-    self.tableView.delegate = self;
     
     self.selectedDevice = nil;
     [[DeviceManager sharedInstance] setDelegate:self];
@@ -68,33 +67,11 @@ UIActionSheetDelegate,UIAlertViewDelegate
     } else {
         blueToothIsOn = NO;
     }
+    
+    [self loadSubviews];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    CGFloat inset = 8;
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    CGFloat navigationBarHeight = self.navigationController.navigationBar.bounds.size.height;
-    CGFloat tabBarHeignth = self.tabBarController.tabBar.bounds.size.height;
-    CGFloat buttonHeight = 50;
-    CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight - inset*4;
-    self.activitorFrame = CGRectMake(0,
-                                     navigationBarHeight + statusBarHeight,
-                                     self.view.bounds.size.width,
-                                     self.view.bounds.size.height - navigationBarHeight - statusBarHeight - tabBarHeignth);
-    // 表视图
-    CGRect frame = CGRectMake(0,
-                              statusBarHeight + navigationBarHeight,
-                              self.view.bounds.size.width,
-                              tableViewHeight);
-    self.tableView.frame = frame;
-    
-    // 绑定按钮
-    frame.origin.x = inset;
-    frame.origin.y += frame.size.height + inset*2;
-    frame.size.width -= inset * 2;
-    frame.size.height = buttonHeight;
-    self.sureButton.frame = frame;
-    self.sureButton.layer.cornerRadius = frame.size.height/2.0;
     
     // 加载已绑定信息:如果已经绑定过
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
@@ -131,6 +108,39 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 
 
+- (void) loadSubviews {
+    CGFloat inset = 8;
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGFloat navigationBarHeight = self.navigationController.navigationBar.bounds.size.height;
+    CGFloat tabBarHeignth = self.tabBarController.tabBar.bounds.size.height;
+    CGFloat buttonHeight = 50;
+    CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight - inset*4;
+    self.activitorFrame = CGRectMake(0,
+                                     navigationBarHeight + statusBarHeight,
+                                     self.view.bounds.size.width,
+                                     self.view.bounds.size.height - navigationBarHeight - statusBarHeight - tabBarHeignth);
+    // 表视图
+    CGRect frame = CGRectMake(0,
+                              statusBarHeight + navigationBarHeight,
+                              self.view.bounds.size.width,
+                              tableViewHeight);
+    self.tableView.frame = frame;
+    
+    // 绑定按钮
+    frame.origin.x = inset;
+    frame.origin.y += frame.size.height + inset*2;
+    frame.size.width -= inset * 2;
+    frame.size.height = buttonHeight;
+    self.sureButton.frame = frame;
+    self.sureButton.layer.cornerRadius = frame.size.height/2.0;
+    
+    [self.view addSubview:self.sureButton];
+    [self.view addSubview:self.tableView];
+    
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+
+}
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
 // section numbers
@@ -288,6 +298,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask : -------------  DeviceManagerDelegate
 // ID号读取
 - (void)didDiscoverDeviceOnID:(NSString *)identifier {
+    NSLog(@"扫描到设备ID:%@",identifier);
     [[DeviceManager sharedInstance] stopScanningDevices];
     [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
 }
@@ -297,6 +308,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [PublicInformation makeCentreToast:error];
         return;
     }
+    NSLog(@"读取到设备SN:%@",SNVersion);
     [self stopDeviceTimer];
     [self stopActivity];
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
