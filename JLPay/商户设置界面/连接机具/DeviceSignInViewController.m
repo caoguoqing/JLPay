@@ -321,6 +321,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 // 设备丢失:SN
 - (void)deviceDisconnectOnSNVersion:(NSString *)SNVersion {
+    NSLog(@"丢失设备SN:%@",SNVersion);
     if (SNVersion && [self.SNVersionNums containsObject:SNVersion]) {
         [self.SNVersionNums removeObject:SNVersion];
     }
@@ -332,7 +333,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 // 设置主密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteMainKeySuccessOrNot:(BOOL)yesOrNot withMessage:(NSString *)msg {
-        // 主密钥下载成功了就继续签到
+    // 主密钥下载成功了就继续签到
     if (yesOrNot) {
         [self downloadWorkKey];
     } else {
@@ -473,7 +474,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self startActivity];
         // 开始扫描并连接
         [[DeviceManager sharedInstance] closeAllDevices];
-        [[DeviceManager sharedInstance] startScanningDevices];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [[DeviceManager sharedInstance] startScanningDevices];
+        });
     }
 }
 // 按钮按下事件

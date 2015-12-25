@@ -20,6 +20,8 @@
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 
+#import "TestVCForDeviceBinding.h"
+
 
 @interface settingViewController ()<UIAlertViewDelegate>
 @property (nonatomic, strong) NSArray *cellNames;           // 单元格对应的功能名称
@@ -158,7 +160,8 @@
         vc.tradePlatform = NameTradePlatformMPOSSwipe;
     }
     else if ([cellName isEqualToString:@"绑定设备"]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+//        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+        viewController = [[TestVCForDeviceBinding alloc] initWithNibName:nil bundle:nil];
     }
     else if ([cellName isEqualToString:@"修改密码"]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];

@@ -18,6 +18,8 @@
 		5E0EBA881C2A36A400DCAC59 /* ModelFeeBusinessInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA871C2A36A400DCAC59 /* ModelFeeBusinessInformation.m */; };
 		5E0EBA8B1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */; };
 		5E0EBA8F1C2A79C000DCAC59 /* ModelAreaCodeSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */; };
+		5E0EBA921C2CE09500DCAC59 /* BLEDeviceManagerTY.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA911C2CE09500DCAC59 /* BLEDeviceManagerTY.m */; };
+		5E0EBA951C2CF25800DCAC59 /* TestVCForDeviceBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA941C2CF25800DCAC59 /* TestVCForDeviceBinding.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -230,6 +232,10 @@
 		5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestFeeBusiness.m; sourceTree = "<group>"; };
 		5E0EBA8D1C2A79C000DCAC59 /* ModelAreaCodeSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelAreaCodeSelector.h; sourceTree = "<group>"; };
 		5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelAreaCodeSelector.m; sourceTree = "<group>"; };
+		5E0EBA901C2CE09500DCAC59 /* BLEDeviceManagerTY.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLEDeviceManagerTY.h; sourceTree = "<group>"; };
+		5E0EBA911C2CE09500DCAC59 /* BLEDeviceManagerTY.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLEDeviceManagerTY.m; sourceTree = "<group>"; };
+		5E0EBA931C2CF25800DCAC59 /* TestVCForDeviceBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestVCForDeviceBinding.h; sourceTree = "<group>"; };
+		5E0EBA941C2CF25800DCAC59 /* TestVCForDeviceBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestVCForDeviceBinding.m; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -874,9 +880,9 @@
 			children = (
 				5E82B78B1B1BEF6D00A58751 /* DeviceManager.h */,
 				5E82B78C1B1BEF6D00A58751 /* DeviceManager.m */,
-				5E5FA56C1B46342600387E69 /* JHL_M60 */,
-				5EDA83E31B90507A0096391B /* RF_BB01 */,
 				5EDA843E1B9EC81D0096391B /* JLPayDevice_TY */,
+				5EDA83E31B90507A0096391B /* RF_BB01 */,
+				5E5FA56C1B46342600387E69 /* JHL_M60 */,
 				5EBF82841ADDFC3D005F7E15 /* JHL */,
 			);
 			path = "设备管理";
@@ -1180,6 +1186,8 @@
 			children = (
 				5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */,
 				5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */,
+				5E0EBA931C2CF25800DCAC59 /* TestVCForDeviceBinding.h */,
+				5E0EBA941C2CF25800DCAC59 /* TestVCForDeviceBinding.m */,
 			);
 			name = controller;
 			sourceTree = "<group>";
@@ -1520,6 +1528,8 @@
 				5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */,
 				5EDA84451B9ED3670096391B /* JieLianService.h */,
 				5E8B0D101BB0E61800FD461A /* libJieLianService.a */,
+				5E0EBA901C2CE09500DCAC59 /* BLEDeviceManagerTY.h */,
+				5E0EBA911C2CE09500DCAC59 /* BLEDeviceManagerTY.m */,
 			);
 			name = JLPayDevice_TY;
 			sourceTree = "<group>";
@@ -1886,6 +1896,7 @@
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5E0EBA731C228A0400DCAC59 /* IntMoneyCalculating.m in Sources */,
 				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,
+				5E0EBA921C2CE09500DCAC59 /* BLEDeviceManagerTY.m in Sources */,
 				5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
@@ -1942,6 +1953,7 @@
 				5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */,
 				5E9448731C0460D800128452 /* ViewModelTCPHandleWithDevice.m in Sources */,
 				5EBAA9141ACD3F1B00E2ABDD /* SBJsonWriter.m in Sources */,
+				5E0EBA951C2CF25800DCAC59 /* TestVCForDeviceBinding.m in Sources */,
 				5EB4C8231B05937200410E06 /* CustPayViewController.m in Sources */,
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
