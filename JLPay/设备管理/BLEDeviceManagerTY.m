@@ -19,6 +19,9 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
 
 @interface BLEDeviceManagerTY()
 <TYJieLianDelegate>
+{
+    BOOL isScanning;
+}
 @property (nonatomic, retain) JieLianService* deviceManager;
 
 @property (nonatomic, strong) NSMutableDictionary* deviceInfo; // 设备信息:
@@ -43,11 +46,13 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
         self.deviceManager = [[JieLianService alloc] init];
         [self.deviceManager setDelegate:self];
         self.deviceInfo = [[NSMutableDictionary alloc] init];
+        isScanning = NO;
     }
     return self;
 }
 - (void)dealloc {
     [self setDelegate:nil];
+    [self.deviceManager setDelegate:nil];
 }
 
 /* 检查设备是否连接 */
@@ -62,18 +67,21 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
 
 /* 连接、断开所有设备 */
 - (void) connectAllDevices {
-    [self.deviceManager StartScanning];
+    [self startScanning];
 }
 - (void) disConnectAllDevices {
-    
+    [self disconnectDevice];
 }
 
 /* 连接、断开设备: 指定SN */
 - (void) connectDeviceOnIdentifier:(NSString*)identifier {
-
+    [self savingNeedConnectIdentifier:identifier];
+    [self startScanning];
 }
 - (void) disConnectDeviceOnSN:(NSString*)SNVersion {
-    
+    if ([SNVersion isEqualToString:[self deviceSNofSaved]]) {
+        [self disconnectDevice];
+    }
 }
 
 /* 写主密钥: 指定SN */
@@ -89,6 +97,16 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
 - (void) swipeCardOnSN:(NSString*)SNVersion {
     
 }
+
+/* -- 测试接口 -- */
+- (void) readSN {
+    if ([self deviceIsConnected]) {
+        if ([self readDeviceSN]) {
+            [self rebackConnectDeviceFail:@"读取设备SN号失败"];
+        }
+    }
+}
+
 
 #pragma mask ---- TYJieLianDelegate
 /* 设备回调: 读取了卡数据 */
@@ -112,13 +130,9 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
                     [SNVersion appendFormat:@"%02x", *(resDatas++) & 0xff];
                 }
                 [self savingDeviceSN:SNVersion];
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceSucOnSN:identifier:)]) {
-                    [self.delegate didConnectedDeviceSucOnSN:SNVersion identifier:[self peripheralSaved].identifier.UUIDString];
-                }
+                [self rebackConnectDeviceSuc];
             } else {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceFail:OnSN:)]) {
-                    
-                }
+                [self rebackConnectDeviceFail:@"读取设备SN号失败!"];
             }
         }
             break;
@@ -139,6 +153,9 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
 
 /* 设备回调: 成功扫描到设备 */
 - (void)discoverPeripheralSuccess:(CBPeripheral *)peripheral {
+    if (!isScanning) {
+        return;
+    }
     // 先检查是否需要保存扫描到的设备
     if (![self savedDevice]) {
         if ([self hasDesignatedDeviceIdentifier]) {
@@ -158,15 +175,14 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
 /* 设备回调: 成功连接设备 */
 - (void)didConnectPeripheral:(CBPeripheral *)peripheral {
     // 读取SN
-    int result = [self.deviceManager GetSnVersion];
-    NSLog(@"GetSnVersion的返回值:[%d]",result);
+    if ([self readDeviceSN]) {
+        [self rebackConnectDeviceFail:@"读取设备SN号失败"];
+    }
 }
 /* 设备回调: 设备断开连接 */
 - (void)didDisconnectPeripheral:(CBPeripheral *)peripheral {
     if ([self savedDevice]) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didDisConnectedDeviceOnSN:)]) {
-            [self.delegate didDisConnectedDeviceOnSN:[self deviceSNofSaved]];
-        }
+        [self rebackDisconnectDevice];
         
         // 断开设备要不要清楚数据源
         [self clearPeripheral];
@@ -178,25 +194,67 @@ static NSString* const kDeviceInfoSNVersion = @"kDeviceInfoSNVersion__"; // 已�
 #pragma mask ---- PRIVATE INTERFACE
 
 #pragma mask ---- 设备操作
+/* 启动扫描 */
+- (void) startScanning {
+    int resScanning = [self.deviceManager StartScanning];
+    if (resScanning) {
+        [self rebackConnectDeviceFail:@"扫描设备失败"];
+        isScanning = NO;
+    } else {
+        isScanning = YES;
+    }
+}
+/* 关闭扫描 */
+- (void) stopScanning {
+//    if (isScanning) {
+        [self.deviceManager stopScanning];
+//    }
+    isScanning = NO;
+}
 /* 连接设备 */
 - (void) connectDevice {
     [self.deviceManager connectDevice:[self peripheralSaved]];
 }
 /* 断开设备 */
 - (void) disconnectDevice {
-    [self.deviceManager stopScanning];
+    [self stopScanning];
     [self.deviceManager disConnectDevice];
-    
+}
+/* 是否连接 */
+- (BOOL) deviceIsConnected {
+    BOOL connected = NO;
+    if ([self savedDevice]) {
+        if ([self peripheralSaved].state == CBPeripheralStateConnected) {
+            connected = YES;
+        }
+    }
+    return connected;
+}
+/* 读取SN号: 0:成功; 1:失败; */
+- (int) readDeviceSN {
+    return [self.deviceManager GetSnVersion];
+}
+
+
+#pragma mask ---- 回调缩写
+/* 设备连接 */
+- (void) rebackConnectDeviceSuc {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceSucOnSN:identifier:)]) {
+        NSString* identifier = [[self peripheralSaved] identifier].UUIDString;
+        NSString* SNVersion = [self deviceSNofSaved];
+        [self.delegate didConnectedDeviceSucOnSN:SNVersion identifier:identifier];
+    }
+}
+- (void) rebackConnectDeviceFail:(NSString*)failMessage {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceFail:OnSN:)]) {
+        [self.delegate didConnectedDeviceFail:failMessage OnSN:nil];
+    }
+}
+- (void) rebackDisconnectDevice {
     if (self.delegate && [self.delegate respondsToSelector:@selector(didDisConnectedDeviceOnSN:)]) {
         [self.delegate didDisConnectedDeviceOnSN:[self deviceSNofSaved]];
     }
-
-    // 断开设备要不要清楚数据源
-    [self clearPeripheral];
-    [self clearDeviceSN];
-    [self clearNeedConnectIdentifier];
 }
-
 
 
 #pragma mask ---- 数据源操作

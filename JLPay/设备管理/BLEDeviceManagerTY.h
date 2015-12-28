@@ -68,4 +68,7 @@ static NSString* const BLEDeviceTypeTY = @"JLpay蓝牙刷卡器";
 /* 刷卡: 指定SN */
 - (void) swipeCardOnSN:(NSString*)SNVersion;
 
+
+/* -- 测试接口 -- */
+- (void) readSN;
 @end
