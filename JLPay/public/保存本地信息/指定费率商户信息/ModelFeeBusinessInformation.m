@@ -54,10 +54,10 @@ static NSString* const kDictNameFeeBusinessInfoSaved = @"kDictNameFeeBusinessInf
 
 /* 查询: 费率名列表 */
 + (NSArray*) feeNamesList {
-    return @[@"0.38不封顶", //0
-             @"0.78不封顶", //1
-             @"0.78封顶",   //2
-             @"1.25不封顶"]; //3
+    return @[@"0.38民生类", //0
+             @"0.78一般类", //1
+//             @"0.78批发类",   //2
+             @"1.25餐饮类"]; //3
 }
 /* 查询: 费率码;指定费率名 */
 + (NSString*) feeTypeOfFeeName:(NSString*)feeName {
@@ -72,11 +72,10 @@ static NSString* const kDictNameFeeBusinessInfoSaved = @"kDictNameFeeBusinessInf
 #pragma mask ---- PRIVATE INTERFACE
 /* 费率名跟类型字典 */
 + (NSDictionary*) feeNamesAndTypes {
-    NSMutableDictionary* dictOfFeeNamesAndTypes = [[NSMutableDictionary alloc] init];
-    for (int i = 0; i < [self feeNamesList].count; i++) {
-        [dictOfFeeNamesAndTypes setObject:[NSNumber numberWithInt:i] forKey:[[self feeNamesList] objectAtIndex:i]];
-    }
-    return dictOfFeeNamesAndTypes;
+    return @{@"0.38民生类":@"0",
+             @"0.78一般类":@"1",
+             @"0.78批发类":@"2",
+             @"1.25餐饮类":@"3",};
 }
 
 /* 保存数据 */

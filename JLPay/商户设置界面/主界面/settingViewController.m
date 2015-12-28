@@ -160,8 +160,8 @@
         vc.tradePlatform = NameTradePlatformMPOSSwipe;
     }
     else if ([cellName isEqualToString:@"绑定设备"]) {
-//        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
-        viewController = [[TestVCForDeviceBinding alloc] initWithNibName:nil bundle:nil];
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+//        viewController = [[TestVCForDeviceBinding alloc] initWithNibName:nil bundle:nil];
     }
     else if ([cellName isEqualToString:@"修改密码"]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];
