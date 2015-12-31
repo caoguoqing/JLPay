@@ -82,7 +82,9 @@ HttpUploadT0CardDelegate>
 }
 
 - (void)didUploadedSuccess {
-    [KVNProgress showSuccessWithStatus:@"上传银行卡信息成功!"];
+    [KVNProgress showSuccessWithStatus:@"上传银行卡信息成功!" completion:^{
+        [self.navigationController popViewControllerAnimated:YES];
+    }];
 }
 - (void)didUploadedFail:(NSString *)failMessage {
     [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传银行卡信息失败:%@",failMessage]];
@@ -175,7 +177,6 @@ HttpUploadT0CardDelegate>
 - (void) chooseImagePickerType {
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"上传银行卡正面照" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:kActionSheetTitleCamera];
-//    [actionSheet addButtonWithTitle:kActionSheetTitlePicture];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -226,7 +227,6 @@ HttpUploadT0CardDelegate>
         return @"ImageCellIdentifier";
     }
 }
-// -- Http &
 // -- 检查输入是否都完成
 - (BOOL) allInputsIsPrepared {
     BOOL prepared = YES;

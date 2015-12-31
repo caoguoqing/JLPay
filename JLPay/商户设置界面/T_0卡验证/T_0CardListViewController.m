@@ -79,9 +79,21 @@
         cell = [[SubAndDetailLabelCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     }
     // testing ......
-    [cell setLeftText:[PublicInformation cuttingOffCardNo: @"1234567890123456789"]];
-    [cell setRightText:[self nameCuttedByOrigin:@"搜集地方能"]];
-    [cell setSubText:@"是不搜索京东金佛搜到金佛i"];
+    if (indexPath.row == 0) {
+        [cell setLeftText:[PublicInformation cuttingOffCardNo: @"1234567890123456789"]];
+        [cell setRightText:[self nameCuttedByOrigin:@"搜集地方能"]];
+        [cell setSubText:@"是不搜索京东金佛搜到金佛i"];
+    }
+    else if (indexPath.row == 1) {
+        [cell setLeftText:[PublicInformation cuttingOffCardNo: @"622657363762777"]];
+        [cell setRightText:[self nameCuttedByOrigin:@"搜集地"]];
+        [cell setSubText:@"不允许;作弊卡"];
+    }
+    else {
+        [cell setLeftText:[PublicInformation cuttingOffCardNo: @"62265736376273723"]];
+        [cell setRightText:[self nameCuttedByOrigin:@"测试"]];
+        [cell setSubText:@"允许"];
+    }
     return cell;
 }
 

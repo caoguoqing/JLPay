@@ -10,7 +10,7 @@
 #import "TotalAmountDisplayView.h"
 #import "DetailsCell.h"
 #import "RevokeViewController.h"
-#import "JLActivitor.h"
+#import "KVNProgress.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
 #import "Define_Header.h"
@@ -148,9 +148,6 @@ NSInteger logCount = 0;
         if (maxPullDownOffset <= -heightPullRefrashView) {
             [self.pullRefrashView turnWaiting];
             // 重新获取明细数据
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-            });
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
             });
@@ -190,9 +187,6 @@ NSInteger logCount = 0;
         
         // 重新获取列表信息
         [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
-        
-        // 启动指示器
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     }
 }
 
@@ -278,11 +272,18 @@ NSInteger logCount = 0;
 #pragma mask ---- 数据源请求 & 回调: ViewModelMPOSDetailsDelegate
 /* HTTP请求数据 */
 - (void) requestDataOnStartDate:(NSString*)startDate endDate:(NSString*)endDate {
-    [self.dataSource requestDetailsWithDelegate:self beginTime:startDate endTime:endDate];
+    [KVNProgress show];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.dataSource requestDetailsWithDelegate:self beginTime:startDate endTime:endDate];
+    });
+    // 清除数据源的过滤条件
+    [self.dataSource removeFilter];
 }
 
 - (void)didRequestingSuccessful {
-    [[JLActivitor sharedInstance] stopAnimating];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [KVNProgress dismiss];
+    });
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }
@@ -294,14 +295,13 @@ NSInteger logCount = 0;
     [self calculateTotalAmount];
 }
 - (void)didRequestingFailWithCode:(HTTPErrorCode)errorCode andMessage:(NSString *)message {
-    [[JLActivitor sharedInstance] stopAnimating];
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }
     [self.dataSource prepareSelector];
     [self.tableView reloadData];
     [self calculateTotalAmount];
-    [PublicInformation makeToast:message];
+    [KVNProgress showErrorWithStatus:message];
 }
 
 // 扫描明细数组,计算总金额，总笔数
@@ -335,8 +335,6 @@ NSInteger logCount = 0;
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
         // 请求数据
         [self requestDataOnStartDate:[PublicInformation nowDate] endDate:[PublicInformation nowDate]];
-        // 启动指示器
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
     } else {
         [self alertShow:@"未绑定设备,请先绑定设备"];
     }
@@ -353,7 +351,9 @@ NSInteger logCount = 0;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.dataSource terminateRequesting];
-    [[JLActivitor sharedInstance] stopAnimating];
+    [KVNProgress dismiss];
+    // 清除数据源的过滤条件
+    [self.dataSource removeFilter];
 }
 
 - (void) loadsSubviews {

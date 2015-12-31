@@ -11,12 +11,9 @@
 #import "PublicInformation.h"
 #import "ASIFormDataRequest.h"
 #import "UserRegisterViewController.h"
-#import "JLActivitor.h"
+#import "KVNProgress.h"
 
 @interface BankNumberViewController()<DynamicPickerViewDelegate, ASIHTTPRequestDelegate, UITextFieldDelegate>
-{
-    CGRect actiFrame;
-}
 @property (nonatomic, strong) UITextField* bankNameField;
 @property (nonatomic, strong) UITextField* branchNameField;
 @property (nonatomic, strong) UILabel* bankNameSearchedLabel;
@@ -61,7 +58,7 @@
         return;
     }
     // HTTP请求
-    [self startActivitor];
+    [KVNProgress show];
     [self requestBankInfoWithBankName:self.bankNameField.text andBranchName:self.branchNameField.text];
 }
 
@@ -84,34 +81,43 @@
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
-    [self stopActivitor];
+    self.httpRequest = nil;
+
     NSData* data = [request responseData];
     NSError* error;
     NSDictionary* responseInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
-    self.httpRequest = nil;
-    self.bankInfos = [responseInfo objectForKey:@"bankList"];
-    NSMutableArray* bankNums = [[NSMutableArray alloc] init];
-    for (NSDictionary* dict in self.bankInfos) {
-        [bankNums addObject:[dict valueForKey:@"bankName"]];
+    
+    if (error) {
+        [KVNProgress showErrorWithStatus:@"响应数据解析失败!"];
+        return;
     }
+    
+    self.bankInfos = [responseInfo objectForKey:@"bankList"];
+    [KVNProgress dismiss];
     // 没查到银行号列表
-    if (bankNums.count == 0) {
-        [self alertForMessage:@"查询到的银行列表为空,请重新输入并查询"];
+    if (!self.bankInfos || self.bankInfos.count == 0) {
+        [PublicInformation makeCentreToast:@"查询到的银行列表为空,请重新输入并查询"];
     }
     // 查到了银行号列表
     else {
+        NSMutableArray* bankNums = [[NSMutableArray alloc] init];
+        for (NSDictionary* dict in self.bankInfos) {
+            [bankNums addObject:[dict valueForKey:@"bankName"]];
+        }
+
         CGRect frame = CGRectMake(0,//self.searchButton.frame.origin.x,
                                   self.searchButton.frame.origin.y + self.searchButton.frame.size.height + 10,
                                   self.view.frame.size.width,
                                   40+180);
         [self loadPickerViewInFrame:frame withDatas:bankNums];
     }
+    
+
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
-    [self stopActivitor];
     self.httpRequest = nil;
-    [self alertForMessage:@"查询联行号失败:网络异常"];
+    [KVNProgress showErrorWithStatus:@"查询联行号失败:网络异常"];
 }
 
 
@@ -129,7 +135,7 @@
 - (void) popVCWithSearchedBankNum {
     // 检查输入
     if (self.selectedIndex < 0) {
-        [self alertForMessage:@"未选择开户行联行号,请先选择!"];
+        [PublicInformation makeCentreToast:@"未选择开户行联行号,请先选择!"];
         return;
     }
     // 跳转界面
@@ -168,7 +174,6 @@
     CGFloat viewHeight = 40;
     CGFloat statesNaviHeight = [PublicInformation returnStatusHeight] + self.navigationController.navigationBar.frame.size.height;
     
-    actiFrame = CGRectMake(0, statesNaviHeight, self.view.frame.size.width, self.view.frame.size.height - statesNaviHeight);
     CGRect frame = CGRectMake(insetHorizantal, statesNaviHeight + insetVertical, mustInputWidth, viewHeight);
     [self.view addSubview:[self mustInputLabelInFrame:frame]];
     
@@ -209,16 +214,6 @@
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     dispatch_async(dispatch_get_main_queue(), ^{
         [alert show];
-    });
-}
-- (void) startActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] startAnimatingInFrame:actiFrame];
-    });
-}
-- (void) stopActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
     });
 }
 

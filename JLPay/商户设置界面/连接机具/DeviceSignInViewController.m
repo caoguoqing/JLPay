@@ -9,7 +9,7 @@
 #import "DeviceSignInViewController.h"
 #import "Define_Header.h"
 #import "Toast+UIView.h"
-#import "JLActivitor.h"
+#import "KVNProgress.h"
 #import "DeviceManager.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "ModelUserLoginInformation.h"
@@ -39,7 +39,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时定时器
-@property (nonatomic) CGRect activitorFrame;
 @end
 
 
@@ -50,7 +49,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @synthesize sureButton = _sureButton;
 @synthesize waitingTimer;
 @synthesize selectedTerminalNum;
-@synthesize activitorFrame;
 @synthesize selectedDevice;
 
 #pragma mask ::: 主视图加载
@@ -93,7 +91,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[JLActivitor sharedInstance] stopAnimating];
+    [KVNProgress dismiss];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
     [[ViewModelTCPHandleWithDevice getInstance] stopDownloading];
@@ -115,10 +113,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     CGFloat tabBarHeignth = self.tabBarController.tabBar.bounds.size.height;
     CGFloat buttonHeight = 50;
     CGFloat tableViewHeight = self.view.bounds.size.height - statusBarHeight - navigationBarHeight - tabBarHeignth - buttonHeight - inset*4;
-    self.activitorFrame = CGRectMake(0,
-                                     navigationBarHeight + statusBarHeight,
-                                     self.view.bounds.size.width,
-                                     self.view.bounds.size.height - navigationBarHeight - statusBarHeight - tabBarHeignth);
     // 表视图
     CGRect frame = CGRectMake(0,
                               statusBarHeight + navigationBarHeight,
@@ -298,19 +292,17 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask : -------------  DeviceManagerDelegate
 // ID号读取
 - (void)didDiscoverDeviceOnID:(NSString *)identifier {
-    NSLog(@"扫描到设备ID:%@",identifier);
     [[DeviceManager sharedInstance] stopScanningDevices];
     [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
 }
 // SN号读取结果
 - (void)didReadSNVersion:(NSString *)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
     if (!yesOrNo) {
-        [PublicInformation makeCentreToast:error];
+        [KVNProgress showErrorWithStatus:error];
         return;
     }
-    NSLog(@"读取到设备SN:%@",SNVersion);
     [self stopDeviceTimer];
-    [self stopActivity];
+    [KVNProgress showSuccessWithStatus:@"设备连接成功!"];
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
@@ -321,7 +313,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 // 设备丢失:SN
 - (void)deviceDisconnectOnSNVersion:(NSString *)SNVersion {
-    NSLog(@"丢失设备SN:%@",SNVersion);
     if (SNVersion && [self.SNVersionNums containsObject:SNVersion]) {
         [self.SNVersionNums removeObject:SNVersion];
     }
@@ -337,26 +328,22 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (yesOrNot) {
         [self downloadWorkKey];
     } else {
-        [self stopActivity];
-        [PublicInformation makeCentreToast:@"绑定设备失败!"];
+        [KVNProgress showErrorWithStatus:@"绑定设备失败:写主密钥失败!"];
     }
 }
 // 设置工作密钥的回调
 - (void)deviceManager:(DeviceManager *)deviceManager didWriteWorkKeySuccessOrNot:(BOOL)yesOrNot {
-    // 停止等待转轮
-    [self stopActivity];
     if (yesOrNot) {
         // 更新批次号
         [PublicInformation updateSignSort];
         [self saveBindedDevice];
         [self reloadTableView];
-        [PublicInformation makeCentreToast:@"绑定设备成功!"];
         needCheckoutToCustVC = YES;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [KVNProgress showSuccessWithStatus:@"设备绑定成功!" completion:^{
             [self.navigationController popViewControllerAnimated:YES];
-        });
+        }];
     } else {
-        [PublicInformation makeCentreToast:@"绑定设备失败!"];
+        [KVNProgress showErrorWithStatus:@"绑定设备失败:写工作密钥失败!"];
     }
 }
 
@@ -380,8 +367,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (result) {
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
-        [self stopActivity];
-        [PublicInformation makeToast:[NSString stringWithFormat:@"下载主密钥失败:%@",errorMessge]];
+        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载主密钥失败:\n%@",errorMessge]];
     }
 }
 /* 工作密钥下载回调 */
@@ -390,8 +376,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (result) {
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
-        [self stopActivity];
-        [PublicInformation makeToast:[NSString stringWithFormat:@"下载工作密钥失败:%@",errorMessge]];
+        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载工作密钥失败:\n%@",errorMessge]];
     }
 }
 
@@ -418,8 +403,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (buttonIndex != 0) {
         // 启动设备扫描
         [[DeviceManager sharedInstance] startScanningDevices];
-        // 异步启动等待视图
-        [self startActivity];
+        [KVNProgress showWithStatus:@"设备连接中..."];
         // 异步启动等待定时器
         [self startDeviceTimer];
     }
@@ -449,7 +433,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 下载主密钥 -- 需要判断设备是否连接
     int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
     if (beingConnect == 1) {
-        [self startActivity];
+        [KVNProgress showWithStatus:@"设备绑定中..."];
         [self downloadMainKey];
     } else {
         [PublicInformation makeCentreToast:@"设备未连接"];
@@ -470,8 +454,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     } else {
         // 异步调起等待定时器
         [self startDeviceTimer];
-        // 异步打开等待视图
-        [self startActivity];
+        [KVNProgress showWithStatus:@"设备连接中..."];
         // 开始扫描并连接
         [[DeviceManager sharedInstance] closeAllDevices];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -573,24 +556,11 @@ UIActionSheetDelegate,UIAlertViewDelegate
         }
     });
 }
-// 启动指示器
-- (void) startActivity {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-    });
-}
-// 关闭指示器
-- (void) stopActivity {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
-    });
-}
 
 // 超时后解除转轮，并输出错误信息
 - (void) waitingTimeoutWithMsg {
-    [[JLActivitor sharedInstance] stopAnimating];
     [self stopDeviceTimer];
-    [PublicInformation makeCentreToast:@"设备连接超时"];
+    [KVNProgress showErrorWithStatus:@"设备连接超时"];
 }
 
 

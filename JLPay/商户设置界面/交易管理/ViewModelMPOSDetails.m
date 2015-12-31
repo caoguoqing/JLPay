@@ -157,7 +157,9 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
     BOOL isFiltered = NO;
     isFiltered = [[node objectForKey:kDetailsFilterKeyCardNo] hasSuffix:filterInputed];
     if (!isFiltered) {
-        isFiltered = (filterInputed.floatValue == [[node objectForKey:kDetailsFilterKeyAmount] floatValue]);
+        NSString* intMoney = node[kDetailsFilterKeyAmount];
+        NSString* dotMoney = [PublicInformation dotMoneyFromNoDotMoney:intMoney];
+        isFiltered = (filterInputed.floatValue == [dotMoney floatValue]);
     }
     return isFiltered;
 }

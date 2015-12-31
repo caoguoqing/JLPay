@@ -211,9 +211,17 @@ static NSMutableArray *colors;
     //先截图
     self.uploadImage=[self getNormalImage:returnView];
     
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"签名成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert setBackgroundColor:[UIColor colorWithWhite:0.8 alpha:0.2]];
-    [alert show];
+//    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"签名成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//    [alert setBackgroundColor:[UIColor colorWithWhite:0.8 alpha:0.2]];
+//    [alert show];
+    PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
+    posInformationVc.posImg=self.uploadImage;
+    
+    [posInformationVc setTransInformation:self.transInformation];
+    
+    // 跳转到小票界面
+    [self.navigationController pushViewController:posInformationVc animated:YES];
+
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {

@@ -14,7 +14,7 @@
 #import "DetailAreaViewController.h"
 #import "BankNumberViewController.h"
 #import "ASIFormDataRequest.h"
-#import "JLActivitor.h"
+#import "KVNProgress.h"
 #import "Define_Header.h"
 
 #import "ModelUserLoginInformation.h"
@@ -26,7 +26,6 @@
 UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestDelegate, UIAlertViewDelegate>
 {
     NSInteger rowCellImageNeedPicking;
-    CGRect activitorFrame;
 }
 @property (nonatomic, strong) UIButton* registerButton;
 @property (nonatomic, strong) UITableView* tableView;
@@ -291,7 +290,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
-    [self stopActivitor];
+//    [self stopActivitor];
     NSData* datas = [request responseData];
     self.httpRequestRegister = nil;
     NSError* error;
@@ -300,7 +299,19 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 成功
     if ([retCode intValue] == 0) {
         NSString* msg = [NSString stringWithFormat:@"%@成功!", [self titleForRegisterType:self.registerType]];
-        [self alertShowWithMessage:msg];
+        [KVNProgress showSuccessWithStatus:msg completion:^{
+            NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+            NSString* userName = [self textInputedAtIndexPath:indexPath];
+            // 清空登陆+商户信息
+            [ModelUserLoginInformation deleteLoginUpInformation];
+            [ModelUserLoginInformation deleteLoginDownInformation];
+            // 保存需要的登陆信息
+            [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
+            
+            // 清空绑定信息
+            [ModelDeviceBindedInformation cleanDeviceBindedInfo];
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
     }
     // 失败
     else {
@@ -309,10 +320,8 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    [self stopActivitor];
-    NSString* errorMesg = [[request error] domain];
-    NSString* msg = [NSString stringWithFormat:@"%@失败:网络异常!:[%@]", [self titleForRegisterType:self.registerType], errorMesg];
-    [self alertShowWithMessage:msg];
+    NSString* msg = [NSString stringWithFormat:@"%@失败:\n[%@]", [self titleForRegisterType:self.registerType], [[request error] localizedDescription]];
+    [KVNProgress showErrorWithStatus:msg];
     [request clearDelegatesAndCancel];
     self.httpRequestRegister = nil;
 }
@@ -392,8 +401,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     if (![self enableToRequest]) {
         return;
     }
-    
-    [self startActivitor];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // 打包
         [self requestPacking];
@@ -402,6 +409,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         
         [self.httpRequestRegister startAsynchronous];
     });
+    [KVNProgress show];
 }
 /* 检查输入是否满足 */
 - (BOOL) enableToRequest {
@@ -412,6 +420,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     if (indexPath) {
         NSString* msg = [NSString stringWithFormat:@"%@未输入,请先输入!",[self titleAtIndexPath:indexPath]];
         [self alertShowWithMessage:msg];
+        enable = NO;
+    }
+    // 密码不能为全0
+    if (enable && [[self passwordInputed] isEqualToString:@"00000000"]) {
+        [self alertShowWithMessage:@"登陆密码不能为全0!"];
         enable = NO;
     }
     // 检查确认密码是否输入正确
@@ -734,6 +747,17 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
     return isEqualingPwd;
 }
+/* 登陆密码 */
+- (NSString*) passwordInputed {
+    NSString* password = nil;
+    for (NSDictionary* dict in self.arrayBasicInfo) {
+        if ([[dict objectForKey:KeyInfoStringTitle] isEqualToString:@"登陆密码"]) {
+            password = [dict objectForKey:KeyInfoStringInputText];
+            break;
+        }
+    }
+    return password;
+}
 /* 检查邮箱格式是否正确 */
 - (BOOL) isValidOfMail:(NSString*)mail {
     BOOL isValied = YES;
@@ -767,7 +791,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
     
-//    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemNullTitleInViewController:self]];
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -777,7 +800,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     CGFloat inset = 12;
     CGFloat btnHeight = 45;
     
-    activitorFrame = CGRectMake(0, statesNaviHeight, self.view.frame.size.width, self.view.frame.size.height - (statesNaviHeight));
     CGRect frame = CGRectMake(0,
                               statesNaviHeight,
                               self.view.frame.size.width,
@@ -807,16 +829,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     dispatch_async(dispatch_get_main_queue(), ^{
         [alert show];
-    });
-}
-- (void) startActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] startAnimatingInFrame:activitorFrame];
-    });
-}
-- (void) stopActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
     });
 }
 

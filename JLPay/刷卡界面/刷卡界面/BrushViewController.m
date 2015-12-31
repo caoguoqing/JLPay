@@ -298,7 +298,6 @@
     [alertV close];
     if (buttonIndex == 0) { // 取消
         // 弹出刷卡界面,回到上层界面
-//        [self.navigationController popViewControllerAnimated:YES];
         [self.navigationController popToRootViewControllerAnimated:YES];
     } else {                // 确定-开始设备加密
         // 进行加密
@@ -322,11 +321,14 @@
     [self stopActivity];
     if (result) {
         // 成功: 跳转界面: 小票、余额显示
-        if ([self.stringOfTranType isEqualToString:TranType_YuE]) {
-            [self pushToYuEVCWithInfo:responseInfo];
-        } else {
-            [self pushToSignVCWithInfo:responseInfo];
-        }
+        self.waitingLabel.text = @"交易成功!";
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if ([self.stringOfTranType isEqualToString:TranType_YuE]) {
+                [self pushToYuEVCWithInfo:responseInfo];
+            } else {
+                [self pushToSignVCWithInfo:responseInfo];
+            }
+        });
     } else {
         // 失败
         NSString* alertMessage = [NSString stringWithFormat:@"交易失败:%@",message];
@@ -414,7 +416,6 @@
         [self alertForFailedMessage:@"设备刷卡超时"]; // 点击确定就会退出场景
     } else {
         [self.waitingLabel setText:[NSString stringWithFormat:@"刷卡中,IC卡请勿拔卡...%02d秒",self.timeOut++]];
-//        [self.waitingLabel setText:[NSString stringWithFormat:@"设备已连接,请刷卡...%02d秒",self.timeOut++]];
 
     }
 }

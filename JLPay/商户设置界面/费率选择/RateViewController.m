@@ -10,7 +10,7 @@
 #import "PublicInformation.h"
 #import "Define_Header.h"
 #import "DynamicPickerView.h"
-#import "JLActivitor.h"
+#import "KVNProgress.h"
 
 #import "ModelFeeBusinessInformation.h"
 #import "HTTPRequestFeeBusiness.h"
@@ -217,14 +217,14 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
     [self.httpFeeBusiness requestFeeBusinessOnFeeType:rate
                                              areaCode:areaCode
                                              delegate:self];
-    [self startActivitor];
+    [KVNProgress show];
 }
 - (void)didRequestSuccessWithInfo:(NSDictionary *)responseInfo {
-    [self stopActivitor];
+    [KVNProgress dismiss];
     NSArray* feeBusinessList = [responseInfo objectForKey:kFeeBusinessListName];
     if (!feeBusinessList || feeBusinessList.count == 0) {
-        [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
-        [PublicInformation makeCentreToast:@"查询商户列表为空,请重新选择费率或地区"];
+        [self.btnBusiness setTitle:@"-商户名-" forState:UIControlStateNormal];
+        [KVNProgress showErrorWithStatus:@"查询商户列表为空,\n请重新选择费率或地区"];
         [self resetIndexBusinessPicked];
     } else {
         self.arrayBusinesses = [NSArray arrayWithArray:feeBusinessList];
@@ -232,9 +232,8 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
     }
 }
 - (void)didRequestFailWithMessage:(NSString *)errorMessage {
-    [self stopActivitor];
-    [self.btnBusiness setTitle:@"-商户-" forState:UIControlStateNormal];
-    [PublicInformation makeCentreToast:[NSString stringWithFormat:@"查询商户列表失败:%@",errorMessage]];
+    [self.btnBusiness setTitle:@"-商户名-" forState:UIControlStateNormal];
+    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"查询商户列表失败:%@",errorMessage]];
     [self resetIndexBusinessPicked];
 }
 /* 重置 indexBusinessPicked */
@@ -348,7 +347,7 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self stopActivitor];
+    [KVNProgress dismiss];
     [self.httpFeeBusiness terminateRequest];
 }
 
@@ -484,17 +483,17 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
 #pragma mask ---- PRIVATE INTERFACE
 
 /* 启动指示器 */
-- (void) startActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
-    });
-}
+//- (void) startActivitor {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [[JLActivitor sharedInstance] startAnimatingInFrame:self.activitorFrame];
+//    });
+//}
 /* 关闭指示器 */
-- (void) stopActivitor {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[JLActivitor sharedInstance] stopAnimating];
-    });
-}
+//- (void) stopActivitor {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [[JLActivitor sharedInstance] stopAnimating];
+//    });
+//}
 
 
 /* 保存的商户号: 从配置中读取 */

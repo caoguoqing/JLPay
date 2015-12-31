@@ -11,13 +11,10 @@
 #import "PosInformationViewController.h"
 #import "AppDelegate.h"
 #import "PublicInformation.h"
-//#import "ASIHTTPRequest.h"
 #import "Define_Header.h"
 #import "ASIFormDataRequest.h"
-//#import "Photo.h"
 #import "Toast+UIView.h"
 #import "JsonToString.h"
-//#import "JLActivity.h"
 #import "MBProgressHUD.h"
 
 
@@ -558,6 +555,7 @@
 - (UIProgressView *)progressView {
     if (_progressView == nil) {
         _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
+        _progressView.progressTintColor = [PublicInformation returnCommonAppColor:@"green"];
     }
     return _progressView;
 }
