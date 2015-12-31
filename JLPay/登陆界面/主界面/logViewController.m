@@ -22,6 +22,7 @@
 #import "ModelDeviceBindedInformation.h"
 #import "ModelHTTPRequestLogin.h"
 #import "ModelFeeBusinessInformation.h"
+#import "ChangePinViewController.h"
 
 
 #pragma mask    ---- 常量设置区 ----
@@ -417,20 +418,22 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     sender.transform = CGAffineTransformIdentity;
     
     if ([self.userNumberTextField.text length] == 0) {
-        [PublicInformation makeToast:@"请输入账号"];
+        [PublicInformation makeCentreToast:@"请输入账号"];
         [sender setEnabled:YES];
         return;
     }
     if ([self.userPasswordTextField.text length] == 0) {
-        [PublicInformation makeToast:@"请输入密码"];
+        [PublicInformation makeCentreToast:@"请输入密码"];
         [sender setEnabled:YES];
         return;
     }
     
-    // 登陆
-    [[ModelHTTPRequestLogin sharedInstance] loginWithUserID:self.userNumberTextField.text
-                                                 andUserPWD:[self pinEncryptBySource:self.userPasswordTextField.text]
-                                                   delegate:self];
+    if ([self.userPasswordTextField.text isEqualToString:@"00000000"]) {
+        [self gotoModifyPin];
+    } else {
+        // 登陆
+        [self startLogin];
+    }
 }
 
 /*************************************
@@ -458,6 +461,11 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 }
 
 #pragma mask ::: ModelHTTPRequestLoginDelegate
+- (void) startLogin {
+    [[ModelHTTPRequestLogin sharedInstance] loginWithUserID:self.userNumberTextField.text
+                                                 andUserPWD:[self pinEncryptBySource:self.userPasswordTextField.text]
+                                                   delegate:self];
+}
 /* 登陆成功 */
 - (void)didLoginSuccessWithLoginInfo:(NSDictionary *)loginInfo {
     [self.loadButton setEnabled:YES];
@@ -491,12 +499,12 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         case LoginErrorCodeTypeLowVersion:
             retMessage = [retMessage stringByAppendingString:@",请点击\"确定\"按钮下载最新版本."];
             tagalert = TagAlertVersionLow;
-            [self alertShowMessage:retMessage andTag:tagalert];
+            [PublicInformation alertCancleAndSureWithTitle:@"提示" message:retMessage tag:tagalert delegate:self];
             break;
         case LoginErrorCodeTypeRegistRefuse:
             self.dictLastRegisterInfo = [ModelHTTPRequestLogin sharedInstance].lastRegisterInfo;
             tagalert = TagAlertRegisterRefuse;
-            [self alertShowMessage:retMessage andTag:tagalert];
+            [PublicInformation alertCancleAndOther:@"修改" title:@"提示" message:retMessage tag:tagalert delegate:self];
             break;
         default:
             [PublicInformation makeToast:@"登陆失败"];
@@ -563,30 +571,14 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     return array;
 }
 
-#pragma mask ::: 弹出提示框
-- (void) alertShowMessage:(NSString*)msg andTag:(TagAlert)alertTag {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"登陆失败" message:msg delegate:self cancelButtonTitle:nil otherButtonTitles:nil, nil];
-    alert.tag = alertTag;
-    switch (alertTag) {
-        case TagAlertRegisterRefuse:
-            [alert addButtonWithTitle:@"取消"];
-            [alert addButtonWithTitle:@"修改注册信息"];
-            break;
-        default:
-            [alert addButtonWithTitle:@"确定"];
-            break;
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [alert show];
-    });
-}
 
 #pragma mask ------ UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     [self.loadButton setEnabled:YES];
+    NSString* buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     switch (alertView.tag) {
         case TagAlertVersionLow:
-            if (TAG_OF_BRANCH_EDITION != 0) { // app store分支不能跳转去下载
+            if ([buttonTitle isEqualToString:@"确定"] && TAG_OF_BRANCH_EDITION != 0) { // app store分支不能跳转去下载
                 [self gotoDownloadApp];
             }
             break;
@@ -595,7 +587,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
             if (self.dictLastRegisterInfo == nil) {
                 return;
             }
-            [self gotoSignUp];
+            if ([buttonTitle isEqualToString:@"修改"]) {
+                [self gotoSignUp];
+            }
         }
             break;
         default:
@@ -603,6 +597,16 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     }
 }
 
+// -- 强制修改密码
+- (void) gotoModifyPin {
+    // 保存当前登陆账号
+    self.switchSavePin.on = NO;
+    self.userPasswordTextField.text = nil;
+    [self savingLoadingInfo];
+    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    ChangePinViewController* modifyPinVC = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];
+    [self.navigationController pushViewController:modifyPinVC animated:YES];
+}
 
 // 下载app
 - (void) gotoDownloadApp {
@@ -637,7 +641,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (UITextField *)userNumberTextField {
     if (_userNumberTextField == nil) {
         _userNumberTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-        _userNumberTextField.placeholder    = @"请输入您的账号";
+        _userNumberTextField.placeholder    = @"请输入登陆账号";
         _userNumberTextField.textColor      = [UIColor whiteColor];
         _userNumberTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
         [_userNumberTextField setDelegate:self];
@@ -649,7 +653,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (UITextField *)userPasswordTextField {
     if (_userPasswordTextField == nil) {
         _userPasswordTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-        _userPasswordTextField.placeholder  = @"请输入您的密码";
+        _userPasswordTextField.placeholder  = @"请输入登陆密码";
         _userPasswordTextField.textColor    = [UIColor whiteColor];
         if ([self.switchSecurity isOn]) {
             _userPasswordTextField.secureTextEntry = NO;

@@ -135,8 +135,8 @@
 - (UIImageView *)imageViewDisplay {
     if (_imageViewDisplay == nil) {
         _imageViewDisplay = [[UIImageView alloc] initWithFrame:CGRectZero];
-        _imageViewDisplay.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-        _imageViewDisplay.layer.cornerRadius = 8.0;
+//        _imageViewDisplay.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+//        _imageViewDisplay.layer.cornerRadius = 8.0;
     }
     return _imageViewDisplay;
 }

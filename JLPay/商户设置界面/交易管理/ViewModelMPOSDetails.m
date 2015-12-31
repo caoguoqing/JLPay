@@ -285,10 +285,12 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
     [titles addObject:kMPOSDetailTitleSettleType];
     
     if ([[detailNode objectForKey:kDetailsKeyClearType] intValue] == 3) { // T+0
-        [titles addObject:kMPOSDetailTitleSettleAmount];
         [titles addObject:kMPOSDetailTitleSettleState];
         if ([[detailNode objectForKey:kDetailsKeySettleFlag] intValue] == 2) { // 拒绝结算
             [titles addObject:kMPOSDetailTitleRefuse];
+        }
+        else if ([[detailNode objectForKey:kDetailsKeySettleFlag] intValue] == 0) { // 结算成功
+            [titles addObject:kMPOSDetailTitleSettleAmount];
         }
     }
 

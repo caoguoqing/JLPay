@@ -270,9 +270,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [imagePickerController setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     }
     [imagePickerController setDelegate:self];
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
-        [imagePickerController setModalPresentationStyle:UIModalPresentationCurrentContext];
-    }
+    [imagePickerController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     [self presentViewController:imagePickerController animated:YES completion:^{}];
     
 }
@@ -981,6 +979,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
                                       [PublicInformation getServerDomain],
                                       [PublicInformation getHTTPPort]];
         [urlString appendString:[self requestTypeForRegisterType:self.registerType]];
+        NSLog(@"HTTP请求连接:%@",urlString);
         _httpRequestRegister = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
         [_httpRequestRegister setPostFormat:ASIMultipartFormDataPostFormat];
         [_httpRequestRegister setRequestMethod:@"POST"];

@@ -151,4 +151,9 @@
 + (void) makeToast:(NSString*)message;
 + (void) makeCentreToast:(NSString*)message;
 
+// -- AlertView 简化
++ (void) alertCancleAndSureWithTitle:(NSString*)title message:(NSString*)message tag:(NSInteger)tag delegate:(id)delegate; // 取消+确定
++ (void) alertSureWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate; // 确定
++ (void) alertCancleAndOther:(NSString*)other title:(NSString*)title message:(NSString*)message tag:(NSInteger)tag delegate:(id)delegate; // 取消+"其他"
+
 @end

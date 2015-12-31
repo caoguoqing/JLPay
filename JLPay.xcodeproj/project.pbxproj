@@ -2278,7 +2278,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6bdab874-323d-47aa-8a39-6ca4d7462b9a";
+				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -2322,7 +2322,7 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL/libCommunicationManager.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6bdab874-323d-47aa-8a39-6ca4d7462b9a";
+				PROVISIONING_PROFILE = "d9b25ca0-ec46-4c3f-bb16-eab4fd68c990";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};

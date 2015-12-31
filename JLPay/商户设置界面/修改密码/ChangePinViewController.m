@@ -9,11 +9,11 @@
 #import "ChangePinViewController.h"
 #import "PublicInformation.h"
 #import "ASIFormDataRequest.h"
-#import "JLActivity.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 #import "Define_Header.h"
 #import "ModelUserLoginInformation.h"
+#import "KVNProgress.h"
 
 @interface ChangePinViewController()<ASIHTTPRequestDelegate, UITextFieldDelegate> {
     CGFloat textFontSize;
@@ -23,7 +23,6 @@
 @property (nonatomic, strong) UITextField* userResureNewPwdField;
 
 @property (nonatomic, strong) UIButton* sureButton;
-@property (nonatomic, strong) JLActivity* activitor;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
 
 
@@ -34,7 +33,6 @@
 @synthesize userOldPwdField = _userOldPwdField;
 @synthesize userNewPwdField = _userNewPwdField;
 @synthesize sureButton = _sureButton;
-@synthesize activitor = _activitor;
 @synthesize httpRequest = _httpRequest;
 @synthesize userResureNewPwdField = _userResureNewPwdField;
 
@@ -50,7 +48,7 @@
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.httpRequest startAsynchronous];
-        [self.activitor startAnimating];
+        [KVNProgress show];
     });
 }
 
@@ -63,26 +61,21 @@
 }
 #pragma mask --- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
-    });
     NSData* data = [self.httpRequest responseData];
     [self.httpRequest clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     if ([[dataDict valueForKey:@"code"] intValue] == 0) {
-        [PublicInformation makeCentreToast:@"修改密码成功!"];
-        [self.navigationController popViewControllerAnimated:YES];
+        [KVNProgress showSuccessWithStatus:@"修改密码成功!" completion:^{
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
     } else {
-        [PublicInformation makeCentreToast:[NSString stringWithFormat:@"修改密码失败:%@",[dataDict valueForKey:@"message"]]];
+        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"修改密码失败:%@",dataDict[@"message"]]];
     }
     self.httpRequest = nil;
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequest clearDelegatesAndCancel];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activitor stopAnimating];
-        [PublicInformation makeCentreToast:@"网络异常,请检查网络"];
-    });
+    [KVNProgress showErrorWithStatus:@"网络异常,请检查网络"];
     self.httpRequest = nil;
 }
 
@@ -92,7 +85,15 @@
     if ([string isEqualToString:@"\n"]) {
         [textField resignFirstResponder];
     }
-    return YES;
+    if (textField.text.length > 8 - 1) {
+        if ([string cStringUsingEncoding:NSUTF8StringEncoding][0] == 0x00) {
+            return YES;
+        } else {
+            return NO;
+        }
+    } else {
+        return YES;
+    }
 }
 
 #pragma mask ---- “修改”按钮的点击事件
@@ -119,14 +120,22 @@
 }
 
 #pragma mask ---- 界面声明周期
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.view.backgroundColor = [UIColor whiteColor];
+    }
+    return self;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"修改密码";
+    self.navigationController.navigationBarHidden = NO;
     // 背景图
     [self.view addSubview:self.userOldPwdField];
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.userResureNewPwdField];
     [self.view addSubview:self.sureButton];
-    [self.view addSubview:self.activitor];
     textFontSize = 15;
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -322,12 +331,6 @@
 }
 
 
-- (JLActivity *)activitor {
-    if (_activitor == nil) {
-        _activitor = [[JLActivity alloc] init];
-    }
-    return _activitor;
-}
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
         NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ModifyPassword",

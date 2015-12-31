@@ -827,6 +827,33 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     });
 }
 
+// -- AlertView 简化
++ (void) alertCancleAndSureWithTitle:(NSString*)title message:(NSString*)message tag:(NSInteger)tag delegate:(id)delegate // 取消+确定
+{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:delegate cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    [alertView setTag:tag];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alertView show];
+    });
+}
++ (void) alertSureWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate  // 确定
+{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:delegate cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alertView setTag:tag];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alertView show];
+    });
+}
++ (void) alertCancleAndOther:(NSString*)other title:(NSString*)title message:(NSString*)message tag:(NSInteger)tag delegate:(id)delegate // 取消+"其他"
+{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:delegate cancelButtonTitle:@"取消" otherButtonTitles:other, nil];
+    [alertView setTag:tag];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alertView show];
+    });
+}
+
+
 
 
 @end
