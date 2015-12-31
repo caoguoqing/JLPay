@@ -829,11 +829,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 
 /* 初始图片 */
 - (UIImage*) initialImage {
-    UIImage* image = [UIImage imageNamed:@"camera"];
+    UIImage* image = [UIImage imageNamed:@"imageUploadBackground_1"]; //camera
     CGFloat viewHeight = HEIGHT_IMAGEVIEW_CELL;
-    CGFloat viewWidth = self.view.frame.size.width ;
+    CGFloat viewWidth = viewHeight;//self.view.frame.size.width - 15.f*2 - 8.f ;
     CGFloat imageHeight = viewHeight/2.0;
-    CGFloat imageWidth = imageHeight * image.size.width/image.size.height;
+    CGFloat imageWidth = imageHeight ;//* image.size.width/image.size.height;
     UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight)];
     UIImageView* imageView = [[UIImageView alloc] initWithFrame:CGRectMake((viewWidth - imageWidth)/2.0,
                                                                            (viewHeight - imageHeight)/2.0,
@@ -845,10 +845,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];
-    image = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    return image;
+    return newImage;
 }
 /* http请求类型 */
 - (NSString*) requestTypeForRegisterType:(RegisterType)type {

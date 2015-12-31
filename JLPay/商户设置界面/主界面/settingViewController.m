@@ -15,12 +15,24 @@
 #import "RateViewController.h"
 #import "FeeRateTableViewController.h"
 #import "BrushViewController.h"
+#import "T_0CardListViewController.h"
 #import "Packing8583.h"
 
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 
 #import "TestVCForDeviceBinding.h"
+
+
+static NSString* const kTitleSettingBusinessName = @"账号名称";
+static NSString* const kTitleSettingTransDetails = @"交易明细";
+static NSString* const kTitleSettingDeviceBinding = @"绑定设备";
+static NSString* const kTitleSettingFeeChoose = @"费率选择";
+static NSString* const kTitleSettingPinUpdate = @"修改密码";
+static NSString* const kTitleSettingT_0CardVerify = @"T+0卡验证";
+static NSString* const kTitleSettingBalanceSelect = @"余额查询";
+static NSString* const kTitleSettingHelper = @"帮助与关于";
+
 
 
 @interface settingViewController ()<UIAlertViewDelegate>
@@ -154,34 +166,36 @@
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController = nil;
     
-    if ([cellName isEqualToString:@"交易明细"]) {
+    if ([cellName isEqualToString:kTitleSettingTransDetails]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
         TransDetailsViewController* vc = (TransDetailsViewController*)viewController;
         vc.tradePlatform = NameTradePlatformMPOSSwipe;
     }
-    else if ([cellName isEqualToString:@"绑定设备"]) {
-//        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
-        viewController = [[TestVCForDeviceBinding alloc] initWithNibName:nil bundle:nil];
+    else if ([cellName isEqualToString:kTitleSettingDeviceBinding]) {
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+//        viewController = [[TestVCForDeviceBinding alloc] initWithNibName:nil bundle:nil];
     }
-    else if ([cellName isEqualToString:@"修改密码"]) {
+    else if ([cellName isEqualToString:kTitleSettingPinUpdate]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];
         [viewController setTitle:cellName];
     }
-    else if ([cellName isEqualToString:@"帮助和关于"]) {
+    else if ([cellName isEqualToString:kTitleSettingHelper]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"helperAndAboutVC"];
         [viewController setTitle:cellName];
     }
-    else if ([cellName isEqualToString:@"费率选择"]) {
+    else if ([cellName isEqualToString:kTitleSettingFeeChoose]) {
 //        viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
         viewController = [[RateViewController alloc] initWithNibName:nil bundle:nil];
         [viewController setTitle:cellName];
     }
-    else if ([cellName isEqualToString:@"余额查询"]) {
+    else if ([cellName isEqualToString:kTitleSettingBalanceSelect]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"brush"];
         BrushViewController* brushVC = (BrushViewController*)viewController;
         brushVC.stringOfTranType = TranType_YuE;
     }
-
+    else if ([cellName isEqualToString:kTitleSettingT_0CardVerify]) {
+        viewController = [[T_0CardListViewController alloc] initWithNibName:nil bundle:nil];
+    }
     if (viewController) {
         [self.navigationController pushViewController:viewController animated:YES];
     }
@@ -217,26 +231,28 @@
 - (NSArray *)cellNames {
     if (_cellNames == nil) {
         _cellNames = [NSArray arrayWithObjects:
-                      @"账号名称",
-                      @"交易明细",
-                      @"绑定设备",
-                      @"费率选择",
-//                      @"余额查询",
-                      @"修改密码",
-                      @"帮助和关于", nil];
+                      kTitleSettingBusinessName,
+                      kTitleSettingTransDetails,
+                      kTitleSettingDeviceBinding,
+                      kTitleSettingFeeChoose,
+//                      kTitleSettingBalanceSelect,
+                      kTitleSettingT_0CardVerify,
+                      kTitleSettingPinUpdate,
+                      kTitleSettingHelper, nil];
     }
     return _cellNames;
 }
 - (NSMutableDictionary *)cellNamesAndImages {
     if (_cellNamesAndImages == nil) {
         _cellNamesAndImages = [[NSMutableDictionary alloc] init];
-        [_cellNamesAndImages setValue:@"01_01" forKey:@"账号名称"];
-        [_cellNamesAndImages setValue:@"01_10" forKey:@"交易明细"];
-        [_cellNamesAndImages setValue:@"01_14" forKey:@"绑定设备"];
-        [_cellNamesAndImages setValue:@"01_18" forKey:@"修改密码"];
-        [_cellNamesAndImages setValue:@"01_24" forKey:@"帮助和关于"];
-        [_cellNamesAndImages setValue:@"01_12" forKey:@"费率选择"];
-        [_cellNamesAndImages setValue:@"01_16" forKey:@"余额查询"];
+        [_cellNamesAndImages setValue:@"01_01" forKey:kTitleSettingBusinessName];
+        [_cellNamesAndImages setValue:@"01_10" forKey:kTitleSettingTransDetails];
+        [_cellNamesAndImages setValue:@"01_14" forKey:kTitleSettingDeviceBinding];
+        [_cellNamesAndImages setValue:@"01_18" forKey:kTitleSettingPinUpdate];
+        [_cellNamesAndImages setValue:@"01_24" forKey:kTitleSettingHelper];
+        [_cellNamesAndImages setValue:@"01_12" forKey:kTitleSettingFeeChoose];
+        [_cellNamesAndImages setValue:@"01_16" forKey:kTitleSettingBalanceSelect];
+        [_cellNamesAndImages setValue:@"T_0CardVerify" forKey:kTitleSettingT_0CardVerify];
     }
     return _cellNamesAndImages;
 }

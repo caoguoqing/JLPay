@@ -20,6 +20,18 @@
 		5E0EBA8F1C2A79C000DCAC59 /* ModelAreaCodeSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */; };
 		5E0EBA921C2CE09500DCAC59 /* BLEDeviceManagerTY.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA911C2CE09500DCAC59 /* BLEDeviceManagerTY.m */; };
 		5E0EBA951C2CF25800DCAC59 /* TestVCForDeviceBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA941C2CF25800DCAC59 /* TestVCForDeviceBinding.m */; };
+		5E0EBA991C3230C900DCAC59 /* T_0CardListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA981C3230C900DCAC59 /* T_0CardListViewController.m */; };
+		5E0EBA9F1C3231D700DCAC59 /* HttpRequestT0CardList.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA9E1C3231D700DCAC59 /* HttpRequestT0CardList.m */; };
+		5E0EBAA71C326EB000DCAC59 /* SubAndDetailLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAA61C326EB000DCAC59 /* SubAndDetailLabelCell.m */; };
+		5E0EBAAA1C327C1D00DCAC59 /* T_0CardUploadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAA91C327C1D00DCAC59 /* T_0CardUploadViewController.m */; };
+		5E0EBAAE1C32846700DCAC59 /* FieldInputTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAAD1C32846700DCAC59 /* FieldInputTableCell.m */; };
+		5E0EBAB11C32849100DCAC59 /* ImageInputTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAB01C32849100DCAC59 /* ImageInputTableCell.m */; };
+		5E0EBAB41C33CF2E00DCAC59 /* HttpUploadT0Card.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAB31C33CF2E00DCAC59 /* HttpUploadT0Card.m */; };
+		5E0EBABB1C34BFA000DCAC59 /* KVNProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAB81C34BFA000DCAC59 /* KVNProgress.m */; };
+		5E0EBABC1C34BFA000DCAC59 /* KVNProgressConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBABA1C34BFA000DCAC59 /* KVNProgressConfiguration.m */; };
+		5E0EBAC31C34C04400DCAC59 /* UIColor+KVNContrast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBABE1C34C04400DCAC59 /* UIColor+KVNContrast.m */; };
+		5E0EBAC41C34C04400DCAC59 /* UIImage+KVNEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAC01C34C04400DCAC59 /* UIImage+KVNEmpty.m */; };
+		5E0EBAC51C34C04400DCAC59 /* UIImage+KVNImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAC21C34C04400DCAC59 /* UIImage+KVNImageEffects.m */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -236,6 +248,30 @@
 		5E0EBA911C2CE09500DCAC59 /* BLEDeviceManagerTY.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLEDeviceManagerTY.m; sourceTree = "<group>"; };
 		5E0EBA931C2CF25800DCAC59 /* TestVCForDeviceBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestVCForDeviceBinding.h; sourceTree = "<group>"; };
 		5E0EBA941C2CF25800DCAC59 /* TestVCForDeviceBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestVCForDeviceBinding.m; sourceTree = "<group>"; };
+		5E0EBA971C3230C900DCAC59 /* T_0CardListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T_0CardListViewController.h; sourceTree = "<group>"; };
+		5E0EBA981C3230C900DCAC59 /* T_0CardListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = T_0CardListViewController.m; sourceTree = "<group>"; };
+		5E0EBA9D1C3231D700DCAC59 /* HttpRequestT0CardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpRequestT0CardList.h; sourceTree = "<group>"; };
+		5E0EBA9E1C3231D700DCAC59 /* HttpRequestT0CardList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpRequestT0CardList.m; sourceTree = "<group>"; };
+		5E0EBAA51C326EB000DCAC59 /* SubAndDetailLabelCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubAndDetailLabelCell.h; sourceTree = "<group>"; };
+		5E0EBAA61C326EB000DCAC59 /* SubAndDetailLabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubAndDetailLabelCell.m; sourceTree = "<group>"; };
+		5E0EBAA81C327C1D00DCAC59 /* T_0CardUploadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T_0CardUploadViewController.h; sourceTree = "<group>"; };
+		5E0EBAA91C327C1D00DCAC59 /* T_0CardUploadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = T_0CardUploadViewController.m; sourceTree = "<group>"; };
+		5E0EBAAC1C32846700DCAC59 /* FieldInputTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldInputTableCell.h; sourceTree = "<group>"; };
+		5E0EBAAD1C32846700DCAC59 /* FieldInputTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldInputTableCell.m; sourceTree = "<group>"; };
+		5E0EBAAF1C32849100DCAC59 /* ImageInputTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInputTableCell.h; sourceTree = "<group>"; };
+		5E0EBAB01C32849100DCAC59 /* ImageInputTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageInputTableCell.m; sourceTree = "<group>"; };
+		5E0EBAB21C33CF2E00DCAC59 /* HttpUploadT0Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpUploadT0Card.h; sourceTree = "<group>"; };
+		5E0EBAB31C33CF2E00DCAC59 /* HttpUploadT0Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpUploadT0Card.m; sourceTree = "<group>"; };
+		5E0EBAB71C34BFA000DCAC59 /* KVNProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVNProgress.h; path = KVNProgress/KVNProgress.h; sourceTree = "<group>"; };
+		5E0EBAB81C34BFA000DCAC59 /* KVNProgress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KVNProgress.m; path = KVNProgress/KVNProgress.m; sourceTree = "<group>"; };
+		5E0EBAB91C34BFA000DCAC59 /* KVNProgressConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVNProgressConfiguration.h; path = KVNProgress/KVNProgressConfiguration.h; sourceTree = "<group>"; };
+		5E0EBABA1C34BFA000DCAC59 /* KVNProgressConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KVNProgressConfiguration.m; path = KVNProgress/KVNProgressConfiguration.m; sourceTree = "<group>"; };
+		5E0EBABD1C34C04400DCAC59 /* UIColor+KVNContrast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+KVNContrast.h"; path = "KVNProgress/UIColor+KVNContrast.h"; sourceTree = "<group>"; };
+		5E0EBABE1C34C04400DCAC59 /* UIColor+KVNContrast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+KVNContrast.m"; path = "KVNProgress/UIColor+KVNContrast.m"; sourceTree = "<group>"; };
+		5E0EBABF1C34C04400DCAC59 /* UIImage+KVNEmpty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+KVNEmpty.h"; path = "KVNProgress/UIImage+KVNEmpty.h"; sourceTree = "<group>"; };
+		5E0EBAC01C34C04400DCAC59 /* UIImage+KVNEmpty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+KVNEmpty.m"; path = "KVNProgress/UIImage+KVNEmpty.m"; sourceTree = "<group>"; };
+		5E0EBAC11C34C04400DCAC59 /* UIImage+KVNImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+KVNImageEffects.h"; path = "KVNProgress/UIImage+KVNImageEffects.h"; sourceTree = "<group>"; };
+		5E0EBAC21C34C04400DCAC59 /* UIImage+KVNImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+KVNImageEffects.m"; path = "KVNProgress/UIImage+KVNImageEffects.m"; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -304,8 +340,8 @@
 		5E4A1FF11C055C3000E7DFD5 /* ModelUserLoginInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUserLoginInformation.m; sourceTree = "<group>"; };
 		5E4A1FF41C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelDeviceBindedInformation.h; sourceTree = "<group>"; };
 		5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelDeviceBindedInformation.m; sourceTree = "<group>"; };
-		5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicPickerView.h; path = CustomPickerView/DynamicPickerView.h; sourceTree = "<group>"; };
-		5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DynamicPickerView.m; path = CustomPickerView/DynamicPickerView.m; sourceTree = "<group>"; };
+		5E54D6521BB6D7E7005FF3C4 /* DynamicPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicPickerView.h; sourceTree = "<group>"; };
+		5E54D6531BB6D7E7005FF3C4 /* DynamicPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicPickerView.m; sourceTree = "<group>"; };
 		5E5E353E1B70BC4300560C0A /* myCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myCollectionCell.h; sourceTree = "<group>"; };
 		5E5E353F1B70BC4300560C0A /* myCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myCollectionCell.m; sourceTree = "<group>"; };
 		5E5E35451B71E93700560C0A /* ChangePinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePinViewController.h; sourceTree = "<group>"; };
@@ -324,10 +360,10 @@
 		5E5E35CF1B7DD7E400560C0A /* BangdingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BangdingViewController.m; sourceTree = "<group>"; };
 		5E5E35DB1B80746500560C0A /* GuanyuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuanyuViewController.h; sourceTree = "<group>"; };
 		5E5E35DC1B80746500560C0A /* GuanyuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuanyuViewController.m; sourceTree = "<group>"; };
-		5E5E36301B87082F00560C0A /* CustomPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomPickerView.h; path = CustomPickerView/CustomPickerView.h; sourceTree = "<group>"; };
-		5E5E36311B87082F00560C0A /* CustomPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomPickerView.m; path = CustomPickerView/CustomPickerView.m; sourceTree = "<group>"; };
+		5E5E36301B87082F00560C0A /* CustomPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomPickerView.h; sourceTree = "<group>"; };
+		5E5E36311B87082F00560C0A /* CustomPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomPickerView.m; sourceTree = "<group>"; };
 		5E5E36331B8B059D00560C0A /* JLActivitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLActivitor.h; sourceTree = "<group>"; };
-		5E5E36341B8B059D00560C0A /* JLActivitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLActivitor.m; sourceTree = "<group>"; };
+		5E5E36341B8B059D00560C0A /* JLActivitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLActivitor.m; path = "/Users/jielian/group/JLPay/JLPay/public/自定义控件/捷联通指示器/JLActivitor.m"; sourceTree = "<absolute>"; };
 		5E5FA5681B413E2F00387E69 /* CommunicationCallBack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationCallBack.h; sourceTree = "<group>"; };
 		5E5FA5691B413E2F00387E69 /* CommunicationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommunicationManager.h; sourceTree = "<group>"; };
 		5E5FA56A1B413EBD00387E69 /* libCommunicationManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libCommunicationManager.a; sourceTree = "<group>"; };
@@ -369,8 +405,8 @@
 		5E82B8291B2ED59800A58751 /* ThreeDesUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreeDesUtil.h; sourceTree = "<group>"; };
 		5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThreeDesUtil.m; sourceTree = "<group>"; };
 		5E82B8621B310AAD00A58751 /* JLActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLActivity.h; sourceTree = "<group>"; };
-		5E82B8631B310AAD00A58751 /* JLActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLActivity.m; sourceTree = "<group>"; };
-		5E82B8651B310AF000A58751 /* activitor01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor01.png; sourceTree = "<group>"; };
+		5E82B8631B310AAD00A58751 /* JLActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLActivity.m; path = "../../../../Users/jielian/group/JLPay/JLPay/public/自定义控件/捷联通指示器/JLActivity.m"; sourceTree = DEVELOPER_DIR; };
+		5E82B8651B310AF000A58751 /* activitor01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = activitor01.png; path = "/Users/jielian/group/JLPay/JLPay/public/自定义控件/捷联通指示器/activitor01.png"; sourceTree = "<absolute>"; };
 		5E82B8661B310AF000A58751 /* activitor02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor02.png; sourceTree = "<group>"; };
 		5E82B8671B310AF000A58751 /* activitor03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor03.png; sourceTree = "<group>"; };
 		5E82B8681B310AF000A58751 /* activitor04.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor04.png; sourceTree = "<group>"; };
@@ -380,7 +416,7 @@
 		5E82B86C1B310AF000A58751 /* activitor08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor08.png; sourceTree = "<group>"; };
 		5E82B86D1B310AF000A58751 /* activitor09.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor09.png; sourceTree = "<group>"; };
 		5E82B86E1B310AF000A58751 /* activitor10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor10.png; sourceTree = "<group>"; };
-		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor11.png; sourceTree = "<group>"; };
+		5E82B86F1B310AF000A58751 /* activitor11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = activitor11.png; path = "/Users/jielian/group/JLPay/JLPay/public/自定义控件/捷联通指示器/activitor11.png"; sourceTree = "<absolute>"; };
 		5E82B8701B310AF000A58751 /* activitor12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = activitor12.png; sourceTree = "<group>"; };
 		5E8541B31BD4EAD000C03B41 /* BankNumberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BankNumberViewController.h; sourceTree = "<group>"; };
 		5E8541B41BD4EAD000C03B41 /* BankNumberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BankNumberViewController.m; sourceTree = "<group>"; };
@@ -626,6 +662,7 @@
 				5E82B7E31B253F5F00A58751 /* 交易管理 */,
 				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E82B87D1B31610700A58751 /* 连接机具 */,
+				5E0EBA961C3227A600DCAC59 /* T_0卡验证 */,
 				5E9448171BFD5AF500128452 /* 余额查询 */,
 				5E5E35441B71E90400560C0A /* 修改密码 */,
 				5E5E35AA1B7DD33800560C0A /* 帮助与关于 */,
@@ -669,6 +706,77 @@
 				5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */,
 			);
 			path = "地区代码";
+			sourceTree = "<group>";
+		};
+		5E0EBA961C3227A600DCAC59 /* T_0卡验证 */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBA9C1C3230F000DCAC59 /* model */,
+				5E0EBA9B1C3230E900DCAC59 /* viewController */,
+				5E0EBAAB1C32843600DCAC59 /* view */,
+			);
+			path = "T_0卡验证";
+			sourceTree = "<group>";
+		};
+		5E0EBA9B1C3230E900DCAC59 /* viewController */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBA971C3230C900DCAC59 /* T_0CardListViewController.h */,
+				5E0EBA981C3230C900DCAC59 /* T_0CardListViewController.m */,
+				5E0EBAA81C327C1D00DCAC59 /* T_0CardUploadViewController.h */,
+				5E0EBAA91C327C1D00DCAC59 /* T_0CardUploadViewController.m */,
+			);
+			name = viewController;
+			sourceTree = "<group>";
+		};
+		5E0EBA9C1C3230F000DCAC59 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBA9D1C3231D700DCAC59 /* HttpRequestT0CardList.h */,
+				5E0EBA9E1C3231D700DCAC59 /* HttpRequestT0CardList.m */,
+				5E0EBAB21C33CF2E00DCAC59 /* HttpUploadT0Card.h */,
+				5E0EBAB31C33CF2E00DCAC59 /* HttpUploadT0Card.m */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		5E0EBAAB1C32843600DCAC59 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBAAC1C32846700DCAC59 /* FieldInputTableCell.h */,
+				5E0EBAAD1C32846700DCAC59 /* FieldInputTableCell.m */,
+				5E0EBAAF1C32849100DCAC59 /* ImageInputTableCell.h */,
+				5E0EBAB01C32849100DCAC59 /* ImageInputTableCell.m */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		5E0EBAB51C34BE4400DCAC59 /* 第三方控件 */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBAB61C34BF6E00DCAC59 /* KVNProgress */,
+				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
+				5ED344251AD8C1DB0005C890 /* ProgressHUD */,
+				5EBF3C401AD3B5BB00091F83 /* Toast */,
+			);
+			path = "第三方控件";
+			sourceTree = "<group>";
+		};
+		5E0EBAB61C34BF6E00DCAC59 /* KVNProgress */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBAB71C34BFA000DCAC59 /* KVNProgress.h */,
+				5E0EBAB81C34BFA000DCAC59 /* KVNProgress.m */,
+				5E0EBAB91C34BFA000DCAC59 /* KVNProgressConfiguration.h */,
+				5E0EBABA1C34BFA000DCAC59 /* KVNProgressConfiguration.m */,
+				5E0EBABD1C34C04400DCAC59 /* UIColor+KVNContrast.h */,
+				5E0EBABE1C34C04400DCAC59 /* UIColor+KVNContrast.m */,
+				5E0EBABF1C34C04400DCAC59 /* UIImage+KVNEmpty.h */,
+				5E0EBAC01C34C04400DCAC59 /* UIImage+KVNEmpty.m */,
+				5E0EBAC11C34C04400DCAC59 /* UIImage+KVNImageEffects.h */,
+				5E0EBAC21C34C04400DCAC59 /* UIImage+KVNImageEffects.m */,
+			);
+			name = KVNProgress;
 			sourceTree = "<group>";
 		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
@@ -819,7 +927,7 @@
 				5E5E36301B87082F00560C0A /* CustomPickerView.h */,
 				5E5E36311B87082F00560C0A /* CustomPickerView.m */,
 			);
-			name = CustomPickerView;
+			path = CustomPickerView;
 			sourceTree = "<group>";
 		};
 		5E5FA56C1B46342600387E69 /* JHL_M60 */ = {
@@ -1364,6 +1472,8 @@
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
 				5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */,
+				5E0EBAB51C34BE4400DCAC59 /* 第三方控件 */,
+				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5E0EBA811C2A312000DCAC59 /* 保存本地信息 */,
 				5EB9B1371AD79EC600A73190 /* SDK */,
 				5EBAA9001ACD3B0200E2ABDD /* DES */,
@@ -1371,13 +1481,6 @@
 				5EDE98B71BDA0D5200131190 /* SQLITE */,
 				5E397B3E1AD364A9004F206F /* TCP */,
 				5E7852CE1C1FBC7000A58865 /* HTTP */,
-				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
-				5E82B8611B310A7D00A58751 /* 捷联通指示器 */,
-				5EBF3C401AD3B5BB00091F83 /* Toast */,
-				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
-				5E5E362C1B87076200560C0A /* CustomPickerView */,
-				5EB9B1441AD7B92100A73190 /* MLTableAlert */,
-				5ED344251AD8C1DB0005C890 /* ProgressHUD */,
 			);
 			path = public;
 			sourceTree = "<group>";
@@ -1500,6 +1603,9 @@
 		5EDA83DD1B9047AF0096391B /* 自定义控件 */ = {
 			isa = PBXGroup;
 			children = (
+				5E5E362C1B87076200560C0A /* CustomPickerView */,
+				5EBE376C1ADF5BC700901980 /* CustomKeyboard */,
+				5E82B8611B310A7D00A58751 /* 捷联通指示器 */,
 				5EBA40F81AEA37AC00F270C0 /* NewVersionView.h */,
 				5EBA40F91AEA37AC00F270C0 /* NewVersionView.m */,
 				5EBA40FB1AEA3A3200F270C0 /* Photo.h */,
@@ -1508,6 +1614,8 @@
 				5E0EBA7B1C23DC0200DCAC59 /* TriangleLeftTurnView.m */,
 				5E0EBA7E1C27CFC900DCAC59 /* CustomNavigationController.h */,
 				5E0EBA7F1C27CFC900DCAC59 /* CustomNavigationController.m */,
+				5E0EBAA51C326EB000DCAC59 /* SubAndDetailLabelCell.h */,
+				5E0EBAA61C326EB000DCAC59 /* SubAndDetailLabelCell.m */,
 			);
 			path = "自定义控件";
 			sourceTree = "<group>";
@@ -1865,6 +1973,7 @@
 				5E397B2B1AD36429004F206F /* ASICloudFilesContainerXMLParserDelegate.m in Sources */,
 				5EBA40FD1AEA3A3200F270C0 /* Photo.m in Sources */,
 				5EB9B1581AD7B92100A73190 /* MLTableAlert.m in Sources */,
+				5E0EBAC41C34C04400DCAC59 /* UIImage+KVNEmpty.m in Sources */,
 				5EBAA8E81ACD2FA800E2ABDD /* ASCIIString.m in Sources */,
 				5EBA40F71AEA366000F270C0 /* QianPiViewController.m in Sources */,
 				5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */,
@@ -1872,6 +1981,7 @@
 				5E0EBA6C1C1FEDAC00DCAC59 /* ViewModelMPOSDetails.m in Sources */,
 				5E82B7E21B214B8F00A58751 /* passwordView.m in Sources */,
 				5EB6F9881AC8DD1C00E47AB5 /* logViewController.m in Sources */,
+				5E0EBAC51C34C04400DCAC59 /* UIImage+KVNImageEffects.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
 				5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */,
 				5E5E35A21B7C79E200560C0A /* MySQLiteManager.m in Sources */,
@@ -1884,6 +1994,7 @@
 				5E397B3C1AD36429004F206F /* ASIWebPageRequest.m in Sources */,
 				5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */,
 				5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */,
+				5E0EBAB11C32849100DCAC59 /* ImageInputTableCell.m in Sources */,
 				5EFD09911C1681BA0062AD34 /* ModelFeeRates.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
 				5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */,
@@ -1892,14 +2003,17 @@
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
 				5E0EBA761C23D79E00DCAC59 /* ViewModelOtherPayDetails.m in Sources */,
 				5E9448231BFDB21700128452 /* NormalTableViewCell.m in Sources */,
+				5E0EBAA71C326EB000DCAC59 /* SubAndDetailLabelCell.m in Sources */,
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5E0EBA731C228A0400DCAC59 /* IntMoneyCalculating.m in Sources */,
+				5E0EBAAA1C327C1D00DCAC59 /* T_0CardUploadViewController.m in Sources */,
 				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,
 				5E0EBA921C2CE09500DCAC59 /* BLEDeviceManagerTY.m in Sources */,
 				5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
+				5E0EBABC1C34BFA000DCAC59 /* KVNProgressConfiguration.m in Sources */,
 				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
 				5EBAA8EF1ACD2FA800E2ABDD /* Unpacking8583.m in Sources */,
 				5E5FA5861B46342600387E69 /* ISDataPath.m in Sources */,
@@ -1912,6 +2026,7 @@
 				5E0EBA8F1C2A79C000DCAC59 /* ModelAreaCodeSelector.m in Sources */,
 				5E397B331AD36429004F206F /* ASIHTTPRequest.m in Sources */,
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
+				5E0EBA991C3230C900DCAC59 /* T_0CardListViewController.m in Sources */,
 				5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */,
 				5EDD1E7E1C084BB800D78A5C /* PullRefrashView.m in Sources */,
 				5E397B361AD36429004F206F /* ASIS3Bucket.m in Sources */,
@@ -1920,12 +2035,15 @@
 				5E82B8251B295F4400A58751 /* RevokeViewController.m in Sources */,
 				5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */,
 				5EA9214E1BE31B1B00DB0AA8 /* QRCodeButtonView.m in Sources */,
+				5E0EBABB1C34BFA000DCAC59 /* KVNProgress.m in Sources */,
 				5E397B2E1AD36429004F206F /* ASICloudFilesRequest.m in Sources */,
 				5E93B4AB1BE99FD80064BEC4 /* ViewModelTCPEnquiry.m in Sources */,
+				5E0EBAB41C33CF2E00DCAC59 /* HttpUploadT0Card.m in Sources */,
 				5EBA40FA1AEA37AC00F270C0 /* NewVersionView.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
 				5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */,
 				5EA9214B1BE3197200DB0AA8 /* OtherPayCollectViewController.m in Sources */,
+				5E0EBAC31C34C04400DCAC59 /* UIColor+KVNContrast.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
 				5E0EBA801C27CFC900DCAC59 /* CustomNavigationController.m in Sources */,
@@ -1940,10 +2058,12 @@
 				5E82B7901B1BFCC200A58751 /* JHLDevice.m in Sources */,
 				5E8541B51BD4EAD000C03B41 /* BankNumberViewController.m in Sources */,
 				5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */,
+				5E0EBA9F1C3231D700DCAC59 /* HttpRequestT0CardList.m in Sources */,
 				5E5FA5841B46342600387E69 /* ISBLEDataPath.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
 				5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */,
+				5E0EBAAE1C32846700DCAC59 /* FieldInputTableCell.m in Sources */,
 				5E93B4A81BE89D300064BEC4 /* ViewModelQRImageMaker.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
 				5EF3BAA71B69C01900DCD764 /* RateViewController.m in Sources */,

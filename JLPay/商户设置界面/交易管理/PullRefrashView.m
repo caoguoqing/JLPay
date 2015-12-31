@@ -7,6 +7,7 @@
 //
 
 #import "PullRefrashView.h"
+#import "PublicInformation.h"
 
 @interface PullRefrashView()
 {
@@ -14,6 +15,7 @@
     NSString* pullDownText;
     NSString* waitingText;
     CGFloat heightContentView;
+    CGFloat heightLabel;
     BOOL refreshing;
 }
 @property (nonatomic, retain) UIImageView* imageView;
@@ -70,6 +72,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         heightContentView = 40.0;
+        heightLabel = 20;
         pullUpText = @"松开即可刷新";
         pullDownText = @"下拉即可刷新";
         waitingText = @"努力加载中";
@@ -89,12 +92,17 @@
     CGFloat widthLabel = textSize.width;
     CGFloat widthImage = heightContentView;
     
-    CGRect frame = CGRectMake((self.frame.size.width - widthImage - widthLabel - inset)/2.0, (self.frame.size.height - heightContentView)/2.0, widthImage, widthImage);
+    CGRect frame = CGRectMake((self.frame.size.width - widthImage - widthLabel - inset)/2.0,
+                              (self.frame.size.height - heightContentView)/2.0,
+                              widthImage,
+                              widthImage);
     [self.imageView setFrame:frame];
     [self.activity setFrame:frame];
     
     frame.origin.x += frame.size.width + inset;
+    frame.origin.y = (self.frame.size.height - heightLabel)/2.0;
     frame.size.width = widthLabel;
+    frame.size.height = heightLabel;
     [self.textLabel setFrame:frame];
     
 }
@@ -112,7 +120,7 @@
 - (UIImageView *)imageView {
     if (_imageView == nil) {
         _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        _imageView.image = [UIImage imageNamed:@"pulltorefresharrow"];
+        _imageView.image = [UIImage imageNamed:@"grayPullArrow"];
     }
     return _imageView;
 }
@@ -122,6 +130,7 @@
         _textLabel.textAlignment = NSTextAlignmentLeft;
         _textLabel.text = pullDownText;
         _textLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
+        _textLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(10, heightLabel) andScale:1]];
     }
     return _textLabel;
 }

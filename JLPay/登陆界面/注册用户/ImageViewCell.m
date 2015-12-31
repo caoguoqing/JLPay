@@ -13,6 +13,7 @@
 {
     CGFloat fontSize;
     CGFloat logCount ;
+    UIImage* imageDisplaying;
 }
 @property (nonatomic, strong) UILabel* mustInputLabel;
 @property (nonatomic, strong) UILabel* titleLabel;
@@ -21,6 +22,8 @@
 @end
 
 @implementation ImageViewCell
+@synthesize title = _title;
+@synthesize imageDisplay = _imageDisplay;
 
 #pragma mask ---- 初始化
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -50,10 +53,12 @@
     frame.size.width = self.frame.size.width - insetHorizantol*2 - mustInputWidth;
     [self.titleLabel setFrame:frame];
     [self.titleLabel setFont:[self newFontInFrame:frame]];
+    [self.titleLabel setText:self.title];
     // 图片视图
     frame.origin.y += frame.size.height + insetVertical;
     frame.size.height = self.frame.size.height - frame.size.height - insetVertical*3;
     [self.imageViewDisplay setFrame:frame];
+    [self.imageViewDisplay setImage:imageDisplaying];
 }
 
 /* 字体大小重置: 指定frame */
@@ -71,28 +76,25 @@
 /* 重置图片: 适应于当前cell frame */
 - (UIImage*) newImageWithSourceImage:(UIImage*)sourceImage {
     UIImage* newImage = nil;
-    CGRect frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width - 30 - 8, HEIGHT_IMAGEVIEW_CELL);
-    UIView* view = [[UIView alloc] initWithFrame:frame];
+    if (self.frame.size.width == 0) {
+        return newImage;
+    }
+    if (!sourceImage) {
+        return newImage;
+    }
+    UIView* view = [[UIView alloc] initWithFrame:self.frame];
     CGFloat newImageWidth = 0;
     CGFloat newImageHeight = 0;
 
     // 按原图大小来定义新的放置图片的视图
-    if (sourceImage.size.width <= view.frame.size.width && sourceImage.size.height <= view.frame.size.height) {
-        newImageWidth = sourceImage.size.width;
-        newImageHeight = sourceImage.size.height;
-    } else {
-        CGFloat sourceRateWH = (sourceImage.size.width)/(sourceImage.size.height);
-        CGFloat newRateWH = (view.frame.size.width)/(view.frame.size.height);
-        // 图片的宽高比大于视图的宽高比: 以视图的宽为准;否则以视图的高为准
-        if (newRateWH >= sourceRateWH) {
-            newImageHeight = view.frame.size.height;
-            newImageWidth = newImageHeight * sourceRateWH;
-        } else {
-            newImageWidth = view.frame.size.width;
-            newImageHeight = newImageWidth * 1/sourceRateWH;
-        }
+    if (self.frame.size.width/self.frame.size.height > sourceImage.size.width/sourceImage.size.height) {
+        newImageHeight = self.frame.size.height;
+        newImageWidth = newImageHeight * sourceImage.size.width/sourceImage.size.height;
     }
-    
+    else {
+        newImageWidth = self.frame.size.width;
+        newImageHeight = newImageWidth * sourceImage.size.height/sourceImage.size.width;
+    }
     UIImageView* newImageView = [[UIImageView alloc] initWithFrame:CGRectMake((view.frame.size.width - newImageWidth)/2.0,
                                                                               (view.frame.size.height - newImageHeight)/2.0,
                                                                               newImageWidth,
@@ -141,14 +143,14 @@
 #pragma mask ---- setter
 - (void)setTitle:(NSString *)title {
     _title = title;
-    self.titleLabel.text = title;
+    [self setNeedsLayout];
 }
 - (void)setImageDisplay:(UIImage *)imageDisplay {
     _imageDisplay = imageDisplay;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage* newImage = [self newImageWithSourceImage:_imageDisplay];
+        imageDisplaying = [self newImageWithSourceImage:imageDisplay];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.imageViewDisplay setImage:newImage];
+            [self setNeedsLayout];
         });
     });
 }

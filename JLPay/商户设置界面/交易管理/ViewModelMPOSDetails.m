@@ -46,7 +46,7 @@ static NSString* const kMPOSDetailTitleTransState = @"交易状态";
 static NSString* const kMPOSDetailTitleOrderNum = @"订单编号";
 static NSString* const kMPOSDetailTitleTermNum = @"终端编号";
 static NSString* const kMPOSDetailTitleSettleType = @"结算方式";
-static NSString* const kMPOSDetailTitleSettleAmount = @"结算金额";
+static NSString* const kMPOSDetailTitleSettleAmount = @"已结算金额";
 static NSString* const kMPOSDetailTitleSettleState = @"结算状态";
 static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
 
