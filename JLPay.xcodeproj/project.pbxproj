@@ -32,6 +32,7 @@
 		5E0EBAC31C34C04400DCAC59 /* UIColor+KVNContrast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBABE1C34C04400DCAC59 /* UIColor+KVNContrast.m */; };
 		5E0EBAC41C34C04400DCAC59 /* UIImage+KVNEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAC01C34C04400DCAC59 /* UIImage+KVNEmpty.m */; };
 		5E0EBAC51C34C04400DCAC59 /* UIImage+KVNImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBAC21C34C04400DCAC59 /* UIImage+KVNImageEffects.m */; };
+		5E0EBAC81C34C30100DCAC59 /* KVNProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E0EBAC71C34C30100DCAC59 /* KVNProgressView.xib */; };
 		5E2DE6D61B534CA500C297CF /* DeviceSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF81AD36429004F206F /* ASICloudFilesCDNRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -272,6 +273,7 @@
 		5E0EBAC01C34C04400DCAC59 /* UIImage+KVNEmpty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+KVNEmpty.m"; path = "KVNProgress/UIImage+KVNEmpty.m"; sourceTree = "<group>"; };
 		5E0EBAC11C34C04400DCAC59 /* UIImage+KVNImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+KVNImageEffects.h"; path = "KVNProgress/UIImage+KVNImageEffects.h"; sourceTree = "<group>"; };
 		5E0EBAC21C34C04400DCAC59 /* UIImage+KVNImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+KVNImageEffects.m"; path = "KVNProgress/UIImage+KVNImageEffects.m"; sourceTree = "<group>"; };
+		5E0EBAC71C34C30100DCAC59 /* KVNProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KVNProgressView.xib; sourceTree = "<group>"; };
 		5E2DE6D41B534CA500C297CF /* DeviceSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSignInViewController.h; sourceTree = "<group>"; };
 		5E2DE6D51B534CA500C297CF /* DeviceSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceSignInViewController.m; sourceTree = "<group>"; };
 		5E397AF41AD36429004F206F /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -777,6 +779,15 @@
 				5E0EBAC21C34C04400DCAC59 /* UIImage+KVNImageEffects.m */,
 			);
 			name = KVNProgress;
+			sourceTree = "<group>";
+		};
+		5E0EBAC61C34C2EA00DCAC59 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5E0EBAC71C34C30100DCAC59 /* KVNProgressView.xib */,
+			);
+			name = Resources;
+			path = ../Resources;
 			sourceTree = "<group>";
 		};
 		5E397AF31AD36429004F206F /* asi-http */ = {
@@ -1374,6 +1385,7 @@
 				5E0D18681B09D9BB0092F4AB /* 商户设置界面 */,
 				5E08AE701B0991A400B8C198 /* 增值服务界面 */,
 				5EB6F97F1AC8DD1C00E47AB5 /* Supporting Files */,
+				5E0EBAC61C34C2EA00DCAC59 /* Resources */,
 				5EB6F98C1AC8DD1C00E47AB5 /* Images.xcassets */,
 				5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */,
 			);
@@ -1924,6 +1936,7 @@
 				5EB9B1561AD7B92100A73190 /* MLTableAlertShadowMask.png in Resources */,
 				5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */,
 				5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */,
+				5E0EBAC81C34C30100DCAC59 /* KVNProgressView.xib in Resources */,
 				5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */,
 				5E82B8761B310AF000A58751 /* activitor06.png in Resources */,
 				5E82B8781B310AF000A58751 /* activitor08.png in Resources */,

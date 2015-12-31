@@ -11,6 +11,7 @@
 #import "FieldInputTableCell.h"
 #import "ImageInputTableCell.h"
 #import "HttpUploadT0Card.h"
+#import "KVNProgress.h"
 
 static NSString* const kActionSheetTitleCamera = @"拍摄";
 static NSString* const kActionSheetTitlePicture = @"从相册选择";
@@ -70,11 +71,21 @@ HttpUploadT0CardDelegate>
 }
 
 #pragma mask 1 HttpUploadT0Card && HttpUploadT0CardDelegate
+- (IBAction) checkAndUpload:(id)sender  {
+    if ([self allInputsIsPrepared]) {
+        [[HttpUploadT0Card sharedInstance] uploadCardNo:[self cardNoFromCell]
+                                         cardHolderName:[self cardNameFromCell]
+                                              cardPhoto:[self cardImageFromCell]
+                                             onDelegate:self];
+        [KVNProgress showWithStatus:@"银行卡信息上传中..."];
+    }
+}
+
 - (void)didUploadedSuccess {
-    [PublicInformation makeCentreToast:@"上传银行卡信息成功!"];
+    [KVNProgress showSuccessWithStatus:@"上传银行卡信息成功!"];
 }
 - (void)didUploadedFail:(NSString *)failMessage {
-    [PublicInformation makeCentreToast:[NSString stringWithFormat:@"上传图片失败:%@",failMessage]];
+    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传银行卡信息失败:%@",failMessage]];
 }
 
 #pragma mask 2 UITableViewDataSource, UITableViewDelegate
@@ -205,14 +216,6 @@ HttpUploadT0CardDelegate>
 }
 
 #pragma mask 3 点击事件
-- (IBAction) checkAndUpload:(id)sender  {
-    if ([self allInputsIsPrepared]) {
-        [[HttpUploadT0Card sharedInstance] uploadCardNo:[self cardNoFromCell]
-                                         cardHolderName:[self cardNameFromCell]
-                                              cardPhoto:[self cardImageFromCell]
-                                             onDelegate:self];
-    }
-}
 
 #pragma mask 4 PRIVATE INTERFACE
 //
