@@ -137,18 +137,15 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     }
 }
 
-#pragma mask ---- 密码文本框的编辑事件
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    if (textField.tag == tagFieldUserPwd) {
-        if ([self.switchSecurity isOn] && textField.secureTextEntry) {
-            [textField setSecureTextEntry:NO];
-            [textField setNeedsDisplay];
-        } else if (![self.switchSecurity isOn] && !textField.secureTextEntry) {
-            [textField setSecureTextEntry:YES];
-            [textField setNeedsDisplay];
-        }
+#pragma mask ----  显示密码switch的切换
+- (IBAction) clickSwitchSecurity:(UISwitch*)sender {
+    if (sender.isOn) {
+        self.userPasswordTextField.secureTextEntry = NO;
+        [self.userPasswordTextField setNeedsDisplay];
+    } else {
+        self.userPasswordTextField.secureTextEntry = YES;
+        [self.userPasswordTextField setNeedsDisplay];
     }
-    return YES;
 }
 
 
@@ -427,13 +424,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         [sender setEnabled:YES];
         return;
     }
-    
-    if ([self.userPasswordTextField.text isEqualToString:@"00000000"]) {
-        [self gotoModifyPin];
-    } else {
-        // 登陆
-        [self startLogin];
-    }
+    // 登陆
+    [self startLogin];
+
 }
 
 /*************************************
@@ -470,20 +463,23 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (void)didLoginSuccessWithLoginInfo:(NSDictionary *)loginInfo {
     [self.loadButton setEnabled:YES];
     
-    // 校验是否切换了账号
-    [self checkoutLoadingSwitch];
-    // 保存当前登陆信息
-    [self savingLoadingInfo];
-    // 保存响应的商户信息
-    [self savingBussinessInfo:loginInfo];
-    [PublicInformation makeToast:@"登陆成功"];
-    
-    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    // 切换到主场景
-    if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        [appDelegate signInSuccessToLogin:0];
+    if ([self.userPasswordTextField.text isEqualToString:@"00000000"]) {
+        [self gotoModifyPin]; // 8位0强制修改密码
     } else {
-        [appDelegate signInSuccessToLogin:1];
+        // 校验是否切换了账号
+        [self checkoutLoadingSwitch];
+        // 保存当前登陆信息
+        [self savingLoadingInfo];
+        // 保存响应的商户信息
+        [self savingBussinessInfo:loginInfo];
+        [PublicInformation makeToast:@"登陆成功"];
+        
+        AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+        if ([ModelDeviceBindedInformation hasBindedDevice]) {
+            [appDelegate signInSuccessToLogin:0]; // 跳转金额输入界面
+        } else {
+            [appDelegate signInSuccessToLogin:1]; // 跳转商户管理界面
+        }
     }
 }
 
@@ -719,6 +715,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     if (_switchSecurity == nil) {
         _switchSecurity = [[UISwitch alloc] initWithFrame:CGRectZero];
         [_switchSecurity setOn:[ModelUserLoginInformation needDisplayUserPWD]];
+        [_switchSecurity addTarget:self action:@selector(clickSwitchSecurity:) forControlEvents:UIControlEventValueChanged];
     }
     return _switchSecurity;
 }

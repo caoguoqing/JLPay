@@ -55,6 +55,8 @@
     
     self.window.rootViewController = [self newNavigationOfLoginVC];
     
+    [NSThread sleepForTimeInterval:1.5f];
+    
     return YES;
 }
 
