@@ -231,8 +231,8 @@
     if (_years == nil) {
         _years = [[NSMutableArray alloc] init];
         NSString* ndate = [self nowDate];
-        for (int i = [[ndate substringToIndex:4] intValue]; i >= 2015; i--) {
-            [_years addObject:[NSString stringWithFormat:@"%d",i]];
+        for (int date = 2015; date <= [ndate substringToIndex:4].intValue; date++) {
+            [_years addObject:[NSString stringWithFormat:@"%d",date]];
         }
     }
     return _years;

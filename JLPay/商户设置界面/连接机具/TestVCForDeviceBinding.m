@@ -198,6 +198,18 @@
     });
 }
 
+- (UIButton*) newButtonWithTitle:(NSString*)title andSelector:(SEL)selector {
+    UIButton* button = [[UIButton alloc] initWithFrame:CGRectZero];
+    [button setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
+    [button setTitle:title forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [button setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+    [button.layer setCornerRadius:5.f];
+    [button addTarget:self action:selector forControlEvents:UIControlEventTouchUpInside];
+    return button;
+}
+
 
 #pragma mask ---- getter
 - (UITableView *)tableView {
@@ -214,92 +226,43 @@
 
 - (UIButton *)btnSearchDevice {
     if (_btnSearchDevice == nil) {
-        _btnSearchDevice = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnSearchDevice setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnSearchDevice setTitle:@"搜索设备" forState:UIControlStateNormal];
-        [_btnSearchDevice setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnSearchDevice setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnSearchDevice setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnSearchDevice.layer setCornerRadius:5.f];
-        [_btnSearchDevice addTarget:self action:@selector(searchDevicesOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnSearchDevice = [self newButtonWithTitle:@"搜索设备" andSelector:@selector(searchDevicesOnButton:)];
     }
     return _btnSearchDevice;
 }
 - (UIButton *)btnConnectDevice {
     if (_btnConnectDevice == nil) {
-        _btnConnectDevice = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnConnectDevice setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnConnectDevice setTitle:@"连接设备" forState:UIControlStateNormal];
-        [_btnConnectDevice setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnConnectDevice setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnConnectDevice setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnConnectDevice.layer setCornerRadius:5.f];
-        [_btnConnectDevice addTarget:self action:@selector(connectDeviceOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnConnectDevice = [self newButtonWithTitle:@"连接设备" andSelector:@selector(connectDeviceOnButton:)];
     }
     return _btnConnectDevice;
 }
 - (UIButton *)btnDisconnectDevice {
     if (_btnDisconnectDevice == nil) {
-        _btnDisconnectDevice = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnDisconnectDevice setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnDisconnectDevice setTitle:@"断开设备" forState:UIControlStateNormal];
-        [_btnDisconnectDevice setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnDisconnectDevice setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnDisconnectDevice setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnDisconnectDevice.layer setCornerRadius:5.f];
-        [_btnDisconnectDevice addTarget:self action:@selector(disConnectDeviceOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnDisconnectDevice = [self newButtonWithTitle:@"断开设备" andSelector:@selector(disConnectDeviceOnButton:)];
     }
     return _btnDisconnectDevice;
 }
 - (UIButton *)btnRereadSN {
     if (_btnRereadSN == nil) {
-        _btnRereadSN = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnRereadSN setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnRereadSN setTitle:@"读取SN" forState:UIControlStateNormal];
-        [_btnRereadSN setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnRereadSN setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnRereadSN setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnRereadSN.layer setCornerRadius:5.f];
-        [_btnRereadSN addTarget:self action:@selector(rereadDeviceSNOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnRereadSN = [self newButtonWithTitle:@"读取SN" andSelector:@selector(rereadDeviceSNOnButton:)];
     }
     return _btnRereadSN;
 }
 - (UIButton *)btnWriteMainKey {
     if (_btnWriteMainKey == nil) {
-        _btnWriteMainKey = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnWriteMainKey setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnWriteMainKey setTitle:@"写主密钥" forState:UIControlStateNormal];
-        [_btnWriteMainKey setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnWriteMainKey setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnWriteMainKey setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnWriteMainKey.layer setCornerRadius:5.f];
-        [_btnWriteMainKey addTarget:self action:@selector(writeDeviceMainKeyOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnWriteMainKey = [self newButtonWithTitle:@"写主密钥" andSelector:@selector(writeDeviceMainKeyOnButton:)];
     }
     return _btnWriteMainKey;
 }
 - (UIButton *)btnWriteWorkKey {
     if (_btnWriteWorkKey == nil) {
-        _btnWriteWorkKey = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnWriteWorkKey setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnWriteWorkKey setTitle:@"写工作密钥" forState:UIControlStateNormal];
-        [_btnWriteWorkKey setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnWriteWorkKey setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnWriteWorkKey setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnWriteWorkKey.layer setCornerRadius:5.f];
-        [_btnWriteWorkKey addTarget:self action:@selector(writeDeviceWorkKeyOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnWriteWorkKey = [self newButtonWithTitle:@"写工作密钥" andSelector:@selector(writeDeviceWorkKeyOnButton:)];
     }
     return _btnWriteWorkKey;
 }
 - (UIButton *)btnSwipeCard {
     if (_btnSwipeCard == nil) {
-        _btnSwipeCard = [[UIButton alloc] initWithFrame:CGRectZero];
-        [_btnSwipeCard setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_btnSwipeCard setTitle:@"刷卡" forState:UIControlStateNormal];
-        [_btnSwipeCard setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_btnSwipeCard setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_btnSwipeCard setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_btnSwipeCard.layer setCornerRadius:5.f];
-        [_btnSwipeCard addTarget:self action:@selector(swipeCardOnButton:) forControlEvents:UIControlEventTouchUpInside];
+        _btnWriteWorkKey = [self newButtonWithTitle:@"刷卡" andSelector:@selector(swipeCardOnButton:)];
     }
     return _btnSwipeCard;
 }

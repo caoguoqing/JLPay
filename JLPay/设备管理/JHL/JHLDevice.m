@@ -204,13 +204,13 @@ static FieldTrackData TransData;
                 NSLog(@"设备电量:%d", batteryLeft);
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (batteryLeft < 10) {
-                        [[app_delegate window] makeToast:[NSString stringWithFormat:@"设备打开成功,电量过低:%d%%",batteryLeft]];
+                        [PublicInformation makeToast:[NSString stringWithFormat:@"设备打开成功,电量过低:%d%%",batteryLeft]];
                     } else {
-                        [[app_delegate window] makeToast:[NSString stringWithFormat:@"设备打开成功,电量:%d%%",batteryLeft]];
+                        [PublicInformation makeToast:[NSString stringWithFormat:@"设备打开成功,电量:%d%%",batteryLeft]];
                     }
                 });
             } else {            // 失败
-                [[app_delegate window] makeToast:[NSString stringWithFormat:@"设备打开失败"]];
+                [PublicInformation makeToast:@"设备打开失败"];
             }
             break;
 
@@ -264,7 +264,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 设备正在识别......", __func__);
-                    [[app_delegate window] makeToast:@"正在识别设备..."];
+                    [PublicInformation makeToast:@"正在识别设备..."];
                 }
             });
             break;
@@ -272,7 +272,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 设备无法识别", __func__);
-                    [[app_delegate window] makeToast:@"无法识别设备"];
+                    [PublicInformation makeToast:@"无法识别设备"];
                 }
             });
             break;
@@ -280,7 +280,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 没有设备介入 （设备拔出）", __func__);
-                    [[app_delegate window] makeToast:@"没有插入设备"];
+                    [PublicInformation makeToast:@"没有插入设备"];
                 }
             });
             break;
@@ -288,7 +288,7 @@ static FieldTrackData TransData;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (Print_log) {
                     NSLog(@"%s, 刷卡器已识别，但需要升级", __func__);
-                    [[app_delegate window] makeToast:@"设备版本过低,请升级固件"];
+                    [PublicInformation makeToast:@"设备版本过低,请升级固件"];
                 }
             });
             break;
@@ -548,13 +548,13 @@ static FieldTrackData TransData;
 #pragma mask : CommunicationCallBack 的暂时无用的协议
 - (void)onTimeout {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[app_delegate window] makeToast:@"设备读取超时"];
+        [PublicInformation makeToast:@"设备读取超时"];
     });
 }
 
 - (void)onError:(NSInteger)code message:(NSString *)msg {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[app_delegate window] makeToast:msg];
+        [PublicInformation makeToast:msg];
     });
 }
 -(void)onSendOK {

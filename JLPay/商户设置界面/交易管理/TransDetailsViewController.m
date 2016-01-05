@@ -148,9 +148,7 @@ NSInteger logCount = 0;
         if (maxPullDownOffset <= -heightPullRefrashView) {
             [self.pullRefrashView turnWaiting];
             // 重新获取明细数据
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
-            });
+            [self requestDataOnStartDate:[self dateOfDateButton:self.dateButtonBegin] endDate:[self dateOfDateButton:self.dateButtonEnd]];
         }
     }
     maxPullDownOffset = 0;

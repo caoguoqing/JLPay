@@ -76,9 +76,7 @@ TYJieLianDelegate
 
 #pragma mask : 断开设备
 - (void)closeAllDevices{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self.deviceManager disConnectDevice];
-    });
+    [self.deviceManager disConnectDevice];
 }
 
 
@@ -141,9 +139,7 @@ TYJieLianDelegate
     for (NSDictionary* dict in self.deviceList) {
         if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
             CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                [self.deviceManager connectDevice:peripheral];
-            });
+            [self.deviceManager connectDevice:peripheral];
             break;
         }
     }
@@ -288,15 +284,11 @@ TYJieLianDelegate
         case WORKKEY_CMD:
             if (!result) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
-                    });
+                    [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
                 }
             } else {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.delegate didWriteWorkKeySucOrFail:NO withError:@"下载工作密钥失败"];
-                    });
+                    [self.delegate didWriteWorkKeySucOrFail:NO withError:@"下载工作密钥失败"];
                 }
             }
             break;

@@ -42,6 +42,10 @@
     [tabBarController setViewControllers:navigationControllers];
     [tabBarController setSelectedIndex:select];
     
+    ////
+    id customClass = objc_getClass("Lender");
+    ////
+    
     [self.window setRootViewController:tabBarController];
 }
 
@@ -98,7 +102,6 @@
     CustPayViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"custPayVC"];
     BrushViewController* brushVC = [[BrushViewController alloc] init];
     
-//    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:viewController];
     CustomNavigationController* navigation = [[CustomNavigationController alloc] initWithRootViewController:viewController viewControllersShouldPopToRoot:@[brushVC]];
     
     [navigation.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor redColor] forKey:NSForegroundColorAttributeName]];

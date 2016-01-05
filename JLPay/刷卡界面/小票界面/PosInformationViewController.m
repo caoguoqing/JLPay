@@ -17,14 +17,15 @@
 #import "JsonToString.h"
 #import "MBProgressHUD.h"
 
+static NSString* const kKVOImageUploaded = @"imageUploaded";
 
 @interface PosInformationViewController ()<ASIHTTPRequestDelegate>
-{
-    BOOL imageUploaded;
-}
 @property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
 
-@property (nonatomic, strong) UIButton* sureButton;
+@property (nonatomic, assign) BOOL imageUploaded;
+
+@property (nonatomic, strong) UIButton* buttonReupload;
+@property (nonatomic, strong) UIButton* buttonUploadDone;
 @property (nonatomic, strong) UIProgressView* progressView;
 @end
 
@@ -32,7 +33,6 @@
 @implementation PosInformationViewController
 @synthesize uploadRequest = _uploadRequest;
 @synthesize progressView = _progressView;
-@synthesize sureButton = _sureButton;
 @synthesize posImg;
 @synthesize scrollAllImg;
 
@@ -108,13 +108,10 @@
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:request.responseString]];
     
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
-        imageUploaded = YES;
+        self.imageUploaded = YES;
         [PublicInformation makeToast:@"小票上传成功"];
     }else{
-        imageUploaded = NO;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.sureButton setEnabled:YES];
-        });
+        self.imageUploaded = NO;
         [PublicInformation makeToast:@"小票上传失败，请稍后重试"];
     }
     [request clearDelegatesAndCancel];
@@ -123,10 +120,7 @@
 }
 /* HTTP回调: 响应失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    imageUploaded = NO;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.sureButton setEnabled:YES];
-    });
+    self.imageUploaded = NO;
     [request clearDelegatesAndCancel];
     self.uploadRequest = nil;
     [PublicInformation makeToast:@"网络异常，请检查网络后重新上传"];
@@ -135,6 +129,7 @@
 
 
 - (void) loadsSubviews {
+    self.automaticallyAdjustsScrollViewInsets = NO;
     // 小字体
     UIFont* littleFont = [UIFont systemFontOfSize:10.f];
     NSDictionary* littleTextAttri = [NSDictionary dictionaryWithObject:littleFont forKey:NSFontAttributeName];
@@ -146,21 +141,31 @@
     NSDictionary* bigTextAttri = [NSDictionary dictionaryWithObject:bigFont forKey:NSFontAttributeName];
     // 每组 label 之间的间隔
     CGFloat inset = 5.f;
-    // 按钮高度
-    CGFloat buttonHeight = 50.f;
+    // 状态栏+导航栏高度
+    CGFloat heightStatus = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGFloat heightNavi = self.navigationController.navigationBar.bounds.size.height;
+    // 进度条高度
+    CGFloat heightProgress = 2.f;
     
     // 小票是滚动视图
     UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(0,
-                                                                          0,
+                                                                          heightStatus + heightNavi + heightProgress,
                                                                           self.view.bounds.size.width,
-                                                                          self.view.bounds.size.height - buttonHeight - inset * 4)];
+                                                                          self.view.bounds.size.height - heightNavi - heightStatus - heightProgress)];
     scrollVi.backgroundColor=[UIColor whiteColor];
     scrollVi.bounces = NO;
     
 #pragma mask : 开始加载滚动视图的子视图
+    CGRect frame = CGRectMake(0, heightStatus + heightNavi, scrollVi.bounds.size.width, heightProgress);
+
+    // 进度条
+    [self.progressView setFrame:frame];
+    [self.view addSubview:self.progressView];
+
     //POS-签购单 商户存根
     NSString* text = @"POS-签购单";
-    CGRect frame = CGRectMake(0, 0, scrollVi.bounds.size.width, [text sizeWithAttributes:bigTextAttri].height);
+    frame.origin.y = 0;
+    frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     UILabel* textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentCenter font:bigFont];
     [scrollVi addSubview:textLabel];
     // 商户存根
@@ -429,42 +434,40 @@
     scrollVi.contentSize = CGSizeMake(Screen_Width, frame.origin.y); // 高度要重新定义
     [self.view addSubview:scrollVi];
     
-    // 进度条
-    frame.origin.x = 0;//inset * 10;
-    frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height;
-    frame.size.width = scrollVi.bounds.size.width ;//- inset*10 * 2;
-    frame.size.height = inset*2;
-    [self.progressView setFrame:frame];
-    [self.view addSubview:self.progressView];
-    
-    // 确定按钮
-    frame.origin.x = inset * 2.0;
-    frame.origin.y = scrollVi.frame.origin.y + scrollVi.frame.size.height + inset * 2.0;
-    frame.size.width = scrollVi.bounds.size.width - inset * 2.0 * 2.0;
-    frame.size.height = buttonHeight;
-    [self.sureButton setFrame:frame];
-    [self.view addSubview:self.sureButton];
-    
     // 将滚动视图的内容装填成图片.jpg
     self.scrollAllImg = [self getNormalImage:scrollVi];
 }
 
+#pragma mask 1 KVO
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kKVOImageUploaded]) {
+        if (self.imageUploaded) {
+            self.buttonUploadDone.enabled = YES;
+            self.buttonReupload.enabled = NO;
+        } else {
+            self.buttonReupload.enabled = YES;
+            self.buttonUploadDone.enabled = NO;
+        }
+    }
+}
+
+#pragma mask 0 界面布局
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
     self.title=@"POS-签购单";
     
-    imageUploaded = NO;
+    self.imageUploaded = NO;
     
     // 导航栏的退出按钮置空
-    UIButton*leftBackBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    leftBackBtn.frame=CGRectMake(0,0,0,0);
-    UIBarButtonItem *backBarBtn=[[UIBarButtonItem alloc] initWithCustomView:leftBackBtn];
-    self.navigationItem.leftBarButtonItem=backBarBtn;
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonReupload]];
     
     // 导航栏添加"完成"按钮
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(checkUploadedAndPopView)]];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonUploadDone]];
+    
+    [self addObserver:self forKeyPath:kKVOImageUploaded options:NSKeyValueObservingOptionNew context:nil];
     
     [self loadsSubviews];
     
@@ -495,7 +498,7 @@
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    if (!imageUploaded) {
+    if (!self.imageUploaded) {
         [self uploadRequestMethod];
     }
 }
@@ -504,17 +507,27 @@
     [super viewWillDisappear:animated];
     [self.uploadRequest clearDelegatesAndCancel];
     self.uploadRequest = nil;
+    [self removeObserver:self forKeyPath:kKVOImageUploaded];
 }
 
 /* 检查上传结果并退出 */
 - (void) checkUploadedAndPopView {
-    if (imageUploaded) {
+    if (self.imageUploaded) {
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
     else {
         [PublicInformation makeCentreToast:@"小票未上传,请上传小票!"];
     }
 }
+// -- 重新上传小票
+- (IBAction) reuploadStubImage:(id)sender {
+    if (self.imageUploaded) {
+        [PublicInformation makeToast:@"小票已成功上传"];
+    } else {
+        [self uploadRequestMethod];
+    }
+}
+
 
 #pragma mark ----------------屏幕截图
 //获取当前屏幕内容
@@ -545,7 +558,7 @@
         _uploadRequest = [[ASIFormDataRequest alloc] initWithURL:url];
         [_uploadRequest setShouldAttemptPersistentConnection:YES];
         [_uploadRequest setNumberOfTimesToRetryOnTimeout:3];
-        [_uploadRequest setTimeOutSeconds:30];
+        [_uploadRequest setTimeOutSeconds:20];
         [_uploadRequest setDelegate:self];
         
         [_uploadRequest setUploadProgressDelegate:self.progressView];
@@ -559,23 +572,38 @@
     }
     return _progressView;
 }
-- (UIButton *)sureButton {
-    if (_sureButton == nil) {
-        _sureButton = [[UIButton alloc] init];
-        _sureButton.layer.cornerRadius = 10.0;
-        [_sureButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
-        [_sureButton setTitle:@"上传" forState:UIControlStateNormal];
-        [_sureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_sureButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        
-        [_sureButton addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-        [_sureButton addTarget:self action:@selector(touchOut:) forControlEvents:UIControlEventTouchUpOutside];
-        [_sureButton addTarget:self action:@selector(requireMethod:) forControlEvents:UIControlEventTouchUpInside];
-
-        _sureButton.enabled = NO;
+- (UIButton *)buttonReupload {
+    if (_buttonReupload == nil) {
+        NSString* buttonTitle = @"重新上传";
+        CGFloat fontSize = 17.f;
+        CGSize titleSize = [buttonTitle sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontSize] forKey:NSFontAttributeName]];
+        _buttonReupload = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, titleSize.width, titleSize.height)];
+        [_buttonReupload setTitle:buttonTitle forState:UIControlStateNormal];
+        [_buttonReupload setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [_buttonReupload setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_buttonReupload setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+        [_buttonReupload.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        _buttonReupload.titleLabel.textAlignment = NSTextAlignmentLeft;
+        [_buttonReupload addTarget:self action:@selector(reuploadStubImage:) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _sureButton;
+    return _buttonReupload;
+}
+- (UIButton *)buttonUploadDone {
+    if (_buttonUploadDone == nil) {
+        NSString* buttonTitle = @"完成";
+        CGFloat fontSize = 17.f;
+        CGSize titleSize = [buttonTitle sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontSize] forKey:NSFontAttributeName]];
+        _buttonUploadDone = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, titleSize.width, titleSize.height)];
+        [_buttonUploadDone setTitle:buttonTitle forState:UIControlStateNormal];
+        [_buttonUploadDone setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [_buttonUploadDone setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_buttonUploadDone setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+        [_buttonUploadDone.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        _buttonUploadDone.titleLabel.textAlignment = NSTextAlignmentRight;
+        [_buttonUploadDone addTarget:self action:@selector(checkUploadedAndPopView) forControlEvents:UIControlEventTouchUpInside];
+        _buttonUploadDone.enabled = NO;
+    }
+    return _buttonUploadDone;
 }
 
 @end

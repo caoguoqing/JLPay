@@ -302,7 +302,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         return;
     }
     [self stopDeviceTimer];
-    [KVNProgress showSuccessWithStatus:@"设备连接成功!"];
+    [KVNProgress dismiss];
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
@@ -457,7 +457,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [KVNProgress showWithStatus:@"设备连接中..."];
         // 开始扫描并连接
         [[DeviceManager sharedInstance] closeAllDevices];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [[DeviceManager sharedInstance] startScanningDevices];
         });
     }
@@ -543,18 +543,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 // 启动设备等待定时器
 - (void) startDeviceTimer {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
-    });
+    self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
 }
 // 关闭设备定时器
 - (void) stopDeviceTimer {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.waitingTimer isValid]) {
-            [self.waitingTimer invalidate];
-            self.waitingTimer = nil;
-        }
-    });
+    if ([self.waitingTimer isValid]) {
+        [self.waitingTimer invalidate];
+        self.waitingTimer = nil;
+    }
 }
 
 // 超时后解除转轮，并输出错误信息

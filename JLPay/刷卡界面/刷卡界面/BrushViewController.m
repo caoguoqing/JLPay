@@ -137,7 +137,6 @@
     // 3.扫描设备
     [[DeviceManager sharedInstance] startScanningDevices];
 
-    
     // 4.先在主线程打开activitor 和 提示信息
     [self.activity startAnimating];
     self.timeOut = 30; // 扫描设备的超时时间为30
