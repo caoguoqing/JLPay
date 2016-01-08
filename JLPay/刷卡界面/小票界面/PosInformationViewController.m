@@ -9,7 +9,6 @@
 #define Screen_Width  [UIScreen mainScreen].bounds.size.width
 
 #import "PosInformationViewController.h"
-#import "AppDelegate.h"
 #import "PublicInformation.h"
 #import "Define_Header.h"
 #import "ASIFormDataRequest.h"
@@ -41,7 +40,7 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        appdelegate=(AppDelegate *)[UIApplication sharedApplication].delegate;
+        self.imageUploaded = NO;
     }
     return self;
 }
@@ -130,6 +129,14 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 
 - (void) loadsSubviews {
     self.automaticallyAdjustsScrollViewInsets = NO;
+    // 导航栏的退出按钮置空
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonReupload]];
+    self.buttonReupload.enabled = NO;
+    
+    // 导航栏添加"完成"按钮
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonUploadDone]];
+    self.buttonUploadDone.enabled = NO;
+
     // 小字体
     UIFont* littleFont = [UIFont systemFontOfSize:10.f];
     NSDictionary* littleTextAttri = [NSDictionary dictionaryWithObject:littleFont forKey:NSFontAttributeName];
@@ -441,10 +448,12 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 #pragma mask 1 KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
+    NSLog(@"监控到KVO-change[%@]",change);
     if ([keyPath isEqualToString:kKVOImageUploaded]) {
         if (self.imageUploaded) {
             self.buttonUploadDone.enabled = YES;
             self.buttonReupload.enabled = NO;
+            [self updateTitleOfReloadButtonAfterUploadingSuccess];
         } else {
             self.buttonReupload.enabled = YES;
             self.buttonUploadDone.enabled = NO;
@@ -459,15 +468,9 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
     self.title=@"POS-签购单";
     
-    self.imageUploaded = NO;
     
-    // 导航栏的退出按钮置空
-    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonReupload]];
     
-    // 导航栏添加"完成"按钮
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonUploadDone]];
-    
-    [self addObserver:self forKeyPath:kKVOImageUploaded options:NSKeyValueObservingOptionNew context:nil];
+    [self addObserver:self forKeyPath:kKVOImageUploaded options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
     
     [self loadsSubviews];
     
@@ -524,6 +527,8 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     if (self.imageUploaded) {
         [PublicInformation makeToast:@"小票已成功上传"];
     } else {
+        [self.uploadRequest clearDelegatesAndCancel];
+        self.uploadRequest = nil;
         [self uploadRequestMethod];
     }
 }
@@ -545,7 +550,11 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     
 }
 
-
+// -- 更新重新上传按钮标题: 成功后
+- (void) updateTitleOfReloadButtonAfterUploadingSuccess {
+    [self.buttonReupload setTitle:@"已上传" forState:UIControlStateDisabled];
+    [self.buttonReupload setTitleColor:[PublicInformation returnCommonAppColor:@"green"] forState:UIControlStateDisabled];
+}
 
 
 #pragma mask ::: setter && getter
@@ -578,10 +587,12 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
         CGFloat fontSize = 17.f;
         CGSize titleSize = [buttonTitle sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontSize] forKey:NSFontAttributeName]];
         _buttonReupload = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, titleSize.width, titleSize.height)];
+        
         [_buttonReupload setTitle:buttonTitle forState:UIControlStateNormal];
         [_buttonReupload setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
         [_buttonReupload setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         [_buttonReupload setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+        
         [_buttonReupload.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
         _buttonReupload.titleLabel.textAlignment = NSTextAlignmentLeft;
         [_buttonReupload addTarget:self action:@selector(reuploadStubImage:) forControlEvents:UIControlEventTouchUpInside];
@@ -601,7 +612,6 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
         [_buttonUploadDone.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
         _buttonUploadDone.titleLabel.textAlignment = NSTextAlignmentRight;
         [_buttonUploadDone addTarget:self action:@selector(checkUploadedAndPopView) forControlEvents:UIControlEventTouchUpInside];
-        _buttonUploadDone.enabled = NO;
     }
     return _buttonUploadDone;
 }

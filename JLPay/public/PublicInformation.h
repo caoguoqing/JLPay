@@ -99,6 +99,8 @@
  */
 +(UIColor*) returnCommonAppColor:(NSString*)color;
 
++ (UIColor*) colorForHexInt:(NSUInteger)hexInt;
+
 #pragma mask 0-------------------------------------------0 App信息相关
 /* 版本号 */
 + (NSString*) AppVersionNumber;

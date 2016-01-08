@@ -27,7 +27,6 @@
 @implementation AppDelegate
 
 
-
 #pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
 -(void)signInSuccessToLogin:(int)select{
     
@@ -37,16 +36,24 @@
     NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
     [navigationControllers addObject:[self newNavigationOfCustPayVC]];
     [navigationControllers addObject:[self newNavigationOfBusinessVC]];
-//    [navigationControllers addObject:[self newNavigationOfAdditionalVC]];
     
     [tabBarController setViewControllers:navigationControllers];
     [tabBarController setSelectedIndex:select];
     
-    ////
-    id customClass = objc_getClass("Lender");
-    ////
-    
     [self.window setRootViewController:tabBarController];
+}
+#pragma mask ::: 初始化主界面:分页控制器
+- (UITabBarController*) mainTabBarControllerOfApp {
+    UITabBarController* tabBarController = [[UITabBarController alloc] initWithNibName:nil bundle:nil];
+    [tabBarController.tabBar setTintColor:[PublicInformation returnCommonAppColor:@"red"]];
+    
+    NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
+    [navigationControllers addObject:[self newNavigationOfCustPayVC]];
+    [navigationControllers addObject:[self newNavigationOfBusinessVC]];
+    [navigationControllers addObject:[self newNavigationOfAdditionalVC]];
+    
+    [tabBarController setViewControllers:navigationControllers];
+    return tabBarController;
 }
 
 

@@ -20,5 +20,7 @@
 
 /* 查询状态 */
 - (BOOL) isRefreshing;
+- (BOOL) isPullingUp;
+- (BOOL) isPullingDown;
 
 @end

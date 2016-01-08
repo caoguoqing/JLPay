@@ -462,24 +462,26 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 /* 登陆成功 */
 - (void)didLoginSuccessWithLoginInfo:(NSDictionary *)loginInfo {
     [self.loadButton setEnabled:YES];
+    // 校验是否切换了账号
+    [self checkoutLoadingSwitch];
     
     if ([self.userPasswordTextField.text isEqualToString:@"00000000"]) {
         [self gotoModifyPin]; // 8位0强制修改密码
     } else {
-        // 校验是否切换了账号
-        [self checkoutLoadingSwitch];
         // 保存当前登陆信息
         [self savingLoadingInfo];
         // 保存响应的商户信息
         [self savingBussinessInfo:loginInfo];
-        [PublicInformation makeToast:@"登陆成功"];
+        [PublicInformation makeToast:@"登录成功"];
         
-        AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+        
+        UITabBarController* mainTabBar = [APPMainDelegate mainTabBarControllerOfApp];
         if ([ModelDeviceBindedInformation hasBindedDevice]) {
-            [appDelegate signInSuccessToLogin:0]; // 跳转金额输入界面
+            [mainTabBar setSelectedIndex:0]; // 切换到金额输入界面
         } else {
-            [appDelegate signInSuccessToLogin:1]; // 跳转商户管理界面
+            [mainTabBar setSelectedIndex:1]; // 切换到商户管理界面
         }
+        [self presentViewController:mainTabBar animated:YES completion:nil];
     }
 }
 
@@ -505,7 +507,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
             [PublicInformation alertCancleAndOther:@"修改" title:@"提示" message:retMessage tag:tagalert delegate:self];
             break;
         default:
-            [PublicInformation makeToast:@"登陆失败"];
+            [PublicInformation makeToast:@"登录失败"];
             break;
     }
 }
@@ -639,7 +641,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (UITextField *)userNumberTextField {
     if (_userNumberTextField == nil) {
         _userNumberTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-        _userNumberTextField.placeholder    = @"请输入登陆账号";
+        _userNumberTextField.placeholder    = @"请输入登录账号";
         _userNumberTextField.textColor      = [UIColor whiteColor];
         _userNumberTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
         [_userNumberTextField setDelegate:self];
@@ -651,7 +653,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (UITextField *)userPasswordTextField {
     if (_userPasswordTextField == nil) {
         _userPasswordTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-        _userPasswordTextField.placeholder  = @"请输入登陆密码";
+        _userPasswordTextField.placeholder  = @"请输入登录密码";
         _userPasswordTextField.textColor    = [UIColor whiteColor];
         if ([self.switchSecurity isOn]) {
             _userPasswordTextField.secureTextEntry = NO;
@@ -673,7 +675,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         _loadButton.backgroundColor     = [UIColor colorWithRed:234.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
         _loadButton.layer.cornerRadius  = ViewCornerRadius;
         _loadButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
-        [_loadButton setTitle:@"登    陆" forState:UIControlStateNormal];
+        [_loadButton setTitle:@"登    录" forState:UIControlStateNormal];
         [_loadButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         [_loadButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
 

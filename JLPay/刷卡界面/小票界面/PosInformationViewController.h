@@ -10,9 +10,7 @@
 
 @class AppDelegate;
 
-@interface PosInformationViewController : UIViewController{
-    AppDelegate *appdelegate;
-}
+@interface PosInformationViewController : UIViewController
 
 @property(nonatomic,retain)UIImage *posImg;
 

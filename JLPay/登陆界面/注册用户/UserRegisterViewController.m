@@ -269,7 +269,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [imagePickerController setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     }
     [imagePickerController setDelegate:self];
-    [imagePickerController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    [imagePickerController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
     [self presentViewController:imagePickerController animated:YES completion:^{}];
     
 }
@@ -290,7 +290,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 #pragma mask ------ ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
-//    [self stopActivitor];
     NSData* datas = [request responseData];
     self.httpRequestRegister = nil;
     NSError* error;
@@ -316,6 +315,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 失败
     else {
         NSString* retMsg = [NSString stringWithFormat:@"%@失败:%@", [self titleForRegisterType:self.registerType],[dataDict valueForKey:@"message"]];
+        [KVNProgress dismiss];
         [self alertShowWithMessage:retMsg];
     }
 }
@@ -991,12 +991,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
                                       [PublicInformation getServerDomain],
                                       [PublicInformation getHTTPPort]];
         [urlString appendString:[self requestTypeForRegisterType:self.registerType]];
-        NSLog(@"HTTP请求连接:%@",urlString);
         _httpRequestRegister = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
         [_httpRequestRegister setPostFormat:ASIMultipartFormDataPostFormat];
         [_httpRequestRegister setRequestMethod:@"POST"];
         [_httpRequestRegister setStringEncoding:NSUTF8StringEncoding];
         [_httpRequestRegister setDelegate:self];
+        [_httpRequestRegister setTimeOutSeconds:60];
     }
     return _httpRequestRegister;
 }

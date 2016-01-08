@@ -10,11 +10,23 @@
 #import "HTTPInstance.h"
 #import "PublicInformation.h"
 
+// http请求字段
+static NSString* const kT0CardListRequestFieldMchtNo = @"mchtNo";
+
+// http响应字段
+static NSString* const kT0CardListResponseFieldCardList = @"cardList";
+static NSString* const kT0CardListResponseFieldCardNo = @"cardId";
+static NSString* const kT0CardListResponseFieldCardUserName = @"cardUserName";
+static NSString* const kT0CardListResponseFieldCheckFlag = @"checkFlag";
+static NSString* const kT0CardListResponseFieldRefuseReason = @"refuseReason";
+
+
+
 @interface HttpRequestT0CardList()
 <HTTPInstanceDelegate>
 @property (nonatomic, retain) HTTPInstance* http;
 @property (nonatomic, assign) id<HttpRequestT0CardListDelegate> delegate;
-
+@property (nonatomic, copy) NSArray* cardInfoList;
 @end
 
 
@@ -36,8 +48,9 @@
 
 - (void) requestT_0CardListOnDelegate:(id<HttpRequestT0CardListDelegate>)delegate {
     self.delegate = delegate;
+    self.cardInfoList = nil;
     [self.http startRequestingWithDelegate:self packingHandle:^(ASIFormDataRequest *http) {
-        // 填充参数
+        [http addPostValue:[PublicInformation returnBusiness] forKey:kT0CardListRequestFieldMchtNo];
     }];
 }
 - (void)terminateRequesting {
@@ -47,22 +60,75 @@
 
 
 - (NSInteger) countOfCardsRequested {
-    return 1;
+    if (self.cardInfoList) {
+        return self.cardInfoList.count;
+    } else {
+        return 0;
+    }
 }
 
 - (NSString*) cardRequestedAtIndex:(NSInteger)index {
-    return @"1234567890";
+    NSString* card = nil;
+    if (index >=0 && index < [self countOfCardsRequested]) {
+        NSDictionary* cardInfo = [self.cardInfoList objectAtIndex:index];
+        card = [cardInfo objectForKey:kT0CardListResponseFieldCardNo];
+    }
+    return card;
 }
 - (NSString*) nameRequestedAtIndex:(NSInteger)index {
-    return @"jlpayTest";
+    NSString* name = nil;
+    if (index >=0 && index < [self countOfCardsRequested]) {
+        NSDictionary* cardInfo = [self.cardInfoList objectAtIndex:index];
+        name = [cardInfo objectForKey:kT0CardListResponseFieldCardUserName];
+    }
+    return name;
 }
 - (NSString*) stateRequestedAtIndex:(NSInteger)index {
-    return @"0";
+    NSString* state = nil;
+    if (index >=0 && index < [self countOfCardsRequested]) {
+        NSDictionary* cardInfo = [self.cardInfoList objectAtIndex:index];
+        state = [cardInfo objectForKey:kT0CardListResponseFieldCheckFlag];
+    }
+    return state;
+}
+- (NSString*) descriptionStateAtIndex:(NSInteger)index {
+    NSString* description = nil;
+    NSString* state = [self stateRequestedAtIndex:index];
+    if ([state isEqualToString:kT0CardCheckFlagChecked]) {
+        description = @"已校验";
+    }
+    else if ([state isEqualToString:kT0CardCheckFlagChecking]) {
+        description = @"正在校验";
+    }
+    else if ([state isEqualToString:kT0CardCheckFlagError]) {
+        description = [NSString stringWithFormat:@"校验失败:%@",[self refusedDescriptionAtIndex:index]];
+    }
+    return description;
+}
+
+
+#pragma mask 1 PRIVATE INTERFACE
+- (NSDictionary*) nodeAtIndex:(NSInteger)index {
+    NSDictionary* node = nil;
+    if (index >=0 && index < [self countOfCardsRequested]) {
+        node = self.cardInfoList[index];
+    }
+    return node;
+}
+- (NSString*) refusedDescriptionAtIndex:(NSInteger)index {
+    NSString* refused = nil;
+    NSDictionary* node = [self nodeAtIndex:index];
+    if (node) {
+        refused = node[kT0CardListResponseFieldRefuseReason];
+    }
+    return refused;
 }
 
 #pragma mask ---- HTTPInstanceDelegate
 - (void)httpInstance:(HTTPInstance *)httpInstance didRequestingFinishedWithInfo:(NSDictionary *)info {
     // 解析响应数据
+    self.cardInfoList = [NSArray arrayWithArray:info[kT0CardListResponseFieldCardList]];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRequestSuccess)]) {
         [self.delegate didRequestSuccess];
     }
@@ -76,7 +142,7 @@
 #pragma mask ---- getter 
 - (HTTPInstance *)http {
     if (_http == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/",
+        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/getT0CardInfo",
                                [PublicInformation getServerDomain],
                                [PublicInformation getHTTPPort]];
         _http = [[HTTPInstance alloc] initWithURLString:urlString];

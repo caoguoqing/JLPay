@@ -107,7 +107,7 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
         }
     }
     else {
-        [self rebackFailWithMessage:@"解析登陆响应数据失败" andErrorType:LoginErrorCodeTypeDefault];
+        [self rebackFailWithMessage:@"解析登录响应数据失败" andErrorType:LoginErrorCodeTypeDefault];
     }
     
     self.httpRequest = nil;

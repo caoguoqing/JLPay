@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+
+// 卡审核状态 @returnType - (NSString*) stateRequestedAtIndex:(NSInteger)index;
+static NSString* const kT0CardCheckFlagChecked = @"0";
+static NSString* const kT0CardCheckFlagChecking = @"1";
+static NSString* const kT0CardCheckFlagError = @"2";
+
+
 @class HttpRequestT0CardList;
 
 @protocol HttpRequestT0CardListDelegate <NSObject>
@@ -29,6 +36,8 @@
 - (NSInteger) countOfCardsRequested;
 - (NSString*) cardRequestedAtIndex:(NSInteger)index;
 - (NSString*) nameRequestedAtIndex:(NSInteger)index;
+
 - (NSString*) stateRequestedAtIndex:(NSInteger)index;
+- (NSString*) descriptionStateAtIndex:(NSInteger)index;
 
 @end

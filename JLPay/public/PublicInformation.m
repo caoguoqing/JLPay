@@ -97,7 +97,11 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 
 /* 获取服务器域名 */
 + (NSString*) getServerDomain {
-    return @"unitepay.com.cn";
+    if (TestOrProduce == 9) {
+        return @"192.168.1.174";
+    } else {
+        return @"unitepay.com.cn";
+    }
 }
 /* 获取TCP端口 */
 + (NSString*) getTcpPort {
@@ -608,6 +612,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
  *      red
  *      green
  *      blueBlack
+ *      redNavigationBar
  */
 +(UIColor*) returnCommonAppColor:(NSString*)color {
     UIColor* retColor = nil;
@@ -620,8 +625,24 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if ([color isEqualToString:@"blueBlack"]) {
         retColor = [UIColor colorWithRed:47.0/255.0 green:53.0/255.0 blue:61.0/255.0 alpha:1];
     }
+    else if ([color isEqualToString:@"redNavigationBar"]) {
+        retColor = [UIColor colorWithRed:240.0/255.0 green:42.0/255.0 blue:57.0/255.0 alpha:1.0];
+    }
+
     return retColor;
 }
+
++ (UIColor*) colorForHexInt:(NSUInteger)hexInt {
+    NSUInteger red = (hexInt & 0xff0000) >> 16;
+    NSUInteger green = (hexInt & 0x00ff00) >> 8;
+    NSUInteger blue = (hexInt & 0x0000ff);
+    return [UIColor colorWithRed:(CGFloat)red/(CGFloat)0xff
+                           green:(CGFloat)green/(CGFloat)0xff
+                            blue:(CGFloat)blue/(CGFloat)0xff
+                           alpha:1.0];
+}
+
+
 
 // app状态栏高度
 +(CGFloat) returnStatusHeight {

@@ -17,6 +17,8 @@
     CGFloat heightContentView;
     CGFloat heightLabel;
     BOOL refreshing;
+    BOOL pullingUp;
+    BOOL pullingDown;
 }
 @property (nonatomic, retain) UIImageView* imageView;
 @property (nonatomic, retain) UIActivityIndicatorView* activity;
@@ -27,9 +29,11 @@
 @implementation PullRefrashView
 
 
-/* 调为下拉状态 */
+/* 调为上拉状态 */
 - (void) turnPullUp {
     refreshing = NO;
+    pullingDown = NO;
+    pullingUp = YES;
     self.activity.hidden = YES;
     [self.activity stopAnimating];
     self.imageView.hidden = NO;
@@ -40,9 +44,11 @@
     }];
 }
 
-/* 调为上拉状态 */
+/* 调为下拉状态 */
 - (void) turnPullDown {
     refreshing = NO;
+    pullingDown = YES;
+    pullingUp = NO;
     self.activity.hidden = YES;
     [self.activity stopAnimating];
     self.imageView.hidden = NO;
@@ -59,11 +65,19 @@
     [self.activity startAnimating];
     self.textLabel.text = waitingText;
     refreshing = YES;
+    pullingUp = NO;
+    pullingDown = NO;
 }
 
 /* 查询状态 */
 - (BOOL) isRefreshing {
     return refreshing;
+}
+- (BOOL) isPullingUp {
+    return pullingUp;
+}
+- (BOOL) isPullingDown {
+    return pullingDown;
 }
 
 
@@ -77,9 +91,13 @@
         pullDownText = @"下拉即可刷新";
         waitingText = @"努力加载中";
         refreshing = NO;
+        pullingDown = YES;
+        pullingUp = NO;
         [self addSubview:self.imageView];
         [self addSubview:self.textLabel];
         [self addSubview:self.activity];
+        
+        [self loadSubviews];
     }
     return self;
 }
@@ -87,6 +105,10 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
+    [self loadSubviews];
+}
+
+- (void) loadSubviews {
     CGFloat inset = 5.0;
     CGSize textSize = [self sizeOfText];
     CGFloat widthLabel = textSize.width;
@@ -104,7 +126,6 @@
     frame.size.width = widthLabel;
     frame.size.height = heightLabel;
     [self.textLabel setFrame:frame];
-    
 }
 
 

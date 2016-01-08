@@ -22,8 +22,8 @@ static NSString* const kFieldNameResponseT0Fee = @"t0Fee"; // t+0费率
 static NSString* const kFieldNameResponseCumMoney = @"cumMoney"; // 已刷T+0金额
 static NSString* const kFieldNameResponseCompareMoney = @"compareMoney";// 比较金额(刷卡金额小于此需要+额外的手续费)
 static NSString* const kFieldNameResponseExtraFee = @"extraFee";  // 额外的手续费
+static NSString* const kFieldNameResponseMinTradeMoney = @"minTradeMoney"; // 最小刷卡额
 
-static NSString* const T_0MinCustMoney = @"1.50";
 
 @interface HTTPRequestSettlementInfo() <ASIHTTPRequestDelegate>
 
@@ -119,7 +119,7 @@ static HTTPRequestSettlementInfo* settlementRequester = nil;
     NSMutableDictionary* settlementInfo = [[NSMutableDictionary alloc] init];
     // t+0标记
     NSString* t0flag = [responseInfo objectForKey:kFieldNameResponseAllowFlag];
-    if (t0flag.intValue == 0) {
+    if (t0flag.intValue != 0) {
         [settlementInfo setObject:[NSNumber numberWithBool:YES] forKey:kSettleInfoNameT_0_Enable];
     } else {
         [settlementInfo setObject:[NSNumber numberWithBool:NO] forKey:kSettleInfoNameT_0_Enable];
@@ -140,7 +140,8 @@ static HTTPRequestSettlementInfo* settlementRequester = nil;
     NSString* extraFee = [responseInfo objectForKey:kFieldNameResponseExtraFee];
     [settlementInfo setObject:[NSString stringWithFormat:@"%.02lf",extraFee.floatValue] forKey:kSettleInfoNameExtraFee];
     // 最低刷卡额
-    [settlementInfo setObject:T_0MinCustMoney forKey:kSettleInfoNameMinCustAmount];
+    NSString* minCustMoney = [responseInfo objectForKey:kFieldNameResponseMinTradeMoney];
+    [settlementInfo setObject:[NSString stringWithFormat:@"%.02lf",minCustMoney.floatValue] forKey:kSettleInfoNameMinCustAmount];
 
     return settlementInfo;
 }
