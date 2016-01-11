@@ -613,6 +613,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
  *      green
  *      blueBlack
  *      redNavigationBar
+ *      OuEr_yellow
  */
 +(UIColor*) returnCommonAppColor:(NSString*)color {
     UIColor* retColor = nil;
@@ -627,6 +628,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if ([color isEqualToString:@"redNavigationBar"]) {
         retColor = [UIColor colorWithRed:240.0/255.0 green:42.0/255.0 blue:57.0/255.0 alpha:1.0];
+    }
+    else if ([color isEqualToString:@"OuEr_yellow"]) {
+        retColor = [UIColor colorWithRed:216.f/255.0 green:196.f/255.0 blue:125.f/255.0 alpha:1.0];
     }
 
     return retColor;

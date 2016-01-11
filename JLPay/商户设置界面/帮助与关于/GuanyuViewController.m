@@ -26,8 +26,11 @@ CGFloat cellHeight = 40.0;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         if ([alertView.title hasPrefix:@"呼叫"]) {
-            NSString* urlString = [alertView.title substringFromIndex:[alertView.title rangeOfString:@"0755"].location];
-            urlString = [@"tel://" stringByAppendingString:urlString];
+            NSString* urlString = self.dataSourceDict[@"联系方式"];
+            NSMutableString* numberString = [NSMutableString stringWithString:urlString];
+            [numberString replaceOccurrencesOfString:@"-" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, urlString.length)];
+            NSLog(@"numberString = [%@]",numberString);
+            urlString = [@"tel://" stringByAppendingString:numberString];
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
         } else if ([alertView.title hasPrefix:@"访问"]) {
             // 访问网址
@@ -111,7 +114,7 @@ CGFloat cellHeight = 40.0;
                               imageWidth );
     // 图标
     UIImageView* imageView = [[UIImageView alloc] initWithFrame:frame];
-    imageView.image = [UIImage imageNamed:@"01icon"];
+    imageView.image = [UIImage imageNamed:@"Icon-60"];
     [self.view addSubview:imageView];
     // 捷联通
     frame.origin.x = 0;
@@ -119,7 +122,7 @@ CGFloat cellHeight = 40.0;
     frame.size.width = self.view.bounds.size.width;
     frame.size.height = labelHeight;
     UILabel* label = [[UILabel alloc] initWithFrame:frame];
-    label.text = @"捷联通";
+    label.text = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
     label.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:label];
     // 表视图
@@ -157,8 +160,8 @@ CGFloat cellHeight = 40.0;
     if (_dataSourceDict == nil) {
         NSMutableArray* values = [[NSMutableArray alloc] init];
         [values addObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
-        [values addObject:@"0755-86532999"];
-        [values addObject:@"www.cccpay.cn"];
+        [values addObject:@"400-119-2200"];
+        [values addObject:@"www.o2o-pay.com"];
         _dataSourceDict = [NSDictionary dictionaryWithObjects:values forKeys:self.cellTextArray];
     }
     return _dataSourceDict;

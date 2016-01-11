@@ -28,7 +28,6 @@
 #pragma mask    ---- 常量设置区 ----
 #define ViewCornerRadius 6.0                                        // 各个 view 的圆角半径值
 #define leftLeave        30.0                                       // view 的左边距
-#define ImageForBrand   @"logo"                                     // 商标图片
 
 
 // 枚举: 弹窗标记
@@ -239,7 +238,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     
     CGFloat      inset                  = 10.0; // 间隔
     /* 商标：图片 */
-    UIImage*     iconImage              = [UIImage imageNamed:ImageForBrand];
+    UIImage*     iconImage              = [UIImage imageNamed:AppLogoImageName];
     CGSize       iconSize               = [iconImage size];
     CGFloat      iconViewWidth          = self.view.bounds.size.width / 2.0;
     CGFloat      iconViewHeight         = iconViewWidth * iconSize.height/iconSize.width;
@@ -672,7 +671,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (UIButton *)loadButton {
     if (_loadButton == nil) {
         _loadButton = [[UIButton alloc] initWithFrame:CGRectZero];
-        _loadButton.backgroundColor     = [UIColor colorWithRed:234.0/255.0 green:58.0/255.0 blue:66.0/255.0 alpha:1];
+        _loadButton.backgroundColor     = [PublicInformation returnCommonAppColor:@"OuEr_yellow"];
         _loadButton.layer.cornerRadius  = ViewCornerRadius;
         _loadButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
         [_loadButton setTitle:@"登    录" forState:UIControlStateNormal];

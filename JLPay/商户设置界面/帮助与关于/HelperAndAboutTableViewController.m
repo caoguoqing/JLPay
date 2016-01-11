@@ -93,7 +93,7 @@
                 [imageTitles addObject:@"搜索设备"];
                 [imageTitles addObject:@"选择设备"];
             } else if (i == 1) {
-                [imageTitles addObject:@"输入金额"];
+                [imageTitles addObject:@"金额输入"];
                 [imageTitles addObject:@"提示刷卡"];
                 [imageTitles addObject:@"输入密码"];
             } else if (i == 2) {

@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "输入密码.PNG"
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "输入密码@2x.PNG",
       "scale" : "2x"
     },
     {
