@@ -17,7 +17,7 @@
 #define CustomKeyboardHeight            216.0
 
 // 日志打印选项: 打印(1);不打印(0);
-#define NeedPrintLog                    1
+#define NeedPrintLog                    0
 
 
 /* ----------------------------
@@ -27,7 +27,7 @@
  * 7: 内网测试72 (TCP + HTTP)
  * 9: http 开发环境:(192.168.1.174:80)
  * ---------------------------- */
-#define TestOrProduce                   3
+#define TestOrProduce                   1
 
 /* ----------------------------
  * 版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -35,7 +35,7 @@
  * 1: test:   网页企业版
  * 2: dev:    开发版
  * ---------------------------- */
-#define TAG_OF_BRANCH_EDITION           2
+#define TAG_OF_BRANCH_EDITION           1
 
 
 /* ----------------------------
