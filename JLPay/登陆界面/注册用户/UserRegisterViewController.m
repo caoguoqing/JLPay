@@ -282,7 +282,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [self setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
         dispatch_async(dispatch_get_main_queue(), ^{
             // 重载表格视图
-            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowCellImageNeedPicking inSection:2]] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView reloadData];
         });
     });
 }
@@ -516,6 +516,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [fieldCell setSecureTextEntry:[self securityAtIndexPath:indexPath]];
         [fieldCell setTextInputed:[self textInputedAtIndexPath:indexPath]];
         [fieldCell setLengthLimit:[self lengthLimitAtIndexPath:indexPath]];
+        
+        // 修改时: 登陆用户名不允许修改
+        if (self.registerType == RegisterTypeRefused && [[self titleAtIndexPath:indexPath] isEqualToString:@"登陆用户名"]) {
+            [fieldCell disableInput];
+        }
+
     }
     else if ([identifier isEqualToString:IdentifierCellLabel])
     {

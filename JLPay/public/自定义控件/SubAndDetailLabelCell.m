@@ -41,6 +41,7 @@
 }
 - (void)setSubText:(NSString *)text {
     self.subLabel.text = text;
+    self.subLabel.textColor = [UIColor grayColor];
 }
 - (void) setSubText:(NSString*)text color:(EnumSubTextColor)enumColor {
     self.subLabel.text = text;
