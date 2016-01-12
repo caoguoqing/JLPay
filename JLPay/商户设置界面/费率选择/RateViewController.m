@@ -277,7 +277,7 @@ static NSString* const kPickerTypeBusiness = @"PickerTypeBusiness";
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.clearButton];
     [self.view addSubview:self.pickerView];
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

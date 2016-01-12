@@ -269,13 +269,16 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [imagePickerController setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     }
     [imagePickerController setDelegate:self];
+    [imagePickerController setModalPresentationStyle:UIModalPresentationFullScreen];
     [imagePickerController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
     [self presentViewController:imagePickerController animated:YES completion:^{}];
     
 }
 #pragma mask ------ UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
-    [picker dismissViewControllerAnimated:YES completion:^{}];
+    [picker dismissViewControllerAnimated:YES completion:^{
+        [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    }];
     UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // 将图片保存到数据源
