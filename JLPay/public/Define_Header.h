@@ -13,6 +13,8 @@
 #import "PublicInformation.h"
 
 
+#define AppLogoImageName                @"AppLogoImageJLPay"
+
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
 

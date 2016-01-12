@@ -21,7 +21,6 @@
 #import "ModelFeeBusinessInformation.h"
 
 
-#define ImageForBrand   @"logo"                                             // 商标图片
 
 static NSInteger const tagAlertFeeBusiness = 10; // 指定费率商户的提示tag
 
@@ -359,7 +358,7 @@ SettlementSwitchViewDelegate>
     // 宽度: 数字按钮
     CGFloat numBtnWidth = self.view.bounds.size.width/3.0;
     // logo imageView高度
-    CGSize  logoImgSize = [UIImage imageNamed:ImageForBrand].size;
+    CGSize  logoImgSize = [UIImage imageNamed:AppLogoImageName].size;
     CGFloat logoImgWidth = self.view.bounds.size.width / 2.0;
     CGFloat logoImgHeight = logoImgWidth * logoImgSize.height/logoImgSize.width;
     /* ---------
@@ -391,7 +390,7 @@ SettlementSwitchViewDelegate>
     // 图标
     CGRect  frame                       = CGRectMake(0, 0, logoImgWidth, logoImgHeight);
     UIImageView *imageView              = [[UIImageView alloc] initWithFrame:frame];
-    imageView.image                     = [UIImage imageNamed:ImageForBrand];
+    imageView.image                     = [UIImage imageNamed:AppLogoImageName];
     imageView.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightLogoImageView/2.0);
     yCenterPre += heightLogoImageView;
     [self.view addSubview:imageView];

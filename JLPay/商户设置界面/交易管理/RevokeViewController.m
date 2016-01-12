@@ -157,7 +157,7 @@
 - (UIImageView *)imageView {
     if (_imageView == nil) {
         _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        _imageView.image = [UIImage imageNamed:@"logo"];
+        _imageView.image = [UIImage imageNamed:AppLogoImageName];
     }
     return _imageView;
 }
