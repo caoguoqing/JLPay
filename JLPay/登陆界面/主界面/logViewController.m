@@ -502,6 +502,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
             break;
         case LoginErrorCodeTypeRegistRefuse:
             self.dictLastRegisterInfo = [ModelHTTPRequestLogin sharedInstance].lastRegisterInfo;
+            NSLog(@"历史注册信息:[%@]",self.dictLastRegisterInfo);
             tagalert = TagAlertRegisterRefuse;
             [PublicInformation alertCancleAndOther:@"修改" title:@"提示" message:retMessage tag:tagalert delegate:self];
             break;

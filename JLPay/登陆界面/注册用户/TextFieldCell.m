@@ -73,6 +73,11 @@
     [self.inputField becomeFirstResponder];
 }
 
+#pragma mask ---- 禁止输入
+- (void) disableInput {
+    self.inputField.enabled = NO;
+}
+
 
 #pragma mask ---- 加载子视图
 - (void)layoutSubviews {

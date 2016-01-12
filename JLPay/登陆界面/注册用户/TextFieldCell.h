@@ -39,4 +39,7 @@
 // 激活输入
 - (void) startInput;
 
+// -- 禁止输入
+- (void) disableInput;
+
 @end
