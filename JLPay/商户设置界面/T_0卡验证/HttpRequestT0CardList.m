@@ -128,7 +128,6 @@ static NSString* const kT0CardListResponseFieldRefuseReason = @"refuseReason";
 - (void)httpInstance:(HTTPInstance *)httpInstance didRequestingFinishedWithInfo:(NSDictionary *)info {
     // 解析响应数据
     self.cardInfoList = [NSArray arrayWithArray:info[kT0CardListResponseFieldCardList]];
-    
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRequestSuccess)]) {
         [self.delegate didRequestSuccess];
     }

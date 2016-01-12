@@ -129,7 +129,7 @@
         [cell setLeftText:[PublicInformation cuttingOffCardNo:[[HttpRequestT0CardList sharedInstance] cardRequestedAtIndex:indexPath.row]]];
     }
     [cell setRightText:[self nameCuttedByOrigin:[[HttpRequestT0CardList sharedInstance] nameRequestedAtIndex:indexPath.row]]];
-    [self setSubTextForCell:cell];
+    [self setSubTextForCell:cell atIndex:indexPath.row];
     return cell;
 }
 
@@ -139,10 +139,9 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 45;
 }
-- (void) setSubTextForCell:(SubAndDetailLabelCell*)cell {
-    NSIndexPath* indexPath = [self.tableView indexPathForCell:cell];
-    NSString* cardflag = [[HttpRequestT0CardList sharedInstance] stateRequestedAtIndex:indexPath.row];
-    NSString* text = [[HttpRequestT0CardList sharedInstance] descriptionStateAtIndex:indexPath.row];
+- (void) setSubTextForCell:(SubAndDetailLabelCell*)cell atIndex:(NSInteger)index {
+    NSString* cardflag = [[HttpRequestT0CardList sharedInstance] stateRequestedAtIndex:index];
+    NSString* text = [[HttpRequestT0CardList sharedInstance] descriptionStateAtIndex:index];
     if ([cardflag isEqualToString:kT0CardCheckFlagChecked]) {
         [cell setSubText:text color:EnumSubTextColorGreen];
     } else {

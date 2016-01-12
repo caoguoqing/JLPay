@@ -578,7 +578,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     switch (alertView.tag) {
         case TagAlertVersionLow:
             if ([buttonTitle isEqualToString:@"确定"] && TAG_OF_BRANCH_EDITION != 0) { // app store分支不能跳转去下载
-                [self gotoDownloadApp];
+//                [self gotoDownloadApp]; // 欧尔app不跳转
             }
             break;
         case TagAlertRegisterRefuse:
