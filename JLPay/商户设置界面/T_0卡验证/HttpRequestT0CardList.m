@@ -95,13 +95,13 @@ static NSString* const kT0CardListResponseFieldRefuseReason = @"refuseReason";
     NSString* description = nil;
     NSString* state = [self stateRequestedAtIndex:index];
     if ([state isEqualToString:kT0CardCheckFlagChecked]) {
-        description = @"已校验";
+        description = @"已验证";
     }
     else if ([state isEqualToString:kT0CardCheckFlagChecking]) {
-        description = @"正在校验";
+        description = @"正在验证";
     }
     else if ([state isEqualToString:kT0CardCheckFlagError]) {
-        description = [NSString stringWithFormat:@"校验失败:%@",[self refusedDescriptionAtIndex:index]];
+        description = [NSString stringWithFormat:@"验证失败:%@",[self refusedDescriptionAtIndex:index]];
     }
     return description;
 }

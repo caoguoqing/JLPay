@@ -41,7 +41,7 @@
 }
 - (void)setSubText:(NSString *)text {
     self.subLabel.text = text;
-    self.subLabel.textColor = [UIColor grayColor];
+    self.subLabel.textColor = [UIColor blackColor];
 }
 - (void) setSubText:(NSString*)text color:(EnumSubTextColor)enumColor {
     self.subLabel.text = text;
@@ -60,7 +60,7 @@
     
     CGFloat widthLeft = (self.frame.size.width - widthImage - insetHorizantal*3) * 3.0/4.0;
     CGFloat widthRight = (self.frame.size.width - widthImage - insetHorizantal*3) * 1.0/4.0;
-    CGFloat widthSub = self.frame.size.width - insetHorizantal*2;
+    CGFloat widthSub = widthLeft + widthRight;
     CGFloat heightUpLabel = (self.frame.size.height - insetVertical*2) * 4.0/7.0;
     CGFloat heightDownLabel = (self.frame.size.height - insetVertical*2) * 3.0/7.0;
     CGFloat widthLine = self.frame.size.width - insetHorizantal*2 - widthImage;

@@ -40,7 +40,7 @@ HttpUploadT0CardDelegate>
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.enableUpload = NO;
-    self.title = @"T+0银行卡上传";
+    self.title = @"卡信息";
     [self loadSubviews];
     self.automaticallyAdjustsScrollViewInsets = NO;
     
@@ -66,8 +66,7 @@ HttpUploadT0CardDelegate>
     [self.navigationItem setRightBarButtonItem:[self verifyCardButton]];
 }
 - (UIBarButtonItem*) verifyCardButton {
-    UIBarButtonItem* verifyButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(checkAndUpload:)];
-    return verifyButton;
+    return [[UIBarButtonItem alloc] initWithTitle:@"上传" style:UIBarButtonItemStylePlain target:self action:@selector(checkAndUpload:)];
 }
 
 #pragma mask 1 HttpUploadT0Card && HttpUploadT0CardDelegate
@@ -77,17 +76,17 @@ HttpUploadT0CardDelegate>
                                          cardHolderName:[self cardNameFromCell]
                                               cardPhoto:[self cardImageFromCell]
                                              onDelegate:self];
-        [KVNProgress showWithStatus:@"银行卡信息上传中..."];
+        [KVNProgress showWithStatus:@"交易卡信息上传中..."];
     }
 }
 
 - (void)didUploadedSuccess {
-    [KVNProgress showSuccessWithStatus:@"上传银行卡信息成功!" completion:^{
+    [KVNProgress showSuccessWithStatus:@"上传交易卡信息成功!" completion:^{
         [self.navigationController popViewControllerAnimated:YES];
     }];
 }
 - (void)didUploadedFail:(NSString *)failMessage {
-    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传银行卡信息失败:%@",failMessage]];
+    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传交易卡信息失败:%@",failMessage]];
 }
 
 #pragma mask 2 UITableViewDataSource, UITableViewDelegate
@@ -115,7 +114,7 @@ HttpUploadT0CardDelegate>
         FieldInputTableCell* fieldCell = (FieldInputTableCell*)cell;
         if (indexPath.row == 0) {
             [fieldCell setTitle:@"卡号"];
-            [fieldCell setPlaceHolder:@"请输入银行卡号"];
+            [fieldCell setPlaceHolder:@"请输入交易卡号"];
         } else {
             [fieldCell setTitle:@"姓名"];
             [fieldCell setPlaceHolder:@"请输入持卡人姓名"];
@@ -129,35 +128,27 @@ HttpUploadT0CardDelegate>
 }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 1) {
-        return @"请上传银行卡正面照";
+        return @"请上传银行卡正面照(拍照清晰)";
     } else {
         return nil;
     }
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1) {
-        return 180.f;
+        return 200.f;
     } else {
         return [tableView rowHeight];
     }
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if (section == 0) {
-        return 80.f;
+        return 20.f;
     } else {
         return 30.f;
     }
 }
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    if (section == 0) {
-        UITextView* textView = [[UITextView alloc] initWithFrame:[tableView rectForHeaderInSection:section]];
-        textView.text = @"注意: T+0交易要先上传刷卡卡号、持卡人姓名及卡正面照，后台验证卡通过后才能进行T+0刷卡交易.";
-        textView.font = [UIFont systemFontOfSize:15.f];
-        textView.backgroundColor = [UIColor clearColor];
-        return textView;
-    } else {
-        return nil;
-    }
+    return nil;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -175,7 +166,7 @@ HttpUploadT0CardDelegate>
 
 #pragma mask 2 照片采集器
 - (void) chooseImagePickerType {
-    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"上传银行卡正面照" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
+    UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"上传交易卡正面照" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:kActionSheetTitleCamera];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
@@ -240,7 +231,7 @@ HttpUploadT0CardDelegate>
     }
     if (prepared && ![self cardImageFromCell]) {
         prepared = NO;
-        [PublicInformation makeCentreToast:@"银行卡正面照未上传!"];
+        [PublicInformation makeCentreToast:@"交易卡正面照未上传!"];
     }
     return prepared;
 }

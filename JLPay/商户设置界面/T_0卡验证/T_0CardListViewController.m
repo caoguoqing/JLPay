@@ -36,7 +36,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
-    self.title = @"T+0银行卡列表";
+    self.title = @"卡列表";
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
     [self loadSubviews];
     
@@ -144,7 +144,11 @@
     NSString* text = [[HttpRequestT0CardList sharedInstance] descriptionStateAtIndex:index];
     if ([cardflag isEqualToString:kT0CardCheckFlagChecked]) {
         [cell setSubText:text color:EnumSubTextColorGreen];
-    } else {
+    }
+    else if ([cardflag isEqualToString:kT0CardCheckFlagError]) {
+        [cell setSubText:text color:EnumSubTextColorRed];
+    }
+    else {
         [cell setSubText:text];
     }
 }
