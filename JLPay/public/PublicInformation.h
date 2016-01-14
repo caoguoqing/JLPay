@@ -111,6 +111,9 @@
 // app的状态栏高度+控制栏高度
 + (CGFloat) heightOfNavigationAndStatusInVC:(UIViewController*)viewController;
 
+// logo
++ (UIImage*) logoImageOfApp;
+
 #pragma mask 0-------------------------------------------0 字符串相关
 // 去掉末尾多余的空白字符,并拷贝一份导出
 + (NSString*) clearSpaceCharAtLastOfString:(NSString*)string ;

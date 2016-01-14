@@ -659,6 +659,22 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return height;
 }
 
+// logo
++ (UIImage*) logoImageOfApp {
+    UIImage* logoImage = nil;
+    if (BranchAppName == 0) {
+        logoImage = [UIImage imageNamed:@"AppLogoImageJLPay"];
+    }
+    else if (BranchAppName == 1) {
+        logoImage = [UIImage imageNamed:@"AppLogoImageWLS"];
+    }
+    else if (BranchAppName == 2) {
+        logoImage = [UIImage imageNamed:@"AppLogoImageOuEr"];
+    }
+    return logoImage;
+}
+
+
 // 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
 + (NSString*) clearSpaceCharAtLastOfString:(NSString*)string {
     if (!string || string.length == 0) {

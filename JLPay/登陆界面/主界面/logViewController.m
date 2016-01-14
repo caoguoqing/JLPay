@@ -238,7 +238,8 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     
     CGFloat      inset                  = 10.0; // 间隔
     /* 商标：图片 */
-    UIImage*     iconImage              = [UIImage imageNamed:AppLogoImageName];
+//    UIImage*     iconImage              = [UIImage imageNamed:AppLogoImageName];
+    UIImage* iconImage = [PublicInformation logoImageOfApp];
     CGSize       iconSize               = [iconImage size];
     CGFloat      iconViewWidth          = self.view.bounds.size.width / 2.0;
     CGFloat      iconViewHeight         = iconViewWidth * iconSize.height/iconSize.width;
