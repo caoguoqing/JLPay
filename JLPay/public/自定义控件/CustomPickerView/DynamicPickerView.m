@@ -18,7 +18,7 @@
 @property (nonatomic, strong) UIColor* seperatorColor;              // 分割视图底色
 @property (nonatomic, strong) UIPickerView* pickerView;             // 选择器:
 
-@property (nonatomic, strong) NSMutableDictionary* dataSources;          // 数据源
+@property (nonatomic, strong) NSMutableDictionary* dataSources;     // 数据源
 
 @end
 

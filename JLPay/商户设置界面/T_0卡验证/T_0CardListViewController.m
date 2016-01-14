@@ -11,7 +11,7 @@
 #import "HttpRequestT0CardList.h"
 #import "PublicInformation.h"
 #import "SubAndDetailLabelCell.h"
-#import "KVNProgress.h"
+#import "KVNProgress+CustomConfiguration.h"
 #import "PullRefrashView.h"
 
 @interface T_0CardListViewController()
@@ -98,7 +98,7 @@
     }
 }
 - (void)didRequestFail:(NSString *)failMessage {
-    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"查询失败:%@",failMessage]];
+    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"查询失败:%@",failMessage] duration:3];
     [self.tableView reloadData];
     if (self.pullRefrashView.isRefreshing) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

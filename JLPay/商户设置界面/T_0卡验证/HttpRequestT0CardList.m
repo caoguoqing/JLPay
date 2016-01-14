@@ -134,8 +134,13 @@ static NSString* const kT0CardListResponseFieldRefuseReason = @"refuseReason";
     }
 }
 - (void)httpInstance:(HTTPInstance *)httpInstance didRequestingFailedWithError:(NSDictionary *)errorInfo {
+    NSString* errorCode = [errorInfo objectForKey:kHTTPInstanceErrorCode];
+    NSString* errorMessage = [errorInfo objectForKey:kHTTPInstanceErrorMessage];
+    if ([errorCode integerValue] == HTTPErrorCodeResponseNoneData) {
+        errorMessage = [errorMessage stringByAppendingString:@",请上传卡信息"];
+    }
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRequestFail:)]) {
-        [self.delegate didRequestFail:errorInfo[kHTTPInstanceErrorMessage]];
+        [self.delegate didRequestFail:errorMessage];
     }
 }
 

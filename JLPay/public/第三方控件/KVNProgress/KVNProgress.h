@@ -10,6 +10,7 @@
 
 #import "KVNProgressConfiguration.h"
 
+
 typedef void (^KVNCompletionBlock)(void);
 
 @interface KVNProgress : UIView

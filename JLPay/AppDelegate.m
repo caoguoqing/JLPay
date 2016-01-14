@@ -14,6 +14,7 @@
 #import "CustomNavigationController.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
+#import "KVNProgress.h"
 
 #import "ModelDeviceBindedInformation.h"
 
@@ -148,6 +149,7 @@
     
     return navigation;
 }
+
 
 
 @end

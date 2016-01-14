@@ -81,11 +81,13 @@
     NSArray *arrA6=@[@"A6",@"A",@"有缺陷成功",@"交易成功，请向发卡行确认"];
     NSArray *arrA7=@[@"A7",@"C",@"安全处理失败",@"拒绝，交易中心异常，请稍后重试"];
     NSArray *arrT1=@[@"T1",@"C",@"安全处理失败",@"T+1商户不允许做T+0交易"];
-    NSArray *arrT2=@[@"T2",@"C",@"安全处理失败",@"持卡人不允许T+0交易"];
-    NSArray *arrTS=@[@"TS",@"C",@"安全处理失败",@"商户号结算表未设置"];
+    NSArray *arrT2=@[@"T2",@"C",@"安全处理失败",@"T+0商户未结算过T+1交易"];
+    NSArray *arrTS=@[@"TS",@"C",@"安全处理失败",@"商户结算表无商户设置"];
+    NSArray *arrT3=@[@"T3",@"C",@"安全处理失败",@"银行卡片未经T+0卡验证"];
 
     
     NSMutableArray *bigArr=[[NSMutableArray alloc] initWithObjects:arr00,arr01,arr03,arr04,arr05,arr10,arr11,arr12,arr13,arr14,arr15,arr21,arr22,arr25,arr30,arr34,arr38,arr40,arr41,arr43, arr45,arr51,arr54,arr55,arr57,arr58,arr59,arr61,arr62,arr64,arr65,arr68,arr75,arr77,arr90,arr91,arr92,arr94,arr96,arr97,arr98,arr99,arrA0,arrA1,arrA2,arrA3,arrA4,arrA5,arrA6,arrA7,arrT1,arrT2,arrTS, nil];
+    [bigArr addObject:arrT3];
     
     NSString *errStr=@"";
     for (NSMutableArray *theArr in bigArr) {

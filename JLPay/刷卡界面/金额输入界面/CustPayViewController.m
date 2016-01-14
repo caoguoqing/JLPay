@@ -20,6 +20,7 @@
 #import "IntMoneyCalculating.h"
 #import "ModelFeeBusinessInformation.h"
 
+#import <objc/runtime.h>
 
 
 static NSInteger const tagAlertFeeBusiness = 10; // 指定费率商户的提示tag
@@ -121,17 +122,17 @@ SettlementSwitchViewDelegate>
 - (void) alertInformationForT_0 {
     NSMutableString* alert = [[NSMutableString alloc] init];
     
-    [alert appendFormat:@"T+0刷卡金额小于等于%@￥时需收取额外手续费: %@￥\n\n",
-     [[ModelSettlementInformation sharedInstance] T_0CompareMoney],
-     [[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
-    [alert appendFormat:@"T+0当日可刷额度: %@￥\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
-    [alert appendFormat:@"T+0单日限额: %@￥\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
-    [alert appendFormat:@"T+0最小刷卡限额: %@￥\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
-    [alert appendFormat:@"T+0增加费率: +%@%%",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
-        
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alert appendFormat:@"单日限额: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
+    [alert appendFormat:@"单日可刷额度: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+    [alert appendFormat:@"单笔最小限额: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
+    [alert appendFormat:@"手续费: +%@%%\n",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
+    [alert appendFormat:@"转账手续费: ￥%@", [[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
+    
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"T+0温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+
     [alertView show];
 }
+
 
 #pragma mask ---- CBCentrolManagerDelegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {

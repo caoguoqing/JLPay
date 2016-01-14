@@ -80,6 +80,10 @@ static HTTPInstance* pubHttpInstance = nil;
                 // 成功
                 [self rebackSuccessWithInfo:resData];
             }
+            else if (errorCode.integerValue == 401) {
+                // 查无数据
+                [self rebackFailCode:HTTPErrorCodeResponseNoneData andMessage:errorMessage];
+            }
             else {
                 // 失败: 后期可能需要枚举部分返回码
                 [self rebackFailCode:HTTPErrorCodeDefault andMessage:errorMessage];

@@ -52,7 +52,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat insetHorizantal = 15;
+    CGFloat insetHorizantal = 10.f;
     CGFloat insetVertical = 4;
     
     CGFloat heightImage = self.frame.size.height - insetVertical*2;

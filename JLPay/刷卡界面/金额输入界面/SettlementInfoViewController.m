@@ -34,15 +34,15 @@
                         kSettleInfoNameAmountAvilable,
                         kSettleInfoNameAmountLimit,
                         kSettleInfoNameMinCustAmount,
-                        kSettleInfoNameT_0_Fee
+                        kSettleInfoNameT_0_Fee,
+                        kSettleInfoNameExtraFee
                         ];
-        titlesForKeys = @{@"sFloatMoney":@"刷卡金额:",
-                          kSettleInfoNameAmountLimit:@"T+0单日限额:",
-                          kSettleInfoNameAmountAvilable:@"T+0当日可刷额度:",
-                          kSettleInfoNameMinCustAmount:@"T+0最小刷卡限额:",
-                          kSettleInfoNameT_0_Fee:@"增加手续费:"
-//                          kSettleInfoNameCompareMoney:@"T+0增加费率:",
-//                          kSettleInfoNameExtraFee:@"T+0增加费率:"
+        titlesForKeys = @{@"sFloatMoney":@"交易金额:",
+                          kSettleInfoNameAmountLimit:@"单日限额:",
+                          kSettleInfoNameAmountAvilable:@"单日可刷额度:",
+                          kSettleInfoNameMinCustAmount:@"单笔最小限额:",
+                          kSettleInfoNameT_0_Fee:@"手续费:",
+                          kSettleInfoNameExtraFee:@"转账手续费:"
                           };
         
         self.title = @"结算信息";
@@ -104,6 +104,11 @@
     else if ([keyOfCell isEqualToString:kSettleInfoNameMinCustAmount]) {
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
     }
+    // 转账手续费
+    else if ([keyOfCell isEqualToString:kSettleInfoNameExtraFee]) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
+    }
+
     return cell;
 }
 
@@ -111,10 +116,6 @@
 /* 格式化: 费率 */
 - (NSString*) formatFee:(NSString*)fee {
     NSString* formationFee = [NSString stringWithFormat:@"+%@%%",fee];
-    if (self.sFloatMoney.floatValue <= [[[ModelSettlementInformation sharedInstance] T_0CompareMoney] floatValue]) {
-        formationFee = [formationFee stringByAppendingFormat:@"+%@￥",[[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
-    }
-//    formationFee = @"+0.20%+100.00￥";
     return formationFee;
 }
 

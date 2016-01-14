@@ -503,7 +503,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void) actionSheetShowForSelectingDevice {
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
-    [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
+//    [actionSheet addButtonWithTitle:DeviceType_RF_BB01]; // 去掉蓝牙刷卡头
     [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
     
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
