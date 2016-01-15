@@ -9,6 +9,7 @@
 #import "HelperAndAboutTableViewController.h"
 #import "BangdingViewController.h"
 #import "PublicInformation.h"
+#import "Define_Header.h"
 
 @interface HelperAndAboutTableViewController ()
 @property (nonatomic, strong) NSMutableArray* cellTitles;
@@ -79,7 +80,9 @@
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
         [_cellTitles addObject:@"3.交易明细"];
-        [_cellTitles addObject:@"4.关于我们"];
+        if (BranchAppName != 1) {
+            [_cellTitles addObject:@"4.关于我们"];
+        }
     }
     return _cellTitles;
 }
@@ -93,7 +96,7 @@
                 [imageTitles addObject:@"搜索设备"];
                 [imageTitles addObject:@"选择设备"];
             } else if (i == 1) {
-                [imageTitles addObject:@"输入金额_JLPay"];
+                [imageTitles addObject:[PublicInformation imageNameCustPayViewShot]];
                 [imageTitles addObject:@"提示刷卡"];
                 [imageTitles addObject:@"输入密码"];
             } else if (i == 2) {
@@ -117,7 +120,7 @@
                 [datas setValue:@"1.自动搜索蓝牙POS设备，获取SN号" forKey:@"搜索设备"];
                 [datas setValue:@"2.手动选择设备终端编号和SN号，执行绑定" forKey:@"选择设备"];
             } else if (i == 1) {
-                [datas setValue:@"1.请输入交易金额" forKey:@"输入金额"];
+                [datas setValue:@"1.请输入交易金额" forKey:[PublicInformation imageNameCustPayViewShot]];
                 [datas setValue:@"2.连接设备，提示刷卡" forKey:@"提示刷卡"];
                 [datas setValue:@"3.输入支付密码" forKey:@"输入密码"];
             } else if (i == 2) {

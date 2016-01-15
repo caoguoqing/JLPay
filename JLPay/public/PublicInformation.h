@@ -129,6 +129,10 @@
                        withWidthScale:(CGFloat)wScale
                        andHeightScale:(CGFloat)hScale;
 
+// -- 金额输入界面截图
++ (UIImage*) imageCustPayViewShot;
++ (NSString*) imageNameCustPayViewShot;
+
 
 #pragma mask 0-------------------------------------------0 8583交易相关
 

@@ -831,6 +831,34 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return newImage;
 }
 
+// -- 金额输入界面截图
++ (UIImage*) imageCustPayViewShot {
+    UIImage* image = nil;
+    if (BranchAppName == 0) {
+        image = [UIImage imageNamed:@"输入金额_JLPay"];
+    }
+    else if (BranchAppName == 1) {
+        image = [UIImage imageNamed:@"输入金额_WLS"];
+    }
+    else if (BranchAppName == 2) {
+        image = [UIImage imageNamed:@"输入金额_OuEr"];
+    }
+    return image;
+}
++ (NSString*) imageNameCustPayViewShot {
+    NSString* imageName = nil;
+    if (BranchAppName == 0) {
+        imageName = @"输入金额_JLPay";
+    }
+    else if (BranchAppName == 1) {
+        imageName = @"输入金额_WLS";
+    }
+    else if (BranchAppName == 2) {
+        imageName = @"输入金额_OuEr";
+    }
+    return imageName;
+}
+
 /* 版本号 */
 + (NSString*) AppVersionNumber {
     NSString* versionNumber = nil;

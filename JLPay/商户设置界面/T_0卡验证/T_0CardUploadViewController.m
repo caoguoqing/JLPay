@@ -40,7 +40,7 @@ HttpUploadT0CardDelegate>
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.enableUpload = NO;
-    self.title = @"卡信息";
+    self.title = @"添加银行卡";
     [self loadSubviews];
     self.automaticallyAdjustsScrollViewInsets = NO;
     
@@ -116,7 +116,7 @@ HttpUploadT0CardDelegate>
             [fieldCell setTitle:@"卡号"];
             [fieldCell setPlaceHolder:@"请输入交易卡号"];
         } else {
-            [fieldCell setTitle:@"姓名"];
+            [fieldCell setTitle:@"持卡人"];
             [fieldCell setPlaceHolder:@"请输入持卡人姓名"];
         }
     }

@@ -7,11 +7,14 @@
 //
 
 #import "GuanyuViewController.h"
+#import "Define_Header.h"
 
 @interface GuanyuViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) NSMutableArray* cellTextArray;
 @property (nonatomic, strong) NSDictionary* dataSourceDict;
+@property (nonatomic, strong) UIImageView* imageView;
+@property (nonatomic, strong) UILabel* appNameLabel;
 @end
 
 CGFloat cellHeight = 40.0;
@@ -26,9 +29,12 @@ CGFloat cellHeight = 40.0;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         if ([alertView.title hasPrefix:@"呼叫"]) {
-            NSString* urlString = [alertView.title substringFromIndex:[alertView.title rangeOfString:@"0755"].location];
-            urlString = [@"tel://" stringByAppendingString:urlString];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+            NSRange gbkTextRange = [alertView.title rangeOfString:@"呼叫"];
+            NSString* telURL = [alertView.title substringFromIndex:gbkTextRange.location + gbkTextRange.length];
+            telURL = [telURL stringByReplacingOccurrencesOfString:@" " withString:@""];
+            telURL = [telURL stringByReplacingOccurrencesOfString:@"-" withString:@""];
+            telURL = [@"tel://" stringByAppendingString:telURL];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telURL]];
         } else if ([alertView.title hasPrefix:@"访问"]) {
             // 访问网址
             NSString* urlString = [alertView.title substringFromIndex:[alertView.title rangeOfString:@"www"].location];
@@ -110,18 +116,15 @@ CGFloat cellHeight = 40.0;
                               imageWidth,
                               imageWidth );
     // 图标
-    UIImageView* imageView = [[UIImageView alloc] initWithFrame:frame];
-    imageView.image = [UIImage imageNamed:@"01icon"];
-    [self.view addSubview:imageView];
-    // 捷联通
+    [self.imageView setFrame:frame];
+    [self.view addSubview:self.imageView];
+    // app名
     frame.origin.x = 0;
     frame.origin.y += frame.size.height;
     frame.size.width = self.view.bounds.size.width;
     frame.size.height = labelHeight;
-    UILabel* label = [[UILabel alloc] initWithFrame:frame];
-    label.text = @"捷联通";
-    label.textAlignment = NSTextAlignmentCenter;
-    [self.view addSubview:label];
+    [self.appNameLabel setFrame:frame];
+    [self.view addSubview:self.appNameLabel];
     // 表视图
     frame.origin.y += frame.size.height + horizontalInset;
     frame.size.height = cellHeight * self.cellTextArray.count;
@@ -157,14 +160,45 @@ CGFloat cellHeight = 40.0;
     if (_dataSourceDict == nil) {
         NSMutableArray* values = [[NSMutableArray alloc] init];
         [values addObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
-        [values addObject:@"0755-86532999"];
-        [values addObject:@"www.cccpay.cn"];
+        if (BranchAppName == 0) {
+            [values addObject:@"0755-86532999"];
+            [values addObject:@"www.cccpay.cn"];
+        }
+        else if (BranchAppName == 2) {
+            [values addObject:@"400-119-2200"];
+            [values addObject:@"www.o2o-pay.com"];
+        }
         _dataSourceDict = [NSDictionary dictionaryWithObjects:values forKeys:self.cellTextArray];
     }
     return _dataSourceDict;
 }
 
-
+- (UIImageView *)imageView {
+    if (!_imageView) {
+        _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+        _imageView.backgroundColor = [UIColor clearColor];
+        if (BranchAppName == 0) {
+            _imageView.image = [UIImage imageNamed:@"AppIconImageJLPay"];
+        }
+        else if (BranchAppName == 2) {
+            _imageView.image = [UIImage imageNamed:@"AppIconImageOuErPay"];
+        }
+    }
+    return _imageView;
+}
+- (UILabel *)appNameLabel {
+    if (!_appNameLabel) {
+        _appNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _appNameLabel.textAlignment = NSTextAlignmentCenter;
+        if (BranchAppName == 0) {
+            _appNameLabel.text = @"捷联通";
+        }
+        else if (BranchAppName == 2) {
+            _appNameLabel.text = @"欧尔支付";
+        }
+    }
+    return _appNameLabel;
+}
 
 
 

@@ -123,9 +123,9 @@ SettlementSwitchViewDelegate>
     NSMutableString* alert = [[NSMutableString alloc] init];
     
     [alert appendFormat:@"单日限额: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
-    [alert appendFormat:@"单日可刷额度: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
     [alert appendFormat:@"单笔最小限额: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
-    [alert appendFormat:@"手续费: +%@%%\n",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
+    [alert appendFormat:@"单日可刷额度: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+    [alert appendFormat:@"手续费率: +%@%%\n",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
     [alert appendFormat:@"转账手续费: ￥%@", [[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
     
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"T+0温馨提示" message:alert delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -359,7 +359,7 @@ SettlementSwitchViewDelegate>
     // 宽度: 数字按钮
     CGFloat numBtnWidth = self.view.bounds.size.width/3.0;
     // logo imageView高度
-    CGSize  logoImgSize = [UIImage imageNamed:AppLogoImageName].size;
+    CGSize  logoImgSize = [PublicInformation logoImageOfApp].size;
     CGFloat logoImgWidth = self.view.bounds.size.width / 2.0;
     CGFloat logoImgHeight = logoImgWidth * logoImgSize.height/logoImgSize.width;
     /* ---------
@@ -391,7 +391,7 @@ SettlementSwitchViewDelegate>
     // 图标
     CGRect  frame                       = CGRectMake(0, 0, logoImgWidth, logoImgHeight);
     UIImageView *imageView              = [[UIImageView alloc] initWithFrame:frame];
-    imageView.image                     = [UIImage imageNamed:AppLogoImageName];
+    imageView.image = [PublicInformation logoImageOfApp];
     imageView.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightLogoImageView/2.0);
     yCenterPre += heightLogoImageView;
     [self.view addSubview:imageView];

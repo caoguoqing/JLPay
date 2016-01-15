@@ -41,7 +41,7 @@
                           kSettleInfoNameAmountLimit:@"单日限额:",
                           kSettleInfoNameAmountAvilable:@"单日可刷额度:",
                           kSettleInfoNameMinCustAmount:@"单笔最小限额:",
-                          kSettleInfoNameT_0_Fee:@"手续费:",
+                          kSettleInfoNameT_0_Fee:@"手续费率:",
                           kSettleInfoNameExtraFee:@"转账手续费:"
                           };
         

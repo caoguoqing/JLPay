@@ -13,7 +13,6 @@
 #import "PublicInformation.h"
 
 
-#define AppLogoImageName                @"AppLogoImageJLPay"
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
@@ -32,7 +31,7 @@
 #define TestOrProduce                   1
 
 /* ----------------------------
- * 版本分支配置(用于标示发布到appStore还是企业版的app)
+ * 代码版本分支配置(用于标示发布到appStore还是企业版的app)
  * 0: master: AppStore
  * 1: test:   网页企业版
  * 2: dev:    开发版
@@ -41,12 +40,13 @@
 
 
 /* ----------------------------
- * 版本分支配置(用于标示发布到appStore还是企业版的app)
+ * app版本分支
  * 0: JLPay
  * 1: WeiLeShua
  * 2: OuErPay
  * ---------------------------- */
-#define BranchAppName                   1
+#define BranchAppName                   0
+
 
 /* ----------------------------
  * 枚举量: 交易平台类型
