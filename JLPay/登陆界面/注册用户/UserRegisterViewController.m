@@ -147,10 +147,13 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     if (!cell) {
         cell = [self cellForIdentifier:reuseIdentifier];
         [cell setFrame:[tableView rectForRowAtIndexPath:indexPath]];
-    }
-    [self settingAttributesOfCell:cell onIdentifier:reuseIdentifier onIndexPath:indexPath];
-    
+    }    
     return cell;
+}
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString* reuseIdentifier = [self identifierCellAtIndexPath:indexPath];
+    [self settingAttributesOfCell:cell onIdentifier:reuseIdentifier onIndexPath:indexPath];
 }
 
 /* Header 的高度定义 */

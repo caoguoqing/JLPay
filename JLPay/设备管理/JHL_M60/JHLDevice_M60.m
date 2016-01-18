@@ -715,7 +715,7 @@
     memset(dataStr, 0, 512);
     [self BcdToAsc:dataStr :TransData.sPIN :(int)strlen((char*)TransData.sPIN)];
     [cardInfo setValue:[NSString stringWithFormat:@"%s",dataStr] forKey:@"52"];
-    if (strlen((char*)dataStr) > 0) {
+    if ([f22 hasSuffix:@"10"]) {
         [cardInfo setValue:@"2600000000000000" forKey:@"53"];
     } else {
         [cardInfo setValue:@"0600000000000000" forKey:@"53"];

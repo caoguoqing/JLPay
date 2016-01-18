@@ -166,7 +166,9 @@
     [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
     [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
     [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:@"156"]];
-    [packingHolder setFieldAtIndex:52 withValue:[info valueForKey:@"52"]];
+    if ([[info valueForKey:@"22"] hasSuffix:@"10"]) {
+        [packingHolder setFieldAtIndex:52 withValue:[info valueForKey:@"52"]];
+    }
     [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
     [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_Consume]];
