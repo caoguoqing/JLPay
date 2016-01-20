@@ -8,6 +8,7 @@
 
 #import "GuanyuViewController.h"
 #import "Define_Header.h"
+#import "ModelAppInformation.h"
 
 @interface GuanyuViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 @property (nonatomic, strong) UITableView* tableView;
@@ -101,6 +102,7 @@ CGFloat cellHeight = 40.0;
     [self.view setBackgroundColor:[UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1]];
     [self.view addSubview:self.tableView];
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
+//    [[ModelAppInformation sharedInstance] requestAppStoreInfo];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

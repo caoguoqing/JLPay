@@ -17,11 +17,14 @@
 #import "KVNProgress.h"
 
 #import "ModelDeviceBindedInformation.h"
+#import "ModelAppInformation.h"
+
 
 #define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
+static NSUInteger const iTagAlertAppStoreInfoRequested = 198;
 
 @interface AppDelegate ()
-
+<UIAlertViewDelegate>
 @end
 
 
@@ -51,7 +54,6 @@
     NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
     [navigationControllers addObject:[self newNavigationOfCustPayVC]];
     [navigationControllers addObject:[self newNavigationOfBusinessVC]];
-//    [navigationControllers addObject:[self newNavigationOfAdditionalVC]];
     
     [tabBarController setViewControllers:navigationControllers];
     return tabBarController;
@@ -63,8 +65,12 @@
     
     self.window.rootViewController = [self newNavigationOfLoginVC];
     
-    [NSThread sleepForTimeInterval:1.5f];
-    
+    // 检查app版本
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(checkAppVersionAndAlert)
+                                                 name:kNotiKeyAppStoreInfoRequested
+                                               object:nil];
+    [self requestAppStoreInfoIfBranchMaster];
     return YES;
 }
 
@@ -93,6 +99,15 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+#pragma mask ---- UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == iTagAlertAppStoreInfoRequested) {
+        if (buttonIndex == 1) {
+            [self gotoAppStore];
+        }
+    }
 }
 
 
@@ -150,6 +165,36 @@
     return navigation;
 }
 
+
+// -- 获取 AppStore 版信息: 如果是master分支
+- (void) requestAppStoreInfoIfBranchMaster {
+    if (TAG_OF_BRANCH_EDITION == 0) { // master分支
+        [[ModelAppInformation sharedInstance] requestAppStoreInfo];
+    }
+}
+// -- 检查 AppStore 版本分支,提示更新
+- (void) checkAppVersionAndAlert {
+    NSString* curAppStoreVersion = [[ModelAppInformation sharedInstance] appStoreVersion];
+    if (!curAppStoreVersion) {
+        return;
+    }
+    NSString* curAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
+    curAppStoreVersion = [curAppStoreVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
+    curAppVersion = [curAppVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
+    if (curAppStoreVersion.integerValue < curAppVersion.integerValue) { // 比较当前版本
+        [PublicInformation alertCancle:@"暂不升级"
+                                 other:@"马上升级"
+                                 title:@"发现新版本,是否升级?"
+                               message:[[ModelAppInformation sharedInstance] appUpdatedDescription]
+                                   tag:iTagAlertAppStoreInfoRequested
+                              delegate:self];
+    }
+    
+}
+// -- 跳转appstore升级界面
+- (void) gotoAppStore {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ModelAppInformation URLStringInAppStore]]];
+}
 
 
 @end

@@ -115,6 +115,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (TestOrProduce == 3) {
         port = @"60701";
     }
+    else if (TestOrProduce == 4) {
+        port = @"60704";
+    }
     else {
         port = @"80";
     }
@@ -128,6 +131,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (TestOrProduce == 3) {
         port = @"60780";
+    }
+    else if (TestOrProduce == 4) {
+        port = @"60705";
     }
     else {
         port = @"80";
@@ -919,6 +925,15 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         [alertView show];
     });
 }
++ (void) alertCancle:(NSString*)cancle other:(NSString*)other title:(NSString*)title message:(NSString*)message tag:(NSInteger)tag delegate:(id)delegate
+{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:delegate cancelButtonTitle:cancle otherButtonTitles:other, nil];
+    [alertView setTag:tag];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alertView show];
+    });
+}
+
 
 
 
