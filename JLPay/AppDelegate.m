@@ -181,7 +181,7 @@ static NSUInteger const iTagAlertAppStoreInfoRequested = 198;
     NSString* curAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     curAppStoreVersion = [curAppStoreVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
     curAppVersion = [curAppVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
-    if (curAppStoreVersion.integerValue < curAppVersion.integerValue) { // 比较当前版本
+    if (curAppStoreVersion.integerValue > curAppVersion.integerValue) { // 比较当前版本
         [PublicInformation alertCancle:@"暂不升级"
                                  other:@"马上升级"
                                  title:@"发现新版本,是否升级?"

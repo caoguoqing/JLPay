@@ -23,6 +23,7 @@
 #import "ModelHTTPRequestLogin.h"
 #import "ModelFeeBusinessInformation.h"
 #import "ChangePinViewController.h"
+#import "ModelAppInformation.h"
 
 
 #pragma mask    ---- 常量设置区 ----
@@ -577,7 +578,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     NSString* buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     switch (alertView.tag) {
         case TagAlertVersionLow:
-            if ([buttonTitle isEqualToString:@"确定"] && TAG_OF_BRANCH_EDITION != 0) { // app store分支不能跳转去下载
+            if ([buttonTitle isEqualToString:@"确定"] ) {
                 [self gotoDownloadApp];
             }
             break;
@@ -609,7 +610,14 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 
 // 下载app
 - (void) gotoDownloadApp {
-    NSString* urlString = @"http://www.cccpay.cn/center.html";
+    NSString* urlString = nil;
+    if (TAG_OF_BRANCH_EDITION == 0) { // AppStore
+        urlString = [ModelAppInformation URLStringInAppStore] ;
+    }
+    else { // 1 or 2 or other..
+        urlString = @"http://www.cccpay.cn/center.html";
+    }
+    // 跳转
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
 }
 // 跳转注册页面

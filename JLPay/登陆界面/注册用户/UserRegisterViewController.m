@@ -147,7 +147,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     if (!cell) {
         cell = [self cellForIdentifier:reuseIdentifier];
         [cell setFrame:[tableView rectForRowAtIndexPath:indexPath]];
-    }    
+    }
     return cell;
 }
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -233,7 +233,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
             [actionSheet addButtonWithTitle:@"拍摄"];
         }
-//        [actionSheet addButtonWithTitle:@"从相册选择"];
         [actionSheet showInView:self.view];
     }
 }
@@ -275,7 +274,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [imagePickerController setModalPresentationStyle:UIModalPresentationFullScreen];
     [imagePickerController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
     [self presentViewController:imagePickerController animated:YES completion:^{}];
-    
 }
 #pragma mask ------ UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
