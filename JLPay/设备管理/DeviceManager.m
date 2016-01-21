@@ -29,7 +29,6 @@ RFDevice_BB01Delegate,
 JLPayDevice_TY01_Delegate,
 DLDevice_DL01Delegate
 >
-@property (nonatomic, strong) NSString*         deviceType;
 @property (nonatomic, retain) id                device;
 @end
 
@@ -40,31 +39,37 @@ DLDevice_DL01Delegate
 @synthesize delegate;
 
 
-static DeviceManager* _sharedDeviceManager = nil;
+//static DeviceManager* _sharedDeviceManager = nil;
 
 #pragma mask --------------------------[Public Interface]--------------------------
 
 #pragma mask : 创建或获取设备操作入口:单例
 +(DeviceManager*) sharedInstance {
+    static DeviceManager* _sharedDeviceManager = nil;
+
     static dispatch_once_t desp;
     dispatch_once(&desp, ^{
         _sharedDeviceManager = [[DeviceManager alloc] init];
     });
+//    [_sharedDeviceManager makeDeviceIfNeeded];
+    JLPrint(@"====STMD 来获取设备入口了");
     return _sharedDeviceManager;
 }
 - (instancetype)init {
     self = [super init];
     if (self) {
         // 如果已经选择过设备就直接创建设备入口
-        if (_sharedDeviceManager.device == nil && _sharedDeviceManager.deviceType != nil) {
-            [_sharedDeviceManager makeDeviceEntryWithType:_sharedDeviceManager.deviceType];
-        }
+        [self makeDeviceIfNeeded];
+//        if (_sharedDeviceManager.device == nil && _sharedDeviceManager.deviceType != nil) {
+//            [_sharedDeviceManager makeDeviceEntryWithType:_sharedDeviceManager.deviceType];
+//        }
     }
     return self;
 }
 
 #pragma mask : 开始扫描设备
 - (void) startScanningDevices {
+    JLPrint(@"%s 设备:[%@]",__func__, self.device);
     [self.device startScanningDevices];
 }
 
@@ -87,6 +92,7 @@ static DeviceManager* _sharedDeviceManager = nil;
     [self.device setDelegate:nil];
     [self.device stopScanningDevices];
     [self.device closeAllDevices];
+    self.deviceType = nil;
     self.device = nil;
     
 }
@@ -221,26 +227,33 @@ static DeviceManager* _sharedDeviceManager = nil;
 
 
 #pragma mask : 设置并创建指定的设备入口
-- (void) makeDeviceEntryWithType:(NSString*)devitype {
-    self.deviceType = devitype;
+- (void) makeDeviceEntry{ //WithType:(NSString*)devitype {
+   // self.deviceType //= devitype;
     if (self.device) {
         self.device = nil;
     }
-    if ([devitype isEqualToString:DeviceType_JHL_M60]) {
+    if ([self.deviceType isEqualToString:DeviceType_JHL_M60]) {
         self.device = [[JHLDevice_M60 alloc] initWithDelegate:self];
     }
-    else if ([devitype isEqualToString:DeviceType_RF_BB01]) {
+    else if ([self.deviceType isEqualToString:DeviceType_RF_BB01]) {
         self.device = [[RFDevice_BB01 alloc] initWithDelegate:self];
     }
-    else if ([devitype isEqualToString:DeviceType_JLpay_TY01]) {
+    else if ([self.deviceType isEqualToString:DeviceType_JLpay_TY01]) {
         self.device = [[JLPayDevice_TY01 alloc] initWithDelegate:self];
     }
-    else if ([devitype isEqualToString:DeviceType_DL01]) {
+    else if ([self.deviceType isEqualToString:DeviceType_DL01]) {
         self.device = [[DLDevice_DL01 alloc] initWithDelegate:self];
     }
 
 }
 
+- (void) makeDeviceIfNeeded {
+    JLPrint(@"设备类型:[%@]",self.deviceType);
+    if (!self.device && self.deviceType) {
+//        [self makeDeviceEntryWithType:self.deviceType];
+        [self makeDeviceEntry];
+    }
+}
 
 
 #pragma mask --------------------------[GETTER & SETTER]--------------------------

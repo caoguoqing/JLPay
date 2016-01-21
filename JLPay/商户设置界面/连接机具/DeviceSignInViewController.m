@@ -57,7 +57,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     self.title = @"绑定设备";
     
     self.selectedDevice = nil;
-    [[DeviceManager sharedInstance] setDelegate:self];
+//    [[DeviceManager sharedInstance] setDelegate:self];
     
     bleManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     if (bleManager.state == CBCentralManagerStatePoweredOn) {
@@ -395,7 +395,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 保存选择的设备类型
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     self.selectedDevice = title;
-    [[DeviceManager sharedInstance] makeDeviceEntryWithType:title];
+    [[DeviceManager sharedInstance] setDeviceType:title];
+    [[DeviceManager sharedInstance] setDelegate:self];
+    [[DeviceManager sharedInstance] makeDeviceEntry];
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (!blueToothIsOn) {
@@ -537,6 +539,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (!identifier) {
         return;
     }
+    JLPrint(@"保存设备信息:sn[%@],id[%@]",self.selectedSNVersionNum,identifier);
     [ModelDeviceBindedInformation saveBindedDeviceInfoWithDeviceType:self.selectedDevice
                                                             deviceID:identifier
                                                             deviceSN:self.selectedSNVersionNum

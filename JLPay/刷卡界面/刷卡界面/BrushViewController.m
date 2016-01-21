@@ -202,10 +202,15 @@
     else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
         [self makePasswordAlertView];
     }
+    else if ([deviceType isEqualToString:DeviceType_DL01]) {
+        [self makePasswordAlertView];
+    }
+
 }
 
 #pragma mask : 识别设备回调
 - (void)didDiscoverDeviceOnID:(NSString *)identifier {
+    JLPrint(@"%s 扫描到了设备id:%@",__func__,identifier);
     if ([identifier isEqualToString:[ModelDeviceBindedInformation deviceIDBinded]]) {
         // 连接设备
         [[DeviceManager sharedInstance] stopScanningDevices];
@@ -268,13 +273,13 @@
 
 #pragma mask ::: 进行加密
 - (void) encryptPinWithSource:(NSString*)source {
-    NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-    if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
+//    NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
+//    if ([deviceType isEqualToString:DeviceType_RF_BB01] ||
+//        [deviceType isEqualToString:DeviceType_DL01]
+//        )
+//    {
         [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
-    }
-    else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
-        
-    }
+//    }
 }
 
 #pragma mask ::: 初始化并加载密码输入提示框

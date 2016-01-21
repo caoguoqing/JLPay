@@ -22,14 +22,16 @@
 
 
 @interface DeviceManager : NSObject
-@property (assign) id<DeviceManagerDelegate> delegate;
+@property (assign)            id<DeviceManagerDelegate> delegate;
+@property (nonatomic, strong) NSString*         deviceType;
+
 
 # pragma mask : 设备管理器公共入口获取或创建
 +(DeviceManager*) sharedInstance;
 
 
 # pragma mask : 设置并创建指定的设备入口
-- (void) makeDeviceEntryWithType:(NSString*)devitype ;
+- (void) makeDeviceEntry ;
 
 # pragma mask : 开始扫描设备
 - (void) startScanningDevices;
