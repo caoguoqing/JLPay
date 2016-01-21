@@ -68,6 +68,18 @@
     return stringPackage;
 }
 
+#pragma mask : MAC加密源串
+- (NSString*) macSourcePackintByType:(NSString*)type {
+    exchangeType = type;
+    // 根据plist配置格式化所有的域值
+    [self resetFormatValueOfFieldsDictionary];
+    NSString* stringPackage = [self macSourcePacking];
+    // 清空字典数据
+    [self cleanAllFields];
+    return stringPackage;
+}
+
+
 #pragma mask : 清空数据
 -(void) cleanAllFields {
     [self.dictionaryFieldNamesAndValues removeAllObjects];
@@ -226,6 +238,14 @@
     
     NSString* retString = [NSString stringWithFormat:@"%@%@", lengthString, string];
     return retString;
+}
+// 打MAC源串
+- (NSString*) macSourcePacking {
+    NSMutableString* string = [[NSMutableString alloc] init];
+    [string appendString:exchangeType];
+    [string appendString:[self bitMapHexString]];
+    [string appendString:[self allDataString]];
+    return string;
 }
 
 // 生成MAP位图串:16进制

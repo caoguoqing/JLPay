@@ -41,6 +41,9 @@
 #pragma mask : 打包结果串获取
 -(NSString*) stringPackingWithType:(NSString*)type;
 
+#pragma mask : MAC加密源串
+- (NSString*) macSourcePackintByType:(NSString*)type;
+
 #pragma mask : 清空数据
 -(void) cleanAllFields;
 

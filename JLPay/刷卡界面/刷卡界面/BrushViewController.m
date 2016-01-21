@@ -251,6 +251,16 @@
     }
 }
 
+- (void)didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString *)macPin withError:(NSString *)error {
+    if (yesOrNo) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading macPin:macPin andDelegate:self];
+        });
+    } else {
+        [self alertForFailedMessage:error];
+    }
+}
+
 
 #pragma mask ::: 进行刷卡
 /*************************************
@@ -351,9 +361,16 @@
     // 启动指示器
     [self startActivity];
     // 发起交易
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading andDelegate:self];
-    });
+    if (UnitStandardPacking == 0) {
+        if ([[ModelDeviceBindedInformation deviceTypeBinded] isEqualToString:DeviceType_DL01]) {
+            NSString* macSource = [self.tcpViewModel macSourceWithTranType:self.stringOfTranType andCardInfo:self.cardInfoOfReading];
+            [[DeviceManager sharedInstance] macEncryptBySource:macSource onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
+        }
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading andDelegate:self];
+        });
+    }
 }
 
 

@@ -44,6 +44,11 @@
                      andCardInfo:(NSDictionary*)cardInfo
                      andDelegate:(id<ViewModelTCPPosTransDelegate>)delegate;
 
+- (void) startTransWithTransType:(NSString*)transType
+                     andCardInfo:(NSDictionary*)cardInfo
+                          macPin:(NSString*)macPin
+                     andDelegate:(id<ViewModelTCPPosTransDelegate>)delegate;
+
 
 /* 终止交易 */
 - (void) terminateTransWithTransType:(NSString*)transType;
