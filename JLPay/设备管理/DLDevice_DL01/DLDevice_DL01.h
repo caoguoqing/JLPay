@@ -31,6 +31,9 @@
 - (void) didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString*)pin withError:(NSString*)error;
 # pragma mask : 设备超时
 - (void) deviceTimeOut;
+# pragma mask : MAC加密回调
+- (void) didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString*)macPin withError:(NSString*)error;
+
 
 @end
 
@@ -79,6 +82,9 @@
 
 #pragma mask : PIN加密
 - (void) pinEncryptBySource:(NSString*)source withPan:(NSString*)pan onSNVersion:(NSString*)SNVersion;
+
+# pragma mask : MAC加密
+- (void) macEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion;
 
 
 @end

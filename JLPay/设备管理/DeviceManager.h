@@ -72,6 +72,8 @@
 # pragma mask : 密码加密 - 不支持输入密码的设备使用本接口加密
 - (void) pinEncryptBySource:(NSString*)source withPan:(NSString*)pan onSNVersion:(NSString*)SNVersion;
 
+# pragma mask : MAC加密
+- (void) macEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion;
 
 
 @end
@@ -116,6 +118,9 @@
 
 # pragma mask : PIN加密回调
 - (void) didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString*)pin withError:(NSString*)error;
+
+# pragma mask : MAC加密回调
+- (void) didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString*)macPin withError:(NSString*)error;
 
 
 @end

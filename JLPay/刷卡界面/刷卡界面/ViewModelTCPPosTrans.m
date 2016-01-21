@@ -32,6 +32,14 @@
 
 @implementation ViewModelTCPPosTrans
 
+// -- 先组mac源串
+//- (NSString*) macSourceWithTranType:(NSString*)transType andCardInfo:(NSDictionary*)cardInfo {
+//    curTransType = transType;
+//    sourceCardInfo = [cardInfo copy];
+//    [self setCardTypeByF22:[cardInfo valueForKey:@"22"]];
+//
+//}
+
 #pragma mask ---- 发起交易: 指定交易类型+卡数据信息(2,4,14,22,23,35,36,52,53,55)
 - (void)startTransWithTransType:(NSString *)transType
                     andCardInfo:(NSDictionary *)cardInfo

@@ -135,6 +135,7 @@
     }
 
     // 3.扫描设备
+    [[DeviceManager sharedInstance] makeDeviceEntry];
     [[DeviceManager sharedInstance] startScanningDevices];
 
     // 4.先在主线程打开activitor 和 提示信息

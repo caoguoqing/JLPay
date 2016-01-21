@@ -154,6 +154,13 @@ DLDevice_DL01Delegate
     }
 }
 
+# pragma mask : MAC加密
+- (void) macEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion {
+    if ([self.device respondsToSelector:@selector(macEncryptBySource:onSNVersion:)]) {
+        [self.device macEncryptBySource:source onSNVersion:SNVersion];
+    }
+}
+
 
 
 
@@ -210,6 +217,7 @@ DLDevice_DL01Delegate
 
 
 
+
 #pragma mask ------------------------------------------------------------- RFDevice_BB01Delegate
 
 # pragma mask : PIN加密回调
@@ -219,8 +227,14 @@ DLDevice_DL01Delegate
     }
 }
 
+#pragma mask ------------------------------------------------------------- DLDevice_DL01Delegate
 
-
+# pragma mask : MAC加密回调
+- (void) didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString*)macPin withError:(NSString*)error {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptMacSucOrFail:macPin:withError:)]) {
+        [self.delegate didEncryptMacSucOrFail:yesOrNo macPin:macPin withError:error];
+    }
+}
 
 #pragma mask --------------------------[Private Interface]--------------------------
 

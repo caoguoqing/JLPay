@@ -95,16 +95,10 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 # pragma mask : 打开指定 identifier 号的设备
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
     JLPrint(@"保存的设备id[%@]，需要打开的id[%@]", self.connectedIdentifier, identifier);
-    
     if (![self.connectedIdentifier isEqualToString:identifier]) {
         [self disConnectDevice];
     }
     [self connectDeviceOnId:identifier];
-//    if ([identifier isEqualToString:[self deviceIdentifier]]) {
-//        if (![self isConnectedDevice]) {
-//            [self connectDevice];
-//        }
-//    }
 }
 # pragma mask : 关闭指定 SNVersion 号的设备
 - (void) closeDevice:(NSString*)SNVersion {
@@ -178,7 +172,18 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 #pragma mask : PIN加密
 - (void) pinEncryptBySource:(NSString*)source withPan:(NSString*)pan onSNVersion:(NSString*)SNVersion {
-    
+    if (![SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
+        return;
+    }
+    [self encriptSourcePin:source];
+}
+
+# pragma mask : MAC加密
+- (void) macEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion {
+    if (![SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
+        return;
+    }
+    [self encriptSourceMac:source];
 }
 
 
@@ -252,20 +257,46 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 -(void)onDidReadCardInfo:(NSDictionary *)dic {
     JLPrint(@"刷卡数据:[%@]",dic);
     NSMutableDictionary* cardInfoReaded = [[NSMutableDictionary alloc] init];
+    // 2,14,22,23,35,36,55
     if (self.device.currentCardType == card_mc) {
-        
+        [cardInfoReaded setObject:[dic objectForKey:@"5"] forKey:@"2"];
+        [cardInfoReaded setObject:[[dic objectForKey:@"6"] substringToIndex:4] forKey:@"14"];
+        [cardInfoReaded setObject:@"0200" forKey:@"22"];
+        [cardInfoReaded setObject:[dic objectForKey:@"A"] forKey:@"35"];
+        NSString* mc36 = [dic objectForKey:@"B"];
+        if (mc36 && mc36.length > 0) {
+            [cardInfoReaded setObject:mc36 forKey:@"36"];
+        }
     }
-
+    else if (self.device.currentCardType == card_ic) {
+        [cardInfoReaded setObject:[dic objectForKey:@"5A"] forKey:@"2"];
+        [cardInfoReaded setObject:[[dic objectForKey:@"5F24"] substringToIndex:4] forKey:@"14"];
+        [cardInfoReaded setObject:@"0500" forKey:@"22"];
+        NSString* icSeq = [dic objectForKey:@"5F34"];
+        while (icSeq.length < 4) {
+            icSeq = [@"0" stringByAppendingString:icSeq];
+        }
+        [cardInfoReaded setObject:icSeq forKey:@"23"];
+        [cardInfoReaded setObject:[dic objectForKey:@"57"] forKey:@"35"];
+        [cardInfoReaded setObject:[dic objectForKey:@"55"] forKey:@"55"];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+        [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfoReaded];
+    }
 }
 
 //加密Pin结果
 -(void)onEncryptPinBlock:(NSString *)encPINblock {
-    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
+        [self.delegate didEncryptPinSucOrFail:YES pin:encPINblock withError:nil];
+    }
 }
 
 //mac计算结果
 -(void)onDidGetMac:(NSString *)strmac {
-    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptMacSucOrFail:macPin:withError:)]) {
+        [self.delegate didEncryptMacSucOrFail:YES macPin:strmac withError:nil];
+    }
 }
 
 //取消交易
@@ -400,6 +431,28 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     // 2:消费; 3:撤销; 4:查余;
     [self.device readCard:2 money:money];
 }
+// -- pin加密
+- (void) encriptSourcePin:(NSString*)source {
+    if (!source || source.length == 0) {
+        return;
+    }
+    NSInteger len = source.length;
+    source = [NSString stringWithFormat:@"%02d%@",len,source];
+    for (int i = 0; i < 16 - len; i++) {
+        source = [source stringByAppendingString:@"F"];
+    }
+    JLPrint(@"组包后的需要加密的明文:[%@]",source);
+    [self.device encryptPin:source];
+}
+// -- mac加密
+- (void) encriptSourceMac:(NSString*)source {
+    if (!source || source.length == 0) {
+        return;
+    }
+    JLPrint(@"加密mac:[%@]",source);
+    [self.device getMacValue:source];
+}
+
 
 // ---- 设备信息数据源
 // -- 设置SN
