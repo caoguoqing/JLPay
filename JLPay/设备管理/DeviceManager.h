@@ -15,6 +15,7 @@
 #define DeviceType_JHL_M60          @"M60蓝牙刷卡器"
 #define DeviceType_RF_BB01          @"蓝牙刷卡头"
 #define DeviceType_JLpay_TY01       @"JLpay蓝牙刷卡器"
+#define DeviceType_DL01             @"DL01蓝牙刷卡器"
 
 
 @protocol DeviceManagerDelegate;

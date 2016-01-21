@@ -14,6 +14,7 @@
 #import "RF_BB01/RFDevice_BB01.h"
 #import "JLPayDevice_TY01.h"
 #import "ModelDeviceBindedInformation.h"
+#import "DLDevice_DL01.h"
 
 /*
  *  厂商设备添加流程:
@@ -25,7 +26,8 @@
 < /* delegate */
 JHLDevice_M60_Delegate,
 RFDevice_BB01Delegate,
-JLPayDevice_TY01_Delegate
+JLPayDevice_TY01_Delegate,
+DLDevice_DL01Delegate
 >
 @property (nonatomic, strong) NSString*         deviceType;
 @property (nonatomic, retain) id                device;
@@ -48,11 +50,17 @@ static DeviceManager* _sharedDeviceManager = nil;
     dispatch_once(&desp, ^{
         _sharedDeviceManager = [[DeviceManager alloc] init];
     });
-    // 如果已经选择过设备就直接创建设备入口
-    if (_sharedDeviceManager.device == nil && _sharedDeviceManager.deviceType != nil) {
-        [_sharedDeviceManager makeDeviceEntryWithType:_sharedDeviceManager.deviceType];
-    }
     return _sharedDeviceManager;
+}
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        // 如果已经选择过设备就直接创建设备入口
+        if (_sharedDeviceManager.device == nil && _sharedDeviceManager.deviceType != nil) {
+            [_sharedDeviceManager makeDeviceEntryWithType:_sharedDeviceManager.deviceType];
+        }
+    }
+    return self;
 }
 
 #pragma mask : 开始扫描设备
@@ -211,11 +219,6 @@ static DeviceManager* _sharedDeviceManager = nil;
 #pragma mask --------------------------[Private Interface]--------------------------
 
 
-#pragma mask :  初始化;
-- (instancetype)init {
-    self = [super init];
-    return self;
-}
 
 #pragma mask : 设置并创建指定的设备入口
 - (void) makeDeviceEntryWithType:(NSString*)devitype {
@@ -232,6 +235,10 @@ static DeviceManager* _sharedDeviceManager = nil;
     else if ([devitype isEqualToString:DeviceType_JLpay_TY01]) {
         self.device = [[JLPayDevice_TY01 alloc] initWithDelegate:self];
     }
+    else if ([devitype isEqualToString:DeviceType_DL01]) {
+        self.device = [[DLDevice_DL01 alloc] initWithDelegate:self];
+    }
+
 }
 
 

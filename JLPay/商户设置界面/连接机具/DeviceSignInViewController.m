@@ -292,6 +292,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask : -------------  DeviceManagerDelegate
 // ID号读取
 - (void)didDiscoverDeviceOnID:(NSString *)identifier {
+    JLPrint(@"设备连接界面:扫描到设备:[%@]",identifier);
     [[DeviceManager sharedInstance] stopScanningDevices];
     [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
 }
@@ -365,6 +366,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString *)mainKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
+        JLPrint(@"下载的主密钥:[%@]",mainKey);
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载主密钥失败:\n%@",errorMessge]];
@@ -505,6 +507,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
 //    [actionSheet addButtonWithTitle:DeviceType_RF_BB01]; // 去掉蓝牙刷卡头
     [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
+    [actionSheet addButtonWithTitle:DeviceType_DL01];
+
     
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }

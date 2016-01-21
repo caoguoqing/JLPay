@@ -873,6 +873,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         NSLog(@"app的版本号:[%@]",versionNumber);
     }
     return versionNumber;
+    
 }
 
 /* 创建一个空的回退bar按钮 */

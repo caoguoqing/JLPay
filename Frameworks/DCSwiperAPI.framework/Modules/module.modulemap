@@ -1,0 +1,6 @@
+framework module DCSwiperAPI {
+  umbrella header "DCSwiperAPI.h"
+
+  export *
+  module * { export * }
+}
