@@ -29,7 +29,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     CBCentralManager* bleManager;
 }
 @property (nonatomic, strong) NSMutableArray* SNVersionNums;        // SN号列表
-@property (nonatomic, strong) NSMutableArray* terminalNums;         // 终端号列表
+//@property (nonatomic, strong) NSMutableArray* terminalNums;         // 终端号列表
 
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 终端号:已勾选的
 @property (nonatomic, strong) NSString* selectedSNVersionNum;       // SN号:已勾选的
@@ -151,7 +151,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rows;
     if (section == 0) {
-        rows = self.terminalNums.count;
+        rows = [ModelUserLoginInformation terminalCount];
     } else if (section == 1) {
         rows = self.SNVersionNums.count;
     }
@@ -175,7 +175,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // textLabel
         cell.textLabel.text = @"终端编号";
         // detailTextLabel
-        cell.detailTextLabel.text = [self.terminalNums objectAtIndex:indexPath.row];
+        cell.detailTextLabel.text = [[ModelUserLoginInformation terminalNumbers] objectAtIndex:indexPath.row];
         
         
         if ([self.selectedTerminalNum isEqualToString:cell.detailTextLabel.text]) {
@@ -279,14 +279,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
         }
     }
     [self.tableView reloadData];
-    // 取消其它的 checkmark 标记
-//    for (int i = 0; i < [tableView numberOfRowsInSection:indexPath.section]; i++) {
-//        NSIndexPath* otherIndex = [NSIndexPath indexPathForRow:i inSection:indexPath.section];
-//        UITableViewCell* otherCell = [tableView cellForRowAtIndexPath:otherIndex];
-//        if (otherIndex.row != indexPath.row && otherCell.accessoryType == UITableViewCellAccessoryCheckmark) {
-//            otherCell.accessoryType = UITableViewCellAccessoryNone;
-//        }
-//    }
 }
 
 #pragma mask : -------------  CBCentrolManagerDelegate 
@@ -404,9 +396,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 保存选择的设备类型
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     self.selectedDevice = title;
-    [[DeviceManager sharedInstance] setDeviceType:title];
+//    [[DeviceManager sharedInstance] setDeviceType:title];
     [[DeviceManager sharedInstance] setDelegate:self];
-    [[DeviceManager sharedInstance] makeDeviceEntry];
+    [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:title];
 }
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (!blueToothIsOn) {
@@ -419,6 +411,15 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [KVNProgress showWithStatus:@"设备连接中..."];
         // 异步启动等待定时器
         [self startDeviceTimer];
+    }
+}
+
+#pragma mask 2 UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.message isEqualToString:@"绑定设备成功!"]) {
+        // 绑定成功后就跳转到金额输入界面
+        [self.navigationController popViewControllerAnimated:YES];
+        needCheckoutToCustVC = YES;
     }
 }
 
@@ -515,34 +516,24 @@ UIActionSheetDelegate,UIAlertViewDelegate
 // 弹出设备类型选择框
 - (void) actionSheetShowForSelectingDevice {
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
-//    [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
-//    [actionSheet addButtonWithTitle:DeviceType_RF_BB01];
-//    [actionSheet addButtonWithTitle:DeviceType_JHL_M60];
     [actionSheet addButtonWithTitle:DeviceType_DL01];
 
     
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
 
-// 小工具: 为简化弹窗代码
-- (void) alertForMessage: (NSString*) messageStr {
-    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
-}
-- (void) alertForBleMessage:(NSString*)msg {
-    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"蓝牙提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
-}
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([alertView.message isEqualToString:@"绑定设备成功!"]) {
-        // 绑定成功后就跳转到金额输入界面
-        [self.navigationController popViewControllerAnimated:YES];
-        needCheckoutToCustVC = YES;
-    }
-}
+//// 小工具: 为简化弹窗代码
+//- (void) alertForMessage: (NSString*) messageStr {
+//    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//    [alert show];
+//}
+//- (void) alertForBleMessage:(NSString*)msg {
+//    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"蓝牙提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//    [alert show];
+//}
 
 
-// 保存绑定的设备到本地
+// 保存绑定的设备信息
 - (void) saveBindedDevice {
     NSString* identifier = [[DeviceManager sharedInstance] identifierOnDeviceSN:self.selectedSNVersionNum];
     if (!identifier) {
@@ -568,8 +559,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
         self.deviceWaitingTimer = nil;
     }
 }
-
-// 超时后解除转轮，并输出错误信息
 - (void) waitingTimeoutWithMsg {
     [self stopDeviceTimer];
     [KVNProgress showErrorWithStatus:@"设备连接超时"];
@@ -585,18 +574,18 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     return _SNVersionNums;
 }
-- (NSMutableArray *)terminalNums {
-    if (_terminalNums == nil) {
-        _terminalNums = [[NSMutableArray alloc] init];
-        NSArray* terms = [ModelUserLoginInformation terminalNumbers];
-        if (!terms || terms.count == 0) {
-            [_terminalNums addObject:@"无"];
-        } else {
-            [_terminalNums addObjectsFromArray:terms];
-        }
-    }
-    return _terminalNums;
-}
+//- (NSMutableArray *)terminalNums {
+//    if (_terminalNums == nil) {
+//        _terminalNums = [[NSMutableArray alloc] init];
+//        NSArray* terms = [ModelUserLoginInformation terminalNumbers];
+//        if (!terms || terms.count == 0) {
+//            [_terminalNums addObject:@"无"];
+//        } else {
+//            [_terminalNums addObjectsFromArray:terms];
+//        }
+//    }
+//    return _terminalNums;
+//}
 - (UIButton *)sureButton {
     if (_sureButton == nil) {
         _sureButton = [[UIButton alloc] init];

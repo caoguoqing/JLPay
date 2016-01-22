@@ -244,7 +244,7 @@
         [binaryString replaceCharactersInRange:NSMakeRange(abit.intValue - 1, 1) withString:@"1"];
     }
     // 64域强制置1
-    [binaryString replaceCharactersInRange:NSMakeRange(binaryString.length - 1, 1) withString:@"1"];
+//    [binaryString replaceCharactersInRange:NSMakeRange(binaryString.length - 1, 1) withString:@"1"];
     // 二进制转HEX
     return [ISOHelper binaryToHexAsString:binaryString];
 }

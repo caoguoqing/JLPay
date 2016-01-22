@@ -292,6 +292,7 @@
     [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
     [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_Consume]];
+    [packingHolder setFieldAtIndex:64 withValue:@"1"];
 
     NSString* packing = [packingHolder macSourcePackintByType:@"0200"];
     return packing;
@@ -313,7 +314,8 @@
     [packingHolder setFieldAtIndex:49 withValue:[responseCardInfo valueForKey:@"49"]];
     [packingHolder setFieldAtIndex:55 withValue:[sourceCardInfo valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60ByLast60:[responseCardInfo valueForKey:@"60"]]];
-    
+    [packingHolder setFieldAtIndex:64 withValue:@"1"];
+
     packing = [packingHolder macSourcePackintByType:@"0320"];
     return packing;
 }
@@ -338,7 +340,8 @@
     [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
     [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_YuE]];
-    
+    [packingHolder setFieldAtIndex:64 withValue:@"1"];
+
     packing = [packingHolder macSourcePackintByType:@"0200"];
     return packing;
 }

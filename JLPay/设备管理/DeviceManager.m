@@ -30,6 +30,8 @@ JLPayDevice_TY01_Delegate,
 DLDevice_DL01Delegate
 >
 @property (nonatomic, retain) id                device;
+@property (nonatomic, strong) NSString*         deviceType;
+
 @end
 
 
@@ -51,7 +53,6 @@ DLDevice_DL01Delegate
     dispatch_once(&desp, ^{
         _sharedDeviceManager = [[DeviceManager alloc] init];
     });
-//    [_sharedDeviceManager makeDeviceIfNeeded];
     JLPrint(@"====STMD 来获取设备入口了");
     return _sharedDeviceManager;
 }
@@ -59,13 +60,24 @@ DLDevice_DL01Delegate
     self = [super init];
     if (self) {
         // 如果已经选择过设备就直接创建设备入口
-        [self makeDeviceIfNeeded];
-//        if (_sharedDeviceManager.device == nil && _sharedDeviceManager.deviceType != nil) {
-//            [_sharedDeviceManager makeDeviceEntryWithType:_sharedDeviceManager.deviceType];
-//        }
+//        [self makeDeviceIfNeeded];
     }
     return self;
 }
+
+# pragma mask : 设置并创建指定的设备入口
+- (void) makeDeviceEntryOnDeviceType:(NSString*)deviceType {
+    if (![deviceType isEqualToString:self.deviceType]) {
+        [self setDeviceType:deviceType];
+        if (self.device) {
+            [self setDevice:nil];
+        }
+    }
+    if (!self.device) {
+        [self makeDeviceEntry];
+    }
+}
+
 
 #pragma mask : 开始扫描设备
 - (void) startScanningDevices {
@@ -243,9 +255,6 @@ DLDevice_DL01Delegate
 #pragma mask : 设置并创建指定的设备入口
 - (void) makeDeviceEntry{ //WithType:(NSString*)devitype {
    // self.deviceType //= devitype;
-    if (self.device) {
-        self.device = nil;
-    }
     if ([self.deviceType isEqualToString:DeviceType_JHL_M60]) {
         self.device = [[JHLDevice_M60 alloc] initWithDelegate:self];
     }
@@ -261,24 +270,23 @@ DLDevice_DL01Delegate
 
 }
 
-- (void) makeDeviceIfNeeded {
-    JLPrint(@"设备类型:[%@]",self.deviceType);
-    if (!self.device && self.deviceType) {
-//        [self makeDeviceEntryWithType:self.deviceType];
-        [self makeDeviceEntry];
-    }
-}
+//- (void) makeDeviceIfNeeded {
+//    JLPrint(@"设备类型:[%@]",self.deviceType);
+//    if (!self.device && self.deviceType) {
+//        [self makeDeviceEntry];
+//    }
+//}
 
 
 #pragma mask --------------------------[GETTER & SETTER]--------------------------
 
 #pragma mask : 获取配置中的设备类型
-- (NSString *)deviceType {
-    if (_deviceType == nil) {
-        _deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-    }
-    return _deviceType;
-}
+//- (NSString *)deviceType {
+//    if (_deviceType == nil) {
+//        _deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
+//    }
+//    return _deviceType;
+//}
 
 
 @end
