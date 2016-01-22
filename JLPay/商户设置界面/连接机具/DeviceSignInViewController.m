@@ -38,7 +38,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
-@property (nonatomic, strong) NSTimer*  waitingTimer;               // 等待超时定时器
+@property (nonatomic, strong) NSTimer*  deviceWaitingTimer;               // 等待超时定时器
 @end
 
 
@@ -47,7 +47,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @synthesize SNVersionNums = _SNVersionNums;
 @synthesize tableView = _tableView;
 @synthesize sureButton = _sureButton;
-@synthesize waitingTimer;
+@synthesize deviceWaitingTimer;
 @synthesize selectedTerminalNum;
 @synthesize selectedDevice;
 
@@ -55,9 +55,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"绑定设备";
-    
     self.selectedDevice = nil;
-//    [[DeviceManager sharedInstance] setDelegate:self];
     
     bleManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     if (bleManager.state == CBCentralManagerStatePoweredOn) {
@@ -65,20 +63,28 @@ UIActionSheetDelegate,UIAlertViewDelegate
     } else {
         blueToothIsOn = NO;
     }
+    // 加载已绑定信息:如果已经绑定过
+    if ([ModelDeviceBindedInformation hasBindedDevice]) {
+        self.selectedTerminalNum = [ModelDeviceBindedInformation terminalNoBinded];
+        self.selectedSNVersionNum = [ModelDeviceBindedInformation deviceSNBinded];
+    }
+    // 更新切换视图标记:切换到金额输入界面
+    needCheckoutToCustVC = NO;
+
     
     [self loadSubviews];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    // 加载已绑定信息:如果已经绑定过
-    if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        self.selectedTerminalNum = [ModelDeviceBindedInformation terminalNoBinded];
-        self.selectedSNVersionNum = [ModelDeviceBindedInformation deviceSNBinded];
-    }
+//    // 加载已绑定信息:如果已经绑定过
+//    if ([ModelDeviceBindedInformation hasBindedDevice]) {
+//        self.selectedTerminalNum = [ModelDeviceBindedInformation terminalNoBinded];
+//        self.selectedSNVersionNum = [ModelDeviceBindedInformation deviceSNBinded];
+//    }
     
     // 更新切换视图标记:切换到金额输入界面
-    needCheckoutToCustVC = NO;
+//    needCheckoutToCustVC = NO;
     
     [[ViewModelTCPHandleWithDevice getInstance] setDelegate: self];
 }
@@ -171,6 +177,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // detailTextLabel
         cell.detailTextLabel.text = [self.terminalNums objectAtIndex:indexPath.row];
         
+        
         if ([self.selectedTerminalNum isEqualToString:cell.detailTextLabel.text]) {
             [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
         } else {
@@ -206,7 +213,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         label.font = cell.textLabel.font;
         label.textColor = [UIColor colorWithWhite:0.4 alpha:1];
         [headerView addSubview:label];
-        // 按钮
+        // 按钮-"搜索"
         UIButton* button = [[UIButton alloc] initWithFrame:CGRectMake(frame.size.width - 15 - frame.size.width/4.0, inset, frame.size.width/4.0, frame.size.height - inset*2)];
         [button setTitle:@"搜索" forState:UIControlStateNormal];
         button.titleLabel.font = cell.textLabel.font;
@@ -262,7 +269,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
         else if (indexPath.section == 1) {
             self.selectedSNVersionNum = nil;
         }
-    } else {
+    }
+    else {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         if (indexPath.section == 0) {
             self.selectedTerminalNum = cell.detailTextLabel.text;
@@ -270,14 +278,15 @@ UIActionSheetDelegate,UIAlertViewDelegate
             self.selectedSNVersionNum = cell.detailTextLabel.text;
         }
     }
+    [self.tableView reloadData];
     // 取消其它的 checkmark 标记
-    for (int i = 0; i < [tableView numberOfRowsInSection:indexPath.section]; i++) {
-        NSIndexPath* otherIndex = [NSIndexPath indexPathForRow:i inSection:indexPath.section];
-        UITableViewCell* otherCell = [tableView cellForRowAtIndexPath:otherIndex];
-        if (otherIndex.row != indexPath.row && otherCell.accessoryType == UITableViewCellAccessoryCheckmark) {
-            otherCell.accessoryType = UITableViewCellAccessoryNone;
-        }
-    }
+//    for (int i = 0; i < [tableView numberOfRowsInSection:indexPath.section]; i++) {
+//        NSIndexPath* otherIndex = [NSIndexPath indexPathForRow:i inSection:indexPath.section];
+//        UITableViewCell* otherCell = [tableView cellForRowAtIndexPath:otherIndex];
+//        if (otherIndex.row != indexPath.row && otherCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+//            otherCell.accessoryType = UITableViewCellAccessoryNone;
+//        }
+//    }
 }
 
 #pragma mask : -------------  CBCentrolManagerDelegate 
@@ -550,13 +559,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 // 启动设备等待定时器
 - (void) startDeviceTimer {
-    self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
+    self.deviceWaitingTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(waitingTimeoutWithMsg) userInfo:nil repeats:NO];
 }
 // 关闭设备定时器
 - (void) stopDeviceTimer {
-    if ([self.waitingTimer isValid]) {
-        [self.waitingTimer invalidate];
-        self.waitingTimer = nil;
+    if ([self.deviceWaitingTimer isValid]) {
+        [self.deviceWaitingTimer invalidate];
+        self.deviceWaitingTimer = nil;
     }
 }
 
