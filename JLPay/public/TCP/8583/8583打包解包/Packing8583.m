@@ -265,9 +265,7 @@
 
 // 取数据字典中所有值,打包成串
 - (NSString*) allDataString {
-    if (NeedPrintLog) {
-        NSLog(@"打包的所有域:{%@}",self.dictionaryFieldNamesAndValues);
-    }
+    JLPrint(@"打包所有域:{%@}",self.dictionaryFieldNamesAndValues);
     NSMutableString* dataString = [[NSMutableString alloc] init];
     // 排序位图数组
     NSArray* mapArray = [self arraySortBySourceArray:self.dictionaryFieldNamesAndValues.allKeys];

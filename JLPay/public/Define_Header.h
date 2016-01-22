@@ -30,7 +30,7 @@
  * 7: 内网测试72 (TCP + HTTP)
  * 9: http 开发环境:(192.168.1.174:80)
  * ---------------------------- */
-#define TestOrProduce                   4
+#define TestOrProduce                   3
 
 /* ----------------------------
  * 代码版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -55,7 +55,7 @@
  * 0: 标准
  * 1: 非标准(自定义)
  * ---------------------------- */
-#define UnitStandardPacking             0
+#define UnitStandardPacking             1
 
 
 

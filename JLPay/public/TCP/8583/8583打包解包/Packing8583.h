@@ -11,7 +11,7 @@
 
 /*************[交易类型]**************/
 #define TranType                    @"TranType"
-#define TranType_Consume            @"190000"                           // 消费 同8583 bit3域值
+#define TranType_Consume            @"000000"                           // 消费 同8583 bit3域值  // 190000:000000
 #define TranType_ConsumeRepeal      @"280000"                           // 消费撤销
 #define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易
 #define TranType_TuiHuo             @"200000"                           // 退货交易

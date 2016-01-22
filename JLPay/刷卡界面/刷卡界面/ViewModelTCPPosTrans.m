@@ -212,7 +212,7 @@
     [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
     [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
     [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"82"];
+    [packingHolder setFieldAtIndex:25 withValue:@"00"]; // 00:82
     [packingHolder setFieldAtIndex:26 withValue:@"12"];
     [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
     [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];
