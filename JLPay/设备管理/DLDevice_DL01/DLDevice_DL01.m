@@ -259,26 +259,37 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     NSMutableDictionary* cardInfoReaded = [[NSMutableDictionary alloc] init];
     // 2,14,22,23,35,36,55
     if (self.device.currentCardType == card_mc) {
-        [cardInfoReaded setObject:[dic objectForKey:@"5"] forKey:@"2"];
-        [cardInfoReaded setObject:[[dic objectForKey:@"6"] substringToIndex:4] forKey:@"14"];
-        [cardInfoReaded setObject:@"0200" forKey:@"22"];
-        [cardInfoReaded setObject:[dic objectForKey:@"A"] forKey:@"35"];
+        [cardInfoReaded setObject:[dic objectForKey:@"5"] forKey:@"2"]; // 2
+        [cardInfoReaded setObject:[[dic objectForKey:@"6"] substringToIndex:4] forKey:@"14"]; //14
+        [cardInfoReaded setObject:@"0200" forKey:@"22"]; // 22
+        NSString* lenMc35 = [dic objectForKey:@"8"];
+        int intLen = [PublicInformation sistenToTen:lenMc35];
+        if (intLen > 0) {
+            NSString* mc35 = [[dic objectForKey:@"A"] substringToIndex:intLen];
+            [cardInfoReaded setObject:mc35 forKey:@"35"]; // 35
+        }
         NSString* mc36 = [dic objectForKey:@"B"];
         if (mc36 && mc36.length > 0) {
-            [cardInfoReaded setObject:mc36 forKey:@"36"];
+            [cardInfoReaded setObject:mc36 forKey:@"36"]; // 36
         }
     }
     else if (self.device.currentCardType == card_ic) {
-        [cardInfoReaded setObject:[dic objectForKey:@"5A"] forKey:@"2"];
-        [cardInfoReaded setObject:[[dic objectForKey:@"5F24"] substringToIndex:4] forKey:@"14"];
-        [cardInfoReaded setObject:@"0500" forKey:@"22"];
+        [cardInfoReaded setObject:[dic objectForKey:@"5A"] forKey:@"2"]; // 2
+        [cardInfoReaded setObject:[[dic objectForKey:@"5F24"] substringToIndex:4] forKey:@"14"]; // 14
+        [cardInfoReaded setObject:@"0500" forKey:@"22"]; // 22
         NSString* icSeq = [dic objectForKey:@"5F34"];
         while (icSeq.length < 4) {
             icSeq = [@"0" stringByAppendingString:icSeq];
         }
-        [cardInfoReaded setObject:icSeq forKey:@"23"];
-        [cardInfoReaded setObject:[dic objectForKey:@"57"] forKey:@"35"];
-        [cardInfoReaded setObject:[dic objectForKey:@"55"] forKey:@"55"];
+        [cardInfoReaded setObject:icSeq forKey:@"23"]; // 23
+        NSString* mc35 = [dic objectForKey:@"57"];
+        if (mc35 && mc35.length > 0) {
+            if ([[mc35 substringWithRange:NSMakeRange(mc35.length - 1, 1)] isEqualToString:@"F"]) {
+                mc35 = [mc35 substringToIndex:mc35.length - 1];
+            }
+            [cardInfoReaded setObject:mc35 forKey:@"35"]; // 35
+        }
+        [cardInfoReaded setObject:[dic objectForKey:@"55"] forKey:@"55"]; // 55
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
         [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfoReaded];

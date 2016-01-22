@@ -44,29 +44,6 @@
 }
 
 #pragma mask ---- 发起交易: 指定交易类型+卡数据信息(2,4,14,22,23,35,36,52,53,55)
-- (void)startTransWithTransType:(NSString *)transType
-                    andCardInfo:(NSDictionary *)cardInfo
-                    andDelegate:(id<ViewModelTCPPosTransDelegate>)delegate
-{
-    curTransType = transType;
-    sourceCardInfo = [cardInfo copy];
-    self.delegate = delegate;
-    [self setCardTypeByF22:[cardInfo valueForKey:@"22"]];
-    
-    // 1.打包
-    NSString* stringPacking = [self stringPackingByInfo:cardInfo];
-    if (!stringPacking) {
-        [self delegateRebackResult:NO message:errorMessage responseInfo:nil];
-        // 打包失败就退出
-        return;
-    }
-    // 2.发送交易
-    [self.tcpHolder sendOrderMethod:stringPacking
-                                 IP:[PublicInformation getServerDomain]
-                               PORT:[PublicInformation getTcpPort].intValue
-                           Delegate:self
-                             method:transType];
-}
 - (void) startTransWithTransType:(NSString*)transType
                      andCardInfo:(NSDictionary*)cardInfo
                           macPin:(NSString*)macPin
@@ -126,7 +103,7 @@
 {
     // 批上送就可以回调并退出
     if ([curTransType isEqualToString:TranType_BatchUpload]) {
-        [self delegateRebackResult:YES message:nil responseInfo:responseCardInfo];
+//        [self delegateRebackResult:YES message:nil responseInfo:responseCardInfo];
         return;
     }
     if (state) { // 成功
@@ -137,6 +114,7 @@
             responseCardInfo = [dataDict copy];
             curTransType = TranType_BatchUpload;
             // 3.如果IC卡交易:继续上送批上送，批上送不关心响应结果
+            // ----- 披上送也要进行mac加密
             NSString* packing = [self stringPackingByInfo:dataDict];
             [self.tcpHolder sendOrderMethod:packing
                                          IP:[PublicInformation getServerDomain]
@@ -144,10 +122,10 @@
                                    Delegate:self
                                      method:curTransType];
         }
-        else
-        {
+//        else
+//        {
             [self delegateRebackResult:YES message:nil responseInfo:dataDict];
-        }
+//        }
     } else { // 失败
         [self delegateRebackResult:NO message:message responseInfo:nil];
     }
@@ -244,7 +222,7 @@
     [packingHolder setFieldAtIndex:11 withValue:[responseCardInfo valueForKey:@"11"]];
     [packingHolder setFieldAtIndex:22 withValue:[sourceCardInfo valueForKey:@"22"]];
     [packingHolder setFieldAtIndex:23 withValue:[sourceCardInfo valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"82"];
+    [packingHolder setFieldAtIndex:25 withValue:@"00"]; //
     [packingHolder setFieldAtIndex:26 withValue:@"12"];
     [packingHolder setFieldAtIndex:41 withValue:[responseCardInfo valueForKey:@"41"]];
     [packingHolder setFieldAtIndex:42 withValue:[responseCardInfo valueForKey:@"42"]];

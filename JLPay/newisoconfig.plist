@@ -256,14 +256,14 @@
 		<key>special</key>
 		<string>99</string>
 		<key>type</key>
-		<string>asc</string>
+		<string>bcd</string>
 		<key>length</key>
 		<string></string>
 	</dict>
 	<key>36</key>
 	<dict>
 		<key>type</key>
-		<string>asc</string>
+		<string>bcd</string>
 		<key>special</key>
 		<string>999</string>
 		<key>length</key>

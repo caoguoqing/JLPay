@@ -368,7 +368,7 @@
         }
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading andDelegate:self];
+//            [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading andDelegate:self];
         });
     }
 }
