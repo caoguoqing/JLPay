@@ -55,28 +55,31 @@
     [self.dictionaryFieldNamesAndValues setValue:value forKey:[NSString stringWithFormat:@"%d",index]];
 }
 
+#pragma mask : 准备好了数据;准备打包;(会将所有域数据格式化)
+- (void) preparePacking {
+    [self resetFormatValueOfFieldsDictionary];
+}
+
 
 #pragma mask : 打包结果串获取
 -(NSString*) stringPackingWithType:(NSString*)type {
     exchangeType = type;
     // 根据plist配置格式化所有的域值
-    [self resetFormatValueOfFieldsDictionary];
+//    [self resetFormatValueOfFieldsDictionary];
     // 组包
-    NSString* stringPackage = [self stringPacking];
+//    NSString* stringPackage = [self stringPacking];
     // 清空字典数据
-    [self cleanAllFields];
-    return stringPackage;
+//    [self cleanAllFields];
+    return [self stringPacking];
 }
 
 #pragma mask : MAC加密源串
 - (NSString*) macSourcePackintByType:(NSString*)type {
     exchangeType = type;
     // 根据plist配置格式化所有的域值
-    [self resetFormatValueOfFieldsDictionary];
-    NSString* stringPackage = [self macSourcePacking];
-    // 清空字典数据
-    [self cleanAllFields];
-    return stringPackage;
+//    [self resetFormatValueOfFieldsDictionary];
+//    NSString* stringPackage = [self macSourcePacking];
+    return [self macSourcePacking];
 }
 
 
@@ -221,6 +224,7 @@
     NSString* lengthString = [PublicInformation ToBHex:(int)string.length/2];
     
     NSString* retString = [NSString stringWithFormat:@"%@%@", lengthString, string];
+    JLPrint(@"组完包后的交易报文串:[%@]",retString);
     return retString;
 }
 // 打MAC源串
@@ -229,6 +233,7 @@
     [string appendString:exchangeType];
     [string appendString:[self bitMapHexString]];
     [string appendString:[self allDataString]];
+    [string deleteCharactersInRange:NSMakeRange(string.length - 16, 16)];
     return string;
 }
 
@@ -243,8 +248,6 @@
     for (NSString* abit in self.dictionaryFieldNamesAndValues.allKeys) {
         [binaryString replaceCharactersInRange:NSMakeRange(abit.intValue - 1, 1) withString:@"1"];
     }
-    // 64域强制置1
-//    [binaryString replaceCharactersInRange:NSMakeRange(binaryString.length - 1, 1) withString:@"1"];
     // 二进制转HEX
     return [ISOHelper binaryToHexAsString:binaryString];
 }

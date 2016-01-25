@@ -92,7 +92,6 @@
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
-    
 }
 
 
@@ -135,6 +134,7 @@
     }
 
     // 3.扫描设备
+    JLPrint(@"绑定的设备类型:[%@]",[ModelDeviceBindedInformation deviceTypeBinded]);
     [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:[ModelDeviceBindedInformation deviceTypeBinded]];
     [[DeviceManager sharedInstance] startScanningDevices];
 
@@ -214,7 +214,7 @@
     JLPrint(@"%s 扫描到了设备id:%@",__func__,identifier);
     if ([identifier isEqualToString:[ModelDeviceBindedInformation deviceIDBinded]]) {
         // 连接设备
-        [[DeviceManager sharedInstance] stopScanningDevices];
+//        [[DeviceManager sharedInstance] stopScanningDevices];
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
     }
 }
@@ -253,6 +253,7 @@
 
 - (void)didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString *)macPin withError:(NSString *)error {
     if (yesOrNo) {
+        JLPrint(@"设备加密后的mac串:[%@]",macPin);
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading macPin:macPin andDelegate:self];
         });
@@ -284,13 +285,15 @@
 
 #pragma mask ::: 进行加密
 - (void) encryptPinWithSource:(NSString*)source {
-//    NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-//    if ([deviceType isEqualToString:DeviceType_RF_BB01] ||
-//        [deviceType isEqualToString:DeviceType_DL01]
-//        )
-//    {
+    // pin encrypt. if source != null
+    if (source && source.length > 0) {
         [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
-//    }
+    }
+    // start trans. if source == null
+    else {
+        [self.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
+        [self startTrans];
+    }
 }
 
 #pragma mask ::: 初始化并加载密码输入提示框
@@ -364,6 +367,7 @@
     if (UnitStandardPacking == 0) {
         if ([[ModelDeviceBindedInformation deviceTypeBinded] isEqualToString:DeviceType_DL01]) {
             NSString* macSource = [self.tcpViewModel macSourceWithTranType:self.stringOfTranType andCardInfo:self.cardInfoOfReading];
+            JLPrint(@"mac加密原始串:[%@]",macSource);
             [[DeviceManager sharedInstance] macEncryptBySource:macSource onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
         }
     } else {

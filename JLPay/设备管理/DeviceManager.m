@@ -59,8 +59,6 @@ DLDevice_DL01Delegate
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // 如果已经选择过设备就直接创建设备入口
-//        [self makeDeviceIfNeeded];
     }
     return self;
 }
@@ -254,7 +252,6 @@ DLDevice_DL01Delegate
 
 #pragma mask : 设置并创建指定的设备入口
 - (void) makeDeviceEntry{ //WithType:(NSString*)devitype {
-   // self.deviceType //= devitype;
     if ([self.deviceType isEqualToString:DeviceType_JHL_M60]) {
         self.device = [[JHLDevice_M60 alloc] initWithDelegate:self];
     }
@@ -270,23 +267,9 @@ DLDevice_DL01Delegate
 
 }
 
-//- (void) makeDeviceIfNeeded {
-//    JLPrint(@"设备类型:[%@]",self.deviceType);
-//    if (!self.device && self.deviceType) {
-//        [self makeDeviceEntry];
-//    }
-//}
 
 
-#pragma mask --------------------------[GETTER & SETTER]--------------------------
 
-#pragma mask : 获取配置中的设备类型
-//- (NSString *)deviceType {
-//    if (_deviceType == nil) {
-//        _deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-//    }
-//    return _deviceType;
-//}
 
 
 @end

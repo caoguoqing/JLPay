@@ -78,7 +78,11 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownMainKey]];
     [packingHolder setFieldAtIndex:62 withValue:[packingHolder MAINKEY]];
     [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
-    return [packingHolder stringPackingWithType:@"0800"];
+    [packingHolder preparePacking];
+    NSString* packing = [packingHolder stringPackingWithType:@"0800"];
+    [packingHolder cleanAllFields];
+
+    return packing;
 }
 /* 打包: 工作密钥下载 */
 - (NSString*) stringPackingWorkKeyDownload {
@@ -88,8 +92,10 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
     [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:sBusinessNumber]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownWorkKey]];
     [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
-    
-    return [packingHolder stringPackingWithType:@"0800"];
+    [packingHolder preparePacking];
+    NSString* packing = [packingHolder stringPackingWithType:@"0800"];
+    [packingHolder cleanAllFields];
+    return packing;
 }
 
 /* 错误回调 */

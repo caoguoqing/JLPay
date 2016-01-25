@@ -99,7 +99,6 @@ CGFloat buttonSpacerHeight = 0;
     }
 #endif
 
-//    self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
     self.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1];
 
     [self addSubview:dialogView];
@@ -289,33 +288,34 @@ CGFloat buttonSpacerHeight = 0;
                               buttonHeight);
     for (int i=0; i<[buttonTitles count]; i++) {
 
-        UIButton* closeButton = [[UIButton alloc] init];
-        [closeButton setFrame:frame];
+        UIButton* actionButton = [[UIButton alloc] init];
+        [actionButton setFrame:frame];
 
-        [closeButton addTarget:self action:@selector(customIOS7dialogButtonTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
-        [closeButton setTag:i];
+        [actionButton addTarget:self action:@selector(customIOS7dialogButtonTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+        [actionButton setTag:i];
 
-        [closeButton setTitle:[buttonTitles objectAtIndex:i] forState:UIControlStateNormal];
-        [closeButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [closeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
+        [actionButton setTitle:[buttonTitles objectAtIndex:i] forState:UIControlStateNormal];
         
-        [closeButton.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
-        [closeButton.layer setCornerRadius:kCustomIOSAlertViewCornerRadius - 2];
-        [closeButton.layer setBorderWidth:0.3];
-        [closeButton.layer setBorderColor:[UIColor colorWithWhite:0.5 alpha:0.5].CGColor];
-        if (i != 0) {
-            closeButton.backgroundColor = [UIColor colorWithRed:43.0/255.0 green:91.0/255.0 blue:236.0/255.0 alpha:1];
-            [closeButton setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.5] forState:UIControlStateNormal];
-            [closeButton setEnabled:NO];
-            [closeButton setHighlighted:NO];
-        } else {
-            closeButton.backgroundColor = [UIColor whiteColor];
+        [actionButton.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
+        [actionButton.layer setCornerRadius:kCustomIOSAlertViewCornerRadius - 2];
+        [actionButton.layer setBorderWidth:0.3];
+        [actionButton.layer setBorderColor:[UIColor colorWithWhite:0.5 alpha:0.5].CGColor];
+        
+        if (i == 0) { // 取消
+            actionButton.backgroundColor = [UIColor whiteColor];
+            [actionButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [actionButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        }
+        else { // 其他
+            actionButton.backgroundColor = [UIColor colorWithRed:43.0/255.0 green:91.0/255.0 blue:236.0/255.0 alpha:1];
+            [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [actionButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         }
         
         ////////// 按钮组的保存
-        [self.mutableArrayButtons addObject:closeButton];
+        [self.mutableArrayButtons addObject:actionButton];
 
-        [container addSubview:closeButton];
+        [container addSubview:actionButton];
         
         //
         frame.origin.x += buttonWidth + kCustomIOSContentViewInset;
@@ -504,31 +504,13 @@ CGFloat buttonSpacerHeight = 0;
     if (self.password.length > 5) return;
     
     [self.password appendString:button.currentTitle];
-
     // 调用 passwordView 的新方法
     [self.passwordFieldView passwordAppendChar:button.currentTitle];
-    // 监控 确定 按钮的状态
-    for (int i = 1; i < self.mutableArrayButtons.count; i++) {
-        UIButton* button = [self.mutableArrayButtons objectAtIndex:i];
-        if ((_password.length == 6) && (!button.enabled)) {
-            [button setEnabled:YES];
-            [button setHighlighted:YES];
-        }
-    }
 }
 
 - (void)keyboard:(LVKeyboardView *)keyboard didClickDeleteBtn:(UIButton *)deleteBtn {
     if (self.password.length < 1) return;
-    
     [self.password deleteCharactersInRange:NSMakeRange(self.password.length - 1, 1)];
-    // 监控 确定 按钮的状态
-    for (int i = 1; i < self.mutableArrayButtons.count; i++) {
-        UIButton* button = [self.mutableArrayButtons objectAtIndex:i];
-        if ((_password.length < 6) && button.enabled) {
-            [button setEnabled:NO];
-            [button setHighlighted:NO];
-        }
-    }
     [self.passwordFieldView passwordRemoveChar];
     
 }

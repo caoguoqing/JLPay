@@ -40,10 +40,6 @@
 - (NSString*) macSourceWithTranType:(NSString*)transType andCardInfo:(NSDictionary*)cardInfo;
 
 /* 发起交易: 指定交易类型+卡数据信息(2,4,14,22,23,35,36,52,53,55) */
-//- (void) startTransWithTransType:(NSString*)transType
-//                     andCardInfo:(NSDictionary*)cardInfo
-//                     andDelegate:(id<ViewModelTCPPosTransDelegate>)delegate;
-
 - (void) startTransWithTransType:(NSString*)transType
                      andCardInfo:(NSDictionary*)cardInfo
                           macPin:(NSString*)macPin

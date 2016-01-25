@@ -377,6 +377,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString *)workKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
+        JLPrint(@"下载的工作密钥:[%@]",workKey);
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载工作密钥失败:\n%@",errorMessge]];
@@ -522,15 +523,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
 
-//// 小工具: 为简化弹窗代码
-//- (void) alertForMessage: (NSString*) messageStr {
-//    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"提示" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//    [alert show];
-//}
-//- (void) alertForBleMessage:(NSString*)msg {
-//    UIAlertView* alert  = [[UIAlertView alloc] initWithTitle:@"蓝牙提示" message:msg delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//    [alert show];
-//}
 
 
 // 保存绑定的设备信息
@@ -574,18 +566,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     return _SNVersionNums;
 }
-//- (NSMutableArray *)terminalNums {
-//    if (_terminalNums == nil) {
-//        _terminalNums = [[NSMutableArray alloc] init];
-//        NSArray* terms = [ModelUserLoginInformation terminalNumbers];
-//        if (!terms || terms.count == 0) {
-//            [_terminalNums addObject:@"无"];
-//        } else {
-//            [_terminalNums addObjectsFromArray:terms];
-//        }
-//    }
-//    return _terminalNums;
-//}
 - (UIButton *)sureButton {
     if (_sureButton == nil) {
         _sureButton = [[UIButton alloc] init];

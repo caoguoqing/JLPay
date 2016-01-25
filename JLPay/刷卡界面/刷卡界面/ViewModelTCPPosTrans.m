@@ -24,6 +24,8 @@
     NSDictionary* sourceCardInfo;
     NSDictionary* responseCardInfo;
     NSString* macPinEncripted;
+    
+    BOOL macEncrypt;
 }
 @property (nonatomic, assign) id<ViewModelTCPPosTransDelegate>delegate;
 @property (nonatomic, strong) TcpClientService* tcpHolder;
@@ -40,6 +42,7 @@
     [self setCardTypeByF22:[cardInfo valueForKey:@"22"]];
     
     // -- 打包MAC串
+    macEncrypt = YES;
     return [self macStringPackingByInfo:cardInfo];
 }
 
@@ -63,11 +66,13 @@
         return;
     }
     // 2.发送交易
+    JLPrint(@"发送的报文");
     [self.tcpHolder sendOrderMethod:stringPacking
                                  IP:[PublicInformation getServerDomain]
                                PORT:[PublicInformation getTcpPort].intValue
                            Delegate:self
                              method:transType];
+    macEncrypt = NO;
 }
 
 
@@ -122,10 +127,7 @@
                                    Delegate:self
                                      method:curTransType];
         }
-//        else
-//        {
-            [self delegateRebackResult:YES message:nil responseInfo:dataDict];
-//        }
+        [self delegateRebackResult:YES message:nil responseInfo:dataDict];
     } else { // 失败
         [self delegateRebackResult:NO message:message responseInfo:nil];
     }
@@ -183,26 +185,28 @@
 - (NSString*) packingConsumeByInfo:(NSDictionary*)info {
     NSString* packing = nil;
     Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:2 withValue:[info valueForKey:@"2"]];
-    [packingHolder setFieldAtIndex:3 withValue:TranType_Consume];
-    [packingHolder setFieldAtIndex:4 withValue:[info valueForKey:@"4"]];
-    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
-    [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
-    [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
-    [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"00"]; // 00:82
-    [packingHolder setFieldAtIndex:26 withValue:@"12"];
-    [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
-    [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];
-    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
-    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
-    [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:@"156"]];
-    if ([[info valueForKey:@"22"] hasSuffix:@"10"]) {
-        [packingHolder setFieldAtIndex:52 withValue:[info valueForKey:@"52"]];
+    if (!macEncrypt) {
+            [packingHolder setFieldAtIndex:2 withValue:[info valueForKey:@"2"]];
+            [packingHolder setFieldAtIndex:3 withValue:TranType_Consume];
+            [packingHolder setFieldAtIndex:4 withValue:[info valueForKey:@"4"]];
+            [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
+            [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
+            [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
+            [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
+            [packingHolder setFieldAtIndex:25 withValue:@"00"]; // 00:82
+            [packingHolder setFieldAtIndex:26 withValue:@"12"];
+            [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
+            [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];
+            [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
+            [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
+            [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:@"156"]];
+            if ([[info valueForKey:@"22"] hasSuffix:@"10"]) {
+                [packingHolder setFieldAtIndex:52 withValue:[info valueForKey:@"52"]];
+            }
+            [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
+            [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
+            [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_Consume]];
     }
-    [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
-    [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_Consume]];
     if (macPinEncripted) {
         [packingHolder setFieldAtIndex:64 withValue:macPinEncripted];
     } else {
@@ -210,25 +214,30 @@
     }
     
     packing = [packingHolder stringPackingWithType:@"0200"];
+    [packingHolder cleanAllFields];
+
     return packing;
 }
 /* 打包: 批上送 */
 - (NSString*) packingBatchUpByInfo:(NSDictionary*)lastInfo {
     NSString* packing = nil;
     Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:2 withValue:[responseCardInfo valueForKey:@"2"]];
-    [packingHolder setFieldAtIndex:3 withValue:[responseCardInfo valueForKey:@"3"]];
-    [packingHolder setFieldAtIndex:4 withValue:[responseCardInfo valueForKey:@"4"]];
-    [packingHolder setFieldAtIndex:11 withValue:[responseCardInfo valueForKey:@"11"]];
-    [packingHolder setFieldAtIndex:22 withValue:[sourceCardInfo valueForKey:@"22"]];
-    [packingHolder setFieldAtIndex:23 withValue:[sourceCardInfo valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"00"]; //
-    [packingHolder setFieldAtIndex:26 withValue:@"12"];
-    [packingHolder setFieldAtIndex:41 withValue:[responseCardInfo valueForKey:@"41"]];
-    [packingHolder setFieldAtIndex:42 withValue:[responseCardInfo valueForKey:@"42"]];
-    [packingHolder setFieldAtIndex:49 withValue:[responseCardInfo valueForKey:@"49"]];
-    [packingHolder setFieldAtIndex:55 withValue:[sourceCardInfo valueForKey:@"55"]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60ByLast60:[responseCardInfo valueForKey:@"60"]]];
+    if (!macEncrypt) {
+        [packingHolder setFieldAtIndex:2 withValue:[responseCardInfo valueForKey:@"2"]];
+        [packingHolder setFieldAtIndex:3 withValue:[responseCardInfo valueForKey:@"3"]];
+        [packingHolder setFieldAtIndex:4 withValue:[responseCardInfo valueForKey:@"4"]];
+        [packingHolder setFieldAtIndex:11 withValue:[responseCardInfo valueForKey:@"11"]];
+        [packingHolder setFieldAtIndex:22 withValue:[sourceCardInfo valueForKey:@"22"]];
+        [packingHolder setFieldAtIndex:23 withValue:[sourceCardInfo valueForKey:@"23"]];
+        [packingHolder setFieldAtIndex:25 withValue:@"00"]; //
+        [packingHolder setFieldAtIndex:26 withValue:@"12"];
+        [packingHolder setFieldAtIndex:41 withValue:[responseCardInfo valueForKey:@"41"]];
+        [packingHolder setFieldAtIndex:42 withValue:[responseCardInfo valueForKey:@"42"]];
+        [packingHolder setFieldAtIndex:49 withValue:[responseCardInfo valueForKey:@"49"]];
+        [packingHolder setFieldAtIndex:55 withValue:[sourceCardInfo valueForKey:@"55"]];
+        [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60ByLast60:[responseCardInfo valueForKey:@"60"]]];
+        [packingHolder preparePacking];
+    }
     if (macPinEncripted) {
         [packingHolder setFieldAtIndex:64 withValue:macPinEncripted];
     } else {
@@ -236,29 +245,33 @@
     }
     
     packing = [packingHolder stringPackingWithType:@"0320"];
+    [packingHolder cleanAllFields];
     return packing;
 }
 /* 打包: 余额查询 */
 - (NSString*) packingYuEByInfo:(NSDictionary*)info {
     NSString* packing = nil;
     Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:2 withValue:[info valueForKey:@"2"]];
-    [packingHolder setFieldAtIndex:3 withValue:TranType_YuE];
-    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
-    [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
-    [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
-    [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"82"];
-    [packingHolder setFieldAtIndex:26 withValue:@"12"];
-    [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
-    [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];
-    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
-    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
-    [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:@"156"]];
-    [packingHolder setFieldAtIndex:52 withValue:[info valueForKey:@"52"]];
-    [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
-    [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_YuE]];
+    if (!macEncrypt) {
+        [packingHolder setFieldAtIndex:2 withValue:[info valueForKey:@"2"]];
+        [packingHolder setFieldAtIndex:3 withValue:TranType_YuE];
+        [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
+        [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
+        [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
+        [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
+        [packingHolder setFieldAtIndex:25 withValue:@"82"];
+        [packingHolder setFieldAtIndex:26 withValue:@"12"];
+        [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
+        [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];
+        [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:[PublicInformation returnTerminal]]];
+        [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:[PublicInformation returnBusiness]]];
+        [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:@"156"]];
+        [packingHolder setFieldAtIndex:52 withValue:[info valueForKey:@"52"]];
+        [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
+        [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
+        [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_YuE]];
+        [packingHolder preparePacking];
+    }
     if (macPinEncripted) {
         [packingHolder setFieldAtIndex:64 withValue:macPinEncripted];
     } else {
@@ -266,6 +279,7 @@
     }
     
     packing = [packingHolder stringPackingWithType:@"0200"];
+    [packingHolder cleanAllFields];
     return packing;
 }
 
@@ -279,7 +293,7 @@
     [packingHolder setFieldAtIndex:14 withValue:[info valueForKey:@"14"]];
     [packingHolder setFieldAtIndex:22 withValue:[info valueForKey:@"22"]];
     [packingHolder setFieldAtIndex:23 withValue:[info valueForKey:@"23"]];
-    [packingHolder setFieldAtIndex:25 withValue:@"82"];
+    [packingHolder setFieldAtIndex:25 withValue:@"00"];
     [packingHolder setFieldAtIndex:26 withValue:@"12"];
     [packingHolder setFieldAtIndex:35 withValue:[info valueForKey:@"35"]];
     [packingHolder setFieldAtIndex:36 withValue:[info valueForKey:@"36"]];
@@ -292,7 +306,8 @@
     [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
     [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_Consume]];
-    [packingHolder setFieldAtIndex:64 withValue:@"1"];
+    [packingHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
+    [packingHolder preparePacking];
 
     NSString* packing = [packingHolder macSourcePackintByType:@"0200"];
     return packing;
@@ -314,7 +329,8 @@
     [packingHolder setFieldAtIndex:49 withValue:[responseCardInfo valueForKey:@"49"]];
     [packingHolder setFieldAtIndex:55 withValue:[sourceCardInfo valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60ByLast60:[responseCardInfo valueForKey:@"60"]]];
-    [packingHolder setFieldAtIndex:64 withValue:@"1"];
+    [packingHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
+    [packingHolder preparePacking];
 
     packing = [packingHolder macSourcePackintByType:@"0320"];
     return packing;
@@ -340,7 +356,8 @@
     [packingHolder setFieldAtIndex:53 withValue:[info valueForKey:@"53"]];
     [packingHolder setFieldAtIndex:55 withValue:[info valueForKey:@"55"]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_YuE]];
-    [packingHolder setFieldAtIndex:64 withValue:@"1"];
+    [packingHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
+    [packingHolder preparePacking];
 
     packing = [packingHolder macSourcePackintByType:@"0200"];
     return packing;

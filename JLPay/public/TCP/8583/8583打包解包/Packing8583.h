@@ -28,6 +28,15 @@
 @interface Packing8583 : NSObject
 
 
+// -- 流程 --
+// -> setFieldAtIndex:withValue     2,3,4,...64
+// -> preparePacking;
+// -> macSourcePackintByType:       if need mac
+// -> stringPackingWithType:        packing
+// -> cleanAllFields;
+
+
+
 #pragma mask : 公共入口
 +(Packing8583*) sharedInstance;
 #pragma mask : 生成F60
@@ -36,6 +45,10 @@
 
 #pragma mask : 域值设置:需要打包的
 - (void) setFieldAtIndex:(int)index withValue:(NSString*)value;
+
+// -- formatingFieldsData; ?? 执行格式化
+#pragma mask : 准备好了数据;准备打包;(会将所有域数据格式化)
+- (void) preparePacking;
 
 
 #pragma mask : 打包结果串获取

@@ -22,7 +22,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 @interface DLDevice_DL01()
 <DCSwiperAPIDelegate>
 @property (nonatomic, strong) DCSwiperAPI* device;
-//@property (nonatomic, strong) NSMutableDictionary* deviceInfoDiscovered;
 
 @property (nonatomic, strong) NSMutableArray* deviceList;
 @property (nonatomic, strong) NSString* connectedIdentifier;
@@ -52,7 +51,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 # pragma mask : 开始扫描设备
 - (void) startScanningDevices {
     // 停止扫描
-    [self stopScanningDevice];
+//    [self stopScanningDevice];
     // 关闭已连接的设备
     if ([self isConnectedDevice]) {
         [self disConnectDevice];
@@ -95,7 +94,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 # pragma mask : 打开指定 identifier 号的设备
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
     JLPrint(@"保存的设备id[%@]，需要打开的id[%@]", self.connectedIdentifier, identifier);
-    if (![self.connectedIdentifier isEqualToString:identifier]) {
+    if (self.connectedIdentifier && ![self.connectedIdentifier isEqualToString:identifier]) {
         [self disConnectDevice];
     }
     [self connectDeviceOnId:identifier];
@@ -103,7 +102,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 # pragma mask : 关闭指定 SNVersion 号的设备
 - (void) closeDevice:(NSString*)SNVersion {
     [self disConnectDevice];
-//    [self setDeviceInfoDiscovered:nil];
 }
 
 # pragma mask : 判断指定SN号的设备是否已连接
@@ -370,7 +368,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     [self.device setDelegate:nil];
     [self.device stopScanBlueDevice];
     [self.device disConnect];
-//    [self setDeviceInfoDiscovered:nil];
     [self setConnectedIdentifier:nil];
     [self.deviceList removeAllObjects];
 }
@@ -379,15 +376,12 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 // -- 开启扫描
 - (void) scanningDevice {
     JLPrint(@"启动扫描");
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self.device scanBlueDevice];
-//    });
+    [self.device scanBlueDevice];
 }
 // -- 关闭扫描
 - (void) stopScanningDevice {
+    JLPrint(@"关闭扫描");
     [self.device stopScanBlueDevice];
-    JLPrint(@"清空设备列表");
-//    [self.deviceList removeAllObjects];
 }
 // -- 是否扫描到设备
 - (BOOL) isScannedDevice {
@@ -406,8 +400,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 // -- 断开设备
 - (void) disConnectDevice {
     [self.device disConnect];
-//    [self.device stopScanBlueDevice];
-//    [self setDeviceInfoDiscovered:nil];
     [self setConnectedIdentifier:nil];
 }
 // -- 是否已连接设备
