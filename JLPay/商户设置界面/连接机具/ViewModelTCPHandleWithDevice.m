@@ -7,6 +7,7 @@
 //
 
 #import "ViewModelTCPHandleWithDevice.h"
+#import "ModelTCPTransPacking.h"
 #import "TcpClientService.h"
 #import "PublicInformation.h"
 #import "Packing8583.h"
@@ -17,8 +18,6 @@
 @interface ViewModelTCPHandleWithDevice()
 <wallDelegate, Unpacking8583Delegate>
 {
-    NSString* sTerminalNumber; // 终端号
-    NSString* sBusinessNumber; // 商户号
     NSString* sTranType; // 交易类型
 }
 
@@ -40,15 +39,15 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 
 /* 下载主密钥 */
 - (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum {
-    sTerminalNumber = terminalNum;
-    sBusinessNumber = businessNum;
-    [self sendTransPackage:[self stringPackingMainKeyDownload] withTransType:TranType_DownMainKey];
+    NSDictionary* fieldInfos = [NSDictionary dictionaryWithObjects:@[terminalNum,businessNum] forKeys:@[@"41",@"42"]];
+    [[ModelTCPTransPacking sharedModel] packingFieldsInfo:fieldInfos forTransType:TranType_DownMainKey];
+    [self sendTransPackage:[[ModelTCPTransPacking sharedModel] packageFinalyPacking] withTransType:TranType_DownMainKey];
 }
 /* 下载工作密钥 */
 - (void) downloadWorkKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum {
-    sTerminalNumber = terminalNum;
-    sBusinessNumber = businessNum;
-    [self sendTransPackage:[self stringPackingWorkKeyDownload] withTransType:TranType_DownWorkKey];
+    NSDictionary* fieldInfos = [NSDictionary dictionaryWithObjects:@[terminalNum,businessNum] forKeys:@[@"41",@"42"]];
+    [[ModelTCPTransPacking sharedModel] packingFieldsInfo:fieldInfos forTransType:TranType_DownWorkKey];
+    [self sendTransPackage:[[ModelTCPTransPacking sharedModel] packageFinalyPacking] withTransType:TranType_DownWorkKey];
 }
 /* 终止下载 */
 - (void) stopDownloading {
@@ -69,34 +68,6 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
                                              method:transType];
 }
 
-/* 打包: 主密钥下载 */
-- (NSString*) stringPackingMainKeyDownload {
-    Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
-    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:sTerminalNumber]];
-    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:sBusinessNumber]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownMainKey]];
-    [packingHolder setFieldAtIndex:62 withValue:[packingHolder MAINKEY]];
-    [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
-    [packingHolder preparePacking];
-    NSString* packing = [packingHolder stringPackingWithType:@"0800"];
-    [packingHolder cleanAllFields];
-
-    return packing;
-}
-/* 打包: 工作密钥下载 */
-- (NSString*) stringPackingWorkKeyDownload {
-    Packing8583* packingHolder = [Packing8583 sharedInstance];
-    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
-    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:sTerminalNumber]];
-    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:sBusinessNumber]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownWorkKey]];
-    [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
-    [packingHolder preparePacking];
-    NSString* packing = [packingHolder stringPackingWithType:@"0800"];
-    [packingHolder cleanAllFields];
-    return packing;
-}
 
 /* 错误回调 */
 - (void) rebackWithErrorMessage:(NSString*)errorMessage {

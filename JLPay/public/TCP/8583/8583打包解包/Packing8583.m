@@ -64,21 +64,12 @@
 #pragma mask : 打包结果串获取
 -(NSString*) stringPackingWithType:(NSString*)type {
     exchangeType = type;
-    // 根据plist配置格式化所有的域值
-//    [self resetFormatValueOfFieldsDictionary];
-    // 组包
-//    NSString* stringPackage = [self stringPacking];
-    // 清空字典数据
-//    [self cleanAllFields];
     return [self stringPacking];
 }
 
 #pragma mask : MAC加密源串
 - (NSString*) macSourcePackintByType:(NSString*)type {
     exchangeType = type;
-    // 根据plist配置格式化所有的域值
-//    [self resetFormatValueOfFieldsDictionary];
-//    NSString* stringPackage = [self macSourcePacking];
     return [self macSourcePacking];
 }
 
@@ -234,6 +225,7 @@
     [string appendString:[self bitMapHexString]];
     [string appendString:[self allDataString]];
     [string deleteCharactersInRange:NSMakeRange(string.length - 16, 16)];
+    JLPrint(@"mac原始串:[%@]",string);
     return string;
 }
 

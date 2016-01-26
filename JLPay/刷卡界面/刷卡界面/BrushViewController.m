@@ -18,6 +18,7 @@
 #import "BalanceEnquiryViewController.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
+#import "ModelTCPTransPacking.h"
 
 @interface BrushViewController()
 <
@@ -30,11 +31,13 @@
 {
     BOOL blueToothPowerOn;
     CBCentralManager* blueManager; // 用来检测手机蓝牙是否开启
+    NSString* curTransType;
 }
 
 @property (nonatomic, strong) ViewModelTCPPosTrans* tcpViewModel;           // TCP交易中转
 
 @property (nonatomic, retain) NSMutableDictionary* cardInfoOfReading;       // 读到得卡数据
+@property (nonatomic, copy) NSDictionary* transResponseInfo;                // 交易响应信息
 
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的指示器
 @property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
@@ -58,7 +61,6 @@
 *************************************/
 
 
-#define TIMEOUT 60                      // 超时时间:统一60s
 
  
 @implementation BrushViewController
@@ -88,7 +90,7 @@
     [self setTitle:@"刷卡"];
     [self addSubViews];
     // 交易超时时间为60秒,后面可以重置
-    [self setTimeOut:TIMEOUT];
+    [self setTimeOut:60];
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
@@ -140,7 +142,7 @@
 
     // 4.先在主线程打开activitor 和 提示信息
     [self.activity startAnimating];
-    self.timeOut = 30; // 扫描设备的超时时间为30
+    self.timeOut = 20; // 扫描设备的超时时间为30
     [self startTimerWithSelector:@selector(waitingForDeviceOpenning)];
 
 }
@@ -156,14 +158,40 @@
     [blueManager setDelegate:nil];
 }
 
+#pragma mask : 识别设备回调
+- (void)didDiscoverDeviceOnID:(NSString *)identifier {
+    JLPrint(@"%s 扫描到了设备id:%@",__func__,identifier);
+    if ([identifier isEqualToString:[ModelDeviceBindedInformation deviceIDBinded]]) {
+        // 连接设备
+        //        [[DeviceManager sharedInstance] stopScanningDevices];
+        [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
+    }
+}
+
+#pragma mask : SN号读取回调:SN号在设备连接后自动被读取
+- (void)didReadSNVersion:(NSString *)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
+    [self stopTimer];
+    if (!yesOrNo) {
+        // 提示并退出
+        [self.activity stopAnimating];
+        [self alertForFailedMessage:@"连接设备失败"];
+    } else {
+        // 继续刷卡:读磁道等信息
+        [self beginToSwipe];
+    }
+}
+
+#pragma mask ::: 进行刷卡
+- (void) beginToSwipe {
+    self.timeOut = 0; // 超时从0开始计数
+    [self.activity startAnimating];
+    // 启动定时器:刷卡计时
+    [self startTimerWithSelector:@selector(waitingForDeviceSwiping)];
+    [[DeviceManager sharedInstance] cardSwipeWithMoney:self.sIntMoney yesOrNot:NO onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
+}
 
 
-#pragma mask <<<<<<<<<<<<<<<<<<<<<<<<<<< 设备操作
-
-
-#pragma mask -----------------------------------------  DeviceManagerDelegate
-
-#pragma mask : 刷卡结果的回调
+#pragma mask : DeviceManagerDelegate 刷卡结果的回调
 - (void)deviceManager:(DeviceManager *)deviceManager
  didSwipeSuccessOrNot:(BOOL)yesOrNot
           withMessage:(NSString *)msg
@@ -191,109 +219,10 @@
 
     // 成功就继续,输入密码或直接发起交易
     NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-    if ([deviceType isEqualToString:DeviceType_JHL_M60]) {
-        [self startTrans];
-    }
-    else if ([deviceType isEqualToString:DeviceType_JLpay_TY01]) {
-        [self startTrans];
-    }
-    else if ([deviceType isEqualToString:DeviceType_RF_BB01]) {
-        [self makePasswordAlertView];
-    }
-    else if ([deviceType isEqualToString:DeviceType_JHL_A60]) {
-        [self makePasswordAlertView];
-    }
-    else if ([deviceType isEqualToString:DeviceType_DL01]) {
+    if ([deviceType isEqualToString:DeviceType_DL01]) {
         [self makePasswordAlertView];
     }
 
-}
-
-#pragma mask : 识别设备回调
-- (void)didDiscoverDeviceOnID:(NSString *)identifier {
-    JLPrint(@"%s 扫描到了设备id:%@",__func__,identifier);
-    if ([identifier isEqualToString:[ModelDeviceBindedInformation deviceIDBinded]]) {
-        // 连接设备
-//        [[DeviceManager sharedInstance] stopScanningDevices];
-        [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
-    }
-}
-
-#pragma mask : SN号读取回调:SN号在设备连接后自动被读取
-- (void)didReadSNVersion:(NSString *)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
-    [self stopTimer];
-    if (!yesOrNo) {
-        // 提示并退出
-        [self.activity stopAnimating];
-        [self alertForFailedMessage:@"连接设备失败"];
-    } else {
-        // 继续刷卡:读磁道等信息
-        [self beginToSwipe];
-    }
-}
-
-#pragma mask : PIN加密密文获取
-- (void)didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString *)pin withError:(NSString *)error {
-    if (yesOrNo) {
-        if (pin && pin.length > 0) {
-            NSMutableString* f22 = [NSMutableString stringWithString:[self.cardInfoOfReading valueForKey:@"22"]];
-            [f22 replaceCharactersInRange:NSMakeRange(2, 1) withString:@"1"];
-            [self.cardInfoOfReading setValue:f22 forKey:@"22"];
-            [self.cardInfoOfReading setValue:pin forKey:@"52"];
-            [self.cardInfoOfReading setValue:@"2600000000000000" forKey:@"53"];
-        } else {
-            [self.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
-        }
-        // 发起交易
-        [self startTrans];
-    } else {
-        [self alertForFailedMessage:error];
-    }
-}
-
-- (void)didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString *)macPin withError:(NSString *)error {
-    if (yesOrNo) {
-        JLPrint(@"设备加密后的mac串:[%@]",macPin);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading macPin:macPin andDelegate:self];
-        });
-    } else {
-        [self alertForFailedMessage:error];
-    }
-}
-
-
-#pragma mask ::: 进行刷卡
-/*************************************
- * 功  能 : 进行刷卡;
- *          - 在副线程中扫描并打开设备
- *          - 在主线程中加载刷卡的定时器，并显示
- *          - 在主线程中加载交易的定时器，并显示
- * 参  数 :
- *          (NSString*) message
- * 返  回 : 无
- *************************************/
-- (void) beginToSwipe {
-    self.timeOut = 0; // 超时从0开始计数
-    [self.activity startAnimating];
-    // 启动定时器:刷卡计时
-    [self startTimerWithSelector:@selector(waitingForDeviceSwiping)];
-    
-    [[DeviceManager sharedInstance] cardSwipeWithMoney:self.sIntMoney yesOrNot:NO onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
-}
-
-
-#pragma mask ::: 进行加密
-- (void) encryptPinWithSource:(NSString*)source {
-    // pin encrypt. if source != null
-    if (source && source.length > 0) {
-        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
-    }
-    // start trans. if source == null
-    else {
-        [self.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
-        [self startTrans];
-    }
 }
 
 #pragma mask ::: 初始化并加载密码输入提示框
@@ -308,8 +237,6 @@
     });
 }
 
-
-
 #pragma mask ::: 密码输入提示框的按钮点击事件
 - (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     CustomIOSAlertView* alertV = (CustomIOSAlertView*)alertView;
@@ -323,59 +250,121 @@
     }
 }
 
-#pragma mask >>>>>>>>>>>>>>>>>>>>>>>>>>> 设备操作
+#pragma mask ::: 进行加密
+- (void) encryptPinWithSource:(NSString*)source {
+    curTransType = self.stringOfTranType;
+    // pin encrypt. if source != null
+    if (source && source.length > 0) {
+        [[DeviceManager sharedInstance] pinEncryptBySource:source withPan:[self.cardInfoOfReading valueForKey:@"2"] onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
+    }
+    // start trans. if source == null
+    else {
+        [self.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
+        //        [self startTrans];
+        [self startTransPackingOnTransType:curTransType];
+    }
+}
+
+
+#pragma mask : PIN加密密文获取
+- (void)didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString *)pin withError:(NSString *)error {
+    if (yesOrNo) {
+        if (pin && pin.length > 0) {
+            NSMutableString* f22 = [NSMutableString stringWithString:[self.cardInfoOfReading valueForKey:@"22"]];
+            [f22 replaceCharactersInRange:NSMakeRange(2, 1) withString:@"1"];
+            [self.cardInfoOfReading setValue:f22 forKey:@"22"];
+            [self.cardInfoOfReading setValue:pin forKey:@"52"];
+            [self.cardInfoOfReading setValue:@"2600000000000000" forKey:@"53"];
+        } else {
+            [self.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
+        }
+        // 发起交易
+        [self startTransPackingOnTransType:curTransType];
+    } else {
+        [self alertForFailedMessage:error];
+    }
+}
+
 
 
 
 #pragma mask ---- ViewModelTCPPosTransDelegate 
-/* 交易结果回调 */
-- (void)viewModel:(ViewModelTCPPosTrans *)viewModel
-      transResult:(BOOL)result
-      withMessage:(NSString *)message
-  andResponseInfo:(NSDictionary *)responseInfo
-{
-    [viewModel terminateTransWithTransType:self.stringOfTranType];
+- (void)didTransSuccessWithResponseInfo:(NSDictionary *)responseInfo onTransType:(NSString *)transType {
     [self stopTimer];
     [self stopActivity];
-    if (result) {
-        // 成功: 跳转界面: 小票、余额显示
-        self.waitingLabel.text = @"交易成功!";
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if ([self.stringOfTranType isEqualToString:TranType_YuE]) {
-                [self pushToYuEVCWithInfo:responseInfo];
-            } else {
-                [self pushToSignVCWithInfo:responseInfo];
-            }
-        });
+    self.transResponseInfo = responseInfo;
+    if ([transType isEqualToString:TranType_BatchUpload]) {
+        [self handleWithTransSuccessOnTransType:transType];
     } else {
-        // 失败
-        NSString* alertMessage = [NSString stringWithFormat:@"交易失败:%@",message];
-        [self alertForFailedMessage:alertMessage];
+        if ([self.cardInfoOfReading[@"22"] hasPrefix:@"05"]) {
+            curTransType = TranType_BatchUpload;
+            // 将响应信息的域追加到卡信息域里
+            [self repackingCardInfoWithTransResponseInfo];
+            // 发起批上送交易
+            [self startTransPackingOnTransType:curTransType];
+        } else {
+            [self handleWithTransSuccessOnTransType:transType];
+        }
+    }
+}
+- (void)didTransFailWithErrMsg:(NSString *)errMsg onTransType:(NSString *)transType {
+    [self stopTimer];
+    [self stopActivity];
+    if (![transType isEqualToString:TranType_BatchUpload]) {
+        [self alertForFailedMessage:[NSString stringWithFormat:@"交易失败:%@",errMsg]];
+    } else {
+        [self handleWithTransSuccessOnTransType:self.stringOfTranType];
+    }
+}
+- (void) handleWithTransSuccessOnTransType:(NSString*)transType {
+    self.waitingLabel.text = @"交易成功";
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if ([self.stringOfTranType isEqualToString:TranType_YuE]) {
+            [self pushToYuEVCWithInfo:self.transResponseInfo];
+        } else {
+            [self pushToSignVCWithInfo:self.transResponseInfo];
+        }
+    });
+}
+- (void) repackingCardInfoWithTransResponseInfo {
+    for (NSString* key in self.transResponseInfo.allKeys) {
+        NSString* cardFieldValue = [self.cardInfoOfReading objectForKey:key];
+        if (!cardFieldValue || cardFieldValue.length == 0) {
+            [self.cardInfoOfReading setObject:[self.transResponseInfo objectForKey:key] forKey:key];
+        }
     }
 }
 
 
-
-#pragma mask ---- TCP
-- (void) startTrans {
+#pragma mask ---- PACKING & TCP
+- (void) startTransPackingOnTransType:(NSString*)transType {
     self.timeOut = 0;
-    // 调起交易超时计时器
     [self startTimerWithSelector:@selector(waitingForDeviceCusting)];
-    // 启动指示器
     [self startActivity];
-    // 发起交易
     if (UnitStandardPacking == 0) {
         if ([[ModelDeviceBindedInformation deviceTypeBinded] isEqualToString:DeviceType_DL01]) {
-            NSString* macSource = [self.tcpViewModel macSourceWithTranType:self.stringOfTranType andCardInfo:self.cardInfoOfReading];
-            JLPrint(@"mac加密原始串:[%@]",macSource);
-            [[DeviceManager sharedInstance] macEncryptBySource:macSource onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
+            [[ModelTCPTransPacking sharedModel] packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
+            [[DeviceManager sharedInstance] macEncryptBySource:[[ModelTCPTransPacking sharedModel] getMacStringAfterPacking]
+                                                   onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
         }
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self.tcpViewModel startTransWithTransType:self.stringOfTranType andCardInfo:self.cardInfoOfReading andDelegate:self];
-        });
     }
 }
+
+- (void)didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString *)macPin withError:(NSString *)error {
+    if (yesOrNo) {
+        JLPrint(@"设备加密后的mac串:[%@]",macPin);
+        [[ModelTCPTransPacking sharedModel] repackingWithMacPin:macPin];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tcpViewModel startTransWithTransType:curTransType
+                                      andPackingString:[[ModelTCPTransPacking sharedModel] packageFinalyPacking]
+                                            onDelegate:self];
+        });
+    } else {
+        [self alertForFailedMessage:error];
+    }
+}
+
+
 
 
 #pragma mask ---- CBCentrolManagerDelegate

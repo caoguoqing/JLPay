@@ -24,26 +24,21 @@
 
 @protocol ViewModelTCPPosTransDelegate <NSObject>
 
-/* 回调结果: 带回错误信息(如果错误);带回响应信息(如果成功,key为域索引串) */
-- (void)viewModel:(ViewModelTCPPosTrans*)viewModel
-      transResult:(BOOL)result
-      withMessage:(NSString*)message
-  andResponseInfo:(NSDictionary*)responseInfo;
-
+- (void) didTransSuccessWithResponseInfo:(NSDictionary *)responseInfo onTransType:(NSString*)transType;
+- (void) didTransFailWithErrMsg:(NSString *)errMsg onTransType:(NSString*)transType;
 
 @end
 
 
+
 @interface ViewModelTCPPosTrans : NSObject
 
-// -- 先组mac源串
-- (NSString*) macSourceWithTranType:(NSString*)transType andCardInfo:(NSDictionary*)cardInfo;
-
-/* 发起交易: 指定交易类型+卡数据信息(2,4,14,22,23,35,36,52,53,55) */
+// -- new
 - (void) startTransWithTransType:(NSString*)transType
-                     andCardInfo:(NSDictionary*)cardInfo
-                          macPin:(NSString*)macPin
-                     andDelegate:(id<ViewModelTCPPosTransDelegate>)delegate;
+                andPackingString:(NSString*)packingString
+                      onDelegate:(id<ViewModelTCPPosTransDelegate>)delegate;
+
+
 
 
 /* 终止交易 */

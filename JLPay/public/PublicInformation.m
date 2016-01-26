@@ -758,10 +758,10 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 #pragma mask ::: 交易名称转换 e.g. 消费-190000
 + (NSString*) transNameWithCode:(NSString*)transCode {
     NSString* transName = nil;
-    if ([transCode isEqualToString:@"190000"]) {
+    if ([transCode isEqualToString:TranType_Consume]) { //
         transName = @"消费 (SALE)";
     }
-    else if ([transCode isEqualToString:@"280000"]) {
+    else if ([transCode isEqualToString:TranType_ConsumeRepeal]) {
         transName = @"消费撤销 (VOID)";
     }
     return transName;

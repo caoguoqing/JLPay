@@ -338,14 +338,22 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
             }
             break;
         case ERROR_FAIL_GETMAC:
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptMacSucOrFail:macPin:withError:)]) {
+                [self.delegate didEncryptMacSucOrFail:NO macPin:nil withError:@"MAC加密失败"];
+            }
             break;
         case ERROR_FAIL_MCCARD:
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
+            }
             break;
         case ERROR_FAIL_NEEDIC:
             
             break;
         case ERROR_FAIL_READCARD:
-            
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
+                [self.delegate didCardSwipedSucOrFail:NO withError:@"读卡失败" andCardInfo:nil];
+            }
             break;
         case ERROR_FAIL_TIMEOUT:
             if (self.delegate && [self.delegate respondsToSelector:@selector(deviceTimeOut)]) {
@@ -359,6 +367,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 // -- 刷卡回调
 -(void)onDetectCard {
+    JLPrint(@"刷卡回调:");
 }
 
 
