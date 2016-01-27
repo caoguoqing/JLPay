@@ -118,6 +118,10 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (TestOrProduce == 4) {
         port = @"60704";
     }
+    // 5: 内网测试75(2809) (TCP:60702,HTTP:60780)
+    else if (TestOrProduce == 5) {
+        port = @"60702";
+    }
     else {
         port = @"80";
     }
@@ -134,6 +138,10 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (TestOrProduce == 4) {
         port = @"60705";
+    }
+    // 5: 内网测试75(2809) (TCP:60702,HTTP:60780)
+    else if (TestOrProduce == 5) {
+        port = @"60780";
     }
     else {
         port = @"80";

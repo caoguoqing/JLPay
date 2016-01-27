@@ -35,7 +35,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 - (instancetype)initWithDelegate:(id<DLDevice_DL01Delegate>)deviceDelegate {
     self = [super init];
     if (self) {
-        JLPrint(@"=====TMD  什么时候被创建的");
         self.deviceList = [[NSMutableArray alloc] init];
         [self setDelegate:deviceDelegate];
         self.device = [DCSwiperAPI shareInstance];
@@ -51,7 +50,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 # pragma mask : 打开指定 identifier 号的设备
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
-    JLPrint(@"保存的设备id[%@]，需要打开的id[%@]", self.connectedIdentifier, identifier);
     if ([self isConnectedDevice]) {
         [self disConnectDevice];
     }
@@ -63,6 +61,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 - (void) clearAndCloseAllDevices {
     [self setDelegate:nil];
     [self.device setDelegate:nil];
+//    [self.device cancelCard];
     [self stopScanningDevice];
     [self disConnectDevice];
 }
@@ -73,30 +72,23 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 }
 
 
-
-/////////////////////////////////////////   {
-
-
-
 # pragma mask : 判断指定SN号的设备是否已连接
 - (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion {
-    int isConnected = -1;
+    BOOL isConnected = NO;
     if ([self isScannedDevice] && [self isConnectedDevice]) {
-        JLPrint(@"。。。读取已连接的SN号:[%@]",[self SNOfDeviceInfo]);
         if ([SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
-            isConnected = 1;
+            isConnected = YES;
         }
     }
     return isConnected;
 }
 
 # pragma mask : 判断指定设备ID的设备是否已连接
-// 1:已连接; 0:正在连接; -1:未连接;
 - (BOOL) isConnectedOnIdentifier:(NSString*)identifier {
-    int isConnected = -1;
+    BOOL isConnected = NO;
     if ([self isScannedDevice] && [self isConnectedDevice]) {
         if ([identifier isEqualToString:self.connectedIdentifier]) {
-            isConnected = 1;
+            isConnected = YES;
         }
     }
     return isConnected;
@@ -126,14 +118,12 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 # pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
-    JLPrint(@"money = [%@]",money);
     if (![SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
             [self.delegate didCardSwipedResult:NO onSucCardInfo:nil onErrMsg:@"设备未连接"];
         }
         return;
     }
-    
     double dMoney = 0;
     if (yesOrNot) {
         dMoney = [money doubleValue];
@@ -395,6 +385,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 // -- 读取sn
 - (void) readDeviceSN {
+    JLPrint(@"读取设备SN号");
     [self.device getDeviceKsn];
 }
 
@@ -406,7 +397,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 // -- 写工作密钥
 - (void) writeWorkKey:(NSString *)workKey {
     // 解析workkey到字典
-    JLPrint(@"原始工作密钥:[%@]",workKey);
     NSString* pinKey = [workKey substringToIndex:40];
     NSString* macKey = [workKey substringFromIndex:40];
     macKey = [NSString stringWithFormat:@"%@%@",[macKey substringToIndex:16],[macKey substringFromIndex:macKey.length - 8]];
@@ -447,7 +437,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 // -- 设置SN
 - (void) deviceInfoAddSN:(NSString*)sn {
     if (!self.connectedIdentifier) {
-        JLPrint(@"self.connectedIdentifier为空!!!!!");
         return;
     }
     NSMutableDictionary* deviceInfo = [self deviceInfoOnId:self.connectedIdentifier];
