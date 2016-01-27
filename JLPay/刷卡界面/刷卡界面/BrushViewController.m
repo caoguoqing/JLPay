@@ -137,7 +137,7 @@
     // 3.扫描设备
     JLPrint(@"绑定的设备类型:[%@]",[ModelDeviceBindedInformation deviceTypeBinded]);
     [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:[ModelDeviceBindedInformation deviceTypeBinded]];
-//    [[DeviceManager sharedInstance] startScanningDevices];
+    [[DeviceManager sharedInstance] openDeviceWithIdentifier:[ModelDeviceBindedInformation deviceIDBinded]];
 
     // 4.先在主线程打开activitor 和 提示信息
     [self.activity startAnimating];
@@ -157,20 +157,12 @@
     [blueManager setDelegate:nil];
 }
 
-#pragma mask : 识别设备回调
-- (void)didDiscoverDeviceOnID:(NSString *)identifier {
-    JLPrint(@"%s 扫描到了设备id:%@",__func__,identifier);
-    if ([identifier isEqualToString:[ModelDeviceBindedInformation deviceIDBinded]]) {
-        // 连接设备
-        //        [[DeviceManager sharedInstance] stopScanningDevices];
-        [[DeviceManager sharedInstance] openDeviceWithIdentifier:identifier];
-    }
-}
 
 #pragma mask : SN号读取回调:SN号在设备连接后自动被读取
-- (void)didReadSNVersion:(NSString *)SNVersion sucOrFail:(BOOL)yesOrNo withError:(NSString *)error {
+- (void)didConnectedDeviceResult:(BOOL)result onSucSN:(NSString *)SNVersion onErrMsg:(NSString *)errMsg
+{
     [self stopTimer];
-    if (!yesOrNo) {
+    if (!result) {
         // 提示并退出
         [self.activity stopAnimating];
         [self alertForFailedMessage:@"连接设备失败"];
@@ -191,22 +183,14 @@
 
 
 #pragma mask : DeviceManagerDelegate 刷卡结果的回调
-- (void)deviceManager:(DeviceManager *)deviceManager
- didSwipeSuccessOrNot:(BOOL)yesOrNot
-          withMessage:(NSString *)msg
-          andCardInfo:(NSDictionary *)cardInfo
+- (void)didCardSwipedResult:(BOOL)result onSucCardInfo:(NSDictionary *)cardInfo onErrMsg:(NSString *)errMsg
 {
-    // 先停止计时器
     [self stopTimer];
-    // 停止指示器
     [self stopActivity];
-    
-    // 失败就退出
-    if (!yesOrNot) {
-        [self alertForFailedMessage:msg];
+    if (!result) {
+        [self alertForFailedMessage:errMsg];
         return;
     }
-        
     if (self.cardInfoOfReading.count > 0) {
         [self.cardInfoOfReading removeAllObjects];
         self.cardInfoOfReading = nil;
@@ -215,7 +199,7 @@
     [self.cardInfoOfReading addEntriesFromDictionary:cardInfo];
     // 添加金额
     [self.cardInfoOfReading setValue:self.sIntMoney forKey:@"4"];
-
+    
     // 成功就继续,输入密码或直接发起交易
     NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
     if ([deviceType isEqualToString:DeviceType_DL01]) {
@@ -266,8 +250,9 @@
 
 
 #pragma mask : PIN加密密文获取
-- (void)didEncryptPinSucOrFail:(BOOL)yesOrNo pin:(NSString *)pin withError:(NSString *)error {
-    if (yesOrNo) {
+- (void)didPinEncryptResult:(BOOL)result onSucPin:(NSString *)pin onErrMsg:(NSString *)errMsg
+{
+    if (result) {
         if (pin && pin.length > 0) {
             NSMutableString* f22 = [NSMutableString stringWithString:[self.cardInfoOfReading valueForKey:@"22"]];
             [f22 replaceCharactersInRange:NSMakeRange(2, 1) withString:@"1"];
@@ -280,11 +265,9 @@
         // 发起交易
         [self startTransPackingOnTransType:curTransType];
     } else {
-        [self alertForFailedMessage:error];
+        [self alertForFailedMessage:errMsg];
     }
 }
-
-
 
 
 #pragma mask ---- ViewModelTCPPosTransDelegate 
@@ -349,8 +332,10 @@
     }
 }
 
-- (void)didEncryptMacSucOrFail:(BOOL)yesOrNo macPin:(NSString *)macPin withError:(NSString *)error {
-    if (yesOrNo) {
+#pragma mask ---- 设备MAC加密结果
+- (void)didMacEncryptResult:(BOOL)result onSucMacPin:(NSString *)macPin onErrMsg:(NSString *)errMsg
+{
+    if (result) {
         JLPrint(@"设备加密后的mac串:[%@]",macPin);
         [[ModelTCPTransPacking sharedModel] repackingWithMacPin:macPin];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -359,12 +344,23 @@
                                             onDelegate:self];
         });
     } else {
-        [self alertForFailedMessage:error];
+        [self alertForFailedMessage:errMsg];
     }
 }
 
-
-
+- (void)didDisconnectDeviceOnSN:(NSString *)SNVersion {
+    if (![SNVersion isEqualToString:[ModelDeviceBindedInformation deviceSNBinded]]) {
+        return;
+    }
+    [self stopTimer];
+    [self stopActivity];
+    [self alertForFailedMessage:[NSString stringWithFormat:@"交易失败:设备[%@]丢失",SNVersion]];
+}
+- (void)deviceManagerTimeOut {
+    [self stopActivity];
+    [self stopTimer];
+    [self alertForFailedMessage:@"交易失败:设备操作超时!"];
+}
 
 #pragma mask ---- CBCentrolManagerDelegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {

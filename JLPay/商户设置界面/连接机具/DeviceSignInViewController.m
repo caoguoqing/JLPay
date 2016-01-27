@@ -29,7 +29,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     CBCentralManager* bleManager;
 }
 @property (nonatomic, strong) NSMutableArray* SNVersionNums;        // SN号列表
-//@property (nonatomic, strong) NSMutableArray* terminalNums;         // 终端号列表
 
 @property (nonatomic, strong) NSString* selectedTerminalNum;        // 终端号:已勾选的
 @property (nonatomic, strong) NSString* selectedSNVersionNum;       // SN号:已勾选的
@@ -456,12 +455,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 异步调起等待定时器
         [self startDeviceTimer];
         [KVNProgress showWithStatus:@"设备连接中..."];
-        // 开始扫描并连接
-//        [[DeviceManager sharedInstance] closeAllDevices];
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:nil];
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-////            [[DeviceManager sharedInstance] startScanningDevices];
-//        });
     }
 }
 // 按钮按下事件
