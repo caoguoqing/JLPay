@@ -228,12 +228,14 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
         [cardInfoReaded setObject:@"0200" forKey:@"22"]; // 22
         NSString* lenMc35 = [dic objectForKey:@"8"];
         NSString* lenMc36 = [dic objectForKey:@"9"];
-        int intLen = [PublicInformation sistenToTen:lenMc35];
+        int intLen = ([lenMc35 isEqualToString:@"FF"])?(0):([PublicInformation sistenToTen:lenMc35]);
+        JLPrint(@"35域长度:%d",intLen);
         if (intLen > 0) {
             NSString* mc35 = [[dic objectForKey:@"A"] substringToIndex:intLen];
             [cardInfoReaded setObject:mc35 forKey:@"35"]; // 35
         }
-        intLen = [PublicInformation sistenToTen:lenMc36];
+        intLen = ([lenMc36 isEqualToString:@"FF"])?(0):([PublicInformation sistenToTen:lenMc36]);
+        JLPrint(@"36域长度:%d",intLen);
         if (intLen > 0) {
             NSString* mc36 = [[dic objectForKey:@"B"] substringToIndex:intLen];
             [cardInfoReaded setObject:mc36 forKey:@"36"]; // 36
