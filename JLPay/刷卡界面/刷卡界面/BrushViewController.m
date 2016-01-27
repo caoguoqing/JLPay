@@ -94,6 +94,7 @@
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+    [[DeviceManager sharedInstance] setDelegate:self];
 }
 
 
@@ -103,8 +104,6 @@
 {
     [super viewWillAppear:animated];
     [self.activity startAnimating];
-    
-    [[DeviceManager sharedInstance] setDelegate:self];
     
     self.navigationController.navigationBarHidden = NO;
 }
@@ -138,7 +137,7 @@
     // 3.扫描设备
     JLPrint(@"绑定的设备类型:[%@]",[ModelDeviceBindedInformation deviceTypeBinded]);
     [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:[ModelDeviceBindedInformation deviceTypeBinded]];
-    [[DeviceManager sharedInstance] startScanningDevices];
+//    [[DeviceManager sharedInstance] startScanningDevices];
 
     // 4.先在主线程打开activitor 和 提示信息
     [self.activity startAnimating];

@@ -145,7 +145,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     [packingHolder setFieldAtIndex:23 withValue:[responseCardInfo valueForKey:@"23"]];
     [packingHolder setFieldAtIndex:25 withValue:k8583FieldValue25]; //
     [packingHolder setFieldAtIndex:26 withValue:k8583FieldValue26];
-    [packingHolder setFieldAtIndex:35 withValue:[responseCardInfo valueForKey:@"35"]];
+//    [packingHolder setFieldAtIndex:35 withValue:[responseCardInfo valueForKey:@"35"]];
     [packingHolder setFieldAtIndex:41 withValue:[responseCardInfo valueForKey:@"41"]];
     [packingHolder setFieldAtIndex:42 withValue:[responseCardInfo valueForKey:@"42"]];
     [packingHolder setFieldAtIndex:49 withValue:[EncodeString encodeASC:k8583FieldValue49]];

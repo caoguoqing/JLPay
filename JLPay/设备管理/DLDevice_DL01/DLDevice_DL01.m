@@ -26,6 +26,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 @property (nonatomic, strong) NSMutableArray* deviceList;
 @property (nonatomic, strong) NSString* connectedIdentifier;
 
+@property (nonatomic, assign) id<DLDevice_DL01Delegate> delegate;
 
 @end
 
@@ -44,68 +45,41 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 }
 - (void)dealloc {
     [self setDelegate:nil];
-    
 }
 
 
-# pragma mask : 开始扫描设备
-- (void) startScanningDevices {
-    // 停止扫描
-//    [self stopScanningDevice];
-    // 关闭已连接的设备
-    if ([self isConnectedDevice]) {
-        [self disConnectDevice];
-    }
-    // 启动扫描
-    JLPrint(@"-------什么时候开启扫描了");
-    [self scanningDevice];
-}
-# pragma mask : 停止扫描设备
-- (void) stopScanningDevices {
-    [self stopScanningDevice];
-}
 
-
-# pragma mask : 打开所有蓝牙设备
-- (void) openAllDevices{}
-# pragma mask : 关闭所有蓝牙设备
-- (void) closeAllDevices {
-    [self disConnectDevice];
-}
-# pragma mask : SN号读取:所有设备
-- (void) readSNVersions{}
-
-# pragma mask : ID设备获取:根据SN号获取对应设备
-- (NSString*) identifierOnDeviceSN:(NSString*)SNVersion {
-    if (!self.connectedIdentifier) {
-        return nil;
-    }
-    NSString* connectedSN = [[self deviceInfoOnId:self.connectedIdentifier] objectForKey:kDCDeviceInfoKSN];
-    if ([connectedSN isEqualToString:SNVersion]) {
-        return self.connectedIdentifier;
-    } else {
-        return nil;
-    }
-}
-
-# pragma mask : 打开指定 SNVersion 号的设备
-- (void) openDevice:(NSString*)SNVersion{
-}
 # pragma mask : 打开指定 identifier 号的设备
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
     JLPrint(@"保存的设备id[%@]，需要打开的id[%@]", self.connectedIdentifier, identifier);
-    if (self.connectedIdentifier && ![self.connectedIdentifier isEqualToString:identifier]) {
+    if ([self isConnectedDevice]) {
         [self disConnectDevice];
     }
-    [self connectDeviceOnId:identifier];
+    [self setConnectedIdentifier:identifier];
+    [self scanningDevice];
 }
-# pragma mask : 关闭指定 SNVersion 号的设备
-- (void) closeDevice:(NSString*)SNVersion {
+
+# pragma mask : 关闭所有蓝牙设备
+- (void) clearAndCloseAllDevices {
+    [self setDelegate:nil];
+    [self.device setDelegate:nil];
+    [self stopScanningDevice];
     [self disConnectDevice];
 }
 
+# pragma mask : 设备ID:通过SN查找
+- (NSString*) deviceIdentifierOnSN:(NSString*)SNVersion {
+    return [self identifierOnSN:SNVersion];
+}
+
+
+
+/////////////////////////////////////////   {
+
+
+
 # pragma mask : 判断指定SN号的设备是否已连接
-- (int) isConnectedOnSNVersionNum:(NSString*)SNVersion {
+- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion {
     int isConnected = -1;
     if ([self isScannedDevice] && [self isConnectedDevice]) {
         JLPrint(@"。。。读取已连接的SN号:[%@]",[self SNOfDeviceInfo]);
@@ -118,7 +92,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 # pragma mask : 判断指定设备ID的设备是否已连接
 // 1:已连接; 0:正在连接; -1:未连接;
-- (int) isConnectedOnIdentifier:(NSString*)identifier {
+- (BOOL) isConnectedOnIdentifier:(NSString*)identifier {
     int isConnected = -1;
     if ([self isScannedDevice] && [self isConnectedDevice]) {
         if ([identifier isEqualToString:self.connectedIdentifier]) {
@@ -133,18 +107,19 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     if ([SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
         [self writeMainKey:mainKey];
     } else {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteMainKeySucOrFail:withError:)]) {
-            [self.delegate didWriteMainKeySucOrFail:NO withError:@"下载主密钥失败:设备未连接!"];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
+            [self.delegate didWroteMainKeyResult:NO onErrMsg:@"设备未连接!"];
         }
     }
 }
+
 # pragma mask : 设置工作密钥
 - (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion {
     if ([SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
         [self writeWorkKey:workKey];
     } else {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
-            [self.delegate didWriteWorkKeySucOrFail:NO withError:@"下载工作密钥失败:设备未连接!"];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {
+            [self.delegate didWroteWorkKeyResult:NO onErrMsg:@"设备未连接!"];
         }
     }
 }
@@ -153,8 +128,8 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 - (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion {
     JLPrint(@"money = [%@]",money);
     if (![SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-            [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败:设备未连接" andCardInfo:nil];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+            [self.delegate didCardSwipedResult:NO onSucCardInfo:nil onErrMsg:@"设备未连接"];
         }
         return;
     }
@@ -187,34 +162,40 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 
 
-#pragma mask 2 DCSwiperAPIDelegate
+#pragma mask 2 -------------- DCSwiperAPIDelegate
 //扫描设备结果
 -(void)onFindBlueDevice:(NSDictionary *)dic {
     if (![[dic objectForKey:kDCDeviceInfoName] hasPrefix:kDCDeviceNamePrefix]) {
         return;
     }
     JLPrint(@"扫描到设备:[%@]", [dic objectForKey:kDCDeviceInfoName]);
-    if ([self deviceInfoOnId:[dic objectForKey:kDCDeviceInfoIdentifier]]) {
-        return;
-    }
-    // 追加设备信息到设备列表
-    JLPrint(@"====添加扫描到的设备到设备列表:[%@]",dic);
     [self.deviceList addObject:[NSMutableDictionary dictionaryWithDictionary:dic]];
-    JLPrint(@"====添加后的设备列表:[%@]",self.deviceList);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didDiscoverDeviceOnID:)]) {
-        [self.delegate didDiscoverDeviceOnID:[dic objectForKey:kDCDeviceInfoIdentifier]];
+    if (![self isConnectedDevice]) {
+        if (self.connectedIdentifier) {
+            // 选择了 id 就连接指定id
+            [self connectDeviceOnId:self.connectedIdentifier];
+        } else {
+            // 没有选择 id 就连接列表中的第一个
+            if (self.deviceList.count > 0) {
+                [self connectDeviceOnId:[self.deviceList[0] objectForKey:kDCDeviceInfoIdentifier]];
+            }
+        }
     }
 }
 
 //连接设备结果
 -(void)onDidConnectBlueDevice:(NSDictionary *)dic {
-    self.connectedIdentifier = [dic objectForKey:kDCDeviceInfoIdentifier];
+    [self setConnectedIdentifier:[dic objectForKey:kDCDeviceInfoIdentifier]];
     [self readDeviceSN];
 }
 
 
 //失去连接到设备
 -(void)onDisconnectBlueDevice:(NSDictionary *)dic {
+    JLPrint(@"丢失设备:[%@]",dic);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didDisconnectDeviceOnSN:)]) {
+        [self.delegate didDisconnectDeviceOnSN:[self SNOfDeviceInfo]];
+    }
 }
 
 
@@ -223,19 +204,16 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     JLPrint(@"读取到的设备ksn信息:[%@]", dic);
     NSString* SNVersion = [dic objectForKey:@"6"];
     [self deviceInfoAddSN:SNVersion]; // 添加SN到设备信息
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
-        [self.delegate didReadSNVersion:SNVersion sucOrFail:YES withError:nil];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
+        [self.delegate didConnectedDeviceResult:YES onSucSN:SNVersion onErrMsg:nil];
     }
-    
 }
 
 //更新主密钥回调
 -(void)onDidUpdateMasterKey:(int)retCode {
     if (retCode == ERROR_OK) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteMainKeySucOrFail:withError:)]) {
-            [self.delegate didWriteMainKeySucOrFail:YES withError:nil];
-        } else {
-            [self.delegate didWriteMainKeySucOrFail:NO withError:@"主密钥下载失败!"];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
+            [self.delegate didWroteMainKeyResult:YES onErrMsg:nil];
         }
     }
 }
@@ -243,10 +221,8 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 //更新工作密钥回调
 -(void)onDidUpdateKey:(int)retCode {
     if (retCode == ERROR_OK) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
-            [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
-        } else {
-            [self.delegate didWriteWorkKeySucOrFail:NO withError:@"工作密钥下载失败!"];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {
+            [self.delegate didWroteWorkKeyResult:YES onErrMsg:nil];
         }
     }
 }
@@ -289,22 +265,22 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
         }
         [cardInfoReaded setObject:[dic objectForKey:@"55"] forKey:@"55"]; // 55
     }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-        [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfoReaded];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+        [self.delegate didCardSwipedResult:YES onSucCardInfo:cardInfoReaded onErrMsg:nil];
     }
 }
 
 //加密Pin结果
 -(void)onEncryptPinBlock:(NSString *)encPINblock {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
-        [self.delegate didEncryptPinSucOrFail:YES pin:encPINblock withError:nil];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didPinEncryptResult:onSucPin:onErrMsg:)]) {
+        [self.delegate didPinEncryptResult:YES onSucPin:encPINblock onErrMsg:nil];
     }
 }
 
 //mac计算结果
 -(void)onDidGetMac:(NSString *)strmac {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptMacSucOrFail:macPin:withError:)]) {
-        [self.delegate didEncryptMacSucOrFail:YES macPin:strmac withError:nil];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
+        [self.delegate didMacEncryptResult:YES onSucMacPin:strmac onErrMsg:nil];
     }
 }
 
@@ -318,8 +294,8 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     JLPrint(@"%s type = [%d], status = [%d]",__func__, type, status);
     switch (type) {
         case ERROR_FAIL_CONNECT_DEVICE:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didOpenDeviceSucOrFail:withError:)]) {
-                [self.delegate didOpenDeviceSucOrFail:NO withError:@"连接设备失败"];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
+                [self.delegate didConnectedDeviceResult:NO onSucSN:nil onErrMsg:@"连接设备失败"];
             }
             break;
         case ERROR_FAIL_DATA:
@@ -328,36 +304,35 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
         }
             break;
         case ERROR_FAIL_ENCRYPTPIN:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptPinSucOrFail:pin:withError:)]) {
-                [self.delegate didEncryptPinSucOrFail:NO pin:nil withError:@"密码加密失败"];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didPinEncryptResult:onSucPin:onErrMsg:)]) {
+                [self.delegate didPinEncryptResult:NO onSucPin:nil onErrMsg:@"密码加密失败"];
             }
             break;
         case ERROR_FAIL_GET_KSN:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
-                [self.delegate didReadSNVersion:nil sucOrFail:NO withError:@"读取设备SN号失败"];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
+                [self.delegate didConnectedDeviceResult:NO onSucSN:nil onErrMsg:@"读取SN号失败"];
             }
             break;
         case ERROR_FAIL_GETMAC:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didEncryptMacSucOrFail:macPin:withError:)]) {
-                [self.delegate didEncryptMacSucOrFail:NO macPin:nil withError:@"MAC加密失败"];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
+                [self.delegate didMacEncryptResult:NO onSucMacPin:nil onErrMsg:@"MAC加密失败"];
             }
             break;
         case ERROR_FAIL_MCCARD:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-                [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+                [self.delegate didCardSwipedResult:NO onSucCardInfo:nil onErrMsg:@"刷卡失败"];
             }
             break;
         case ERROR_FAIL_NEEDIC:
-            
             break;
         case ERROR_FAIL_READCARD:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-                [self.delegate didCardSwipedSucOrFail:NO withError:@"读卡失败" andCardInfo:nil];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+                [self.delegate didCardSwipedResult:NO onSucCardInfo:nil onErrMsg:@"读卡失败"];
             }
             break;
         case ERROR_FAIL_TIMEOUT:
-            if (self.delegate && [self.delegate respondsToSelector:@selector(deviceTimeOut)]) {
-                [self.delegate deviceTimeOut];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(deviceManagerTimeOut)]) {
+                [self.delegate deviceManagerTimeOut];
             }
             break;
         default:
@@ -385,12 +360,14 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 // -- 开启扫描
 - (void) scanningDevice {
     JLPrint(@"启动扫描");
+    [self.deviceList removeAllObjects];
     [self.device scanBlueDevice];
 }
 // -- 关闭扫描
 - (void) stopScanningDevice {
     JLPrint(@"关闭扫描");
     [self.device stopScanBlueDevice];
+    [self.deviceList removeAllObjects];
 }
 // -- 是否扫描到设备
 - (BOOL) isScannedDevice {
@@ -496,6 +473,17 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
         }
     }
     return deviceInfo;
+}
+// -- id获取: 指定SN
+- (NSString*) identifierOnSN:(NSString*)SNVersion {
+    NSString* identifier = nil;
+    for (NSDictionary* deviceInfo in self.deviceList) {
+        if ([SNVersion isEqualToString:[deviceInfo objectForKey:kDCDeviceInfoKSN]]) {
+            identifier = [deviceInfo objectForKey:kDCDeviceInfoIdentifier];
+            break;
+        }
+    }
+    return identifier;
 }
 
 #pragma mask 4 getter
