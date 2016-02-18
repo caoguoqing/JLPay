@@ -25,6 +25,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 @property (nonatomic, strong) NSMutableArray* deviceList;
 @property (nonatomic, strong) NSString* connectedIdentifier;
+@property (nonatomic, assign) BOOL connectEnable;
 
 @property (nonatomic, assign) id<DLDevice_DL01Delegate> delegate;
 
@@ -35,6 +36,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 - (instancetype)initWithDelegate:(id<DLDevice_DL01Delegate>)deviceDelegate {
     self = [super init];
     if (self) {
+        self.connectEnable = NO;
         self.deviceList = [[NSMutableArray alloc] init];
         [self setDelegate:deviceDelegate];
         self.device = [DCSwiperAPI shareInstance];
@@ -50,10 +52,21 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 # pragma mask : 打开指定 identifier 号的设备
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
-    if ([self isConnectedDevice]) {
-        [self disConnectDevice];
+    JLPrint(@"正在打开设备,查看设备列表:{%@}",self.deviceList);
+    // 动联设备创建设备后就已经开始扫描了;所以这里不用
+    if (!identifier) {
+        if (!self.connectedIdentifier) {
+            // do nothing
+        } else {
+            [self connectDeviceOnId:self.connectedIdentifier];
+        }
+    } else {
+        [self setConnectedIdentifier:identifier];
+        if ([self deviceInfoOnId:identifier]) {
+            [self connectDeviceOnId:identifier];
+        }
     }
-    [self setConnectedIdentifier:identifier];
+    [self setConnectEnable:YES]; // 允许连接设备
     [self scanningDevice];
 }
 
@@ -61,9 +74,9 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 - (void) clearAndCloseAllDevices {
     [self setDelegate:nil];
     [self.device setDelegate:nil];
-//    [self.device cancelCard];
     [self stopScanningDevice];
     [self disConnectDevice];
+    [self setConnectEnable:NO];
 }
 
 # pragma mask : 设备ID:通过SN查找
@@ -158,16 +171,34 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     if (![[dic objectForKey:kDCDeviceInfoName] hasPrefix:kDCDeviceNamePrefix]) {
         return;
     }
-    JLPrint(@"扫描到设备:[%@]", [dic objectForKey:kDCDeviceInfoName]);
+    NSString* curDeviceIdentifier = [dic objectForKey:kDCDeviceInfoIdentifier];
+    JLPrint(@"扫描到设备(%@):[%@]", [dic objectForKey:kDCDeviceInfoName], curDeviceIdentifier);
+    // add device if it not exists; else return
+    BOOL exists = NO;
+    for (NSDictionary* device in self.deviceList) {
+        if ([device[kDCDeviceInfoIdentifier] isEqualToString:curDeviceIdentifier]) {
+            exists = YES;
+            break;
+        }
+    }
+    if (exists) {
+        return;
+    }
     [self.deviceList addObject:[NSMutableDictionary dictionaryWithDictionary:dic]];
+    
+    // connect device on connectedIdentifier,if equal to curIdentifier;
+    //         or set curIdentifier to connectedIdentifier,and connect it
     if (![self isConnectedDevice]) {
         if (self.connectedIdentifier) {
-            // 选择了 id 就连接指定id
-            [self connectDeviceOnId:self.connectedIdentifier];
+            if ([self.connectedIdentifier isEqualToString:curDeviceIdentifier]) {
+                if (self.connectEnable) {
+                    [self connectDeviceOnId:self.connectedIdentifier];
+                }
+            }
         } else {
-            // 没有选择 id 就连接列表中的第一个
-            if (self.deviceList.count > 0) {
-                [self connectDeviceOnId:[self.deviceList[0] objectForKey:kDCDeviceInfoIdentifier]];
+            [self setConnectedIdentifier:curDeviceIdentifier];
+            if (self.connectEnable) {
+                [self connectDeviceOnId:curDeviceIdentifier];
             }
         }
     }
@@ -175,7 +206,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 //连接设备结果
 -(void)onDidConnectBlueDevice:(NSDictionary *)dic {
-    [self setConnectedIdentifier:[dic objectForKey:kDCDeviceInfoIdentifier]];
     [self readDeviceSN];
 }
 
@@ -354,7 +384,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 // -- 开启扫描
 - (void) scanningDevice {
     JLPrint(@"启动扫描");
-    [self.deviceList removeAllObjects];
     [self.device scanBlueDevice];
 }
 // -- 关闭扫描

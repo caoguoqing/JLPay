@@ -431,14 +431,12 @@ UIActionSheetDelegate,UIAlertViewDelegate
         return;
     }
     // 下载主密钥 -- 需要判断设备是否连接
-    int beingConnect = [[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum];
-    if (beingConnect == 1) {
+    if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum]) {
         [KVNProgress showWithStatus:@"设备绑定中..."];
         [self downloadMainKey];
     } else {
         [PublicInformation makeCentreToast:@"设备未连接"];
     }
-    
 }
 // 打开设备并读取sn号
 - (IBAction) buttonTouchToOpenDevices:(id)sender {
@@ -454,7 +452,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
     } else {
         // 异步调起等待定时器
         [self startDeviceTimer];
+        [[DeviceManager sharedInstance] clearAndCloseAllDevices];
         [KVNProgress showWithStatus:@"设备连接中..."];
+        [[DeviceManager sharedInstance] setDelegate:self];
+        [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:self.selectedDevice];
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:nil];
     }
 }
