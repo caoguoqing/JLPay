@@ -150,6 +150,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 40;
 }
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 40;
+}
 // pragma mask ::: 装载终端编号、SN号单元格
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     // 重用或创建 cell
@@ -225,19 +228,25 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
 }
 
-// pragma mask ::: 设置section 尾
-- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    NSMutableString* headerTitle = [[NSMutableString alloc] init];
+// -- 底部视图自定义
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    CGRect frame = CGRectMake(0, 0, tableView.frame.size.width, tableView.sectionFooterHeight);
+    UIView* footerView = [[UIView alloc] initWithFrame:frame];
+    UILabel* footerLabel = [[UILabel alloc] init];
+    frame.origin.x += 15;
+    frame.size.width -= 15;
+    frame.size.height = 40.f;
+    [footerLabel setFrame:frame];
+    [footerView addSubview:footerLabel];
+    footerLabel.textColor = [UIColor brownColor];
+    footerLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:0.4]];
     if (section == 0) {
-        [headerTitle appendString: @"(已绑定终端号: "];
-            [headerTitle appendFormat:@"%@)",[self terminalBinded]];
-    } else if (section == 1) {
-        [headerTitle appendString: @"(已绑定设备 SN: "];
-            [headerTitle appendFormat:@"%@)",[self SNVersionNumBinded]];
+        footerLabel.text = [NSString stringWithFormat:@"(已绑定终端号: %@)", [self terminalBinded]];
+    } else {
+        footerLabel.text = [NSString stringWithFormat:@"(已绑定设备 SN: %@)", [self SNVersionNumBinded]];
     }
-    return headerTitle;
+    return footerView;
 }
-
 
 /*
  * pragma mask ::: 点击终端编号对应的单元格
@@ -269,6 +278,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     [self.tableView reloadData];
 }
+
 
 #pragma mask : -------------  CBCentrolManagerDelegate 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
