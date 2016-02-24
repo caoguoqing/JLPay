@@ -275,19 +275,23 @@
     [self stopTimer];
     [self stopActivity];
     self.transResponseInfo = responseInfo;
-    if ([transType isEqualToString:TranType_BatchUpload]) {
-        [self handleWithTransSuccessOnTransType:transType];
-    } else {
-        if ([self.cardInfoOfReading[@"22"] hasPrefix:@"05"]) {
-            curTransType = TranType_BatchUpload;
-            // 将响应信息的域追加到卡信息域里
-            [self repackingCardInfoWithTransResponseInfo];
-            // 发起批上送交易
-            [self startTransPackingOnTransType:curTransType];
-        } else {
-            [self handleWithTransSuccessOnTransType:transType];
-        }
-    }
+    
+    [self handleWithTransSuccessOnTransType:transType]; // 直接成功处理
+
+    // --- modify: IC卡交易不送披上送交易了
+//    if ([transType isEqualToString:TranType_BatchUpload]) {
+//        [self handleWithTransSuccessOnTransType:transType];
+//    } else {
+//        if ([self.cardInfoOfReading[@"22"] hasPrefix:@"05"]) {
+//            curTransType = TranType_BatchUpload;
+//            // 将响应信息的域追加到卡信息域里
+//            [self repackingCardInfoWithTransResponseInfo];
+//            // 发起批上送交易
+//            [self startTransPackingOnTransType:curTransType];
+//        } else {
+//            [self handleWithTransSuccessOnTransType:transType];
+//        }
+//    }
 }
 - (void)didTransFailWithErrMsg:(NSString *)errMsg onTransType:(NSString *)transType {
     [self stopTimer];
