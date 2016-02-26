@@ -10,6 +10,7 @@
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
 #import "DLDevice_DL01.h"
+#import "LDDevice_M18.h"
 
 /*
  *  厂商设备添加流程:
@@ -19,9 +20,10 @@
 
 @interface DeviceManager()
 < /* delegate */
-DLDevice_DL01Delegate
+DLDevice_DL01Delegate,
+LDDevice_M18Delegate
 >
-@property (nonatomic, retain) id                device;
+@property (nonatomic, strong) id                device;
 @property (nonatomic, strong) NSString*         deviceType;
 
 @end
@@ -66,6 +68,7 @@ DLDevice_DL01Delegate
 
 #pragma mask : 打开设备,用UUID打开
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
+    JLPrint(@"连接设备:[%@]",identifier);
     [self.device openDeviceWithIdentifier:identifier];
 }
 
@@ -187,6 +190,9 @@ DLDevice_DL01Delegate
 - (void) makeDeviceEntry{
     if ([self.deviceType isEqualToString:DeviceType_DL01]) {
         self.device = [[DLDevice_DL01 alloc] initWithDelegate:self];
+    }
+    else if ([self.deviceType isEqualToString:DeviceType_LD_M18]) {
+        self.device = [[LDDevice_M18 alloc] initWithDelegate:self];
     }
 
 }

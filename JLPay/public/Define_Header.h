@@ -18,7 +18,7 @@
 #define CustomKeyboardHeight            216.0
 
 // 日志打印选项: 打印(1);不打印(0);
-#define NeedPrintLog                    0
+#define NeedPrintLog                    1
 #define JLPrint(fmt,...)    if (NeedPrintLog == 1) { NSLog(fmt,##__VA_ARGS__); }
 
 

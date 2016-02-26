@@ -16,6 +16,7 @@
 #import "ViewModelTCPHandleWithDevice.h"
 #import "ModelDeviceBindedInformation.h"
 
+
 @interface DeviceSignInViewController()
 <
 DeviceManagerDelegate,
@@ -70,6 +71,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 更新切换视图标记:切换到金额输入界面
     needCheckoutToCustVC = NO;
     [self loadSubviews];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -393,6 +395,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 保存选择的设备类型
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     self.selectedDevice = title;
+    JLPrint(@"选择的设备类型:[%@]",title);
     [[DeviceManager sharedInstance] setDelegate:self];
     [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:title];
 }
@@ -403,6 +406,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     if (buttonIndex != 0) {
         // 启动设备扫描
+        JLPrint(@"启动扫描...");
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:nil];
         [KVNProgress showWithStatus:@"设备连接中..."];
         // 异步启动等待定时器
@@ -510,6 +514,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void) actionSheetShowForSelectingDevice {
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:DeviceType_DL01];
+    [actionSheet addButtonWithTitle:DeviceType_LD_M18];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
 
