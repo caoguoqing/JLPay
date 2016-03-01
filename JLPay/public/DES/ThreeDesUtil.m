@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import <UIKit/UIKit.h>
 #import "ConverUtil.h"
+#import "DesUtil.h"
 
 @implementation ThreeDesUtil
 
@@ -27,19 +28,22 @@
     unsigned char buffer[1024];
     memset(buffer, 0, sizeof(char));
     size_t numBytesEncrypted = 0;
-    ;
+    NSLog(@"要加密的原串:[%@],key[%@]",clearText,key);
     NSData *testData=[PublicInformation NewhexStrToNSData:clearText];
     Byte *test=(Byte *)[testData bytes];
     Byte *keybyte=(Byte *)[[PublicInformation NewhexStrToNSData:key] bytes];
-    
+    NSLog(@"要加密的原串:[%@],key[%@]",clearText,key);
+
     CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt,
                                           kCCAlgorithm3DES,
                                           kCCOptionECBMode|kCCOptionPKCS7Padding,
                                           keybyte,
                                           kCCKeySize3DES,
                                           nil,//iv,
-                                          test	, [testData length],
-                                          buffer, 1024,
+                                          test,
+                                          [testData length],
+                                          buffer,
+                                          1024,
                                           &numBytesEncrypted);
     if (cryptStatus == kCCSuccess) {
         //NSLog(@"DES加密成功");
@@ -50,6 +54,21 @@
     }
     return ciphertext;
 }
+
+
++ (NSString*) TriDESEncryptedSource:(NSString*)source onKey:(NSString*)key {
+    NSString* key1 = [key substringToIndex:key.length/2];
+    NSString* key2 = [key substringFromIndex:key.length/2];
+    
+    NSString* temp = nil;
+    
+    temp = [DesUtil encryptUseDES:source key:key1];
+    temp = [DesUtil decryptUseDES:temp key:key2];
+    temp = [DesUtil encryptUseDES:temp key:key1];
+    
+    return temp;
+}
+
 
 /**
  DES解密

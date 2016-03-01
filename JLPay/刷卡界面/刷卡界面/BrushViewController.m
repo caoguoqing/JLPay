@@ -202,10 +202,14 @@
     
     // 成功就继续,输入密码或直接发起交易
     NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
-    if ([deviceType isEqualToString:DeviceType_DL01]) {
+    if ([deviceType isEqualToString:DeviceType_DL01])
+    {
         [self makePasswordAlertView];
     }
-
+    else if ([deviceType isEqualToString:DeviceType_LD_M18])
+    {
+        [self makePasswordAlertView];
+    }
 }
 
 #pragma mask ::: 初始化并加载密码输入提示框
@@ -328,11 +332,9 @@
     [self startTimerWithSelector:@selector(waitingForDeviceCusting)];
     [self startActivity];
     if (UnitStandardPacking == 0) {
-        if ([[ModelDeviceBindedInformation deviceTypeBinded] isEqualToString:DeviceType_DL01]) {
-            [[ModelTCPTransPacking sharedModel] packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
-            [[DeviceManager sharedInstance] macEncryptBySource:[[ModelTCPTransPacking sharedModel] getMacStringAfterPacking]
-                                                   onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
-        }
+        [[ModelTCPTransPacking sharedModel] packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
+        [[DeviceManager sharedInstance] macEncryptBySource:[[ModelTCPTransPacking sharedModel] getMacStringAfterPacking]
+                                               onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
     }
 }
 
@@ -340,7 +342,6 @@
 - (void)didMacEncryptResult:(BOOL)result onSucMacPin:(NSString *)macPin onErrMsg:(NSString *)errMsg
 {
     if (result) {
-        JLPrint(@"设备加密后的mac串:[%@]",macPin);
         [[ModelTCPTransPacking sharedModel] repackingWithMacPin:macPin];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tcpViewModel startTransWithTransType:curTransType

@@ -19,4 +19,9 @@
  */
 +(NSString *) decryptUse3DES:(NSString *)plainText key:(NSString *)key;
 
+
+
+// -- 新的3DES加密
++ (NSString*) TriDESEncryptedSource:(NSString*)source onKey:(NSString*)key ;
+
 @end

@@ -269,6 +269,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
         if (intLen > 0) {
             NSString* mc36 = [[dic objectForKey:@"B"] substringToIndex:intLen];
             [cardInfoReaded setObject:mc36 forKey:@"36"]; // 36
+            JLPrint(@"读到的卡36域:[%@]",mc36);
         }
     }
     else if (self.device.currentCardType == card_ic) {
