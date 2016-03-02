@@ -9,18 +9,19 @@
 #import "JLPayDevice_TY01.h"
 #import "JieLianService.h"
 #import "Define_Header.h"
+#import "PublicInformation.h"
 
 @interface JLPayDevice_TY01()
-<
-TYJieLianDelegate
->
+<TYJieLianDelegate>
 {
     BOOL cardSwipedSuccess;
 }
+@property (assign) id<JLPayDevice_TY01_Delegate> delegate;
 
 @property (nonatomic, retain) JieLianService* deviceManager;
 @property (nonatomic, strong) NSMutableArray* deviceList;
-@property (nonatomic, strong) CBPeripheral* connectedPeripheral;
+
+@property (nonatomic, strong) NSString* connectedIdentifier;
 @end
 
 
@@ -28,7 +29,6 @@ TYJieLianDelegate
 @implementation JLPayDevice_TY01
 @synthesize deviceManager = _deviceManager;
 @synthesize deviceList = _deviceList;
-@synthesize connectedPeripheral;
 
 
 #define KeyDataPathNodeDataPath         @"KeyDataPathNodeDataPath"      // 设备dataPath
@@ -40,14 +40,10 @@ TYJieLianDelegate
 
 
 
+#pragma mask 1 PUBLIC INTERFACE
 
 
-#pragma mask -------------------------------------------------------- PUBLIC INTERFACE
-
-- (void)openAllDevices{}
-
-
-#pragma mask : 初始化,创建设备入口
+// -- pragma mask : 初始化,创建设备入口
 - (instancetype)initWithDelegate:(id<JLPayDevice_TY01_Delegate>)deviceDelegate {
     self = [super init];
     if (self) {
@@ -62,189 +58,157 @@ TYJieLianDelegate
     self.deviceManager = nil;
 }
 
-#pragma mask : 扫描设备
-- (void)startScanningDevices {
-    [self.deviceManager stopScanning];
-    [self.deviceList removeAllObjects];
-    [self.deviceManager StartScanning];
+// -- pragma mask : 连接设备
+- (void)openDeviceWithIdentifier:(NSString *)identifier {
+    // 0.设置已连接设备的id
+    [self setConnectedIdentifier:identifier];
+    // 1.开启扫描
+    [self startDeviceScanning];
 }
 
-#pragma mask : 扫描停止
-- (void)stopScanningDevices {
-    [self.deviceManager stopScanning];
+// -- pragma mask : 关闭所有蓝牙设备
+- (void) clearAndCloseAllDevices {
+    [self setDelegate:nil];
+    [self.deviceManager setDelegate:nil];
+    [self stopDeviceScanning];
+    [self disConnectingDevice];
 }
 
-#pragma mask : 断开设备
-- (void)closeAllDevices{
-    [self.deviceManager disConnectDevice];
-}
 
-
-- (void)readSNVersions {}
-- (void)closeDevice:(NSString *)SNVersion{}
-- (void)openDevice:(NSString *)SNVersion{}
-
-
-#pragma mask : 判断设备连接:SN
-- (int)isConnectedOnSNVersionNum:(NSString *)SNVersion {
-    int connected = -1;
-    for (NSDictionary* dict in self.deviceList) {
-        
-        if ([SNVersion isEqualToString:[dict valueForKey:KeyDataPathNodeSNVersion]]) {
-            CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
-            if (peripheral.state == CBPeripheralStateConnected) {
-                connected = 1;
-            } else if (peripheral.state == CBPeripheralStateConnecting) {
-                connected = 0;
-            } else {
-                connected = -1;
-            }
-            break;
-        }
+// -- pragma mask : 判断设备连接:SN
+- (BOOL)isConnectedOnSNVersionNum:(NSString *)SNVersion {
+    BOOL connected = NO;
+    NSDictionary* deviceNode = [self deviceNodeOnSNVersion:SNVersion];
+    if (deviceNode && [[deviceNode objectForKey:KeyDataPathNodeIdentifier] isEqualToString:self.connectedIdentifier]) {
+        connected = YES;
     }
     return connected;
 }
-#pragma mask : 判断设备连接:SN
-- (int)isConnectedOnIdentifier:(NSString *)identifier {
-    int connected = -1;
-    for (NSDictionary* dict in self.deviceList) {
-        if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
-            CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
-            if (peripheral.state == CBPeripheralStateConnected) {
-                connected = 1; // 连接
-            } else if (peripheral.state == CBPeripheralStateConnecting) {
-                connected = 0;  // 正在连接
-            } else {
-                connected = -1; // 未连接
-            }
-            break;
-        }
+// -- pragma mask : 判断设备连接:SN
+- (BOOL)isConnectedOnIdentifier:(NSString *)identifier {
+    BOOL connected = NO;
+    NSDictionary* deviceNode = [self deviceNodeOnIdentifier:identifier];
+    if (deviceNode && [identifier isEqualToString:self.connectedIdentifier]) {
+        connected = YES;
     }
     return connected;
 }
 
-#pragma mask : 设备ID获取:on SN
-- (NSString *)identifierOnDeviceSN:(NSString *)SNVersion {
+// -- pragma mask : ID设备获取:根据SN号获取对应设备
+- (NSString*) deviceIdentifierOnSN:(NSString*)SNVersion {
     NSString* identifier = nil;
-    for (NSDictionary* dict in self.deviceList) {
-        if ([[dict valueForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
-            identifier = [dict valueForKey:KeyDataPathNodeIdentifier];
-        }
+    NSDictionary* deviceNode = [self deviceNodeOnSNVersion:SNVersion];
+    if (deviceNode) {
+        identifier = [deviceNode objectForKey:KeyDataPathNodeIdentifier];
     }
     return identifier;
 }
 
-#pragma mask : 连接设备
-- (void)openDeviceWithIdentifier:(NSString *)identifier {
-    for (NSDictionary* dict in self.deviceList) {
-        if ([identifier isEqualToString:[dict valueForKey:KeyDataPathNodeIdentifier]]) {
-            CBPeripheral* peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
-            [self.deviceManager connectDevice:peripheral];
-            break;
-        }
-    }
-}
-
-#pragma mask : 写主密钥
+// -- pragma mask : 写主密钥
 - (void)writeMainKey:(NSString *)mainKey onSNVersion:(NSString *)SNVersion {
-    CBPeripheral* peripheral = [self peripheralOnSNVersion:SNVersion];
-    if (peripheral) {
-        [self.deviceManager WriteMainKey:16 :mainKey];
+    if (![self isConnectedOnSNVersionNum:SNVersion]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
+            [self.delegate didWroteMainKeyResult:NO onErrMsg:@"设备未连接"];
+        }
+        return;
     }
+    [self.deviceManager WriteMainKey:16 :mainKey];
 }
-#pragma mask : 写工作密钥
+// -- pragma mask : 写工作密钥
 - (void)writeWorkKey:(NSString *)workKey onSNVersion:(NSString *)SNVersion {
-    CBPeripheral* peripheral = [self peripheralOnSNVersion:SNVersion];
-    if (peripheral) {
-        [self.deviceManager WriteWorkKey:60 :workKey];
+    if (![self isConnectedOnSNVersionNum:SNVersion]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {
+            [self.delegate didWroteWorkKeyResult:NO onErrMsg:@"设备未连接"];
+        }
+        return;
     }
+    // 因为不用 TRK_KEY 了,将 PIN_KEY 当 TRK_KEY 用;
+    [self.deviceManager WriteWorkKey:60 :[self newWorkKeyFromSourceWorkKey:workKey]];
 }
 
-#pragma mask : 刷卡
+// -- pragma mask : 刷卡
 - (void)cardSwipeWithMoney:(NSString *)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString *)SNVersion {
-    CBPeripheral* peripheral = [self peripheralOnSNVersion:SNVersion];
-    if (peripheral) {
-        [self.deviceManager MagnAmountPasswordCardAmount:money TimeOut:20];
-    } else {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-            [self.delegate didCardSwipedSucOrFail:NO withError:@"设备未连接" andCardInfo:nil];
+    if (![self isConnectedOnSNVersionNum:SNVersion]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+            [self.delegate didCardSwipedResult:NO onSucCardInfo:nil onErrMsg:@"设备未连接"];
+        }
+        return;
+    }
+    [self.deviceManager MagnAmountPasswordCardAmount:money TimeOut:20];
+}
+
+
+// -- pragma mask : MAC加密
+- (void) macEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion {
+    if (![self isConnectedOnSNVersionNum:SNVersion]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
+            [self.delegate didMacEncryptResult:NO onSucMacPin:nil onErrMsg:@"设备未连接"];
         }
     }
+    [self.deviceManager GetMac:(int)source.length/2 :source];
 }
 
-#pragma mask : 密文密码获取
-- (void)pinEncryptBySource:(NSString *)source withPan:(NSString *)pan onSNVersion:(NSString *)SNVersion {}
 
 
 
 
+#pragma mask 2 TYJieLianDelegate
 
-
-#pragma mask ------------------------------------------------------------- TYJieLianDelegate
-
-#pragma mask : 扫描到设备的回调
+// -- pragma mask : 扫描到设备的回调
 - (void)discoverPeripheralSuccess:(CBPeripheral *)peripheral {
     if (![peripheral.name hasPrefix:TYDeviceName]) {
         return;
     }
     
+    // 检查设备是否存在
     BOOL isExist = NO;
-    // 检查设备是否已存在
-    for (NSDictionary* dict in self.deviceList) {
-        CBPeripheral* iperipheral = [dict objectForKey:KeyDataPathNodeDataPath];
-        if ([iperipheral.identifier.UUIDString isEqualToString:peripheral.identifier.UUIDString]) {
-            isExist = YES;
-            break;
-        }
+    NSString* deviceIdentifier = peripheral.identifier.UUIDString;
+    if ([self deviceNodeOnIdentifier:deviceIdentifier]) {
+        isExist = YES;
     }
     if (!isExist) {
         // 设备列表追加
         NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
         [dict setObject:peripheral forKey:KeyDataPathNodeDataPath];
-        [dict setValue:peripheral.identifier.UUIDString forKey:KeyDataPathNodeIdentifier];
+        [dict setObject:deviceIdentifier forKey:KeyDataPathNodeIdentifier];
         [self.deviceList addObject:dict];
-        // 扫描到一个设备就关闭扫描
-        [self.deviceManager stopScanning];
-        // 引发回调
-        if (self.delegate && [self.delegate respondsToSelector:@selector(didDiscoverDeviceOnID:)]) {
-            [self.delegate didDiscoverDeviceOnID:peripheral.identifier.UUIDString];
+        // 是否连接设备
+        if (self.connectedIdentifier) {
+            if ([self.connectedIdentifier isEqualToString:deviceIdentifier]) {
+                [self connectingDevice:peripheral];
+            }
+        } else {
+            [self setConnectedIdentifier:deviceIdentifier];
+            [self connectingDevice:peripheral];
         }
     }
 }
 
 
-#pragma mask : 连接设备的回调
+// -- pragma mask : 连接设备的回调
 - (void)didConnectPeripheral:(CBPeripheral *)peripheral {
-    self.connectedPeripheral = peripheral;
-    for (NSDictionary* dict in self.deviceList) {
-        CBPeripheral* iperipheral = [dict objectForKey:KeyDataPathNodeDataPath];
-        if ([peripheral.identifier.UUIDString isEqualToString:iperipheral.identifier.UUIDString]) {
-            // 读取SN
-            [self.deviceManager GetSnVersion];
-            break;
-        }
-    }
+    [self.deviceManager GetSnVersion];    
 }
 
-#pragma mask : 设备丢失的回调
+// -- pragma mask : 设备丢失的回调
 - (void)didDisconnectPeripheral:(CBPeripheral *)peripheral{
-    self.connectedPeripheral = nil;
-    for (NSDictionary* dict in self.deviceList) {
-        if ([[dict valueForKey:KeyDataPathNodeIdentifier] isEqualToString:peripheral.identifier.UUIDString]) {
+    NSString* deviceIdentifier = peripheral.identifier.UUIDString;
+    NSDictionary* deviceNode = [self deviceNodeOnIdentifier:deviceIdentifier];
+    if (deviceNode) {
+        NSString* SNVersion = [deviceNode objectForKey:KeyDataPathNodeSNVersion];
+        if (SNVersion) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(didDisconnectDeviceOnSN:)]) {
+                [self.delegate didDisconnectDeviceOnSN:SNVersion];
+            }
+            [self removeSNVersionOnDeviceIdentifier:deviceIdentifier];
         }
     }
 }
 
-#pragma mask : 设备返回数据
+// -- pragma mask : 设备返回数据
 - (void)onReceive:(NSData *)data {
     Byte* bytesData = (Byte*)[data bytes];
     int result = (int)bytesData[1];
-    CBPeripheral* onRececeivePeripheral = nil;
-    for (NSDictionary* dict in self.deviceList) {
-        if ([[dict objectForKey:KeyDataPathNodeIdentifier] isEqualToString:self.connectedPeripheral.identifier.UUIDString]) {
-            onRececeivePeripheral = [dict objectForKey:KeyDataPathNodeDataPath];
-        }
-    }
     switch (bytesData[0]) {
         case GETSNVERSION:
         {
@@ -256,39 +220,39 @@ TYJieLianDelegate
                 }
                 // 更新SN到设备池
                 for (NSDictionary* dict in self.deviceList) {
-                    if ([[dict valueForKey:KeyDataPathNodeIdentifier] isEqualToString:self.connectedPeripheral.identifier.UUIDString]) {
+                    if ([[dict valueForKey:KeyDataPathNodeIdentifier] isEqualToString:self.connectedIdentifier]) {
                         [dict setValue:SNString forKey:KeyDataPathNodeSNVersion];
                     }
                 }
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
-                    [self.delegate didReadSNVersion:SNString sucOrFail:YES withError:nil];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
+                    [self.delegate didConnectedDeviceResult:YES onSucSN:SNString onErrMsg:nil];
                 }
             } else {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didReadSNVersion:sucOrFail:withError:)]) {
-                    [self.delegate didReadSNVersion:nil sucOrFail:NO withError:@"读取SN号失败"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
+                    [self.delegate didConnectedDeviceResult:NO onSucSN:nil onErrMsg:@"设备SN号读取失败"];
                 }
             }
         }
             break;
         case MAINKEY_CMD:
             if (!result) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteMainKeySucOrFail:withError:)]) {
-                    [self.delegate didWriteMainKeySucOrFail:YES withError:nil];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
+                    [self.delegate didWroteMainKeyResult:YES onErrMsg:nil];
                 }
             } else {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteMainKeySucOrFail:withError:)]) {
-                    [self.delegate didWriteMainKeySucOrFail:NO withError:@"下载主密钥失败"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
+                    [self.delegate didWroteMainKeyResult:NO onErrMsg:@"下载主密钥失败"];
                 }
             }
             break;
         case WORKKEY_CMD:
             if (!result) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
-                    [self.delegate didWriteWorkKeySucOrFail:YES withError:nil];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {
+                    [self.delegate didWroteWorkKeyResult:YES onErrMsg:nil];
                 }
             } else {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didWriteWorkKeySucOrFail:withError:)]) {
-                    [self.delegate didWriteWorkKeySucOrFail:NO withError:@"下载工作密钥失败"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {
+                    [self.delegate didWroteWorkKeyResult:NO onErrMsg:@"下载工作密钥失败"];
                 }
             }
             break;
@@ -297,8 +261,22 @@ TYJieLianDelegate
                 cardSwipedSuccess = YES;
             } else {
                 cardSwipedSuccess = NO;
-                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-                    [self.delegate didCardSwipedSucOrFail:NO withError:@"刷卡失败" andCardInfo:nil];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+                    [self.delegate didCardSwipedResult:NO onSucCardInfo:nil onErrMsg:@"刷卡失败"];
+                }
+            }
+            break;
+        case GETMAC_CMD:
+            if (!result) {
+                NSString* dataString = [PublicInformation stringWithHexBytes2:data];
+                NSString* macPin = [dataString substringWithRange:NSMakeRange(4, 16)];
+                JLPrint(@"mac设备的计算结果:[%@]",macPin);
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
+                    [self.delegate didMacEncryptResult:YES onSucMacPin:macPin onErrMsg:nil];
+                }
+            } else {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
+                    [self.delegate didMacEncryptResult:NO onSucMacPin:nil onErrMsg:@"MAC加密失败"];
                 }
             }
             break;
@@ -335,10 +313,16 @@ TYJieLianDelegate
             }
             // 二磁道
             else if ([key isEqualToString:@"encTrack2Ex"]) {
+                if ([[value substringFromIndex:value.length - 1] isEqualToString:@"F"]) {
+                    value = [value substringToIndex:value.length - 1];
+                }
                 [cardInfo setValue:value forKey:@"35"];
             }
             // 三磁道
             else if ([key isEqualToString:@"encTrack3Ex"]) {
+                if ([[value substringFromIndex:value.length - 1] isEqualToString:@"F"]) {
+                    value = [value substringToIndex:value.length - 1];
+                }
                 [cardInfo setValue:value forKey:@"36"];
             }
             // 密文密码
@@ -356,6 +340,9 @@ TYJieLianDelegate
             }
             // 二磁道
             else if ([key isEqualToString:@"track2Data"]) {
+                if ([[value substringFromIndex:value.length - 1] isEqualToString:@"F"]) {
+                    value = [value substringToIndex:value.length - 1];
+                }
                 [cardInfo setValue:value forKey:@"35"];
             }
             // 密文密码
@@ -389,45 +376,108 @@ TYJieLianDelegate
     }
     [cardInfo setValue:f22 forKey:@"22"];
 
-    if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedSucOrFail:withError:andCardInfo:)]) {
-        [self.delegate didCardSwipedSucOrFail:YES withError:nil andCardInfo:cardInfo];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didCardSwipedResult:onSucCardInfo:onErrMsg:)]) {
+        [self.delegate didCardSwipedResult:YES onSucCardInfo:cardInfo onErrMsg:nil];
     }
 }
 
 
 
 
+#pragma mask 3 PRIVATE INTERFACE
 
 
 
+// -- 开启扫描
+- (void) startDeviceScanning {
+    [self.deviceList removeAllObjects];
+    [self.deviceManager StartScanning];
+}
+// -- 关闭扫描
+- (void) stopDeviceScanning {
+    [self.deviceList removeAllObjects];
+    [self.deviceManager stopScanning];
+}
+// -- 连接设备
+- (void) connectingDevice:(CBPeripheral*)device {
+    [self.deviceManager connectDevice:device];
+}
+// -- 断开设备连接
+- (void) disConnectingDevice {
+    [self setConnectedIdentifier:nil];
+    [self.deviceManager disConnectDevice];
+}
 
+#pragma mask 3 model: 工作密钥
+- (NSString*) newWorkKeyFromSourceWorkKey:(NSString*)sourceWorkKey {
+    NSString* newWorkKey = nil;
+    NSString* pinKey = [sourceWorkKey substringToIndex:40];
+    NSString* macKey = [sourceWorkKey substringFromIndex:40];
+    NSString* newMacKey = [NSString stringWithFormat:@"%@%@%@",
+                           [macKey substringToIndex:16],
+                           [macKey substringToIndex:16],
+                           [macKey substringFromIndex:macKey.length - 8]];
+    newWorkKey = [NSString stringWithFormat:@"%@%@%@",pinKey,newMacKey,pinKey];
+    return newWorkKey;
+}
 
-#pragma mask ------------------------------------ PRIVATE INTERFACE
-
-#pragma mask : 根据SN获取设备入口
-- (CBPeripheral*) peripheralOnSNVersion:(NSString*)SNVersion {
-    CBPeripheral* peripheral = nil;
-    for (NSDictionary* dict in self.deviceList) {
-        if ([[dict valueForKey:KeyDataPathNodeSNVersion] isEqualToString:SNVersion]) {
-            peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
+#pragma mask 3 model: 设备列表
+// -- 设备节点: 指定ID
+- (NSMutableDictionary* ) deviceNodeOnIdentifier:(NSString*)identifier {
+    NSMutableDictionary* deviceNode = nil;
+    for (NSMutableDictionary* dic in self.deviceList) {
+        if (identifier && [identifier isEqualToString:[dic objectForKey:KeyDataPathNodeIdentifier]]) {
+            deviceNode = dic;
+            break;
         }
     }
-    return peripheral;
+    return deviceNode;
 }
-
-#pragma mask : 根据ID获取设备入口
-- (CBPeripheral*) peripheralOnIdentifier:(NSString*)identifier {
-    CBPeripheral* peripheral = nil;
-    for (NSDictionary* dict in self.deviceList) {
-        if ([[dict valueForKey:KeyDataPathNodeIdentifier] isEqualToString:identifier]) {
-            peripheral = [dict objectForKey:KeyDataPathNodeDataPath];
+// -- 设备节点: 指定SN
+- (NSMutableDictionary* ) deviceNodeOnSNVersion:(NSString*)SNVersion {
+    NSMutableDictionary* deviceNode = nil;
+    for (NSMutableDictionary* dic in self.deviceList) {
+        if (SNVersion && [SNVersion isEqualToString:[dic objectForKey:KeyDataPathNodeSNVersion]]) {
+            deviceNode = dic;
+            break;
         }
     }
-    return peripheral;
+    return deviceNode;
 }
 
+// -- 设备入口: 指定ID
+- (CBPeripheral* ) deviceOnIdentifier:(NSString*)identifier {
+    CBPeripheral* device = nil;
+    NSDictionary* deviceNode = [self deviceNodeOnIdentifier:identifier];
+    if (deviceNode) {
+        device = [deviceNode objectForKey:KeyDataPathNodeDataPath];
+    }
+    return device;
+}
+// -- 设备入口: 指定SN
+- (CBPeripheral* ) deviceOnSNVersion:(NSString*)SNVersion {
+    CBPeripheral* device = nil;
+    NSDictionary* deviceNode = [self deviceNodeOnSNVersion:SNVersion];
+    if (deviceNode) {
+        device = [deviceNode objectForKey:KeyDataPathNodeDataPath];
+    }
+    return device;
+}
 
-
+// -- 添加SN到设备列表
+- (void) addSNVersion:(NSString*)SNVersion onDeviceIdentifier:(NSString*)identifier {
+    NSMutableDictionary* deviceNode = [self deviceNodeOnIdentifier:identifier];
+    if (deviceNode) {
+        [deviceNode setObject:SNVersion forKey:KeyDataPathNodeSNVersion];
+    }
+}
+// -- 从设备列表移除SN
+- (void) removeSNVersionOnDeviceIdentifier:(NSString*)identifier {
+    NSMutableDictionary* deviceNode = [self deviceNodeOnIdentifier:identifier];
+    if (deviceNode) {
+        [self.deviceList removeObject:deviceNode];
+    }
+}
 
 
 

@@ -18,14 +18,6 @@
 @interface ViewModelTCPPosTrans() <wallDelegate,Unpacking8583Delegate>
 {
     NSString* curTransType; // 当前交易类型
-//    NSString* errorMessage; // 错误信息:用来错误时回调
-//    BOOL isICCardTrans; // IC卡交易
-//    
-//    NSDictionary* sourceCardInfo;
-//    NSDictionary* responseCardInfo;
-//    NSString* macPinEncripted;
-//    
-//    BOOL macEncrypt;
 }
 @property (nonatomic, assign) id<ViewModelTCPPosTransDelegate>delegate;
 @property (nonatomic, strong) TcpClientService* tcpHolder;

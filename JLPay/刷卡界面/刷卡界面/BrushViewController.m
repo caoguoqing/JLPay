@@ -135,7 +135,6 @@
     }
 
     // 3.扫描设备
-    JLPrint(@"绑定的设备类型:[%@]",[ModelDeviceBindedInformation deviceTypeBinded]);
     [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:[ModelDeviceBindedInformation deviceTypeBinded]];
     [[DeviceManager sharedInstance] openDeviceWithIdentifier:[ModelDeviceBindedInformation deviceIDBinded]];
 
@@ -199,6 +198,7 @@
     [self.cardInfoOfReading addEntriesFromDictionary:cardInfo];
     // 添加金额
     [self.cardInfoOfReading setValue:self.sIntMoney forKey:@"4"];
+
     
     // 成功就继续,输入密码或直接发起交易
     NSString* deviceType = [ModelDeviceBindedInformation deviceTypeBinded];
@@ -209,6 +209,10 @@
     else if ([deviceType isEqualToString:DeviceType_LD_M18])
     {
         [self makePasswordAlertView];
+    }
+    else if ([deviceType isEqualToString:DeviceType_JLpay_TY01]) {
+        curTransType = self.stringOfTranType;
+        [self startTransPackingOnTransType:curTransType];
     }
 }
 
@@ -247,7 +251,6 @@
     // start trans. if source == null
     else {
         [self.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
-        //        [self startTrans];
         [self startTransPackingOnTransType:curTransType];
     }
 }
@@ -331,11 +334,9 @@
     self.timeOut = 0;
     [self startTimerWithSelector:@selector(waitingForDeviceCusting)];
     [self startActivity];
-    if (UnitStandardPacking == 0) {
-        [[ModelTCPTransPacking sharedModel] packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
-        [[DeviceManager sharedInstance] macEncryptBySource:[[ModelTCPTransPacking sharedModel] getMacStringAfterPacking]
+    [[ModelTCPTransPacking sharedModel] packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
+    [[DeviceManager sharedInstance] macEncryptBySource:[[ModelTCPTransPacking sharedModel] getMacStringAfterPacking]
                                                onSNVersion:[ModelDeviceBindedInformation deviceSNBinded]];
-    }
 }
 
 #pragma mask ---- 设备MAC加密结果

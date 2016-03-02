@@ -98,7 +98,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         }
         return;
     }
-    __block typeof(self) wSelf = self;
+    __weak typeof(self) wSelf = self;
     [self.device loadKey:[self newMainKeyOnSouce:mainKey] successBlock:^{
         if (wSelf.delegate && [wSelf.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
             [wSelf.delegate didWroteMainKeyResult:YES onErrMsg:nil];
@@ -117,10 +117,9 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         }
         return;
     }
-    __block typeof(self) wSelf = self;
-    __block NSString* weadWorkKey = workKey;
+    __weak typeof(self) wSelf = self;
     [self.device loadKey:[self pinKeyInSourceWorkKey:workKey] successBlock:^{
-        [self.device loadKey:[wSelf macKeyInSourceWorkKey:weadWorkKey] successBlock:^{
+        [self.device loadKey:[wSelf macKeyInSourceWorkKey:workKey] successBlock:^{
             if (wSelf.delegate && [wSelf.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {
                 [wSelf.delegate didWroteWorkKeyResult:YES onErrMsg:nil];
             }
@@ -144,7 +143,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         return;
     }
 
-    __block typeof(self) wSelf = self;
+    __weak typeof(self) wSelf = self;
     [self.device waitingCard:nil timeOut:20 CheckCardTp:SUPPORTCARDTYPE_MAG_IC_RF moneyNum:[PublicInformation dotMoneyFromNoDotMoney:money] successBlock:^(LDE_CardType cardtype) {
         if (cardtype == CARDTYPE_MAGNETIC) {
             [wSelf MGCardInfoReadingOnSuccess:^(NSDictionary * cardInfo) {
@@ -183,7 +182,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         return;
     }
     
-    __block typeof(self) wSelf = self;
+    __weak typeof(self) wSelf = self;
     [self.device encClearPIN:source withPan:pan successBlock:^(NSString *stringCB) {
         if (wSelf.delegate && [wSelf.delegate respondsToSelector:@selector(didPinEncryptResult:onSucPin:onErrMsg:)]) {
             [wSelf.delegate didPinEncryptResult:YES onSucPin:stringCB onErrMsg:nil];
@@ -204,7 +203,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
     }
     
     JLPrint(@"开始进行mac加密");
-    __block typeof(self) wSelf = self;
+    __weak typeof(self) wSelf = self;
     [self.device calculateMac:source successBlock:^(NSString *stringCB) {
         if (wSelf.delegate && [wSelf.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
             [wSelf.delegate didMacEncryptResult:YES onSucMacPin:stringCB onErrMsg:nil];
@@ -221,7 +220,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 #pragma mask 2 private interface 
 // -- 开启扫描
 - (void) startDeviceScanning {
-    __block typeof(self) wself = self;
+    __weak typeof(self) wself = self;
     [self.device startSearchDev:8000 searchOneDeviceBlcok:^(LDC_DEVICEBASEINFO *deviceInfo) {
         if (![deviceInfo.deviceName hasPrefix:kLDDeviceNamePre]) return ;
         NSString* curIdentifier = deviceInfo.deviceIndentifier;
@@ -240,7 +239,6 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         if (needConnectDevice) {
             [wself.device openDevice:curIdentifier channel:CHANNEL_BLUETOOTH mode:COMMUNICATIONMODE_MASTER successBlock:^{
                 [wself.device getDeviceInfo:^(LDC_DeviceInfo *deviceInfo) {
-                    JLPrint(@"读取到设备信息:productSN[%@]",deviceInfo.productSN);
                     [wself addSN:deviceInfo.productSN toDeviceIdentifier:curIdentifier];
                     if (wself.delegate && [wself.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
                         [wself.delegate didConnectedDeviceResult:YES onSucSN:deviceInfo.productSN onErrMsg:nil];
@@ -273,8 +271,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 // -- 读卡数据,并封装; 磁条卡
 - (void) MGCardInfoReadingOnSuccess:(void (^) (NSDictionary*))successCB orErrorBlock:(onErrorCB)errorCB {
     __block NSMutableDictionary* cardInfo = [NSMutableDictionary dictionary];
-    __block typeof(self) wSelf = self;
-    __block onErrorCB errorBlock = errorCB;
+    __weak typeof(self) wSelf = self;
     // 先读卡号
     [self.device getPAN:PANDATATYPE_PLAIN successCB:^(NSString *stringCB) {
         [cardInfo setObject:stringCB forKey:@"2"];
@@ -308,10 +305,10 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
             // 回调读到的卡数据
             successCB(cardInfo);
         } failedBlock:^(NSString *errCode, NSString *errInfo) {
-            errorBlock(errCode, errInfo);
+            errorCB(errCode, errInfo);
         }];
     } failedBlock:^(NSString *errCode, NSString *errInfo) {
-        errorBlock(errCode, errInfo);
+        errorCB(errCode, errInfo);
     }];
 }
 
@@ -319,8 +316,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 // -- 读卡数据,并封装; IC卡
 - (void) ICCardInfoReadingOnSuccess:(void (^) (NSDictionary*))successCB orErrorBlock:(onErrorCB)errorCB {
     __block NSMutableDictionary* cardInfo = [NSMutableDictionary dictionary];
-    __block typeof(self) wSelf = self;
-    __block onErrorCB errorBlock = errorCB;
+    __weak typeof(self) wSelf = self;
     LFC_EMVTradeInfo* emvInfo = [[LFC_EMVTradeInfo alloc] init];
     emvInfo.flag = FORCEONLINE_NO;
     emvInfo.type = TRADETYPE_PURCHASE;
@@ -351,7 +347,6 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         if (track2 && [track2 rangeOfString:@"="].length > 0) {
             track2 = [track2 stringByReplacingOccurrencesOfString:@"=" withString:@"D"];
         }
-        JLPrint(@"IC卡磁道数据:[%@]",track2);
         [cardInfo setObject:track2 forKey:@"35"];
         
         // 继续读取IC芯片数据
@@ -360,21 +355,20 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
         getPin.moneyNum = @"0.00";
         getPin.timeout = 40;
         [wSelf.device continuePBOC:getPin successBlock:^(LFC_EMVResult *emvResult) {
-            JLPrint(@"读取IC数据的结果:[%d],IC芯片数据:[%@]",emvResult.result,emvResult.dol);
             if (emvResult.dol && emvResult.dol.length > 0) {
                 // 55
                 [cardInfo setObject:emvResult.dol forKey:@"55"];
                 // 回调读到的卡数据 -- 这里才是真正的读IC卡成功
                 successCB(cardInfo);
             } else {
-                errorBlock(@"EMV_ERR", @"IC卡数据读取失败");
+                errorCB(@"EMV_ERR", @"IC卡数据读取失败");
             }
         } failedBlock:^(NSString *errCode, NSString *errInfo) {
-            errorBlock(errCode, errInfo);
+            errorCB(errCode, errInfo);
         }];
         
     } failedBlock:^(NSString *errCode, NSString *errInfo) {
-        errorBlock(errCode, errInfo);
+        errorCB(errCode, errInfo);
     }];
 }
 
@@ -441,7 +435,6 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 // -- 查询设备ID: 指定SN
 - (NSString*) getIdentifierOnSN:(NSString*)SN {
     NSString* identifier = nil;
-    JLPrint(@"设备列表信息:[%@]",self.bleDevices);
     for (NSMutableDictionary* device in self.bleDevices) {
         if (device[kLDDeviceInfoDeviceSN] && [SN isEqualToString:device[kLDDeviceInfoDeviceSN]]) {
             LDC_DEVICEBASEINFO* deviceInfo = [device objectForKey:kLDDeviceInfoBasicInfo];

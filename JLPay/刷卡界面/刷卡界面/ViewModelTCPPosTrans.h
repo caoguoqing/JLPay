@@ -33,7 +33,6 @@
 
 @interface ViewModelTCPPosTrans : NSObject
 
-// -- new
 - (void) startTransWithTransType:(NSString*)transType
                 andPackingString:(NSString*)packingString
                       onDelegate:(id<ViewModelTCPPosTransDelegate>)delegate;

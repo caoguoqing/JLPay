@@ -9,8 +9,11 @@
 #import "DeviceManager.h"
 #import "Define_Header.h"
 #import "ModelDeviceBindedInformation.h"
+
 #import "DLDevice_DL01.h"
 #import "LDDevice_M18.h"
+#import "JLPayDevice_TY01.h"
+
 
 /*
  *  厂商设备添加流程:
@@ -21,7 +24,8 @@
 @interface DeviceManager()
 < /* delegate */
 DLDevice_DL01Delegate,
-LDDevice_M18Delegate
+LDDevice_M18Delegate,
+JLPayDevice_TY01_Delegate
 >
 @property (nonatomic, strong) id                device;
 @property (nonatomic, strong) NSString*         deviceType;
@@ -193,6 +197,9 @@ LDDevice_M18Delegate
     }
     else if ([self.deviceType isEqualToString:DeviceType_LD_M18]) {
         self.device = [[LDDevice_M18 alloc] initWithDelegate:self];
+    }
+    else if ([self.deviceType isEqualToString:DeviceType_JLpay_TY01]) {
+        self.device = [[JLPayDevice_TY01 alloc] initWithDelegate:self];
     }
 
 }

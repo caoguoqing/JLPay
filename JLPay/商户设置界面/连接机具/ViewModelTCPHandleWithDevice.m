@@ -142,7 +142,6 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 - (NSString*) mainKeyAnalysedByF62:(NSString*)f62 {
     NSString* mainKey = nil;
     // 截取主密钥密文
-    JLPrint(@"原始62域串(主密钥):[%@]",f62);
     NSRange sKeyRange = [f62 rangeOfString:@"DF02"];
     if (sKeyRange.length > 0) {
         NSInteger location = sKeyRange.location + sKeyRange.length;
@@ -153,9 +152,7 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
             if (location + length <= f62.length) {
                 NSString* mainKeyPin = [f62 substringWithRange:NSMakeRange(location, length)];
                 // 解密出明文
-                JLPrint(@"主密钥密文:[%@]",mainKeyPin);
                 mainKey = [[Unpacking8583 getInstance] threeDESdecrypt:mainKeyPin keyValue:@"EF2AE9F834BFCDD5260B974A70AD1A4A"];
-                JLPrint(@"主密钥明文:[%@]",mainKey);
             }
         }
     }
@@ -164,7 +161,6 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 // 解析62域: 工作密钥
 - (NSString*) workKeyAnalysedByF62:(NSString*)f62 {
     NSString* workKey = [NSString stringWithString:f62];
-    JLPrint(@"原始62域串(工作密钥):[%@]",workKey);
     if (workKey){
         NSUInteger extLen = workKey.length % 40;
         if (extLen > 0) {

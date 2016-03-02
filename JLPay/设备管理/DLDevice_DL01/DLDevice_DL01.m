@@ -52,7 +52,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 # pragma mask : 打开指定 identifier 号的设备
 - (void) openDeviceWithIdentifier:(NSString*)identifier {
-    JLPrint(@"正在打开设备,查看设备列表:{%@}",self.deviceList);
     // 动联设备创建设备后就已经开始扫描了;所以这里不用
     if (!identifier) {
         if (!self.connectedIdentifier) {
@@ -172,7 +171,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
         return;
     }
     NSString* curDeviceIdentifier = [dic objectForKey:kDCDeviceInfoIdentifier];
-    JLPrint(@"扫描到设备(%@):[%@]", [dic objectForKey:kDCDeviceInfoName], curDeviceIdentifier);
     // add device if it not exists; else return
     BOOL exists = NO;
     for (NSDictionary* device in self.deviceList) {
@@ -212,7 +210,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 //失去连接到设备
 -(void)onDisconnectBlueDevice:(NSDictionary *)dic {
-    JLPrint(@"丢失设备:[%@]",dic);
     if (self.delegate && [self.delegate respondsToSelector:@selector(didDisconnectDeviceOnSN:)]) {
         [self.delegate didDisconnectDeviceOnSN:[self SNOfDeviceInfo]];
     }
@@ -221,7 +218,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 //读取ksn结果
 -(void)onDidGetDeviceKsn:(NSDictionary *)dic {
-    JLPrint(@"读取到的设备ksn信息:[%@]", dic);
     NSString* SNVersion = [dic objectForKey:@"6"];
     [self deviceInfoAddSN:SNVersion]; // 添加SN到设备信息
     if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
@@ -249,7 +245,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 //读取卡信息结果
 -(void)onDidReadCardInfo:(NSDictionary *)dic {
-    JLPrint(@"刷卡数据:[%@]",dic);
     NSMutableDictionary* cardInfoReaded = [[NSMutableDictionary alloc] init];
     // 2,14,22,23,35,36,55
     if (self.device.currentCardType == card_mc) {
@@ -316,7 +311,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 // -- 操作结果
 -(void)onResponse:(int)type :(int)status {
-    JLPrint(@"%s type = [%d], status = [%d]",__func__, type, status);
     switch (type) {
         case ERROR_FAIL_CONNECT_DEVICE:
             if (self.delegate && [self.delegate respondsToSelector:@selector(didConnectedDeviceResult:onSucSN:onErrMsg:)]) {
@@ -384,12 +378,10 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 // -- 开启扫描
 - (void) scanningDevice {
-    JLPrint(@"启动扫描");
     [self.device scanBlueDevice];
 }
 // -- 关闭扫描
 - (void) stopScanningDevice {
-    JLPrint(@"关闭扫描");
     [self.device stopScanBlueDevice];
     [self.deviceList removeAllObjects];
 }
@@ -403,7 +395,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 }
 // -- 连接设备
 - (void) connectDeviceOnId:(NSString*)identifier {
-    JLPrint(@"从设备列表取出的%@的设备信息[%@]",identifier,[self deviceInfoOnId:identifier]);
     [self.device connectBlueDevice:[self deviceInfoOnId:identifier]];
 }
 
@@ -419,13 +410,11 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 
 // -- 读取sn
 - (void) readDeviceSN {
-    JLPrint(@"读取设备SN号");
     [self.device getDeviceKsn];
 }
 
 // -- 写主密钥
 - (void) writeMainKey:(NSString*)mainKey {
-    JLPrint(@"写主密钥:[%@]",mainKey);
     [self.device updateMasterKey:mainKey];
 }
 // -- 写工作密钥
@@ -435,7 +424,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     NSString* macKey = [workKey substringFromIndex:40];
     macKey = [NSString stringWithFormat:@"%@%@",[macKey substringToIndex:16],[macKey substringFromIndex:macKey.length - 8]];
     NSDictionary* workKeyInfo = [NSDictionary dictionaryWithObjects:@[pinKey,macKey] forKeys:@[kDCDeviceInfoPinKey,kDCDeviceInfoMacKey]];
-    JLPrint(@"打包后的工作密钥:[%@]",workKeyInfo);
     [self.device updateKey:workKeyInfo];
 }
 
@@ -454,7 +442,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     for (int i = 0; i < 16 - len; i++) {
         source = [source stringByAppendingString:@"F"];
     }
-    JLPrint(@"组包后的需要加密的明文:[%@]",source);
     [self.device encryptPin:source];
 }
 // -- mac加密
@@ -462,7 +449,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     if (!source || source.length == 0) {
         return;
     }
-    JLPrint(@"加密mac:[%@]",source);
     [self.device getMacValue:source];
 }
 
@@ -475,14 +461,12 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
     }
     NSMutableDictionary* deviceInfo = [self deviceInfoOnId:self.connectedIdentifier];
     [deviceInfo setObject:sn forKey:kDCDeviceInfoKSN];
-    JLPrint(@"设置了sn后的设备列表:[%@]",self.deviceList);
 }
 // -- 获取SN
 - (NSString*) SNOfDeviceInfo {
     if (!self.connectedIdentifier) {
         return nil;
     }
-    JLPrint(@"已连接设备的信息:{%@}", [self deviceInfoOnId:self.connectedIdentifier]);
     return [[self deviceInfoOnId:self.connectedIdentifier] objectForKey:kDCDeviceInfoKSN];
 }
 
@@ -490,7 +474,6 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 - (NSMutableDictionary*) deviceInfoOnId:(NSString*)identifier {
     NSMutableDictionary* deviceInfo = nil;
     for (NSMutableDictionary* dic in self.deviceList) {
-        JLPrint(@"设备列表中,id[%@]",[dic objectForKey:kDCDeviceInfoIdentifier]);
         if ([[dic objectForKey:kDCDeviceInfoIdentifier] isEqualToString:identifier]) {
             deviceInfo = dic;
         }

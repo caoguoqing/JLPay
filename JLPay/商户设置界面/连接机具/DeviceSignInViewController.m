@@ -339,9 +339,14 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self saveBindedDevice];
         [self reloadTableView];
         needCheckoutToCustVC = YES;
-        [KVNProgress showSuccessWithStatus:@"设备绑定成功!" completion:^{
-            [self.navigationController popViewControllerAnimated:YES];
-        }];
+        
+        [[DeviceManager sharedInstance] clearAndCloseAllDevices];
+
+//        dispatch_async(dispatch_get_main_queue(), ^{
+            [KVNProgress showSuccessWithStatus:@"设备绑定成功!" completion:^{
+                [self.navigationController popViewControllerAnimated:YES];
+            }];
+//        });
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"绑定设备失败:%@",errMsg]];
     }
@@ -365,7 +370,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString *)mainKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
-        JLPrint(@"下载的主密钥:[%@]",mainKey);
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载主密钥失败:\n%@",errorMessge]];
@@ -375,7 +379,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString *)workKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
-        JLPrint(@"下载的工作密钥:[%@]",workKey);
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载工作密钥失败:\n%@",errorMessge]];
@@ -395,7 +398,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     // 保存选择的设备类型
     NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
     self.selectedDevice = title;
-    JLPrint(@"选择的设备类型:[%@]",title);
     [[DeviceManager sharedInstance] setDelegate:self];
     [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:title];
 }
@@ -406,7 +408,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     if (buttonIndex != 0) {
         // 启动设备扫描
-        JLPrint(@"启动扫描...");
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:nil];
         [KVNProgress showWithStatus:@"设备连接中..."];
         // 异步启动等待定时器
@@ -515,6 +516,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:DeviceType_DL01];
     [actionSheet addButtonWithTitle:DeviceType_LD_M18];
+    [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
 
@@ -526,7 +528,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (!identifier) {
         return;
     }
-    JLPrint(@"保存设备信息:sn[%@],id[%@]",self.selectedSNVersionNum,identifier);
+    JLPrint(@"\n----------\n保存设备信息:\n设备类型:[%@]\nSN号:[%@]\n设备ID:[%@]\n终端号:[%@]\n商户号:[%@]\n------------\n",self.selectedDevice,self.selectedSNVersionNum,identifier,self.selectedTerminalNum,[ModelUserLoginInformation businessNumber]);
     [ModelDeviceBindedInformation saveBindedDeviceInfoWithDeviceType:self.selectedDevice
                                                             deviceID:identifier
                                                             deviceSN:self.selectedSNVersionNum
