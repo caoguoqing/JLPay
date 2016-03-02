@@ -340,13 +340,16 @@ UIActionSheetDelegate,UIAlertViewDelegate
         [self reloadTableView];
         needCheckoutToCustVC = YES;
         
-        [[DeviceManager sharedInstance] clearAndCloseAllDevices];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            // 部分设备退出比较慢，放在副线程
+            [[DeviceManager sharedInstance] clearAndCloseAllDevices];
+        });
 
-//        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [KVNProgress showSuccessWithStatus:@"设备绑定成功!" completion:^{
                 [self.navigationController popViewControllerAnimated:YES];
             }];
-//        });
+        });
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"绑定设备失败:%@",errMsg]];
     }
@@ -528,7 +531,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (!identifier) {
         return;
     }
-    JLPrint(@"\n----------\n保存设备信息:\n设备类型:[%@]\nSN号:[%@]\n设备ID:[%@]\n终端号:[%@]\n商户号:[%@]\n------------\n",self.selectedDevice,self.selectedSNVersionNum,identifier,self.selectedTerminalNum,[ModelUserLoginInformation businessNumber]);
     [ModelDeviceBindedInformation saveBindedDeviceInfoWithDeviceType:self.selectedDevice
                                                             deviceID:identifier
                                                             deviceSN:self.selectedSNVersionNum
