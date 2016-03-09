@@ -518,7 +518,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void) actionSheetShowForSelectingDevice {
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:DeviceType_DL01];
-    [actionSheet addButtonWithTitle:DeviceType_LD_M18];
+//    [actionSheet addButtonWithTitle:DeviceType_LD_M18];
     [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }

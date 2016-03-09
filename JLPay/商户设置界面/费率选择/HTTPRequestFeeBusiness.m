@@ -10,10 +10,18 @@
 #import "HTTPInstance.h"
 #import "PublicInformation.h"
 
+
+static NSString* const kHttpBusinessErrorDomainName = @"kHttpBusinessErrorDomainName";
+
+
 @interface HTTPRequestFeeBusiness()
 <HTTPInstanceDelegate>
-@property (nonatomic, retain) HTTPInstance* http;
+@property (nonatomic, strong) HTTPInstance* http;
 @property (nonatomic, assign) id<HTTPRequestFeeBusinessDelegate>delegate;
+
+@property (nonatomic, copy) void (^ requestSucBlock) (NSArray* businessArray);
+@property (nonatomic, copy) void (^ requestErrBlock) (NSError* error);
+
 
 @end
 
@@ -39,6 +47,21 @@
         [http addPostValue:[PublicInformation returnBusiness] forKey:@"mchtNo"];
     }];
 }
+// block 的申请接口
+- (void) requestFeeBusinessOnFeeType:(NSString*)feeType
+                            areaCode:(NSString*)areaCode
+                          onSucBlock:(void (^) (NSArray* businessInfos))sucBlock
+                          onErrBlock:(void (^) (NSError* error))errBlock
+{
+    self.requestSucBlock = sucBlock;
+    self.requestErrBlock = errBlock;
+    
+    [self.http startRequestingWithDelegate:self packingHandle:^(ASIFormDataRequest *http) {
+        [http addPostValue:feeType forKey:@"feeType"];
+        [http addPostValue:areaCode forKey:@"areaCode"];
+        [http addPostValue:[PublicInformation returnBusiness] forKey:@"mchtNo"];
+    }];
+}
 
 /* 终止请求 */
 - (void)terminateRequest {
@@ -52,11 +75,19 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRequestFailWithMessage:)]) {
         [self.delegate didRequestFailWithMessage:[errorInfo objectForKey:kHTTPInstanceErrorMessage]];
     }
+    if (self.requestErrBlock) {
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObject:[errorInfo objectForKey:kHTTPInstanceErrorMessage] forKey:NSLocalizedDescriptionKey];
+        NSError* error = [NSError errorWithDomain:kHttpBusinessErrorDomainName code:[[errorInfo objectForKey:kHTTPInstanceErrorCode] integerValue] userInfo:userInfo];
+        self.requestErrBlock(error);
+    }
 }
 - (void)httpInstance:(HTTPInstance *)httpInstance didRequestingFinishedWithInfo:(NSDictionary *)info
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(didRequestSuccessWithInfo:)]) {
         [self.delegate didRequestSuccessWithInfo:info];
+    }
+    if (self.requestSucBlock) {
+        self.requestSucBlock([info objectForKey:kFeeBusinessListName]);
     }
 }
 

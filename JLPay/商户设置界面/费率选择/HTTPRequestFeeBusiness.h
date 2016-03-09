@@ -32,6 +32,11 @@ static NSString* const kFeeBusinessTerminalNum = @"termNo"; // 终端号
                             areaCode:(NSString*)areaCode
                             delegate:(id<HTTPRequestFeeBusinessDelegate>)delegate;
 
+- (void) requestFeeBusinessOnFeeType:(NSString*)feeType
+                            areaCode:(NSString*)areaCode
+                          onSucBlock:(void (^) (NSArray* businessInfos))sucBlock
+                          onErrBlock:(void (^) (NSError* error))errBlock;
+
 - (void) terminateRequest;
 
 @end

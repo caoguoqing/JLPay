@@ -11,9 +11,10 @@
 #import "PublicInformation.h"
 #import "ISOFieldFormation.h"
 #import "Define_Header.h"
-#import "ModelFeeRates.h"
+
 #import "ModelSettlementInformation.h"
-#import "ModelFeeBusinessInformation.h"
+#import "ModelBusinessInfoSaved.h"
+#import "ModelRateInfoSaved.h"
 
 @interface Packing8583() {
     NSString* exchangeType;
@@ -94,7 +95,7 @@
     [F60 appendString:[self f60_3EncodeCodeWithTransType:transType]];
     // 60.4 N1 手机: T+1:1, T+0:2
     [F60 appendString:[self f60_4feeTypeWithTransType:transType]];
-    // 60.5 N1(+15+8) 费率:
+    // 60.5 N1 费率: 指定费率、指定商户
     [F60 appendString:[self f60_5feeWithTransType:transType]];
 
     return F60;
@@ -171,18 +172,24 @@
         [f60_5Fee appendString:@"0"];
     }
     else {
+        // T+0
         if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
             [f60_5Fee appendString:@"0"];
         }
+        // 非 T+0
         else {
-            if ([ModelFeeBusinessInformation isSaved]) {
+            // 多商户
+            if ([ModelBusinessInfoSaved beenSaved]) {
                 [f60_5Fee appendString:@"9"];
-                [f60_5Fee appendString:[ModelFeeBusinessInformation businessNumSaved]];
-                [f60_5Fee appendString:[ModelFeeBusinessInformation terminalNumSaved]];
+                [f60_5Fee appendString:[ModelBusinessInfoSaved businessCode]];
+                [f60_5Fee appendString:[ModelBusinessInfoSaved terminalCode]];
             }
-            else if ([ModelFeeRates isSavedFeeRate]) {
-                [f60_5Fee appendString:[ModelFeeRates valueOfFeeRateName:[ModelFeeRates feeRateNameSaved]]];
+            // 多费率
+            else if ([ModelRateInfoSaved beenSaved]) {
+                [f60_5Fee appendString:[[ModelRateInfoSaved rateValueOnRateType:[ModelRateInfoSaved rateTypeSelected]] substringWithRange:NSMakeRange(1, 1)]];
+                [f60_5Fee appendString:[ModelRateInfoSaved cityCode]];
             }
+            // 其他
             else {
                 [f60_5Fee appendString:@"0"];
             }

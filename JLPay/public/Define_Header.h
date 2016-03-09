@@ -12,7 +12,7 @@
 #import "AppDelegate.h"
 #import "PublicInformation.h"
 
-
+#define NameWeakSelf(weakSelf)          __weak typeof(self) weakSelf = self;
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0

@@ -18,7 +18,9 @@
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
 #import "IntMoneyCalculating.h"
-#import "ModelFeeBusinessInformation.h"
+
+#import "ModelRateInfoSaved.h"
+#import "ModelBusinessInfoSaved.h"
 
 #import <objc/runtime.h>
 
@@ -278,8 +280,13 @@ SettlementSwitchViewDelegate>
             inputsValid = NO;
         }
     }
-    else if ([ModelFeeBusinessInformation isSaved]) {
-        NSString* alert = [NSString stringWithFormat:@"已设置指定费率的商户:\n[%@]\n是否继续刷卡?", [ModelFeeBusinessInformation businessNameSaved]];
+    else if ([ModelBusinessInfoSaved beenSaved]) {
+        NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@][%@]\n是否继续刷卡?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
+        [self alertViewForFeeBusinessMessage:alert];
+        inputsValid = NO;
+    }
+    else if ([ModelRateInfoSaved beenSaved]) {
+        NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@][%@]\n是否继续刷卡?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
         [self alertViewForFeeBusinessMessage:alert];
         inputsValid = NO;
     }

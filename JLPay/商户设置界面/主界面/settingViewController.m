@@ -22,6 +22,7 @@
 #import "ModelDeviceBindedInformation.h"
 
 #import "TestVCForDeviceBinding.h"
+#import "RateChooseViewController.h"
 
 
 static NSString* const kTitleSettingBusinessName = @"账号名称";
@@ -185,7 +186,7 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     }
     else if ([cellName isEqualToString:kTitleSettingFeeChoose]) {
 //        viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
-        viewController = [[RateViewController alloc] initWithNibName:nil bundle:nil];
+        viewController = [[RateChooseViewController alloc] initWithNibName:nil bundle:nil];
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:kTitleSettingBalanceSelect]) {
