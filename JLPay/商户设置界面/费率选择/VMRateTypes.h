@@ -10,7 +10,7 @@
 
 @interface VMRateTypes : NSObject
 
-- (NSString*) rateTypeSelected;
-- (NSString*) rateValueSelected;
+@property (nonatomic, assign) NSString* rateTypeSelected;
+@property (nonatomic, assign) NSString* rateValueSelected;
 
 @end

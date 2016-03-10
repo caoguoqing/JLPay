@@ -10,16 +10,22 @@
 #import <Foundation/Foundation.h>
 
 
-static NSString* const kHttpAreaCode = @"key";
-static NSString* const kHttpAreaName = @"value";
 
 
 @interface HttpRequestAreas : NSObject
 
+
 - (void) requestAreasOnCode:(NSString*)areaCode
-                 onSucBlock:(void (^) (NSArray* areas))sucBlock
+                 onSucBlock:(void (^) (void))sucBlock
                  onErrBlock:(void (^) (NSError* error))errBlock;
 
+@property (nonatomic, assign) NSString* provinceNameSelected; // on KVO
+@property (nonatomic, assign) NSString* provinceCodeSelected; // on KVO
+@property (nonatomic, assign) NSString* cityNameSelected; // on KVO
+@property (nonatomic, assign) NSString* cityCodeSelected; // on KVO
+
+
 - (void) terminateRequesting;
+
 
 @end

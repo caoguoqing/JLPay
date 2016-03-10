@@ -17,6 +17,12 @@
 #import "Masonry.h"
 #import "ModelBusinessInfoSaved.h"
 #import "RateChooseViewController.h"
+#import "VMRateTypes.h"
+
+
+static NSString* const kKVORateTypeSelected = @"rateTypeSelected";
+static NSString* const kKVOProvinceSelected = @"provinceNameSelected";
+static NSString* const kKVOCitySelected = @"cityNameSelected";
 
 
 @interface SegRateViewController ()
@@ -49,16 +55,8 @@
 @property (nonatomic, strong) UIButton* clearingButton;
 
 
-// 获取的省、市的临时列表
-@property (nonatomic, strong) NSArray* provincesRequsted;
-@property (nonatomic, strong) NSArray* citiesRequested;
-
-// -- 已选择的费率、省、市
-@property (nonatomic, strong) NSString* rateTypeSelected;
-@property (nonatomic, strong) NSString* provinceNameSelected;
-@property (nonatomic, strong) NSString* cityNameSelected;
-
 @property (nonatomic, strong) HttpRequestAreas* http;
+@property (nonatomic, strong) VMRateTypes* rateTypes;
 
 
 @end
@@ -81,12 +79,14 @@
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self updateRateInfoDisplayed];
+    [self addKVOs];
     RateChooseViewController* parentVC = (RateChooseViewController*)self.parentViewController;
     parentVC.canChangeViewController = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self removeKVOs];
     [self.http terminateRequesting];
 }
 - (void)didReceiveMemoryWarning {
@@ -99,80 +99,55 @@
     iTagAlertForCity = 11;
     segmentTintColor = [PublicInformation colorForHexInt:0x292421];
 }
+- (void) addKVOs {
+    [self.rateTypes addObserver:self forKeyPath:kKVORateTypeSelected options:NSKeyValueObservingOptionNew context:nil];
+    [self.http addObserver:self forKeyPath:kKVOProvinceSelected options:NSKeyValueObservingOptionNew context:nil];
+    [self.http addObserver:self forKeyPath:kKVOCitySelected options:NSKeyValueObservingOptionNew context:nil];
+}
+- (void) removeKVOs {
+    [self.rateTypes removeObserver:self forKeyPath:kKVORateTypeSelected];
+    [self.http removeObserver:self forKeyPath:kKVOProvinceSelected];
+    [self.http removeObserver:self forKeyPath:kKVOCitySelected];
+}
 
 #pragma mask 1 IBAction
 - (IBAction) clickToChooseRate:(ChooseButton*)sender {
     [self reframePullListViewLayonButton:sender];
-    NSArray* aaa = [ModelRateInfoSaved allRateTypes];
-    [self.pullSegView setDataSouces:aaa];
-    NameWeakSelf(wself);
     [sender turningDirection:YES];
-    [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-        wself.rateTypeSelected = [aaa objectAtIndex:selectedIndex];
-        [wself.rateButton setTitle:wself.rateTypeSelected forState:UIControlStateNormal];
-        [sender turningDirection:NO];
-    }];
+    [self.pullSegView.tableView setDataSource:(id<UITableViewDataSource>)self.rateTypes];
+    [self.pullSegView.tableView setDelegate:(id<UITableViewDelegate>)self.rateTypes];
+    [self.pullSegView showAnimation];
 }
+
 - (IBAction) clickToChooseProvince:(ChooseButton*)sender {
     [self reframePullListViewLayonButton:sender];
-    NameWeakSelf(wself);
-    if (self.provincesRequsted) {
-        NSArray* provinceNames = [self provinceNamesInList];
-        [self.pullSegView setDataSouces:provinceNames];
-        [sender turningDirection:YES];
-        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-            [sender turningDirection:NO];
-
-            NSString* curProvince = [sender titleForState:UIControlStateNormal];
-            if (![curProvince isEqualToString:[provinceNames objectAtIndex:selectedIndex]]) {
-                wself.provinceNameSelected = [provinceNames objectAtIndex:selectedIndex];
-                [sender setTitle:wself.provinceNameSelected forState:UIControlStateNormal];
-                // 更新市按钮
-                [wself.cityButton setTitle:@"市" forState:UIControlStateNormal];
-                wself.cityNameSelected = nil;
-                // 查询对应的市列表
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [wself requestingCitiesOnProvinceCode:[wself provinceCodeForName:wself.provinceNameSelected]];
-                });
-            }
-        }];
-        
-    } else {
-        [self alertForNullProvinces];
-    }
+    [sender turningDirection:YES];
+    [self.pullSegView.tableView setDataSource:(id<UITableViewDataSource>)self.http];
+    [self.pullSegView.tableView setDelegate:(id<UITableViewDelegate>)self.http];
+    [self requestingProvinces];
 }
 - (IBAction) clickToChooseCity:(ChooseButton*)sender {
     [self reframePullListViewLayonButton:sender];
-    if (!self.provinceNameSelected) {
-        [PublicInformation makeCentreToast:@"请先选择'省'"];
-        return;
-    }
-    
-    NameWeakSelf(wself);
-    if (self.citiesRequested) {
-        NSArray* cityNames = [self cityNamesInList];
-        [self.pullSegView setDataSouces:cityNames];
-        [sender turningDirection:YES];
-        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-            [sender turningDirection:NO];
-            wself.cityNameSelected = [cityNames objectAtIndex:selectedIndex];
-            [sender setTitle:wself.cityNameSelected forState:UIControlStateNormal];
-        }];
+    [sender turningDirection:YES];
+    [self.pullSegView.tableView setDataSource:(id<UITableViewDataSource>)self.http];
+    [self.pullSegView.tableView setDelegate:(id<UITableViewDelegate>)self.http];
+    if (self.http.provinceNameSelected) {
+        [self requestingCitiesOnProvinceCode:self.http.provinceCodeSelected];
     } else {
-        [self alertForNullCities];
+        [PublicInformation makeCentreToast:@"请先选择省份"];
     }
 }
 
 - (IBAction) clickToSaveRateInfo:(UIButton*)sender {
-    if (!self.rateTypeSelected) {
+    if (!self.rateTypes.rateTypeSelected) {
         [PublicInformation makeCentreToast:@"未选择费率类型,请先选择'费率'"];
         return;
     }
-    if (!self.provinceNameSelected) {
+    if (!self.http.provinceNameSelected) {
         [PublicInformation makeCentreToast:@"未选择省份,请先选择'省份'"];
         return;
     }
-    if (!self.cityNameSelected) {
+    if (!self.http.cityNameSelected) {
         [PublicInformation makeCentreToast:@"未选择市,请先选择'市'"];
         return;
     }
@@ -180,11 +155,11 @@
     if ([ModelRateInfoSaved beenSaved]) {
         [ModelRateInfoSaved clearSaved];
     }
-    [ModelRateInfoSaved savingRateInfoWithRateType:self.rateTypeSelected
-                                      provinceName:self.provinceNameSelected
-                                      provinceCode:[self provinceCodeForName:self.provinceNameSelected]
-                                          cityName:self.cityNameSelected
-                                          cityCode:[self cityCodeForName:self.cityNameSelected]];
+    [ModelRateInfoSaved savingRateInfoWithRateType:self.rateTypes.rateTypeSelected
+                                      provinceName:self.http.provinceNameSelected
+                                      provinceCode:self.http.provinceCodeSelected
+                                          cityName:self.http.cityNameSelected
+                                          cityCode:self.http.cityCodeSelected];
     [PublicInformation makeToast:@"保存费率信息成功!"];
     [self updateRateInfoDisplayed];
     // 多费率|多商户 只能选其一
@@ -202,44 +177,25 @@
     }
 }
 
-
-#pragma mask 2 model
-// -- 省名列表: 从省列表中解析
-- (NSArray*) provinceNamesInList {
-    NSMutableArray* provinceNames = [NSMutableArray array];
-    for (NSDictionary* provinceNode in self.provincesRequsted) {
-        [provinceNames addObject:[provinceNode objectForKey:kHttpAreaName]];
+#pragma mask 1 KVO
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    NSString* newValue = [change objectForKey:NSKeyValueChangeNewKey];
+    if ([keyPath isEqualToString:kKVORateTypeSelected]) {
+        [self.rateButton setTitle:newValue forState:UIControlStateNormal];
+        [self.rateButton turningDirection:NO];
+        [self.pullSegView hiddenAnimation];
     }
-    return provinceNames;
-}
-// -- 市名列表: 从市列表中解析
-- (NSArray*) cityNamesInList {
-    NSMutableArray* cityNames = [NSMutableArray array];
-    for (NSDictionary* cityNode in self.citiesRequested) {
-        [cityNames addObject:[cityNode objectForKey:kHttpAreaName]];
+    else if ([keyPath isEqualToString:kKVOProvinceSelected]) {
+        [self.provinceButton setTitle:newValue forState:UIControlStateNormal];
+        [self.provinceButton turningDirection:NO];
+        [self.pullSegView hiddenAnimation];
     }
-    return cityNames;
-}
-// --
-- (NSString*) provinceCodeForName:(NSString*)provinceName {
-    NSString* provinceCode = nil;
-    for (NSDictionary* node in self.provincesRequsted) {
-        if ([provinceName isEqualToString:[node objectForKey:kHttpAreaName]]) {
-            provinceCode = [node objectForKey:kHttpAreaCode];
-            break;
-        }
+    else if ([keyPath isEqualToString:kKVOCitySelected]) {
+        [self.cityButton setTitle:newValue forState:UIControlStateNormal];
+        [self.cityButton turningDirection:NO];
+        [self.pullSegView hiddenAnimation];
     }
-    return provinceCode;
-}
-- (NSString*) cityCodeForName:(NSString*)cityName {
-    NSString* cityCode = nil;
-    for (NSDictionary* node in self.citiesRequested) {
-        if ([cityName isEqualToString:[node objectForKey:kHttpAreaName]]) {
-            cityCode = [node objectForKey:kHttpAreaCode];
-            break;
-        }
-    }
-    return cityCode;
 }
 
 #pragma mask 2 private interface
@@ -264,16 +220,16 @@
         [KVNProgress show];
     });
     NameWeakSelf(wself);
-    [self.http requestAreasOnCode:@"156" onSucBlock:^(NSArray *areas) {
+    [self.http requestAreasOnCode:@"156" onSucBlock:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [KVNProgress dismiss];
         });
-        wself.provincesRequsted = [areas copy];
+        [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
+        [wself.provinceButton turningDirection:NO];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:@"查询省数据失败,请重试!" duration:2];
+            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
         });
-        wself.provincesRequsted = nil;
     }];
 }
 // -- 申请市数据
@@ -283,25 +239,25 @@
         [KVNProgress show];
     });
     NameWeakSelf(wself);
-    [self.http requestAreasOnCode:provinceCode onSucBlock:^(NSArray *areas) {
+    [self.http requestAreasOnCode:provinceCode onSucBlock:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [KVNProgress dismiss];
         });
-        wself.citiesRequested = [areas copy];
+        [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
+        [wself.cityButton turningDirection:NO];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:@"查询省数据失败,请重试!" duration:2];
+            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
         });
-        wself.citiesRequested = nil;
     }];
 }
 
 // -- 提示: 无省份,是否重新查询
 - (void) alertForNullProvinces {
     [PublicInformation alertCancle:@"取消"
-                             other:@"重新查询"
-                             title:@"查无省份数据"
-                           message:@"是否重新查询可用的省份信息?"
+                             other:@"确定"
+                             title:nil
+                           message:@"请先选择省份!"
                                tag:iTagAlertForProvince
                           delegate:self];
 }
@@ -323,8 +279,7 @@
             [self requestingProvinces];
         }
         else if (alertView.tag == iTagAlertForCity) {
-            NSString* provinceNameSelected = [self.provinceButton titleForState:UIControlStateNormal];
-            [self requestingCitiesOnProvinceCode:[self provinceCodeForName:provinceNameSelected]];
+            [self requestingCitiesOnProvinceCode:self.http.provinceCodeSelected];
         }
     }
 }
@@ -347,7 +302,7 @@
 // 下拉显示列表
 - (PullListSegView *)pullSegView {
     if (!_pullSegView) {
-        _pullSegView = [[PullListSegView alloc] initWithDataSource:[ModelRateInfoSaved allRateTypes]];
+        _pullSegView = [[PullListSegView alloc] init];
     }
     return _pullSegView;
 }
@@ -507,6 +462,12 @@
     }
     return _http;
 }
+- (VMRateTypes *)rateTypes {
+    if (!_rateTypes) {
+        _rateTypes = [[VMRateTypes alloc] init];
+    }
+    return _rateTypes;
+}
 
 
 #pragma mask 5 layout subviews 
@@ -555,7 +516,6 @@
     CGSize minLabelSize = CGSizeMake(10, labelLittleHeight);
     CGFloat titleScale = 0.6;
     CGFloat savedScale = 1.f;
-    
     self.rateTitle.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:maxLabelSize andScale:titleScale]];
     self.provinceTitle.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:maxLabelSize andScale:titleScale]];
     self.cityTitle.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:maxLabelSize andScale:titleScale]];

@@ -287,13 +287,13 @@
     [sender turningDirection:YES];
     
     NSArray* rates = [ModelBusinessInfoSaved allRateTypes];
-    [self.pullSegView setDataSouces:rates];
+//    [self.pullSegView setDataSouces:rates];
     NameWeakSelf(wself);
-    [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-        wself.rateTypeSelected = [rates objectAtIndex:selectedIndex];
-        [sender setTitle:wself.rateTypeSelected forState:UIControlStateNormal];
-        [sender turningDirection:NO];
-    }];
+//    [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
+//        wself.rateTypeSelected = [rates objectAtIndex:selectedIndex];
+//        [sender setTitle:wself.rateTypeSelected forState:UIControlStateNormal];
+//        [sender turningDirection:NO];
+//    }];
 }
 
 - (IBAction) clickToChooseProvince:(ChooseButton*)sender {
@@ -301,29 +301,29 @@
     [sender turningDirection:YES];
     NameWeakSelf(wself);
 
-    if (self.provincesRequsted) {
-        [self.pullSegView setDataSouces:[self provinceNamesOnRequested]];
-        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-            [sender turningDirection:NO];
-            NSString* curProvinceSelected = [wself provinceNameAtIndex:selectedIndex];
-            // 只有选择了不同的省才更新市列表、省标题
-            if (![curProvinceSelected isEqualToString:wself.provinceNameSelected]) {
-                // 更新按钮标题
-                wself.provinceNameSelected = curProvinceSelected;
-                [sender setTitle:curProvinceSelected forState:UIControlStateNormal];
-                // 更新市
-                [wself.cityButton setTitle:@"市" forState:UIControlStateNormal];
-                wself.cityNameSelected = nil;
-                wself.citiesRequested = nil;
-                // 并重新查询市
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [wself requestCitiesOnProvinceCode:[wself provinceCodeOnName:curProvinceSelected]];
-                });
-            }
-        }];
-    } else {
-        [self alertForNullProvinces];
-    }
+//    if (self.provincesRequsted) {
+//        [self.pullSegView setDataSouces:[self provinceNamesOnRequested]];
+//        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
+//            [sender turningDirection:NO];
+//            NSString* curProvinceSelected = [wself provinceNameAtIndex:selectedIndex];
+//            // 只有选择了不同的省才更新市列表、省标题
+//            if (![curProvinceSelected isEqualToString:wself.provinceNameSelected]) {
+//                // 更新按钮标题
+//                wself.provinceNameSelected = curProvinceSelected;
+//                [sender setTitle:curProvinceSelected forState:UIControlStateNormal];
+//                // 更新市
+//                [wself.cityButton setTitle:@"市" forState:UIControlStateNormal];
+//                wself.cityNameSelected = nil;
+//                wself.citiesRequested = nil;
+//                // 并重新查询市
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                    [wself requestCitiesOnProvinceCode:[wself provinceCodeOnName:curProvinceSelected]];
+//                });
+//            }
+//        }];
+//    } else {
+//        [self alertForNullProvinces];
+//    }
     
 }
 
@@ -336,36 +336,36 @@
 
     [sender turningDirection:YES];
     NameWeakSelf(wself);
-    if (self.citiesRequested) {
-        [self.pullSegView setDataSouces:[self cityNamesOnRequested]];
-        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-            [sender turningDirection:NO];
-            NSString* curCityName = [wself cityNameAtIndex:selectedIndex];
-            if (![curCityName isEqualToString:wself.cityNameSelected]) {
-                wself.cityNameSelected = curCityName;
-                [sender setTitle:curCityName forState:UIControlStateNormal];
-                // 并申请商户数据
-                NSString* rateCode = [ModelBusinessInfoSaved rateValueOnRateType:wself.rateTypeSelected];
-                NSString* cityCode = [wself cityCodeOnName:curCityName];
-                [wself requestBusinessesOnRateCode:rateCode andAreaCode:cityCode onSucBlock:^{
-                    [wself reframePullListViewLayonButton:wself.businessButton];
-                    [wself.businessButton turningDirection:YES];
-                    [wself.pullSegView setDataSouces:[wself businessNamesOnRequested]];
-                    [wself.pullSegView showForSelection:^(NSInteger selectedIndex) {
-                        [wself.businessButton turningDirection:NO];
-                        wself.businessNameSelected = [wself businessNameAtIndex:selectedIndex];
-                        wself.terminalCodeSelected = [wself terminalCodeAtIndex:selectedIndex];
-                        [wself.businessButton setTitle:wself.businessNameSelected forState:UIControlStateNormal];
-                    }];
-                } onErrBlock:^{
-                    
-                }];
-
-            }
-        }];
-    } else {
-        [self alertForNullCities];
-    }
+//    if (self.citiesRequested) {
+//        [self.pullSegView setDataSouces:[self cityNamesOnRequested]];
+//        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
+//            [sender turningDirection:NO];
+//            NSString* curCityName = [wself cityNameAtIndex:selectedIndex];
+//            if (![curCityName isEqualToString:wself.cityNameSelected]) {
+//                wself.cityNameSelected = curCityName;
+//                [sender setTitle:curCityName forState:UIControlStateNormal];
+//                // 并申请商户数据
+//                NSString* rateCode = [ModelBusinessInfoSaved rateValueOnRateType:wself.rateTypeSelected];
+//                NSString* cityCode = [wself cityCodeOnName:curCityName];
+//                [wself requestBusinessesOnRateCode:rateCode andAreaCode:cityCode onSucBlock:^{
+//                    [wself reframePullListViewLayonButton:wself.businessButton];
+//                    [wself.businessButton turningDirection:YES];
+//                    [wself.pullSegView setDataSouces:[wself businessNamesOnRequested]];
+//                    [wself.pullSegView showForSelection:^(NSInteger selectedIndex) {
+//                        [wself.businessButton turningDirection:NO];
+//                        wself.businessNameSelected = [wself businessNameAtIndex:selectedIndex];
+//                        wself.terminalCodeSelected = [wself terminalCodeAtIndex:selectedIndex];
+//                        [wself.businessButton setTitle:wself.businessNameSelected forState:UIControlStateNormal];
+//                    }];
+//                } onErrBlock:^{
+//                    
+//                }];
+//
+//            }
+//        }];
+//    } else {
+//        [self alertForNullCities];
+//    }
 }
 
 - (IBAction) clickToChooseBusiness:(ChooseButton*)sender {
@@ -385,18 +385,18 @@
     }
     
     NameWeakSelf(wself);
-    if (self.businessesRequested) {
-        [sender turningDirection:YES];
-        [self.pullSegView setDataSouces:[self businessNamesOnRequested]];
-        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
-            [sender turningDirection:NO];
-            wself.businessNameSelected = [wself businessNameAtIndex:selectedIndex];
-            wself.terminalCodeSelected = [wself terminalCodeAtIndex:selectedIndex];
-            [sender setTitle:wself.businessNameSelected forState:UIControlStateNormal];
-        }];
-    } else {
-        [self alertForNullBusinesses];
-    }
+//    if (self.businessesRequested) {
+//        [sender turningDirection:YES];
+//        [self.pullSegView setDataSouces:[self businessNamesOnRequested]];
+//        [self.pullSegView showForSelection:^(NSInteger selectedIndex) {
+//            [sender turningDirection:NO];
+//            wself.businessNameSelected = [wself businessNameAtIndex:selectedIndex];
+//            wself.terminalCodeSelected = [wself terminalCodeAtIndex:selectedIndex];
+//            [sender setTitle:wself.businessNameSelected forState:UIControlStateNormal];
+//        }];
+//    } else {
+//        [self alertForNullBusinesses];
+//    }
 
 }
 
@@ -491,32 +491,32 @@
 
 // -- UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
-        if (alertView.tag == iTagAlertForProvince) {
-            [self requestProvinces];
-        }
-        else if (alertView.tag == iTagAlertForCity) {
-            NSString* provinceNameSelected = [self.provinceButton titleForState:UIControlStateNormal];
-            [self requestCitiesOnProvinceCode:[self provinceCodeOnName:provinceNameSelected]];
-        }
-        else if (alertView.tag == iTagAlertForBusiness) {
-            NameWeakSelf(wself);
-            NSString* rateCode = [ModelBusinessInfoSaved rateValueOnRateType:self.rateTypeSelected];
-            NSString* cityCode = [self cityCodeOnName:self.cityNameSelected];
-            [self requestBusinessesOnRateCode:rateCode andAreaCode:cityCode onSucBlock:^{
-                [wself.businessButton turningDirection:YES];
-                [wself.pullSegView setDataSouces:[wself businessNamesOnRequested]];
-                [wself.pullSegView showForSelection:^(NSInteger selectedIndex) {
-                    [wself.businessButton turningDirection:NO];
-                    wself.businessNameSelected = [wself businessNameAtIndex:selectedIndex];
-                    wself.terminalCodeSelected = [wself terminalCodeAtIndex:selectedIndex];
-                    [wself.businessButton setTitle:wself.businessNameSelected forState:UIControlStateNormal];
-                }];
-            } onErrBlock:^{
-                
-            }];
-        }
-    }
+//    if (buttonIndex == 1) {
+//        if (alertView.tag == iTagAlertForProvince) {
+//            [self requestProvinces];
+//        }
+//        else if (alertView.tag == iTagAlertForCity) {
+//            NSString* provinceNameSelected = [self.provinceButton titleForState:UIControlStateNormal];
+//            [self requestCitiesOnProvinceCode:[self provinceCodeOnName:provinceNameSelected]];
+//        }
+//        else if (alertView.tag == iTagAlertForBusiness) {
+//            NameWeakSelf(wself);
+//            NSString* rateCode = [ModelBusinessInfoSaved rateValueOnRateType:self.rateTypeSelected];
+//            NSString* cityCode = [self cityCodeOnName:self.cityNameSelected];
+//            [self requestBusinessesOnRateCode:rateCode andAreaCode:cityCode onSucBlock:^{
+//                [wself.businessButton turningDirection:YES];
+//                [wself.pullSegView setDataSouces:[wself businessNamesOnRequested]];
+//                [wself.pullSegView showForSelection:^(NSInteger selectedIndex) {
+//                    [wself.businessButton turningDirection:NO];
+//                    wself.businessNameSelected = [wself businessNameAtIndex:selectedIndex];
+//                    wself.terminalCodeSelected = [wself terminalCodeAtIndex:selectedIndex];
+//                    [wself.businessButton setTitle:wself.businessNameSelected forState:UIControlStateNormal];
+//                }];
+//            } onErrBlock:^{
+//                
+//            }];
+//        }
+//    }
 }
 
 // -- 更新保存信息提示:
@@ -687,7 +687,7 @@
 // 下拉显示列表
 - (PullListSegView *)pullSegView {
     if (!_pullSegView) {
-        _pullSegView = [[PullListSegView alloc] initWithDataSource:[ModelBusinessInfoSaved allRateTypes]];
+//        _pullSegView = [[PullListSegView alloc] initWithDataSource:[ModelBusinessInfoSaved allRateTypes]];
     }
     return _pullSegView;
 }
