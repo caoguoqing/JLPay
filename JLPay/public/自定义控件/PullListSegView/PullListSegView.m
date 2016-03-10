@@ -8,17 +8,16 @@
 
 
 #import "PullListSegView.h"
-//#import "PublicInformation.h"
 
 
 @interface PullListSegView()
 <UITableViewDataSource, UITableViewDelegate>
 {
-    CGFloat animationDuration;
-    NSInteger iMaxDisplayCount;
-    CGFloat  fHeightOfSegViewCell;
-    CGFloat  fWidthOfTri;
-    CGFloat  fHeightOfTri;
+    CGFloat     animationDuration;
+    NSInteger   iMaxDisplayCount;
+    CGFloat     fHeightOfSegViewCell;
+    CGFloat     fWidthOfTri;
+    CGFloat     fHeightOfTri;
 
 }
 @property (nonatomic, strong) UITableView* tableView;
@@ -32,6 +31,7 @@
 - (instancetype) initWithDataSource:(NSArray*)dataSource {
     self = [super initWithFrame:CGRectZero];
     if (self) {
+        [self initialProperties];
         self.backgroundColor = [UIColor clearColor];
         self.alpha = 0;
         self.layer.shadowColor = [UIColor blackColor].CGColor;
@@ -41,7 +41,6 @@
         self.dataSouces = dataSource;
         self.selectedIndex = -1;
         [self loadSubViews];
-        [self initialProperties];
     }
     return self;
 }
@@ -92,10 +91,10 @@
 #pragma mask 0 public interface
 - (void)showForSelection:(void (^)(NSInteger))selectedBlock {
     self.selectedBlock = selectedBlock;
-    [self.tableView reloadData];
-    [self setNeedsDisplay];
     [self setNeedsLayout];
+    [self setNeedsDisplay];
     [self animationShow];
+    [self.tableView reloadData];
 }
 
 
@@ -141,17 +140,18 @@
 // -- animation: show
 - (void) animationShow {
     self.transform = CGAffineTransformMakeScale(0.01, 0.01);
-    [UIView animateWithDuration:animationDuration animations:^{
+    [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.alpha = 1;
         self.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
+        
     }];
 }
 // -- animation: hidden
 - (void) animationHidden {
-    [UIView animateWithDuration:animationDuration delay:0.1 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.alpha = 0.0;
-        self.transform = CGAffineTransformMakeScale(0.1, 0.1);
+        self.transform = CGAffineTransformMakeScale(0.01, 0.01);
     } completion:^(BOOL finished) {
         self.transform = CGAffineTransformIdentity;
     }];

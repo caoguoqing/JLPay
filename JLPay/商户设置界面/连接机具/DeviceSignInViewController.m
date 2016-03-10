@@ -382,6 +382,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString *)workKey orErrorMessage:(NSString *)errorMessge
 {
     if (result) {
+        JLPrint(@"写工作密钥:[%@]",workKey);
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
         [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载工作密钥失败:\n%@",errorMessge]];
@@ -518,7 +519,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void) actionSheetShowForSelectingDevice {
     UIActionSheet* actionSheet = [[UIActionSheet alloc] initWithTitle:@"请选择设备类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     [actionSheet addButtonWithTitle:DeviceType_DL01];
-//    [actionSheet addButtonWithTitle:DeviceType_LD_M18];
+    [actionSheet addButtonWithTitle:DeviceType_LD_M18];
     [actionSheet addButtonWithTitle:DeviceType_JLpay_TY01];
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }

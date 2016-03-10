@@ -92,6 +92,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 
 # pragma mask : 设置主密钥 : 写入的数据 = mainKey + checkValue; checkValue = 3des[mainkey + key(16个0)].subString(0-8)
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion{
+    JLPrint(@"写主密钥:[%@]",mainKey);
     if (![self isConnectedOnSNVersionNum:SNVersion]) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
             [self.delegate didWroteMainKeyResult:NO onErrMsg:@"设备未连接"];
@@ -206,7 +207,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
     __weak typeof(self) wSelf = self;
     [self.device calculateMac:source successBlock:^(NSString *stringCB) {
         if (wSelf.delegate && [wSelf.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
-            [wSelf.delegate didMacEncryptResult:YES onSucMacPin:stringCB onErrMsg:nil];
+            [wSelf.delegate didMacEncryptResult:YES onSucMacPin:[stringCB uppercaseString] onErrMsg:nil];
         }
     } failedBlock:^(NSString *errCode, NSString *errInfo) {
         if (wSelf.delegate && [wSelf.delegate respondsToSelector:@selector(didMacEncryptResult:onSucMacPin:onErrMsg:)]) {
@@ -394,7 +395,14 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 - (LFC_LoadKey*) macKeyInSourceWorkKey:(NSString*)source {
     LFC_LoadKey* macKey = [[LFC_LoadKey alloc] init];
     macKey.keyType = KEYTYPE_MAC;
-    macKey.keyData = [source substringFromIndex:source.length - 40];
+    // ---- 替换中间16位0
+    NSString* realMacKey = [source substringWithRange:NSMakeRange(40, 16)];
+    NSString* realCheckValue = [source substringFromIndex:source.length - 8];
+    NSString* macData = [realMacKey stringByAppendingString:realMacKey];
+    macData = [macData stringByAppendingString:realCheckValue];
+    //
+    macKey.keyData = macData;
+    JLPrint(@"拆分的mac key[%@]",macKey.keyData);
     return macKey;
 }
 

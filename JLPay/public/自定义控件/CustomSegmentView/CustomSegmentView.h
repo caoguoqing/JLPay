@@ -14,9 +14,9 @@ typedef enum {
     CustSegSelectedTypeUnderLine,
     // 单元格;有边框、有分割线、
     CustSegSelectedTypeSingleRect
-} CustSegSelectedType;
+} CustSegSelectedType; // 切换框类型
 
-static NSString* const kKeyPathSegSelectedItem = @"selectedItem";
+static NSString* const kKeyPathSegSelectedItem = @"selectedItem"; // KVO
 
 
 @interface CustomSegmentView : UIView
@@ -25,7 +25,7 @@ static NSString* const kKeyPathSegSelectedItem = @"selectedItem";
 
 @property (nonatomic, assign) CustSegSelectedType selectedType;
 
-@property (nonatomic, assign) BOOL canTurnOnSegment;
+@property (nonatomic, assign) BOOL canTurnOnSegment;        // 开关:允许切换
 
 @property (nonatomic, strong) UIColor* textColor;           // defualt 0x262626
 @property (nonatomic, strong) UIColor* textSelectedColor;   // default blue
