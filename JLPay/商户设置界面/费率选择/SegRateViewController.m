@@ -58,7 +58,6 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 @property (nonatomic, strong) HttpRequestAreas* http;
 @property (nonatomic, strong) VMRateTypes* rateTypes;
 
-
 @end
 
 @implementation SegRateViewController
@@ -71,10 +70,6 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     [self loadSubViews];
     [self relayoutSubViews];
     [self updateRateInfoDisplayed];
-}
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self requestingProvinces];
 }
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -187,6 +182,11 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
         [self.pullSegView hiddenAnimation];
     }
     else if ([keyPath isEqualToString:kKVOProvinceSelected]) {
+        if (![[self.provinceButton titleForState:UIControlStateNormal] isEqualToString:newValue]) {
+            self.http.cityCodeSelected = nil;
+            self.http.cityNameSelected = nil;
+            [self.cityButton setTitle:@"市" forState:UIControlStateNormal];
+        }
         [self.provinceButton setTitle:newValue forState:UIControlStateNormal];
         [self.provinceButton turningDirection:NO];
         [self.pullSegView hiddenAnimation];
@@ -252,37 +252,6 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     }];
 }
 
-// -- 提示: 无省份,是否重新查询
-- (void) alertForNullProvinces {
-    [PublicInformation alertCancle:@"取消"
-                             other:@"确定"
-                             title:nil
-                           message:@"请先选择省份!"
-                               tag:iTagAlertForProvince
-                          delegate:self];
-}
-// -- 提示: 无市,判断是否查询了省;是否重新查询市
-- (void) alertForNullCities {
-    [PublicInformation alertCancle:@"取消"
-                             other:@"重新查询"
-                             title:@"查无市数据"
-                           message:@"是否重新查询可用的市信息?"
-                               tag:iTagAlertForCity
-                          delegate:self];
-}
-
-// -- UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 1) {
-        if (alertView.tag == iTagAlertForProvince) {
-            [self requestingProvinces];
-        }
-        else if (alertView.tag == iTagAlertForCity) {
-            [self requestingCitiesOnProvinceCode:self.http.provinceCodeSelected];
-        }
-    }
-}
 
 // -- 更新保存信息提示:
 - (void) updateRateInfoDisplayed {

@@ -9,12 +9,6 @@
 #import <Foundation/Foundation.h>
 
 
-/* 响应数据域名 - responseInfo */
-static NSString* const kFeeBusinessListName = @"merchInfoList"; // 商户信息列表名
-static NSString* const kFeeBusinessBusinessName = @"mchtNm"; // 商户名
-static NSString* const kFeeBusinessBusinessNum = @"mchtNo"; // 商户号
-static NSString* const kFeeBusinessTerminalNum = @"termNo"; // 终端号
-
 
 
 
@@ -22,9 +16,14 @@ static NSString* const kFeeBusinessTerminalNum = @"termNo"; // 终端号
 @interface HTTPRequestFeeBusiness : NSObject
 
 
+@property (nonatomic, assign) NSString* businessNameSelected;
+@property (nonatomic, assign) NSString* businessCodeSelected;
+@property (nonatomic, assign) NSString* terminalCodeSelected;
+
+
 - (void) requestFeeBusinessOnFeeType:(NSString*)feeType
                             areaCode:(NSString*)areaCode
-                          onSucBlock:(void (^) (NSArray* businessInfos))sucBlock
+                          onSucBlock:(void (^) (void))sucBlock
                           onErrBlock:(void (^) (NSError* error))errBlock;
 
 - (void) terminateRequest;

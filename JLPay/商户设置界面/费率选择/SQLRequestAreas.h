@@ -7,13 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
-static NSString* const kSQLAreaCode = @"KEY";
-static NSString* const kSQLAreaName = @"VALUE";
 
 @interface SQLRequestAreas : NSObject
 
-+ (void) requestAreasOnCode:(NSString*)areaCode
-                 onSucBlock:(void (^) (NSArray* areas))sucBlock
+@property (nonatomic, assign) NSString* provinceNameSelected; // on KVO
+@property (nonatomic, assign) NSString* provinceCodeSelected; // on KVO
+@property (nonatomic, assign) NSString* cityNameSelected; // on KVO
+@property (nonatomic, assign) NSString* cityCodeSelected; // on KVO
+
+
+- (void) requestAreasOnCode:(NSString*)areaCode
+                 onSucBlock:(void (^) (void))sucBlock
                  onErrBlock:(void (^) (NSError* error))errBlock;
 
 
