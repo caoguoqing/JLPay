@@ -17,20 +17,10 @@ static NSString* const kFeeBusinessTerminalNum = @"termNo"; // 终端号
 
 
 
-@class HTTPRequestFeeBusiness;
-@protocol HTTPRequestFeeBusinessDelegate <NSObject>
-
-- (void) didRequestSuccessWithInfo:(NSDictionary*)responseInfo;
-- (void) didRequestFailWithMessage:(NSString*)errorMessage;
-
-@end
 
 
 @interface HTTPRequestFeeBusiness : NSObject
 
-- (void) requestFeeBusinessOnFeeType:(NSString*)feeType
-                            areaCode:(NSString*)areaCode
-                            delegate:(id<HTTPRequestFeeBusinessDelegate>)delegate;
 
 - (void) requestFeeBusinessOnFeeType:(NSString*)feeType
                             areaCode:(NSString*)areaCode

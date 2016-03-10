@@ -395,13 +395,7 @@ static NSString* const kKey3DESMainKey = @"0000000000000000";
 - (LFC_LoadKey*) macKeyInSourceWorkKey:(NSString*)source {
     LFC_LoadKey* macKey = [[LFC_LoadKey alloc] init];
     macKey.keyType = KEYTYPE_MAC;
-    // ---- 替换中间16位0
-    NSString* realMacKey = [source substringWithRange:NSMakeRange(40, 16)];
-    NSString* realCheckValue = [source substringFromIndex:source.length - 8];
-    NSString* macData = [realMacKey stringByAppendingString:realMacKey];
-    macData = [macData stringByAppendingString:realCheckValue];
-    //
-    macKey.keyData = macData;
+    macKey.keyData = [source substringWithRange:NSMakeRange(40, 40)];
     JLPrint(@"拆分的mac key[%@]",macKey.keyData);
     return macKey;
 }

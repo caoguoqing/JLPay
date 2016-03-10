@@ -109,6 +109,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 # pragma mask : 设置主密钥
 - (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion {
     if ([SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
+        JLPrint(@"写主密钥:[%@]",mainKey);
         [self writeMainKey:mainKey];
     } else {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteMainKeyResult:onErrMsg:)]) {
@@ -120,6 +121,7 @@ static NSString* const kDCDeviceNamePrefix = @"DL01";
 # pragma mask : 设置工作密钥
 - (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion {
     if ([SNVersion isEqualToString:[self SNOfDeviceInfo]]) {
+        JLPrint(@"写工作密钥:[%@]",workKey);
         [self writeWorkKey:workKey];
     } else {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didWroteWorkKeyResult:onErrMsg:)]) {

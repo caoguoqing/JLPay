@@ -12,8 +12,6 @@
 #import "TransDetailsViewController.h"
 #import "Define_Header.h"
 #import "DeviceSignInViewController.h"
-#import "RateViewController.h"
-#import "FeeRateTableViewController.h"
 #import "BrushViewController.h"
 #import "T_0CardListViewController.h"
 #import "Packing8583.h"
@@ -174,7 +172,6 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     }
     else if ([cellName isEqualToString:kTitleSettingDeviceBinding]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
-//        viewController = [[TestVCForDeviceBinding alloc] initWithNibName:nil bundle:nil];
     }
     else if ([cellName isEqualToString:kTitleSettingPinUpdate]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];
@@ -185,7 +182,6 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:kTitleSettingFeeChoose]) {
-//        viewController = [[FeeRateTableViewController alloc] initWithStyle:UITableViewStylePlain];
         viewController = [[RateChooseViewController alloc] initWithNibName:nil bundle:nil];
         [viewController setTitle:cellName];
     }

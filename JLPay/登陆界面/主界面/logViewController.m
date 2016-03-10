@@ -21,10 +21,10 @@
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelHTTPRequestLogin.h"
-#import "ModelFeeBusinessInformation.h"
 #import "ChangePinViewController.h"
 #import "ModelAppInformation.h"
-
+#import "ModelRateInfoSaved.h"
+#import "ModelBusinessInfoSaved.h"
 
 #pragma mask    ---- 常量设置区 ----
 #define ViewCornerRadius 6.0                                        // 各个 view 的圆角半径值
@@ -299,10 +299,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     frame.size.height                   = iconViewHeight;
     self.loadButton.frame               = frame;
     [self.view addSubview:self.loadButton];
-    frame.origin.y += frame.size.height;
-    
     
     /* 注册按钮：UIButton */
+    frame.origin.y += frame.size.height;
     y = frame.origin.y + inset*2;
     CGFloat signInViewHeight            = iconViewHeight / 5.0 * 2.0;
     CGFloat signInViewWidth             = signInViewHeight * 137.0/42.0;
@@ -521,8 +520,13 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         [ModelUserLoginInformation deleteLoginDownInformation];
         // 清空设备绑定信息
         [ModelDeviceBindedInformation cleanDeviceBindedInfo];
-        // 清空设置的指定费率商户信息
-        [ModelFeeBusinessInformation clearFeeBusinessInfoSaved];
+        // 清空多费率、多商户:如果设置了
+        if ([ModelBusinessInfoSaved beenSaved]) {
+            [ModelBusinessInfoSaved clearSaved];
+        }
+        if ([ModelRateInfoSaved beenSaved]) {
+            [ModelRateInfoSaved clearSaved];
+        }
     }
 }
 
