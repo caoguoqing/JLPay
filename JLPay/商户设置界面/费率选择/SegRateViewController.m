@@ -185,16 +185,19 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
         if (![[self.provinceButton titleForState:UIControlStateNormal] isEqualToString:newValue]) {
             self.http.cityCodeSelected = nil;
             self.http.cityNameSelected = nil;
-            [self.cityButton setTitle:@"市" forState:UIControlStateNormal];
         }
         [self.provinceButton setTitle:newValue forState:UIControlStateNormal];
         [self.provinceButton turningDirection:NO];
         [self.pullSegView hiddenAnimation];
     }
     else if ([keyPath isEqualToString:kKVOCitySelected]) {
-        [self.cityButton setTitle:newValue forState:UIControlStateNormal];
-        [self.cityButton turningDirection:NO];
-        [self.pullSegView hiddenAnimation];
+        if (![newValue isEqual:[NSNull null]]) {
+            [self.cityButton setTitle:newValue forState:UIControlStateNormal];
+            [self.cityButton turningDirection:NO];
+            [self.pullSegView hiddenAnimation];
+        } else {
+                [self.cityButton setTitle:@"市" forState:UIControlStateNormal];
+        }
     }
 }
 
@@ -433,7 +436,7 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 }
 - (VMRateTypes *)rateTypes {
     if (!_rateTypes) {
-        _rateTypes = [[VMRateTypes alloc] init];
+        _rateTypes = [[VMRateTypes alloc] initWithRateType:VMRateTypeRate];
     }
     return _rateTypes;
 }

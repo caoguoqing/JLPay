@@ -19,10 +19,10 @@
                  onSucBlock:(void (^) (void))sucBlock
                  onErrBlock:(void (^) (NSError* error))errBlock;
 
-@property (nonatomic, assign) NSString* provinceNameSelected; // on KVO
-@property (nonatomic, assign) NSString* provinceCodeSelected; // on KVO
-@property (nonatomic, assign) NSString* cityNameSelected; // on KVO
-@property (nonatomic, assign) NSString* cityCodeSelected; // on KVO
+@property (nonatomic, strong) NSString* provinceNameSelected; // on KVO
+@property (nonatomic, strong) NSString* provinceCodeSelected; // on KVO
+@property (nonatomic, strong) NSString* cityNameSelected; // on KVO
+@property (nonatomic, strong) NSString* cityCodeSelected; // on KVO
 
 
 - (void) terminateRequesting;

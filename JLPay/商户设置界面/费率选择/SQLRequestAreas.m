@@ -9,6 +9,7 @@
 #import "SQLRequestAreas.h"
 #import "ModelAreaCodeSelector.h"
 #import <UIKit/UIKit.h>
+#import "PublicInformation.h"
 
 static NSString* const kSQLAreaCode = @"KEY";
 static NSString* const kSQLAreaName = @"VALUE";
@@ -110,19 +111,19 @@ typedef enum {
 #pragma mask 3 model
 - (NSString*) provinceNameAtIndex:(NSInteger)index {
     NSDictionary* provinceNode = [self.provincesRequested objectAtIndex:index];
-    return [provinceNode objectForKey:kSQLAreaName];
+    return [PublicInformation clearSpaceCharAtLastOfString:[provinceNode objectForKey:kSQLAreaName]];
 }
 - (NSString*) provinceCodeAtIndex:(NSInteger)index {
     NSDictionary* provinceNode = [self.provincesRequested objectAtIndex:index];
-    return [provinceNode objectForKey:kSQLAreaCode];
+    return [PublicInformation clearSpaceCharAtLastOfString:[provinceNode objectForKey:kSQLAreaCode]];
 }
 - (NSString*) cityNameAtIndex:(NSInteger)index {
     NSDictionary* cityNode = [self.citiesRequested objectAtIndex:index];
-    return [cityNode objectForKey:kSQLAreaName];
+    return [PublicInformation clearSpaceCharAtLastOfString:[cityNode objectForKey:kSQLAreaName]];
 }
 - (NSString*) cityCodeAtIndex:(NSInteger)index {
     NSDictionary* cityNode = [self.citiesRequested objectAtIndex:index];
-    return [cityNode objectForKey:kSQLAreaCode];
+    return [PublicInformation clearSpaceCharAtLastOfString:[cityNode objectForKey:kSQLAreaCode]];
 }
 
 

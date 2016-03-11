@@ -16,9 +16,9 @@
 @interface HTTPRequestFeeBusiness : NSObject
 
 
-@property (nonatomic, assign) NSString* businessNameSelected;
-@property (nonatomic, assign) NSString* businessCodeSelected;
-@property (nonatomic, assign) NSString* terminalCodeSelected;
+@property (nonatomic, strong) NSString* businessNameSelected;
+@property (nonatomic, strong) NSString* businessCodeSelected;
+@property (nonatomic, strong) NSString* terminalCodeSelected;
 
 
 - (void) requestFeeBusinessOnFeeType:(NSString*)feeType

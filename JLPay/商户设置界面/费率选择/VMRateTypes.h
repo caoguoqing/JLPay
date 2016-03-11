@@ -8,9 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    VMRateTypeRate,
+    VMRateTypeBusinessRate
+}VMRateType;
+
 @interface VMRateTypes : NSObject
 
-@property (nonatomic, assign) NSString* rateTypeSelected;
-@property (nonatomic, assign) NSString* rateValueSelected;
+- (instancetype) initWithRateType:(VMRateType)rateType;
+
+
+@property (nonatomic, strong) NSString* rateTypeSelected;
+@property (nonatomic, strong) NSString* rateValueSelected;
 
 @end

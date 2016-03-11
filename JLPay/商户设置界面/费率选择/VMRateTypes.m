@@ -9,14 +9,24 @@
 #import "VMRateTypes.h"
 #import <UIKit/UIKit.h>
 #import "ModelRateInfoSaved.h"
+#import "ModelBusinessInfoSaved.h"
 
 @interface VMRateTypes()
 <UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, copy) NSArray* rateTypes;
+@property (nonatomic, assign) VMRateType rateType;
+
 @end
 
 @implementation VMRateTypes
 
+- (instancetype) initWithRateType:(VMRateType)rateType {
+    self = [super init];
+    if (self) {
+        self.rateType = rateType;
+    }
+    return self;
+}
 
 #pragma mask 1 UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -42,14 +52,24 @@
 #pragma mask 1 UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     self.rateTypeSelected = [self.rateTypes objectAtIndex:indexPath.row];
-    self.rateValueSelected = [ModelRateInfoSaved rateValueOnRateType:self.rateTypeSelected];
+    if (self.rateType == VMRateTypeRate) {
+        self.rateValueSelected = [ModelRateInfoSaved rateValueOnRateType:self.rateTypeSelected];
+    }
+    else if (self.rateType == VMRateTypeBusinessRate) {
+        self.rateValueSelected = [ModelBusinessInfoSaved rateValueOnRateType:self.rateTypeSelected];
+    }
     [tableView reloadData];
 }
 
 #pragma mask 5 getter
 - (NSArray *)rateTypes {
     if (!_rateTypes) {
-        _rateTypes = [[ModelRateInfoSaved allRateTypes] copy];
+        if (self.rateType == VMRateTypeRate) {
+            _rateTypes = [[ModelRateInfoSaved allRateTypes] copy];
+        }
+        else if (self.rateType == VMRateTypeBusinessRate) {
+            _rateTypes = [[ModelBusinessInfoSaved allRateTypes] copy];
+        }
     }
     return _rateTypes;
 }

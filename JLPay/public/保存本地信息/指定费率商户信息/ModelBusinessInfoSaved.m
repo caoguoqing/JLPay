@@ -133,7 +133,7 @@ static NSString* const kMBusinessInfoTerminalCode   = @"terminalCode";          
 #pragma mask 3 model:
 // -- 费率组字典
 + (NSDictionary*) rateTypesDictionary {
-    return @{@"0.38民生类":@"11",@"0.78一般类":@"12",/*@"0.78批发类":@"13",*/@"1.25餐饮类":@"14"};
+    return @{@"0.38民生类":@"0",@"0.78一般类":@"1",/*@"0.78批发类":@"2",*/@"1.25餐饮类":@"3"};
 }
 
 

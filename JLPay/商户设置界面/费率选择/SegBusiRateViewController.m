@@ -162,25 +162,58 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 #pragma mask 1 KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
+    // 切换了费率，要reset商户
+    // 切换了省,要reset市、商户
+    // 切换了市，要reset商户
+    NSString* newValue = [change objectForKey:NSKeyValueChangeNewKey];
     if ([keyPath isEqualToString:kKVOBusiRateTypeSelected]) {
-        [self.rateButton setTitle:self.rateTypes.rateTypeSelected forState:UIControlStateNormal];
+        if (![newValue isEqualToString:[self.rateButton titleForState:UIControlStateNormal]]) {
+            self.businessHttp.businessNameSelected = nil;
+            self.businessHttp.businessCodeSelected = nil;
+            self.businessHttp.terminalCodeSelected = nil;
+        }
+        [self.rateButton setTitle:newValue forState:UIControlStateNormal];
         [self.rateButton turningDirection:NO];
         [self.pullSegView hiddenAnimation];
     }
     else if ([keyPath isEqualToString:kKVOBusiProvinceNameSelected]) {
-        [self.provinceButton setTitle:self.sqlAreas.provinceNameSelected forState:UIControlStateNormal];
-        [self.provinceButton turningDirection:NO];
-        [self.pullSegView hiddenAnimation];
+        if (![newValue isEqual:[NSNull null]]) {
+            if (![newValue isEqualToString:[self.provinceButton titleForState:UIControlStateNormal]]) {
+                self.sqlAreas.cityNameSelected = nil;
+                self.sqlAreas.cityCodeSelected = nil;
+                self.businessHttp.businessNameSelected = nil;
+                self.businessHttp.businessCodeSelected = nil;
+                self.businessHttp.terminalCodeSelected = nil;
+            }
+            [self.provinceButton setTitle:newValue forState:UIControlStateNormal];
+            [self.provinceButton turningDirection:NO];
+            [self.pullSegView hiddenAnimation];
+        } else {
+            [self.provinceButton setTitle:@"省份" forState:UIControlStateNormal];
+        }
     }
     else if ([keyPath isEqualToString:kKVOBusiCityNameSelected]) {
-        [self.cityButton setTitle:self.sqlAreas.cityNameSelected forState:UIControlStateNormal];
-        [self.cityButton turningDirection:NO];
-        [self.pullSegView hiddenAnimation];
+        if (![newValue isEqual:[NSNull null]]) {
+            if (![newValue isEqualToString:[self.cityButton titleForState:UIControlStateNormal]]) {
+                self.businessHttp.businessNameSelected = nil;
+                self.businessHttp.businessCodeSelected = nil;
+                self.businessHttp.terminalCodeSelected = nil;
+            }
+            [self.cityButton setTitle:newValue forState:UIControlStateNormal];
+            [self.cityButton turningDirection:NO];
+            [self.pullSegView hiddenAnimation];
+        } else {
+            [self.cityButton setTitle:@"市" forState:UIControlStateNormal];
+        }
     }
     else if ([keyPath isEqualToString:kKVOBusiBusinessNameSelected]) {
-        [self.businessButton setTitle:self.businessHttp.businessNameSelected forState:UIControlStateNormal];
-        [self.businessButton turningDirection:NO];
-        [self.pullSegView hiddenAnimation];
+        if (![newValue isEqual:[NSNull null]]) {
+            [self.businessButton setTitle:newValue forState:UIControlStateNormal];
+            [self.businessButton turningDirection:NO];
+            [self.pullSegView hiddenAnimation];
+        } else {
+            [self.businessButton setTitle:@"商户" forState:UIControlStateNormal];
+        }
     }
 }
 
@@ -493,7 +526,7 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 }
 - (VMRateTypes *)rateTypes {
     if (!_rateTypes) {
-        _rateTypes = [[VMRateTypes alloc] init];
+        _rateTypes = [[VMRateTypes alloc] initWithRateType:VMRateTypeBusinessRate];
     }
     return _rateTypes;
 }

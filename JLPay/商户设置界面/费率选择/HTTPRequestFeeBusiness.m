@@ -68,9 +68,16 @@ static NSString* const kFeeBusinessTerminalNum = @"termNo"; // 终端号
 }
 - (void)httpInstance:(HTTPInstance *)httpInstance didRequestingFinishedWithInfo:(NSDictionary *)info
 {
-    self.businessInfosRequested = [info objectForKey:kFeeBusinessListName];
-    if (self.requestSucBlock) {
-        self.requestSucBlock();
+    NSArray* businessInfos = [info objectForKey:kFeeBusinessListName];
+    if (businessInfos && businessInfos.count > 0) {
+        self.businessInfosRequested = [info objectForKey:kFeeBusinessListName];
+        if (self.requestSucBlock) {
+            self.requestSucBlock();
+        }
+    } else {
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObject:@"查无商户数据\n请切换'费率'或'地区'" forKey:NSLocalizedDescriptionKey];
+        NSError* error = [NSError errorWithDomain:kHttpBusinessErrorDomainName code:99 userInfo:userInfo];
+        self.requestErrBlock(error);
     }
 }
 
