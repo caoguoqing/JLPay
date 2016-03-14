@@ -18,4 +18,7 @@
 - (void) showAnimation;
 - (void) hiddenAnimation;
 
+- (void) showWithCompletion:(void (^) (void))completion;
+- (void) hideWithCompletion:(void (^) (void))completion;
+
 @end

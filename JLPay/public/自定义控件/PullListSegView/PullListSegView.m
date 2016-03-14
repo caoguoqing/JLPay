@@ -31,6 +31,34 @@
 - (void)hiddenAnimation {
     [self animationHidden];
 }
+- (void) showWithCompletion:(void (^) (void))completion {
+    [self.tableView reloadData];
+    [self setNeedsLayout];
+    [self setNeedsDisplay];
+    
+    self.transform = CGAffineTransformMakeScale(0.01, 0.01);
+    [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.alpha = 1;
+        self.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished) {
+        if (finished) {
+            completion();
+        }
+    }];
+
+}
+- (void) hideWithCompletion:(void (^) (void))completion {
+    [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.alpha = 0.0;
+        self.transform = CGAffineTransformMakeScale(0.01, 0.01);
+    } completion:^(BOOL finished) {
+        if (finished) {
+            self.transform = CGAffineTransformIdentity;
+            completion();
+        }
+    }];
+}
+
 
 
 #pragma mask 3 private interface
@@ -83,7 +111,7 @@
 }
 
 - (void) initialProperties {
-    animationDuration = 0.3;
+    animationDuration = 0.2;
     iMaxDisplayCount = 5;
     fWidthOfTri = 20.f;
     fHeightOfTri = 20.f * 2.f/3.f;

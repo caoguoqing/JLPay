@@ -71,6 +71,14 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     [self relayoutSubViews];
     [self updateRateInfoDisplayed];
 }
+
+- (void) clickToHiddenAllPull {
+    [self.pullSegView hiddenAnimation];
+    [self.rateButton turningDirection:NO];
+    [self.provinceButton turningDirection:NO];
+    [self.cityButton turningDirection:NO];
+}
+
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self updateRateInfoDisplayed];
@@ -87,7 +95,6 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
-
 
 - (void) initialProperties {
     iTagAlertForProvince = 10;
@@ -108,6 +115,8 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 #pragma mask 1 IBAction
 - (IBAction) clickToChooseRate:(ChooseButton*)sender {
     [self reframePullListViewLayonButton:sender];
+    [self.provinceButton turningDirection:NO];
+    [self.cityButton turningDirection:NO];
     [sender turningDirection:YES];
     [self.pullSegView.tableView setDataSource:(id<UITableViewDataSource>)self.rateTypes];
     [self.pullSegView.tableView setDelegate:(id<UITableViewDelegate>)self.rateTypes];
@@ -116,24 +125,29 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 
 - (IBAction) clickToChooseProvince:(ChooseButton*)sender {
     [self reframePullListViewLayonButton:sender];
+    [self.cityButton turningDirection:NO];
+    [self.rateButton turningDirection:NO];
     [sender turningDirection:YES];
     [self.pullSegView.tableView setDataSource:(id<UITableViewDataSource>)self.http];
     [self.pullSegView.tableView setDelegate:(id<UITableViewDelegate>)self.http];
     [self requestingProvinces];
 }
 - (IBAction) clickToChooseCity:(ChooseButton*)sender {
+    if (!self.http.provinceNameSelected) {
+        [PublicInformation makeCentreToast:@"请先选择省份"];
+        return;
+    }
     [self reframePullListViewLayonButton:sender];
+    [self.provinceButton turningDirection:NO];
+    [self.rateButton turningDirection:NO];
     [sender turningDirection:YES];
     [self.pullSegView.tableView setDataSource:(id<UITableViewDataSource>)self.http];
     [self.pullSegView.tableView setDelegate:(id<UITableViewDelegate>)self.http];
-    if (self.http.provinceNameSelected) {
-        [self requestingCitiesOnProvinceCode:self.http.provinceCodeSelected];
-    } else {
-        [PublicInformation makeCentreToast:@"请先选择省份"];
-    }
+    [self requestingCitiesOnProvinceCode:self.http.provinceCodeSelected];
 }
 
 - (IBAction) clickToSaveRateInfo:(UIButton*)sender {
+    [self clickToHiddenAllPull];
     if (!self.rateTypes.rateTypeSelected) {
         [PublicInformation makeCentreToast:@"未选择费率类型,请先选择'费率'"];
         return;
@@ -163,6 +177,7 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     }
 }
 - (IBAction) clickToClearSavedRateInfo:(UIButton*)sender {
+    [self clickToHiddenAllPull];
     if ([ModelRateInfoSaved beenSaved]) {
         [ModelRateInfoSaved clearSaved];
         [self updateRateInfoDisplayed];

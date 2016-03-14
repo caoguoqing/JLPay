@@ -32,7 +32,7 @@
     return self;
 }
 - (void) initialProperties {
-    animationDuration = 0.2;
+    animationDuration = 0.15;
     openUp = NO;
 }
 - (void) loadSubViews {

@@ -44,12 +44,13 @@
     [self relayoutSubViews];
     [self.segmentedControl addObserver:self forKeyPath:kKeyPathSegSelectedItem options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
     
+    self.tabBarController.tabBar.hidden = YES;
 }
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.tabBarController.tabBar.hidden = NO;
     [self.segmentedControl removeObserver:self forKeyPath:kKeyPathSegSelectedItem];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
@@ -71,14 +72,10 @@
     CGFloat heightNavigation = self.navigationController.navigationBar.frame.size.height;
     CGFloat heightStatusBar = [UIApplication sharedApplication].statusBarFrame.size.height;
     CGFloat heightTabBar = self.tabBarController.tabBar.frame.size.height;
-
-    NSLog(@"状态栏搞:[%lf],导航栏:[%lf]",heightStatusBar,heightNavigation);
     CGFloat heightSegment = 50;
     frame.origin.y = heightNavigation + heightStatusBar;
     frame.size.height = heightSegment;
     self.segmentedControl.frame = frame;
-    
-    
     
     CGFloat childVCFrameY = heightStatusBar + heightNavigation + heightSegment;
     CGFloat childVCFrameH = self.view.bounds.size.height - childVCFrameY - heightTabBar;
@@ -108,6 +105,7 @@
 - (void) transitionViewControllerFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
     UIViewController* fromVC = [self.childrenViewControllers objectAtIndex:fromIndex];
     UIViewController* toVC = [self.childrenViewControllers objectAtIndex:toIndex];
+    self.canChangeViewController = NO;
     [self transitionFromViewController:fromVC toViewController:toVC
                               duration:1
                                options:UIViewAnimationOptionCurveEaseInOut
@@ -122,7 +120,6 @@
 - (CustomSegmentView *)segmentedControl {
     if (!_segmentedControl) {
         _segmentedControl = [[CustomSegmentView alloc] initWithItems:self.segVCTypes.segRateTypesInfo.allKeys];
-//        UIColor* lightBlue = [UIColor colorWithRed:29.f/255.f green:91.f/255.f blue:171.f/255.f alpha:1];
         _segmentedControl.tintColor = [PublicInformation returnCommonAppColor:@"red"];
         _segmentedControl.textColor = [PublicInformation returnCommonAppColor:@"red"];
         _segmentedControl.textSelectedColor = [UIColor whiteColor];
@@ -154,5 +151,10 @@
 - (void)setCanChangeViewController:(BOOL)canChangeViewController {
     _canChangeViewController = canChangeViewController;
     _segmentedControl.canTurnOnSegment = canChangeViewController;
+    if (!canChangeViewController) {
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
+    } else {
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+    }
 }
 @end

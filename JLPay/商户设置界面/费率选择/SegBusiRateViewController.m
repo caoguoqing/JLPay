@@ -72,32 +72,39 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 
 #pragma mask 1 IBAction
 - (IBAction) clickToChooseRate:(ChooseButton*)sender {
-    [self reframePullListViewLayonButton:sender];
+    [self.provinceButton turningDirection:NO];
+    [self.cityButton turningDirection:NO];
+    [self.businessButton turningDirection:NO];
     [sender turningDirection:YES];
+    [self reframePullListViewLayonButton:sender];
     self.pullSegView.tableView.dataSource = (id)self.rateTypes;
     self.pullSegView.tableView.delegate = (id)self.rateTypes;
     [self.pullSegView showAnimation];
 }
 
 - (IBAction) clickToChooseProvince:(ChooseButton*)sender {
-    [self reframePullListViewLayonButton:sender];
+    [self.rateButton turningDirection:NO];
+    [self.cityButton turningDirection:NO];
+    [self.businessButton turningDirection:NO];
     [sender turningDirection:YES];
+    [self reframePullListViewLayonButton:sender];
     [self requestProvinces];
 }
 
 - (IBAction) clickToChooseCity:(ChooseButton*)sender {
-    [self reframePullListViewLayonButton:sender];
     if (!self.sqlAreas.provinceNameSelected) {
         [PublicInformation makeCentreToast:@"请先选择'省'"];
         return;
     }
+    [self.rateButton turningDirection:NO];
+    [self.provinceButton turningDirection:NO];
+    [self.businessButton turningDirection:NO];
     [sender turningDirection:YES];
+    [self reframePullListViewLayonButton:sender];
     [self requestCitiesOnProvinceCode:self.sqlAreas.provinceCodeSelected];
 }
 
 - (IBAction) clickToChooseBusiness:(ChooseButton*)sender {
-    [self reframePullListViewLayonButton:sender];
-    
     if (!self.rateTypes.rateTypeSelected) {
         [PublicInformation makeCentreToast:@"请先选择'费率'"];
         return;
@@ -110,10 +117,19 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
         [PublicInformation makeCentreToast:@"请先选择'市'"];
         return;
     }
-    [self requestBusinessesOnRateCode:self.rateTypes.rateValueSelected andAreaCode:self.sqlAreas.cityCodeSelected];
+    [self.rateButton turningDirection:NO];
+    [self.provinceButton turningDirection:NO];
+    [self.cityButton turningDirection:NO];
+    NameWeakSelf(wself);
+    [sender turningDirection:YES];
+    [self.pullSegView hideWithCompletion:^{
+        [wself reframePullListViewLayonButton:sender];
+        [wself requestBusinessesOnRateCode:wself.rateTypes.rateValueSelected andAreaCode:self.sqlAreas.cityCodeSelected];
+    }];
 }
 
 - (IBAction) clickToSaveBusinessInfo:(UIButton*)sender {
+    [self clickToHiddenAllPull];
     if (!self.rateTypes.rateTypeSelected) {
         [PublicInformation makeCentreToast:@"未选择费率类型,请先选择'费率'"];
         return;
@@ -150,6 +166,7 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     }
 }
 - (IBAction) clickToClearSavedBusinessInfo:(UIButton*)sender {
+    [self clickToHiddenAllPull];
     if ([ModelBusinessInfoSaved beenSaved]) {
         [ModelBusinessInfoSaved clearSaved];
         [self updateRateInfoDisplayed];
@@ -270,11 +287,12 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     NameWeakSelf(wself);
     [self.businessHttp requestFeeBusinessOnFeeType:rateCode areaCode:areaCode onSucBlock:^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress dismiss];
+            [KVNProgress dismissWithCompletion:^{
+                wself.pullSegView.tableView.dataSource = (id)wself.businessHttp;
+                wself.pullSegView.tableView.delegate = (id)wself.businessHttp;
+                [wself.pullSegView showAnimation];
+            }];
         });
-        wself.pullSegView.tableView.dataSource = (id)self.businessHttp;
-        wself.pullSegView.tableView.delegate = (id)self.businessHttp;
-        [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
         [wself.businessButton turningDirection:NO];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -540,6 +558,13 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     [self loadSubViews];
     [self relayoutSubViews];
     [self updateRateInfoDisplayed];
+}
+- (void) clickToHiddenAllPull {
+    [self.pullSegView hiddenAnimation];
+    [self.rateButton turningDirection:NO];
+    [self.provinceButton turningDirection:NO];
+    [self.cityButton turningDirection:NO];
+    [self.businessButton turningDirection:NO];
 }
 
 - (void) viewDidAppear:(BOOL)animated {

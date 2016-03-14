@@ -14,18 +14,15 @@ typedef enum {
     ChooseButtonTypeUnderLine
 } ChooseButtonType;
 
+
 @interface ChooseButton : UIButton
 
 
-@property (nonatomic, assign) BOOL hasLineBottom;
-
 @property (nonatomic, assign) ChooseButtonType chooseButtonType;
-
-- (void) turningDirection:(BOOL)up;
-
 @property (nonatomic, strong) UIColor* nomalColor;
 @property (nonatomic, strong) UIColor* selectedColor;
 
+- (void) turningDirection:(BOOL)up;
 
 
 @end

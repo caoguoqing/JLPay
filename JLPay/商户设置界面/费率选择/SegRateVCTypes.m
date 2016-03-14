@@ -12,7 +12,7 @@ static NSString* const kSegRateVCTypeRate =         @"费率设置";
 static NSString* const kSegRateVCTypeBusinessRate = @"商户设置";
 
 static NSString* const kSegVCNameRate = @"SegRateViewController";
-static NSString* const kSegVCNameBusinessRate = @"SegBusiRateViewController";  // SegBusiRateViewController,  RateViewController
+static NSString* const kSegVCNameBusinessRate = @"SegBusiRateViewController"; 
 
 @implementation SegRateVCTypes
 
