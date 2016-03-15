@@ -297,8 +297,12 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 - (ChooseButton *)rateButton {
     if (!_rateButton) {
         _rateButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _rateButton.layer.borderWidth = 0.7;
-        _rateButton.layer.borderColor = segmentTintColor.CGColor;
+        _rateButton.backgroundColor = [UIColor whiteColor];
+        _rateButton.layer.cornerRadius = 4.f;
+        _rateButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _rateButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _rateButton.layer.shadowOpacity = 0.8;
+        
         _rateButton.nomalColor = segmentTintColor;
         _rateButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _rateButton.chooseButtonType = ChooseButtonTypeRect;
@@ -312,8 +316,11 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 - (ChooseButton *)provinceButton {
     if (!_provinceButton) {
         _provinceButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _provinceButton.layer.borderWidth = 0.7;
-        _provinceButton.layer.borderColor = segmentTintColor.CGColor;
+        _provinceButton.backgroundColor = [UIColor whiteColor];
+        _provinceButton.layer.cornerRadius = 4.f;
+        _provinceButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _provinceButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _provinceButton.layer.shadowOpacity = 0.8;
         _provinceButton.nomalColor = segmentTintColor;
         _provinceButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _provinceButton.chooseButtonType = ChooseButtonTypeRect;
@@ -327,8 +334,11 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 - (ChooseButton *)cityButton {
     if (!_cityButton) {
         _cityButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _cityButton.layer.borderWidth = 0.7;
-        _cityButton.layer.borderColor = segmentTintColor.CGColor;
+        _cityButton.backgroundColor = [UIColor whiteColor];
+        _cityButton.layer.cornerRadius = 4.f;
+        _cityButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _cityButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _cityButton.layer.shadowOpacity = 0.8;
         _cityButton.nomalColor = segmentTintColor;
         _cityButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _cityButton.chooseButtonType = ChooseButtonTypeRect;
@@ -346,6 +356,7 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     if (!_savingButton) {
         _savingButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_savingButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
+        _savingButton.layer.cornerRadius = 4.f;
         [_savingButton setTitle:@"保存" forState:UIControlStateNormal];
         [_savingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_savingButton setTitleColor:[UIColor colorWithWhite:0.2 alpha:1] forState:UIControlStateHighlighted];
@@ -358,6 +369,7 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     if (!_clearingButton) {
         _clearingButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_clearingButton setBackgroundColor:[UIColor grayColor]];
+        _clearingButton.layer.cornerRadius = 4.f;
         [_clearingButton setTitle:@"清除" forState:UIControlStateNormal];
         [_clearingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_clearingButton setTitleColor:[UIColor colorWithWhite:0.2 alpha:0.9] forState:UIControlStateHighlighted];

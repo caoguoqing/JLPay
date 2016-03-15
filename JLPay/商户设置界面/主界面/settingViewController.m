@@ -19,7 +19,6 @@
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 
-#import "TestVCForDeviceBinding.h"
 #import "RateChooseViewController.h"
 
 

@@ -17,11 +17,13 @@
     CGFloat     fWidthOfTri;
     CGFloat     fHeightOfTri;
 }
+@property (nonatomic, strong) CAShapeLayer* triShapeLayer;
+@property (nonatomic, strong) CAShapeLayer* rectShapeLayer;
 @end
 
 @implementation PullListSegView
 
-#pragma mask 1 public interface 
+#pragma mask 1 public interface
 - (void)showAnimation {
     [self.tableView reloadData];
     [self setNeedsLayout];
@@ -45,7 +47,7 @@
             completion();
         }
     }];
-
+    
 }
 - (void) hideWithCompletion:(void (^) (void))completion {
     [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -92,7 +94,31 @@
     }
     return _tableView;
 }
+- (CAShapeLayer *) triShapeLayer {
+    if (!_triShapeLayer) {
+        _triShapeLayer = [CAShapeLayer layer];
+    }
+    return _triShapeLayer;
+}
+- (CAShapeLayer *)rectShapeLayer {
+    if (!_rectShapeLayer) {
+        _rectShapeLayer = [CAShapeLayer layer];
+    }
+    return _rectShapeLayer;
+}
 
+- (UIColor *)tintColor {
+    if (!_tintColor) {
+        _tintColor = [UIColor colorWithWhite:0.2 alpha:0.8];
+    }
+    return _tintColor;
+}
+- (UIColor *)textColor {
+    if (!_textColor) {
+        _textColor = [UIColor whiteColor];
+    }
+    return _textColor;
+}
 
 #pragma mask 0 生命周期,和布局
 - (instancetype) init {
@@ -131,6 +157,12 @@
     frame.size.height = height;
     [self setFrame:frame];
     
+    self.triShapeLayer.frame = CGRectMake((frame.size.width - fWidthOfTri)/2.f, 0, fWidthOfTri, fHeightOfTri);
+    [self addPathToTriShapeLayer];
+    
+    self.rectShapeLayer.frame = CGRectMake(0, fHeightOfTri, frame.size.width, frame.size.height - fHeightOfTri);
+    [self addPathToRectShapeLayer];
+    
     frame.origin.x = 0;
     frame.origin.y = fHeightOfTri;
     frame.size.height -= fHeightOfTri;
@@ -138,24 +170,34 @@
 }
 
 - (void) loadSubViews {
+    [self.layer addSublayer:self.triShapeLayer];
+    [self.layer addSublayer:self.rectShapeLayer];
     [self addSubview:self.tableView];
 }
 
-- (void)drawRect:(CGRect)rect {
-    CGFloat centerX = rect.size.width/2.f;
-    // 三角
-    UIBezierPath* triPath = [UIBezierPath bezierPath];
-    [triPath moveToPoint:CGPointMake(centerX, 0)];
-    [triPath addLineToPoint:CGPointMake(centerX - fWidthOfTri/2.f, fHeightOfTri)];
-    [triPath addLineToPoint:CGPointMake(centerX + fWidthOfTri/2.f, fHeightOfTri)];
-    [triPath closePath];
-    UIColor* fillColor = [UIColor colorWithWhite:0.2 alpha:0.9];
-    [fillColor setFill];
-    [triPath fill];
-    // 矩形
-    CGRect rectFrame = CGRectMake(0, fHeightOfTri, rect.size.width, rect.size.height - fHeightOfTri);
-    UIBezierPath* rectPath = [UIBezierPath bezierPathWithRoundedRect:rectFrame cornerRadius:5.f];
-    [rectPath fill];
+- (void) addPathToTriShapeLayer {
+    UIBezierPath* path = [UIBezierPath bezierPath];
+    CGRect frame = self.triShapeLayer.frame;
+    
+    CGFloat centerX = frame.size.width/2.f;
+    CGPoint triTopPoint = CGPointMake(centerX, 0);
+    CGPoint triBottomLeftPoint = CGPointMake(0, fHeightOfTri);
+    CGPoint triBottomRightPoint = CGPointMake(frame.size.width, fHeightOfTri);
+    
+    [path moveToPoint:triBottomLeftPoint];
+    [path addLineToPoint:triTopPoint];
+    [path addLineToPoint:triBottomRightPoint];
+    
+    [path closePath];
+    
+    self.triShapeLayer.fillColor = self.tintColor.CGColor;
+    self.triShapeLayer.path = path.CGPath;
+}
+- (void) addPathToRectShapeLayer {
+    CGRect frame = self.rectShapeLayer.bounds;
+    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:5.f];
+    self.rectShapeLayer.fillColor = self.tintColor.CGColor;
+    self.rectShapeLayer.path = path.CGPath;
 }
 
 

@@ -346,8 +346,11 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 - (ChooseButton *)rateButton {
     if (!_rateButton) {
         _rateButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _rateButton.layer.borderColor = lightBlue.CGColor;
-        _rateButton.layer.borderWidth = 0.7;
+        _rateButton.backgroundColor = [UIColor whiteColor];
+        _rateButton.layer.cornerRadius = 4.f;
+        _rateButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _rateButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _rateButton.layer.shadowOpacity = 0.8;
         _rateButton.nomalColor = lightBlue;
         _rateButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _rateButton.chooseButtonType = ChooseButtonTypeRect;
@@ -361,8 +364,11 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 - (ChooseButton *)provinceButton {
     if (!_provinceButton) {
         _provinceButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _provinceButton.layer.borderColor = lightBlue.CGColor;
-        _provinceButton.layer.borderWidth = 0.7;
+        _provinceButton.backgroundColor = [UIColor whiteColor];
+        _provinceButton.layer.cornerRadius = 4.f;
+        _provinceButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _provinceButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _provinceButton.layer.shadowOpacity = 0.8;
         _provinceButton.nomalColor = lightBlue;
         _provinceButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _provinceButton.chooseButtonType = ChooseButtonTypeRect;
@@ -376,8 +382,11 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 - (ChooseButton *)cityButton {
     if (!_cityButton) {
         _cityButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _cityButton.layer.borderColor = lightBlue.CGColor;
-        _cityButton.layer.borderWidth = 0.7;
+        _cityButton.backgroundColor = [UIColor whiteColor];
+        _cityButton.layer.cornerRadius = 4.f;
+        _cityButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _cityButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _cityButton.layer.shadowOpacity = 0.8;
         _cityButton.nomalColor = lightBlue;
         _cityButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _cityButton.chooseButtonType = ChooseButtonTypeRect;
@@ -391,8 +400,11 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 - (ChooseButton *)businessButton {
     if (!_businessButton) {
         _businessButton = [[ChooseButton alloc] initWithFrame:CGRectZero];
-        _businessButton.layer.borderColor = lightBlue.CGColor;
-        _businessButton.layer.borderWidth = 0.7;
+        _businessButton.backgroundColor = [UIColor whiteColor];
+        _businessButton.layer.cornerRadius = 4.f;
+        _businessButton.layer.shadowColor = [UIColor colorWithWhite:0.4 alpha:1].CGColor;
+        _businessButton.layer.shadowOffset = CGSizeMake(1.5, 1.5);
+        _businessButton.layer.shadowOpacity = 0.8;
         _businessButton.nomalColor = lightBlue;
         _businessButton.selectedColor = [UIColor colorWithWhite:0.7 alpha:0.8];
         _businessButton.chooseButtonType = ChooseButtonTypeRect;
@@ -409,6 +421,7 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     if (!_savingButton) {
         _savingButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_savingButton setBackgroundColor:[PublicInformation returnCommonAppColor:@"red"]];
+        _savingButton.layer.cornerRadius = 4.f;
         [_savingButton setTitle:@"保存" forState:UIControlStateNormal];
         [_savingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_savingButton setTitleColor:[UIColor colorWithWhite:0.2 alpha:1] forState:UIControlStateHighlighted];
@@ -421,6 +434,7 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     if (!_clearingButton) {
         _clearingButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [_clearingButton setBackgroundColor:[UIColor grayColor]];
+        _clearingButton.layer.cornerRadius = 4.f;
         [_clearingButton setTitle:@"清除" forState:UIControlStateNormal];
         [_clearingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_clearingButton setTitleColor:[UIColor colorWithWhite:0.2 alpha:0.9] forState:UIControlStateHighlighted];
