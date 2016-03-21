@@ -24,6 +24,7 @@ static NSString* const kFieldNameLoginDownBusinessName = @"mchtNm"; // 商户名
 static NSString* const kFieldNameLoginDownBusinessEmail = @"commEmail"; // 商户邮箱
 static NSString* const kFieldNameLoginDownTerminalCount = @"termCount"; // 终端号个数
 static NSString* const kFieldNameLoginDownTerminalList = @"TermNoList"; // 终端号列表:","分割
+static NSString* const kFieldNameLoginDownAllowTypes = @"allowType"; // 允许标志
 static NSString* const kFieldNameLoginDownRegisterInfo = @"registerInfoList"; // 注册信息
 
 /* ----- 历史注册信息字段名 ----- */

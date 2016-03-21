@@ -10,9 +10,6 @@
 
 @interface JHLM60_Control : NSObject
 
-// -- 连接设备
-- (void) connectingOnSucBlock:(void )
-
 
 
 @end

@@ -226,15 +226,19 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
 // 功能名称:cell名
 - (NSArray *)cellNames {
     if (_cellNames == nil) {
-        _cellNames = [NSArray arrayWithObjects:
-                      kTitleSettingBusinessName,
-                      kTitleSettingTransDetails,
-                      kTitleSettingDeviceBinding,
-                      kTitleSettingFeeChoose,
-//                      kTitleSettingBalanceSelect,
-                      kTitleSettingT_0CardVerify,
-                      kTitleSettingPinUpdate,
-                      kTitleSettingHelper, nil];
+        NSMutableArray* cellNames = [NSMutableArray array];
+        [cellNames addObject:kTitleSettingBusinessName];
+        [cellNames addObject:kTitleSettingTransDetails];
+        [cellNames addObject:kTitleSettingDeviceBinding];
+        if ([ModelUserLoginInformation allowedMoreBusiness] || [ModelUserLoginInformation allowedMoreRate]) {
+            [cellNames addObject:kTitleSettingFeeChoose];
+        }
+        if ([ModelUserLoginInformation allowedT_0]) {
+            [cellNames addObject:kTitleSettingT_0CardVerify];
+        }
+        [cellNames addObject:kTitleSettingPinUpdate];
+        [cellNames addObject:kTitleSettingHelper];
+        _cellNames = [NSArray arrayWithArray:cellNames];
     }
     return _cellNames;
 }

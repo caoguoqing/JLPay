@@ -460,6 +460,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 }
 /* 登陆成功 */
 - (void)didLoginSuccessWithLoginInfo:(NSDictionary *)loginInfo {
+    JLPrint(@"登陆响应信息:[%@]",loginInfo);
     [self.loadButton setEnabled:YES];
     // 校验是否切换了账号
     [self checkoutLoadingSwitch];
@@ -472,7 +473,6 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         // 保存响应的商户信息
         [self savingBussinessInfo:loginInfo];
         [PublicInformation makeToast:@"登录成功"];
-        
         
         UITabBarController* mainTabBar = [APPMainDelegate mainTabBarControllerOfApp];
         if ([ModelDeviceBindedInformation hasBindedDevice]) {
@@ -553,7 +553,8 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
                                                  businessNumber:[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]
                                                   businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
                                                   terminalCount:termCount
-                                                terminalNumbers:terminals];
+                                                terminalNumbers:terminals
+                                                     allowTypes:[loginInfo objectForKey:kFieldNameLoginDownAllowTypes]];
 
 }
 #pragma mask ::: 分隔终端号字符串

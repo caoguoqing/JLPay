@@ -26,7 +26,8 @@
                            businessNumber:(NSString*)businessNumber // 商户编号
                             businessEmail:(NSString*)businessEmail // 商户邮箱
                             terminalCount:(NSString*)terminalCount // 终端号个数
-                          terminalNumbers:(NSArray*)terminalNumbers; //终端号列表
+                          terminalNumbers:(NSArray*)terminalNumbers //终端号列表
+                               allowTypes:(NSString*)allowTypes;    // 允许标志位
 
 #pragma mask ---- 删
 /* 删除登陆上送信息 */
@@ -65,6 +66,16 @@
 + (NSInteger) terminalCount;
 /* 终端号列表 */
 + (NSArray*) terminalNumbers;
+
+/* ---- 允许操作标志位 */
+/* 是否允许: T+0 */
++ (BOOL) allowedT_0;
+/* 是否允许: T+n(6,15,30) */
++ (BOOL) allowedT_N;
+/* 是否允许: 多费率 */
++ (BOOL) allowedMoreRate;
+/* 是否允许: 多商户 */
++ (BOOL) allowedMoreBusiness;
 
 
 @end

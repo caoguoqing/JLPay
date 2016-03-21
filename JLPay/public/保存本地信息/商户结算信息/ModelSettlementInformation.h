@@ -33,7 +33,6 @@ typedef enum {
 - (void) updateSettlementType:(SETTLEMENTTYPE)settlementType;
 
 /* 切换结算方式 -- 暂时用不到 */
-//- (SETTLEMENTTYPE) settlementTypeSwitched;
 - (void) switchingSettleType;
 
 

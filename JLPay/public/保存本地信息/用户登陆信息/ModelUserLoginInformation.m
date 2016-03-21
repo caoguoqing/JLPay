@@ -22,6 +22,7 @@ static NSString* KeyLoginDownInfoBusinessNumber = @"KeyLoginDownInfoBusinessNumb
 static NSString* KeyLoginDownInfoBusinessEmail = @"KeyLoginDownInfoBusinessEmail__";
 static NSString* KeyLoginDownInfoTerminalCount = @"KeyLoginDownInfoTerminalCount__";
 static NSString* KeyLoginDownInfoTerminalNumbers = @"KeyLoginDownInfoTerminalNumbers__";
+static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 /* ------------------------------ */
 
 
@@ -54,8 +55,14 @@ static NSString* KeyLoginDownInfoTerminalNumbers = @"KeyLoginDownInfoTerminalNum
                             businessEmail:(NSString*)businessEmail // 商户邮箱 nullable
                             terminalCount:(NSString*)terminalCount // 终端号个数 nullNoable
                           terminalNumbers:(NSArray*)terminalNumbers //终端号列表 nullable
+                               allowTypes:(NSString *)allowTypes
 {
-    if (!businessName || !businessNumber || !terminalCount || businessName.length == 0 || businessNumber.length == 0 || terminalCount.length == 0) {
+    if (!businessName   || businessName.length == 0 ||
+        !businessNumber || businessNumber.length == 0 ||
+        !terminalCount  || terminalCount.length == 0 ||
+        !allowTypes     || allowTypes.length == 0
+        )
+    {
         return NO;
     }
     NSMutableDictionary* newInfo = [[NSMutableDictionary alloc] init];
@@ -66,6 +73,7 @@ static NSString* KeyLoginDownInfoTerminalNumbers = @"KeyLoginDownInfoTerminalNum
     if (terminalCount.intValue != 0 && terminalCount.intValue == terminalNumbers.count) {
         [newInfo setObject:terminalNumbers forKey:KeyLoginDownInfoTerminalNumbers];
     }
+    [newInfo setObject:allowTypes forKey:KeyLoginDownInfoAllowTypes];
     [self writeLoginDownInfo:newInfo];
     return YES;
 }
@@ -208,6 +216,54 @@ static NSString* KeyLoginDownInfoTerminalNumbers = @"KeyLoginDownInfoTerminalNum
     }
     return terminals;
 }
+
+// -- 所有云逊标志位
++ (NSString*) allowTypesSaved {
+    NSDictionary* loginDownInfo = [self informationOfLoginDown];
+    return [loginDownInfo objectForKey:KeyLoginDownInfoAllowTypes];
+}
+
+/* 是否允许: T+0 */
++ (BOOL) allowedT_0 {
+    NSString* T_0Flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(3, 1)];
+    NSLog(@"t0允许位:[%@]",T_0Flag);
+    if (T_0Flag.integerValue == 0) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+/* 是否允许: T+n(6,15,30) */
++ (BOOL) allowedT_N {
+    NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(0, 1)];
+    NSLog(@"tn允许位:[%@]",flag);
+    if (flag.integerValue == 0) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+/* 是否允许: 多费率 */
++ (BOOL) allowedMoreRate {
+    NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(1, 1)];
+    NSLog(@"多费率允许位:[%@]",flag);
+    if (flag.integerValue == 0) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+/* 是否允许: 多商户 */
++ (BOOL) allowedMoreBusiness {
+    NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(2, 1)];
+    NSLog(@"多商户允许位:[%@]",flag);
+    if (flag.integerValue == 0) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
 
 #pragma mask ---- PRIVATE INTERFACE
 /* 清除登陆上送信息 */
