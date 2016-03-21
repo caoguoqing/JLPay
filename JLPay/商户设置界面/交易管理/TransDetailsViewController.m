@@ -91,7 +91,6 @@ NSInteger logCount = 0;
         // 颜色和金额要重置
         [cell setAmount:[NSString stringWithFormat:@"￥ %@",[PublicInformation dotMoneyFromNoDotMoney:[self.dataSource moneyAtIndex:indexPath.row]]] withColor:textColor];
     }
-    
 
     return cell;
 }
