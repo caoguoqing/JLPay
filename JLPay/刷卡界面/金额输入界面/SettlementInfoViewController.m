@@ -7,19 +7,21 @@
 //
 
 #import "SettlementInfoViewController.h"
-#import "HTTPRequestSettlementInfo.h"
 #import "PublicInformation.h"
 #import "BrushViewController.h"
 #import "Packing8583.h"
 #import "Define_Header.h"
 #import "ModelSettlementInformation.h"
+#import "VMT_0InfoRequester.h"
 
 @interface SettlementInfoViewController()
 <UITableViewDataSource, UITableViewDelegate>
-{
-    NSArray* keysOfCells;
-    NSDictionary* titlesForKeys;
-}
+//{
+//    NSArray* keysOfCells;
+//    NSDictionary* titlesForKeys;
+//}
+@property (nonatomic, strong) NSArray* titles;
+@property (nonatomic, strong) NSDictionary* titleAndValues;
 
 
 @end
@@ -30,24 +32,8 @@
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        keysOfCells = @[@"sFloatMoney",
-                        kSettleInfoNameAmountAvilable,
-                        kSettleInfoNameAmountLimit,
-                        kSettleInfoNameMinCustAmount,
-                        kSettleInfoNameT_0_Fee,
-                        kSettleInfoNameExtraFee
-                        ];
-        titlesForKeys = @{@"sFloatMoney":@"交易金额:",
-                          kSettleInfoNameAmountLimit:@"单日限额:",
-                          kSettleInfoNameAmountAvilable:@"单日可刷额度:",
-                          kSettleInfoNameMinCustAmount:@"单笔最小限额:",
-                          kSettleInfoNameT_0_Fee:@"手续费率:",
-                          kSettleInfoNameExtraFee:@"转账手续费:"
-                          };
-        
         self.title = @"结算信息";
         self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-        
         self.tableView.canCancelContentTouches = NO;
         self.tableView.delaysContentTouches = NO;
     }
@@ -70,7 +56,7 @@
     return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return keysOfCells.count;
+    return self.titles.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* cellIdentifier = @"cellIdentifier__";
@@ -79,44 +65,9 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
         cell.backgroundColor = [UIColor whiteColor];
     }
-    NSString* keyOfCell = [keysOfCells objectAtIndex:indexPath.row];
-    NSString* titleOfCell = [titlesForKeys objectForKey:keyOfCell];
-    
-    cell.textLabel.text = titleOfCell;
-    
-    // 刷卡金额
-    if ([keyOfCell isEqualToString:@"sFloatMoney"]) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[self valueForKey:keyOfCell]];// [self valueForKey:keyOfCell];
-    }
-    // 费率
-    else if ([keyOfCell isEqualToString:kSettleInfoNameT_0_Fee]) {
-        cell.detailTextLabel.text = [self formatFee:[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
-    }
-    // t0当前可刷
-    else if ([keyOfCell isEqualToString:kSettleInfoNameAmountAvilable]) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
-    }
-    // t0单日限额
-    else if ([keyOfCell isEqualToString:kSettleInfoNameAmountLimit]) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
-    }
-    // t0最小刷卡额
-    else if ([keyOfCell isEqualToString:kSettleInfoNameMinCustAmount]) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
-    }
-    // 转账手续费
-    else if ([keyOfCell isEqualToString:kSettleInfoNameExtraFee]) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@￥",[[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
-    }
-
+    cell.textLabel.text = [self.titles objectAtIndex:indexPath.row];
+    cell.detailTextLabel.text = [self.titleAndValues objectForKey:cell.textLabel.text];
     return cell;
-}
-
-
-/* 格式化: 费率 */
-- (NSString*) formatFee:(NSString*)fee {
-    NSString* formationFee = [NSString stringWithFormat:@"+%@%%",fee];
-    return formationFee;
 }
 
 
@@ -159,6 +110,21 @@
 
 - (void)setSFloatMoney:(NSString *)sFloatMoney {
     _sFloatMoney = [NSString stringWithString:sFloatMoney];
+}
+
+#pragma mask 4 getter 
+- (NSArray *)titles {
+    return @[@"交易金额",@"单日限额",@"单日可刷额度",@"单笔最小限额",@"手续费率",@"转账手续费"];
+}
+- (NSDictionary *)titleAndValues {
+    NSMutableDictionary* dic = [NSMutableDictionary dictionary];
+    [dic setObject:[NSString stringWithFormat:@"￥%@",self.sFloatMoney] forKey:@"交易金额"];
+    [dic setObject:[NSString stringWithFormat:@"￥%@",[[VMT_0InfoRequester sharedInstance] amountLimit]] forKey:@"单日限额"];
+    [dic setObject:[NSString stringWithFormat:@"￥%@",[[VMT_0InfoRequester sharedInstance] amountAvilable]] forKey:@"单日可刷额度"];
+    [dic setObject:[NSString stringWithFormat:@"￥%@",[[VMT_0InfoRequester sharedInstance] amountMinCust]] forKey:@"单笔最小限额"];
+    [dic setObject:[NSString stringWithFormat:@"+%@%%",[[VMT_0InfoRequester sharedInstance] T_0MoreRate]] forKey:@"手续费率"];
+    [dic setObject:[NSString stringWithFormat:@"￥%@",[[VMT_0InfoRequester sharedInstance] T_0ExtraFee]] forKey:@"转账手续费"];
+    return [NSDictionary dictionaryWithDictionary:dic];
 }
 
 @end

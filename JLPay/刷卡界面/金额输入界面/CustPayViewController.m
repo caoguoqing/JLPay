@@ -12,9 +12,8 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "DeleteButton.h"
 #import "Packing8583.h"
-//#import "SettlementSwitchView.h"
 #import "SettlementInfoViewController.h"
-#import "HTTPRequestSettlementInfo.h"
+//#import "HTTPRequestSettlementInfo.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
 #import "ModelUserLoginInformation.h"
@@ -23,6 +22,8 @@
 #import "ModelRateInfoSaved.h"
 #import "ModelBusinessInfoSaved.h"
 #import "JCAlertView.h"
+#import "PullListSegView.h"
+#import "VMT_0InfoRequester.h"
 
 #import <objc/runtime.h>
 
@@ -30,7 +31,7 @@
 
 @interface CustPayViewController ()
 <CBCentralManagerDelegate,
-HTTPRequestSettlementInfoDelegate>
+UITableViewDataSource,UITableViewDelegate>
 {
     BOOL blueToothPowerOn;              // 蓝牙打开状态标记
     CBCentralManager* blueManager;      // 蓝牙设备操作入口
@@ -39,11 +40,16 @@ HTTPRequestSettlementInfoDelegate>
 @property (nonatomic, strong) UIView* backViewOfMoney;                      // 用来优化结算方式视图的点击体验
 
 @property (nonatomic, strong) IntMoneyCalculating* intMoneyCalculating;
-//@property (nonatomic, strong) SettlementSwitchView* settlementView;         // 结算方式切换视图
+
+@property (nonatomic, strong) UILabel* settlementPreLabel;                  // 显示结算方式
+@property (nonatomic, strong) UIButton* settlementSwitchBtn;                // 切换结算方式
+@property (nonatomic, strong) PullListSegView* pullListView;
+
+@property (nonatomic, strong) NSMutableArray* displaySettlementTypes;
+
 @end
 
 @implementation CustPayViewController
-@synthesize labelDisplayMoney = _labelDisplayMoney;
 
 
 - (void)viewDidLoad {
@@ -54,6 +60,7 @@ HTTPRequestSettlementInfoDelegate>
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+    [self addKVOs];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -61,22 +68,31 @@ HTTPRequestSettlementInfoDelegate>
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = YES;
     
-    // 更新结算方式的标记 - T+1
-//    [self.settlementView setEnableSwitching:[[ModelSettlementInformation sharedInstance] T_0EnableOrNot]];
-//    [self.settlementView switchNormal];
-    [[ModelSettlementInformation sharedInstance] updateSettlementType:SETTLEMENTTYPE_T_1];
-
     // 申请结算信息
-    if ([ModelUserLoginInformation allowedT_0] || [ModelUserLoginInformation allowedT_N]) {
+    if ([ModelUserLoginInformation allowedT_0]) {
         [self startHTTPRequestForSettlementInfo];
     }
+    // 重置当前的结算方式
+    [ModelSettlementInformation sharedInstance].curSettlementType = SETTLEMENTTYPE_T_1;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBarHidden = NO;
+}
 
-    [[HTTPRequestSettlementInfo sharedInstance] requestTerminate];
+- (void) addKVOs {
+    [[ModelSettlementInformation sharedInstance] addObserver:self forKeyPath:@"curSettlementType" options:NSKeyValueObservingOptionNew context:nil];
+}
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"curSettlementType"]) {
+        SETTLEMENTTYPE curSettllementType = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
+        self.settlementPreLabel.text = [NSString stringWithFormat:@"结算方式:%@", [ModelSettlementInformation nameOfSettlementType:curSettllementType]];
+        if (curSettllementType == SETTLEMENTTYPE_T_0) {
+            [self alertInformationForT_0];
+        }
+    }
 }
 
 /* 重载点击事件: 优化点击的体验 */
@@ -84,54 +100,39 @@ HTTPRequestSettlementInfoDelegate>
     UITouch* touch = [touches anyObject];
     CGPoint curPoint = [touch locationInView:self.view];
     /* 判断是否在T+0切换视图中 */
-    if ([self moneyBackViewContainsPoint:curPoint]) {
-//        [self.settlementView clickToSwichSettlementType];
+    if (curPoint.x >= self.backViewOfMoney.frame.origin.x &&
+        curPoint.x <= self.backViewOfMoney.frame.origin.x + self.backViewOfMoney.frame.size.width &&
+        curPoint.y >= self.backViewOfMoney.frame.origin.y &&
+        curPoint.y <= self.backViewOfMoney.frame.origin.y + self.backViewOfMoney.frame.size.height
+        )
+    {
+        [self clickToSwitchSettlement:self.settlementSwitchBtn];
     }
 }
 
-#pragma mask ---- HTTP && HTTPRequestSettlementInfoDelegate
+#pragma mask ---- HTTP
 /* 请求数据 */
 - (void) startHTTPRequestForSettlementInfo {
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        [[HTTPRequestSettlementInfo sharedInstance] requestSettlementInfoWithBusinessNumber:[ModelDeviceBindedInformation businessNoBinded] delegate:self];
+        NameWeakSelf(wself);
+        [[VMT_0InfoRequester sharedInstance] requestT_0InformationWithBusinessNumbser:[ModelDeviceBindedInformation businessNoBinded] onSucBlocK:^{
+            VMT_0InfoRequester* vmT0Requester = [VMT_0InfoRequester sharedInstance];
+            if ([vmT0Requester enableT_0]) {
+                wself.settlementSwitchBtn.hidden = NO;
+                if (![wself.displaySettlementTypes containsObject:@(SETTLEMENTTYPE_T_0)]) {
+                    [wself.displaySettlementTypes insertObject:@(SETTLEMENTTYPE_T_0) atIndex:1];
+                }
+            } else {
+                if ([wself.displaySettlementTypes containsObject:@(SETTLEMENTTYPE_T_0)]) {
+                    [wself.displaySettlementTypes removeObjectAtIndex:1];
+                }
+            }
+        } onErrorBlock:^(NSError *error) {
+            
+        }];
     }
 }
-/* 回调: 成功 */
-- (void)didRequestedSuccessWithSettlementInfo:(NSDictionary *)settlementInfo {
-    [[ModelSettlementInformation sharedInstance] saveSettlementInfo:settlementInfo];
-//    [self.settlementView setEnableSwitching:[[settlementInfo objectForKey:kSettleInfoNameT_0_Enable] boolValue]];
 
-}
-/* 回调: 失败 */
-- (void)didRequestedFailedWithErrorMessage:(NSString *)errorMessage {
-//    [self.settlementView setEnableSwitching:NO];
-    [[ModelSettlementInformation sharedInstance] cleanSettlementInfo];
-}
-
-
-
-//#pragma mask ---- SettlementSwitchViewDelegate
-//- (void)didSwitchedSettlementType:(SETTLEMENTTYPE)settlementType {
-//    switch (settlementType) {
-//        case SETTLEMENTTYPE_T_0:
-//            // 提示T+0信息
-//            [self alertInformationForT_0];
-//            break;
-//        default:
-//            break;
-//    }
-//    [[ModelSettlementInformation sharedInstance] updateSettlementType:settlementType];
-//}
-- (void) alertInformationForT_0 {
-    NSMutableString* alert = [[NSMutableString alloc] init];
-    [alert appendFormat:@"单日限额: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountLimit]];
-    [alert appendFormat:@"单笔最小限额: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
-    [alert appendFormat:@"单日可刷额度: ￥%@\n",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
-    [alert appendFormat:@"手续费率: +%@%%\n",[[ModelSettlementInformation sharedInstance] T_0SettlementFeeRate]];
-    [alert appendFormat:@"转账手续费: ￥%@", [[ModelSettlementInformation sharedInstance] T_0CompareExtraFee]];
-    
-    [JCAlertView showOneButtonWithTitle:@"T+0温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"确定" Click:^{}];
-}
 
 
 #pragma mask ---- CBCentrolManagerDelegate
@@ -214,7 +215,6 @@ HTTPRequestSettlementInfoDelegate>
  *************************************/
 - (IBAction)longPressButtonOfDelete:(UILongPressGestureRecognizer*)sender {
     self.labelDisplayMoney.text = [self moneyClearZero];
-    
     if (sender.state == UIGestureRecognizerStateEnded) {
         sender.view.transform           = CGAffineTransformIdentity;
         sender.view.backgroundColor     = [UIColor clearColor];
@@ -236,6 +236,54 @@ HTTPRequestSettlementInfoDelegate>
     sender.transform                    = CGAffineTransformIdentity;
 }
 
+// -- 点击切换结算方式
+- (IBAction) clickToSwitchSettlement:(UIButton*)sender {
+    CGRect frame = sender.frame;
+    CGFloat widthPullList = 160;
+    frame.origin.x = frame.origin.x + frame.size.width/2.f - widthPullList/2.f;
+    frame.origin.y += frame.size.height + 4;
+    frame.size.width = widthPullList;
+    [self.pullListView setFrame:frame];
+    [self.pullListView showWithCompletion:^{}];
+}
+#pragma mark 2  UITableViewDataSource
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString* cellIdentifier = @"cellIdentifier";
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell.backgroundColor = [UIColor clearColor];
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    }
+    cell.textLabel.text = [ModelSettlementInformation nameOfSettlementType:[[self.displaySettlementTypes objectAtIndex:indexPath.row] intValue]];
+    return cell;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.displaySettlementTypes.count;
+}
+#pragma mark 2  UITableViewDelegate
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+- (void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    SETTLEMENTTYPE selectedSettlementType = [[self.displaySettlementTypes objectAtIndex:indexPath.row] intValue];
+    [self.pullListView hideWithCompletion:^{
+        [ModelSettlementInformation sharedInstance].curSettlementType = selectedSettlementType;
+    }];
+}
+
+- (void) alertInformationForT_0 {
+    NSMutableString* alert = [[NSMutableString alloc] init];
+    [alert appendFormat:@"单日限额:      ￥%@\n",[[VMT_0InfoRequester sharedInstance] amountLimit]];
+    [alert appendFormat:@"单笔最小限额:   ￥%@\n",[[VMT_0InfoRequester sharedInstance] amountMinCust]];
+    [alert appendFormat:@"单日可刷额度:   ￥%@\n",[[VMT_0InfoRequester sharedInstance] amountAvilable]];
+    [alert appendFormat:@"手续费率:      +%@%%\n",[[VMT_0InfoRequester sharedInstance] T_0MoreRate]];
+    [alert appendFormat:@"转账手续费:    ￥%@", [[VMT_0InfoRequester sharedInstance] T_0ExtraFee]];
+    [JCAlertView showOneButtonWithTitle:@"T+0温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"确定" Click:^{}];
+}
 
 
 #pragma mark  ------点击了刷卡按钮: 跳转刷卡界面
@@ -269,13 +317,13 @@ HTTPRequestSettlementInfoDelegate>
         inputsValid = NO;
     }
     else if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
-        if (self.labelDisplayMoney.text.floatValue < [[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount].floatValue) {
-            NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@￥",[[ModelSettlementInformation sharedInstance] T_0MinSettlementAmount]];
+        if (self.labelDisplayMoney.text.floatValue < [[VMT_0InfoRequester sharedInstance] amountMinCust].floatValue) {
+            NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@￥",[[VMT_0InfoRequester sharedInstance] amountMinCust]];
             [PublicInformation makeToast:log];
             inputsValid = NO;
         }
-        else if (self.labelDisplayMoney.text.floatValue > [[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable].floatValue) {
-            NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@￥",[[ModelSettlementInformation sharedInstance] T_0DaySettlementAmountAvailable]];
+        else if (self.labelDisplayMoney.text.floatValue > [[VMT_0InfoRequester sharedInstance] amountAvilable].floatValue) {
+            NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@￥",[[VMT_0InfoRequester sharedInstance] amountAvilable]];
             [PublicInformation makeToast:log];
             inputsValid = NO;
         }
@@ -409,27 +457,39 @@ HTTPRequestSettlementInfoDelegate>
     [self.view addSubview:imageView];
     
     // 金额背景框
+    frame.origin.x = bornerWith;
+    frame.origin.y = yCenterPre;
     frame.size.width = self.view.bounds.size.width - bornerWith*2;
     frame.size.height = heightMoneyDisplay - bornerWith*2;
     [self.backViewOfMoney setFrame:frame];
-    self.backViewOfMoney.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightMoneyDisplay/2.0);
     [self.view addSubview:self.backViewOfMoney];
     
+    // 结算方式切换视图
+    CGRect innerFrame = CGRectMake(frame.origin.x + inset, frame.origin.y + inset, 0, 20);
+    UIFont* littleFont = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:innerFrame.size andScale:1.f]];
+    self.settlementPreLabel.font = littleFont;
+    innerFrame.size.width = [self.settlementPreLabel.text sizeWithAttributes:@{NSFontAttributeName:littleFont}].width + 15;
+    [self.settlementPreLabel setFrame:innerFrame];
+    [self.view addSubview:self.settlementPreLabel];
+    
+    innerFrame.origin.x += innerFrame.size.width;
+    innerFrame.size.width = [[self.settlementSwitchBtn titleForState:UIControlStateNormal] sizeWithAttributes:@{NSFontAttributeName:littleFont}].width + 4;
+    [self.settlementSwitchBtn setFrame:innerFrame];
+    self.settlementSwitchBtn.titleLabel.font = littleFont;
+    [self.view addSubview:self.settlementSwitchBtn];
+
     // moneyLabel
-    CGRect innerFrame = CGRectMake(0, 0, frame.size.width - 45, frame.size.height);
+    innerFrame.origin.x = 0;
+    innerFrame.origin.y = 0;
+    innerFrame.size.width = frame.size.width - 45;
+    innerFrame.size.height = frame.size.height;
     self.labelDisplayMoney.frame = innerFrame;
     self.labelDisplayMoney.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:innerFrame.size andScale:6.0/12.0]];
     [self.backViewOfMoney addSubview:self.labelDisplayMoney];
     
-    // 结算方式切换视图
-    innerFrame.origin.x += inset ;
-    innerFrame.origin.y += inset ;
-    innerFrame.size.height = 20;
-//    [self.settlementView setFrame:innerFrame];
-//    [self.backViewOfMoney addSubview:self.settlementView];
     
     // moneyImageView 金额符号Label : 字体大小为金额字体大小的 3/4, 因为字体为汉字，显示要比英文字母高一点，所以将y降低一个 inset，高度也减少一个 inset
-    innerFrame.origin.x                 = 0 + innerFrame.size.width + inset;
+    innerFrame.origin.x                 = frame.size.width - 45;
     innerFrame.origin.y                 = 0 + inset;
     innerFrame.size.width               = frame.size.width - innerFrame.origin.x;
     innerFrame.size.height              = frame.size.height;
@@ -495,24 +555,10 @@ HTTPRequestSettlementInfoDelegate>
     [brushButton addTarget:self action:@selector(outBrush:) forControlEvents:UIControlEventTouchUpOutside];
     [brushButton setSelected:YES];
     [self.view addSubview:brushButton];
+    
+    // 下拉展示
+    [self.view addSubview:self.pullListView];
 }
-
-
-/* 判断坐标点是否在T+0切换视图内 */
-- (BOOL) moneyBackViewContainsPoint:(CGPoint)point {
-    BOOL contains = NO;
-    if (point.x >= self.backViewOfMoney.frame.origin.x &&
-        point.x <= self.backViewOfMoney.frame.origin.x + self.backViewOfMoney.frame.size.width &&
-        point.y >= self.backViewOfMoney.frame.origin.y &&
-        point.y <= self.backViewOfMoney.frame.origin.y + self.backViewOfMoney.frame.size.height
-        )
-    {
-        contains = YES;
-    }
-    return contains;
-}
-
-
 
 #pragma mask --- setter & getter
 - (IntMoneyCalculating *)intMoneyCalculating {
@@ -530,19 +576,52 @@ HTTPRequestSettlementInfoDelegate>
     }
     return _labelDisplayMoney;
 }
-//- (SettlementSwitchView *)settlementView {
-//    if (_settlementView == nil) {
-//        _settlementView = [[SettlementSwitchView alloc] initWithFrame:CGRectZero];
-//        [_settlementView setDelegate:self];
-//    }
-//    return _settlementView;
-//}
 - (UIView *)backViewOfMoney {
     if (_backViewOfMoney == nil) {
         _backViewOfMoney = [[UIView alloc] initWithFrame:CGRectZero];
         _backViewOfMoney.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0]; // 灰色
     }
     return _backViewOfMoney;
+}
+- (UILabel *)settlementPreLabel {
+    if (!_settlementPreLabel) {
+        _settlementPreLabel = [UILabel new];
+        _settlementPreLabel.text = [NSString stringWithFormat:@"结算方式:%@" ,[ModelSettlementInformation nameOfSettlementType:SETTLEMENTTYPE_T_1]];
+        _settlementPreLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
+    }
+    return _settlementPreLabel;
+}
+- (UIButton *)settlementSwitchBtn {
+    if (!_settlementSwitchBtn) {
+        _settlementSwitchBtn = [UIButton new];
+        [_settlementSwitchBtn setTitle:@"切换" forState:UIControlStateNormal];
+        [_settlementSwitchBtn setTitleColor:[UIColor brownColor] forState:UIControlStateNormal];
+        [_settlementSwitchBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [_settlementSwitchBtn addTarget:self action:@selector(clickToSwitchSettlement:) forControlEvents:UIControlEventTouchUpInside];
+        _settlementSwitchBtn.hidden = YES;
+    }
+    return _settlementSwitchBtn;
+}
+- (NSMutableArray *)displaySettlementTypes {
+    if (!_displaySettlementTypes) {
+        _displaySettlementTypes = [NSMutableArray array];
+        [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_1)];
+        if ([ModelUserLoginInformation allowedT_N]) {
+            self.settlementSwitchBtn.hidden = NO;
+            [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_6)];
+            [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_15)];
+            [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_30)];
+        }
+    }
+    return _displaySettlementTypes;
+}
+- (PullListSegView *)pullListView {
+    if (!_pullListView) {
+        _pullListView = [[PullListSegView alloc] init];
+        _pullListView.tableView.dataSource = self;
+        _pullListView.tableView.delegate = self;
+    }
+    return _pullListView;
 }
 
 @end

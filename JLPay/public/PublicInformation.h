@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "Define_Header.h"
+
 @interface PublicInformation : NSObject
 
 

@@ -43,7 +43,7 @@
     [self.labelSettlementDisplay sizeToFit];
     self.labelSettlementDisplay.layer.position = CGPointMake(0.0, 0.0);
     self.labelSettlementDisplay.layer.anchorPoint = CGPointMake(0.0, 0.0);
-    self.labelSettlementDisplay.textColor = (self.enableSwitching)?([UIColor colorWithWhite:0.3 alpha:1]):([UIColor grayColor]);
+    self.labelSettlementDisplay.textColor = (!self.enableSwitching)?([UIColor colorWithWhite:0.3 alpha:1]):([UIColor grayColor]);
     
     [self.buttonSwitch.titleLabel setFont:fontLabelText];
     [self.buttonSwitch sizeToFit];
@@ -112,7 +112,7 @@
 
 /* 切换枚举值 */
 - (void) switchSettlementType {
-    [[ModelSettlementInformation sharedInstance] switchingSettleType];
+//    [[ModelSettlementInformation sharedInstance] switchingSettleType];
     self.curSettlementType = [[ModelSettlementInformation sharedInstance] curSettlementType];
 }
 

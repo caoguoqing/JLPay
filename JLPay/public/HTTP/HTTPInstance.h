@@ -48,6 +48,11 @@ typedef enum {
 /* 开始请求 */
 - (void) startRequestingWithDelegate:(id<HTTPInstanceDelegate>)delegate
                        packingHandle:(void (^)(ASIFormDataRequest* http))packingBlock;
+
+- (void) requestingOnPackingHandle:(void (^) (ASIFormDataRequest* http))packingBlock
+                        onSucBlock:(void (^) (NSDictionary* info))sucBlock
+                        onErrBlock:(void (^) (NSError* error))errBlock;
+
 /* 终止请求 */
 - (void) terminateRequesting;
 

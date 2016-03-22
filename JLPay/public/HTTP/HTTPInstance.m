@@ -8,6 +8,8 @@
 
 #import "HTTPInstance.h"
 
+NSString* const HTTPInstanceDomain = @"HTTPInstanceDomain";
+
 @interface HTTPInstance()
 <ASIHTTPRequestDelegate>
 {
@@ -15,6 +17,9 @@
 }
 @property (nonatomic, assign) id<HTTPInstanceDelegate>delegate;
 @property (nonatomic, retain) ASIFormDataRequest* httpRequester;
+
+@property (nonatomic, copy) void (^ httpSucBlock) (NSDictionary* info);
+@property (nonatomic, copy) void (^ httpErrBlock) (NSError* error);
 
 @end
 
@@ -48,6 +53,22 @@ static HTTPInstance* pubHttpInstance = nil;
         [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"HTTP请求失败"];
     }
 }
+
+- (void)requestingOnPackingHandle:(void (^)(ASIFormDataRequest *))packingBlock
+                       onSucBlock:(void (^)(NSDictionary *))sucBlock
+                       onErrBlock:(void (^)(NSError *))errBlock
+{
+    self.httpSucBlock = sucBlock;
+    self.httpErrBlock = errBlock;
+    if (self.httpRequester) {
+        packingBlock(self.httpRequester);
+        [self.httpRequester setDelegate:self];
+        [self.httpRequester startAsynchronous];
+    } else {
+        [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"HTTP请求失败"];
+    }
+}
+
 /* 终止请求 */
 - (void) terminateRequesting {
     self.delegate = nil;
@@ -112,11 +133,18 @@ static HTTPInstance* pubHttpInstance = nil;
     return errorInfo;
 }
 
+- (NSError*) errorOnCode:(NSInteger)code message:(NSString*)msg {
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObject:msg forKey:NSLocalizedDescriptionKey];
+    return [NSError errorWithDomain:HTTPInstanceDomain code:code userInfo:userInfo];
+}
 
 /* 成功回调 */
 - (void) rebackSuccessWithInfo:(NSDictionary*)info {
     if (self.delegate && [self.delegate respondsToSelector:@selector(httpInstance:didRequestingFinishedWithInfo:)]) {
         [self.delegate httpInstance:self didRequestingFinishedWithInfo:info];
+    }
+    if (self.httpSucBlock) {
+        self.httpSucBlock(info);
     }
 }
 
@@ -124,6 +152,9 @@ static HTTPInstance* pubHttpInstance = nil;
 - (void) rebackFailCode:(HTTPErrorCode)errorCode andMessage:(NSString*)message {
     if (self.delegate && [self.delegate respondsToSelector:@selector(httpInstance:didRequestingFailedWithError:)]) {
         [self.delegate httpInstance:self didRequestingFailedWithError:[self errorInfoMadeByCode:[NSString stringWithFormat:@"%d", errorCode] andMessage:message]];
+    }
+    if (self.httpErrBlock) {
+        self.httpErrBlock([self errorOnCode:errorCode message:message]);
     }
 }
 

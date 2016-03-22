@@ -28,11 +28,9 @@
     unsigned char buffer[1024];
     memset(buffer, 0, sizeof(char));
     size_t numBytesEncrypted = 0;
-    NSLog(@"要加密的原串:[%@],key[%@]",clearText,key);
     NSData *testData=[PublicInformation NewhexStrToNSData:clearText];
     Byte *test=(Byte *)[testData bytes];
     Byte *keybyte=(Byte *)[[PublicInformation NewhexStrToNSData:key] bytes];
-    NSLog(@"要加密的原串:[%@],key[%@]",clearText,key);
 
     CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt,
                                           kCCAlgorithm3DES,
