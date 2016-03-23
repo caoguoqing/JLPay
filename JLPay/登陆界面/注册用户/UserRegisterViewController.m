@@ -14,7 +14,8 @@
 #import "DetailAreaViewController.h"
 #import "BankNumberViewController.h"
 #import "ASIFormDataRequest.h"
-#import "KVNProgress.h"
+//#import "KVNProgress.h"
+#import "MBProgressHUD+CustomSate.h"
 #import "Define_Header.h"
 
 #import "ModelUserLoginInformation.h"
@@ -34,7 +35,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestD
 @property (nonatomic, strong) NSArray* arrayImageInfo;
 
 @property (nonatomic, retain) ASIFormDataRequest* httpRequestRegister;
-
+@property (nonatomic, strong) MBProgressHUD* hud;
 
 @end
 
@@ -302,7 +303,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 成功
     if ([retCode intValue] == 0) {
         NSString* msg = [NSString stringWithFormat:@"%@成功!", [self titleForRegisterType:self.registerType]];
-        [KVNProgress showSuccessWithStatus:msg completion:^{
+        [self.hud showSuccessWithText:msg andDetailText:nil onCompletion:^{
             NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
             NSString* userName = [self textInputedAtIndexPath:indexPath];
             // 清空登陆+商户信息
@@ -319,13 +320,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 失败
     else {
         NSString* retMsg = [NSString stringWithFormat:@"%@失败:%@", [self titleForRegisterType:self.registerType],[dataDict valueForKey:@"message"]];
-        [KVNProgress dismiss];
+        [self.hud hideOnCompletion:nil];
         [self alertShowWithMessage:retMsg];
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    NSString* msg = [NSString stringWithFormat:@"%@失败:\n[%@]", [self titleForRegisterType:self.registerType], [[request error] localizedDescription]];
-    [KVNProgress showErrorWithStatus:msg];
+    [self.hud showFailWithText:[NSString stringWithFormat:@"%@失败",[self titleForRegisterType:self.registerType]] andDetailText:[[request error] localizedDescription] onCompletion:nil];
     [request clearDelegatesAndCancel];
     self.httpRequestRegister = nil;
 }
@@ -416,7 +416,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         
         [self.httpRequestRegister startAsynchronous];
     });
-    [KVNProgress show];
+    [self.hud showNormalWithText:@"数据上送中..." andDetailText:nil];
 }
 /* 检查输入是否满足 */
 - (BOOL) enableToRequest {
@@ -802,6 +802,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.registerButton setTitle:[self buttonTitleForRegisterType:self.registerType] forState:UIControlStateNormal]; // 设置按钮标题
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.hud];
     
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemNullTitleInViewController:self]];
 }
@@ -1011,6 +1012,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [_httpRequestRegister setTimeOutSeconds:60];
     }
     return _httpRequestRegister;
+}
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
 }
 
 @end

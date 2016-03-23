@@ -11,7 +11,7 @@
 #import "FieldInputTableCell.h"
 #import "ImageInputTableCell.h"
 #import "HttpUploadT0Card.h"
-#import "KVNProgress.h"
+#import "MBProgressHUD+CustomSate.h"
 
 static NSString* const kActionSheetTitleCamera = @"拍摄";
 static NSString* const kActionSheetTitlePicture = @"从相册选择";
@@ -25,6 +25,7 @@ HttpUploadT0CardDelegate>
 }
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, assign) BOOL enableUpload;  // KVO key
+@property (nonatomic, strong) MBProgressHUD* hud;
 @end
 
 @implementation T_0CardUploadViewController
@@ -62,6 +63,7 @@ HttpUploadT0CardDelegate>
                               self.view.frame.size.height - heightStates - heightNavi - heightTabbar);
     [self.tableView setFrame:frame];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.hud];
     
     [self.navigationItem setRightBarButtonItem:[self verifyCardButton]];
 }
@@ -76,17 +78,23 @@ HttpUploadT0CardDelegate>
                                          cardHolderName:[self cardNameFromCell]
                                               cardPhoto:[self cardImageFromCell]
                                              onDelegate:self];
-        [KVNProgress showWithStatus:@"交易卡信息上传中..."];
+//        [KVNProgress showWithStatus:@"交易卡信息上传中..."];
+        
     }
 }
 
 - (void)didUploadedSuccess {
-    [KVNProgress showSuccessWithStatus:@"上传交易卡信息成功!" completion:^{
-        [self.navigationController popViewControllerAnimated:YES];
+    NameWeakSelf(wself);
+    [self.hud showSuccessWithText:@"上传交易卡信息成功" andDetailText:nil onCompletion:^{
+        [wself.navigationController popViewControllerAnimated:YES];
     }];
+//    [KVNProgress showSuccessWithStatus:@"上传交易卡信息成功!" completion:^{
+//        [self.navigationController popViewControllerAnimated:YES];
+//    }];
 }
 - (void)didUploadedFail:(NSString *)failMessage {
-    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传交易卡信息失败:%@",failMessage]];
+//    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传交易卡信息失败:%@",failMessage]];
+    [self.hud showFailWithText:@"上传交易卡信息失败" andDetailText:failMessage onCompletion:^{}];
 }
 
 #pragma mask 2 UITableViewDataSource, UITableViewDelegate
@@ -262,5 +270,10 @@ HttpUploadT0CardDelegate>
     }
     return _tableView;
 }
-
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
+}
 @end

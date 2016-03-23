@@ -11,7 +11,6 @@
 #import "Define_Header.h"
 #import "ChooseButton.h"
 #import "PublicInformation.h"
-#import "KVNProgress+CustomConfiguration.h"
 #import "Masonry.h"
 #import "ModelBusinessInfoSaved.h"
 #import "HTTPRequestFeeBusiness.h"
@@ -19,6 +18,7 @@
 #import "ModelRateInfoSaved.h"
 #import "RateChooseViewController.h"
 #import "VMRateTypes.h"
+#import "MBProgressHUD+CustomSate.h"
 
 static NSString* const kKVOBusiRateTypeSelected = @"rateTypeSelected";
 static NSString* const kKVOBusiProvinceNameSelected = @"provinceNameSelected";
@@ -32,6 +32,7 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     UIColor* lightBlue;
 }
 @property (nonatomic, strong) PullListSegView* pullSegView;
+@property (nonatomic, strong) MBProgressHUD* hud;
 
 // 费率
 @property (nonatomic, strong) UILabel* rateTitle;
@@ -239,65 +240,48 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
 // -- 查询省信息
 - (void) requestProvinces
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [KVNProgress show];
-    });
+    [self.hud showNormalWithText:@"正在查询'省'数据..." andDetailText:nil];
     NameWeakSelf(wself);
     [self.sqlAreas requestAreasOnCode:@"156" onSucBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress dismiss];
-        });
+        [self.hud hideOnCompletion:nil];
         wself.pullSegView.tableView.dataSource = (id)wself.sqlAreas;
         wself.pullSegView.tableView.delegate = (id)wself.sqlAreas;
         [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
         [wself.provinceButton turningDirection:NO];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
-        });
+        [wself.hud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:^{
+        }];
     }];
 }
 // -- 查询市信息
 - (void) requestCitiesOnProvinceCode:(NSString*)provinceCode
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [KVNProgress show];
-    });
+    [self.hud showNormalWithText:@"正在查询'市'数据..." andDetailText:nil];
     NameWeakSelf(wself);
     [self.sqlAreas requestAreasOnCode:provinceCode onSucBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress dismiss];
-        });
+        [wself.hud hideOnCompletion:nil];
         wself.pullSegView.tableView.dataSource = (id)wself.sqlAreas;
         wself.pullSegView.tableView.delegate = (id)wself.sqlAreas;
         [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
         [wself.cityButton turningDirection:NO];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
-        });
+        [wself.hud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:nil];
     }];
 }
 // -- 查询商户信息
 - (void) requestBusinessesOnRateCode:(NSString*)rateCode andAreaCode:(NSString*)areaCode
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [KVNProgress show];
-    });
+    [self.hud showNormalWithText:@"正在查询'商户'数据..." andDetailText:nil];
     NameWeakSelf(wself);
     [self.businessHttp requestFeeBusinessOnFeeType:rateCode areaCode:areaCode onSucBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress dismissWithCompletion:^{
-                wself.pullSegView.tableView.dataSource = (id)wself.businessHttp;
-                wself.pullSegView.tableView.delegate = (id)wself.businessHttp;
-                [wself.pullSegView showAnimation];
-            }];
-        });
+        [wself.hud hideOnCompletion:^{
+            wself.pullSegView.tableView.dataSource = (id)wself.businessHttp;
+            wself.pullSegView.tableView.delegate = (id)wself.businessHttp;
+            [wself.pullSegView showAnimation];
+        }];
     } onErrBlock:^(NSError *error) {
         [wself.businessButton turningDirection:NO];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
-        });
+        [wself.hud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:nil];
     }];
 }
 
@@ -562,6 +546,12 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     }
     return _rateTypes;
 }
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
+}
 
 #pragma mask 0 生命周期
 
@@ -637,6 +627,7 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     [self.view addSubview:self.clearingButton];
     
     [self.view addSubview:self.pullSegView];
+    [self.view addSubview:self.hud];
 }
 
 - (void) relayoutSubViews {

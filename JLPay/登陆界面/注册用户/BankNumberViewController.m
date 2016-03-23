@@ -11,7 +11,7 @@
 #import "PublicInformation.h"
 #import "ASIFormDataRequest.h"
 #import "UserRegisterViewController.h"
-#import "KVNProgress.h"
+#import "MBProgressHUD+CustomSate.h"
 
 @interface BankNumberViewController()<DynamicPickerViewDelegate, ASIHTTPRequestDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) UITextField* bankNameField;
@@ -20,6 +20,7 @@
 @property (nonatomic, strong) UIButton* searchButton;
 @property (nonatomic, strong) DynamicPickerView* pickerView;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
+@property (nonatomic, strong) MBProgressHUD* hud;
 
 @property (nonatomic, strong) NSArray* bankInfos;
 @property (nonatomic, assign) int selectedIndex;
@@ -58,7 +59,7 @@
         return;
     }
     // HTTP请求
-    [KVNProgress show];
+    [self.hud showNormalWithText:nil andDetailText:nil];
     [self requestBankInfoWithBankName:self.bankNameField.text andBranchName:self.branchNameField.text];
 }
 
@@ -88,12 +89,12 @@
     NSDictionary* responseInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
     
     if (error) {
-        [KVNProgress showErrorWithStatus:@"响应数据解析失败!"];
+        [self.hud showFailWithText:@"响应数据解析失败!" andDetailText:nil onCompletion:nil];
         return;
     }
     
     self.bankInfos = [responseInfo objectForKey:@"bankList"];
-    [KVNProgress dismiss];
+    [self.hud hideOnCompletion:nil];
     // 没查到银行号列表
     if (!self.bankInfos || self.bankInfos.count == 0) {
         [PublicInformation makeCentreToast:@"查询到的银行列表为空,请重新输入并查询"];
@@ -117,7 +118,7 @@
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
-    [KVNProgress showErrorWithStatus:@"查询联行号失败:网络异常"];
+    [self.hud showFailWithText:@"查询联行号失败:网络异常" andDetailText:nil onCompletion:nil];
 }
 
 
@@ -156,7 +157,7 @@
     [self.view addSubview:self.branchNameField];
     [self.view addSubview:self.searchButton];
     [self.view addSubview:self.pickerView];
-    
+    [self.view addSubview:self.hud];
     self.selectedIndex = -1;
     
     UIBarButtonItem* doneItem = [[UIBarButtonItem alloc] initWithTitle:@"完成"
@@ -272,5 +273,11 @@
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
+}
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
 }
 @end

@@ -11,7 +11,7 @@
 #import "HttpRequestT0CardList.h"
 #import "PublicInformation.h"
 #import "SubAndDetailLabelCell.h"
-#import "KVNProgress+CustomConfiguration.h"
+#import "MBProgressHUD+CustomSate.h"
 #import "PullRefrashView.h"
 
 @interface T_0CardListViewController()
@@ -20,6 +20,7 @@
 @property (nonatomic, strong) UIBarButtonItem* addtionButton;
 @property (nonatomic, assign) CGFloat lastScrollOffsetY;
 @property (nonatomic, strong) PullRefrashView* pullRefrashView;
+@property (nonatomic, strong) MBProgressHUD* hud;
 @end
 
 @implementation T_0CardListViewController
@@ -70,6 +71,7 @@
     
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addCardPicture:)]];
     
+    [self.view addSubview:self.hud];
     self.view.backgroundColor = [UIColor colorWithWhite:0.98 alpha:1];
 }
 
@@ -81,12 +83,11 @@
 #pragma mask ---- HttpRequst &&  HttpRequestT0CardListDelegate
 // -- 申请数据
 - (void) startRequestCardInfoList {
-    [KVNProgress show];
+    [self.hud showNormalWithText:@"数据加载中..." andDetailText:nil];
     [[HttpRequestT0CardList sharedInstance] requestT_0CardListOnDelegate:self];
 }
 - (void)didRequestSuccess {
-    [KVNProgress dismiss];
-    
+    [self.hud showSuccessWithText:@"加载成功" andDetailText:nil onCompletion:nil];
     [self.tableView reloadData];
     if (self.pullRefrashView.isRefreshing) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -98,7 +99,7 @@
     }
 }
 - (void)didRequestFail:(NSString *)failMessage {
-    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"查询失败:%@",failMessage] duration:3];
+    [self.hud showFailWithText:@"查询失败" andDetailText:failMessage onCompletion:nil];
     [self.tableView reloadData];
     if (self.pullRefrashView.isRefreshing) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -211,5 +212,11 @@
     return _tableView;
 }
 
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
+}
 
 @end

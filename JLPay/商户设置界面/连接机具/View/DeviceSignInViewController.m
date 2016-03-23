@@ -9,7 +9,7 @@
 #import "DeviceSignInViewController.h"
 #import "Define_Header.h"
 #import "Toast+UIView.h"
-#import "KVNProgress.h"
+#import "MBProgressHUD+CustomSate.h"
 #import "DeviceManager.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "ModelUserLoginInformation.h"
@@ -39,6 +39,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
 @property (nonatomic, strong) UIButton* sureButton;                 // “确定”按钮
 @property (nonatomic, strong) UITableView* tableView;               // 设备列表的表视图
 @property (nonatomic, strong) NSTimer*  deviceWaitingTimer;               // 等待超时定时器
+
+@property (nonatomic, strong) MBProgressHUD* progressHud;
 @end
 
 
@@ -88,7 +90,8 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [KVNProgress dismiss];
+//    [KVNProgress dismiss];
+    [self.progressHud hide:YES];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
     [[ViewModelTCPHandleWithDevice getInstance] stopDownloading];
@@ -128,9 +131,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
     [self.view addSubview:self.sureButton];
     [self.view addSubview:self.tableView];
     
+    [self.view addSubview:self.progressHud];
+    
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-
 }
 
 #pragma mask ------------------------------ 表视图 delegate & dataSource
@@ -294,12 +298,20 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask : -------------  DeviceManagerDelegate
 - (void)didConnectedDeviceResult:(BOOL)result onSucSN:(NSString *)SNVersion onErrMsg:(NSString *)errMsg
 {
+    NameWeakSelf(wself);
     [self stopDeviceTimer];
     if (!result) {
-        [KVNProgress showErrorWithStatus:errMsg];
+        [wself.progressHud showFailWithText:@"连接设备失败" andDetailText:errMsg onCompletion:^{}];
+//        [self.progressHud hideOnCompletion:^{
+//        }];
         return;
     }
-    [KVNProgress dismiss];
+    [wself.progressHud showSuccessWithText:@"连接设备成功" andDetailText:@"请选择设备,并'绑定'" onCompletion:^{
+    }];
+//    [self.progressHud hideOnCompletion:^{
+//        NSLog(@"隐藏已经结束了");
+//        
+//    }];
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
@@ -328,11 +340,17 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (result) {
         [self downloadWorkKey];
     } else {
-        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"绑定设备失败:%@",errMsg]];
+        NameWeakSelf(wself);
+        [wself.progressHud showFailWithText:@"绑定设备失败" andDetailText:errMsg onCompletion:^{
+            
+        }];
+//        [self.progressHud hideOnCompletion:^{
+//        }];
     }
 }
 // 设置工作密钥的回调
 - (void)didWroteWorkKeyResult:(BOOL)result onErrMsg:(NSString *)errMsg {
+    NameWeakSelf(wself);
     if (result) {
         // 更新批次号
         [PublicInformation updateSignSort];
@@ -344,14 +362,17 @@ UIActionSheetDelegate,UIAlertViewDelegate
             // 部分设备退出比较慢，放在副线程
             [[DeviceManager sharedInstance] clearAndCloseAllDevices];
         });
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showSuccessWithStatus:@"设备绑定成功!" completion:^{
-                [self.navigationController popViewControllerAnimated:YES];
-            }];
-        });
+        [wself.progressHud showSuccessWithText:@"绑定设备成功" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
+//        [self.progressHud hideOnCompletion:^{
+//        }];
     } else {
-        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"绑定设备失败:%@",errMsg]];
+        [wself.progressHud showFailWithText:@"绑定设备失败" andDetailText:errMsg onCompletion:^{
+            
+        }];
+//        [self.progressHud hideOnCompletion:^{
+//        }];
     }
 }
 
@@ -375,7 +396,12 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (result) {
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
-        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载主密钥失败:\n%@",errorMessge]];
+        NameWeakSelf(wself);
+        [wself.progressHud showFailWithText:@"下载主密钥失败" andDetailText:errorMessge onCompletion:^{
+            
+        }];
+//        [self.progressHud hideOnCompletion:^{
+//        }];
     }
 }
 /* 工作密钥下载回调 */
@@ -385,7 +411,10 @@ UIActionSheetDelegate,UIAlertViewDelegate
         JLPrint(@"写工作密钥:[%@]",workKey);
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
-        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"下载工作密钥失败:\n%@",errorMessge]];
+        NameWeakSelf(wself);
+        [wself.progressHud showFailWithText:@"下载工作密钥失败" andDetailText:errorMessge onCompletion:^{}];
+//        [self.progressHud hideOnCompletion:^{
+//        }];
     }
 }
 
@@ -413,7 +442,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (buttonIndex != 0) {
         // 启动设备扫描
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:nil];
-        [KVNProgress showWithStatus:@"设备连接中..."];
+        [self.progressHud showNormalWithText:@"设备连接中..." andDetailText:nil];
         // 异步启动等待定时器
         [self startDeviceTimer];
     }
@@ -451,7 +480,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     // 下载主密钥 -- 需要判断设备是否连接
     if ([[DeviceManager sharedInstance] isConnectedOnSNVersionNum:self.selectedSNVersionNum]) {
-        [KVNProgress showWithStatus:@"设备绑定中..."];
+        [self.progressHud showNormalWithText:@"设备绑定中..." andDetailText:nil];
         [self downloadMainKey];
     } else {
         [PublicInformation makeCentreToast:@"设备未连接"];
@@ -472,7 +501,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // 异步调起等待定时器
         [self startDeviceTimer];
         [[DeviceManager sharedInstance] clearAndCloseAllDevices];
-        [KVNProgress showWithStatus:@"设备连接中..."];
+        [self.progressHud showNormalWithText:@"设备连接中..." andDetailText:nil];
         [[DeviceManager sharedInstance] setDelegate:self];
         [[DeviceManager sharedInstance] makeDeviceEntryOnDeviceType:self.selectedDevice];
         [[DeviceManager sharedInstance] openDeviceWithIdentifier:nil];
@@ -553,8 +582,12 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void) waitingTimeoutWithMsg {
     [self stopDeviceTimer];
-    [KVNProgress showErrorWithStatus:@"设备连接超时"];
+    NameWeakSelf(wself);
+    [wself.progressHud showWarnWithText:@"设备连接超时" andDetailText:@"请点击'搜索'按钮重新搜索" onCompletion:^{}];
+//    [self.progressHud hideOnCompletion:^{
+//    }];
 }
+
 
 
 
@@ -589,7 +622,12 @@ UIActionSheetDelegate,UIAlertViewDelegate
     }
     return _tableView;
 }
-
+- (MBProgressHUD *)progressHud {
+    if (!_progressHud) {
+        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _progressHud;
+}
 
 @end
 

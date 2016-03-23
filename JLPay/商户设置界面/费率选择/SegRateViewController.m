@@ -13,7 +13,8 @@
 #import "HttpRequestAreas.h"
 #import "ModelRateInfoSaved.h"
 #import "PublicInformation.h"
-#import "KVNProgress+CustomConfiguration.h"
+//#import "KVNProgress+CustomConfiguration.h"
+#import "MBProgressHUD+CustomSate.h"
 #import "Masonry.h"
 #import "ModelBusinessInfoSaved.h"
 #import "RateChooseViewController.h"
@@ -33,7 +34,7 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     UIColor* segmentTintColor;
 }
 @property (nonatomic, strong) PullListSegView* pullSegView;
-
+@property (nonatomic, strong) MBProgressHUD* hud;
 // 费率
 @property (nonatomic, strong) UILabel* rateTitle;
 @property (nonatomic, strong) ChooseButton* rateButton;
@@ -233,40 +234,46 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
 
 // -- 申请省数据
 - (void) requestingProvinces {
-    [self.http terminateRequesting];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [KVNProgress show];
-    });
     NameWeakSelf(wself);
+    [self.http terminateRequesting];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [KVNProgress show];
+//    });
+    [self.hud showNormalWithText:@"正在获取'省'数据..." andDetailText:nil];
     [self.http requestAreasOnCode:@"156" onSucBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress dismiss];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [KVNProgress dismiss];
+//        });
+        [wself.hud hideOnCompletion:nil];
         [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
         [wself.provinceButton turningDirection:NO];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
+//        });
+        [wself.hud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:nil];
     }];
 }
 // -- 申请市数据
 - (void) requestingCitiesOnProvinceCode:(NSString*)provinceCode {
     [self.http terminateRequesting];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [KVNProgress show];
-    });
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [KVNProgress show];
+//    });
+    [self.hud showNormalWithText:@"正在查询'市'数据..." andDetailText:nil];
     NameWeakSelf(wself);
     [self.http requestAreasOnCode:provinceCode onSucBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress dismiss];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [KVNProgress dismiss];
+//        });
+        [wself.hud hideOnCompletion:nil];
         [wself.pullSegView showAnimation];
     } onErrBlock:^(NSError *error) {
         [wself.cityButton turningDirection:NO];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [KVNProgress showErrorWithStatus:[error localizedDescription] duration:2];
+//        });
+        [wself.hud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:nil];
     }];
 }
 
@@ -292,6 +299,12 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
         _pullSegView = [[PullListSegView alloc] init];
     }
     return _pullSegView;
+}
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
 }
 // 费率
 - (ChooseButton *)rateButton {
@@ -490,6 +503,7 @@ static NSString* const kKVOCitySelected = @"cityNameSelected";
     [self.view addSubview:self.clearingButton];
     
     [self.view addSubview:self.pullSegView];
+    [self.view addSubview:self.hud];
 }
 
 - (void) relayoutSubViews {

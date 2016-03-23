@@ -10,7 +10,6 @@
 #import "TotalAmountDisplayView.h"
 #import "DetailsCell.h"
 #import "RevokeViewController.h"
-#import "KVNProgress.h"
 #import "PublicInformation.h"
 #import "DatePickerView.h"
 #import "Define_Header.h"
@@ -19,6 +18,7 @@
 #import "ViewModelOtherPayDetails.h"
 #import "PullRefrashView.h"
 #import "TriangleLeftTurnView.h"
+#import "MBProgressHUD+CustomSate.h"
 
 @interface TransDetailsViewController()
 <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,
@@ -40,7 +40,7 @@ ViewModelMPOSDetailsDelegate
 @property (nonatomic, strong) UIButton* dateButtonEnd;              // 终止日期按钮
 @property (nonatomic, strong) TotalAmountDisplayView* totalView;    // 总金额显示view
 @property (nonatomic, strong) PullRefrashView* pullRefrashView;     // 下拉刷新视图
-
+@property (nonatomic, strong) MBProgressHUD* hud;
 #pragma mask : model
 @property (nonatomic, retain) id dataSource;
 
@@ -269,7 +269,7 @@ NSInteger logCount = 0;
 #pragma mask ---- 数据源请求 & 回调: ViewModelMPOSDetailsDelegate
 /* HTTP请求数据 */
 - (void) requestDataOnStartDate:(NSString*)startDate endDate:(NSString*)endDate {
-    [KVNProgress show];
+    [self.hud showNormalWithText:@"数据加载中..." andDetailText:nil];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self.dataSource requestDetailsWithDelegate:self beginTime:startDate endTime:endDate];
     });
@@ -278,9 +278,7 @@ NSInteger logCount = 0;
 }
 
 - (void)didRequestingSuccessful {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [KVNProgress dismiss];
-    });
+    [self.hud showSuccessWithText:@"加载成功" andDetailText:nil onCompletion:nil];
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }
@@ -298,7 +296,7 @@ NSInteger logCount = 0;
     [self.dataSource prepareSelector];
     [self.tableView reloadData];
     [self calculateTotalAmount];
-    [KVNProgress showErrorWithStatus:message];
+    [self.hud showFailWithText:@"加载失败" andDetailText:message onCompletion:nil];
 }
 
 // 扫描明细数组,计算总金额，总笔数
@@ -348,7 +346,6 @@ NSInteger logCount = 0;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.dataSource terminateRequesting];
-    [KVNProgress dismiss];
     // 清除数据源的过滤条件
     [self.dataSource removeFilter];
 }
@@ -437,7 +434,7 @@ NSInteger logCount = 0;
     [self.tableView addSubview:self.pullRefrashView];
     [self.view addSubview:self.tableView];
 
-    
+    [self.view addSubview:self.hud];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 }
@@ -580,6 +577,12 @@ NSInteger logCount = 0;
         _dateButtonEnd.tag = 199;
     }
     return _dateButtonEnd;
+}
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
 }
 
 @end

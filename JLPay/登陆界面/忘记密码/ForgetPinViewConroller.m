@@ -9,7 +9,7 @@
 #import "ForgetPinViewConroller.h"
 #import "PublicInformation.h"
 #import "ASIFormDataRequest.h"
-#import "KVNProgress.h"
+#import "MBProgressHUD+CustomSate.h"
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 
@@ -31,7 +31,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) UITextField* userNewPwdField;
 @property (nonatomic, strong) UIButton* sureButton;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
-
+@property (nonatomic, strong) MBProgressHUD* hud;
 @end
 
 @implementation ForgetPinViewConroller
@@ -52,7 +52,7 @@ typedef enum : NSUInteger {
     [self.httpRequest addPostValue:self.userIDField.text forKey:@"identityNo"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     [self.httpRequest startAsynchronous];
-    [KVNProgress show];
+    [self.hud showNormalWithText:@"正在修改..." andDetailText:nil];
 }
 
 - (NSString*) encryptBy3DESForPin:(NSString*)pin {
@@ -64,21 +64,22 @@ typedef enum : NSUInteger {
 }
 #pragma mask --- ASIHTTPRequestDelegate
 - (void)requestFinished:(ASIHTTPRequest *)request {
+    NameWeakSelf(wself);
     NSData* data = [self.httpRequest responseData];
     [self.httpRequest clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     if ([[dataDict valueForKey:@"code"] intValue] == 0) {
-    [KVNProgress showSuccessWithStatus:@"修改密码成功!" completion:^{
-        [self.navigationController popViewControllerAnimated:YES];
-    }];
+        [self.hud showSuccessWithText:@"修改成功!" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
     } else {
-        [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"修改密码失败:%@",[dataDict valueForKey:@"message"]]];
+        [self.hud showFailWithText:@"修改失败" andDetailText:[dataDict valueForKey:@"message"] onCompletion:nil];
     }
     self.httpRequest = nil;
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequest clearDelegatesAndCancel];
-    [KVNProgress showErrorWithStatus:@"网络异常,请检查网络"];
+    [self.hud showFailWithText:@"网络异常,请检查网络" andDetailText:nil onCompletion:nil];
     self.httpRequest = nil;
 }
 
@@ -129,6 +130,7 @@ typedef enum : NSUInteger {
     [self.view addSubview:self.userIDField];
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.sureButton];
+    [self.view addSubview:self.hud];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -208,7 +210,6 @@ typedef enum : NSUInteger {
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.httpRequest clearDelegatesAndCancel];
-    [KVNProgress dismiss];
 }
 
 // 给textField生成的左边的描述label
@@ -336,6 +337,12 @@ typedef enum : NSUInteger {
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
+}
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _hud;
 }
 
 @end
