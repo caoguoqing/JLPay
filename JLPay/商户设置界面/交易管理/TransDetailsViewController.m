@@ -241,7 +241,7 @@ NSInteger logCount = 0;
         if (buttonIndex == 1) { // 查询
             UITextField* textField = [alertView textFieldAtIndex:0];
             if (textField.text == nil || [textField.text length] == 0) {
-                [PublicInformation makeCentreToast:@"查询条件为空,请输入卡号或金额"];
+                [self.hud showWarnWithText:@"查询条件为空,请输入卡号或金额" andDetailText:nil onCompletion:nil];
                 return;
             }
             // 进行模糊条件查询
@@ -252,7 +252,7 @@ NSInteger logCount = 0;
                 [self.tableView reloadData];
                 [self calculateTotalAmount];
             } else {
-                [PublicInformation makeToast:@"未查询到匹配的明细"];
+                [self.hud showWarnWithText:@"未查询到匹配的明细" andDetailText:nil onCompletion:nil];
                 [self.dataSource clearDetails];
                 [self.tableView reloadData];
                 [self calculateTotalAmount];
@@ -278,13 +278,14 @@ NSInteger logCount = 0;
 }
 
 - (void)didRequestingSuccessful {
-    [self.hud showSuccessWithText:@"加载成功" andDetailText:nil onCompletion:nil];
     if ([self.pullRefrashView isRefreshing]) {
         [self resetPullRefreshView];
     }
     [self.dataSource prepareSelector];
     if ([self.dataSource totalCountOfTrans] == 0) {
-        [PublicInformation makeToast:@"查询日期无交易明细"];
+        [self.hud showWarnWithText:@"查询日期无交易明细" andDetailText:nil onCompletion:nil];
+    } else {
+        [self.hud showSuccessWithText:@"查询成功" andDetailText:nil onCompletion:nil];
     }
     [self.tableView reloadData];
     [self calculateTotalAmount];
@@ -305,7 +306,6 @@ NSInteger logCount = 0;
     [self.totalView setTotalRows:[NSString stringWithFormat:@"%d", [self.dataSource totalCountOfTrans]]];
     [self.totalView setSucRows:[NSString stringWithFormat:@"%d",[self.dataSource countOfNormalTrans]]];
     [self.totalView setRevokeRows:[NSString stringWithFormat:@"%d", [self.dataSource countofCancelTrans]]];
-
 }
 
 
@@ -455,19 +455,19 @@ NSInteger logCount = 0;
 
     if (date.intValue > [PublicInformation nowDate].intValue) {
         if (tagButton == self.dateButtonBegin.tag) {
-            [PublicInformation makeCentreToast:@"起始日期不能大于当前系统日期!"];
+            [self.hud showWarnWithText:@"起始日期不能大于当前系统日期!" andDetailText:nil onCompletion:nil];
         }
         else if (tagButton == self.dateButtonEnd.tag) {
-            [PublicInformation makeCentreToast:@"终止日期不能大于当前系统日期!"];
+            [self.hud showWarnWithText:@"终止日期不能大于当前系统日期!" andDetailText:nil onCompletion:nil];
         }
         valid = NO;
     }
     else if (dateInterval > 90) {
         if (tagButton == self.dateButtonBegin.tag) {
-            [PublicInformation makeCentreToast:@"起始日期不能早于当前日期3个月!"];
+            [self.hud showWarnWithText:@"起始日期不能早于当前日期3个月!" andDetailText:nil onCompletion:nil];
         }
         else if (tagButton == self.dateButtonEnd.tag) {
-            [PublicInformation makeCentreToast:@"终止日期不能早于当前日期3个月!"];
+            [self.hud showWarnWithText:@"终止日期不能早于当前日期3个月!" andDetailText:nil onCompletion:nil];
         }
         valid = NO;
     }
