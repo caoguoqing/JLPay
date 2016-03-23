@@ -112,6 +112,7 @@
     [f63 appendString:[self f63_6ChannelTerminal]];
     [f63 appendString:[self f63_7ChoosedBusiness]];
     [f63 appendString:[self f63_8ChoosedTerminal]];
+    NSLog(@"打包的63域[%@]",f63);
     return f63;
 }
 

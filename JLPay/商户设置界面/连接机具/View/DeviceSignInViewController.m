@@ -90,7 +90,6 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    [KVNProgress dismiss];
     [self.progressHud hide:YES];
     // 在界面退出后控制器可能会被释放,所以要将 delegate 置空
     [[DeviceManager sharedInstance] clearAndCloseAllDevices];
@@ -298,20 +297,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
 #pragma mask : -------------  DeviceManagerDelegate
 - (void)didConnectedDeviceResult:(BOOL)result onSucSN:(NSString *)SNVersion onErrMsg:(NSString *)errMsg
 {
-    NameWeakSelf(wself);
     [self stopDeviceTimer];
     if (!result) {
-        [wself.progressHud showFailWithText:@"连接设备失败" andDetailText:errMsg onCompletion:^{}];
-//        [self.progressHud hideOnCompletion:^{
-//        }];
+        [self.progressHud showFailWithText:@"连接设备失败" andDetailText:errMsg onCompletion:^{}];
         return;
     }
-    [wself.progressHud showSuccessWithText:@"连接设备成功" andDetailText:@"请选择设备,并'绑定'" onCompletion:^{
+    [self.progressHud showSuccessWithText:@"连接设备成功" andDetailText:@"请选择设备,并'绑定'" onCompletion:^{
     }];
-//    [self.progressHud hideOnCompletion:^{
-//        NSLog(@"隐藏已经结束了");
-//        
-//    }];
     if (self.SNVersionNums.count == 1 && [[self.SNVersionNums objectAtIndex:0] isEqualToString:@"无"]) {
         [self.SNVersionNums removeAllObjects];
     }
@@ -340,12 +332,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (result) {
         [self downloadWorkKey];
     } else {
-        NameWeakSelf(wself);
-        [wself.progressHud showFailWithText:@"绑定设备失败" andDetailText:errMsg onCompletion:^{
+        [self.progressHud showFailWithText:@"绑定设备失败" andDetailText:errMsg onCompletion:^{
             
         }];
-//        [self.progressHud hideOnCompletion:^{
-//        }];
     }
 }
 // 设置工作密钥的回调
@@ -362,17 +351,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
             // 部分设备退出比较慢，放在副线程
             [[DeviceManager sharedInstance] clearAndCloseAllDevices];
         });
-        [wself.progressHud showSuccessWithText:@"绑定设备成功" andDetailText:nil onCompletion:^{
+        [self.progressHud showSuccessWithText:@"绑定设备成功" andDetailText:nil onCompletion:^{
             [wself.navigationController popViewControllerAnimated:YES];
         }];
-//        [self.progressHud hideOnCompletion:^{
-//        }];
     } else {
-        [wself.progressHud showFailWithText:@"绑定设备失败" andDetailText:errMsg onCompletion:^{
+        [self.progressHud showFailWithText:@"绑定设备失败" andDetailText:errMsg onCompletion:^{
             
         }];
-//        [self.progressHud hideOnCompletion:^{
-//        }];
     }
 }
 
@@ -396,12 +381,9 @@ UIActionSheetDelegate,UIAlertViewDelegate
     if (result) {
         [[DeviceManager sharedInstance] writeMainKey:mainKey onSNVersion:self.selectedSNVersionNum];
     } else {
-        NameWeakSelf(wself);
-        [wself.progressHud showFailWithText:@"下载主密钥失败" andDetailText:errorMessge onCompletion:^{
+        [self.progressHud showFailWithText:@"下载主密钥失败" andDetailText:errorMessge onCompletion:^{
             
         }];
-//        [self.progressHud hideOnCompletion:^{
-//        }];
     }
 }
 /* 工作密钥下载回调 */
@@ -411,10 +393,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         JLPrint(@"写工作密钥:[%@]",workKey);
         [[DeviceManager sharedInstance] writeWorkKey:workKey onSNVersion:self.selectedSNVersionNum];
     } else {
-        NameWeakSelf(wself);
-        [wself.progressHud showFailWithText:@"下载工作密钥失败" andDetailText:errorMessge onCompletion:^{}];
-//        [self.progressHud hideOnCompletion:^{
-//        }];
+        [self.progressHud showFailWithText:@"下载工作密钥失败" andDetailText:errorMessge onCompletion:^{}];
     }
 }
 
@@ -582,10 +561,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 }
 - (void) waitingTimeoutWithMsg {
     [self stopDeviceTimer];
-    NameWeakSelf(wself);
-    [wself.progressHud showWarnWithText:@"设备连接超时" andDetailText:@"请点击'搜索'按钮重新搜索" onCompletion:^{}];
-//    [self.progressHud hideOnCompletion:^{
-//    }];
+    [self.progressHud showWarnWithText:@"设备连接超时" andDetailText:@"请点击'搜索'按钮重新搜索" onCompletion:^{}];
 }
 
 

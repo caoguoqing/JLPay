@@ -89,12 +89,18 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 }
 
 - (void) hideOnCompletion:(void (^) (void))completion {
-    self.completionBlock = completion;
-    [self hide:YES];
+    __weak typeof(self)wself = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        wself.completionBlock = completion;
+        [wself hide:YES];
+    });
 }
 - (void) hideDelay:(NSTimeInterval)delay onCompletion:(void (^) (void))completion {
-    self.completionBlock = completion;
-    [self hide:YES afterDelay:delay];
+    __weak typeof(self)wself = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        wself.completionBlock = completion;
+        [wself hide:YES afterDelay:delay];
+    });
 }
 
 
