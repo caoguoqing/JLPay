@@ -126,6 +126,9 @@
         _segmentedControl.selectedType = CustSegSelectedTypeSingleRect;
         _segmentedControl.layer.borderColor = [PublicInformation returnCommonAppColor:@"red"].CGColor;
         _segmentedControl.layer.borderWidth = 1.f;
+        if (self.segVCTypes.segRateTypesInfo.count == 1) {
+            _segmentedControl.hidden = YES;
+        }
     }
     return _segmentedControl;
 }

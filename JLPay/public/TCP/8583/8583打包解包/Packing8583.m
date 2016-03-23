@@ -101,6 +101,19 @@
     return F60;
 }
 
+#pragma mask : 生成F63
++ (NSString*) makeF63OnTranType:(NSString*)tranType {
+    NSMutableString* f63 = [NSMutableString string];
+    [f63 appendString:[self f63_1UploadChannel]];
+    [f63 appendString:[self f63_2RateType]];
+    [f63 appendString:[self f63_3SettlementType]];
+    [f63 appendString:[self f63_4AreaCode]];
+    [f63 appendString:[self f63_5ChannelBusiness]];
+    [f63 appendString:[self f63_6ChannelTerminal]];
+    [f63 appendString:[self f63_7ChoosedBusiness]];
+    [f63 appendString:[self f63_8ChoosedTerminal]];
+    return f63;
+}
 
 
 + (NSString*) makeF60ByLast60:(NSString*)last60 {
@@ -198,6 +211,81 @@
     return f60_5Fee;
 }
 
+// 63.1 上送渠道
++ (NSString*) f63_1UploadChannel {
+    return @"1"; // 手机端统一送1
+}
+// 63.2 费率类型
++ (NSString*) f63_2RateType {
+    if ([ModelRateInfoSaved beenSaved]) {
+        return [[ModelRateInfoSaved rateValueOnRateType:[ModelRateInfoSaved rateTypeSelected]] substringWithRange:NSMakeRange(1, 1)];
+    }
+    else if ([ModelBusinessInfoSaved beenSaved]) {
+        return @"9";
+    }
+    else {
+        return @"0";
+    }
+}
+// 63.3 结算方式
++ (NSString*) f63_3SettlementType {
+    NSString* settlementType = nil;
+    switch ([[ModelSettlementInformation sharedInstance] curSettlementType]) {
+        case SETTLEMENTTYPE_T_1:
+            settlementType = @"00";
+            break;
+        case SETTLEMENTTYPE_T_0:
+            settlementType = @"20";
+            break;
+        case SETTLEMENTTYPE_T_6:
+            settlementType = @"26";
+            break;
+        case SETTLEMENTTYPE_T_15:
+            settlementType = @"27";
+            break;
+        case SETTLEMENTTYPE_T_30:
+            settlementType = @"28";
+            break;
+        default:
+            settlementType = @"00";
+            break;
+    }
+    return settlementType;
+}
+// 63.4 地区码
++ (NSString*) f63_4AreaCode {
+    if ([ModelRateInfoSaved beenSaved]) {
+        return [ModelRateInfoSaved cityCode];
+    } else {
+        return @"0000";
+    }
+}
+// 63.5 商户号
++ (NSString*) f63_5ChannelBusiness {
+    return @"000000000000000";
+}
+// 63.6 终端号
++ (NSString*) f63_6ChannelTerminal {
+    return @"00000000";
+}
+// 63.7 固定商户号
++ (NSString*) f63_7ChoosedBusiness {
+    if ([ModelBusinessInfoSaved beenSaved]) {
+        return [ModelBusinessInfoSaved businessCode];
+    } else {
+        return @"000000000000000";
+    }
+}
+// 63.8 固定终端号
++ (NSString*) f63_8ChoosedTerminal {
+    if ([ModelBusinessInfoSaved beenSaved]) {
+        return [ModelBusinessInfoSaved terminalCode];
+    } else {
+        return @"00000000";
+    }
+}
+
+
 
 
 // 执行排序
@@ -274,6 +362,7 @@
         }
     }
 }
+
 
 
 

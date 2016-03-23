@@ -13,7 +13,6 @@
 #import "DeleteButton.h"
 #import "Packing8583.h"
 #import "SettlementInfoViewController.h"
-//#import "HTTPRequestSettlementInfo.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
 #import "ModelUserLoginInformation.h"
@@ -282,7 +281,10 @@ UITableViewDataSource,UITableViewDelegate>
     [alert appendFormat:@"单日可刷额度:   ￥%@\n",[[VMT_0InfoRequester sharedInstance] amountAvilable]];
     [alert appendFormat:@"手续费率:      +%@%%\n",[[VMT_0InfoRequester sharedInstance] T_0MoreRate]];
     [alert appendFormat:@"转账手续费:    ￥%@", [[VMT_0InfoRequester sharedInstance] T_0ExtraFee]];
-    [JCAlertView showOneButtonWithTitle:@"T+0温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"确定" Click:^{}];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [JCAlertView showOneButtonWithTitle:@"T+0温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"确定" Click:^{
+        }];
+    });
 }
 
 
@@ -328,7 +330,7 @@ UITableViewDataSource,UITableViewDelegate>
             inputsValid = NO;
         }
     }
-    else if ([ModelBusinessInfoSaved beenSaved]) {
+    else if ([ModelUserLoginInformation allowedMoreBusiness] && [ModelBusinessInfoSaved beenSaved]) {
         NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@][%@]\n是否继续刷卡?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
         [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
         } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
@@ -336,7 +338,7 @@ UITableViewDataSource,UITableViewDelegate>
         }];
         inputsValid = NO;
     }
-    else if ([ModelRateInfoSaved beenSaved]) {
+    else if ([ModelUserLoginInformation allowedMoreRate] && [ModelRateInfoSaved beenSaved]) {
         NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@][%@]\n是否继续刷卡?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
         [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
         } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
@@ -363,7 +365,9 @@ UITableViewDataSource,UITableViewDelegate>
         [viewcon setSFloatMoney:self.labelDisplayMoney.text];
         [viewcon setSIntMoney:[PublicInformation intMoneyFromDotMoney:self.labelDisplayMoney.text]];
     }
-    [self.navigationController pushViewController:viewController animated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController pushViewController:viewController animated:YES];
+    });
     
     // 重置金额
     self.labelDisplayMoney.text = @"0.00";

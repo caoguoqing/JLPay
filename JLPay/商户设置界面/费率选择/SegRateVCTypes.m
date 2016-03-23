@@ -7,6 +7,7 @@
 //
 
 #import "SegRateVCTypes.h"
+#import "ModelUserLoginInformation.h"
 
 static NSString* const kSegRateVCTypeRate =         @"费率设置";
 static NSString* const kSegRateVCTypeBusinessRate = @"商户设置";
@@ -28,8 +29,12 @@ static NSString* const kSegVCNameBusinessRate = @"SegBusiRateViewController";
 - (NSDictionary *)segRateTypesInfo {
     if (!_segRateTypesInfo) {
         NSMutableDictionary* types = [NSMutableDictionary dictionary];
-        [types setObject:kSegVCNameRate forKey:kSegRateVCTypeRate];
-        [types setObject:kSegVCNameBusinessRate forKey:kSegRateVCTypeBusinessRate];
+        if ([ModelUserLoginInformation allowedMoreRate]) {
+            [types setObject:kSegVCNameRate forKey:kSegRateVCTypeRate];
+        }
+        if ([ModelUserLoginInformation allowedMoreBusiness]) {
+            [types setObject:kSegVCNameBusinessRate forKey:kSegRateVCTypeBusinessRate];
+        }
         _segRateTypesInfo = [NSDictionary dictionaryWithDictionary:types];
     }
     return _segRateTypesInfo;

@@ -43,6 +43,9 @@
 #pragma mask : 生成F60
 + (NSString*) makeF60OnTrantype:(NSString*)tranType ;
 + (NSString*) makeF60ByLast60:(NSString*)last60;
+#pragma mask : 生成F63
++ (NSString*) makeF63OnTranType:(NSString*)tranType;
+
 
 #pragma mask : 域值设置:需要打包的
 - (void) setFieldAtIndex:(int)index withValue:(NSString*)value;
