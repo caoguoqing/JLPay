@@ -115,6 +115,15 @@
 
 // logo
 + (UIImage*) logoImageOfApp;
+// icon
++ (UIImage*) iconImageOfApp;
+// app name
++ (NSString*) appNameOnDifferentBranch;
+
+// telephone of company
++ (NSString*) telephoneOfCompany;
+// url of company
++ (NSString*) urlOfCompany;
 
 #pragma mask 0-------------------------------------------0 字符串相关
 // 去掉末尾多余的空白字符,并拷贝一份导出

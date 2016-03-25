@@ -103,6 +103,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         return @"unitepay.com.cn";
     }
 }
+
 /* 获取TCP端口 */
 + (NSString*) getTcpPort {
     NSString* port = nil;
@@ -113,23 +114,26 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         port = @"28090";
     }
     else if (TestOrProduce == 3) {
-        port = @"60701";
+        port = @"37580";
     }
     else if (TestOrProduce == 7) {
         port = @"9088";
     }
     else if (TestOrProduce == 4) {
-        port = @"60704";
+        port = @"37690";
     }
-    // 5: 内网测试75(2809) (TCP:60702,HTTP:60780)
     else if (TestOrProduce == 5) {
-        port = @"60702";
+        port = @"37590";
+    }
+    else if (TestOrProduce == 11) {
+        port = @"10090";
     }
     else {
         port = @"80";
     }
     return port;
 }
+
 /* 获取HTTP端口 */
 + (NSString*) getHTTPPort {
     NSString* port = nil;
@@ -137,13 +141,16 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         port = @"8088";
     }
     else if (TestOrProduce == 3) {
-        port = @"60780";
+        port = @"37588";
     }
     else if (TestOrProduce == 4) {
-        port = @"60705";
+        port = @"37688";
     }
     else if (TestOrProduce == 5) {
-        port = @"60780";
+        port = @"37588";
+    }
+    else if (TestOrProduce == 11) {
+        port = @"10088";
     }
     else {
         port = @"80";
@@ -675,6 +682,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return height;
 }
 
+
+// --------------- [app O单区分] ----------------
+
 // logo
 + (UIImage*) logoImageOfApp {
     UIImage* logoImage = nil;
@@ -687,8 +697,82 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 2) {
         logoImage = [UIImage imageNamed:@"AppLogoImageOuEr"];
     }
+    else if (BranchAppName == 3) {
+        logoImage = [UIImage imageNamed:@"AppLogoImageKFT"];
+    }
     return logoImage;
 }
+// icon
++ (UIImage*) iconImageOfApp {
+    UIImage* iconImage = nil;
+    if (BranchAppName == 0) {
+        iconImage = [UIImage imageNamed:@"AppIconImageJLPay"];
+    }
+    else if (BranchAppName == 1) {
+        iconImage = [UIImage imageNamed:@"AppIconImageWLS"];
+    }
+    else if (BranchAppName == 2) {
+        iconImage = [UIImage imageNamed:@"AppIconImageOuEr"];
+    }
+    else if (BranchAppName == 3) {
+        iconImage = [UIImage imageNamed:@"AppIconImageKFT"];
+    }
+    return iconImage;
+}
+// app name
++ (NSString*) appNameOnDifferentBranch {
+    NSString* appName = nil;
+    if (BranchAppName == 0) {
+        appName = @"捷联通";
+    }
+    else if (BranchAppName == 1) {
+        appName = @"微乐刷";
+    }
+    else if (BranchAppName == 2) {
+        appName = @"欧尔支付";
+    }
+    else if (BranchAppName == 3) {
+        appName = @"快付通";
+    }
+    return appName;
+}
+// telephone of company
++ (NSString*) telephoneOfCompany {
+    NSString* telephone = nil;
+    if (BranchAppName == 0) {
+        telephone = @"0755-86532999";
+    }
+    else if (BranchAppName == 1) {
+        telephone = @"待定...";
+    }
+    else if (BranchAppName == 2) {
+        telephone = @"400-119-2200";
+    }
+    else if (BranchAppName == 3) {
+        telephone = @"待定...";
+    }
+
+    return telephone;
+}
+// url of company
++ (NSString*) urlOfCompany {
+    NSString* url = nil;
+    if (BranchAppName == 0) {
+        url = @"www.cccpay.cn";
+    }
+    else if (BranchAppName == 1) {
+        url = @"待定...";
+    }
+    else if (BranchAppName == 2) {
+        url = @"www.o2o-pay.com";
+    }
+    else if (BranchAppName == 3) {
+        url = @"待定...";
+    }
+    return url;
+}
+// --------------- [app O单区分] ----------------
+
 
 
 // 去掉传入的字符串末尾多余的空白字符,并拷贝一份导出
@@ -859,6 +943,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 2) {
         image = [UIImage imageNamed:@"输入金额_OuEr"];
     }
+    else if (BranchAppName == 3) {
+        image = [UIImage imageNamed:@"输入金额_KFT"];
+    }
     return image;
 }
 + (NSString*) imageNameCustPayViewShot {
@@ -871,6 +958,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (BranchAppName == 2) {
         imageName = @"输入金额_OuEr";
+    }
+    else if (BranchAppName == 3) {
+        imageName = @"输入金额_KFT";
     }
     return imageName;
 }

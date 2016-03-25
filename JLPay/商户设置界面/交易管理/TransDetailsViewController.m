@@ -236,7 +236,8 @@ NSInteger logCount = 0;
  * 参  数 :
  * 返  回 :
  *************************************/
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([alertView.title isEqualToString:@"明细查询"]) {
         if (buttonIndex == 1) { // 查询
             UITextField* textField = [alertView textFieldAtIndex:0];
@@ -285,7 +286,7 @@ NSInteger logCount = 0;
     if ([self.dataSource totalCountOfTrans] == 0) {
         [self.hud showWarnWithText:@"查询日期无交易明细" andDetailText:nil onCompletion:nil];
     } else {
-        [self.hud showSuccessWithText:@"查询成功" andDetailText:nil onCompletion:nil];
+        [self.hud hide:YES];
     }
     [self.tableView reloadData];
     [self calculateTotalAmount];

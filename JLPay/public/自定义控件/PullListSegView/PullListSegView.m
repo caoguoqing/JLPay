@@ -17,13 +17,12 @@
     CGFloat     fWidthOfTri;
     CGFloat     fHeightOfTri;
 }
-@property (nonatomic, strong) CAShapeLayer* triShapeLayer;
-@property (nonatomic, strong) CAShapeLayer* rectShapeLayer;
+@property (nonatomic, strong) CAShapeLayer* shapeLayer;
 @end
 
 @implementation PullListSegView
 
-#pragma mask 1 public interface
+#pragma mask 1 public interface 
 - (void)showAnimation {
     [self.tableView reloadData];
     [self setNeedsLayout];
@@ -47,7 +46,7 @@
             completion();
         }
     }];
-    
+
 }
 - (void) hideWithCompletion:(void (^) (void))completion {
     [UIView animateWithDuration:animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -94,22 +93,16 @@
     }
     return _tableView;
 }
-- (CAShapeLayer *) triShapeLayer {
-    if (!_triShapeLayer) {
-        _triShapeLayer = [CAShapeLayer layer];
+- (CAShapeLayer *)shapeLayer {
+    if (!_shapeLayer) {
+        _shapeLayer = [CAShapeLayer layer];
     }
-    return _triShapeLayer;
-}
-- (CAShapeLayer *)rectShapeLayer {
-    if (!_rectShapeLayer) {
-        _rectShapeLayer = [CAShapeLayer layer];
-    }
-    return _rectShapeLayer;
+    return _shapeLayer;
 }
 
 - (UIColor *)tintColor {
     if (!_tintColor) {
-        _tintColor = [UIColor colorWithWhite:0.2 alpha:0.8];
+        _tintColor = [UIColor colorWithRed:(2*16+4)/255.f green:(2*16+4)/255.f blue:(3*16+4)/255.f alpha:0.98];  //0x242434
     }
     return _tintColor;
 }
@@ -127,10 +120,6 @@
         [self initialProperties];
         self.backgroundColor = [UIColor clearColor];
         self.alpha = 0;
-        self.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.layer.shadowOffset = CGSizeZero;
-        self.layer.shadowRadius = 5;
-        self.layer.shadowOpacity = 0.97;
         [self loadSubViews];
     }
     return self;
@@ -157,48 +146,69 @@
     frame.size.height = height;
     [self setFrame:frame];
     
-    self.triShapeLayer.frame = CGRectMake((frame.size.width - fWidthOfTri)/2.f, 0, fWidthOfTri, fHeightOfTri);
-    [self addPathToTriShapeLayer];
-    
-    self.rectShapeLayer.frame = CGRectMake(0, fHeightOfTri, frame.size.width, frame.size.height - fHeightOfTri);
-    [self addPathToRectShapeLayer];
-    
     frame.origin.x = 0;
+    frame.origin.y = 0;
+    [self.shapeLayer setFrame:frame];
+    self.shapeLayer.fillColor = self.tintColor.CGColor;
+    [self resetPathOfShapeLayer:self.shapeLayer];
+    
     frame.origin.y = fHeightOfTri;
     frame.size.height -= fHeightOfTri;
     [self.tableView setFrame:frame];
 }
 
 - (void) loadSubViews {
-    [self.layer addSublayer:self.triShapeLayer];
-    [self.layer addSublayer:self.rectShapeLayer];
+    [self.layer addSublayer:self.shapeLayer];
     [self addSubview:self.tableView];
 }
 
-- (void) addPathToTriShapeLayer {
-    UIBezierPath* path = [UIBezierPath bezierPath];
-    CGRect frame = self.triShapeLayer.frame;
+- (void) resetPathOfShapeLayer:(CAShapeLayer*)layer {
+    CGRect frame = layer.bounds;
+    CGFloat radius = 8.f;
+    CGFloat width= frame.size.width;
+    CGFloat height = frame.size.height;
+    CGFloat centerX = width/2.f;
     
-    CGFloat centerX = frame.size.width/2.f;
-    CGPoint triTopPoint = CGPointMake(centerX, 0);
-    CGPoint triBottomLeftPoint = CGPointMake(0, fHeightOfTri);
-    CGPoint triBottomRightPoint = CGPointMake(frame.size.width, fHeightOfTri);
+    CGPoint triTopP = CGPointMake(centerX, 0);
+    CGPoint triBottomLeftP = CGPointMake(centerX - fWidthOfTri/2.f, fHeightOfTri);
+    CGPoint triBottomRightP = CGPointMake(centerX + fWidthOfTri/2.f, fHeightOfTri);
     
-    [path moveToPoint:triBottomLeftPoint];
-    [path addLineToPoint:triTopPoint];
-    [path addLineToPoint:triBottomRightPoint];
+    CGPoint rectTopRightStartP = CGPointMake(width - radius, fHeightOfTri);
+    CGPoint rectTopRightContrlP = CGPointMake(width, fHeightOfTri);
+    CGPoint rectTopRightEndP = CGPointMake(width, fHeightOfTri + radius);
     
-    [path closePath];
-    
-    self.triShapeLayer.fillColor = self.tintColor.CGColor;
-    self.triShapeLayer.path = path.CGPath;
-}
-- (void) addPathToRectShapeLayer {
-    CGRect frame = self.rectShapeLayer.bounds;
-    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:5.f];
-    self.rectShapeLayer.fillColor = self.tintColor.CGColor;
-    self.rectShapeLayer.path = path.CGPath;
-}
+    CGPoint rectBottomRightStartP = CGPointMake(width, height - radius);
+    CGPoint rectBottomRightContrlP = CGPointMake(width, height);
+    CGPoint rectBottomRightEndP = CGPointMake(width - radius, height);
 
+    CGPoint rectBottomLeftStartP = CGPointMake(radius, height);
+    CGPoint rectBottomLeftContrlP = CGPointMake(0, height);
+    CGPoint rectBottomLeftEndP = CGPointMake(0, height - radius);
+
+    CGPoint rectTopLeftStartP = CGPointMake(0, fHeightOfTri + radius);
+    CGPoint rectTopLeftContrlP = CGPointMake(0, fHeightOfTri);
+    CGPoint rectTopLeftEndP = CGPointMake(radius, fHeightOfTri);
+    
+    UIBezierPath* path = [UIBezierPath bezierPath];
+    [path moveToPoint:triBottomLeftP];
+    [path addLineToPoint:triTopP];
+    [path addLineToPoint:triBottomRightP];
+    
+    [path addLineToPoint:rectTopRightStartP];
+    [path addQuadCurveToPoint:rectTopRightEndP controlPoint:rectTopRightContrlP];
+    
+    [path addLineToPoint:rectBottomRightStartP];
+    [path addQuadCurveToPoint:rectBottomRightEndP controlPoint:rectBottomRightContrlP];
+    
+    [path addLineToPoint:rectBottomLeftStartP];
+    [path addQuadCurveToPoint:rectBottomLeftEndP controlPoint:rectBottomLeftContrlP];
+    
+    [path addLineToPoint:rectTopLeftStartP];
+    [path addQuadCurveToPoint:rectTopLeftEndP controlPoint:rectTopLeftContrlP];
+    
+    [path addLineToPoint:triBottomLeftP];
+    [path closePath];
+    layer.path = path.CGPath;
+}
 
 @end

@@ -208,13 +208,15 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 点击cell: 详细地址 | 联行号
     if ([reuseIdentifier isEqualToString:IdentifierCellLabel]) {
         if (indexPath.section == 0 && indexPath.row == self.arrayBasicInfo.count - 1) {
-            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            DetailAreaViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"detailAreaVC"];
+//            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//            DetailAreaViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"detailAreaVC"];
+            DetailAreaViewController* viewController = [[DetailAreaViewController alloc] initWithNibName:nil bundle:nil];
             [self.navigationController pushViewController:viewController animated:YES];
         }
         else if (indexPath.section == 1 && indexPath.row == 0) {
-            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            BankNumberViewController* bankVC = [storyBoard instantiateViewControllerWithIdentifier:@"bankNumVC"];
+//            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//            BankNumberViewController* bankVC = [storyBoard instantiateViewControllerWithIdentifier:@"bankNumVC"];
+            BankNumberViewController* bankVC = [[BankNumberViewController alloc] initWithNibName:nil bundle:nil];
             [self.navigationController pushViewController:bankVC animated:YES];
         }
     }

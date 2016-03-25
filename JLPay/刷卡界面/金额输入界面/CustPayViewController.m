@@ -45,6 +45,7 @@ UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) PullListSegView* pullListView;
 
 @property (nonatomic, strong) NSMutableArray* displaySettlementTypes;
+@property (nonatomic, assign) NSInteger selectedSettlementIndex;
 
 @end
 
@@ -60,6 +61,7 @@ UITableViewDataSource,UITableViewDelegate>
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     [self addKVOs];
+    self.selectedSettlementIndex = -1;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -68,7 +70,7 @@ UITableViewDataSource,UITableViewDelegate>
     self.navigationController.navigationBarHidden = YES;
     
     // 申请结算信息
-    if ([ModelUserLoginInformation allowedT_0]) {
+    if ([ModelUserLoginInformation allowedT_0] && BranchAppName != 3) {
         [self startHTTPRequestForSettlementInfo];
     }
     // 重置当前的结算方式
@@ -105,7 +107,9 @@ UITableViewDataSource,UITableViewDelegate>
         curPoint.y <= self.backViewOfMoney.frame.origin.y + self.backViewOfMoney.frame.size.height
         )
     {
-        [self clickToSwitchSettlement:self.settlementSwitchBtn];
+        if (BranchAppName != 3) {
+            [self clickToSwitchSettlement:self.settlementSwitchBtn];
+        }
     }
 }
 
@@ -257,6 +261,11 @@ UITableViewDataSource,UITableViewDelegate>
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
     cell.textLabel.text = [ModelSettlementInformation nameOfSettlementType:[[self.displaySettlementTypes objectAtIndex:indexPath.row] intValue]];
+    if (indexPath.row == self.selectedSettlementIndex) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     return cell;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -268,6 +277,7 @@ UITableViewDataSource,UITableViewDelegate>
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 - (void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedSettlementIndex = indexPath.row;
     SETTLEMENTTYPE selectedSettlementType = [[self.displaySettlementTypes objectAtIndex:indexPath.row] intValue];
     [self.pullListView hideWithCompletion:^{
         [ModelSettlementInformation sharedInstance].curSettlementType = selectedSettlementType;
@@ -610,7 +620,7 @@ UITableViewDataSource,UITableViewDelegate>
     if (!_displaySettlementTypes) {
         _displaySettlementTypes = [NSMutableArray array];
         [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_1)];
-        if ([ModelUserLoginInformation allowedT_N]) {
+        if ([ModelUserLoginInformation allowedT_N] && BranchAppName != 3) {
             self.settlementSwitchBtn.hidden = NO;
             [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_6)];
             [_displaySettlementTypes addObject:@(SETTLEMENTTYPE_T_15)];

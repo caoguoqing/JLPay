@@ -546,6 +546,13 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (void) savingBussinessInfo:(NSDictionary*)loginInfo {
     NSArray* terminals = nil;
     NSString* termCount = [loginInfo objectForKey:kFieldNameLoginDownTerminalCount];
+    
+    JLPrint(@"终端号列表:[%@]",[loginInfo objectForKey:kFieldNameLoginDownTerminalList]);
+    JLPrint(@"终端号个数:[%@]",[loginInfo objectForKey:kFieldNameLoginDownTerminalCount]);
+    JLPrint(@"商户名:[%@]",[loginInfo objectForKey:kFieldNameLoginDownBusinessName]);
+    JLPrint(@"商户号:[%@]",[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]);
+
+    
     if (termCount.intValue > 0) {
         terminals = [self arraySeparatedByTerminalListString:[loginInfo objectForKey:kFieldNameLoginDownTerminalList]];
     }
@@ -559,6 +566,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 }
 #pragma mask ::: 分隔终端号字符串
 - (NSArray*) arraySeparatedByTerminalListString:(NSString*) terminalsString {
+    JLPrint(@"终端号列表:[%@]",terminalsString);
     NSMutableArray* array = [[NSMutableArray alloc] init];
     // 按逗号拆分到数组
     if (terminalsString && terminalsString.length > 0) {

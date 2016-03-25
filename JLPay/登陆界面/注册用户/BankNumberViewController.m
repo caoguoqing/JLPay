@@ -153,6 +153,8 @@
 #pragma mask ------ 界面声明周期
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"开户行联行号";
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.bankNameField];
     [self.view addSubview:self.branchNameField];
     [self.view addSubview:self.searchButton];

@@ -357,6 +357,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"详细地址";
+    self.view.backgroundColor = [UIColor whiteColor];
     kPickerTypeProvince = @"kPickerTypeProvince";
     kPickerTypeArea = @"PickerTypeArea";
     kPickerTypeCity = @"kPickerTypeCity";
@@ -368,7 +370,6 @@
     
     [self.view addSubview:self.btnProvince];
     [self.view addSubview:self.btnCity];
-//    [self.view addSubview:self.btnArea];
     [self.view addSubview:self.fieldDetailAddr];
     [self.view addSubview:self.btnSure];
     [self.view addSubview:self.pickerView];

@@ -162,14 +162,8 @@ CGFloat cellHeight = 40.0;
     if (_dataSourceDict == nil) {
         NSMutableArray* values = [[NSMutableArray alloc] init];
         [values addObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
-        if (BranchAppName == 0) {
-            [values addObject:@"0755-86532999"];
-            [values addObject:@"www.cccpay.cn"];
-        }
-        else if (BranchAppName == 2) {
-            [values addObject:@"400-119-2200"];
-            [values addObject:@"www.o2o-pay.com"];
-        }
+        [values addObject:[PublicInformation telephoneOfCompany]];
+        [values addObject:[PublicInformation urlOfCompany]];
         _dataSourceDict = [NSDictionary dictionaryWithObjects:values forKeys:self.cellTextArray];
     }
     return _dataSourceDict;
@@ -179,12 +173,7 @@ CGFloat cellHeight = 40.0;
     if (!_imageView) {
         _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
         _imageView.backgroundColor = [UIColor clearColor];
-        if (BranchAppName == 0) {
-            _imageView.image = [UIImage imageNamed:@"AppIconImageJLPay"];
-        }
-        else if (BranchAppName == 2) {
-            _imageView.image = [UIImage imageNamed:@"AppIconImageOuErPay"];
-        }
+        _imageView.image = [PublicInformation iconImageOfApp];
     }
     return _imageView;
 }
@@ -192,12 +181,7 @@ CGFloat cellHeight = 40.0;
     if (!_appNameLabel) {
         _appNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _appNameLabel.textAlignment = NSTextAlignmentCenter;
-        if (BranchAppName == 0) {
-            _appNameLabel.text = @"捷联通";
-        }
-        else if (BranchAppName == 2) {
-            _appNameLabel.text = @"欧尔支付";
-        }
+        _appNameLabel.text = [PublicInformation appNameOnDifferentBranch];
     }
     return _appNameLabel;
 }

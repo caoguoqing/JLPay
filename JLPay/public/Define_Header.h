@@ -18,7 +18,7 @@
 #define CustomKeyboardHeight            216.0
 
 // 日志打印选项: 打印(1);不打印(0);
-#define NeedPrintLog                    1
+#define NeedPrintLog                    0
 #define JLPrint(fmt,...)    if (NeedPrintLog == 1) { NSLog(fmt,##__VA_ARGS__); }
 
 
@@ -26,13 +26,14 @@
  * 环境: 
  * 1: 生产环境()            (TCP:28088,HTTP:80)
  * 2: 生产环境(2809)        (TCP:28090,HTTP:80)
- * 3: 内网测试75(2808)      (TCP:60701,HTTP:60780)
- * 5: 内网测试75(2809)      (TCP:60702,HTTP:60780)
- * 4: 内网测试76(2809)      (TCP:60704,HTTP:60705)
+ * 3: 内网测试75(2808)      (TCP:60701,HTTP:60780) -> new: (TCP:37580,HTTP:37588)
+ * 5: 内网测试75(2809)      (TCP:60702,HTTP:60780) -> new: (TCP:37590,HTTP:37588)
+ * 4: 内网测试76(2809)      (TCP:7690,HTTP:28090)  -> new: (TCP:37690,HTTP:37688)
  * 7: 内网测试72            (TCP + HTTP)
  * 9: http 开发环境:        (192.168.1.174:80)
+ * 11: KFT:                (TCP:10090,HTTP:10088)
  * ---------------------------- */
-#define TestOrProduce                   5
+#define TestOrProduce                   11
 
 /* ----------------------------
  * 代码版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -48,8 +49,9 @@
  * 0: JLPay
  * 1: WeiLeShua
  * 2: OuErPay
+ * 3: KFT (KuaiFuTong)
  * ---------------------------- */
-#define BranchAppName                   0
+#define BranchAppName                   3
 
 
 /* ----------------------------

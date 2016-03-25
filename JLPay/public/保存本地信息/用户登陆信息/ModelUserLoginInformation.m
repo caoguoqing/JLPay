@@ -59,8 +59,7 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 {
     if (!businessName   || businessName.length == 0 ||
         !businessNumber || businessNumber.length == 0 ||
-        !terminalCount  || terminalCount.length == 0 ||
-        !allowTypes     || allowTypes.length == 0
+        !terminalCount  || terminalCount.length == 0
         )
     {
         return NO;
@@ -73,7 +72,9 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
     if (terminalCount.intValue != 0 && terminalCount.intValue == terminalNumbers.count) {
         [newInfo setObject:terminalNumbers forKey:KeyLoginDownInfoTerminalNumbers];
     }
-    [newInfo setObject:allowTypes forKey:KeyLoginDownInfoAllowTypes];
+    if (allowTypes && allowTypes.length > 0) {
+        [newInfo setObject:allowTypes forKey:KeyLoginDownInfoAllowTypes];
+    }
     [self writeLoginDownInfo:newInfo];
     return YES;
 }
@@ -226,7 +227,6 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 /* 是否允许: T+0 */
 + (BOOL) allowedT_0 {
     NSString* T_0Flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(3, 1)];
-    NSLog(@"t0允许位:[%@]",T_0Flag);
     if (T_0Flag.integerValue == 0) {
         return NO;
     } else {
@@ -236,7 +236,6 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 /* 是否允许: T+n(6,15,30) */
 + (BOOL) allowedT_N {
     NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(0, 1)];
-    NSLog(@"tn允许位:[%@]",flag);
     if (flag.integerValue == 0) {
         return NO;
     } else {
@@ -246,7 +245,6 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 /* 是否允许: 多费率 */
 + (BOOL) allowedMoreRate {
     NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(1, 1)];
-    NSLog(@"多费率允许位:[%@]",flag);
     if (flag.integerValue == 0) {
         return NO;
     } else {
@@ -256,7 +254,6 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 /* 是否允许: 多商户 */
 + (BOOL) allowedMoreBusiness {
     NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(2, 1)];
-    NSLog(@"多商户允许位:[%@]",flag);
     if (flag.integerValue == 0) {
         return NO;
     } else {
