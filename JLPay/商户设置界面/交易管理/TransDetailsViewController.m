@@ -550,8 +550,6 @@ NSInteger logCount = 0;
     if (_dateButtonBegin == nil) {
         _dateButtonBegin = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButtonBegin.layer.cornerRadius = 5.0;
-//        _dateButtonBegin.backgroundColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
-//        [_dateButtonBegin setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_dateButtonBegin setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
         _dateButtonBegin.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(0, 20) andScale:1]];
         
@@ -567,8 +565,6 @@ NSInteger logCount = 0;
     if (_dateButtonEnd == nil) {
         _dateButtonEnd = [[UIButton alloc] initWithFrame:CGRectZero];
         _dateButtonEnd.layer.cornerRadius = 5.0;
-//        _dateButtonEnd.backgroundColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
-//        [_dateButtonEnd setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_dateButtonEnd setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
         _dateButtonEnd.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(0, 20) andScale:1]];
         

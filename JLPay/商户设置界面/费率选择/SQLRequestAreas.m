@@ -69,6 +69,11 @@ typedef enum {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         cell.backgroundColor = [UIColor clearColor];
         cell.textLabel.textColor = [UIColor whiteColor];
+        CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
+        frame.origin.x = frame.origin.y = 0;
+        UIView* backView = [[UIView alloc] initWithFrame:frame];
+        backView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.35];
+        cell.selectedBackgroundView = backView;
     }
     if (self.areaType == SQLRequestAreaTypeProvince) {
         cell.textLabel.text = [self provinceNameAtIndex:indexPath.row];

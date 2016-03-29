@@ -556,12 +556,14 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     if (termCount.intValue > 0) {
         terminals = [self arraySeparatedByTerminalListString:[loginInfo objectForKey:kFieldNameLoginDownTerminalList]];
     }
+    JLPrint(@"开始保存:");
     [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[loginInfo objectForKey:kFieldNameLoginDownBusinessName]
                                                  businessNumber:[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]
                                                   businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
                                                   terminalCount:termCount
                                                 terminalNumbers:terminals
                                                      allowTypes:[loginInfo objectForKey:kFieldNameLoginDownAllowTypes]];
+    JLPrint(@"保存完毕!");
 
 }
 #pragma mask ::: 分隔终端号字符串
@@ -581,6 +583,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
             }
         }
     }
+    JLPrint(@"去除多余空格后的终端号列表:[%@]",array);
     return array;
 }
 
@@ -592,7 +595,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     switch (alertView.tag) {
         case TagAlertVersionLow:
             if ([buttonTitle isEqualToString:@"确定"] ) {
-                [self gotoDownloadApp];
+                if (BranchAppName != 3) {
+                    [self gotoDownloadApp];
+                }
             }
             break;
         case TagAlertRegisterRefuse:

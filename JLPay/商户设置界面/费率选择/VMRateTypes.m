@@ -40,6 +40,11 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         cell.textLabel.textColor = [UIColor whiteColor];
         cell.backgroundColor = [UIColor clearColor];
+        CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
+        frame.origin.x = frame.origin.y = 0;
+        UIView* backView = [[UIView alloc] initWithFrame:frame];
+        backView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.35];
+        cell.selectedBackgroundView = backView;
     }
     cell.textLabel.text = [self.rateTypes objectAtIndex:indexPath.row];
     if ([cell.textLabel.text isEqualToString:self.rateTypeSelected]) {

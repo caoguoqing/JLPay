@@ -107,7 +107,7 @@ UITableViewDataSource,UITableViewDelegate>
         curPoint.y <= self.backViewOfMoney.frame.origin.y + self.backViewOfMoney.frame.size.height
         )
     {
-        if (BranchAppName != 3) {
+        if (BranchAppName != 3 && ([ModelUserLoginInformation allowedT_0] || [ModelUserLoginInformation allowedT_N])) {
             [self clickToSwitchSettlement:self.settlementSwitchBtn];
         }
     }
@@ -258,7 +258,11 @@ UITableViewDataSource,UITableViewDelegate>
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         cell.backgroundColor = [UIColor clearColor];
         cell.textLabel.textColor = [UIColor whiteColor];
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
+        frame.origin.x = frame.origin.y = 0;
+        UIView* backView = [[UIView alloc] initWithFrame:frame];
+        backView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.35];
+        cell.selectedBackgroundView = backView;
     }
     cell.textLabel.text = [ModelSettlementInformation nameOfSettlementType:[[self.displaySettlementTypes objectAtIndex:indexPath.row] intValue]];
     if (indexPath.row == self.selectedSettlementIndex) {
@@ -315,46 +319,66 @@ UITableViewDataSource,UITableViewDelegate>
 - (BOOL) checkInputsBeforeSwipe {
     BOOL inputsValid = YES;
     NameWeakSelf(wself);
-
-    if ([self.labelDisplayMoney.text floatValue] < 0.0001) {
+    if (inputsValid && [self.labelDisplayMoney.text floatValue] < 0.0001) {
         [PublicInformation makeToast:@"请输入金额!"];
         inputsValid = NO;
     }
-    else if (!blueToothPowerOn) {
+    if (inputsValid && !blueToothPowerOn) {
         [PublicInformation makeToast:@"手机蓝牙未打开,请打开蓝牙!"];
         inputsValid = NO;
     }
-    else if (![ModelDeviceBindedInformation hasBindedDevice]) {
+    if (inputsValid && ![ModelDeviceBindedInformation hasBindedDevice]) {
         [PublicInformation makeToast:@"设备未绑定,请先绑定设备!"];
         inputsValid = NO;
     }
-    else if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
-        if (self.labelDisplayMoney.text.floatValue < [[VMT_0InfoRequester sharedInstance] amountMinCust].floatValue) {
-            NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@￥",[[VMT_0InfoRequester sharedInstance] amountMinCust]];
-            [PublicInformation makeToast:log];
-            inputsValid = NO;
+    
+    if (inputsValid) {
+        SETTLEMENTTYPE settlementType = [[ModelSettlementInformation sharedInstance] curSettlementType];
+        switch (settlementType) {
+            case SETTLEMENTTYPE_T_1:
+            {
+                if ([ModelUserLoginInformation allowedMoreBusiness] && [ModelBusinessInfoSaved beenSaved]) {
+                    NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@][%@]\n是否继续刷卡?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
+                    [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+                    } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+                        [wself pushSwipeOrOtherDisplayVC];
+                    }];
+                    inputsValid = NO;
+                }
+                else if ([ModelUserLoginInformation allowedMoreRate] && [ModelRateInfoSaved beenSaved]) {
+                    NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@][%@]\n是否继续刷卡?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
+                    [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+                    } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+                        [wself pushSwipeOrOtherDisplayVC];
+                    }];
+                    inputsValid = NO;
+                }
+            }
+                break;
+            case SETTLEMENTTYPE_T_0:
+            {
+                if (self.labelDisplayMoney.text.floatValue < [[VMT_0InfoRequester sharedInstance] amountMinCust].floatValue) {
+                    NSString* log = [NSString stringWithFormat:@"T+0最小刷卡额度:%@￥",[[VMT_0InfoRequester sharedInstance] amountMinCust]];
+                    [PublicInformation makeToast:log];
+                    inputsValid = NO;
+                }
+                else if (self.labelDisplayMoney.text.floatValue > [[VMT_0InfoRequester sharedInstance] amountAvilable].floatValue) {
+                    NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@￥",[[VMT_0InfoRequester sharedInstance] amountAvilable]];
+                    [PublicInformation makeToast:log];
+                    inputsValid = NO;
+                }
+            }
+                break;
+            case SETTLEMENTTYPE_T_6:
+            case SETTLEMENTTYPE_T_15:
+            case SETTLEMENTTYPE_T_30:
+            {
+                // do nothing
+            }
+                break;
+            default:
+                break;
         }
-        else if (self.labelDisplayMoney.text.floatValue > [[VMT_0InfoRequester sharedInstance] amountAvilable].floatValue) {
-            NSString* log = [NSString stringWithFormat:@"金额超限:T+0当日可刷卡额度:%@￥",[[VMT_0InfoRequester sharedInstance] amountAvilable]];
-            [PublicInformation makeToast:log];
-            inputsValid = NO;
-        }
-    }
-    else if ([ModelUserLoginInformation allowedMoreBusiness] && [ModelBusinessInfoSaved beenSaved]) {
-        NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@][%@]\n是否继续刷卡?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
-        [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
-        } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
-            [wself pushSwipeOrOtherDisplayVC];
-        }];
-        inputsValid = NO;
-    }
-    else if ([ModelUserLoginInformation allowedMoreRate] && [ModelRateInfoSaved beenSaved]) {
-        NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@][%@]\n是否继续刷卡?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
-        [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
-        } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
-            [wself pushSwipeOrOtherDisplayVC];
-        }];
-        inputsValid = NO;
     }
     return inputsValid;
 }

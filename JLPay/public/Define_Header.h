@@ -18,7 +18,7 @@
 #define CustomKeyboardHeight            216.0
 
 // 日志打印选项: 打印(1);不打印(0);
-#define NeedPrintLog                    0
+#define NeedPrintLog                    1
 #define JLPrint(fmt,...)    if (NeedPrintLog == 1) { NSLog(fmt,##__VA_ARGS__); }
 
 
@@ -33,7 +33,7 @@
  * 9: http 开发环境:        (192.168.1.174:80)
  * 11: KFT:                (TCP:10090,HTTP:10088)
  * ---------------------------- */
-#define TestOrProduce                   11
+#define TestOrProduce                   5
 
 /* ----------------------------
  * 代码版本分支配置(用于标示发布到appStore还是企业版的app)
@@ -51,7 +51,7 @@
  * 2: OuErPay
  * 3: KFT (KuaiFuTong)
  * ---------------------------- */
-#define BranchAppName                   3
+#define BranchAppName                   0
 
 
 /* ----------------------------

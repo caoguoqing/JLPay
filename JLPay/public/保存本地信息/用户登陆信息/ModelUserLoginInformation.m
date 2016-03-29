@@ -218,7 +218,7 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
     return terminals;
 }
 
-// -- 所有云逊标志位
+// -- 所有允许标志位
 + (NSString*) allowTypesSaved {
     NSDictionary* loginDownInfo = [self informationOfLoginDown];
     return [loginDownInfo objectForKey:KeyLoginDownInfoAllowTypes];
@@ -226,8 +226,12 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 
 /* 是否允许: T+0 */
 + (BOOL) allowedT_0 {
-    NSString* T_0Flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(3, 1)];
-    if (T_0Flag.integerValue == 0) {
+    NSString* T_0Flag = nil;
+    NSString* allowTypes = [self allowTypesSaved];
+    if (allowTypes && allowTypes.length >= 4) {
+        T_0Flag =  [[self allowTypesSaved] substringWithRange:NSMakeRange(3, 1)];
+    }
+    if (T_0Flag == nil || T_0Flag.integerValue == 0) {
         return NO;
     } else {
         return YES;
@@ -235,8 +239,12 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 }
 /* 是否允许: T+n(6,15,30) */
 + (BOOL) allowedT_N {
-    NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(0, 1)];
-    if (flag.integerValue == 0) {
+    NSString* flag = nil;
+    NSString* allowTypes = [self allowTypesSaved];
+    if (allowTypes && allowTypes.length >= 1) {
+        flag = [allowTypes substringWithRange:NSMakeRange(0, 1)];
+    }
+    if (flag == nil || flag.integerValue == 0) {
         return NO;
     } else {
         return YES;
@@ -244,8 +252,12 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 }
 /* 是否允许: 多费率 */
 + (BOOL) allowedMoreRate {
-    NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(1, 1)];
-    if (flag.integerValue == 0) {
+    NSString* flag = nil;
+    NSString* allowTypes = [self allowTypesSaved];
+    if (allowTypes && allowTypes.length >= 1) {
+        flag = [allowTypes substringWithRange:NSMakeRange(1, 1)];
+    }
+    if (flag == nil || flag.integerValue == 0) {
         return NO;
     } else {
         return YES;
@@ -253,8 +265,12 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
 }
 /* 是否允许: 多商户 */
 + (BOOL) allowedMoreBusiness {
-    NSString* flag = [[self allowTypesSaved] substringWithRange:NSMakeRange(2, 1)];
-    if (flag.integerValue == 0) {
+    NSString* flag = nil;
+    NSString* allowTypes = [self allowTypesSaved];
+    if (allowTypes && allowTypes.length >= 1) {
+        flag = [allowTypes substringWithRange:NSMakeRange(2, 1)];
+    }
+    if (flag == nil || flag.integerValue == 0) {
         return NO;
     } else {
         return YES;

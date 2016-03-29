@@ -33,6 +33,7 @@
         [self initialProperties];
         [self loadSubViews];
         [self addObserver:self forKeyPath:kKeyPathSegSelectedItem options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
+        self.clipsToBounds = YES;
     }
     return self;
 }

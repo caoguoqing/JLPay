@@ -286,7 +286,8 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
     [titles addObject:kMPOSDetailTitleTermNum];
     [titles addObject:kMPOSDetailTitleSettleType];
     
-    if ([[detailNode objectForKey:kDetailsKeyClearType] intValue] == 3) { // T+0
+    if ([[detailNode objectForKey:kDetailsKeyClearType] intValue] != 0)
+    { // 非T+1都要显示结算信息
         [titles addObject:kMPOSDetailTitleSettleState];
         if ([[detailNode objectForKey:kDetailsKeySettleFlag] intValue] == 2) { // 拒绝结算
             [titles addObject:kMPOSDetailTitleRefuse];
@@ -342,11 +343,26 @@ static NSString* const kMPOSDetailTitleRefuse = @"失败原因";
         else if (value.intValue == 2) {
             value = @"D+1(代理商出手续费)";
         }
-        else if (value.intValue == 3) {
+        else if (value.intValue == 20) {
             value = @"T+0";
         }
-        else if (value.intValue == 4) {
+        else if (value.intValue == 21) {
             value = @"D+0";
+        }
+        else if (value.intValue == 22) {
+            value = @"T+0秒到";
+        }
+        else if (value.intValue == 23) {
+            value = @"D+0钱包";
+        }
+        else if (value.intValue == 26) {
+            value = @"T+6";
+        }
+        else if (value.intValue == 27) {
+            value = @"T+15";
+        }
+        else if (value.intValue == 28) {
+            value = @"T+30";
         }
     }
     else if ([title isEqualToString:kMPOSDetailTitleSettleState]) { // 结算状态

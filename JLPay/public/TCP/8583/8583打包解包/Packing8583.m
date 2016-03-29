@@ -11,6 +11,7 @@
 #import "PublicInformation.h"
 #import "ISOFieldFormation.h"
 #import "Define_Header.h"
+#import "EncodeString.h"
 
 #import "ModelSettlementInformation.h"
 #import "ModelBusinessInfoSaved.h"
@@ -113,7 +114,7 @@
     [f63 appendString:[self f63_7ChoosedBusiness]];
     [f63 appendString:[self f63_8ChoosedTerminal]];
     NSLog(@"打包的63域[%@]",f63);
-    return f63;
+    return [EncodeString encodeASC:f63];
 }
 
 
@@ -218,13 +219,18 @@
 }
 // 63.2 费率类型
 + (NSString*) f63_2RateType {
-    if ([ModelRateInfoSaved beenSaved]) {
-        return [[ModelRateInfoSaved rateValueOnRateType:[ModelRateInfoSaved rateTypeSelected]] substringWithRange:NSMakeRange(1, 1)];
-    }
-    else if ([ModelBusinessInfoSaved beenSaved]) {
-        return @"9";
-    }
-    else {
+    // 选择了非T+1的结算方式，要屏蔽费率
+    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1) {
+        if ([ModelRateInfoSaved beenSaved]) {
+            return [[ModelRateInfoSaved rateValueOnRateType:[ModelRateInfoSaved rateTypeSelected]] substringWithRange:NSMakeRange(1, 1)];
+        }
+        else if ([ModelBusinessInfoSaved beenSaved]) {
+            return @"9";
+        }
+        else {
+            return @"0";
+        }
+    } else {
         return @"0";
     }
 }
@@ -255,7 +261,7 @@
 }
 // 63.4 地区码
 + (NSString*) f63_4AreaCode {
-    if ([ModelRateInfoSaved beenSaved]) {
+    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1 && [ModelRateInfoSaved beenSaved]) {
         return [ModelRateInfoSaved cityCode];
     } else {
         return @"0000";
@@ -271,7 +277,7 @@
 }
 // 63.7 固定商户号
 + (NSString*) f63_7ChoosedBusiness {
-    if ([ModelBusinessInfoSaved beenSaved]) {
+    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1 && [ModelBusinessInfoSaved beenSaved]) {
         return [ModelBusinessInfoSaved businessCode];
     } else {
         return @"000000000000000";
@@ -279,7 +285,7 @@
 }
 // 63.8 固定终端号
 + (NSString*) f63_8ChoosedTerminal {
-    if ([ModelBusinessInfoSaved beenSaved]) {
+    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1 && [ModelBusinessInfoSaved beenSaved]) {
         return [ModelBusinessInfoSaved terminalCode];
     } else {
         return @"00000000";

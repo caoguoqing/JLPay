@@ -72,12 +72,17 @@
     CGFloat heightNavigation = self.navigationController.navigationBar.frame.size.height;
     CGFloat heightStatusBar = [UIApplication sharedApplication].statusBarFrame.size.height;
     CGFloat heightTabBar = self.tabBarController.tabBar.frame.size.height;
-    CGFloat heightSegment = 50;
-    frame.origin.y = heightNavigation + heightStatusBar;
+    CGFloat heightSegment = 45;
+    CGFloat inset = 15;
+    frame.origin.x = 15;
+    frame.size.width -= inset*2;
+    frame.origin.y = heightNavigation + heightStatusBar + inset;
     frame.size.height = heightSegment;
     self.segmentedControl.frame = frame;
     
-    CGFloat childVCFrameY = heightStatusBar + heightNavigation + heightSegment;
+    frame.origin.x = 0;
+    frame.size.width += inset*2;
+    CGFloat childVCFrameY = frame.origin.y + frame.size.height;
     CGFloat childVCFrameH = self.view.bounds.size.height - childVCFrameY - heightTabBar;
     CGRect normalFrame = CGRectMake(0, childVCFrameY, frame.size.width, childVCFrameH);
     
@@ -126,6 +131,7 @@
         _segmentedControl.selectedType = CustSegSelectedTypeSingleRect;
         _segmentedControl.layer.borderColor = [PublicInformation returnCommonAppColor:@"red"].CGColor;
         _segmentedControl.layer.borderWidth = 1.f;
+        _segmentedControl.layer.cornerRadius = 7.f;
         if (self.segVCTypes.segRateTypesInfo.count == 1) {
             _segmentedControl.hidden = YES;
         }
