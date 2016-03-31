@@ -49,28 +49,30 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     return self;
 }
 //  |
-//  V
+//  V  : 逐个键入域值
 - (void) packingFieldsInfo:(NSDictionary*)fieldsInfo forTransType:(NSString*)transType {
     transType__ = transType;
     [self packingWithFieldsInfo:fieldsInfo];
 }
 //  |
-//  V
+//  V  : 获取MAC原始串
 - (NSString*) getMacStringAfterPacking {
     return [[Packing8583 sharedInstance] macSourcePackintByType:[self msgTypeOnTransType:transType__]];
 }
 //  |
-//  V
+//  V  : 键入MAC密文串
 - (void) repackingWithMacPin:(NSString*)macPin {
     [[Packing8583 sharedInstance] setFieldAtIndex:64 withValue:macPin];
 }
 //  |
-//  V
+//  V  : 获取最终打包串
 - (NSString*) packageFinalyPacking {
     NSString* packing = [[Packing8583 sharedInstance] stringPackingWithType:[self msgTypeOnTransType:transType__]];
     [[Packing8583 sharedInstance] cleanAllFields];
     return packing;
 }
+
+
 
 #pragma mask 2 PRIVATE INTERFACE
 
@@ -106,6 +108,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     return msgType;
 }
 
+// -- 消费
 - (void) packingConsumeFieldsInfo:(NSDictionary*)fieldsInfo {
     Packing8583* packHolder = [Packing8583 sharedInstance];
     [packHolder setFieldAtIndex:2 withValue:fieldsInfo[@"2"]];
@@ -130,11 +133,12 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     }
     [packHolder setFieldAtIndex:55 withValue:fieldsInfo[@"55"]];
     [packHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:transType__]];
-    [packHolder setFieldAtIndex:63 withValue:[Packing8583 makeF63OnTranType:transType__]];
+//    [packHolder setFieldAtIndex:63 withValue:[Packing8583 makeF63OnTranType:transType__]];
     [packHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
     [packHolder preparePacking];
 }
 
+// -- 批上送
 - (void) packingBatchUpFieldsInfo:(NSDictionary*)responseCardInfo {
     Packing8583* packingHolder = [Packing8583 sharedInstance];
     [packingHolder setFieldAtIndex:2 withValue:[responseCardInfo valueForKey:@"2"]];
@@ -153,6 +157,8 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60ByLast60:[responseCardInfo valueForKey:@"60"]]];
     [packingHolder preparePacking];
 }
+
+// -- 主密钥下载
 - (void) packingDownMainKFieldsInfo:(NSDictionary*)fieldsInfo {
     Packing8583* packingHolder = [Packing8583 sharedInstance];
 
@@ -165,6 +171,8 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     [packingHolder preparePacking];
 
 }
+
+// --- 工作密钥
 - (void) packingDownWorkKFieldsInfo:(NSDictionary*)fieldsInfo {
     Packing8583* packingHolder = [Packing8583 sharedInstance];
     [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
