@@ -208,14 +208,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 点击cell: 详细地址 | 联行号
     if ([reuseIdentifier isEqualToString:IdentifierCellLabel]) {
         if (indexPath.section == 0 && indexPath.row == self.arrayBasicInfo.count - 1) {
-//            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//            DetailAreaViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"detailAreaVC"];
             DetailAreaViewController* viewController = [[DetailAreaViewController alloc] initWithNibName:nil bundle:nil];
             [self.navigationController pushViewController:viewController animated:YES];
         }
         else if (indexPath.section == 1 && indexPath.row == 0) {
-//            UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//            BankNumberViewController* bankVC = [storyBoard instantiateViewControllerWithIdentifier:@"bankNumVC"];
             BankNumberViewController* bankVC = [[BankNumberViewController alloc] initWithNibName:nil bundle:nil];
             [self.navigationController pushViewController:bankVC animated:YES];
         }
@@ -261,7 +257,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 
 
 #pragma mask ------ UIActionSheetDelegate
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     UIImagePickerController* imagePickerController = [[UIImagePickerController alloc] init];
     NSString* btnTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
     if ([btnTitle isEqualToString:@"取消"]) {
@@ -274,23 +270,56 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [imagePickerController setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     }
     [imagePickerController setDelegate:self];
-    [imagePickerController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [imagePickerController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-    [self presentViewController:imagePickerController animated:YES completion:^{}];
+    CGFloat deviceVersion = [[UIDevice currentDevice] systemVersion].floatValue;
+    if (deviceVersion >= 8.0) {
+        [imagePickerController setModalPresentationStyle:UIModalPresentationCurrentContext];
+    } else if (deviceVersion >= 7.0) {
+        [imagePickerController setModalPresentationStyle:UIModalPresentationFullScreen];
+    }
+    NameWeakSelf(wself);
+    dispatch_async(dispatch_get_main_queue(), ^{
+//        [UIView beginAnimations:nil context:nil];
+//        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//        [UIView setAnimationDuration:0.3];
+//        [UIView setAnimationDelay:0];
+        [wself presentViewController:imagePickerController animated:YES completion:^{}];
+//        [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:imagePickerController.view cache:NO];
+//        [UIView commitAnimations];
+    });
 }
+
+
 #pragma mask ------ UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
-    [picker dismissViewControllerAnimated:YES completion:^{
-        [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-    }];
-    UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
+    NameWeakSelf(wself);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // 将图片保存到数据源
-        [self setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
+        UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
+        UIImage* newImage = [imagePicked copy];
+        
+        NSLog(@"image old[%p],new image[%p]",imagePicked,newImage);
+        [wself setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
         dispatch_async(dispatch_get_main_queue(), ^{
-            // 重载表格视图
-            [self.tableView reloadData];
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+            [UIView setAnimationDuration:0.3];
+            [UIView setAnimationDelay:0];
+            [picker dismissViewControllerAnimated:YES completion:^{
+                [wself.tableView reloadData];
+            }];
+            [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:picker.view cache:NO];
+            [UIView commitAnimations];
         });
+    });
+}
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        [UIView setAnimationDuration:0.3];
+        [UIView setAnimationDelay:0];
+        [picker dismissViewControllerAnimated:YES completion:^{}];
+        [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:picker.view cache:NO];
+        [UIView commitAnimations];
     });
 }
 
@@ -450,23 +479,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     return enable;
 }
 
-#pragma mask ------ UIAlertViewDelegate 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([alertView.message hasPrefix:@"新用户注册成功"] ||
-        [alertView.message hasPrefix:@"注册资料完善"]) {
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
-        NSString* userName = [self textInputedAtIndexPath:indexPath];
-        // 清空登陆+商户信息
-        [ModelUserLoginInformation deleteLoginUpInformation];
-        [ModelUserLoginInformation deleteLoginDownInformation];
-        // 保存需要的登陆信息
-        [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
-        
-        // 清空绑定信息
-        [ModelDeviceBindedInformation cleanDeviceBindedInfo];        
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-}
 
 
 #pragma mask ------ tabel cell 的初始化及属性设置
@@ -644,7 +656,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 /* 设置图片: 指定row */
 - (void) setImageInfoWithImage:(UIImage*)image atIndex:(NSInteger)index {
     NSMutableDictionary* imageNode = [self.arrayImageInfo objectAtIndex:index];
-    [imageNode setObject:image forKey:KeyInfoImageSelected];
+    [imageNode setObject:[image copy] forKey:KeyInfoImageSelected];
     [imageNode setObject:@(YES) forKey:KeyInfoBoolInputed];
 }
 
@@ -838,6 +850,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     self.httpRequestRegister = nil;
 }
 
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
 
 /* 简化alert代码 */
 - (void) alertShowWithMessage:(NSString*)msg {
@@ -846,6 +862,24 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [alert show];
     });
 }
+#pragma mask ------ UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.message hasPrefix:@"新用户注册成功"] ||
+        [alertView.message hasPrefix:@"注册资料完善"]) {
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+        NSString* userName = [self textInputedAtIndexPath:indexPath];
+        // 清空登陆+商户信息
+        [ModelUserLoginInformation deleteLoginUpInformation];
+        [ModelUserLoginInformation deleteLoginDownInformation];
+        // 保存需要的登陆信息
+        [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
+        
+        // 清空绑定信息
+        [ModelDeviceBindedInformation cleanDeviceBindedInfo];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
 
 /* 回退到上一个场景 */
 - (void) backToLastViewController {

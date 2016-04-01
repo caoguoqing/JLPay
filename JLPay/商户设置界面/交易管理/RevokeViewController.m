@@ -37,28 +37,21 @@
     
     [super viewDidLoad];
     self.title = @"交易详情";
-    
-    [self.view addSubview:self.imageView];
+    self.automaticallyAdjustsScrollViewInsets = NO;
     [self.view addSubview:self.tableView];
+    [self.tableView addSubview:self.imageView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    CGFloat inset = 10;
     CGFloat naviAndStatusHeight = [[UIApplication sharedApplication] statusBarFrame].size.height + self.navigationController.navigationBar.bounds.size.height;
-    CGRect frame = CGRectMake(self.view.bounds.size.width/4.0,
-                              inset + naviAndStatusHeight,
-                              self.view.bounds.size.width/2.0,
-                              self.imageView.image.size.height/self.imageView.image.size.width * self.view.bounds.size.width/2.0);
-    // 商标
-    [self.imageView setFrame:frame];
-    
-    // 表视图
-    frame.origin.x = 0;
-    frame.origin.y += inset + frame.size.height;
-    frame.size.width = self.view.bounds.size.width;
-    frame.size.height = self.view.bounds.size.height - frame.origin.y - /*inset*2.0 - buttonHeight -*/ self.tabBarController.tabBar.bounds.size.height;
+    CGRect frame = CGRectMake(0,
+                              naviAndStatusHeight,
+                              self.view.bounds.size.width,
+                              self.view.bounds.size.height - naviAndStatusHeight - self.tabBarController.tabBar.bounds.size.height);
     self.tableView.frame = frame;
+    self.tableView.contentInset = UIEdgeInsetsMake(self.imageView.frame.size.height + 30, 0, 0, 0);
+    self.tableView.contentOffset = CGPointMake(0, -30 - self.imageView.frame.size.height);
 }
 
 #pragma mask ::: section 的个数
@@ -156,8 +149,11 @@
 #pragma mask ::: getter & setter
 - (UIImageView *)imageView {
     if (_imageView == nil) {
-        _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        _imageView.image = [PublicInformation logoImageOfApp];
+        UIImage* image = [PublicInformation logoImageOfApp];
+        CGFloat imageWidth = self.view.frame.size.width/2.f;
+        CGFloat imageHeight = imageWidth * image.size.height/image.size.width;
+        _imageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - imageWidth)/2.f, - imageHeight - 15, imageWidth, imageHeight)];
+        _imageView.image = image;
     }
     return _imageView;
 }

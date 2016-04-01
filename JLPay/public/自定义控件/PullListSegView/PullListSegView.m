@@ -90,6 +90,7 @@
         _tableView.backgroundColor = [UIColor clearColor];
         _tableView.separatorInset = UIEdgeInsetsMake(15, 0, 0, 15);
         _tableView.rowHeight = 37.f;
+        _tableView.layer.cornerRadius = 8.f;
     }
     return _tableView;
 }
