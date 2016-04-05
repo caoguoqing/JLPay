@@ -242,7 +242,7 @@
             settlementType = @"00";
             break;
         case SETTLEMENTTYPE_T_0:
-            settlementType = @"20";
+            settlementType = @"22";
             break;
         case SETTLEMENTTYPE_T_6:
             settlementType = @"26";

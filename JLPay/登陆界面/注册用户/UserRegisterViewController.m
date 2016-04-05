@@ -14,10 +14,8 @@
 #import "DetailAreaViewController.h"
 #import "BankNumberViewController.h"
 #import "ASIFormDataRequest.h"
-//#import "KVNProgress.h"
 #import "MBProgressHUD+CustomSate.h"
 #import "Define_Header.h"
-
 #import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 
