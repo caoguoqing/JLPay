@@ -610,10 +610,8 @@
 }
 - (UILabel *)moneyLabel {
     if (_moneyLabel == nil) {
-        _moneyLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        NSString* settleType = [ModelSettlementInformation nameOfSettlementType:[[ModelSettlementInformation sharedInstance] curSettlementType]] ;
-        
-        _moneyLabel.text = [NSString stringWithFormat:@"金额: %@ 元,(%@)",self.sFloatMoney, settleType];
+        _moneyLabel = [[UILabel alloc] initWithFrame:CGRectZero];        
+        _moneyLabel.text = [NSString stringWithFormat:@"金额: %@ 元",self.sFloatMoney];
     }
     return _moneyLabel;
 }

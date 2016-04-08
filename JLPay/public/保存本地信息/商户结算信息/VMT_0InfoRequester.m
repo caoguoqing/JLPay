@@ -57,9 +57,10 @@
     [self.http requestingOnPackingHandle:^(ASIFormDataRequest *http) {
         [http addPostValue:businessNumber forKey:kFieldNameRequestBusinessNum];
     } onSucBlock:^(NSDictionary *info) {
-        wself.T_0InfoRequested = info;
+        wself.T_0InfoRequested = [NSDictionary dictionaryWithDictionary:info];
         sucBlock();
     } onErrBlock:^(NSError *error) {
+        wself.T_0InfoRequested = nil;
         errBlock(error);
     }];
 }
@@ -72,7 +73,10 @@
 
 // -- 是否允许T+0
 - (BOOL) enableT_0 {
-    NSString* allowFlag = [self.T_0InfoRequested objectForKey:kFieldNameResponseAllowFlag];
+    NSString* allowFlag = @"0";
+    if (self.T_0InfoRequested) {
+        allowFlag = [self.T_0InfoRequested objectForKey:kFieldNameResponseAllowFlag];
+    }
     if ([allowFlag integerValue] == 0) {
         return NO;
     } else {

@@ -468,10 +468,6 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
     self.title=@"POS-签购单";
     
-    
-    
-    [self addObserver:self forKeyPath:kKVOImageUploaded options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
-    
     [self loadsSubviews];
     
 }
@@ -498,6 +494,7 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+    [self addObserver:self forKeyPath:kKVOImageUploaded options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
