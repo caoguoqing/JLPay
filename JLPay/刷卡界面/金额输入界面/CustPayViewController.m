@@ -258,7 +258,7 @@
                     [JCAlertView showOneButtonWithTitle:@"拒绝交易" Message:message ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"确定" Click:^{
                     }];
                 }
-                else if (curInputedMoney > T_0AvilabelMoney) {// (!(curInputedMoney <= T_0AvilabelMoney && curInputedMoney >= T_0MinLimitMoney)) {
+                else if (curInputedMoney > T_0AvilabelMoney) {
                     [[ModelSettlementInformation sharedInstance] setCurSettlementType:SETTLEMENTTYPE_T_1];
                 }
                 else {
