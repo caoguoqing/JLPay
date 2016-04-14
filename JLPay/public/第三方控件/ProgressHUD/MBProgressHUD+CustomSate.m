@@ -11,7 +11,7 @@
 #import "CustomCheckView.h"
 
 
-static CGFloat const fMBProgressHUDSucDuration = 1.5;   // 成功时的显示持续时间
+static CGFloat const fMBProgressHUDSucDuration = 0.8;   // 成功时的显示持续时间
 static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持续时间
 
 

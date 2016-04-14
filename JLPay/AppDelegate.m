@@ -53,6 +53,7 @@ static NSUInteger const iTagAlertAppStoreInfoRequested = 198;
     NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
     [navigationControllers addObject:[self newNavigationOfCustPayVC]];
     [navigationControllers addObject:[self newNavigationOfBusinessVC]];
+//    [navigationControllers addObject:[self newNavigationOfAdditionalVC]];
     
     [tabBarController setViewControllers:navigationControllers];
     return tabBarController;

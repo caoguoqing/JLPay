@@ -9,21 +9,20 @@
 #import "CodeScannerViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "MaskView.h"
-#import "MBProgressHUD.h"
-#import "ViewModelTCP.h"
-#import "ViewModelTCPEnquiry.h"
+#import "MBProgressHUD+CustomSate.h"
 #import "OtherPayCollectViewController.h"
 #import "BarCodeResultViewController.h"
 #import "PublicInformation.h"
 #import "ViewModelCodeScanner.h"
+
+#import "VMHttpAlipay.h"
 
 
 #pragma mask ---- 对象属性
 @interface CodeScannerViewController()
 <
 ViewModelCodeScannerDelegate,
-UIAlertViewDelegate,
-ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
+UIAlertViewDelegate>
 {
     BOOL codeScanningDone;  // 扫码结果
     BOOL payIsDone;         // 收款结果
@@ -34,8 +33,8 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 @property (nonatomic, strong) MaskView* maskView; // 遮罩视图: 带扫描框
 
 @property (nonatomic, strong) MBProgressHUD* progressHUD;
-@property (nonatomic, strong) ViewModelTCP* tcpHolder;
-@property (nonatomic, strong) ViewModelTCPEnquiry* tcpEnquiry;
+
+@property (nonatomic, strong) VMHttpAlipay* http;
 
 @property (nonatomic, strong) NSTimer* timeOutForTCPEnquiry;
 @end
@@ -56,110 +55,29 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
         codeScanningDone = YES;
         self.progressHUD.labelText = @"交易处理中...";
         [self.progressHUD show:YES];
-        [self startTCPTransWithOrderCode:code];
+        [self startHttpTransWithPayCode:code andFloatMoney:self.money];
     } else {
         [self alertForMessage:message];
     }
 }
 
-
-#pragma mask ---- ViewModelTCPDelegate
-- (void)TCPResponse:(ViewModelTCP *)tcp withState:(BOOL)state andData:(NSDictionary *)responseData
-{
-    [tcp TCPClear];
-    // 交易成功
-    if (state) {
-        payIsDone = YES;
-        [self.progressHUD hide:YES];
-        [self pushToBarCodeResultVCWithResult:state];
-    }
-    // 交易失败,继续查询结果
-    else {
-        NSString* f63 = [responseData valueForKey:KeyResponseDataRetData];
-        if (f63 && f63.length > 0) {
-            NSString* orderCode = nil;
-            // 订单号
-            orderCode = [f63 substringToIndex:64*2];
-            orderCode = [PublicInformation stringFromHexString:orderCode];
+#pragma mask ---- HTTP
+- (void) startHttpTransWithPayCode:(NSString*)payCode andFloatMoney:(NSString*)floatMoney {
+    self.http.payCode = payCode;
+    self.http.payAmount = [PublicInformation intMoneyFromDotMoney:floatMoney];
+    [self.progressHUD showNormalWithText:@"交易处理中..." andDetailText:nil];
+    NameWeakSelf(wself);
+    [self.http startAlipayTransOnFinished:^{
+        [wself.progressHUD showSuccessWithText:@"交易成功" andDetailText:nil onCompletion:^{
             
-            // 发起结果查询轮询定时器
-            [self startTCPEnquiryWithOrderCode:orderCode];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self startTimerForTCPEnquiry];
-            });
-        }
-    }
+        }];
+    } onError:^(NSError *error) {
+        [wself.progressHUD showFailWithText:@"交易失败" andDetailText:[error localizedDescription] onCompletion:^{
+            
+        }];
+    }];
 }
 
-#pragma mask ---- NSKeyValueObserving
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context
-{
-    if ([keyPath isEqualToString:KEYPATH_PAYISDONE_CHANGED] && object == self.tcpEnquiry) {
-        NSNumber* value = [self.tcpEnquiry valueForKey:KEYPATH_PAYISDONE_CHANGED];
-        if (value.boolValue) { // 监控的值变为成功了
-            [self.tcpEnquiry cleanForEnquiryDone];
-        }
-    }
-}
-
-
-#pragma mask ---- ViewModelTCPEnquiryDelegate
-- (void)TCPEnquiryResult:(BOOL)result withMessage:(NSString *)message {
-    payIsDone = YES;
-    isTCPEnquirying = NO;
-    [self.progressHUD hide:YES];
-    [self pushToBarCodeResultVCWithResult:result];
-}
-
-
-#pragma mask ---- TCP
-/* TCP扫码收款交易请求 */
-- (void) startTCPTransWithOrderCode:(NSString*)orderCode {
-    NSString* transType = nil;
-    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
-        transType = TranType_BarCode_Trans_Alipay;
-    }
-    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
-        transType = TranType_BarCode_Trans_WeChat;
-    }
-    if (transType) {
-        [self.tcpHolder TCPRequestWithTransType:transType andMoney:self.money andOrderCode:orderCode andDelegate:self];
-    }
-}
-
-/* TCP扫码收款结果查询 */
-- (void) startTCPEnquiryWithOrderCode:(NSString*)orderCode {
-    NSString* transType = nil;
-    if ([self.payCollectType isEqualToString:PayCollectTypeAlipay]) {
-        transType = TranType_BarCode_Review_Alipay;
-    }
-    else if ([self.payCollectType isEqualToString:PayCollectTypeWeChatPay]) {
-        transType = TranType_BarCode_Review_WeChat;
-    }
-    if (transType) {
-        [self.tcpEnquiry TCPStartTransEnquiryWithTransType:transType andOrderCode:orderCode andMoney:self.money];
-    }
-    isTCPEnquirying = YES;
-}
-/* 关闭交易结果轮询TCP */
-- (void) stopTCPEnquiry {
-    // 终止并清除轮询TCP队列
-    [self.tcpEnquiry terminateTCPEnquiry];
-    isTCPEnquirying = NO;
-    
-    [self.progressHUD hide:YES];
-    // 跳转到交易结果显示界面
-    [self pushToBarCodeResultVCWithResult:NO];
-}
-
-
-#pragma mask ---- 交易结果轮询超时定时器
-- (void) startTimerForTCPEnquiry {
-    self.timeOutForTCPEnquiry = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(stopTCPEnquiry) userInfo:nil repeats:NO];
-}
 
 #pragma mask ---- 初始化界面视图
 - (void)viewDidLoad {
@@ -185,8 +103,6 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
             [self.maskView startImageAnimation];
         }
     }
-    // 注册KVO: 轮询结果更新
-    [self.tcpEnquiry addObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -198,22 +114,6 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     }
     // 关闭扫码动效
     [self.maskView stopImageAnimation];
-    
-    // 如果交易未成功: 先判断并关闭条码支付TCP，然后判断并关闭TCP结果轮询
-    if (!payIsDone) {
-        if ([self.tcpHolder isConnected]) {
-            [self.tcpHolder TCPClear];
-        }
-        if (isTCPEnquirying) {
-            [self.tcpEnquiry terminateTCPEnquiry];
-        }
-    }
-    
-    [self.progressHUD hide:YES];
-    
-    // 注销KVO
-    [self.tcpEnquiry removeObserver:self forKeyPath:KEYPATH_PAYISDONE_CHANGED];
-
 }
 
 
@@ -255,8 +155,7 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
 
 /* 跳转界面 */
 - (void) pushToBarCodeResultVCWithResult:(BOOL)result {
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    BarCodeResultViewController* resultVC = [storyBoard instantiateViewControllerWithIdentifier:@"barPayCollectionVC"];
+    BarCodeResultViewController* resultVC = [[BarCodeResultViewController alloc] initWithNibName:nil bundle:nil];
     [resultVC setPayCollectType:self.payCollectType];
     [resultVC setMoney:self.money];
     [resultVC setResult:result];
@@ -287,19 +186,6 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
     }
     return _progressHUD;
 }
-- (ViewModelTCP *)tcpHolder {
-    if (_tcpHolder == nil) {
-        _tcpHolder = [[ViewModelTCP alloc] init];
-    }
-    return _tcpHolder;
-}
-- (ViewModelTCPEnquiry *)tcpEnquiry {
-    if (_tcpEnquiry == nil) {
-        _tcpEnquiry = [[ViewModelTCPEnquiry alloc] init];
-        [_tcpEnquiry setDelegate:self];
-    }
-    return _tcpEnquiry;
-}
 - (ViewModelCodeScanner *)codeScanner {
     if (_codeScanner == nil) {
         _codeScanner = [[ViewModelCodeScanner alloc] init];
@@ -307,6 +193,12 @@ ViewModelTCPDelegate, ViewModelTCPEnquiryDelegate>
         [_codeScanner setInterestRect:[self rectOfInterest]];
     }
     return _codeScanner;
+}
+- (VMHttpAlipay *)http {
+    if (!_http) {
+        _http = [VMHttpAlipay new];
+    }
+    return _http;
 }
 
 @end

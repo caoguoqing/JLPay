@@ -250,8 +250,28 @@
                 CGFloat T_0MinLimitMoney = [[VMT_0InfoRequester sharedInstance] amountMinCust].floatValue;
                 CGFloat T_0AvilabelMoney = [[VMT_0InfoRequester sharedInstance] amountAvilable].floatValue;
                 JLPrint(@"输入金额[%lf],最小限额[%lf],可刷额度[%lf]",curInputedMoney,T_0MinLimitMoney,T_0AvilabelMoney);
-                if (!(curInputedMoney <= T_0AvilabelMoney && curInputedMoney >= T_0MinLimitMoney)) {
+                
+                if (curInputedMoney < T_0MinLimitMoney) {
+                    // 不允许交易
+                    inputsValid = NO;
+                    NSString* message = [NSString stringWithFormat:@"交易金额必须大于T+0最小刷卡额度:￥%.02lf", T_0MinLimitMoney];
+                    [JCAlertView showOneButtonWithTitle:@"拒绝交易" Message:message ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"确定" Click:^{
+                    }];
+                }
+                else if (curInputedMoney > T_0AvilabelMoney) {// (!(curInputedMoney <= T_0AvilabelMoney && curInputedMoney >= T_0MinLimitMoney)) {
                     [[ModelSettlementInformation sharedInstance] setCurSettlementType:SETTLEMENTTYPE_T_1];
+                }
+                else {
+                    // 提示T+0结算信息
+                    inputsValid = NO;
+                    CGFloat T_0LimitMoney = [[VMT_0InfoRequester sharedInstance] amountLimit].floatValue;
+                    CGFloat T_0MoreRate = [[VMT_0InfoRequester sharedInstance] T_0MoreRate].floatValue;
+                    CGFloat T_0MoreFee = [[VMT_0InfoRequester sharedInstance] T_0ExtraFee].floatValue;
+                    NSString* message = [NSString stringWithFormat:@"单日限额:￥%.02lf\n单笔最小限额:￥%.02lf\n单日可刷额度:￥%.02lf\n手续费率: +%.02lf%%\n转账手续费:￥%.02lf",T_0LimitMoney,T_0MinLimitMoney,T_0AvilabelMoney,T_0MoreRate,T_0MoreFee];
+                    [JCAlertView showTwoButtonsWithTitle:@"T+0温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+                    } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+                        [wself pushSwipeOrOtherDisplayVC];
+                    }];
                 }
                 JLPrint(@"判断后的当前结算方式为:[%d]",[[ModelSettlementInformation sharedInstance] curSettlementType]);
             }
