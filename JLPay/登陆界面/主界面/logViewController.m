@@ -557,6 +557,10 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         terminals = [self arraySeparatedByTerminalListString:[loginInfo objectForKey:kFieldNameLoginDownTerminalList]];
     }
     JLPrint(@"开始保存:");
+    NSString* allowTypes = [loginInfo objectForKey:kFieldNameLoginDownAllowTypes];
+    if (BranchAppName == 4) {
+        allowTypes = [NSString stringWithFormat:@"%@000",[allowTypes substringToIndex:1]];
+    }
     [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[loginInfo objectForKey:kFieldNameLoginDownBusinessName]
                                                  businessNumber:[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]
                                                   businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
@@ -595,7 +599,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     switch (alertView.tag) {
         case TagAlertVersionLow:
             if ([buttonTitle isEqualToString:@"确定"] ) {
-                if (BranchAppName != 3) {
+                if (BranchAppName != 3 && BranchAppName != 4) {
                     [self gotoDownloadApp];
                 }
             }

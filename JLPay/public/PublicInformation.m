@@ -700,6 +700,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         logoImage = [UIImage imageNamed:@"AppLogoImageKFT"];
     }
+    else if (BranchAppName == 4) {
+        logoImage = [UIImage imageNamed:@"AppLogoImage1_1"];
+    }
     return logoImage;
 }
 // icon
@@ -716,6 +719,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (BranchAppName == 3) {
         iconImage = [UIImage imageNamed:@"AppIconImageKFT"];
+    }
+    else if (BranchAppName == 4) {
+        iconImage = [UIImage imageNamed:@"AppIconImage1_1"];
     }
     return iconImage;
 }
@@ -734,6 +740,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         appName = @"快付通";
     }
+    else if (BranchAppName == 4) {
+        appName = @"壹加壹";
+    }
     return appName;
 }
 // telephone of company
@@ -751,7 +760,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         telephone = @"待定...";
     }
-
+    else if (BranchAppName == 4) {
+        telephone = @"待定...";
+    }
     return telephone;
 }
 // url of company
@@ -946,6 +957,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         image = [UIImage imageNamed:@"输入金额_KFT"];
     }
+    else if (BranchAppName == 4) {
+        image = [UIImage imageNamed:@"输入金额_1_1"];
+    }
     return image;
 }
 + (NSString*) imageNameCustPayViewShot {
@@ -962,6 +976,10 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         imageName = @"输入金额_KFT";
     }
+    else if (BranchAppName == 4) {
+        imageName = @"输入金额_1_1";
+    }
+
     return imageName;
 }
 

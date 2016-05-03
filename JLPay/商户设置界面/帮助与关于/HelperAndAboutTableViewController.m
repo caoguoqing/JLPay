@@ -80,7 +80,7 @@
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
         [_cellTitles addObject:@"3.交易明细"];
-        if (BranchAppName != 1) {
+        if (BranchAppName != 1 && BranchAppName != 4) {
             [_cellTitles addObject:@"4.关于我们"];
         }
     }

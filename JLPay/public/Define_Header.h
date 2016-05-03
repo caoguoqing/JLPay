@@ -50,8 +50,9 @@
  * 1: WeiLeShua
  * 2: OuErPay
  * 3: KFT (KuaiFuTong)
+ * 4: 1+1 (仅提供T+1基本功能)
  * ---------------------------- */
-#define BranchAppName                   0
+#define BranchAppName                   4
 
 
 /* ----------------------------
