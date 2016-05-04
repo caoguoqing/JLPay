@@ -558,7 +558,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     }
     JLPrint(@"开始保存:");
     NSString* allowTypes = [loginInfo objectForKey:kFieldNameLoginDownAllowTypes];
-    if (BranchAppName == 4) {
+    if (BranchAppName == 4 || BranchAppName == 3) {
         allowTypes = [NSString stringWithFormat:@"%@000",[allowTypes substringToIndex:1]];
     }
     [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[loginInfo objectForKey:kFieldNameLoginDownBusinessName]
@@ -566,7 +566,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
                                                   businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
                                                   terminalCount:termCount
                                                 terminalNumbers:terminals
-                                                     allowTypes:[loginInfo objectForKey:kFieldNameLoginDownAllowTypes]];
+                                                     allowTypes:allowTypes];
     JLPrint(@"保存完毕!");
 
 }

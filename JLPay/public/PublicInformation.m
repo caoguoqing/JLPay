@@ -100,7 +100,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     if (TestOrProduce == 9) {
         return @"192.168.1.174";
     } else {
-        return @"unitepay.com.cn";
+        return @"27.221.52.49";
     }
 }
 

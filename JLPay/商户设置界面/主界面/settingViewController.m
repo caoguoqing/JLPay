@@ -231,11 +231,9 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
         [cellNames addObject:kTitleSettingTransDetails];
         [cellNames addObject:kTitleSettingDeviceBinding];
         if ([ModelUserLoginInformation allowedMoreBusiness] || [ModelUserLoginInformation allowedMoreRate]) {
-            if (BranchAppName != 3) {
-                [cellNames addObject:kTitleSettingFeeChoose];
-            }
+            [cellNames addObject:kTitleSettingFeeChoose];
         }
-        if ([ModelUserLoginInformation allowedT_0] && BranchAppName != 3) {
+        if ([ModelUserLoginInformation allowedT_0]) {
             [cellNames addObject:kTitleSettingT_0CardVerify];
         }
         [cellNames addObject:kTitleSettingPinUpdate];

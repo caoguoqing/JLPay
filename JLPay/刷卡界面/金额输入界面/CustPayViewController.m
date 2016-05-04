@@ -57,7 +57,7 @@
     self.navigationController.navigationBarHidden = YES;
     
     // 申请结算信息,并重置当前结算方式
-    if ([ModelUserLoginInformation allowedT_0] && BranchAppName != 3) {
+    if ([ModelUserLoginInformation allowedT_0]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self startHTTPRequestForSettlementInfo];
         });
