@@ -41,6 +41,6 @@
         </view>
     </objects>
     <resources>
-        <image name="AppLogoImage1_1" width="163" height="64"/>
+        <image name="AppLogoImage1_1" width="163" height="55"/>
     </resources>
 </document>
