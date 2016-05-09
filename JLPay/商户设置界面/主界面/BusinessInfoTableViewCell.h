@@ -7,19 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Define_Header.h"
+#import "Masonry.h"
 
 @interface BusinessInfoTableViewCell : UITableViewCell
 
-/* 设置头像图片 */
-- (void) setHeadImage:(UIImage*)headImage;
+@property (nonatomic, strong) UIImageView* headImageView;   // 头像图片
+@property (nonatomic, strong) UILabel* labelUserId;         // 登录名标签
+@property (nonatomic, strong) UILabel* labelBusinessName;   // 商户名标签
+@property (nonatomic, strong) UILabel* labelBusinessNo;     // 商户号标签
+@property (nonatomic, strong) UILabel* labelCheckedState;   // 审核状态
 
-/* 设置登陆用户名 */
-- (void) setUserId:(NSString*)userId;
-
-/* 设置商户名 */
-- (void) setBusinessName:(NSString*)businessName;
-
-/* 设置商户编号 */
-- (void) setBusinessNo:(NSString *)businessNo;
 
 @end

@@ -7,10 +7,12 @@
 //
 
 #import "DeleteButton.h"
+#import "Masonry.h"
+#import "Define_Header.h"
 
 @interface DeleteButton ()
 
-@property (nonatomic, strong)  UIImageView *imageView;
+@property (nonatomic, strong)  UIImageView *dImageView;
 
 @end
 
@@ -24,12 +26,35 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.imageView                      = [[UIImageView alloc] initWithFrame:CGRectMake(frame.size.width/4.0, frame.size.height/4.0, frame.size.width/2.0, frame.size.height/2.0)];
-        self.imageView.image                = [UIImage imageNamed:@"delete"];
-        [self addSubview:self.imageView];
+        [self addSubview:self.dImageView];
     }
     return self;
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGSize imageSize = self.dImageView.image.size;
+    CGFloat widthImage = self.frame.size.width * 0.5;
+    CGFloat heightImage = widthImage * imageSize.height/imageSize.width;
+    
+    NameWeakSelf(wself);
+    [self.dImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(wself.mas_centerX);
+        make.centerY.equalTo(wself.mas_centerY);
+        make.width.mas_equalTo(widthImage);
+        make.height.mas_equalTo(heightImage);
+    }];
+    
+}
+
+
+# pragma mask 4 getter
+- (UIImageView *)dImageView {
+    if (!_dImageView) {
+        _dImageView = [UIImageView new];
+        _dImageView.image = [UIImage imageNamed:@"delete"];
+    }
+    return _dImageView;
+}
 
 @end

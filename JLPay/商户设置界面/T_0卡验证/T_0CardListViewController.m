@@ -69,7 +69,7 @@
     self.pullRefrashView = [[PullRefrashView alloc] initWithFrame:frame];
     [self.tableView addSubview:self.pullRefrashView];
     
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addCardPicture:)]];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"添加银行卡" style:UIBarButtonItemStylePlain target:self action:@selector(addCardPicture:)]];
     
     [self.view addSubview:self.hud];
     self.view.backgroundColor = [UIColor colorWithWhite:0.98 alpha:1];

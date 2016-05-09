@@ -262,11 +262,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/public/&#x4fdd;&#x5b58;&#x672c;&#x5730;&#x4fe1;&#x606f;/&#x7528;&#x6237;&#x767b;&#x9646;&#x4fe1;&#x606f;/ModelUserLoginInformation.h"
-            timestampString = "479804620.792827"
+            timestampString = "484136739.230693"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
             landmarkName = "+newLoginUpInfoWithUserID:userPWD:needSaveUserPWD:needDisplayUserPWD:"
             landmarkType = "4">
          </BreakpointContent>
@@ -278,11 +278,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/public/&#x4fdd;&#x5b58;&#x672c;&#x5730;&#x4fe1;&#x606f;/&#x7528;&#x6237;&#x767b;&#x9646;&#x4fe1;&#x606f;/ModelUserLoginInformation.h"
-            timestampString = "480239600.420383"
+            timestampString = "484136739.230693"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
             landmarkName = "+userID"
             landmarkType = "4">
          </BreakpointContent>

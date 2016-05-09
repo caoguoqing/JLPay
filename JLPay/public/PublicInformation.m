@@ -97,9 +97,13 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 
 /* 获取服务器域名 */
 + (NSString*) getServerDomain {
-    if (TestOrProduce == 9) {
-        return @"192.168.1.174";
-    } else {
+    if (TestOrProduce == 2) {
+        return @"unitepay.com.cn";
+    }
+    else if (TestOrProduce == 5) {
+        return @"202.104.101.126";
+    }
+    else {
         return @"unitepay.com.cn";
     }
 }
@@ -123,7 +127,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         port = @"37690";
     }
     else if (TestOrProduce == 5) {
-        port = @"37590";
+        port = @"60702";
     }
     else if (TestOrProduce == 11) {
         port = @"10090";
@@ -147,7 +151,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         port = @"37688";
     }
     else if (TestOrProduce == 5) {
-        port = @"37588";
+        port = @"60780";
     }
     else if (TestOrProduce == 11) {
         port = @"10088";
@@ -641,6 +645,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     UIColor* retColor = nil;
     if ([color isEqualToString:@"red"]) {
         retColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
+    }
+    else if ([color isEqualToString:@"lightBlue"]) {
+        retColor = [UIColor colorWithRed:1.0/255.0 green:171.0/255.0 blue:240.0/255.0 alpha:1.0];
     }
     else if ([color isEqualToString:@"green"]) {
         retColor = [UIColor colorWithRed:53.0/255.0 green:176.0/255.0 blue:41.0/255.0 alpha:1.0];

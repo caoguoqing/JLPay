@@ -25,6 +25,7 @@
 #import "ModelAppInformation.h"
 #import "ModelRateInfoSaved.h"
 #import "ModelBusinessInfoSaved.h"
+#import <ReactiveCocoa.h>
 
 #pragma mask    ---- 常量设置区 ----
 #define ViewCornerRadius 6.0                                        // 各个 view 的圆角半径值
@@ -59,6 +60,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 
 @property (nonatomic, assign) CGFloat     moveHeightByWindow;       // 界面需要移动的高度
 @property (nonatomic, retain) NSDictionary* dictLastRegisterInfo;   // 审核未通过的注册信息
+
+//@property (nonatomic, strong) UITabBarController* mainTabBarVC;
+
 @end
 
 
@@ -99,9 +103,8 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (!self.navigationController.navigationBarHidden) {
-        self.navigationController.navigationBarHidden = YES;
-    }
+    [self.navigationController setNavigationBarHidden:YES];
+    [self.tabBarController.tabBar setHidden:NO];
     // 加载用户名和密码
     [self loadUserNameField];
     if (self.switchSavePin.isOn) {
@@ -475,7 +478,8 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
         [PublicInformation makeToast:@"登录成功"];
         
         UITabBarController* mainTabBar = [APPMainDelegate mainTabBarControllerOfApp];
-        if ([ModelDeviceBindedInformation hasBindedDevice]) {
+        
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked && [ModelDeviceBindedInformation hasBindedDevice]) {
             [mainTabBar setSelectedIndex:0]; // 切换到金额输入界面
         } else {
             [mainTabBar setSelectedIndex:1]; // 切换到商户管理界面
@@ -546,6 +550,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 - (void) savingBussinessInfo:(NSDictionary*)loginInfo {
     NSArray* terminals = nil;
     NSString* termCount = [loginInfo objectForKey:kFieldNameLoginDownTerminalCount];
+    NSNumber* checkState = [loginInfo objectForKey:kFieldNameLoginDownCheckState];
     
     JLPrint(@"终端号列表:[%@]",[loginInfo objectForKey:kFieldNameLoginDownTerminalList]);
     JLPrint(@"终端号个数:[%@]",[loginInfo objectForKey:kFieldNameLoginDownTerminalCount]);
@@ -556,13 +561,14 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     if (termCount.intValue > 0) {
         terminals = [self arraySeparatedByTerminalListString:[loginInfo objectForKey:kFieldNameLoginDownTerminalList]];
     }
-    JLPrint(@"开始保存:");
+    JLPrint(@"开始保存:");    
     [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[loginInfo objectForKey:kFieldNameLoginDownBusinessName]
                                                  businessNumber:[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]
                                                   businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
                                                   terminalCount:termCount
                                                 terminalNumbers:terminals
-                                                     allowTypes:[loginInfo objectForKey:kFieldNameLoginDownAllowTypes]];
+                                                     allowTypes:[loginInfo objectForKey:kFieldNameLoginDownAllowTypes]
+                                                     checkState:[checkState integerValue]];
     JLPrint(@"保存完毕!");
 
 }
@@ -746,4 +752,5 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     }
     return _switchSecurity;
 }
+
 @end

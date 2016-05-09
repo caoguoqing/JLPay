@@ -13,7 +13,17 @@
 /***** 本类保存的信息只有一份 *****/
 
 
+typedef enum {
+    BusinessCheckStateChecked,          // 审核通过
+    BusinessCheckStateChecking,         // 审核中
+    BusinessCheckStateCheckRefused      // 审核拒绝
+}BusinessCheckState;
+
+
 @interface ModelUserLoginInformation : NSObject
+
++ (instancetype) sharedInfo;
+
 
 #pragma mask ---- 增
 /* 保存登陆上送信息 */
@@ -27,7 +37,8 @@
                             businessEmail:(NSString*)businessEmail // 商户邮箱
                             terminalCount:(NSString*)terminalCount // 终端号个数
                           terminalNumbers:(NSArray*)terminalNumbers //终端号列表
-                               allowTypes:(NSString*)allowTypes;    // 允许标志位
+                               allowTypes:(NSString*)allowTypes    // 允许标志位
+                               checkState:(BusinessCheckState)state;
 
 #pragma mask ---- 删
 /* 删除登陆上送信息 */
@@ -66,6 +77,9 @@
 + (NSInteger) terminalCount;
 /* 终端号列表 */
 + (NSArray*) terminalNumbers;
+
+/* 审核标志 */
++ (BusinessCheckState)checkSate;
 
 /* ---- 允许操作标志位 */
 /* 是否允许: T+0 */

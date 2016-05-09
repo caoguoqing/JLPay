@@ -16,6 +16,10 @@
 #import "ViewModelTCPHandleWithDevice.h"
 #import "ModelDeviceBindedInformation.h"
 
+typedef enum {
+    DeviceSignInAlertTagNoTerminals
+}DeviceSignInAlertTag;
+
 
 @interface DeviceSignInViewController()
 <
@@ -78,14 +82,18 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-        [[ViewModelTCPHandleWithDevice getInstance] setDelegate: self];
+    [[ViewModelTCPHandleWithDevice getInstance] setDelegate: self];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    if (self.selectedDevice == nil && blueToothIsOn) {
-        // 加载设备选择框
-        [self actionSheetShowForSelectingDevice];
+    if ([ModelUserLoginInformation terminalCount] == 0) {
+        [PublicInformation alertSureWithTitle:@"商户未配置终端号" message:@"请等待后台配置终端,或联系客服人员处理" tag:DeviceSignInAlertTagNoTerminals delegate:self];
+    } else {
+        if (self.selectedDevice == nil && blueToothIsOn) {
+            // 加载设备选择框
+            [self actionSheetShowForSelectingDevice];
+        }
     }
 }
 - (void)viewWillDisappear:(BOOL)animated {

@@ -90,6 +90,16 @@
 		5E5FA5871B46342600387E69 /* ISMFiDataPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA57B1B46342600387E69 /* ISMFiDataPath.m */; };
 		5E5FA5881B46342600387E69 /* libReliableBurstData_arm64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5FA57C1B46342600387E69 /* libReliableBurstData_arm64.a */; };
 		5E5FA58E1B477DD100387E69 /* JHLDevice_M60.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */; };
+		5E66B1C11CD9CD9E00728547 /* ImageTitleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1C01CD9CD9E00728547 /* ImageTitleButton.m */; };
+		5E66B1C81CDA026E00728547 /* MyBusinessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1C71CDA026E00728547 /* MyBusinessViewController.m */; };
+		5E66B1CB1CDA035000728547 /* UserHeadImageTBVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1CA1CDA035000728547 /* UserHeadImageTBVCell.m */; };
+		5E66B1CE1CDA037C00728547 /* BusinessStateTBVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1CD1CDA037C00728547 /* BusinessStateTBVCell.m */; };
+		5E66B1DC1CDAD6B100728547 /* NSError+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1D51CDAD6B100728547 /* NSError+Custom.m */; };
+		5E66B1DD1CDAD6B100728547 /* NSString+Formater.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1D81CDAD6B100728547 /* NSString+Formater.m */; };
+		5E66B1DE1CDAD6B100728547 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1DB1CDAD6B100728547 /* UIColor+HexColor.m */; };
+		5E66B1E11CDB18DC00728547 /* MHttpBusinessInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1E01CDB18DC00728547 /* MHttpBusinessInfo.m */; };
+		5E66B1E41CDB1A2300728547 /* VMDataSourceMyBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1E31CDB1A2300728547 /* VMDataSourceMyBusiness.m */; };
+		5E66B1E71CDB2AD300728547 /* BusinessVCRefreshButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1E61CDB2AD300728547 /* BusinessVCRefreshButton.m */; };
 		5E6C4B421C8FB564000294BB /* ChooseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B291C8FB564000294BB /* ChooseButton.m */; };
 		5E6C4B431C8FB564000294BB /* DirectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B2B1C8FB564000294BB /* DirectionView.m */; };
 		5E6C4B451C8FB564000294BB /* HttpRequestAreas.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B2F1C8FB564000294BB /* HttpRequestAreas.m */; };
@@ -226,6 +236,7 @@
 		5EFD099A1C17D0E40062AD34 /* ModelHTTPRequestLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EFD09991C17D0E40062AD34 /* ModelHTTPRequestLogin.m */; };
 		9E4D90A11BCF5B410096F84E /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E4D90A01BCF5B410096F84E /* ImageViewCell.m */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
+		F234A97B1AAF5D10E4F97D33 /* libPods-JLPay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3986AFEC0AAFBA486C3C27 /* libPods-JLPay.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -399,6 +410,26 @@
 		5E5FA57E1B46342600387E69 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		5E5FA58C1B477DD100387E69 /* JHLDevice_M60.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHLDevice_M60.h; sourceTree = "<group>"; };
 		5E5FA58D1B477DD100387E69 /* JHLDevice_M60.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHLDevice_M60.m; sourceTree = "<group>"; };
+		5E66B1BF1CD9CD9E00728547 /* ImageTitleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageTitleButton.h; sourceTree = "<group>"; };
+		5E66B1C01CD9CD9E00728547 /* ImageTitleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageTitleButton.m; sourceTree = "<group>"; };
+		5E66B1C61CDA026E00728547 /* MyBusinessViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyBusinessViewController.h; sourceTree = "<group>"; };
+		5E66B1C71CDA026E00728547 /* MyBusinessViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyBusinessViewController.m; sourceTree = "<group>"; };
+		5E66B1C91CDA035000728547 /* UserHeadImageTBVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserHeadImageTBVCell.h; sourceTree = "<group>"; };
+		5E66B1CA1CDA035000728547 /* UserHeadImageTBVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserHeadImageTBVCell.m; sourceTree = "<group>"; };
+		5E66B1CC1CDA037C00728547 /* BusinessStateTBVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessStateTBVCell.h; sourceTree = "<group>"; };
+		5E66B1CD1CDA037C00728547 /* BusinessStateTBVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessStateTBVCell.m; sourceTree = "<group>"; };
+		5E66B1D41CDAD6B100728547 /* NSError+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+Custom.h"; sourceTree = "<group>"; };
+		5E66B1D51CDAD6B100728547 /* NSError+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+Custom.m"; sourceTree = "<group>"; };
+		5E66B1D71CDAD6B100728547 /* NSString+Formater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Formater.h"; sourceTree = "<group>"; };
+		5E66B1D81CDAD6B100728547 /* NSString+Formater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Formater.m"; sourceTree = "<group>"; };
+		5E66B1DA1CDAD6B100728547 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
+		5E66B1DB1CDAD6B100728547 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
+		5E66B1DF1CDB18DC00728547 /* MHttpBusinessInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHttpBusinessInfo.h; sourceTree = "<group>"; };
+		5E66B1E01CDB18DC00728547 /* MHttpBusinessInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHttpBusinessInfo.m; sourceTree = "<group>"; };
+		5E66B1E21CDB1A2300728547 /* VMDataSourceMyBusiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMDataSourceMyBusiness.h; sourceTree = "<group>"; };
+		5E66B1E31CDB1A2300728547 /* VMDataSourceMyBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMDataSourceMyBusiness.m; sourceTree = "<group>"; };
+		5E66B1E51CDB2AD300728547 /* BusinessVCRefreshButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessVCRefreshButton.h; sourceTree = "<group>"; };
+		5E66B1E61CDB2AD300728547 /* BusinessVCRefreshButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessVCRefreshButton.m; sourceTree = "<group>"; };
 		5E6C4B281C8FB564000294BB /* ChooseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChooseButton.h; sourceTree = "<group>"; };
 		5E6C4B291C8FB564000294BB /* ChooseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChooseButton.m; sourceTree = "<group>"; };
 		5E6C4B2A1C8FB564000294BB /* DirectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionView.h; sourceTree = "<group>"; };
@@ -658,9 +689,12 @@
 		5EFD098A1C1577160062AD34 /* SettlementInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettlementInfoViewController.m; sourceTree = "<group>"; };
 		5EFD09981C17D0E40062AD34 /* ModelHTTPRequestLogin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelHTTPRequestLogin.h; sourceTree = "<group>"; };
 		5EFD09991C17D0E40062AD34 /* ModelHTTPRequestLogin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelHTTPRequestLogin.m; sourceTree = "<group>"; };
+		6C3986AFEC0AAFBA486C3C27 /* libPods-JLPay.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JLPay.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86F117F53CDE6931F23F72C3 /* Pods-JLPay.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JLPay.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JLPay/Pods-JLPay.debug.xcconfig"; sourceTree = "<group>"; };
 		9E4D909F1BCF5B410096F84E /* ImageViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewCell.h; sourceTree = "<group>"; };
 		9E4D90A01BCF5B410096F84E /* ImageViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewCell.m; sourceTree = "<group>"; };
 		9E4D90AB1BD0FB330096F84E /* iMagPay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iMagPay.framework; path = Frameworks/iMagPay.framework; sourceTree = "<group>"; };
+		C31F63A30F82750E73C9B4E9 /* Pods-JLPay.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JLPay.release.xcconfig"; path = "Pods/Target Support Files/Pods-JLPay/Pods-JLPay.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -684,6 +718,7 @@
 				5E33AB031C5222F50032D8E1 /* DCSwiperAPI.framework in Frameworks */,
 				5EB9B13E1AD79F6A00A73190 /* CoreBluetooth.framework in Frameworks */,
 				5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */,
+				F234A97B1AAF5D10E4F97D33 /* libPods-JLPay.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,6 +757,7 @@
 			isa = PBXGroup;
 			children = (
 				5E94481B1BFDA15F00128452 /* 主界面 */,
+				5E66B1C21CDA025600728547 /* 我的商户 */,
 				5E82B7E31B253F5F00A58751 /* 交易管理 */,
 				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E82B87D1B31610700A58751 /* 连接机具 */,
@@ -1060,6 +1096,86 @@
 			path = ILAlertView;
 			sourceTree = "<group>";
 		};
+		5E66B1C21CDA025600728547 /* 我的商户 */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1C31CDA025600728547 /* Model */,
+				5E66B1C41CDA025600728547 /* View */,
+				5E66B1C51CDA025600728547 /* ViewModel */,
+			);
+			path = "我的商户";
+			sourceTree = "<group>";
+		};
+		5E66B1C31CDA025600728547 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1DF1CDB18DC00728547 /* MHttpBusinessInfo.h */,
+				5E66B1E01CDB18DC00728547 /* MHttpBusinessInfo.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5E66B1C41CDA025600728547 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1C61CDA026E00728547 /* MyBusinessViewController.h */,
+				5E66B1C71CDA026E00728547 /* MyBusinessViewController.m */,
+				5E66B1C91CDA035000728547 /* UserHeadImageTBVCell.h */,
+				5E66B1CA1CDA035000728547 /* UserHeadImageTBVCell.m */,
+				5E66B1CC1CDA037C00728547 /* BusinessStateTBVCell.h */,
+				5E66B1CD1CDA037C00728547 /* BusinessStateTBVCell.m */,
+				5E66B1E51CDB2AD300728547 /* BusinessVCRefreshButton.h */,
+				5E66B1E61CDB2AD300728547 /* BusinessVCRefreshButton.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5E66B1C51CDA025600728547 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1E21CDB1A2300728547 /* VMDataSourceMyBusiness.h */,
+				5E66B1E31CDB1A2300728547 /* VMDataSourceMyBusiness.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5E66B1D21CDAD6B100728547 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1D31CDAD6B100728547 /* NSError */,
+				5E66B1D61CDAD6B100728547 /* NSString */,
+				5E66B1D91CDAD6B100728547 /* UIColor */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
+		5E66B1D31CDAD6B100728547 /* NSError */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1D41CDAD6B100728547 /* NSError+Custom.h */,
+				5E66B1D51CDAD6B100728547 /* NSError+Custom.m */,
+			);
+			path = NSError;
+			sourceTree = "<group>";
+		};
+		5E66B1D61CDAD6B100728547 /* NSString */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1D71CDAD6B100728547 /* NSString+Formater.h */,
+				5E66B1D81CDAD6B100728547 /* NSString+Formater.m */,
+			);
+			path = NSString;
+			sourceTree = "<group>";
+		};
+		5E66B1D91CDAD6B100728547 /* UIColor */ = {
+			isa = PBXGroup;
+			children = (
+				5E66B1DA1CDAD6B100728547 /* UIColor+HexColor.h */,
+				5E66B1DB1CDAD6B100728547 /* UIColor+HexColor.m */,
+			);
+			path = UIColor;
+			sourceTree = "<group>";
+		};
 		5E6C4B271C8FB52C000294BB /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -1279,6 +1395,8 @@
 		5E94480A1BFB21D800128452 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				5E66B1BF1CD9CD9E00728547 /* ImageTitleButton.h */,
+				5E66B1C01CD9CD9E00728547 /* ImageTitleButton.m */,
 				5E0D186C1B09E8FE0092F4AB /* DeleteButton.h */,
 				5E0D186D1B09E8FE0092F4AB /* DeleteButton.m */,
 				5EFD09831C1141BE0062AD34 /* SettlementSwitchView.h */,
@@ -1566,6 +1684,7 @@
 				5EB6F97E1AC8DD1C00E47AB5 /* JLPay */,
 				5EB6F9981AC8DD1C00E47AB5 /* JLPayTests */,
 				5EB6F97D1AC8DD1C00E47AB5 /* Products */,
+				EAFC3970BEF943F15A498131 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1678,6 +1797,7 @@
 				5EB6F9B51AC9210900E47AB5 /* Define_Header.h */,
 				5EBAA8F51ACD389D00E2ABDD /* PublicInformation.h */,
 				5EBAA8F61ACD389D00E2ABDD /* PublicInformation.m */,
+				5E66B1D21CDAD6B100728547 /* Category */,
 				5E0EBAB51C34BE4400DCAC59 /* 第三方控件 */,
 				5EDA83DD1B9047AF0096391B /* 自定义控件 */,
 				5E0EBA811C2A312000DCAC59 /* 保存本地信息 */,
@@ -2002,8 +2122,18 @@
 				5E397B551AD37B4B004F206F /* CFNetwork.framework */,
 				5E5E35A61B7C7A0B00560C0A /* libsqlite3.dylib */,
 				5E8B0D001BB0051400FD461A /* libsqlite3.tbd */,
+				6C3986AFEC0AAFBA486C3C27 /* libPods-JLPay.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EAFC3970BEF943F15A498131 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				86F117F53CDE6931F23F72C3 /* Pods-JLPay.debug.xcconfig */,
+				C31F63A30F82750E73C9B4E9 /* Pods-JLPay.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2013,9 +2143,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5EB6F99F1AC8DD1C00E47AB5 /* Build configuration list for PBXNativeTarget "JLPay" */;
 			buildPhases = (
+				2100F359E12759EF1906CD31 /* Check Pods Manifest.lock */,
 				5EB6F9781AC8DD1C00E47AB5 /* Sources */,
 				5EB6F9791AC8DD1C00E47AB5 /* Frameworks */,
 				5EB6F97A1AC8DD1C00E47AB5 /* Resources */,
+				BE0A7B5D8487F1F127DA982F /* Embed Pods Frameworks */,
+				3FC81B39FFC6894B39687FAC /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2118,6 +2251,54 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2100F359E12759EF1906CD31 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		3FC81B39FFC6894B39687FAC /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JLPay/Pods-JLPay-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BE0A7B5D8487F1F127DA982F /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JLPay/Pods-JLPay-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		5EB6F9781AC8DD1C00E47AB5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -2173,6 +2354,7 @@
 				5E5E35A21B7C79E200560C0A /* MySQLiteManager.m in Sources */,
 				5E6C4B451C8FB564000294BB /* HttpRequestAreas.m in Sources */,
 				5E33AB0A1C5616B20032D8E1 /* ModelTCPTransPacking.m in Sources */,
+				5E66B1DD1CDAD6B100728547 /* NSString+Formater.m in Sources */,
 				5E397B311AD36429004F206F /* ASIDownloadCache.m in Sources */,
 				5E397B381AD36429004F206F /* ASIS3BucketRequest.m in Sources */,
 				5E4A1FF21C055C3000E7DFD5 /* ModelUserLoginInformation.m in Sources */,
@@ -2183,6 +2365,7 @@
 				5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */,
 				5E9447F01BEC8E5B00128452 /* MaskView.m in Sources */,
 				5E0EBAB11C32849100DCAC59 /* ImageInputTableCell.m in Sources */,
+				5E66B1CE1CDA037C00728547 /* BusinessStateTBVCell.m in Sources */,
 				5E6C4B6C1C8FB710000294BB /* MASConstraintMaker.m in Sources */,
 				5EBE37711ADF5BC700901980 /* LVKeyboardAccessoryBtn.m in Sources */,
 				5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */,
@@ -2195,12 +2378,15 @@
 				5EBA40F51AEA366000F270C0 /* MyView.m in Sources */,
 				5E82B7F01B256C6B00A58751 /* DetailsCell.m in Sources */,
 				5E0EBA731C228A0400DCAC59 /* IntMoneyCalculating.m in Sources */,
+				5E66B1C11CD9CD9E00728547 /* ImageTitleButton.m in Sources */,
 				5E0EBAAA1C327C1D00DCAC59 /* T_0CardUploadViewController.m in Sources */,
+				5E66B1DC1CDAD6B100728547 /* NSError+Custom.m in Sources */,
 				5E6C4B7D1C8FB738000294BB /* ModelRateInfoSaved.m in Sources */,
 				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,
 				5E0EBA921C2CE09500DCAC59 /* BLEDeviceManagerTY.m in Sources */,
 				5E9448021BF42E2100128452 /* ViewModelTransDetails.m in Sources */,
 				5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */,
+				5E66B1E41CDB1A2300728547 /* VMDataSourceMyBusiness.m in Sources */,
 				5E5FA5821B46342600387E69 /* ILAlertView.m in Sources */,
 				5EA2DF581C914E5700770353 /* VMRateTypes.m in Sources */,
 				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
@@ -2218,6 +2404,7 @@
 				5EBE37721ADF5BC700901980 /* LVKeyboardView.m in Sources */,
 				5E0EBA991C3230C900DCAC59 /* T_0CardListViewController.m in Sources */,
 				5EBAA8E91ACD2FA800E2ABDD /* EncodeString.m in Sources */,
+				5E66B1E71CDB2AD300728547 /* BusinessVCRefreshButton.m in Sources */,
 				5EDD1E7E1C084BB800D78A5C /* PullRefrashView.m in Sources */,
 				5E6C4B701C8FB710000294BB /* NSArray+MASAdditions.m in Sources */,
 				5E397B361AD36429004F206F /* ASIS3Bucket.m in Sources */,
@@ -2235,6 +2422,7 @@
 				5EBA40FA1AEA37AC00F270C0 /* NewVersionView.m in Sources */,
 				5EA2DF731C97AFBF00770353 /* CellForDeviceBinding.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
+				5E66B1DE1CDAD6B100728547 /* UIColor+HexColor.m in Sources */,
 				5E93B4A51BE74A6E0064BEC4 /* ViewModelTCP.m in Sources */,
 				5E6C4B6F1C8FB710000294BB /* MASViewConstraint.m in Sources */,
 				5E6C4B711C8FB710000294BB /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
@@ -2256,6 +2444,7 @@
 				5EF3BAA01B672C6800DCD764 /* TransDetailsViewController.m in Sources */,
 				5E0EBA9F1C3231D700DCAC59 /* HttpRequestT0CardList.m in Sources */,
 				5E5FA5841B46342600387E69 /* ISBLEDataPath.m in Sources */,
+				5E66B1C81CDA026E00728547 /* MyBusinessViewController.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
 				5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */,
@@ -2290,6 +2479,7 @@
 				5E6C4B771C8FB721000294BB /* CustomSegmentView.m in Sources */,
 				5E6C4B421C8FB564000294BB /* ChooseButton.m in Sources */,
 				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
+				5E66B1CB1CDA035000728547 /* UserHeadImageTBVCell.m in Sources */,
 				5E6C4B6A1C8FB710000294BB /* MASCompositeConstraint.m in Sources */,
 				5EF3BA9D1B67258F00DCD764 /* TotalAmountDisplayView.m in Sources */,
 				5E397B281AD36429004F206F /* ASICloudFilesCDNRequest.m in Sources */,
@@ -2298,6 +2488,7 @@
 				5E397B4A1AD364A9004F206F /* TcpClientService3.m in Sources */,
 				5E5E35AD1B7DD39B00560C0A /* HelperAndAboutTableViewController.m in Sources */,
 				5EFD098B1C1577160062AD34 /* SettlementInfoViewController.m in Sources */,
+				5E66B1E11CDB18DC00728547 /* MHttpBusinessInfo.m in Sources */,
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5EA2DF961C9BD88200770353 /* JHLM60_Device.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
@@ -2430,6 +2621,7 @@
 		};
 		5EB6F9A01AC8DD1C00E47AB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 86F117F53CDE6931F23F72C3 /* Pods-JLPay.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
 				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
@@ -2461,6 +2653,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-all_load",
 					"-lstdc++",
 				);
@@ -2473,6 +2666,7 @@
 		};
 		5EB6F9A11AC8DD1C00E47AB5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C31F63A30F82750E73C9B4E9 /* Pods-JLPay.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
 				CODE_SIGN_IDENTITY = "iPhone Developer: liang luo (6E6R3DRW63)";
@@ -2503,6 +2697,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-all_load",
 					"-lstdc++",
 				);

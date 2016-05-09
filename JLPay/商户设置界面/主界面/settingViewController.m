@@ -20,6 +20,7 @@
 #import "ModelDeviceBindedInformation.h"
 
 #import "RateChooseViewController.h"
+#import "MyBusinessViewController.h"
 
 
 static NSString* const kTitleSettingBusinessName = @"账号名称";
@@ -27,10 +28,14 @@ static NSString* const kTitleSettingTransDetails = @"交易明细";
 static NSString* const kTitleSettingDeviceBinding = @"绑定设备";
 static NSString* const kTitleSettingFeeChoose = @"费率选择";
 static NSString* const kTitleSettingPinUpdate = @"修改密码";
-static NSString* const kTitleSettingT_0CardVerify = @"T+0卡验证";
+static NSString* const kTitleSettingT_0CardVerify = @"卡验证";
 static NSString* const kTitleSettingBalanceSelect = @"余额查询";
 static NSString* const kTitleSettingHelper = @"帮助与关于";
 
+
+typedef enum {
+    SettingVCAlertTagBusiChecking
+} SettingVCAlertTag;
 
 
 @interface settingViewController ()<UIAlertViewDelegate>
@@ -56,13 +61,14 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     [self setExtraCellLineHidden:self.tableView];
     
     // 只校验一次: 如果未绑定设备就直接跳转到设备绑定界面
-    if (![ModelDeviceBindedInformation hasBindedDevice]) {
+    if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked && ![ModelDeviceBindedInformation hasBindedDevice]) {
         UIViewController* viewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
         [self.navigationController pushViewController:viewController animated:YES];
     }
 }
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 
@@ -93,15 +99,6 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     return tableView.rowHeight;
 }
 
-/*************************************
- * 功  能 : UITableViewDelegate :屏蔽指定cell 的点击高亮效果
- *************************************/
-- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) {
-        return NO;
-    }
-    return YES;
-}
 
 /*************************************
  * 功  能 : UITableViewDataSource :cellForRowAtIndexPath 协议;
@@ -126,9 +123,20 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     // 下面是 cell 的装载
     if (indexPath.row == 0) {
         BusinessInfoTableViewCell* businessInfoCell = (BusinessInfoTableViewCell*)cell;
-        [businessInfoCell setUserId:[ModelUserLoginInformation userID]];
-        [businessInfoCell setBusinessName:[ModelUserLoginInformation businessName]];
-        [businessInfoCell setBusinessNo:[ModelUserLoginInformation businessNumber]];
+        businessInfoCell.labelUserId.text = [ModelUserLoginInformation userID];
+        businessInfoCell.labelBusinessName.text = [ModelUserLoginInformation businessName];
+        businessInfoCell.labelBusinessNo.text = [ModelUserLoginInformation businessNumber];
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked) {
+            businessInfoCell.labelCheckedState.hidden = YES;
+        }
+        else if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecking) {
+            businessInfoCell.labelCheckedState.hidden = NO;
+            businessInfoCell.labelCheckedState.text = @"审核中";
+        }
+        else if ([ModelUserLoginInformation checkSate] == BusinessCheckStateCheckRefused) {
+            businessInfoCell.labelCheckedState.hidden = NO;
+            businessInfoCell.labelCheckedState.text = @"审核拒绝";
+        }
     } else {
         NormalTableViewCell* normalCell = (NormalTableViewCell*)cell;
         NSString *labelName         = [self.cellNames objectAtIndex:indexPath.row];
@@ -164,13 +172,27 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController = nil;
     
+    CGRect frame = [tableView rectForRowAtIndexPath:indexPath];
+    UIView* selectedBView = [[UIView alloc] initWithFrame:frame];
+    selectedBView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.2];
+    [cell setSelectedBackgroundView:selectedBView];
+    
+    
     if ([cellName isEqualToString:kTitleSettingTransDetails]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
-        TransDetailsViewController* vc = (TransDetailsViewController*)viewController;
-        vc.tradePlatform = NameTradePlatformMPOSSwipe;
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked) {
+            viewController = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
+            TransDetailsViewController* vc = (TransDetailsViewController*)viewController;
+            vc.tradePlatform = NameTradePlatformMPOSSwipe;
+        } else {
+            [PublicInformation alertSureWithTitle:@"温馨提示" message:@"商户正在审核中,不允许操作" tag:SettingVCAlertTagBusiChecking delegate:self];
+        }
     }
     else if ([cellName isEqualToString:kTitleSettingDeviceBinding]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked) {
+            viewController = [storyBoard instantiateViewControllerWithIdentifier:@"deviceSigninVC"];
+        } else {
+            [PublicInformation alertSureWithTitle:@"温馨提示" message:@"商户正在审核中,不允许操作" tag:SettingVCAlertTagBusiChecking delegate:self];
+        }
     }
     else if ([cellName isEqualToString:kTitleSettingPinUpdate]) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"changePinVC"];
@@ -181,21 +203,38 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
         [viewController setTitle:cellName];
     }
     else if ([cellName isEqualToString:kTitleSettingFeeChoose]) {
-        viewController = [[RateChooseViewController alloc] initWithNibName:nil bundle:nil];
-        [viewController setTitle:cellName];
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked) {
+            viewController = [[RateChooseViewController alloc] initWithNibName:nil bundle:nil];
+            [viewController setTitle:cellName];
+        } else {
+            [PublicInformation alertSureWithTitle:@"温馨提示" message:@"商户正在审核中,不允许操作" tag:SettingVCAlertTagBusiChecking delegate:self];
+        }
     }
     else if ([cellName isEqualToString:kTitleSettingBalanceSelect]) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"brush"];
-        BrushViewController* brushVC = (BrushViewController*)viewController;
-        brushVC.stringOfTranType = TranType_YuE;
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked) {
+            viewController = [storyBoard instantiateViewControllerWithIdentifier:@"brush"];
+            BrushViewController* brushVC = (BrushViewController*)viewController;
+            brushVC.stringOfTranType = TranType_YuE;
+        } else {
+            [PublicInformation alertSureWithTitle:@"温馨提示" message:@"商户正在审核中,不允许操作" tag:SettingVCAlertTagBusiChecking delegate:self];
+        }
     }
     else if ([cellName isEqualToString:kTitleSettingT_0CardVerify]) {
-        viewController = [[T_0CardListViewController alloc] initWithNibName:nil bundle:nil];
+        if ([ModelUserLoginInformation checkSate] == BusinessCheckStateChecked) {
+            viewController = [[T_0CardListViewController alloc] initWithNibName:nil bundle:nil];
+        } else {
+            [PublicInformation alertSureWithTitle:@"温馨提示" message:@"商户正在审核中,不允许操作" tag:SettingVCAlertTagBusiChecking delegate:self];
+        }
     }
+    else if ([cellName isEqualToString:kTitleSettingBusinessName]) {
+        viewController = [[MyBusinessViewController alloc] initWithNibName:nil bundle:nil];
+    }
+
     if (viewController) {
         [self.navigationController pushViewController:viewController animated:YES];
     }
 }
+
 
 /* cell 的重用标示 */
 - (NSString*) reuseIdentifierAtIndexPath:(NSIndexPath*)indexPath {
@@ -215,11 +254,6 @@ static NSString* const kTitleSettingHelper = @"帮助与关于";
     [tableView setTableFooterView:view];
 }
 
-// 简化代码
-- (void) alertShowWithMessage:(NSString*)msg {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:msg message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alert show];
-}
 
 
 #pragma mask ---- getter & setter

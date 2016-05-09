@@ -10,5 +10,5 @@
 
 
 @interface settingViewController : UITableViewController
-
+<UIAlertViewDelegate>
 @end

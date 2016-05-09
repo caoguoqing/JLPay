@@ -75,22 +75,24 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
     NSData* data = [request responseData];
     NSError* error = nil;
     NSDictionary* loginInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    NSMutableDictionary* userLoginDownInfo = [NSMutableDictionary dictionaryWithDictionary:loginInfo];
     if (!error) {
         NSString* code = [loginInfo objectForKey:kFieldNameLoginDownCode];
         NSString* message = [loginInfo objectForKey:kFieldNameLoginDownMessage];
         /* 响应码: 登陆成功 */
         if ([code intValue] == 0) {
             // 校验终端个数跟列表中是否一致
-            NSArray* terminals = [[NSArray alloc] init];
-            if ([[loginInfo objectForKey:kFieldNameLoginDownTerminalList] componentsSeparatedByString:@","]) {
-                terminals = [NSArray arrayWithArray:[[loginInfo objectForKey:kFieldNameLoginDownTerminalList] componentsSeparatedByString:@","]];
-            }
-            if ([[loginInfo objectForKey:kFieldNameLoginDownTerminalCount] intValue] == terminals.count)
-            {
-                [self rebackSuccessWithLoginInfo:loginInfo];
+            if ([self isValidTerminalCountsCheckedOnLoginInfo:loginInfo]) {
+                [userLoginDownInfo setObject:@(BusinessCheckStateChecked) forKey:kFieldNameLoginDownCheckState];
+                [self rebackSuccessWithLoginInfo:userLoginDownInfo];
             } else {
                 [self rebackFailWithMessage:@"终端个数返回异常" andErrorType:LoginErrorCodeTypeDefault];
             }
+        }
+        /* 响应码: 审核中 */
+        else if ([code intValue] == LoginErrorCodeTypeChecking) {
+            [userLoginDownInfo setObject:@(BusinessCheckStateChecking) forKey:kFieldNameLoginDownCheckState];
+            [self rebackSuccessWithLoginInfo:userLoginDownInfo];
         }
         /* 响应码: 版本过低 */
         else if ([code intValue] == LoginErrorCodeTypeLowVersion) {
@@ -112,6 +114,24 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
     
     self.httpRequest = nil;
 }
+
+// -- 检查终端号列表个数是否一致
+- (BOOL) isValidTerminalCountsCheckedOnLoginInfo:(NSDictionary*)loginInfo {
+    NSString* terminalList = [loginInfo objectForKey:kFieldNameLoginDownTerminalList];
+    NSNumber* terminalCount = [loginInfo objectForKey:kFieldNameLoginDownTerminalCount];
+    BOOL terminalNumberIsValid = YES;
+    if (terminalCount && terminalCount.integerValue > 0) {
+        NSArray* terminals = nil;
+        if (terminalList && terminalList.length > 0) {
+            terminals = [terminalList componentsSeparatedByString:@","];
+        }
+        if (!terminals || terminals.count != terminalCount.integerValue) {
+            terminalNumberIsValid = NO;
+        }
+    }
+    return terminalNumberIsValid;
+}
+
 
 /* 回调: HTTP响应失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {

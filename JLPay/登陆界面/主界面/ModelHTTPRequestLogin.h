@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ModelUserLoginInformation.h"
 @class ModelHTTPRequestLogin;
 
 
@@ -25,6 +26,7 @@ static NSString* const kFieldNameLoginDownBusinessEmail = @"commEmail"; // 商�
 static NSString* const kFieldNameLoginDownTerminalCount = @"termCount"; // 终端号个数
 static NSString* const kFieldNameLoginDownTerminalList = @"TermNoList"; // 终端号列表:","分割
 static NSString* const kFieldNameLoginDownAllowTypes = @"allowType"; // 允许标志
+static NSString* const kFieldNameLoginDownCheckState = @"checkState"; // 审核标记
 static NSString* const kFieldNameLoginDownRegisterInfo = @"registerInfoList"; // 注册信息
 
 /* ----- 历史注册信息字段名 ----- */
@@ -53,6 +55,7 @@ static NSString* const kFieldNameLastRegist09 = @"09"; // 手持身份证
 typedef enum {
     LoginErrorCodeTypeDefault = 99,             // 默认错误
     LoginErrorCodeTypeLowVersion = 701,         // 版本过低: 需下载新版本
+    LoginErrorCodeTypeChecking = 801,           // 审核中
     LoginErrorCodeTypeRegistRefuse = 802        // 注册审核拒绝: 需修改注册信息
 } LoginErrorCodeType;
 

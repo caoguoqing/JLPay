@@ -80,7 +80,7 @@ static HTTPInstance* pubHttpInstance = nil;
 - (void) requestFinished:(ASIHTTPRequest *)request {
     NSData* data = [request responseData];
     NSDictionary* resHeader = [request responseHeaders];
-
+    NSLog(@"---响应信息:[%@]",[request responseString]);
     [self.httpRequester clearDelegatesAndCancel];
     NSError* error;
     NSDictionary* resData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];

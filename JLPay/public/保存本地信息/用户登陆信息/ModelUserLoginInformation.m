@@ -23,11 +23,28 @@ static NSString* KeyLoginDownInfoBusinessEmail = @"KeyLoginDownInfoBusinessEmail
 static NSString* KeyLoginDownInfoTerminalCount = @"KeyLoginDownInfoTerminalCount__";
 static NSString* KeyLoginDownInfoTerminalNumbers = @"KeyLoginDownInfoTerminalNumbers__";
 static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
+static NSString* KeyLoginDownInfoCheckState = @"KeyLoginDownInfoCheckState__";
+
 /* ------------------------------ */
 
 
 @implementation ModelUserLoginInformation
 
+
++ (instancetype)sharedInfo {
+    static ModelUserLoginInformation* sharedUserLoginInfo;
+    dispatch_once_t predicate;
+    dispatch_once(&predicate, ^{
+        sharedUserLoginInfo = [[ModelUserLoginInformation alloc] init];
+    });
+    return sharedUserLoginInfo;
+}
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+    }
+    return self;
+}
 
 #pragma mask ---- 增
 /* 保存登陆上送信息 */
@@ -56,10 +73,10 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
                             terminalCount:(NSString*)terminalCount // 终端号个数 nullNoable
                           terminalNumbers:(NSArray*)terminalNumbers //终端号列表 nullable
                                allowTypes:(NSString *)allowTypes
+                               checkState:(BusinessCheckState)state
 {
     if (!businessName   || businessName.length == 0 ||
-        !businessNumber || businessNumber.length == 0 ||
-        !terminalCount  || terminalCount.length == 0
+        !businessNumber || businessNumber.length == 0 
         )
     {
         return NO;
@@ -68,13 +85,16 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
     [newInfo setObject:businessName forKey:KeyLoginDownInfoBusinessName];
     [newInfo setObject:businessNumber forKey:KeyLoginDownInfoBusinessNumber];
     [newInfo setObject:businessEmail forKey:KeyLoginDownInfoBusinessEmail];
-    [newInfo setObject:terminalCount forKey:KeyLoginDownInfoTerminalCount];
+    if (terminalCount && terminalCount.length > 0) {
+        [newInfo setObject:terminalCount forKey:KeyLoginDownInfoTerminalCount];
+    }
     if (terminalCount.intValue != 0 && terminalCount.intValue == terminalNumbers.count) {
         [newInfo setObject:terminalNumbers forKey:KeyLoginDownInfoTerminalNumbers];
     }
     if (allowTypes && allowTypes.length > 0) {
         [newInfo setObject:allowTypes forKey:KeyLoginDownInfoAllowTypes];
     }
+    [newInfo setObject:@(state) forKey:KeyLoginDownInfoCheckState];
     [self writeLoginDownInfo:newInfo];
     return YES;
 }
@@ -217,6 +237,17 @@ static NSString* KeyLoginDownInfoAllowTypes = @"KeyLoginDownInfoAllowTypes__";
     }
     return terminals;
 }
+
+/* 审核标志 */
++ (BusinessCheckState)checkSate {
+    BusinessCheckState state = BusinessCheckStateChecked;
+    NSDictionary* loginDownInfo = [self informationOfLoginDown];
+    if (loginDownInfo) {
+        state = [[loginDownInfo objectForKey:KeyLoginDownInfoCheckState] integerValue];
+    }
+    return state;
+}
+
 
 // -- 所有允许标志位
 + (NSString*) allowTypesSaved {

@@ -7,40 +7,10 @@
 //
 
 #import "BusinessInfoTableViewCell.h"
-#import "PublicInformation.h"
 
-@interface BusinessInfoTableViewCell()
-
-@property (nonatomic, strong) UIImageView* headImageView;   // 头像图片
-@property (nonatomic, strong) UILabel* labelUserId; // 登录名标签
-@property (nonatomic, strong) UILabel* labelBusinessName; // 商户名标签
-@property (nonatomic, strong) UILabel* labelBusinessNo; // 商户号标签
-
-@end
 
 @implementation BusinessInfoTableViewCell
 
-
-#pragma mask ---- PUBLIC INTERFACE
-/* 设置头像图片 */
-- (void) setHeadImage:(UIImage*)headImage {
-    [self.headImageView setImage:headImage];
-}
-
-/* 设置登陆用户名 */
-- (void) setUserId:(NSString*)userId {
-    [self.labelUserId setText:userId];
-}
-
-/* 设置商户名 */
-- (void) setBusinessName:(NSString*)businessName {
-    [self.labelBusinessName setText:businessName];
-}
-
-/* 设置商户编号 */
-- (void) setBusinessNo:(NSString *)businessNo {
-    [self.labelBusinessNo setText:businessNo];
-}
 
 
 
@@ -49,11 +19,13 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         self.backgroundColor = [PublicInformation returnCommonAppColor:@"red"];
-        [self addSubview:self.headImageView];
-        [self addSubview:self.labelUserId];
-        [self addSubview:self.labelBusinessName];
-        [self addSubview:self.labelBusinessNo];
+        [self.contentView addSubview:self.headImageView];
+        [self.contentView addSubview:self.labelUserId];
+        [self.contentView addSubview:self.labelBusinessName];
+        [self.contentView addSubview:self.labelBusinessNo];
+        [self.contentView addSubview:self.labelCheckedState];
     }
     return self;
 }
@@ -62,52 +34,51 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat insetImageTop = 6.0;
-    CGFloat insetImageLeft = 15.0;
-    CGFloat insetLabelBig = 1.0;
-    CGFloat insetLabelLit = 1.0;
-    CGFloat insetLabelTop = 10.0;
-
-    CGFloat heightLabelLit = (self.frame.size.height - insetLabelBig - insetLabelLit - insetLabelTop*2) * 2.0/7.0;
-    CGFloat heightLabelBig = heightLabelLit * 3.0/2.0;
+    CGFloat inset = 15;
+    CGFloat fontRate = 0.96;
+    CGFloat heightImageV = self.frame.size.height * 0.85;
     
-    CGFloat heightImage = self.frame.size.height - insetImageTop * 2;
-    CGFloat widthLabel = self.frame.size.width - insetImageLeft * 2 - heightImage - 35/* 为AccessoryDisclosure预留 */;
+    CGFloat heightLabelT = self.frame.size.height - inset * 0.66 * 2;
+    CGFloat heightBigLabel = heightLabelT * 0.46;
+    CGFloat heightMinLabel = (heightLabelT - heightBigLabel) * 0.5;
     
-    CGRect frame = CGRectMake(insetImageLeft, insetImageTop, heightImage, heightImage);
-    // 头像图片
-    [self.headImageView setFrame:frame];
-    self.headImageView.layer.cornerRadius = frame.size.width / 2.0;
-    
-    // 登录名
-    frame.origin.x += frame.size.width + insetImageLeft;
-    frame.origin.y = insetLabelTop;
-    frame.size.width = widthLabel;
-    frame.size.height = heightLabelBig;
-    [self.labelUserId setFrame:frame];
-    [self.labelUserId setFont:[self newFontForHeight:frame.size.height]];
-    
-    // 商户名
-    frame.origin.y += frame.size.height + insetLabelBig;
-    frame.size.height = heightLabelLit;
-    [self.labelBusinessName setFrame:frame];
-    [self.labelBusinessName setFont:[self newFontForHeight:frame.size.height]];
-    
-    // 商户号
-    frame.origin.y += frame.size.height + insetLabelLit;
-    [self.labelBusinessNo setFrame:frame];
-    [self.labelBusinessNo setFont:[self newFontForHeight:frame.size.height]];
-}
-
-#pragma mask ---- PRIVATE INTERFACE
-/* 根据高度计算适应的 UIFont */
-- (UIFont*) newFontForHeight:(CGFloat)height {
-    CGFloat testFontSize = 20;
-    CGSize testSize = [@"test" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:testFontSize]
-                                                                              forKey:NSFontAttributeName]];
-    
-    CGFloat newFontSize = height / testSize.height * testFontSize;
-    return [UIFont systemFontOfSize:newFontSize];
+    NameWeakSelf(wself);
+    [self.headImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.contentView.mas_left).offset(inset);
+        make.centerY.equalTo(wself.contentView.mas_centerY);
+        make.width.mas_equalTo(heightImageV);
+        make.height.mas_equalTo(heightImageV);
+        wself.headImageView.layer.cornerRadius = heightImageV * 0.5;
+    }];
+    [self.labelUserId mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.headImageView.mas_right).offset(inset);
+        make.top.equalTo(wself.contentView.mas_top).offset(inset * 0.66);
+        make.height.mas_equalTo(heightBigLabel);
+        make.width.mas_equalTo([wself.labelUserId.text resizeAtHeight:heightBigLabel scale:1].width);
+        wself.labelUserId.font = [UIFont systemFontOfSize:[wself.labelUserId.text resizeFontAtHeight:heightBigLabel scale:fontRate]];
+    }];
+    [self.labelBusinessName mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.labelUserId.mas_left);
+        make.top.equalTo(wself.labelUserId.mas_bottom);
+        make.height.mas_equalTo(heightMinLabel);
+        make.width.mas_equalTo([wself.labelBusinessName.text resizeAtHeight:heightMinLabel scale:1].width );
+        wself.labelBusinessName.font = [UIFont systemFontOfSize:[wself.labelBusinessName.text resizeFontAtHeight:heightMinLabel scale:fontRate]];
+    }];
+    [self.labelBusinessNo mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.labelBusinessName.mas_left);
+        make.top.equalTo(wself.labelBusinessName.mas_bottom);
+        make.height.mas_equalTo(heightMinLabel);
+        make.width.mas_equalTo([wself.labelBusinessNo.text resizeAtHeight:heightMinLabel scale:1].width);
+        wself.labelBusinessNo.font = [UIFont systemFontOfSize:[wself.labelBusinessNo.text resizeFontAtHeight:heightMinLabel scale:fontRate]];
+    }];
+    [self.labelCheckedState mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.labelUserId.mas_right).offset(10);
+        make.centerY.equalTo(wself.labelUserId.mas_centerY);
+        make.height.mas_equalTo(heightBigLabel);
+        make.width.mas_equalTo([wself.labelCheckedState.text resizeAtHeight:heightBigLabel scale:1].width);
+        wself.labelCheckedState.font = [UIFont systemFontOfSize:[wself.labelCheckedState.text resizeFontAtHeight:heightBigLabel scale:0.5]];
+        wself.labelCheckedState.layer.cornerRadius = heightBigLabel * 0.5;
+    }];
 }
 
 
@@ -147,6 +118,16 @@
         _labelBusinessNo.textAlignment = NSTextAlignmentLeft;
     }
     return _labelBusinessNo;
+}
+- (UILabel *)labelCheckedState {
+    if (!_labelCheckedState) {
+        _labelCheckedState = [UILabel new];
+        _labelCheckedState.backgroundColor = [UIColor whiteColor];
+        _labelCheckedState.textAlignment = NSTextAlignmentCenter;
+        _labelCheckedState.textColor = [PublicInformation returnCommonAppColor:@"red"];
+        _labelCheckedState.layer.masksToBounds = YES;
+    }
+    return _labelCheckedState;
 }
 
 @end

@@ -11,6 +11,12 @@
 
 #import "AppDelegate.h"
 #import "PublicInformation.h"
+#import "NSString+SBJSON.h"
+#import "NSString+Formater.h"
+#import "UIColor+HexColor.h"
+#import "NSError+Custom.h"
+
+
 
 #define NameWeakSelf(weakSelf)          __weak typeof(self) weakSelf = self;
 

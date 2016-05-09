@@ -17,6 +17,7 @@
 #import "ModelSettlementInformation.h"
 #import "ModelUserLoginInformation.h"
 #import "IntMoneyCalculating.h"
+#import "ImageTitleButton.h"
 
 #import "ModelRateInfoSaved.h"
 #import "ModelBusinessInfoSaved.h"
@@ -35,6 +36,11 @@
 @property (nonatomic, strong) UIView* backViewOfMoney;                      // 用来优化结算方式视图的点击体验
 
 @property (nonatomic, strong) IntMoneyCalculating* intMoneyCalculating;
+
+@property (nonatomic, strong) ImageTitleButton* swipeButton;
+@property (nonatomic, strong) ImageTitleButton* wechatPayButton;;
+@property (nonatomic, strong) ImageTitleButton* alipayButton;
+
 
 @end
 
@@ -100,7 +106,7 @@
 #pragma mask ::: 数字按键组的分割线
 - (void) drawLineInRect : (CGRect)rect {
     CGFloat lineWidth = 0.5;
-    CGFloat horizontalWidth = rect.size.width;  // 水平
+    CGFloat horizontalWidth = rect.size.width * 3/4.0;  // 水平
     CGRect frame = CGRectMake(rect.origin.x, rect.origin.y, horizontalWidth, lineWidth);
     // 横线
     for (int i = 0; i < 5; i++) {
@@ -116,10 +122,10 @@
     frame.size.width = lineWidth;
     frame.size.height = rect.size.height;
     // 竖线
-    for (int j = 0; j < 4; j++) {
+    for (int j = 0; j < 5; j++) {
         UIView* line = [[UIView alloc] initWithFrame:frame];
         line.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.5];
-        frame.origin.x += rect.size.width/3.0;
+        frame.origin.x += rect.size.width/4.0;
         [self.view addSubview:line];
     }
 }
@@ -138,7 +144,7 @@
 }
 
 #pragma mask  ---- 数字按钮组的点击事件
-- (IBAction) touchUp:(UIButton*)sender {
+- (IBAction) clickNumerButton:(UIButton*)sender {
     sender.transform                    = CGAffineTransformIdentity;
     sender.backgroundColor              = [UIColor clearColor];
     // 向金额对象压入输入的数字
@@ -203,10 +209,21 @@
     }
 }
 
+- (IBAction) toWechatPay:(UIButton*)sender {
+    [PublicInformation makeCentreToast:@"敬请期待，即将开通!"];
+}
+- (IBAction) toAlipay:(UIButton*)sender {
+    [PublicInformation makeCentreToast:@"敬请期待，即将开通!"];
+}
+
 /* 刷卡前检查输入 */
 - (BOOL) checkInputsBeforeSwipe {
     BOOL inputsValid = YES;
     NameWeakSelf(wself);
+    if ([ModelUserLoginInformation checkSate] != BusinessCheckStateChecked) {
+        [PublicInformation makeCentreToast:@"商户正在审核，不允许交易"];
+        inputsValid = NO;
+    }
     if (inputsValid && [self.labelDisplayMoney.text floatValue] < 0.0001) {
         [PublicInformation makeToast:@"请输入金额!"];
         inputsValid = NO;
@@ -348,16 +365,15 @@
  * 返  回 : 无
  *************************************/
 - (void) addSubViews {
-    // 字体大小: 数字按钮组的
+    /* status bar height */
     CGFloat statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
     // 有效高度: 视图的
     CGFloat visibleHeight = self.view.bounds.size.height - self.tabBarController.tabBar.bounds.size.height - statusBarHeight;
-    // 宽度: 分割线
-    CGFloat  bornerWith = 1;
     // 间隔值
     CGFloat inset = 5.0;
     // 宽度: 数字按钮
-    CGFloat numBtnWidth = self.view.bounds.size.width/3.0;
+    NSInteger numberOfLinesNumberButton = 4;
+    CGFloat numBtnWidth = self.view.bounds.size.width/numberOfLinesNumberButton;
     // logo imageView高度
     CGSize  logoImgSize = [PublicInformation logoImageOfApp].size;
     CGFloat logoImgWidth = self.view.bounds.size.width / 2.0;
@@ -369,16 +385,16 @@
      4.计算金额显示框最小高度
      --------- */
     CGFloat minHeightLogoImageView = logoImgHeight + inset*2;
-    CGFloat maxHeightNumButton = numBtnWidth * 3.0/4.0 * 4.0/5.0;
+    CGFloat maxHeightNumButton = numBtnWidth;
     CGFloat minHeightMoneyDisplay = minHeightLogoImageView;
     
     // 初始高度值: 图标、金额框、数字按钮
     CGFloat heightLogoImageView = minHeightLogoImageView;
     CGFloat heightMoneyDisplay = minHeightMoneyDisplay;
-    CGFloat heightNumButton = (visibleHeight - minHeightLogoImageView - minHeightMoneyDisplay)/5.0;
+    CGFloat heightNumButton = (visibleHeight - minHeightLogoImageView - minHeightMoneyDisplay)/numberOfLinesNumberButton;
     // 如果数字按钮高度大于最大值:置为最大值,金额框、logo视图各分多出来的高度的一半
     if (heightNumButton > maxHeightNumButton) {
-        CGFloat difference = (heightNumButton - maxHeightNumButton)*5;
+        CGFloat difference = (heightNumButton - maxHeightNumButton) * numberOfLinesNumberButton;
         heightNumButton = maxHeightNumButton;
         heightLogoImageView += difference/2.0;
         heightMoneyDisplay += difference/2.0;
@@ -396,10 +412,10 @@
     [self.view addSubview:imageView];
     
     // 金额背景框
-    frame.origin.x = bornerWith;
+    frame.origin.x = 0;
     frame.origin.y = yCenterPre;
-    frame.size.width = self.view.bounds.size.width - bornerWith*2;
-    frame.size.height = heightMoneyDisplay - bornerWith*2;
+    frame.size.width = self.view.bounds.size.width;
+    frame.size.height = heightMoneyDisplay;
     [self.backViewOfMoney setFrame:frame];
     [self.view addSubview:self.backViewOfMoney];
 
@@ -431,18 +447,20 @@
     frame.size.width                    = numBtnWidth;
     frame.size.height                   = heightNumButton;
     CGRect numbersFrame                 = CGRectMake(0, yCenterPre, self.view.bounds.size.width, heightNumButton*4);
+    
     for (int i = 0; i < numbers.count; i++) {
         NSString* titleButton = [numbers objectAtIndex:i];
-        CGPoint curCenterPoint = CGPointMake(0 + numBtnWidth * (i % 3) + numBtnWidth/2.0, yCenterPre + heightNumButton * (i / 3) + heightNumButton/2.0);
+        CGPoint curCenterPoint = CGPointMake(0 + numBtnWidth * (i % 3) + numBtnWidth/2.0,
+                                             yCenterPre + heightNumButton * (i / 3) + heightNumButton/2.0);
         // 数字按钮+小数点按钮
         if (titleButton.length == 1) {
             UIButton* numberButton = [[UIButton alloc] initWithFrame:frame];
             numberButton.center = curCenterPoint;
             [numberButton setTitle:titleButton forState:UIControlStateNormal];
             [numberButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            numberButton.titleLabel.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:2.0/3.0]];
+            numberButton.titleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:0.5]];
             [numberButton  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-            [numberButton  addTarget:self action:@selector(touchUp:) forControlEvents:UIControlEventTouchUpInside];
+            [numberButton  addTarget:self action:@selector(clickNumerButton:) forControlEvents:UIControlEventTouchUpInside];
             [numberButton  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
             [self.view addSubview:numberButton];
         }
@@ -462,26 +480,36 @@
     }
     // 分割线
     [self drawLineInRect:numbersFrame];
-    yCenterPre += heightNumButton*4;
+    
+    NameWeakSelf(wself);
+    CGFloat heightImageButton = heightNumButton;
+    // 支付宝支付
+    [self.view addSubview:self.alipayButton];
+    [self.alipayButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.view.mas_left).offset(numBtnWidth * 3);
+        make.right.equalTo(wself.view.mas_right);
+        make.top.equalTo(wself.view.mas_top).offset(yCenterPre);
+        make.height.mas_equalTo(heightImageButton);
+    }];
+    
+    // 微信支付
+    [self.view addSubview:self.wechatPayButton];
+    [self.wechatPayButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.alipayButton.mas_left).offset(0);
+        make.right.equalTo(wself.alipayButton.mas_right);
+        make.top.equalTo(wself.alipayButton.mas_bottom).offset(0);
+        make.height.equalTo(wself.alipayButton.mas_height);
+    }];
     
     // 刷卡按钮
-    frame.size.width                    = self.view.bounds.size.width - inset*2;
-    frame.size.height                   = heightNumButton - inset*2;
-    UIButton *brushButton               = [[UIButton alloc] initWithFrame:frame];
-    brushButton.center = CGPointMake(self.view.frame.size.width/2.0, yCenterPre + heightNumButton/2.0);
-    brushButton.layer.cornerRadius      = 8.0;
-    brushButton.backgroundColor         = [PublicInformation returnCommonAppColor:@"red"];
-    [brushButton setTitle:@"开始刷卡" forState:UIControlStateNormal];
-    [brushButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [brushButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [brushButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    brushButton.titleLabel.font = [UIFont boldSystemFontOfSize:[PublicInformation resizeFontInSize:frame.size andScale:0.7]];
-    [brushButton addTarget:self action:@selector(beginBrush:) forControlEvents:UIControlEventTouchDown];
-    [brushButton addTarget:self action:@selector(toBrushClick:) forControlEvents:UIControlEventTouchUpInside];
-    [brushButton addTarget:self action:@selector(outBrush:) forControlEvents:UIControlEventTouchUpOutside];
-    [brushButton setSelected:YES];
-    [self.view addSubview:brushButton];
-    
+    heightImageButton *= 2;
+    [self.view addSubview:self.swipeButton];
+    [self.swipeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(wself.wechatPayButton.mas_centerX);
+        make.width.equalTo(wself.wechatPayButton.mas_width);
+        make.height.mas_equalTo(heightImageButton);
+        make.top.equalTo(wself.wechatPayButton.mas_bottom);
+    }];
 }
 
 #pragma mask --- setter & getter
@@ -506,6 +534,39 @@
         _backViewOfMoney.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:188.0/255.0 blue:194.0/255.0 alpha:1.0]; // 灰色
     }
     return _backViewOfMoney;
+}
+- (ImageTitleButton *)swipeButton {
+    if (!_swipeButton) {
+        _swipeButton = [[ImageTitleButton alloc] init];
+        _swipeButton.bImageView.image = [UIImage imageNamed:@"CreditCard_blackBlue"];
+        _swipeButton.bTitleLabel.text = @"刷卡";
+        _swipeButton.bTitleLabel.textColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
+        _swipeButton.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.4];
+        [_swipeButton addTarget:self action:@selector(toBrushClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _swipeButton;
+}
+- (ImageTitleButton *)wechatPayButton {
+    if (!_wechatPayButton) {
+        _wechatPayButton = [[ImageTitleButton alloc] init];
+        _wechatPayButton.bImageView.image = [UIImage imageNamed:@"WechatPay_white"];
+        _wechatPayButton.bTitleLabel.text = @"微信收款";
+        _wechatPayButton.bTitleLabel.textColor = [UIColor whiteColor];
+        _wechatPayButton.backgroundColor = [PublicInformation returnCommonAppColor:@"green"];
+        [_wechatPayButton addTarget:self action:@selector(toWechatPay:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _wechatPayButton;
+}
+- (ImageTitleButton *)alipayButton {
+    if (!_alipayButton) {
+        _alipayButton = [[ImageTitleButton alloc] init];
+        _alipayButton.bImageView.image = [UIImage imageNamed:@"Alipay_white"];
+        _alipayButton.bTitleLabel.text = @"支付宝收款";
+        _alipayButton.bTitleLabel.textColor = [UIColor whiteColor];
+        _alipayButton.backgroundColor = [PublicInformation returnCommonAppColor:@"lightBlue"];
+        [_alipayButton addTarget:self action:@selector(toAlipay:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _alipayButton;
 }
 
 @end

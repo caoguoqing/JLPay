@@ -343,7 +343,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
             
             // 清空绑定信息
             [ModelDeviceBindedInformation cleanDeviceBindedInfo];
-            [self.navigationController popViewControllerAnimated:YES];
+            // 1.从登陆界面进来；2.从商户信息界面进来
+            if (self.tabBarController) {
+                [self.tabBarController dismissViewControllerAnimated:YES completion:nil];
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
         }];
     }
     // 失败
@@ -810,6 +815,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 #pragma mask ------ 界面声明周期
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     [self setTitle:[self titleForRegisterType:self.registerType]]; // 设置界面标题
     [self.registerButton setTitle:[self buttonTitleForRegisterType:self.registerType] forState:UIControlStateNormal]; // 设置按钮标题
     [self.view addSubview:self.registerButton];

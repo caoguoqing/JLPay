@@ -31,10 +31,6 @@
 - (void) clearDetails;
 
 
-#pragma mask ---- 过滤器 -------- 需要修改
-/* 过滤: 输入为金额或卡号后4位; 返回过滤结果*/
-//- (BOOL) filterDetailsByInput:(NSString*)input;
-//- (void) removeFilter;
 
 
 #pragma mask ---- selector
