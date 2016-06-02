@@ -198,11 +198,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/&#x767b;&#x9646;&#x754c;&#x9762;/&#x6ce8;&#x518c;&#x7528;&#x6237;/UserRegisterViewController.m"
-            timestampString = "481540709.52072"
+            timestampString = "486378384.634215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
             landmarkName = "@implementation UserRegisterViewController"
             landmarkType = "3">
          </BreakpointContent>

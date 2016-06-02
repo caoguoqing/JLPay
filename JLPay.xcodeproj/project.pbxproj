@@ -209,6 +209,7 @@
 		5EBE37751ADF5C2000901980 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE37741ADF5C2000901980 /* UIView+Extension.m */; };
 		5EBE9F291BCCE7EE0076BA98 /* DetailAreaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBE9F281BCCE7EE0076BA98 /* DetailAreaViewController.m */; };
 		5EBF3C3F1AD3B5B400091F83 /* Toast+UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EBF3C3E1AD3B5B400091F83 /* Toast+UIView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5EBFD4051CFFE596009F93EC /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EBFD4041CFFE596009F93EC /* Entitlements.plist */; };
 		5EC14E651ADCE47700CCD764 /* BrushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC14E641ADCE47700CCD764 /* BrushViewController.m */; };
 		5EC19F1E1CA26EF3001CF371 /* CustomCheckView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC19F1D1CA26EF3001CF371 /* CustomCheckView.m */; };
 		5EC19F201CA27AFC001CF371 /* MBProgressHUD+CustomSate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC19F1F1CA27AFC001CF371 /* MBProgressHUD+CustomSate.m */; };
@@ -644,6 +645,7 @@
 		5EBE9F281BCCE7EE0076BA98 /* DetailAreaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailAreaViewController.m; sourceTree = "<group>"; };
 		5EBF3C3D1AD3B5B400091F83 /* Toast+UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Toast+UIView.h"; sourceTree = "<group>"; };
 		5EBF3C3E1AD3B5B400091F83 /* Toast+UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Toast+UIView.m"; sourceTree = "<group>"; };
+		5EBFD4041CFFE596009F93EC /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		5EC14E631ADCE47700CCD764 /* BrushViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrushViewController.h; sourceTree = "<group>"; };
 		5EC14E641ADCE47700CCD764 /* BrushViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrushViewController.m; sourceTree = "<group>"; };
 		5EC19F191CA26ED8001CF371 /* MBProgressHUD+CustomSate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+CustomSate.h"; sourceTree = "<group>"; };
@@ -1722,6 +1724,7 @@
 				5EFD09811C1139B40062AD34 /* Default-568h@2x.png */,
 				5E5E35A81B7C7A3200560C0A /* test.db */,
 				5ECB55911AD4D44800777866 /* newisoconfig.plist */,
+				5EBFD4041CFFE596009F93EC /* Entitlements.plist */,
 				5EB6F98E1AC8DD1C00E47AB5 /* LaunchScreen.xib */,
 				5EB6F9801AC8DD1C00E47AB5 /* Info.plist */,
 				5EB6F9811AC8DD1C00E47AB5 /* main.m */,
@@ -2237,6 +2240,7 @@
 				5EB6F9901AC8DD1C00E47AB5 /* LaunchScreen.xib in Resources */,
 				5E0EBAC81C34C30100DCAC59 /* KVNProgressView.xib in Resources */,
 				5EB6F98D1AC8DD1C00E47AB5 /* Images.xcassets in Resources */,
+				5EBFD4051CFFE596009F93EC /* Entitlements.plist in Resources */,
 				5EB9B1531AD7B92100A73190 /* MLTableAlertButton@2x.png in Resources */,
 				5EB9B1541AD7B92100A73190 /* MLTableAlertButtonPressed.png in Resources */,
 			);
@@ -2658,7 +2662,7 @@
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "579959d3-1a50-41ab-9f20-d3cac06bc2a0";
+				PROVISIONING_PROFILE = "cf0f3149-d111-4938-bf41-4d4ee87e1246";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -2702,7 +2706,7 @@
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "579959d3-1a50-41ab-9f20-d3cac06bc2a0";
+				PROVISIONING_PROFILE = "cf0f3149-d111-4938-bf41-4d4ee87e1246";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};

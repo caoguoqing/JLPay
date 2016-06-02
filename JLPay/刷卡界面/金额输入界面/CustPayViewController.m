@@ -282,9 +282,8 @@
                     // 提示T+0结算信息
                     inputsValid = NO;
                     CGFloat T_0LimitMoney = [[VMT_0InfoRequester sharedInstance] amountLimit].floatValue;
-                    CGFloat T_0MoreRate = [[VMT_0InfoRequester sharedInstance] T_0MoreRate].floatValue;
                     CGFloat T_0MoreFee = [[VMT_0InfoRequester sharedInstance] T_0ExtraFee].floatValue;
-                    NSString* message = [NSString stringWithFormat:@"单日限额:￥%.02lf\n单笔最小限额:￥%.02lf\n单日可刷额度:￥%.02lf\n手续费率: +%.02lf%%\n转账手续费:￥%.02lf",T_0LimitMoney,T_0MinLimitMoney,T_0AvilabelMoney,T_0MoreRate,T_0MoreFee];
+                    NSString* message = [NSString stringWithFormat:@"单日限额:￥%.02lf\n单笔最小限额:￥%.02lf\n单日可刷额度:￥%.02lf\n转账手续费:￥%.02lf",T_0LimitMoney,T_0MinLimitMoney,T_0AvilabelMoney,T_0MoreFee];
                     [JCAlertView showTwoButtonsWithTitle:@"T+0温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
                     } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
                         [wself pushSwipeOrOtherDisplayVC];

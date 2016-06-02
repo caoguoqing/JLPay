@@ -26,12 +26,13 @@
 
 
 #pragma mask ---- UITextFieldDelegate
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(tableViewCell:didInputedText:)]) {
-        [self.delegate tableViewCell:self didInputedText:textField.text];
-    }
-}
+//- (void)textFieldDidEndEditing:(UITextField *)textField {
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(tableViewCell:didInputedText:)]) {
+//        [self.delegate tableViewCell:self didInputedText:textField.text];
+//    }
+//}
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    
     BOOL shouldChange = YES;
     if ([string isEqualToString:@"\n"]) {
         [textField resignFirstResponder];
@@ -45,6 +46,13 @@
         [textField setText:newString];
         shouldChange = NO;
     }
+    
+    if (shouldChange) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(tableViewCell:didInputedText:)]) {
+            [self.delegate tableViewCell:self didInputedText:[textField.text stringByAppendingString:string]];
+        }
+    }
+    
     return shouldChange;
 }
 

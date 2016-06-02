@@ -17,6 +17,9 @@
 @property (nonatomic, strong) UITextField* bankNameField;
 @property (nonatomic, strong) UITextField* branchNameField;
 @property (nonatomic, strong) UILabel* bankNameSearchedLabel;
+
+@property (nonatomic, strong) UITextView* noteLabel;
+
 @property (nonatomic, strong) UIButton* searchButton;
 @property (nonatomic, strong) DynamicPickerView* pickerView;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
@@ -61,6 +64,14 @@
     // HTTP请求
     [self.hud showNormalWithText:nil andDetailText:nil];
     [self requestBankInfoWithBankName:self.bankNameField.text andBranchName:self.branchNameField.text];
+}
+
+- (IBAction) hiddenTextFieldsKeyBoard:(UITapGestureRecognizer*)tapGes {
+    for (UIView* subview in self.view.subviews) {
+        if ([subview class] == [UITextField class] && [subview isFirstResponder]) {
+            [subview resignFirstResponder];
+        }
+    }
 }
 
 #pragma mask ------ HTTP请求操作
@@ -112,9 +123,9 @@
                                   40+180);
         [self loadPickerViewInFrame:frame withDatas:bankNums];
     }
-    
 
 }
+
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
     self.httpRequest = nil;
@@ -158,6 +169,7 @@
     [self.view addSubview:self.bankNameField];
     [self.view addSubview:self.branchNameField];
     [self.view addSubview:self.searchButton];
+    [self.view addSubview:self.noteLabel];
     [self.view addSubview:self.pickerView];
     [self.view addSubview:self.hud];
     self.selectedIndex = -1;
@@ -167,6 +179,10 @@
                                                                 target:self
                                                                 action:@selector(popVCWithSearchedBankNum)];
     self.navigationItem.rightBarButtonItem = doneItem;
+    
+    UITapGestureRecognizer* tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hiddenTextFieldsKeyBoard:)];
+    [self.view addGestureRecognizer:tapGes];
+    
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -192,10 +208,17 @@
     frame.origin.x += frame.size.width;
     frame.size.width = fieldWidth;
     [self.branchNameField setFrame:frame];
+    
+//    frame.origin.x = insetHorizantal;
+    frame.origin.y += frame.size.height;
+//    frame.size.width = fieldWidth;
+    frame.size.height = viewHeight * 2;
+    [self.noteLabel setFrame:frame];
 
     frame.origin.x = insetHorizantal;
-    frame.origin.y += frame.size.height + insetVertical*2;
+    frame.origin.y += frame.size.height + insetVertical*3;
     frame.size.width = self.view.frame.size.width - insetHorizantal*2;
+    frame.size.height = viewHeight;
     [self.searchButton setFrame:frame];
     
 }
@@ -281,5 +304,14 @@
         _hud = [[MBProgressHUD alloc] initWithView:self.view];
     }
     return _hud;
+}
+- (UITextView *)noteLabel {
+    if (!_noteLabel) {
+        _noteLabel = [UITextView new];
+        _noteLabel.text = @"只支持部分银行结算，如工商银行、农业银行、建设银行、交通银行、招商银行、光大银行、华夏银行、浦发银行、民生银行、平安银行、广发银行;";
+        _noteLabel.textColor = [UIColor grayColor];
+        _noteLabel.font = [UIFont systemFontOfSize:12];
+    }
+    return _noteLabel;
 }
 @end

@@ -155,6 +155,8 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self settingAttributesOfCell:cell onIdentifier:reuseIdentifier onIndexPath:indexPath];
 }
 
+#pragma mask ------ UITableViewDelegate
+
 /* Header 的高度定义 */
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 30;
@@ -197,8 +199,14 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     return label;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    if (section == 1) {
+        return @"如需选择T+0业务结算，必须是银联卡62开头，且卡号长度限制为15位、16位或19位";
+    } else {
+        return @"";
+    }
+}
 
-#pragma mask ------ UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -294,7 +302,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
         UIImage* newImage = [imagePicked copy];
         
-        NSLog(@"image old[%p],new image[%p]",imagePicked,newImage);
         [wself setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
         dispatch_async(dispatch_get_main_queue(), ^{
             [UIView beginAnimations:nil context:nil];
@@ -478,6 +485,11 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [self alertShowWithMessage:@"邮箱格式错误,请确认格式!"];
         enable = NO;
     }
+    // 检查结算卡号是否合规
+    if (enable && ![self isValidOfSettlementCardNo:[self settlementCardNo]]) {
+        [self alertShowWithMessage:@"结算卡号必须为15位、16位或19位\n且以62开头的借记卡!"];
+        enable = NO;
+    }
     
     return enable;
 }
@@ -531,6 +543,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
                     onIdentifier:(NSString*)identifier
                      onIndexPath:(NSIndexPath*)indexPath
 {
+    
     if ([identifier isEqualToString:IdentifierCellField])
     {
         TextFieldCell* fieldCell = (TextFieldCell*)cell;
@@ -703,6 +716,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     }
     return info;
 }
+
 /* 获取邮箱 */
 - (NSString*) mailInputed {
     NSString* mail = nil;
@@ -717,6 +731,23 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         mail = [mailInfo valueForKey:KeyInfoStringInputText];
     }
     return mail;
+}
+
+/* 结算卡号 */
+- (NSString*) settlementCardNo {
+    NSString* cardNo = nil;
+    
+    NSDictionary* cardNoInfo = nil;
+    for (NSDictionary* dict in self.arrayAccountInfo) {
+        if ([[dict valueForKey:KeyInfoStringKeyName] isEqualToString:@"settleAcct"]) {
+            cardNoInfo = dict;
+            break;
+        }
+    }
+    if (cardNoInfo) {
+        cardNo = [cardNoInfo valueForKey:KeyInfoStringInputText];
+    }
+    return cardNo;
 }
 
 /* 设置开户行-联行号 */
@@ -809,6 +840,18 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         }
     }
     return isValied;
+}
+
+/* 检查结算卡号是否合规 */
+- (BOOL) isValidOfSettlementCardNo:(NSString*)cardNo {
+    BOOL valid = NO;
+    if ( cardNo.length > 2 &&
+        (cardNo.length == 15 || cardNo.length == 16 || cardNo.length == 19) &&
+        [[cardNo substringToIndex:2] isEqualToString:@"62"])
+    {
+        valid = YES;
+    }
+    return valid;
 }
 
 
@@ -1020,7 +1063,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         NSArray* bankNoKeys = @[KeyInfoStringTitle,KeyInfoBoolMustInput,KeyInfoStringPlayceHolder,KeyInfoStringBankName,KeyInfoStringBankNum,KeyInfoBoolInputed,KeyInfoStringBankNameKeyName,KeyInfoStringBankNumKeyName];
         [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"开户行联行号",@(YES),@"请输入开户行名并选择联行号",@"",@"",@(NO),@"speSettleDs",@"openStlno", nil] forKeys:bankNoKeys]];
         [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账户名",@"不超过40位字符",@(YES),@"",@(NO),@(NO),@"settleAcctNm",@(30), nil] forKeys:keys]];
-        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账号",@"不超过30位账号",@(YES),@"",@(NO),@(NO),@"settleAcct",@(40), nil] forKeys:keys]];
+        [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"结算账号",@"16位或19位62开头的借记卡",@(YES),@"",@(NO),@(NO),@"settleAcct",@(40), nil] forKeys:keys]];
         [accountInfos addObject: [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"绑定设备SN号",@"(选填)不超过32位",@(NO),@"",@(NO),@(NO),@"ageUserName",@(20), nil] forKeys:keys]];
         _arrayAccountInfo = [NSArray arrayWithArray:accountInfos];
     }
