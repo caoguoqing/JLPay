@@ -638,7 +638,7 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     if (TAG_OF_BRANCH_EDITION == 0) { // AppStore
         urlString = [ModelAppInformation URLStringInAppStore] ;
     }
-    else { // 1 or 2 or other..
+    else {
         urlString = @"http://www.cccpay.cn/center.html";
     }
     // 跳转

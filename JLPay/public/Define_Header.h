@@ -47,7 +47,7 @@
  * 1: test:   网页企业版
  * 2: dev:    开发版
  * ---------------------------- */
-#define TAG_OF_BRANCH_EDITION           1
+#define TAG_OF_BRANCH_EDITION           0
 
 
 /* ----------------------------
