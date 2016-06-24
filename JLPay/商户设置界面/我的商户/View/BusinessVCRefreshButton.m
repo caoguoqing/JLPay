@@ -27,6 +27,7 @@
 }
 
 - (void) addSubvies {
+    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.95];
     [self addSubview:self.refreshImgView];
 }
 

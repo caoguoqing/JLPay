@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HelperAndAboutTableViewController : UITableViewController
+@interface HelperAndAboutTableViewController : UIViewController
+<UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic, strong) UITableView* tableView;
+@property (nonatomic, strong) NSMutableArray* cellTitles;
+@property (nonatomic, strong) NSMutableDictionary* dictTitlesAndImages;
+@property (nonatomic, strong) NSMutableDictionary* dictTitlesAndDatas;
+
 
 @end

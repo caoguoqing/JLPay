@@ -10,7 +10,6 @@
 #import "MyView.h"
 #import "AppDelegate.h"
 #import <QuartzCore/QuartzCore.h>
-#import "PosInformationViewController.h"
 #import "Define_Header.h"
 #import "PublicInformation.h"
 #import "Packing8583.h"
@@ -200,7 +199,6 @@ static NSMutableArray *colors;
     newVersionVi.userInteractionEnabled=YES;
     [newVersionVi refresh];
     
-    
 }
 
 -(void)againMethod{
@@ -211,11 +209,9 @@ static NSMutableArray *colors;
     //先截图
     self.uploadImage=[self getNormalImage:returnView];
     
-//    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"签名成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//    [alert setBackgroundColor:[UIColor colorWithWhite:0.8 alpha:0.2]];
-//    [alert show];
     PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
     posInformationVc.posImg=self.uploadImage;
+    posInformationVc.userFor = self.userFor;
     
     [posInformationVc setTransInformation:self.transInformation];
     
@@ -234,7 +230,8 @@ static NSMutableArray *colors;
         
         PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
         posInformationVc.posImg=self.uploadImage;
-        
+        posInformationVc.userFor = self.userFor;
+
         [posInformationVc setTransInformation:self.transInformation];
         
         // 跳转到小票界面
@@ -273,8 +270,9 @@ static NSMutableArray *colors;
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     
-    PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] init];
+    PosInformationViewController *posInformationVc=[[PosInformationViewController alloc] initWithNibName:nil bundle:nil];
     posInformationVc.posImg=self.uploadImage;
+    posInformationVc.userFor = self.userFor;
     
     // 传递交易信息字典
     [posInformationVc setTransInformation:self.transInformation];

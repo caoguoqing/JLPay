@@ -12,7 +12,7 @@
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 #import "Define_Header.h"
-#import "ModelUserLoginInformation.h"
+#import "MLoginSavedResource.h"
 #import "MBProgressHUD+CustomSate.h"
 
 @interface ChangePinViewController()<ASIHTTPRequestDelegate, UITextFieldDelegate> {
@@ -43,7 +43,7 @@
  * 返  回:
  ******************************/
 - (void) requestForChangingPin {
-    [self.httpRequest addPostValue:[ModelUserLoginInformation userID] forKey:@"userName"];
+    [self.httpRequest addPostValue:[MLoginSavedResource sharedLoginResource].userName forKey:@"userName"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -131,7 +131,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"修改密码";
-    self.navigationController.navigationBarHidden = NO;
     // 背景图
     [self.view addSubview:self.userOldPwdField];
     [self.view addSubview:self.userNewPwdField];
@@ -142,9 +141,11 @@
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = NO;
+    
     CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
     CGFloat horizontalInset = 20;
-    CGFloat btnHeight = 50;
+    CGFloat btnHeight = self.view.frame.size.height * 1/13;
     
     CGFloat lineHeight = 0.5;
     CGFloat lineWidth = self.view.frame.size.width - horizontalInset * 2;
@@ -152,7 +153,7 @@
     CGFloat labelWidth = self.view.frame.size.width/3.0;
     
     CGFloat fieldWith = self.view.frame.size.width* 2.0/3.0 - horizontalInset * 2;
-    CGFloat fieldHeight = 45;
+    CGFloat fieldHeight = btnHeight;
 
     
     CGRect frame = CGRectMake(0,

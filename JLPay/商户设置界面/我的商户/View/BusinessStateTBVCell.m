@@ -27,7 +27,7 @@
     NameWeakSelf(wself);
     [self.stateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(wself.contentView.mas_centerY);
-        make.left.equalTo(wself.textLabel.mas_right).offset(15);
+        make.right.equalTo(wself.contentView.mas_right).offset(-15);
         make.height.mas_equalTo(heightStateLabel);
         make.width.mas_equalTo(widthStateLabel);
         wself.stateLabel.layer.cornerRadius = heightStateLabel * 0.5;

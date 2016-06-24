@@ -9,6 +9,7 @@
 #import "MBProgressHUD+CustomSate.h"
 
 #import "CustomCheckView.h"
+#import <ReactiveCocoa.h>
 
 
 static CGFloat const fMBProgressHUDSucDuration = 0.8;   // 成功时的显示持续时间
@@ -20,6 +21,15 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 - (void) showNormalWithText:(NSString*)text andDetailText:(NSString*)detailText {
     self.mode = MBProgressHUDModeIndeterminate;
+    self.labelText = text;
+    self.detailsLabelText = detailText;
+    [self show:YES];
+}
+
+
+- (void)showCircleProgressWithText:(NSString *)text andDetailText:(NSString *)detailText //onCompletion:(void (^)(void))completion
+{
+    self.mode = MBProgressHUDModeDeterminateHorizontalBar; //MBProgressHUDModeDeterminateHorizontalBar MBProgressHUDModeAnnularDeterminate
     self.labelText = text;
     self.detailsLabelText = detailText;
     [self show:YES];
@@ -87,6 +97,8 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
         });
     }];
 }
+
+
 
 - (void) hideOnCompletion:(void (^) (void))completion {
     __weak typeof(self)wself = self;

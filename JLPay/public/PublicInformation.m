@@ -10,7 +10,7 @@
 #import "Define_Header.h"
 #import "Packing8583.h"
 #import "Unpacking8583.h"
-#import "ModelUserLoginInformation.h"
+#import "MLoginSavedResource.h"
 #import "ModelDeviceBindedInformation.h"
 #import "Toast+UIView.h"
 
@@ -86,54 +86,73 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 }
 
 +(NSString *)returnTerminal{
-    return [ModelDeviceBindedInformation terminalNoBinded];
+    if ([ModelDeviceBindedInformation hasBindedDevice]) {
+        return [ModelDeviceBindedInformation terminalNoBinded];
+    } else {
+        return @"";
+    }
 }
 +(NSString *)returnBusiness{
-    return [ModelUserLoginInformation businessNumber];
+//    return [ModelUserLoginInformation businessNumber];
+    JLPrint(@"访问商户编号:[%@]", [MLoginSavedResource sharedLoginResource].businessNumber);
+    return [MLoginSavedResource sharedLoginResource].businessNumber;
 }
 +(NSString *)returnBusinessName{
-    return [ModelUserLoginInformation businessName];
+//    return [ModelUserLoginInformation businessName];
+    return [MLoginSavedResource sharedLoginResource].businessName;
+}
++ (NSString*) returnUserName {
+    return [MLoginSavedResource sharedLoginResource].userName;
 }
 
 /* 获取服务器域名 */
 + (NSString*) getServerDomain {
-    if (TestOrProduce == 2) {
-        return @"unitepay.com.cn";
+    NSString* ip = nil;
+    switch (TestOrProduce) {
+        case 2:
+            ip = @"unitepay.com.cn";
+            break;
+        case 5:
+            ip = @"202.104.101.126"; // 202.104.101.126  119.147.84.102
+            break;
+        case 9:
+            ip = @"202.104.101.126";
+            break;
+        default:
+            ip = @"202.104.101.126";
+            break;
     }
-    else if (TestOrProduce == 5) {
-        return @"202.104.101.126";
-    }
-    else {
-        return @"unitepay.com.cn";
-    }
+    return ip;
 }
 
 /* 获取TCP端口 */
 + (NSString*) getTcpPort {
     NSString* port = nil;
-    if (TestOrProduce == 1) {
-        port = @"28088";
-    }
-    else if (TestOrProduce == 2) {
-        port = @"28090";
-    }
-    else if (TestOrProduce == 3) {
-        port = @"37580";
-    }
-    else if (TestOrProduce == 7) {
-        port = @"9088";
-    }
-    else if (TestOrProduce == 4) {
-        port = @"37690";
-    }
-    else if (TestOrProduce == 5) {
-        port = @"60702";
-    }
-    else if (TestOrProduce == 11) {
-        port = @"10090";
-    }
-    else {
-        port = @"80";
+    switch (TestOrProduce) {
+        case 1:
+            port = @"28088";
+            break;
+        case 2:
+            port = @"28090";
+            break;
+        case 3:
+            port = @"37580";
+            break;
+        case 4:
+            port = @"7690";
+            break;
+        case 5:
+            port = @"60702";
+            break;
+        case 7:
+            port = @"9088";
+            break;
+        case 11:
+            port = @"10090";
+            break;
+        default:
+            port = @"80";
+            break;
     }
     return port;
 }
@@ -141,23 +160,68 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 /* 获取HTTP端口 */
 + (NSString*) getHTTPPort {
     NSString* port = nil;
-    if (TestOrProduce == 7) {
-        port = @"8088";
+    switch (TestOrProduce) {
+        case 3:
+            port = @"37588";
+            break;
+        case 4:
+            port = @"7688";
+            break;
+        case 5:
+            port = @"60780";
+            break;
+        case 7:
+            port = @"8088";
+            break;
+        case 9:
+            port = @"10088";
+            break;
+        case 11:
+            port = @"10088";
+            break;
+        default:
+            port = @"80";
+            break;
     }
-    else if (TestOrProduce == 3) {
-        port = @"37588";
+    return port;
+}
+
+
+/* OnlinePay: ip */
++ (NSString*) getOnlinePayIp {
+    NSString* ip = nil;
+    switch (TestOrProduce) {
+        case 2:
+            ip = @"202.104.101.126"; // 202.104.101.126 192.168.1.138
+            break;
+        case 5:
+            ip = @"202.104.101.126";
+            break;
+        default:
+            ip = @"202.104.101.126";
+            break;
     }
-    else if (TestOrProduce == 4) {
-        port = @"37688";
-    }
-    else if (TestOrProduce == 5) {
-        port = @"60780";
-    }
-    else if (TestOrProduce == 11) {
-        port = @"10088";
-    }
-    else {
-        port = @"80";
+    return ip;
+}
+/* OnlinePay: port */
++ (NSString*) getOnlinePayPort {
+    NSString* port = @"80";
+    switch (TestOrProduce) {
+        case 2:
+            port = @"60780";
+            break;
+        case 4:
+            port = @"7688";
+            break;
+        case 5:
+            port = @"60780";
+            break;
+        case 11:
+            port = @"10088";
+            break;
+        default:
+            port = @"80";
+            break;
     }
     return port;
 }
@@ -344,7 +408,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 
 //16进制转字符串（ascii）
 +(NSString *)stringFromHexString:(NSString *)hexString { //
-    
+    if (!hexString || hexString.length == 0) {
+        return nil;
+    }
     char *myBuffer = (char *)malloc((int)[hexString length] / 2 + 1);
     bzero(myBuffer, [hexString length] / 2 + 1);
     for (int i = 0; i < [hexString length] - 1; i += 2) {
@@ -478,6 +544,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
     nDate = [dateFormatter stringFromDate:[NSDate date]];
     nDate = [nDate substringToIndex:8];
+    
     return nDate;
 }
 + (NSString*) nowTime {
@@ -646,11 +713,11 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     if ([color isEqualToString:@"red"]) {
         retColor = [UIColor colorWithRed:235.0/255.0 green:69.0/255.0 blue:75.0/255.0 alpha:1.0];
     }
-    else if ([color isEqualToString:@"lightBlue"]) {
-        retColor = [UIColor colorWithRed:1.0/255.0 green:171.0/255.0 blue:240.0/255.0 alpha:1.0];
+    else if ([color isEqualToString:@"lightBlue"]) { //1-171-240
+        retColor = [UIColor colorWithRed:1.0/255.0 green:171.0/255.0 blue:240.0/255.0 alpha:1.0]; //
     }
     else if ([color isEqualToString:@"green"]) {
-        retColor = [UIColor colorWithRed:53.0/255.0 green:176.0/255.0 blue:41.0/255.0 alpha:1.0];
+        retColor = [UIColor colorWithRed:53.0/255.0 green:176.0/255.0 blue:41.0/255.0 alpha:1.0]; // 
     }
     else if ([color isEqualToString:@"blueBlack"]) {
         retColor = [UIColor colorWithRed:47.0/255.0 green:53.0/255.0 blue:61.0/255.0 alpha:1];
@@ -707,12 +774,15 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         logoImage = [UIImage imageNamed:@"AppLogoImageKFT"];
     }
+    else if (BranchAppName == 5) {
+        logoImage = [UIImage imageNamed:@"AppLogoImageZJMS"];
+    }
     return logoImage;
 }
 // icon
 + (UIImage*) iconImageOfApp {
     UIImage* iconImage = nil;
-    if (BranchAppName == 0) {
+    if (BranchAppName == 0 ) {
         iconImage = [UIImage imageNamed:@"AppIconImageJLPay"];
     }
     else if (BranchAppName == 1) {
@@ -723,6 +793,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (BranchAppName == 3) {
         iconImage = [UIImage imageNamed:@"AppIconImageKFT"];
+    }
+    else if (BranchAppName == 5) {
+        iconImage = [UIImage imageNamed:@"AppIconImageJLPay"];
     }
     return iconImage;
 }
@@ -741,6 +814,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         appName = @"快付通";
     }
+    else if (BranchAppName == 5) {
+        appName = @"中金秒刷";
+    }
     return appName;
 }
 // telephone of company
@@ -758,7 +834,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         telephone = @"待定...";
     }
-
+    else {
+        telephone = @"0755-86532999";
+    }
     return telephone;
 }
 // url of company
@@ -775,6 +853,9 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (BranchAppName == 3) {
         url = @"待定...";
+    }
+    else  {
+        url = @"www.cccpay.cn";
     }
     return url;
 }
@@ -953,6 +1034,12 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     else if (BranchAppName == 3) {
         image = [UIImage imageNamed:@"输入金额_KFT"];
     }
+    else if (BranchAppName == 5) {
+        image = [UIImage imageNamed:@"输入金额_ZJMS"];
+    }
+    else {
+        image = [UIImage imageNamed:@"输入金额_JLPay"];
+    }
     return image;
 }
 + (NSString*) imageNameCustPayViewShot {
@@ -968,6 +1055,12 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
     else if (BranchAppName == 3) {
         imageName = @"输入金额_KFT";
+    }
+    else if (BranchAppName == 5) {
+        imageName = @"输入金额_ZJMS";
+    }
+    else {
+        imageName = @"输入金额_JLPay";
     }
     return imageName;
 }

@@ -73,6 +73,7 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
 - (void)requestFinished:(ASIHTTPRequest *)request {
     [request clearDelegatesAndCancel];
     NSData* data = [request responseData];
+    NSLog(@"登陆响应信息[%@]", [request responseString]);
     NSError* error = nil;
     NSDictionary* loginInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
     NSMutableDictionary* userLoginDownInfo = [NSMutableDictionary dictionaryWithDictionary:loginInfo];
@@ -94,14 +95,17 @@ static ModelHTTPRequestLogin* modelHTTPLogin = nil;
             [userLoginDownInfo setObject:@(BusinessCheckStateChecking) forKey:kFieldNameLoginDownCheckState];
             [self rebackSuccessWithLoginInfo:userLoginDownInfo];
         }
+        /* 响应码: 注册审核拒绝 */
+        else if ([code intValue] == LoginErrorCodeTypeRegistRefuse) {
+            [userLoginDownInfo setObject:@(BusinessCheckStateCheckRefused) forKey:kFieldNameLoginDownCheckState];
+            [self rebackSuccessWithLoginInfo:userLoginDownInfo];
+            
+            //            self.lastRegisterInfo = [NSDictionary dictionaryWithDictionary:[loginInfo objectForKey:kFieldNameLoginDownRegisterInfo]];
+            //            [self rebackFailWithMessage:message andErrorType:LoginErrorCodeTypeRegistRefuse];
+        }
         /* 响应码: 版本过低 */
         else if ([code intValue] == LoginErrorCodeTypeLowVersion) {
             [self rebackFailWithMessage:message andErrorType:LoginErrorCodeTypeLowVersion];
-        }
-        /* 响应码: 注册审核拒绝 */
-        else if ([code intValue] == LoginErrorCodeTypeRegistRefuse) {
-            self.lastRegisterInfo = [NSDictionary dictionaryWithDictionary:[loginInfo objectForKey:kFieldNameLoginDownRegisterInfo]];
-            [self rebackFailWithMessage:message andErrorType:LoginErrorCodeTypeRegistRefuse];
         }
         /* 响应码: 其他错误 */
         else {

@@ -505,7 +505,11 @@ buttonType ButtonTitle:(NSString *)buttonTitle Click:(clickHandle)click ButtonTy
 - (void)toggleKeyWindow{
     [[jCSingleTon shareSingleTon].oldKeyWindow makeKeyAndVisible];
     [jCSingleTon shareSingleTon].backgroundWindow.rootViewController = nil;
-    [jCSingleTon shareSingleTon].backgroundWindow.frame = CGRectZero;
+    /*
+     不能仅将backgroundWindow的frame置0，而是要隐藏掉它;
+     */
+    [jCSingleTon shareSingleTon].backgroundWindow.hidden = YES;
+//    [jCSingleTon shareSingleTon].backgroundWindow.frame = CGRectZero;
 }
 
 - (void)setup{

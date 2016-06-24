@@ -12,7 +12,7 @@
 #import "MBProgressHUD+CustomSate.h"
 #import "DeviceManager.h"
 #import <CoreBluetooth/CoreBluetooth.h>
-#import "ModelUserLoginInformation.h"
+#import "MLoginSavedResource.h"
 #import "ViewModelTCPHandleWithDevice.h"
 #import "ModelDeviceBindedInformation.h"
 
@@ -61,6 +61,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"绑定设备";
+    self.view.backgroundColor = [UIColor whiteColor];
     self.selectedDevice = nil;
     
     bleManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
@@ -82,12 +83,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO];
     [[ViewModelTCPHandleWithDevice getInstance] setDelegate: self];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    if ([ModelUserLoginInformation terminalCount] == 0) {
+    if ([MLoginSavedResource sharedLoginResource].terminalCount == 0) {
         [PublicInformation alertSureWithTitle:@"商户未配置终端号" message:@"请等待后台配置终端,或联系客服人员处理" tag:DeviceSignInAlertTagNoTerminals delegate:self];
     } else {
         if (self.selectedDevice == nil && blueToothIsOn) {
@@ -153,7 +155,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rows;
     if (section == 0) {
-        rows = [ModelUserLoginInformation terminalCount];
+        rows = [MLoginSavedResource sharedLoginResource].terminalCount;
     } else if (section == 1) {
         rows = self.SNVersionNums.count;
     }
@@ -180,7 +182,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
         // textLabel
         cell.textLabel.text = @"终端编号";
         // detailTextLabel
-        cell.detailTextLabel.text = [[ModelUserLoginInformation terminalNumbers] objectAtIndex:indexPath.row];
+        cell.detailTextLabel.text = [[MLoginSavedResource sharedLoginResource].terminalList objectAtIndex:indexPath.row];
         
         
         if ([self.selectedTerminalNum isEqualToString:cell.detailTextLabel.text]) {
@@ -374,13 +376,13 @@ UIActionSheetDelegate,UIAlertViewDelegate
 /* 主密钥下载 */
 - (void) downloadMainKey {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[ViewModelTCPHandleWithDevice getInstance] downloadMainKeyWithBusinessNum:[ModelUserLoginInformation businessNumber] andTerminalNum:self.selectedTerminalNum];
+        [[ViewModelTCPHandleWithDevice getInstance] downloadMainKeyWithBusinessNum:[MLoginSavedResource sharedLoginResource].businessNumber andTerminalNum:self.selectedTerminalNum];
     });
 }
 /* 工作密钥下载 */
 - (void) downloadWorkKey {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[ViewModelTCPHandleWithDevice getInstance] downloadWorkKeyWithBusinessNum:[ModelUserLoginInformation businessNumber] andTerminalNum:self.selectedTerminalNum];
+        [[ViewModelTCPHandleWithDevice getInstance] downloadWorkKeyWithBusinessNum:[MLoginSavedResource sharedLoginResource].businessNumber andTerminalNum:self.selectedTerminalNum];
     });
 }
 /* 主密钥下载回调 */
@@ -552,7 +554,7 @@ UIActionSheetDelegate,UIAlertViewDelegate
                                                             deviceID:identifier
                                                             deviceSN:self.selectedSNVersionNum
                                                       terminalNumber:self.selectedTerminalNum
-                                                      businessNumber:[ModelUserLoginInformation businessNumber]];
+                                                      businessNumber:[MLoginSavedResource sharedLoginResource].businessNumber];
 }
 
 

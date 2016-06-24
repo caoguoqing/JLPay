@@ -10,14 +10,13 @@
 #import "HTTPInstance.h"
 #import "Define_Header.h"
 #import "MD5Util.h"
-#import "ModelUserLoginInformation.h"
 
 
 static NSString* const MHttpBusinessKeyUserName = @"userName";              // 登录名
 
 static NSString* const MHttpBusinessKeyMchtStatus = @"mchtStatus";          // 商户状态
 
-static NSString* const MHttpBusinessKeyMchntNm = @"mchtNm";                // 商户名
+static NSString* const MHttpBusinessKeyMchntNm = @"mchtNm";                 // 商户名
 static NSString* const MHttpBusinessKeyMchtNo = @"mchtNo";                  // 商户编号
 static NSString* const MHttpBusinessKeyIdentifyNo = @"identifyNo";          // 身份证号码
 static NSString* const MHttpBusinessKeyTelNo = @"telNo";                    // 手机号码

@@ -15,17 +15,22 @@
 #import "Toast+UIView.h"
 #import "JsonToString.h"
 #import "MBProgressHUD.h"
+#import "DispatchMaterialUploadViewCtr.h"
+#import <ReactiveCocoa.h>
+
+
+
 
 static NSString* const kKVOImageUploaded = @"imageUploaded";
 
 @interface PosInformationViewController ()<ASIHTTPRequestDelegate>
 @property (nonatomic, strong) ASIFormDataRequest *uploadRequest;
 
-@property (nonatomic, assign) BOOL imageUploaded;
-
-@property (nonatomic, strong) UIButton* buttonReupload;
-@property (nonatomic, strong) UIButton* buttonUploadDone;
 @property (nonatomic, strong) UIProgressView* progressView;
+
+@property (nonatomic, strong) UIButton* handleBtn;
+
+
 @end
 
 
@@ -40,47 +45,18 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.imageUploaded = NO;
     }
     return self;
 }
 
 
-
-
-- (IBAction) touchDown:(UIButton*)sender {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        sender.transform = CGAffineTransformMakeScale(0.95, 0.95);
-        [sender setEnabled:NO];
-    });
-}
-- (IBAction) touchOut:(UIButton*)sender {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        sender.transform = CGAffineTransformIdentity;
-        [sender setEnabled:YES];
-    });
-}
-/* 确定按钮-上传小票图片 */
--(IBAction) requireMethod:(UIButton*)sender {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        sender.transform = CGAffineTransformIdentity;
-    });
-    [self uploadRequestMethod];
-}
-
 #pragma mark ------------图片上传
 
 /*** 签名图片上传接口 ***/
 -(void)uploadRequestMethod {
+    self.uploadState = PosNoteUploadStateUploading;
+    
     [self.uploadRequest setDelegate:self];
-    /*
-     uploadRequstMchntNo	商户编号        15位
-     uploadRequestMchntNM	商户名称        不超过100位
-     uploadRequestReferNo	交易检索号       12位
-     uploadRequestTermNo	终端编号        8位
-     uploadRequestAmoumt	交易金额        以分为单位
-     uploadRequestTime      请求时间        14位
-     */
     NSMutableDictionary* headerInfo = [[NSMutableDictionary alloc] init];
     [headerInfo setValue:[PublicInformation returnBusiness] forKey:@"uploadRequstMchntNo"];
     [headerInfo setValue:[PublicInformation returnBusinessName] forKey:@"uploadRequestMchntNM"];
@@ -107,10 +83,12 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     NSDictionary *chatUpLoadDic=[[NSDictionary alloc] initWithDictionary:[JsonToString getAnalysis:request.responseString]];
     
     if ([[chatUpLoadDic objectForKey:@"code"] intValue] == 0) {
-        self.imageUploaded = YES;
+        self.uploadState = PosNoteUploadStateUploadedSuc;
+
         [PublicInformation makeToast:@"小票上传成功"];
     }else{
-        self.imageUploaded = NO;
+        self.uploadState = PosNoteUploadStateUploadedFail;
+
         [PublicInformation makeToast:@"小票上传失败，请稍后重试"];
     }
     [request clearDelegatesAndCancel];
@@ -119,23 +97,157 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 }
 /* HTTP回调: 响应失败 */
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    self.imageUploaded = NO;
     [request clearDelegatesAndCancel];
     self.uploadRequest = nil;
+    self.uploadState = PosNoteUploadStateUploadedFail;
+
     [PublicInformation makeToast:@"网络异常，请检查网络后重新上传"];
 }
 
 
+#pragma mask 0 界面布局
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
+    self.title=@"POS-签购单";
+    
+    [self loadsSubviews];
+    [self addKVOs];
+    
+}
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO];
+}
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (self.userFor == PosNoteUseForUpload) {
+        [self uploadRequestMethod];
+    }
+}
+// 视图退出,要取消
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.uploadRequest clearDelegatesAndCancel];
+    self.uploadRequest = nil;
+}
+
+- (void) addKVOs {
+    
+    if (self.userFor == PosNoteUseForUpload) {
+        @weakify(self);
+        [[RACObserve(self, uploadState) deliverOnMainThread] subscribeNext:^(NSNumber* state) {
+            @strongify(self);
+            switch (state.integerValue) {
+                case PosNoteUploadStatePreUpload:
+                {
+                    [self.handleBtn setTitle:@"上传" forState:UIControlStateNormal];
+                    self.handleBtn.enabled = YES;
+                }
+                    break;
+                case PosNoteUploadStateUploading:
+                {
+                    [self.handleBtn setTitle:@"正在上传" forState:UIControlStateNormal];
+                    self.handleBtn.enabled = NO;
+                }
+                    break;
+                case PosNoteUploadStateUploadedFail:
+                {
+                    [self.handleBtn setTitle:@"重新上传" forState:UIControlStateNormal];
+                    self.handleBtn.enabled = YES;
+                }
+                    break;
+                case PosNoteUploadStateUploadedSuc:
+                {
+                    [self.handleBtn setTitle:@"完成" forState:UIControlStateNormal];
+                    self.handleBtn.enabled = YES;
+                }
+                    break;
+                default:
+                {
+                    [self.handleBtn setTitle:@"完成" forState:UIControlStateNormal];
+                    self.handleBtn.enabled = YES;
+                }
+                    break;
+            }
+        }];
+    }
+    
+    
+}
+
+// 简化代码:label可以用同一个产出方式
+- (UILabel*) newTextLabelWithText:(NSString*)text
+                          inFrame:(CGRect)frame
+                        alignment:(NSTextAlignment)textAlignment
+                             font:(UIFont*)font
+{
+    UILabel* textLabel = [[UILabel alloc] initWithFrame:frame];
+    textLabel.backgroundColor = [UIColor clearColor];
+    textLabel.text = text;
+    textLabel.textAlignment = textAlignment;
+    textLabel.textColor = [UIColor blackColor];
+    textLabel.font = font;
+    // 设置自动换行
+    [textLabel setNumberOfLines:0];
+    textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    return textLabel;
+}
+
+
+# pragma mask 3 IBAction
+
+- (IBAction) clickedOnHandleBtn:(UIButton*)sender {
+    if (self.userFor == PosNoteUseForUpload) {
+        if (self.uploadState == PosNoteUploadStateUploadedSuc) {
+            /* 成功则退出到根界面 */
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        } else {
+            /* 失败的重新上传 */
+            [self uploadRequestMethod];
+        }
+    } else {
+        /* 回退到调单界面 */
+        for (UIViewController* viewC in self.navigationController.viewControllers) {
+            if ([NSStringFromClass([viewC class]) isEqualToString:@"DispatchMaterialUploadViewCtr"]) {
+                DispatchMaterialUploadViewCtr* dispatchUploadVC = (DispatchMaterialUploadViewCtr*)viewC;
+                dispatchUploadVC.dispatchUploader.signedImage = [self.scrollAllImg copy];
+                [dispatchUploadVC.tableView reloadData];
+                [self.navigationController popToViewController:dispatchUploadVC animated:YES];
+            }
+        }
+    }
+}
+
+
+#pragma mark ----------------屏幕截图
+//获取当前屏幕内容
+- (UIImage *)getNormalImage:(UIScrollView *)view{
+    CGRect oldFrame = view.frame;
+    view.frame = CGRectMake(0, 0, view.contentSize.width, view.contentSize.height);
+    CGSize size = CGSizeMake(view.frame.size.width, view.frame.size.height);
+    UIGraphicsBeginImageContextWithOptions(size, view.opaque, 1.0);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    img=[UIImage imageWithData:UIImageJPEGRepresentation(img, 0.5)];
+    UIGraphicsEndImageContext();
+    view.frame = oldFrame;
+    return img;
+    
+}
+
+
+
+# pragma mask 3 布局
+
+/* 布局 */
 - (void) loadsSubviews {
     self.automaticallyAdjustsScrollViewInsets = NO;
-    // 导航栏的退出按钮置空
-    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonReupload]];
-    self.buttonReupload.enabled = NO;
     
-    // 导航栏添加"完成"按钮
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.buttonUploadDone]];
-    self.buttonUploadDone.enabled = NO;
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.handleBtn]];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:[UIView new]]];
 
     // 小字体
     UIFont* littleFont = [UIFont systemFontOfSize:10.f];
@@ -152,7 +264,7 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     CGFloat heightStatus = [UIApplication sharedApplication].statusBarFrame.size.height;
     CGFloat heightNavi = self.navigationController.navigationBar.bounds.size.height;
     // 进度条高度
-    CGFloat heightProgress = 2.f;
+    CGFloat heightProgress = 3.f;
     
     // 小票是滚动视图
     UIScrollView *scrollVi=[[UIScrollView alloc] initWithFrame:CGRectMake(0,
@@ -162,6 +274,7 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     scrollVi.backgroundColor=[UIColor whiteColor];
     scrollVi.bounces = NO;
     
+    JLPrint(@"dangqian交易信息节点M:[%@]",self.transInformation);
 #pragma mask : 开始加载滚动视图的子视图
     CGRect frame = CGRectMake(0, heightStatus + heightNavi, scrollVi.bounds.size.width, heightProgress);
 
@@ -196,7 +309,11 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 商户名称 - 值
-    text = [PublicInformation returnBusinessName];
+    if (self.userFor == PosNoteUseForUpload) {
+        text = [PublicInformation returnBusinessName];
+    } else {
+        text = [self.transInformation objectForKey:@"businessName"];
+    }
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
@@ -209,7 +326,11 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 商户编号 - 值
-    text = [PublicInformation returnBusiness];
+    if (self.userFor == PosNoteUseForUpload) {
+        text = [PublicInformation returnBusiness];
+    } else {
+        text = [self.transInformation objectForKey:@"businessNum"];
+    }
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
@@ -222,7 +343,11 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 终端编号 - 值 并列
-    text = [PublicInformation returnTerminal];
+    if (self.userFor == PosNoteUseForUpload) {
+        text = [PublicInformation returnTerminal];
+    } else {
+        text = [self.transInformation objectForKey:@"terminal"];
+    }
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
@@ -248,7 +373,11 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 交易类型 - 值
-    text = [PublicInformation transNameWithCode:[self.transInformation valueForKey:@"3"]];
+    if (self.userFor == PosNoteUseForUpload) {
+        text = [PublicInformation transNameWithCode:[self.transInformation valueForKey:@"3"]];
+    } else {
+        text = [self.transInformation valueForKey:@"3"];
+    }
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:bigTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:bigFont];
@@ -276,11 +405,23 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     [scrollVi addSubview:textLabel];
     // 日期/时间 - 值
     NSMutableString* detailDate = [[NSMutableString alloc] init];
-    [detailDate appendString:[[PublicInformation nowDate] substringToIndex:4]];
+    if (self.userFor == PosNoteUseForUpload) {
+        [detailDate appendString:[[PublicInformation nowDate] substringToIndex:4]];
+    } else {
+        [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringToIndex:4]];
+    }
     [detailDate appendString:@"/"];
-    [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringToIndex:2]];
+    if (self.userFor == PosNoteUseForUpload) {
+        [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringToIndex:2]];
+    } else {
+        [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringWithRange:NSMakeRange(4, 2)]];
+    }
     [detailDate appendString:@"/"];
-    [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringFromIndex:2]];
+    if (self.userFor == PosNoteUseForUpload) {
+        [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringFromIndex:2]];
+    } else {
+        [detailDate appendString:[[self.transInformation valueForKey:@"13"] substringWithRange:NSMakeRange(6, 2)]];
+    }
     [detailDate appendString:@" "];
     [detailDate appendString:[[self.transInformation valueForKey:@"12"] substringToIndex:2]];
     [detailDate appendString:@":"];
@@ -330,7 +471,11 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:littleFont];
     [scrollVi addSubview:textLabel];
     // 批次号 - 值
-    text = [PublicInformation returnSignSort];
+    if (self.userFor == PosNoteUseForUpload) {
+        text = [PublicInformation returnSignSort];
+    } else {
+        text = nil;
+    }
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
     textLabel = [self newTextLabelWithText:text inFrame:frame alignment:NSTextAlignmentLeft font:midFont];
@@ -371,7 +516,9 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     [scrollVi addSubview:textLabel];
     // 交易参考号 - 值
     text = [self.transInformation valueForKey:@"37"];
-    text = [PublicInformation stringFromHexString:text];
+    if (self.userFor == PosNoteUseForUpload) {
+        text = [PublicInformation stringFromHexString:text];
+    }
     
     frame.origin.y += frame.size.height;
     frame.size.height = [text sizeWithAttributes:midTextAttri].height;
@@ -445,116 +592,10 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     self.scrollAllImg = [self getNormalImage:scrollVi];
 }
 
-#pragma mask 1 KVO
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    NSLog(@"监控到KVO-change[%@]",change);
-    if ([keyPath isEqualToString:kKVOImageUploaded]) {
-        if (self.imageUploaded) {
-            self.buttonUploadDone.enabled = YES;
-            self.buttonReupload.enabled = NO;
-            [self updateTitleOfReloadButtonAfterUploadingSuccess];
-        } else {
-            self.buttonReupload.enabled = YES;
-            self.buttonUploadDone.enabled = NO;
-        }
-    }
-}
-
-#pragma mask 0 界面布局
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.93 blue:0.98 alpha:1.0];
-    self.title=@"POS-签购单";
-    
-    [self loadsSubviews];
-    
-}
-
-
-// 简化代码:label可以用同一个产出方式
-- (UILabel*) newTextLabelWithText:(NSString*)text
-                          inFrame:(CGRect)frame
-                        alignment:(NSTextAlignment)textAlignment
-                             font:(UIFont*)font
-{
-    UILabel* textLabel = [[UILabel alloc] initWithFrame:frame];
-    textLabel.backgroundColor = [UIColor clearColor];
-    textLabel.text = text;
-    textLabel.textAlignment = textAlignment;
-    textLabel.textColor = [UIColor blackColor];
-    textLabel.font = font;
-    // 设置自动换行
-    [textLabel setNumberOfLines:0];
-    textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    return textLabel;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:NO];
-    [self addObserver:self forKeyPath:kKVOImageUploaded options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
-}
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    if (!self.imageUploaded) {
-        [self uploadRequestMethod];
-    }
-}
-// 视图退出,要取消
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [self.uploadRequest clearDelegatesAndCancel];
-    self.uploadRequest = nil;
-    [self removeObserver:self forKeyPath:kKVOImageUploaded];
-}
-
-/* 检查上传结果并退出 */
-- (void) checkUploadedAndPopView {
-    if (self.imageUploaded) {
-        [self.navigationController popToRootViewControllerAnimated:YES];
-    }
-    else {
-        [PublicInformation makeCentreToast:@"小票未上传,请上传小票!"];
-    }
-}
-// -- 重新上传小票
-- (IBAction) reuploadStubImage:(id)sender {
-    if (self.imageUploaded) {
-        [PublicInformation makeToast:@"小票已成功上传"];
-    } else {
-        [self.uploadRequest clearDelegatesAndCancel];
-        self.uploadRequest = nil;
-        [self uploadRequestMethod];
-    }
-}
-
-
-#pragma mark ----------------屏幕截图
-//获取当前屏幕内容
-- (UIImage *)getNormalImage:(UIScrollView *)view{
-    CGRect oldFrame = view.frame;
-    view.frame = CGRectMake(0, 0, view.contentSize.width, view.contentSize.height);
-    CGSize size = CGSizeMake(view.frame.size.width, view.frame.size.height);
-    UIGraphicsBeginImageContextWithOptions(size, view.opaque, 1.0);
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
-    img=[UIImage imageWithData:UIImageJPEGRepresentation(img, 0.5)];
-    UIGraphicsEndImageContext();
-    view.frame = oldFrame;
-    return img;
-    
-}
-
-// -- 更新重新上传按钮标题: 成功后
-- (void) updateTitleOfReloadButtonAfterUploadingSuccess {
-    [self.buttonReupload setTitle:@"已上传" forState:UIControlStateDisabled];
-    [self.buttonReupload setTitleColor:[PublicInformation returnCommonAppColor:@"green"] forState:UIControlStateDisabled];
-}
 
 
 #pragma mask ::: setter && getter
+
 - (ASIFormDataRequest *)uploadRequest {
     if (_uploadRequest == nil) {
         NSString* uploadString = [NSString stringWithFormat:@"http://%@:%@/jlagent/UploadImg",
@@ -566,51 +607,31 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
         [_uploadRequest setNumberOfTimesToRetryOnTimeout:3];
         [_uploadRequest setTimeOutSeconds:20];
         [_uploadRequest setDelegate:self];
-        
         [_uploadRequest setUploadProgressDelegate:self.progressView];
     }
     return _uploadRequest;
 }
+
 - (UIProgressView *)progressView {
     if (_progressView == nil) {
         _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
-        _progressView.progressTintColor = [PublicInformation returnCommonAppColor:@"green"];
+        _progressView.progressTintColor = [UIColor colorWithHex:HexColorTypeGreen alpha:1];
     }
     return _progressView;
 }
-- (UIButton *)buttonReupload {
-    if (_buttonReupload == nil) {
-        NSString* buttonTitle = @"重新上传";
-        CGFloat fontSize = 17.f;
-        CGSize titleSize = [buttonTitle sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontSize] forKey:NSFontAttributeName]];
-        _buttonReupload = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, titleSize.width, titleSize.height)];
-        
-        [_buttonReupload setTitle:buttonTitle forState:UIControlStateNormal];
-        [_buttonReupload setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        [_buttonReupload setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_buttonReupload setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        
-        [_buttonReupload.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
-        _buttonReupload.titleLabel.textAlignment = NSTextAlignmentLeft;
-        [_buttonReupload addTarget:self action:@selector(reuploadStubImage:) forControlEvents:UIControlEventTouchUpInside];
+
+- (UIButton *)handleBtn {
+    if (!_handleBtn) {
+        _handleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
+        [_handleBtn setTitle:@"完成" forState:UIControlStateNormal];
+        [_handleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_handleBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.7] forState:UIControlStateHighlighted];
+        [_handleBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.7] forState:UIControlStateDisabled];
+        [_handleBtn addTarget:self action:@selector(clickedOnHandleBtn:) forControlEvents:UIControlEventTouchUpInside];
+        _handleBtn.titleLabel.font = [UIFont systemFontOfSize:[NSString resizeFontAtHeight:30 scale:0.68]];
     }
-    return _buttonReupload;
+    return _handleBtn;
 }
-- (UIButton *)buttonUploadDone {
-    if (_buttonUploadDone == nil) {
-        NSString* buttonTitle = @"完成";
-        CGFloat fontSize = 17.f;
-        CGSize titleSize = [buttonTitle sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:fontSize] forKey:NSFontAttributeName]];
-        _buttonUploadDone = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, titleSize.width, titleSize.height)];
-        [_buttonUploadDone setTitle:buttonTitle forState:UIControlStateNormal];
-        [_buttonUploadDone setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        [_buttonUploadDone setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [_buttonUploadDone setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-        [_buttonUploadDone.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
-        _buttonUploadDone.titleLabel.textAlignment = NSTextAlignmentRight;
-        [_buttonUploadDone addTarget:self action:@selector(checkUploadedAndPopView) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _buttonUploadDone;
-}
+
 
 @end

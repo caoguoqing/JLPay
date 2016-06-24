@@ -30,8 +30,8 @@
 {
     NameWeakSelf(wself);
     [self.http requestingOnPackingHandle:^(ASIFormDataRequest *http) {
-        [http addPostValue:[ModelUserLoginInformation businessNumber] forKey:@"mchtInf"];
-        NSString* source = [NSString stringWithFormat:@"mchtInf=%@&key=shisongcheng",[ModelUserLoginInformation businessNumber]];
+        [http addPostValue:[PublicInformation returnBusiness] forKey:@"mchtInf"];
+        NSString* source = [NSString stringWithFormat:@"mchtInf=%@&key=shisongcheng",[PublicInformation returnBusiness]];
         [http addPostValue:[MD5Util encryptWithSource:source] forKey:@"sign"];
     } onSucBlock:^(NSDictionary *info) {
         // packing info

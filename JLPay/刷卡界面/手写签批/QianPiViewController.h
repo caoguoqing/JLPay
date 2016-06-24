@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "ASINetworkQueue.h"
 #import "NewVersionView.h"
+#import "PosInformationViewController.h"
+
 
 @class AppDelegate;
 
@@ -30,8 +32,9 @@
 @property(nonatomic,retain)NSString *lastLiushuiStr;
 
 
-@property (nonatomic, strong) NSDictionary* transInformation;
+@property (nonatomic, copy) NSDictionary* transInformation;
 
+@property (nonatomic, assign) PosNoteUseFor userFor;
 
 -(void)getCurretnLiushui:(NSString *)liushui;
 

@@ -124,6 +124,8 @@ typedef enum : NSUInteger {
 #pragma mask ---- 界面声明周期
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"忘记密码";
+    self.view.backgroundColor = [UIColor whiteColor];
     // 背景图
     textFontSize = 15;
     [self.view addSubview:self.userNumberField];
@@ -134,9 +136,8 @@ typedef enum : NSUInteger {
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (self.navigationController.navigationBarHidden) {
-        self.navigationController.navigationBarHidden = NO;
-    }
+    self.navigationController.navigationBarHidden = NO;
+    
     CGFloat naviAndStatusHeight = self.navigationController.navigationBar.bounds.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
     CGFloat horizontalInset = 20;
     CGFloat btnHeight = 50;

@@ -27,20 +27,20 @@
 
 - (void)requestMyBusinessInfoOnFinished:(void (^)(void))finished onErrorBlock:(void (^)(NSError *))errorBlock {
     NameWeakSelf(wself);
+    [self updateTitlesNeedDisplayedOnFilled:NO];
     [[MHttpBusinessInfo sharedVM] requestBusinessInfoOnFinished:^{
-        NSString* businessState = [wself valueForTitleName:VMMyBusinessTitleState];
-        if (businessState.integerValue == 8 || businessState.integerValue == 2) { // ‘拒绝状态’，退出登录
-            if (errorBlock) errorBlock([NSError errorWithDomain:@"" code:VMDataSourceMyBusiCodeCheckRefuse localizedDescription:@"商户审核拒绝"]);
+        NSInteger businessState = [[wself valueForTitleName:VMMyBusinessTitleState] integerValue];
+        if (businessState == 8 || businessState == 2) { // ‘拒绝状态’
+            self.businessState = VMDataSourceMyBusiCodeCheckRefuse;
+        }
+        else if (businessState == 1) {
+            self.businessState = VMDataSourceMyBusiCodeChecking;
         }
         else {
-            if (businessState.integerValue != 1) { // '正常状态',要去掉标题 VMMyBusinessTitleState
-                NSArray* section1Array = [wself.displayTitles objectAtIndex:1];
-                if (section1Array.count == 1 && [section1Array[0] isEqualToString:VMMyBusinessTitleState]) {
-                    [wself.displayTitles removeObjectAtIndex:1];
-                }
-            }
-            if (finished) finished();
+            self.businessState = VMDataSourceMyBusiCodeChecked;
         }
+        [wself updateTitlesNeedDisplayedOnFilled:YES];
+        if (finished) finished();
     } onErrorBlock:^(NSError *error) {
         if (errorBlock) errorBlock(error);
     }];
@@ -73,6 +73,7 @@
         UserHeadImageTBVCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (!cell) {
             cell = [[UserHeadImageTBVCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+            cell.backgroundColor = [UIColor whiteColor];
         }
         cell.headImageView.image = [UIImage imageNamed:@"01_01"];
         cell.titleLabel.text = valueForTitle;
@@ -83,16 +84,18 @@
         BusinessStateTBVCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (!cell) {
             cell = [[BusinessStateTBVCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+            cell.backgroundColor = [UIColor whiteColor];
         }
         cell.textLabel.text = valueKey;
-        cell.detailTextLabel.text = @"修改";
         if (valueForTitle.integerValue == 1) {
             cell.stateLabel.text = @"审核中";
         }
         else if (valueForTitle.integerValue == 8 || valueForTitle.integerValue == 2) {
-            cell.stateLabel.text = @"审核拒绝";
+            cell.stateLabel.text = @"审核不通过";
         }
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        else {
+            cell.stateLabel.text = @"正常";
+        }
         return cell;
     }
     else {
@@ -100,6 +103,7 @@
         UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+            cell.backgroundColor = [UIColor whiteColor];
         }
         if ([valueKey isEqualToString:VMMyBusinessTitleIdNo]) {
             valueForTitle = [valueForTitle stringCuttingXingInRange:NSMakeRange(4, valueForTitle.length - 4 - 4)];
@@ -110,9 +114,29 @@
         else if ([valueKey isEqualToString:VMMyBusinessTitleSettleAccount]) {
             valueForTitle = [valueForTitle stringCuttingXingInRange:NSMakeRange(4, valueForTitle.length - 4 - 4)];
         }
+        else if ([valueKey isEqualToString:VMMyBusinessTitleAddress]) {
+            /* 查询地区: DB */
+            NSDictionary* city = [ModelAreaCodeSelector citySelectedAtCityCode:valueForTitle];
+            NSDictionary* province = [ModelAreaCodeSelector provinceSelectedAtProvinceCode:[city objectForKey:kFieldNameDescr]];
+            valueForTitle = [NSString stringWithFormat:@"%@-%@",
+                             [PublicInformation clearSpaceCharAtLastOfString:province[kFieldNameValue]],
+                             [PublicInformation clearSpaceCharAtLastOfString:city[kFieldNameValue]]];
+        }
         cell.textLabel.text = valueKey;
         cell.detailTextLabel.text = valueForTitle;
         return cell;
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    if (section == 1) {
+        if ([self valueForTitleName:VMMyBusinessTitleState].integerValue == 2) {
+            return [[MLoginSavedResource sharedLoginResource] checkedRefuseReason];
+        } else {
+            return @"";
+        }
+    } else {
+        return @"";
     }
 }
 
@@ -123,29 +147,60 @@
 
 
 
+# pragma mask 3 private interface
+- (void) updateTitlesNeedDisplayedOnFilled:(BOOL)filled {
+    if (filled) {
+        [self.displayTitles addObject:@[VMMyBusinessTitleUser]];
+        
+        switch (self.businessState) {
+            case VMDataSourceMyBusiCodeChecked:
+            {
+                [self.displayTitles addObject:@[VMMyBusinessTitleState,VMMyBusinessTitleNumber]];
+            }
+                break;
+            case VMDataSourceMyBusiCodeChecking:
+            {
+                [self.displayTitles addObject:@[VMMyBusinessTitleState]];
+
+            }
+                break;
+            case VMDataSourceMyBusiCodeCheckRefuse:
+            {
+                [self.displayTitles addObject:@[VMMyBusinessTitleState]];
+
+            }
+                break;
+
+            default:
+                break;
+        }
+        
+        [self.displayTitles addObject:@[VMMyBusinessTitleSettleAccount,VMMyBusinessTitleBankName]];
+        [self.displayTitles addObject:@[VMMyBusinessTitleAddress,VMMyBusinessTitleTelNo,VMMyBusinessTitleEmail]];
+    } else {
+        [self.displayTitles removeAllObjects];
+    }
+}
+
+
 # pragma mask 4 getter
 
 - (NSMutableArray *)displayTitles {
     if (!_displayTitles) {
         _displayTitles = [NSMutableArray array];
-        [_displayTitles addObject:@[VMMyBusinessTitleUser]];
-        [_displayTitles addObject:@[VMMyBusinessTitleState]];
-        [_displayTitles addObject:@[VMMyBusinessTitleName,VMMyBusinessTitleNumber,VMMyBusinessTitleIdNo,VMMyBusinessTitleTelNo,VMMyBusinessTitleEmail]];
-        [_displayTitles addObject:@[VMMyBusinessTitleBankName,VMMyBusinessTitleSettleAccount]];
-        [_displayTitles addObject:@[VMMyBusinessTitleAddress]];
     }
     return _displayTitles;
 }
 - (NSMutableDictionary *)titleAndDataKeys {
     if (!_titleAndDataKeys) {
         _titleAndDataKeys = [NSMutableDictionary dictionary];
-        [_titleAndDataKeys setObject:MHttpBusinessKeyUserName forKey:VMMyBusinessTitleUser];
+        [_titleAndDataKeys setObject:MHttpBusinessKeyMchntNm forKey:VMMyBusinessTitleUser];
         [_titleAndDataKeys setObject:MHttpBusinessKeyMchntNm forKey:VMMyBusinessTitleName];
         [_titleAndDataKeys setObject:MHttpBusinessKeyTelNo forKey:VMMyBusinessTitleTelNo];
         [_titleAndDataKeys setObject:MHttpBusinessKeyMail forKey:VMMyBusinessTitleEmail];
         [_titleAndDataKeys setObject:MHttpBusinessKeySpeSettleDs forKey:VMMyBusinessTitleBankName];
         [_titleAndDataKeys setObject:MHttpBusinessKeySettleAcct forKey:VMMyBusinessTitleSettleAccount];
-        [_titleAndDataKeys setObject:MHttpBusinessKeyAddr forKey:VMMyBusinessTitleAddress];
+        [_titleAndDataKeys setObject:MHttpBusinessKeyAreaNo forKey:VMMyBusinessTitleAddress];
         [_titleAndDataKeys setObject:MHttpBusinessKeyIdentifyNo forKey:VMMyBusinessTitleIdNo];
         [_titleAndDataKeys setObject:MHttpBusinessKeyMchtStatus forKey:VMMyBusinessTitleState];
         [_titleAndDataKeys setObject:MHttpBusinessKeyMchtNo forKey:VMMyBusinessTitleNumber];

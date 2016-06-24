@@ -16,9 +16,6 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-#pragma mask ::: 登陆成功后的跳转功能:跳转到 UITabBarViewController;
-- (void)signInSuccessToLogin:(int)select;
-
 #pragma mask ::: 初始化主界面:分页控制器
 - (UITabBarController*) mainTabBarControllerOfApp ;
 

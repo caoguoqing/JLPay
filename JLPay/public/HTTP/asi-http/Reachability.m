@@ -181,6 +181,7 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 
 @interface Reachability (private)
 
+
 - (NetworkStatus) networkStatusForFlags: (SCNetworkReachabilityFlags) flags;
 
 @end

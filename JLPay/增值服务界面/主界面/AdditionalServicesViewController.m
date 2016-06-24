@@ -15,9 +15,11 @@
 #import "Toast+UIView.h"
 #import "OtherPayCollectViewController.h"
 #import "DeviceManager.h"
-#import "TransDetailsViewController.h"
 #import "ModelDeviceBindedInformation.h"
 #import "AdditionalCollectionLayout.h"
+#import "MBProgressHUD+CustomSate.h"
+
+#import "VMOtherPayType.h"
 
 #define InsetOfSubViews             6.f                 // 第一个子视图(滚动视图)跟后续子视图组的间隔
 
@@ -31,6 +33,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary* imageNamesDict;
 @property (nonatomic, strong) NSMutableArray* titlesArray;
+@property (nonatomic, strong) MBProgressHUD* progressHud;
 @end
 
 
@@ -99,29 +102,18 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     myCollectionCell* cell = (myCollectionCell*)[collectionView cellForItemAtIndexPath:indexPath];
     if ([cell.title isEqualToString:PayCollectTypeAlipay]) {
-        // 校验设备绑定
-        if (![ModelDeviceBindedInformation hasBindedDevice]) {
-            [self alertForMessage:@"设备未绑定，请先绑定设备"];
-        } else {
-            [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeAlipay] animated:YES];
-        }
+        [[VMOtherPayType sharedInstance] setCurPayType:OtherPayTypeAlipay];
+        [self.navigationController pushViewController:[[OtherPayCollectViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
     }
     else if ([cell.title isEqualToString:PayCollectTypeWeChatPay]) {
-        // 校验设备绑定
-        if (![ModelDeviceBindedInformation hasBindedDevice]) {
-            [self alertForMessage:@"设备未绑定，请先绑定设备"];
-        } else {
-            [self.navigationController pushViewController:[self payCollectionViewControllerWithType:PayCollectTypeWeChatPay] animated:YES];
-        }
+        [[VMOtherPayType sharedInstance] setCurPayType:OtherPayTypeWechat];
+        [self.navigationController pushViewController:[[OtherPayCollectViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
     }
     else if ([cell.title isEqualToString:@"明细查询"]){
-        // 校验设备绑定
-        if (![ModelDeviceBindedInformation hasBindedDevice]) {
-            [self alertForMessage:@"设备未绑定，请先绑定设备"];
-        } else {
-            [self.navigationController pushViewController:[self transDetailsViewControllerWithPlatform:NameTradePlatformOtherPay] animated:YES];
-        }
-
+        // -- 先屏蔽
+        [self.progressHud showWarnWithText:@"新功能开发中,敬请期待!" andDetailText:nil onCompletion:^{}];
+        return;
+//      [self.navigationController pushViewController:[self transDetailsViewControllerWithPlatform:NameTradePlatformOtherPay] animated:YES];
     }
 }
 
@@ -130,17 +122,12 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (OtherPayCollectViewController*) payCollectionViewControllerWithType:(NSString*)type {
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     OtherPayCollectViewController* payCollectVC = [storyBoard instantiateViewControllerWithIdentifier:@"otherPayVC"];
-    [payCollectVC setPayCollectType:type];
     return payCollectVC;
 }
 
 /* 交易明细界面 */
-- (TransDetailsViewController*) transDetailsViewControllerWithPlatform:(NSString*)platform {
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    TransDetailsViewController* payCollectVC = [storyBoard instantiateViewControllerWithIdentifier:@"transDetailsVC"];
-    [payCollectVC setTradePlatform:platform];
-    return payCollectVC;
-}
+//- (TransDetailsViewController*) transDetailsViewControllerWithPlatform:(NSString*)platform {
+//}
 
 /* 弹窗 */
 - (void) alertForMessage:(NSString*)message {
@@ -154,17 +141,13 @@ NSString* headerIdentifier = @"headerIdentifier";
 #pragma mask ---- 界面生命周期
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // 设置 title 的字体颜色
-//    UIColor *color                  = [UIColor redColor];
-//    NSDictionary *dict              = [NSDictionary dictionaryWithObject:color  forKey:NSForegroundColorAttributeName];
-//    self.navigationController.navigationBar.titleTextAttributes = dict;
-    self.navigationController.navigationBar.tintColor = [UIColor redColor];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
 
     // 不要自动将 y0 指向导航器下面
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self.view addSubview:self.collectionView];
+    [self.view addSubview:self.progressHud];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -173,7 +156,7 @@ NSString* headerIdentifier = @"headerIdentifier";
     self.collectionView.frame = CGRectMake(0, naviAndStatusHeight, self.view.bounds.size.width, self.view.bounds.size.height - naviAndStatusHeight - tabBarHeight);
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
-    
+    self.tabBarController.tabBar.hidden = NO;
 }
 
 
@@ -209,11 +192,17 @@ NSString* headerIdentifier = @"headerIdentifier";
 - (NSMutableDictionary *)imageNamesDict {
     if (_imageNamesDict == nil) {
         _imageNamesDict = [[NSMutableDictionary alloc] init];
-        [_imageNamesDict setValue:@"03_20" forKey:(NSString*)PayCollectTypeAlipay];
-        [_imageNamesDict setValue:@"wxPay" forKey:(NSString*)PayCollectTypeWeChatPay];
-        [_imageNamesDict setValue:@"03_12" forKey:@"明细查询"];
+        [_imageNamesDict setValue:@"alipay180" forKey:(NSString*)PayCollectTypeAlipay];
+        [_imageNamesDict setValue:@"weChat180" forKey:(NSString*)PayCollectTypeWeChatPay];
+        [_imageNamesDict setValue:@"details180" forKey:@"明细查询"];
     }
     return _imageNamesDict;
+}
+- (MBProgressHUD *)progressHud {
+    if (!_progressHud) {
+        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    return _progressHud;
 }
 
 @end

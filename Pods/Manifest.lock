@@ -1,4 +1,7 @@
 PODS:
+  - FontAwesome (4.3.0)
+  - LTNavigationBar (2.1.1)
+  - MJRefresh (3.0.4)
   - ReactiveCocoa (2.5):
     - ReactiveCocoa/UI (= 2.5)
   - ReactiveCocoa/Core (2.5):
@@ -8,9 +11,15 @@ PODS:
     - ReactiveCocoa/Core
 
 DEPENDENCIES:
+  - FontAwesome (~> 4.3.0)
+  - LTNavigationBar (~> 2.1.1)
+  - MJRefresh (~> 3.0.4)
   - ReactiveCocoa (~> 2.5)
 
 SPEC CHECKSUMS:
+  FontAwesome: 341b52261cad8254017da3ddfc01d67c87c0ca88
+  LTNavigationBar: b1c15fdcc32453d84f8b9fc774fff611c184dfbb
+  MJRefresh: c95f0d541606ef584dab3fbeda28f4f32b4aca6e
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
 
 COCOAPODS: 0.39.0

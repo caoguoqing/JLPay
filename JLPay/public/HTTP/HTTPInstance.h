@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ASIFormDataRequest.h"
+#import "Define_Header.h"
 
 @class HTTPInstance;
 
@@ -42,16 +43,24 @@ typedef enum {
 
 @interface HTTPInstance : NSObject
 
+@property (nonatomic, retain) ASIFormDataRequest* httpRequester;
 
 - (instancetype) initWithURLString:(NSString*)URLString ;
 
-/* 开始请求 */
+/* 请求: delegate */
 - (void) startRequestingWithDelegate:(id<HTTPInstanceDelegate>)delegate
                        packingHandle:(void (^)(ASIFormDataRequest* http))packingBlock;
 
+/* 请求: block 区分错误码 */
 - (void) requestingOnPackingHandle:(void (^) (ASIFormDataRequest* http))packingBlock
                         onSucBlock:(void (^) (NSDictionary* info))sucBlock
                         onErrBlock:(void (^) (NSError* error))errBlock;
+
+/* 请求: block 不区分错误码 */
+- (void) requestingOnPackingBlock:(void (^) (ASIFormDataRequest* http))packingBlock
+                  onFinishedBlock:(void (^) (NSDictionary* info))finishedBlock
+                     onErrorBlock:(void (^) (NSError* error))errorBlock;
+
 
 /* 终止请求 */
 - (void) terminateRequesting;

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "EncodeString.h"
 
 @interface MD5Util : NSObject
 

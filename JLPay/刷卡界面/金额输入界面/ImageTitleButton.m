@@ -27,7 +27,7 @@
 }
 
 - (void) addSubvews {
-    [self addSubview:self.bImageView];
+    [self addSubview:self.bImgLabel];
     [self addSubview:self.bTitleLabel];
 }
 
@@ -35,35 +35,38 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat widthImageView = self.frame.size.width * 0.35;
-    CGFloat heightLabel = widthImageView * 0.5;
+    CGFloat heightLabel = 15;
     CGFloat inset = 10;
+    CGFloat imgScale = 0.38;
     
     NameWeakSelf(wself);
     
-    [self.bImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+    self.bImgLabel.font = [UIFont iconFontWithSize:[@"ss" resizeFontAtHeight:self.frame.size.width * imgScale scale:0.95]];
+    self.bTitleLabel.font = [UIFont boldSystemFontOfSize:[@"ss" resizeFontAtHeight:heightLabel scale:0.95]];
+
+    [self.bImgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(wself.mas_centerX);
-        make.bottom.equalTo(wself.mas_centerY).offset(0);
-        make.width.mas_equalTo(widthImageView);
-        make.height.mas_equalTo(widthImageView);
+        make.centerY.equalTo(wself.mas_top).offset(wself.frame.size.height * 0.4);
+        make.width.height.equalTo(wself.mas_width).multipliedBy(imgScale);
     }];
     [self.bTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(wself.mas_left);
         make.right.equalTo(wself.mas_right);
-        make.top.equalTo(wself.bImageView.mas_bottom).offset(inset * 1);
+        make.top.equalTo(wself.bImgLabel.mas_bottom).offset(inset * 0.5);
         make.height.mas_equalTo(heightLabel);
-        wself.bTitleLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(10, heightLabel) andScale:1]];
     }];
+    
     
 }
 
 
 # pragma mask 4 getter
-- (UIImageView *)bImageView {
-    if (!_bImageView) {
-        _bImageView = [UIImageView new];
+- (UILabel *)bImgLabel {
+    if (!_bImgLabel) {
+        _bImgLabel = [UILabel new];
+        _bImgLabel.textAlignment = NSTextAlignmentCenter;
     }
-    return _bImageView;
+    return _bImgLabel;
 }
 - (UILabel *)bTitleLabel {
     if (!_bTitleLabel) {

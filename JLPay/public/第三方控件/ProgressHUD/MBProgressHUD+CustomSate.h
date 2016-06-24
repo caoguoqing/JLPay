@@ -16,6 +16,8 @@
 - (void) showFailWithText:(NSString*)text andDetailText:(NSString*)detailText onCompletion:(void (^) (void))completion;
 - (void) showWarnWithText:(NSString*)text andDetailText:(NSString*)detailText onCompletion:(void (^) (void))completion;
 
+- (void) showCircleProgressWithText:(NSString*)text andDetailText:(NSString*)detailText;// onCompletion:(void (^) (void))completion;
+
 - (void) hideOnCompletion:(void (^) (void))completion;
 - (void) hideDelay:(NSTimeInterval)delay onCompletion:(void (^) (void))completion;
 

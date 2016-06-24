@@ -12,7 +12,7 @@
 
 @interface ImageTitleButton : UIButton
 
-@property (nonatomic, strong) UIImageView* bImageView;
+@property (nonatomic, strong) UILabel* bImgLabel;
 @property (nonatomic, strong) UILabel* bTitleLabel;
 
 

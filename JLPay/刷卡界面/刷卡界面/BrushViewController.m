@@ -85,7 +85,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
-    
+
     // 加载子视图
     [self setTitle:@"刷卡"];
     [self addSubViews];
@@ -104,8 +104,8 @@
 {
     [super viewWillAppear:animated];
     [self.activity startAnimating];
-    
     self.navigationController.navigationBarHidden = NO;
+    
 }
 
 
@@ -382,10 +382,11 @@
 
 // 跳转界面: 跳转到签名界面
 - (void) pushToSignVCWithInfo:(NSDictionary*)transInfo {
-    QianPiViewController  *qianpi=[[QianPiViewController alloc] init];
+    QianPiViewController  *qianpi=[[QianPiViewController alloc] initWithNibName:nil bundle:nil];
     [qianpi qianpiType:1];
     [qianpi leftTitle:self.sFloatMoney];
     [qianpi setTransInformation:transInfo];
+    qianpi.userFor = PosNoteUseForUpload;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.navigationController pushViewController:qianpi animated:YES];

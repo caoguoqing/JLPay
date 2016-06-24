@@ -9,12 +9,60 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x767b;&#x9646;&#x754c;&#x9762;/&#x4e3b;&#x754c;&#x9762;/ModelHTTPRequestLogin.m"
-            timestampString = "484196088.667999"
+            filePath = "JLPay/&#x589e;&#x503c;&#x670d;&#x52a1;&#x754c;&#x9762;/&#x5176;&#x4ed6;&#x652f;&#x4ed8;&#x6536;&#x6b3e;/&#x626b;&#x4e00;&#x626b;&#x6536;&#x6b3e;/&#x4ea4;&#x6613;&#x754c;&#x9762;/ViewModel/VMHttpWechatPay.m"
+            timestampString = "483591373.157046"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "@implementation VMHttpWechatPay"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/&#x589e;&#x503c;&#x670d;&#x52a1;&#x754c;&#x9762;/&#x5176;&#x4ed6;&#x652f;&#x4ed8;&#x6536;&#x6b3e;/&#x626b;&#x4e00;&#x626b;&#x6536;&#x6b3e;/&#x4ea4;&#x6613;&#x754c;&#x9762;/ViewModel/VMHttpWechatPay.m"
+            timestampString = "483933890.983545"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "-dealloc"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/&#x589e;&#x503c;&#x670d;&#x52a1;&#x754c;&#x9762;/&#x5176;&#x4ed6;&#x652f;&#x4ed8;&#x6536;&#x6b3e;/&#x4e3b;&#x754c;&#x9762;/View/OtherPayCollectViewController.m"
+            timestampString = "483951883.192656"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "-didSelectedView:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/public/HTTP/HTTPInstance.m"
+            timestampString = "484794449.636168"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
             landmarkName = "-requestFinished:"
             landmarkType = "5">
          </BreakpointContent>
@@ -25,13 +73,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x767b;&#x9646;&#x754c;&#x9762;/&#x6ce8;&#x518c;&#x7528;&#x6237;/UserRegisterViewController.m"
-            timestampString = "486381087.37506"
+            filePath = "JLPay/&#x5546;&#x6237;&#x8bbe;&#x7f6e;&#x754c;&#x9762;/&#x7acb;&#x5373;&#x5230;&#x8d26;/&#x8c03;&#x5355;&#x660e;&#x7ec6;/View/OrderDispatchListViewController.m"
+            timestampString = "485763059.430138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "758"
-            endingLineNumber = "758"
-            landmarkName = "-setBankNum:forBankName:"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "-viewWillDisappear:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

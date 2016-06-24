@@ -23,7 +23,7 @@
 + (void) cleanDeviceBindedInfo;
 /* 绑定的设备类型 */
 + (NSString*) deviceTypeBinded;
-/* 绑定的设备id*/
+/* 绑定的设备id */
 + (NSString*) deviceIDBinded;
 /* 绑定的设备SN */
 + (NSString*) deviceSNBinded;

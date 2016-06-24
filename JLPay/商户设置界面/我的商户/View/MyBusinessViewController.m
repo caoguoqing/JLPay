@@ -13,7 +13,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    self.title = @"我的商户";
+    self.title = @"商户信息界面";
     self.automaticallyAdjustsScrollViewInsets = NO;
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
 
@@ -23,27 +23,22 @@
 
 - (void) addSubviews {
     [self.view addSubview:self.tableView];
-    [self.view addSubview:self.logoutBtn];
+    [self.view addSubview:self.uploadBtn];
+    [self.view addSubview:self.reaplyBtn];
     [self.view addSubview:self.refreshBtn];
     [self.view addSubview:self.progressHud];
 }
 
 - (void) layoutSubviews {
-    CGFloat inset = 15;
-    
+    CGFloat inset = 10;
+    CGFloat heightBtn = self.view.frame.size.height * 1/14.f;
+    //uploadBtn
     NameWeakSelf(wself);
-    [self.logoutBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.view.mas_left).offset(inset);
-        make.right.equalTo(wself.view.mas_right).offset(-inset);
-        make.bottom.equalTo(wself.view.mas_bottom).offset(-inset);
-        make.height.mas_equalTo(45);
-        wself.logoutBtn.layer.cornerRadius = 45 * 0.5;
-    }];
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(wself.view.mas_left);
         make.right.equalTo(wself.view.mas_right);
         make.top.equalTo(wself.view.mas_top).offset(64);
-        make.bottom.equalTo(wself.logoutBtn.mas_top).offset(-inset);
+        make.bottom.equalTo(wself.view.mas_bottom).offset(0);
     }];
     [self.refreshBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(wself.tableView.mas_left);
@@ -51,7 +46,20 @@
         make.top.equalTo(wself.tableView.mas_top);
         make.bottom.equalTo(wself.tableView.mas_bottom);
     }];
-    
+    [self.uploadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.view.mas_left).offset(inset);
+        make.right.equalTo(wself.view.mas_right).offset(-inset);
+        make.top.equalTo(wself.view.mas_bottom).offset(inset * 2 + heightBtn);
+        make.height.mas_equalTo(heightBtn);
+        wself.uploadBtn.layer.cornerRadius = heightBtn * 0.5;
+    }];
+    [self.reaplyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.uploadBtn.mas_left);
+        make.right.equalTo(wself.uploadBtn.mas_right);
+        make.bottom.equalTo(wself.uploadBtn.mas_top).offset(-inset);
+        make.height.equalTo(wself.uploadBtn.mas_height);
+        wself.reaplyBtn.layer.cornerRadius = heightBtn * 0.5;
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -70,24 +78,8 @@
     }
 }
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 1) {
-        return YES;
-    }
-    else {
-        return NO;
-    }
+    return NO;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-    NSString* title = [[self.dataSource.displayTitles objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    if (indexPath.section == 1 && [title isEqualToString:VMMyBusinessTitleState]) {
-        [PublicInformation alertCancleAndOther:@"修改" title:@"温馨提示"
-                                       message:@"修改需要重新上传卡和证件照片\n确定要继续修改?"
-                                           tag:MyBusiAlertTagUpdateBusiness delegate:self];
-    }
-}
-
 
 # pragma mask 2 IBAction & UIAlertViewDelegate
 
@@ -96,19 +88,18 @@
     [self doMyBusinessInfoRequesting];
 }
 
-- (IBAction) toLogout:(UIButton*)sender {
-    [PublicInformation alertCancleAndOther:@"退出登录" title:@"是否退出用户登录"
-                                   message:nil tag:MyBusiAlertTagLogout delegate:self];
+- (IBAction) toReaplyBusinessInfo:(UIButton*)sender {
+    [PublicInformation alertCancleAndOther:@"重新申请" title:@"重新申请商户" message:@"重新申请的上传资料需要重新审核，确定要重新申请?" tag:MyBusiAlertTagReaplyBusinessInfo delegate:self];
+}
+- (IBAction) toUploadBusinessInfo:(UIButton*)sender {
+    [PublicInformation alertCancleAndOther:@"确定" title:@"申请资料上传" message:@"补充上传的资料需要重新审核，确定要申请并上传?" tag:MyBusiAlertTagReaplyBusinessInfo delegate:self];
 }
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-    NSString* btnTitle = [alertView buttonTitleAtIndex:buttonIndex];
-    if (alertView.tag == MyBusiAlertTagLogout) {
-        if (![btnTitle isEqualToString:@"取消"]) {
-            [self.tabBarController dismissViewControllerAnimated:YES completion:nil];
-        }
+    if (alertView.tag == MyBusiAlertTagReaplyBusinessInfo && buttonIndex == 1) {
+        [self doVCPushToUserRegister];
     }
-    else if (alertView.tag == MyBusiAlertTagUpdateBusiness && buttonIndex == 1) {
+    else if (alertView.tag == MyBusiAlertTagUploadBusinessInfo && buttonIndex == 1) {
         [self doVCPushToUserRegister];
     }
 }
@@ -121,18 +112,14 @@
             wself.refreshBtn.hidden = YES;
             wself.tableView.hidden = NO;
             [wself.tableView reloadData];
+            // 根据审核状态更新按钮的布局.....
+            [wself updateButtonsLayout];
         }];
     } onErrorBlock:^(NSError *error) {
-        if (error.code == VMDataSourceMyBusiCodeCheckRefuse) {
+        [wself.progressHud showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
             wself.refreshBtn.hidden = NO;
             wself.tableView.hidden = YES;
-            [PublicInformation alertSureWithTitle:@"商户审核被拒绝" message:@"请耐心等待审核,亦可在登录时修改商户信息" tag:MyBusiAlertTagLogout delegate:wself];
-        } else {
-            [wself.progressHud showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
-                wself.refreshBtn.hidden = NO;
-                wself.tableView.hidden = YES;
-            }];
-        }
+        }];
     }];
 }
 
@@ -143,6 +130,30 @@
     [viewController loadLastRegisterInfo:[MHttpBusinessInfo sharedVM].businessInfo];
     [self.navigationController pushViewController:viewController animated:YES];
 }
+- (void) updateButtonsLayout {
+    NameWeakSelf(wself);
+    CGFloat heightBtn = self.view.frame.size.height * 1/14.f;
+    CGFloat inset = 10;
+
+    if (self.dataSource.businessState == VMDataSourceMyBusiCodeCheckRefuse) {
+        self.reaplyBtn.hidden = NO;
+        [self.uploadBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(wself.view.mas_bottom).offset(-(inset + heightBtn));
+        }];
+        [self.tableView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(wself.view.mas_bottom).offset(-inset*3 - heightBtn*2);
+        }];
+        
+    } else {
+        self.reaplyBtn.hidden = YES;
+        [self.uploadBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(wself.view.mas_bottom).offset(-(inset + heightBtn));
+        }];
+        [self.tableView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(wself.view.mas_bottom).offset(-inset*2 - heightBtn);
+        }];
+    }
+}
 
 # pragma mask 4 getter
 - (UITableView *)tableView {
@@ -150,6 +161,8 @@
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
         _tableView.dataSource = self.dataSource;
         _tableView.delegate = self;
+        _tableView.sectionHeaderHeight = 0;
+        _tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0.00001)];
     }
     return _tableView;
 }
@@ -161,17 +174,29 @@
     return _dataSource;
 }
 
-- (UIButton *)logoutBtn {
-    if (!_logoutBtn) {
-        _logoutBtn = [UIButton new];
-        _logoutBtn.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
-        [_logoutBtn setTitle:@"退出登录" forState:UIControlStateNormal];
-        [_logoutBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_logoutBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.4] forState:UIControlStateHighlighted];
-        [_logoutBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.4] forState:UIControlStateDisabled];
-        [_logoutBtn addTarget:self action:@selector(toLogout:) forControlEvents:UIControlEventTouchUpInside];
+- (UIButton *)uploadBtn {
+    if (!_uploadBtn) {
+        _uploadBtn = [UIButton new];
+        _uploadBtn.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
+        [_uploadBtn setTitle:@"申请资料上传" forState:UIControlStateNormal];
+        [_uploadBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_uploadBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.4] forState:UIControlStateHighlighted];
+        [_uploadBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.4] forState:UIControlStateDisabled];
+        [_uploadBtn addTarget:self action:@selector(toUploadBusinessInfo:) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _logoutBtn;
+    return _uploadBtn;
+}
+- (UIButton *)reaplyBtn {
+    if (!_reaplyBtn) {
+        _reaplyBtn = [UIButton new];
+        _reaplyBtn.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
+        [_reaplyBtn setTitle:@"重新申请" forState:UIControlStateNormal];
+        [_reaplyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_reaplyBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.4] forState:UIControlStateHighlighted];
+        [_reaplyBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.4] forState:UIControlStateDisabled];
+        [_reaplyBtn addTarget:self action:@selector(toReaplyBusinessInfo:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _reaplyBtn;
 }
 
 - (BusinessVCRefreshButton *)refreshBtn {

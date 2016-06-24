@@ -28,13 +28,13 @@
 -(instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = @"费率选择";
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"费率选择";
     self.view.backgroundColor = [UIColor whiteColor];
     [self loadSubViews];
     [self loadSubViewControllers];

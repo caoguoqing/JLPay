@@ -16,9 +16,9 @@ NSString* const HTTPInstanceDomain = @"HTTPInstanceDomain";
     NSString* urlString;
 }
 @property (nonatomic, assign) id<HTTPInstanceDelegate>delegate;
-@property (nonatomic, retain) ASIFormDataRequest* httpRequester;
 
 @property (nonatomic, copy) void (^ httpSucBlock) (NSDictionary* info);
+@property (nonatomic, copy) void (^ httpFinishedBlock) (NSDictionary* responseInfo);
 @property (nonatomic, copy) void (^ httpErrBlock) (NSError* error);
 
 @end
@@ -69,6 +69,21 @@ static HTTPInstance* pubHttpInstance = nil;
     }
 }
 
+- (void)requestingOnPackingBlock:(void (^)(ASIFormDataRequest *))packingBlock
+                 onFinishedBlock:(void (^)(NSDictionary *))finishedBlock
+                    onErrorBlock:(void (^)(NSError *))errorBlock
+{
+    self.httpFinishedBlock = finishedBlock;
+    self.httpErrBlock = errorBlock;
+    if (self.httpRequester) {
+        packingBlock(self.httpRequester);
+        [self.httpRequester setDelegate:self];
+        [self.httpRequester startAsynchronous];
+    } else {
+        [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"HTTP请求失败"];
+    }
+}
+
 /* 终止请求 */
 - (void) terminateRequesting {
     self.delegate = nil;
@@ -80,46 +95,55 @@ static HTTPInstance* pubHttpInstance = nil;
 - (void) requestFinished:(ASIHTTPRequest *)request {
     NSData* data = [request responseData];
     NSDictionary* resHeader = [request responseHeaders];
-    NSLog(@"---响应信息:[%@]",[request responseString]);
+    JLPrint(@"---响应信息:[%@]",[request responseString]);
     [self.httpRequester clearDelegatesAndCancel];
     NSError* error;
     NSDictionary* resData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    self.httpRequester = nil;
+
     if (error) {
         [self rebackFailCode:HTTPErrorCodeUnpackingFail andMessage:@"响应数据拆包失败"];
     }
     else {
-        NSString* errorCode = nil;
-        NSString* errorMessage = nil;
-        errorCode = [resData objectForKey:@"code"];
-        errorMessage = [resData objectForKey:@"message"];
-        if (!errorCode) {
-            errorCode = [resHeader objectForKey:@"HttpResult"];
-            errorMessage = [resHeader objectForKey:@"HttpMessage"];
+        /* 在外层区分响应码 */
+        if (self.httpFinishedBlock) {
+            self.httpFinishedBlock(resData);
         }
-        if (errorCode) {
-            if (errorCode.integerValue == 0) {
-                // 成功
-                [self rebackSuccessWithInfo:resData];
+        /* 在本层区分响应码 */
+        else {
+            NSString* errorCode = nil;
+            NSString* errorMessage = nil;
+            errorCode = [resData objectForKey:@"code"];
+            errorMessage = [resData objectForKey:@"message"];
+            if (!errorCode) {
+                errorCode = [resHeader objectForKey:@"HttpResult"];
+                errorMessage = [resHeader objectForKey:@"HttpMessage"];
             }
-            else if (errorCode.integerValue == 401) {
-                // 查无数据
-                [self rebackFailCode:HTTPErrorCodeResponseNoneData andMessage:errorMessage];
+            if (errorCode) {
+                if (errorCode.integerValue == 0) {
+                    // 成功
+                    [self rebackSuccessWithInfo:resData];
+                }
+                else if (errorCode.integerValue == 401) {
+                    // 查无数据
+                    [self rebackFailCode:HTTPErrorCodeResponseNoneData andMessage:errorMessage];
+                }
+                else {
+                    // 失败: 后期可能需要枚举部分返回码
+                    [self rebackFailCode:HTTPErrorCodeDefault andMessage:errorMessage];
+                }
             }
             else {
-                // 失败: 后期可能需要枚举部分返回码
-                [self rebackFailCode:HTTPErrorCodeDefault andMessage:errorMessage];
+                [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"响应数据无响应码"];
             }
         }
-        else {
-            [self rebackFailCode:HTTPErrorCodeDefault andMessage:@"响应数据无响应码"];
-        }
     }
-    self.httpRequester = nil;
+//    self.httpRequester = nil;
 }
 
 - (void) requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequester clearDelegatesAndCancel];
-    [self rebackFailCode:HTTPErrorCodeConnectFail andMessage:@"网络异常"];
+    [self rebackFailCode:95 andMessage:@"网络异常"]; // HTTPErrorCodeConnectFail 95
     self.httpRequester = nil;
 }
 
@@ -149,9 +173,9 @@ static HTTPInstance* pubHttpInstance = nil;
 }
 
 /* 失败回调 */
-- (void) rebackFailCode:(HTTPErrorCode)errorCode andMessage:(NSString*)message {
+- (void) rebackFailCode:(NSInteger)errorCode andMessage:(NSString*)message {
     if (self.delegate && [self.delegate respondsToSelector:@selector(httpInstance:didRequestingFailedWithError:)]) {
-        [self.delegate httpInstance:self didRequestingFailedWithError:[self errorInfoMadeByCode:[NSString stringWithFormat:@"%d", errorCode] andMessage:message]];
+        [self.delegate httpInstance:self didRequestingFailedWithError:[self errorInfoMadeByCode:[NSString stringWithFormat:@"%ld", errorCode] andMessage:message]];
     }
     if (self.httpErrBlock) {
         self.httpErrBlock([self errorOnCode:errorCode message:message]);
@@ -162,6 +186,7 @@ static HTTPInstance* pubHttpInstance = nil;
 - (ASIFormDataRequest *)httpRequester {
     if (_httpRequester == nil) {
         _httpRequester = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+        _httpRequester.timeOutSeconds = 20;
     }
     return _httpRequester;
 }

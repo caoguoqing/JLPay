@@ -15,14 +15,18 @@
 
 typedef enum {
     MyBusiAlertTagLogout,
-    MyBusiAlertTagUpdateBusiness
+    MyBusiAlertTagUpdateBusiness,
+    MyBusiAlertTagReaplyBusinessInfo,
+    MyBusiAlertTagUploadBusinessInfo
 }MyBusiAlertTag;
 
 @interface MyBusinessViewController : UIViewController
 <UIAlertViewDelegate, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView* tableView;
-@property (nonatomic, strong) UIButton* logoutBtn;
+@property (nonatomic, strong) UIButton* uploadBtn;
+@property (nonatomic, strong) UIButton* reaplyBtn;
+
 @property (nonatomic, strong) BusinessVCRefreshButton* refreshBtn;
 @property (nonatomic, strong) VMDataSourceMyBusiness* dataSource;
 @property (nonatomic, strong) MBProgressHUD* progressHud;

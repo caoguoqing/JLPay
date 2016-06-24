@@ -15,9 +15,13 @@
 #import "SettlementInfoViewController.h"
 #import "ModelDeviceBindedInformation.h"
 #import "ModelSettlementInformation.h"
-#import "ModelUserLoginInformation.h"
+#import "MLoginSavedResource.h"
 #import "IntMoneyCalculating.h"
 #import "ImageTitleButton.h"
+#import "VMOtherPayType.h"
+#import "CodeScannerViewController.h"
+#import "DeviceSignInViewController.h"
+#import <LTNavigationBar/UINavigationBar+Awesome.h>
 
 #import "ModelRateInfoSaved.h"
 #import "ModelBusinessInfoSaved.h"
@@ -35,11 +39,11 @@
 @property (nonatomic, strong) UILabel* labelDisplayMoney;                   // 金额显示标签栏
 @property (nonatomic, strong) UIView* backViewOfMoney;                      // 用来优化结算方式视图的点击体验
 
-@property (nonatomic, strong) IntMoneyCalculating* intMoneyCalculating;
+@property (nonatomic, strong) IntMoneyCalculating* intMoneyCalculating;     // VM-金额计算器
 
-@property (nonatomic, strong) ImageTitleButton* swipeButton;
-@property (nonatomic, strong) ImageTitleButton* wechatPayButton;;
-@property (nonatomic, strong) ImageTitleButton* alipayButton;
+@property (nonatomic, strong) ImageTitleButton* swipeButton;                // 刷卡按钮
+@property (nonatomic, strong) ImageTitleButton* wechatPayButton;;           // 微信支付按钮
+@property (nonatomic, strong) ImageTitleButton* alipayButton;               // 支付宝支付按钮
 
 
 @end
@@ -51,7 +55,6 @@
     [super viewDidLoad];
     [self addSubViews];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
-    self.navigationController.navigationBar.tintColor = [UIColor redColor];
     
     blueToothPowerOn = NO;
     blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
@@ -61,9 +64,10 @@
 {
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = YES;
+    self.tabBarController.tabBar.hidden = NO;
     
     // 申请结算信息,并重置当前结算方式
-    if ([ModelUserLoginInformation allowedT_0] && BranchAppName != 3) {
+    if ([MLoginSavedResource sharedLoginResource].T_0_enable && BranchAppName != 3) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self startHTTPRequestForSettlementInfo];
         });
@@ -72,7 +76,6 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBarHidden = NO;
     [[VMT_0InfoRequester sharedInstance] requestTerminate];
 }
 
@@ -84,6 +87,7 @@
             VMT_0InfoRequester* vmT0Requester = [VMT_0InfoRequester sharedInstance];
             // 查询的结果暂时不做任何处理，在点击刷卡时，再判断进行处理
             if ([vmT0Requester enableT_0]) {
+                JLPrint(@"---查询了商户的结算信息:允许T+0");
                 [ModelSettlementInformation sharedInstance].curSettlementType = SETTLEMENTTYPE_T_0;
             } else {
                 [ModelSettlementInformation sharedInstance].curSettlementType = SETTLEMENTTYPE_T_1;
@@ -211,6 +215,23 @@
 
 - (IBAction) toWechatPay:(UIButton*)sender {
     [PublicInformation makeCentreToast:@"敬请期待，即将开通!"];
+    return;
+    /* ----- 先屏蔽掉微信功能，等通道稳定再开放 */
+//    if ([self.labelDisplayMoney.text floatValue] < 0.0001) {
+//        [PublicInformation makeToast:@"请输入金额!"];
+//        return;
+//    }
+//    
+//    /* 填充支付需要的信息 */
+//    [[VMOtherPayType sharedInstance] setPayAmount:[NSString stringWithFormat:@"%.02lf",self.labelDisplayMoney.text.floatValue]];
+//    [[VMOtherPayType sharedInstance] setCurPayType:OtherPayTypeWechat];
+//    
+//    /* 跳转 */
+//    [self.navigationController pushViewController:[[CodeScannerViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
+//    
+//    // 重置金额
+//    self.labelDisplayMoney.text = @"0.00";
+//    self.intMoneyCalculating = nil;
 }
 - (IBAction) toAlipay:(UIButton*)sender {
     [PublicInformation makeCentreToast:@"敬请期待，即将开通!"];
@@ -220,8 +241,8 @@
 - (BOOL) checkInputsBeforeSwipe {
     BOOL inputsValid = YES;
     NameWeakSelf(wself);
-    if ([ModelUserLoginInformation checkSate] != BusinessCheckStateChecked) {
-        [PublicInformation makeCentreToast:@"商户正在审核，不允许交易"];
+    if ([MLoginSavedResource sharedLoginResource].checkedState != BusinessCheckedStateChecked) {
+        [PublicInformation makeCentreToast:@"商户正在审核中，不允许交易"];
         inputsValid = NO;
     }
     if (inputsValid && [self.labelDisplayMoney.text floatValue] < 0.0001) {
@@ -233,7 +254,10 @@
         inputsValid = NO;
     }
     if (inputsValid && ![ModelDeviceBindedInformation hasBindedDevice]) {
-        [PublicInformation makeToast:@"设备未绑定,请先绑定设备!"];
+        [JCAlertView showTwoButtonsWithTitle:@"未绑定设备" Message:@"是否跳转'绑定设备'界面去绑定设备?" ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:nil
+                                  ButtonType:JCAlertViewButtonTypeWarn ButtonTitle:@"去绑定" Click:^{
+                                      [wself.navigationController pushViewController:[[DeviceSignInViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
+        }];
         inputsValid = NO;
     }
     
@@ -242,7 +266,7 @@
         switch (settlementType) {
             case SETTLEMENTTYPE_T_1:
             {
-                if ([ModelUserLoginInformation allowedMoreBusiness] && [ModelBusinessInfoSaved beenSaved]) {
+                if ([MLoginSavedResource sharedLoginResource].N_business_enable && [ModelBusinessInfoSaved beenSaved]) {
                     NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@][%@]\n是否继续刷卡?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
                     [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
                     } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
@@ -250,7 +274,7 @@
                     }];
                     inputsValid = NO;
                 }
-                else if ([ModelUserLoginInformation allowedMoreRate] && [ModelRateInfoSaved beenSaved]) {
+                else if ([MLoginSavedResource sharedLoginResource].N_fee_enable && [ModelRateInfoSaved beenSaved]) {
                     NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@][%@]\n是否继续刷卡?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
                     [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
                     } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
@@ -289,7 +313,6 @@
                         [wself pushSwipeOrOtherDisplayVC];
                     }];
                 }
-                JLPrint(@"判断后的当前结算方式为:[%d]",[[ModelSettlementInformation sharedInstance] curSettlementType]);
             }
                 break;
             case SETTLEMENTTYPE_T_6:
@@ -465,16 +488,20 @@
         }
         // 删除按钮
         else {
-            DeleteButton* deleteButton = [[DeleteButton alloc] initWithFrame:frame];
-            deleteButton.center = curCenterPoint;
-            [deleteButton  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
-            [deleteButton  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
-            [deleteButton  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
+            UIButton* deleteBtn = [[UIButton alloc] initWithFrame:frame];
+            deleteBtn.center = curCenterPoint;
+            [deleteBtn setTitle:[NSString stringWithIconFontType:IconFontType_backspace] forState:UIControlStateNormal];
+            [deleteBtn setTitleColor:[UIColor colorWithHex:HexColorTypeThemeRed alpha:1] forState:UIControlStateNormal];
+            deleteBtn.titleLabel.font = [UIFont iconFontWithSize:[PublicInformation resizeFontInSize:frame.size andScale:0.5]];
+            [deleteBtn  addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
+            [deleteBtn  addTarget:self action:@selector(touchUpDelete:) forControlEvents:UIControlEventTouchUpInside];
+            [deleteBtn  addTarget:self action:@selector(touchUpOut:) forControlEvents:UIControlEventTouchUpOutside];
             // 给撤销按钮添加一个长按事件:将金额清零,金额栈也清0
             UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressButtonOfDelete:)];
             longPress.minimumPressDuration = 0.8;
-            [deleteButton addGestureRecognizer:longPress];
-            [self.view addSubview:deleteButton];
+            [deleteBtn addGestureRecognizer:longPress];
+            [self.view addSubview:deleteBtn];
+
         }
     }
     // 分割线
@@ -537,7 +564,8 @@
 - (ImageTitleButton *)swipeButton {
     if (!_swipeButton) {
         _swipeButton = [[ImageTitleButton alloc] init];
-        _swipeButton.bImageView.image = [UIImage imageNamed:@"CreditCard_blackBlue"];
+        _swipeButton.bImgLabel.text = [NSString stringWithIconFontType:IconFontType_card];
+        _swipeButton.bImgLabel.textColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
         _swipeButton.bTitleLabel.text = @"刷卡";
         _swipeButton.bTitleLabel.textColor = [PublicInformation returnCommonAppColor:@"blueBlack"];
         _swipeButton.backgroundColor = [UIColor colorWithWhite:0.7 alpha:0.4];
@@ -548,7 +576,8 @@
 - (ImageTitleButton *)wechatPayButton {
     if (!_wechatPayButton) {
         _wechatPayButton = [[ImageTitleButton alloc] init];
-        _wechatPayButton.bImageView.image = [UIImage imageNamed:@"WechatPay_white"];
+        _wechatPayButton.bImgLabel.text = [NSString stringWithIconFontType:IconFontType_wechatPay];
+        _wechatPayButton.bImgLabel.textColor = [UIColor whiteColor];
         _wechatPayButton.bTitleLabel.text = @"微信收款";
         _wechatPayButton.bTitleLabel.textColor = [UIColor whiteColor];
         _wechatPayButton.backgroundColor = [PublicInformation returnCommonAppColor:@"green"];
@@ -559,7 +588,8 @@
 - (ImageTitleButton *)alipayButton {
     if (!_alipayButton) {
         _alipayButton = [[ImageTitleButton alloc] init];
-        _alipayButton.bImageView.image = [UIImage imageNamed:@"Alipay_white"];
+        _alipayButton.bImgLabel.text = [NSString stringWithIconFontType:IconFontType_alipay];
+        _alipayButton.bImgLabel.textColor = [UIColor whiteColor];
         _alipayButton.bTitleLabel.text = @"支付宝收款";
         _alipayButton.bTitleLabel.textColor = [UIColor whiteColor];
         _alipayButton.backgroundColor = [PublicInformation returnCommonAppColor:@"lightBlue"];

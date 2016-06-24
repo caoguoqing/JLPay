@@ -10,7 +10,8 @@
 #import "T_0CardUploadViewController.h"
 #import "HttpRequestT0CardList.h"
 #import "PublicInformation.h"
-#import "SubAndDetailLabelCell.h"
+//#import "SubAndDetailLabelCell.h"
+#import "CardCheckListCell.h"
 #import "MBProgressHUD+CustomSate.h"
 #import "PullRefrashView.h"
 
@@ -115,22 +116,39 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [[HttpRequestT0CardList sharedInstance] countOfCardsRequested];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* cellIdentifier = @"cellIdentifier__";
-    SubAndDetailLabelCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    CardCheckListCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
-        cell = [[SubAndDetailLabelCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+        cell = [[CardCheckListCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     }
-    if ([[HttpRequestT0CardList sharedInstance] cardRequestedAtIndex:indexPath.row].length < 16) {
-        [cell setLeftText:[[HttpRequestT0CardList sharedInstance] cardRequestedAtIndex:indexPath.row]];
-    } else {
-        [cell setLeftText:[PublicInformation cuttingOffCardNo:[[HttpRequestT0CardList sharedInstance] cardRequestedAtIndex:indexPath.row]]];
+    
+    NSString* originCardNo = [[HttpRequestT0CardList sharedInstance] cardRequestedAtIndex:indexPath.row];
+    NSString* originCustName = [[HttpRequestT0CardList sharedInstance] nameRequestedAtIndex:indexPath.row];
+    NSString* checkedState = [[HttpRequestT0CardList sharedInstance] stateRequestedAtIndex:indexPath.row];
+    NSString* checkedStatus = [[HttpRequestT0CardList sharedInstance] descriptionStateAtIndex:indexPath.row];
+    
+    cell.cardNoLabel.text = (originCardNo.length == 16 || originCardNo.length == 19)?([PublicInformation cuttingOffCardNo:originCardNo]):(originCardNo);
+    
+    cell.cardCustName.text = [self nameCuttedByOrigin:originCustName];
+    
+    cell.checkStateLabel.text = checkedStatus;
+    
+    if ([checkedState isEqualToString:kT0CardCheckFlagChecked]) {
+        cell.checkStateLabel.textColor = [UIColor colorWithHex:HexColorTypeGreen alpha:1];
     }
-    [cell setRightText:[self nameCuttedByOrigin:[[HttpRequestT0CardList sharedInstance] nameRequestedAtIndex:indexPath.row]]];
-    [self setSubTextForCell:cell atIndex:indexPath.row];
+    else if ([checkedState isEqualToString:kT0CardCheckFlagError]) {
+        cell.checkStateLabel.textColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
+    }
+    else {
+        cell.checkStateLabel.textColor = [UIColor colorWithHex:HexColorTypeBlackGray alpha:1];
+    }
+    
     return cell;
 }
 
@@ -138,21 +156,21 @@
     return NO;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 45;
+    return 48;
 }
-- (void) setSubTextForCell:(SubAndDetailLabelCell*)cell atIndex:(NSInteger)index {
-    NSString* cardflag = [[HttpRequestT0CardList sharedInstance] stateRequestedAtIndex:index];
-    NSString* text = [[HttpRequestT0CardList sharedInstance] descriptionStateAtIndex:index];
-    if ([cardflag isEqualToString:kT0CardCheckFlagChecked]) {
-        [cell setSubText:text color:EnumSubTextColorGreen];
-    }
-    else if ([cardflag isEqualToString:kT0CardCheckFlagError]) {
-        [cell setSubText:text color:EnumSubTextColorRed];
-    }
-    else {
-        [cell setSubText:text];
-    }
-}
+//- (void) setSubTextForCell:(SubAndDetailLabelCell*)cell atIndex:(NSInteger)index {
+//    NSString* cardflag = [[HttpRequestT0CardList sharedInstance] stateRequestedAtIndex:index];
+//    NSString* text = [[HttpRequestT0CardList sharedInstance] descriptionStateAtIndex:index];
+//    if ([cardflag isEqualToString:kT0CardCheckFlagChecked]) {
+//        [cell setSubText:text color:EnumSubTextColorGreen];
+//    }
+//    else if ([cardflag isEqualToString:kT0CardCheckFlagError]) {
+//        [cell setSubText:text color:EnumSubTextColorRed];
+//    }
+//    else {
+//        [cell setSubText:text];
+//    }
+//}
 
 
 #pragma mask ---- UIScrollViewDelegate
@@ -205,7 +223,6 @@
     if (_tableView == nil) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         [_tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-        [_tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
         [_tableView setDelegate:self];
         [_tableView setDataSource:self];
     }

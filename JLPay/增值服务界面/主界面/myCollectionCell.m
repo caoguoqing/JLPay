@@ -7,6 +7,8 @@
 //
 
 #import "myCollectionCell.h"
+#import "Masonry.h"
+#import "PublicInformation.h"
 
 @interface myCollectionCell()
 @property (nonatomic, strong) UIImageView* imageView;
@@ -35,39 +37,27 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGRect frame = self.contentView.bounds;
-    CGFloat inset = 5.0;
-    CGFloat labelHeight = 15.0;
-    // imageView
-    if (self.textLabel.text == nil) {
-        // imageView
-        frame.size.width /= 3.0;
-        frame.size.height = frame.size.width;
-        frame.origin.x = (self.contentView.bounds.size.width - frame.size.width)/2.0;
-        frame.origin.y = (self.contentView.bounds.size.height - frame.size.height)/2.0;
-        self.imageView.frame = frame;
-    } else {
-        // imageView
-        frame.size.width /= 2.0;
-        frame.size.height = frame.size.width;
-        frame.origin.x = (self.contentView.bounds.size.width - frame.size.width)/2.0;
-        frame.origin.y = (self.contentView.bounds.size.height - frame.size.height - inset - labelHeight)/2.0;
-        self.imageView.frame = frame;
-        // textLabel
-        frame.origin.x = 0;
-        frame.origin.y += frame.size.height + inset;
-        frame.size.width = self.contentView.bounds.size.width;
-        frame.size.height = labelHeight;
-        self.textLabel.frame = frame;
-        
-        // 重置label的文字的大小
-        UIFont* font = [UIFont systemFontOfSize:15.0];
-        self.textLabel.font = font;
-        CGSize textSize = [self.textLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName]];
-        if (textSize.height > frame.size.height) {
-            font = [UIFont systemFontOfSize:15.0 * frame.size.height/textSize.height];
-            self.textLabel.font = font;
-        }
-    }
+    CGFloat heightImageView = frame.size.height * 0.38;
+    CGFloat heightLabel = heightImageView * 0.5;
+    
+    CGFloat insetBig = (frame.size.height - heightImageView - heightLabel) * 0.38;
+    CGFloat insetLittle = insetBig * 0.5;
+    
+    NameWeakSelf(wself);
+    [self.imageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(wself.mas_top).offset(insetBig);
+        make.centerX.equalTo(wself.mas_centerX);
+        make.size.mas_equalTo(CGSizeMake(heightImageView, heightImageView));
+    }];
+    [self.textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(wself.imageView.mas_bottom).offset(insetLittle);
+        make.bottom.equalTo(wself.mas_bottom).offset(-insetBig);
+        make.left.equalTo(wself.mas_left);
+        make.right.equalTo(wself.mas_right);
+        make.height.mas_equalTo(heightLabel);
+        wself.textLabel.font = [UIFont systemFontOfSize:[PublicInformation resizeFontInSize:CGSizeMake(10, heightLabel) andScale:0.8]];
+    }];
+    
     self.contentView.layer.borderWidth = 0.3;
     self.contentView.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.5].CGColor;
 }

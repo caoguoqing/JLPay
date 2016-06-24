@@ -16,7 +16,6 @@
 #import "ASIFormDataRequest.h"
 #import "MBProgressHUD+CustomSate.h"
 #import "Define_Header.h"
-#import "ModelUserLoginInformation.h"
 #import "ModelDeviceBindedInformation.h"
 
 
@@ -239,6 +238,8 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
             [actionSheet addButtonWithTitle:@"拍摄"];
         }
         [actionSheet showInView:self.view];
+        
+        [self.view endEditing:YES];
     }
 }
 
@@ -249,6 +250,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
 - (void)tableViewCell:(id)cell didInputedText:(NSString *)text {
     TextFieldCell* tableCell = (TextFieldCell*)cell;
     NSIndexPath* indexPath = [self.tableView indexPathForCell:tableCell];
+    JLPrint(@"当前输入完成的cell的indexPath:[%@]",indexPath);
     if (indexPath.section == 0) {
         NSMutableDictionary* basicInfo = [self.arrayBasicInfo objectAtIndex:indexPath.row];
         [basicInfo setValue:text forKey:KeyInfoStringInputText];
@@ -300,7 +302,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     NameWeakSelf(wself);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         UIImage* imagePicked = [info objectForKey:UIImagePickerControllerOriginalImage];
-        UIImage* newImage = [imagePicked copy];
         
         [wself setImageInfoWithImage:imagePicked atIndex:rowCellImageNeedPicking];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -341,12 +342,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         NSString* msg = [NSString stringWithFormat:@"%@成功!", [self titleForRegisterType:self.registerType]];
         [self.hud showSuccessWithText:msg andDetailText:nil onCompletion:^{
             NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
-            NSString* userName = [self textInputedAtIndexPath:indexPath];
+//            NSString* userName = [self textInputedAtIndexPath:indexPath];
             // 清空登陆+商户信息
-            [ModelUserLoginInformation deleteLoginUpInformation];
-            [ModelUserLoginInformation deleteLoginDownInformation];
-            // 保存需要的登陆信息
-            [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
+//            [ModelUserLoginInformation deleteLoginUpInformation];
+//            [ModelUserLoginInformation deleteLoginDownInformation];
+//            // 保存需要的登陆信息
+//            [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
             
             // 清空绑定信息
             [ModelDeviceBindedInformation cleanDeviceBindedInfo];
@@ -887,9 +888,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     frame.size.height = btnHeight;
     [self.registerButton setFrame:frame];
     
-    if (self.navigationController.navigationBarHidden) {
-        [self.navigationController setNavigationBarHidden:NO];
-    }
+    [self.navigationController setNavigationBarHidden:NO];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -916,10 +915,10 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         NSString* userName = [self textInputedAtIndexPath:indexPath];
         // 清空登陆+商户信息
-        [ModelUserLoginInformation deleteLoginUpInformation];
-        [ModelUserLoginInformation deleteLoginDownInformation];
-        // 保存需要的登陆信息
-        [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
+//        [ModelUserLoginInformation deleteLoginUpInformation];
+//        [ModelUserLoginInformation deleteLoginDownInformation];
+//        // 保存需要的登陆信息
+//        [ModelUserLoginInformation newLoginUpInfoWithUserID:userName userPWD:nil needSaveUserPWD:NO needDisplayUserPWD:NO];
         
         // 清空绑定信息
         [ModelDeviceBindedInformation cleanDeviceBindedInfo];

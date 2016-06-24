@@ -13,7 +13,8 @@
 #import "MHttpBusinessInfo.h"
 #import "UserRegisterViewController.h"
 #import "Define_Header.h"
-
+#import "ModelAreaCodeSelector.h"
+#import "MLoginSavedResource.h"
 
 
 static NSString* const VMMyBusinessTitleUser = @"user";
@@ -29,12 +30,15 @@ static NSString* const VMMyBusinessTitleAddress = @"商户所在地:";
 
 
 typedef enum {
-    VMDataSourceMyBusiCodeCheckRefuse = 32323,      // 审核拒绝
+    VMDataSourceMyBusiCodeChecked = 32323,          // 正常
+    VMDataSourceMyBusiCodeCheckRefuse,              // 审核拒绝
     VMDataSourceMyBusiCodeChecking                  // 审核中
 }VMDataSourceMyBusiCode;
 
 @interface VMDataSourceMyBusiness : NSObject
 < UITableViewDataSource>
+
+@property (nonatomic, assign) VMDataSourceMyBusiCode businessState;
 
 @property (nonatomic, strong) NSMutableArray* displayTitles;
 @property (nonatomic, strong) NSMutableDictionary* titleAndDataKeys;
@@ -43,5 +47,6 @@ typedef enum {
                             onErrorBlock:(void (^) (NSError* error))errorBlock;
 
 - (void) stopRequest;
+
 
 @end

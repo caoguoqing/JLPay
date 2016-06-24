@@ -463,7 +463,6 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
 }
 /* 登陆成功 */
 - (void)didLoginSuccessWithLoginInfo:(NSDictionary *)loginInfo {
-    JLPrint(@"登陆响应信息:[%@]",loginInfo);
     [self.loadButton setEnabled:YES];
     // 校验是否切换了账号
     [self checkoutLoadingSwitch];
@@ -552,16 +551,9 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
     NSString* termCount = [loginInfo objectForKey:kFieldNameLoginDownTerminalCount];
     NSNumber* checkState = [loginInfo objectForKey:kFieldNameLoginDownCheckState];
     
-    JLPrint(@"终端号列表:[%@]",[loginInfo objectForKey:kFieldNameLoginDownTerminalList]);
-    JLPrint(@"终端号个数:[%@]",[loginInfo objectForKey:kFieldNameLoginDownTerminalCount]);
-    JLPrint(@"商户名:[%@]",[loginInfo objectForKey:kFieldNameLoginDownBusinessName]);
-    JLPrint(@"商户号:[%@]",[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]);
-
-    
     if (termCount.intValue > 0) {
         terminals = [self arraySeparatedByTerminalListString:[loginInfo objectForKey:kFieldNameLoginDownTerminalList]];
     }
-    JLPrint(@"开始保存:");    
     [ModelUserLoginInformation newLoginDownInfoWithBusinessName:[loginInfo objectForKey:kFieldNameLoginDownBusinessName]
                                                  businessNumber:[loginInfo objectForKey:kFieldNameLoginDownBusinessNum]
                                                   businessEmail:[loginInfo objectForKey:kFieldNameLoginDownBusinessEmail]
@@ -569,12 +561,10 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
                                                 terminalNumbers:terminals
                                                      allowTypes:[loginInfo objectForKey:kFieldNameLoginDownAllowTypes]
                                                      checkState:[checkState integerValue]];
-    JLPrint(@"保存完毕!");
 
 }
 #pragma mask ::: 分隔终端号字符串
 - (NSArray*) arraySeparatedByTerminalListString:(NSString*) terminalsString {
-    JLPrint(@"终端号列表:[%@]",terminalsString);
     NSMutableArray* array = [[NSMutableArray alloc] init];
     // 按逗号拆分到数组
     if (terminalsString && terminalsString.length > 0) {
@@ -589,7 +579,6 @@ static NSString* const KeyEncryptLoading = @"12345678901234567890123456789012345
             }
         }
     }
-    JLPrint(@"去除多余空格后的终端号列表:[%@]",array);
     return array;
 }
 

@@ -30,6 +30,7 @@
 +(NSString *) returnTerminal;
 +(NSString *) returnBusiness;
 +(NSString *) returnBusinessName;
++(NSString *) returnUserName;
 
 #pragma mask 0-------------------------------------------0 获取服务器ip+port
 /* 获取服务器域名 */
@@ -38,6 +39,11 @@
 + (NSString*) getTcpPort;
 /* 获取HTTP端口 */
 + (NSString*) getHTTPPort;
+
+/* OnlinePay: ip */
++ (NSString*) getOnlinePayIp;
+/* OnlinePay: port */
++ (NSString*) getOnlinePayPort;
 
 
 #pragma mask 0-------------------------------------------0 字符转换相关

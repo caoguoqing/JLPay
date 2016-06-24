@@ -19,10 +19,10 @@
     CC_MD5(souceC, (int)strlen(souceC), result);
     
     for (int i = 0; i < CC_MD2_DIGEST_LENGTH; i++) {
-        [encryptString appendFormat:@"%02x",result[i]];
+        [encryptString appendFormat:@"%02X",result[i]];
     }
-    
-    return encryptString;
+
+    return [encryptString lowercaseString];
 }
 
 

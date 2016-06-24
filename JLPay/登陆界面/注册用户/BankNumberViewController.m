@@ -51,6 +51,7 @@
     sender.transform = CGAffineTransformIdentity;
 }
 - (IBAction) touchToSearch:(UIButton*)sender {
+    [self hiddenTextFieldsKeyBoard:nil];
     sender.transform = CGAffineTransformIdentity;
     // 检查输入
     if (self.bankNameField.text.length == 0) {

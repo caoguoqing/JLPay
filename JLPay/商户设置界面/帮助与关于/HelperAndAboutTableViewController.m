@@ -10,23 +10,27 @@
 #import "BangdingViewController.h"
 #import "PublicInformation.h"
 #import "Define_Header.h"
+#import "Masonry.h"
+#import "MyBusinessViewController.h"
 
-@interface HelperAndAboutTableViewController ()
-@property (nonatomic, strong) NSMutableArray* cellTitles;
-@property (nonatomic, strong) NSMutableDictionary* dictTitlesAndImages;
-@property (nonatomic, strong) NSMutableDictionary* dictTitlesAndDatas;
-@end
 
 @implementation HelperAndAboutTableViewController
-@synthesize cellTitles = _cellTitles;
-@synthesize dictTitlesAndImages = _dictTitlesAndImages;
-@synthesize dictTitlesAndDatas = _dictTitlesAndDatas;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UIView* view = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.tableView setTableFooterView:view];
+    self.title = @"帮助与关于";
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    
+    NameWeakSelf(wself);
+    [self.view addSubview:self.tableView];
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.view.mas_left);
+        make.top.equalTo(wself.view.mas_top).offset(64);
+        make.right.equalTo(wself.view.mas_right);
+        make.bottom.equalTo(wself.view.mas_bottom);
+    }];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -44,15 +48,20 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseCellIdentifier" forIndexPath:indexPath];
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"reuseCellIdentifier"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"reuseCellIdentifier"];
+    }
     cell.textLabel.text = [self.cellTitles objectAtIndex:indexPath.row];
     return cell;
 }
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController;
 
-    if (indexPath.row != 3) {
+    if (indexPath.row < 3) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"帮助界面"];
         BangdingViewController* tongyong = (BangdingViewController*)viewController;
         NSString* viewTitle = [[self.cellTitles objectAtIndex:indexPath.row] substringFromIndex:2];
@@ -64,24 +73,39 @@
         [tongyong setArrayTitles:imageTitles];
         [tongyong setDictTitlesAndDesc:imagesAndDescs];
         
-    } else {
+    }
+    else if (indexPath.row == 3) {
+        viewController = [[MyBusinessViewController alloc] initWithNibName:nil bundle:nil];
+    }
+    else if (indexPath.row == 4) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"关于我们"];
     }
-    
     
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
 
 #pragma mask ---- getter & setter 
+
+- (UITableView *)tableView {
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        [_tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+    }
+    return _tableView;
+}
+
 - (NSMutableArray *)cellTitles {
     if (_cellTitles == nil) {
         _cellTitles = [[NSMutableArray alloc] init];
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
         [_cellTitles addObject:@"3.交易明细"];
+        [_cellTitles addObject:@"4.我的捷联通"];
         if (BranchAppName != 1) {
-            [_cellTitles addObject:@"4.关于我们"];
+            [_cellTitles addObject:@"5.关于我们"];
         }
     }
     return _cellTitles;

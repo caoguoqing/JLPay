@@ -84,7 +84,9 @@ static NSString* KeyLoginDownInfoCheckState = @"KeyLoginDownInfoCheckState__";
     NSMutableDictionary* newInfo = [[NSMutableDictionary alloc] init];
     [newInfo setObject:businessName forKey:KeyLoginDownInfoBusinessName];
     [newInfo setObject:businessNumber forKey:KeyLoginDownInfoBusinessNumber];
-    [newInfo setObject:businessEmail forKey:KeyLoginDownInfoBusinessEmail];
+    if (businessEmail) {
+        [newInfo setObject:businessEmail forKey:KeyLoginDownInfoBusinessEmail];
+    }
     if (terminalCount && terminalCount.length > 0) {
         [newInfo setObject:terminalCount forKey:KeyLoginDownInfoTerminalCount];
     }
