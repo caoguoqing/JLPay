@@ -110,6 +110,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
 
 // -- 消费
 - (void) packingConsumeFieldsInfo:(NSDictionary*)fieldsInfo {
+    JLPrint(@"正在打包消费报文，原始域信息[%@]",fieldsInfo);
     Packing8583* packHolder = [Packing8583 sharedInstance];
     [packHolder setFieldAtIndex:2 withValue:fieldsInfo[@"2"]];
     [packHolder setFieldAtIndex:3 withValue:transType__];

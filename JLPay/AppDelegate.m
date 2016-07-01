@@ -41,7 +41,6 @@ static NSUInteger const iTagAlertAppStoreInfoRequested = 198;
     NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
     [navigationControllers addObject:[self newNavigationOfCustPayVC]];
     [navigationControllers addObject:[self newNavigationOfBusinessVC]];
-//    [navigationControllers addObject:[self newNavigationOfAdditionalVC]];
     
     [tabBarController setViewControllers:navigationControllers];
     return tabBarController;
@@ -68,6 +67,7 @@ void uncaughtExceptionHandler(NSException*exception){
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
     self.window.rootViewController = [self newNavigationOfLoginVC];
+    self.CBManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
     
     // 检查app版本
@@ -92,6 +92,9 @@ void uncaughtExceptionHandler(NSException*exception){
             [self gotoAppStore];
         }
     }
+}
+#pragma mask ---- CBCentralManagerDelegate
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
 }
 
 

@@ -42,7 +42,7 @@
         self.alpha = 1;
         self.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
-        if (finished) {
+        if (completion) {
             completion();
         }
     }];
@@ -53,7 +53,7 @@
         self.alpha = 0.0;
         self.transform = CGAffineTransformMakeScale(0.01, 0.01);
     } completion:^(BOOL finished) {
-        if (finished) {
+        if (completion) {
             self.transform = CGAffineTransformIdentity;
             completion();
         }
@@ -117,6 +117,16 @@
 #pragma mask 0 生命周期,和布局
 - (instancetype) init {
     self = [super init];
+    if (self) {
+        [self initialProperties];
+        self.backgroundColor = [UIColor clearColor];
+        self.alpha = 0;
+        [self loadSubViews];
+    }
+    return self;
+}
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
     if (self) {
         [self initialProperties];
         self.backgroundColor = [UIColor clearColor];

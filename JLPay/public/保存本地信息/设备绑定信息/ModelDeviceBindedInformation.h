@@ -8,28 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface ModelDeviceBindedInformation : NSObject
+
+
+/* 保存绑定信息 */
++ (void) saveBindedDeviceInfoWithIdentifier:(NSString*)identifier
+                                 deviceName:(NSString*)deviceName
+                             businessNumber:(NSString*)businessNumber
+                             terminalNumber:(NSString*)terminalNumber;
+/* 清空绑定信息 */
++ (void) cleanDeviceBindedInfo;
+
+
+# pragma mask : 下列属性为绑定的属性
 
 /* 设备是否绑定 */
 + (BOOL) hasBindedDevice;
-/* 保存绑定信息 */
-+ (void) saveBindedDeviceInfoWithDeviceType:(NSString*)deviceType // 设备类型
-                                   deviceID:(NSString*)deviceID // 设备ID
-                                   deviceSN:(NSString*)deviceSN // 设备SN
-                             terminalNumber:(NSString*)terminalNumber // 终端号
-                             businessNumber:(NSString*)businessNumber; // 商户号
-/* 清空绑定信息 */
-+ (void) cleanDeviceBindedInfo;
-/* 绑定的设备类型 */
-+ (NSString*) deviceTypeBinded;
-/* 绑定的设备id */
-+ (NSString*) deviceIDBinded;
-/* 绑定的设备SN */
-+ (NSString*) deviceSNBinded;
-/* 绑定的终端号 */
+/* 设备Name:绑定的 */
++ (NSString*) deviceName;
+/* 设备ID:绑定的 */
++ (NSString*) deviceIdentifier;
+/* 终端号:绑定的 */
 + (NSString*) terminalNoBinded;
-/* 绑定的商户号 */
-+ (NSString*) businessNoBinded;
-
+/* 商户号: */
++ (NSString*) businessNumber;
 @end

@@ -134,7 +134,8 @@
         _viewControllersForTitles = [NSMutableDictionary dictionary];
         [_viewControllersForTitles setObject:@"MyBusinessViewController" forKey:FuncItemTitleBusinessInfo];
         [_viewControllersForTitles setObject:@"TransDetailListViewController" forKey:FuncItemTitleTransList];
-        [_viewControllersForTitles setObject:@"DeviceSignInViewController" forKey:FuncItemTitleDeviceBinding];
+//        [_viewControllersForTitles setObject:@"DeviceSignInViewController" forKey:FuncItemTitleDeviceBinding];
+        [_viewControllersForTitles setObject:@"DeviceBindingViewController" forKey:FuncItemTitleDeviceBinding];
         [_viewControllersForTitles setObject:@"RateChooseViewController" forKey:FuncItemTitleRateSelecting];
         [_viewControllersForTitles setObject:@"T_0CardListViewController" forKey:FuncItemTitleCardChecking];
         [_viewControllersForTitles setObject:@"ChangePinViewController" forKey:FuncItemTitlePinModifying];

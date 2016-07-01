@@ -9,7 +9,6 @@
 #import "CustPayViewController.h"
 #import "Define_Header.h"
 #import "BrushViewController.h"
-#import <CoreBluetooth/CoreBluetooth.h>
 #import "DeleteButton.h"
 #import "Packing8583.h"
 #import "SettlementInfoViewController.h"
@@ -20,7 +19,8 @@
 #import "ImageTitleButton.h"
 #import "VMOtherPayType.h"
 #import "CodeScannerViewController.h"
-#import "DeviceSignInViewController.h"
+//#import "DeviceSignInViewController.h"
+#import "DeviceBindingViewController.h"
 #import <LTNavigationBar/UINavigationBar+Awesome.h>
 
 #import "ModelRateInfoSaved.h"
@@ -31,11 +31,7 @@
 
 
 @interface CustPayViewController ()
-<CBCentralManagerDelegate>
-{
-    BOOL blueToothPowerOn;              // 蓝牙打开状态标记
-    CBCentralManager* blueManager;      // 蓝牙设备操作入口
-}
+
 @property (nonatomic, strong) UILabel* labelDisplayMoney;                   // 金额显示标签栏
 @property (nonatomic, strong) UIView* backViewOfMoney;                      // 用来优化结算方式视图的点击体验
 
@@ -56,13 +52,14 @@
     [self addSubViews];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     
-    blueToothPowerOn = NO;
-    blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+//    blueToothPowerOn = NO;
+//    blueManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.tabBarController.tabBar.hidden = NO;
     self.navigationController.navigationBarHidden = YES;
     self.tabBarController.tabBar.hidden = NO;
     
@@ -83,7 +80,7 @@
 /* 请求数据 */
 - (void) startHTTPRequestForSettlementInfo {
     if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        [[VMT_0InfoRequester sharedInstance] requestT_0InformationWithBusinessNumbser:[ModelDeviceBindedInformation businessNoBinded] onSucBlocK:^{
+        [[VMT_0InfoRequester sharedInstance] requestT_0InformationWithBusinessNumbser:[MLoginSavedResource sharedLoginResource].businessNumber onSucBlocK:^{
             VMT_0InfoRequester* vmT0Requester = [VMT_0InfoRequester sharedInstance];
             // 查询的结果暂时不做任何处理，在点击刷卡时，再判断进行处理
             if ([vmT0Requester enableT_0]) {
@@ -98,14 +95,6 @@
     }
 }
 
-#pragma mask ---- CBCentrolManagerDelegate
-- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    if (central.state == CBCentralManagerStatePoweredOn) {
-        blueToothPowerOn = YES;
-    } else {
-        blueToothPowerOn = NO;
-    }
-}
 
 #pragma mask ::: 数字按键组的分割线
 - (void) drawLineInRect : (CGRect)rect {
@@ -240,6 +229,7 @@
 /* 刷卡前检查输入 */
 - (BOOL) checkInputsBeforeSwipe {
     BOOL inputsValid = YES;
+    AppDelegate* appDelegate = APPMainDelegate;
     NameWeakSelf(wself);
     if ([MLoginSavedResource sharedLoginResource].checkedState != BusinessCheckedStateChecked) {
         [PublicInformation makeCentreToast:@"商户正在审核中，不允许交易"];
@@ -249,14 +239,14 @@
         [PublicInformation makeToast:@"请输入金额!"];
         inputsValid = NO;
     }
-    if (inputsValid && !blueToothPowerOn) {
+    if (inputsValid && appDelegate.CBManager.state != CBCentralManagerStatePoweredOn) {
         [PublicInformation makeToast:@"手机蓝牙未打开,请打开蓝牙!"];
         inputsValid = NO;
     }
     if (inputsValid && ![ModelDeviceBindedInformation hasBindedDevice]) {
         [JCAlertView showTwoButtonsWithTitle:@"未绑定设备" Message:@"是否跳转'绑定设备'界面去绑定设备?" ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:nil
                                   ButtonType:JCAlertViewButtonTypeWarn ButtonTitle:@"去绑定" Click:^{
-                                      [wself.navigationController pushViewController:[[DeviceSignInViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
+                                      [wself.navigationController pushViewController:[[DeviceBindingViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
         }];
         inputsValid = NO;
     }

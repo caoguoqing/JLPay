@@ -28,7 +28,8 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 
 @property (nonatomic, strong) UIProgressView* progressView;
 
-@property (nonatomic, strong) UIButton* handleBtn;
+//@property (nonatomic, strong) UIButton* handleBtn;
+@property (nonatomic, strong) UIBarButtonItem* rightBarBtn;
 
 
 @end
@@ -137,42 +138,73 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 - (void) addKVOs {
     
     if (self.userFor == PosNoteUseForUpload) {
-        @weakify(self);
-        [[RACObserve(self, uploadState) deliverOnMainThread] subscribeNext:^(NSNumber* state) {
-            @strongify(self);
+        
+        RAC(self.rightBarBtn, title) = [RACObserve(self, uploadState) map:^id(NSNumber* state) {
             switch (state.integerValue) {
                 case PosNoteUploadStatePreUpload:
-                {
-                    [self.handleBtn setTitle:@"上传" forState:UIControlStateNormal];
-                    self.handleBtn.enabled = YES;
-                }
+                    return @"上传";
                     break;
                 case PosNoteUploadStateUploading:
-                {
-                    [self.handleBtn setTitle:@"正在上传" forState:UIControlStateNormal];
-                    self.handleBtn.enabled = NO;
-                }
+                    return @"正在上传";
                     break;
                 case PosNoteUploadStateUploadedFail:
-                {
-                    [self.handleBtn setTitle:@"重新上传" forState:UIControlStateNormal];
-                    self.handleBtn.enabled = YES;
-                }
+                    return @"重新上传";
                     break;
                 case PosNoteUploadStateUploadedSuc:
-                {
-                    [self.handleBtn setTitle:@"完成" forState:UIControlStateNormal];
-                    self.handleBtn.enabled = YES;
-                }
+                    return @"完成";
                     break;
                 default:
-                {
-                    [self.handleBtn setTitle:@"完成" forState:UIControlStateNormal];
-                    self.handleBtn.enabled = YES;
-                }
+                    return @"上传";
                     break;
             }
         }];
+        RAC(self.rightBarBtn, enabled) = [RACObserve(self, uploadState) map:^id(NSNumber* state) {
+            switch (state.integerValue) {
+                case PosNoteUploadStatePreUpload:
+                case PosNoteUploadStateUploadedFail:
+                case PosNoteUploadStateUploadedSuc:
+                    return @(YES);
+                    break;
+                default:
+                    return @(NO);
+                    break;
+            }
+        }];
+//        [[RACObserve(self, uploadState) deliverOnMainThread] subscribeNext:^(NSNumber* state) {
+//            @strongify(self);
+//            switch (state.integerValue) {
+//                case PosNoteUploadStatePreUpload:
+//                {
+//                    [self.handleBtn setTitle:@"上传" forState:UIControlStateNormal];
+//                    self.handleBtn.enabled = YES;
+//                }
+//                    break;
+//                case PosNoteUploadStateUploading:
+//                {
+//                    [self.handleBtn setTitle:@"正在上传" forState:UIControlStateNormal];
+//                    self.handleBtn.enabled = NO;
+//                }
+//                    break;
+//                case PosNoteUploadStateUploadedFail:
+//                {
+//                    [self.handleBtn setTitle:@"重新上传" forState:UIControlStateNormal];
+//                    self.handleBtn.enabled = YES;
+//                }
+//                    break;
+//                case PosNoteUploadStateUploadedSuc:
+//                {
+//                    [self.handleBtn setTitle:@"完成" forState:UIControlStateNormal];
+//                    self.handleBtn.enabled = YES;
+//                }
+//                    break;
+//                default:
+//                {
+//                    [self.handleBtn setTitle:@"完成" forState:UIControlStateNormal];
+//                    self.handleBtn.enabled = YES;
+//                }
+//                    break;
+//            }
+//        }];
     }
     
     
@@ -246,7 +278,7 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
 - (void) loadsSubviews {
     self.automaticallyAdjustsScrollViewInsets = NO;
     
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.handleBtn]];
+    [self.navigationItem setRightBarButtonItem:self.rightBarBtn];
     [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:[UIView new]]];
 
     // 小字体
@@ -620,17 +652,23 @@ static NSString* const kKVOImageUploaded = @"imageUploaded";
     return _progressView;
 }
 
-- (UIButton *)handleBtn {
-    if (!_handleBtn) {
-        _handleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
-        [_handleBtn setTitle:@"完成" forState:UIControlStateNormal];
-        [_handleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_handleBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.7] forState:UIControlStateHighlighted];
-        [_handleBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.7] forState:UIControlStateDisabled];
-        [_handleBtn addTarget:self action:@selector(clickedOnHandleBtn:) forControlEvents:UIControlEventTouchUpInside];
-        _handleBtn.titleLabel.font = [UIFont systemFontOfSize:[NSString resizeFontAtHeight:30 scale:0.68]];
+//- (UIButton *)handleBtn {
+//    if (!_handleBtn) {
+//        _handleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
+//        [_handleBtn setTitle:@"完成" forState:UIControlStateNormal];
+//        [_handleBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//        [_handleBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+//        [_handleBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateDisabled];
+//        [_handleBtn addTarget:self action:@selector(clickedOnHandleBtn:) forControlEvents:UIControlEventTouchUpInside];
+//        _handleBtn.titleLabel.font = [UIFont systemFontOfSize:[NSString resizeFontAtHeight:30 scale:0.618]];
+//    }
+//    return _handleBtn;
+//}
+- (UIBarButtonItem *)rightBarBtn {
+    if (!_rightBarBtn) {
+        _rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(clickedOnHandleBtn:)];
     }
-    return _handleBtn;
+    return _rightBarBtn;
 }
 
 

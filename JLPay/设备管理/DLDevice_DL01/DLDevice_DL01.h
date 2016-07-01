@@ -7,6 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <DCSwiperAPI/DCSwiperAPI.h>
+#import "Define_Header.h"
+
+
+
+static NSString* const kDCDeviceInfoName = @"Name";
+static NSString* const kDCDeviceInfoIdentifier = @"identifier";
+static NSString* const kDCDeviceInfoKSN = @"SNversion";
+
+static NSString* const kDCDeviceInfoPinKey = @"PINKey";
+static NSString* const kDCDeviceInfoMacKey = @"MacKey";
+
+
 
 @class DLDevice_DL01;
 @protocol DLDevice_DL01Delegate <NSObject>

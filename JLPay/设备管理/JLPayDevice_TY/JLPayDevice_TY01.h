@@ -7,68 +7,39 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JieLianService.h"
+#import "Define_Header.h"
+#import "DeviceManager.h"
+#import "NSError+Custom.h"
 
-@class JLPayDevice_TY01;
-
-@protocol JLPayDevice_TY01_Delegate <NSObject>
-@optional
-
-# pragma mask :  * 连接设备结果: 成功:返回了SN;
-- (void) didConnectedDeviceResult:(BOOL)result onSucSN:(NSString*)SNVersion onErrMsg:(NSString*)errMsg;
-
-# pragma mask :  * 丢失设备连接: SN
-- (void) didDisconnectDeviceOnSN:(NSString*)SNVersion;
-
-# pragma mask :  * 设备操作超时的回调
-- (void) deviceManagerTimeOut;
-
-# pragma mask :  * 刷卡结果
-- (void) didCardSwipedResult:(BOOL)result onSucCardInfo:(NSDictionary*)cardInfo onErrMsg:(NSString*)errMsg;
-
-# pragma mask :  * 写主密钥结果
-- (void) didWroteMainKeyResult:(BOOL)result onErrMsg:(NSString*)errMsg;
-
-# pragma mask :  * 写工作密钥结果
-- (void) didWroteWorkKeyResult:(BOOL)result onErrMsg:(NSString*)errMsg;
-
-# pragma mask :  * MAC加密结果
-- (void) didMacEncryptResult:(BOOL)result onSucMacPin:(NSString*)macPin onErrMsg:(NSString*)errMsg;
-
-
-@end
+//static NSString* const MPOSDeviceNamePreTY = @"JLpay";
 
 
 
 @interface JLPayDevice_TY01 : NSObject
 
 
-# pragma mask : 初始化
-- (instancetype)initWithDelegate:(id<JLPayDevice_TY01_Delegate>)deviceDelegate ;
+@property (nonatomic, retain) JieLianService* deviceManager;                    // 设备控制器
+@property (nonatomic, strong) NSMutableArray* deviceList;
 
-# pragma mask : 打开指定 identifier 号的设备
-- (void) openDeviceWithIdentifier:(NSString*)identifier;
+@property (nonatomic, strong, readonly) NSString* connectedIdentifier;          // 设备ID:需要连接的
 
-# pragma mask : 关闭所有蓝牙设备
-- (void) clearAndCloseAllDevices;
+@property (nonatomic, copy) void (^ connectedBlock) (NSString* SNVersion);      // 连接成功的回调
+@property (nonatomic, copy) void (^ finishDisconnected) (void);                 // 完成:断开连接
 
-# pragma mask : 判断指定SN号的设备是否已连接
-- (BOOL) isConnectedOnSNVersionNum:(NSString*)SNVersion;
-# pragma mask : 判断指定设备ID的设备是否已连接
-- (BOOL) isConnectedOnIdentifier:(NSString*)identifier ;
+@property (nonatomic, copy) void (^ errorBlock) (NSError* error);               // 操作失败的回调
 
-# pragma mask : ID设备获取:根据SN号获取对应设备
-- (NSString*) deviceIdentifierOnSN:(NSString*)SNVersion;
 
-# pragma mask : 设置主密钥
-- (void) writeMainKey:(NSString*)mainKey onSNVersion:(NSString*)SNVersion;
-# pragma mask : 设置工作密钥
-- (void) writeWorkKey:(NSString*)workKey onSNVersion:(NSString*)SNVersion;
 
-# pragma mask : 刷卡: 有金额+无密码, 无金额+无密码,
-- (void) cardSwipeWithMoney:(NSString*)money yesOrNot:(BOOL)yesOrNot onSNVersion:(NSString*)SNVersion;
+// -- 1. 连接设备
+- (void) connectWithId:(NSString*)identifier
+           onConnected:(void (^) (NSString* SNVersion))connectedBlock
+               onError:(void (^) (NSError* error))errorBlock;
+// -- 2. 断开连接
+- (void) disconnectOnFinished:(void (^) (void))finished;
 
-# pragma mask : MAC加密
-- (void) macEncryptBySource:(NSString*)source onSNVersion:(NSString*)SNVersion;
+// -- 3. 判断连接状态
+- (BOOL) isConnected;
 
 
 

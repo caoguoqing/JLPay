@@ -20,7 +20,6 @@
     [self initialLinesProperties];
     [self setShapeOnShapeLayer];
     self.shapeLayer.strokeEnd = 1;
-    
 }
 - (void)hiddenAnimation {
     self.shapeLayer.strokeEnd = 0;
@@ -96,6 +95,13 @@
     [path appendPath:arcPath];
     self.shapeLayer.path = path.CGPath;
 }
+// -- 初始化'圆心'闭合路径
+- (void) initialCentreCircleInRect:(CGRect)rect {
+    UIBezierPath* path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width/2.f, rect.size.height/2.f) radius:rect.size.width/4.f startAngle:0 endAngle:2 * M_PI clockwise:YES];
+    self.shapeLayer.path = path.CGPath;
+    self.shapeLayer.fillColor = self.lineColor.CGColor;
+}
+
 
 
 // -- 线条属性初始化
@@ -127,6 +133,9 @@
             break;
         case CustomCheckViewStyleWarn:
             [self initialWarnPointsInRect:self.bounds];
+            break;
+        case CustomCheckViewStyleCentreCircle:
+            [self initialCentreCircleInRect:self.bounds];
             break;
         default:
             [self initialRightPointsInRect:self.bounds];

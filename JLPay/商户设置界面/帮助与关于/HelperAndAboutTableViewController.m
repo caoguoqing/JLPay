@@ -12,6 +12,7 @@
 #import "Define_Header.h"
 #import "Masonry.h"
 #import "MyBusinessViewController.h"
+#import "ModelAppInformation.h"
 
 
 @implementation HelperAndAboutTableViewController
@@ -99,11 +100,13 @@
 
 - (NSMutableArray *)cellTitles {
     if (_cellTitles == nil) {
+        JLPrint(@"....app的名称:[%@]",[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]); 
         _cellTitles = [[NSMutableArray alloc] init];
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
         [_cellTitles addObject:@"3.交易明细"];
-        [_cellTitles addObject:@"4.我的捷联通"];
+        NSString* appName = [@"4.我的" stringByAppendingString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]];
+        [_cellTitles addObject:appName];
         if (BranchAppName != 1) {
             [_cellTitles addObject:@"5.关于我们"];
         }

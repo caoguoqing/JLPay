@@ -72,8 +72,6 @@
     RAC(self.signInCache.loginSavedResource, userPwdPan) = [RACObserve(self.signinHttp, userPwdPinStr) skip:1]; /* 保存密文 */
     RAC(self.signInCache.loginSavedResource, needSaving) = [RACObserve(self, savedEnable) skip:1];
 
-
-
     /* binding: inputs value to http */
     RAC(self.signinHttp, userNameStr) = RACObserve(self.userTextField, text);
     RAC(self.signinHttp, userPwdStr) = RACObserve(self.pwdTextField, text);
@@ -96,7 +94,7 @@
             }
         } completed:^{
             @strongify(self);
-            [self.progressHud showSuccessWithText:@"登录成功" andDetailText:nil onCompletion:^{
+            [self.progressHud hideOnCompletion:^{
                 @strongify(self);
                 /* 初始密码为8个0的: 强制修改密码 */
                 if ([self.pwdTextField.text isEqualToString:@"00000000"]) {
@@ -110,6 +108,20 @@
                     [self switchToMainInterface];
                 }
             }];
+//            [self.progressHud showSuccessWithText:@"登录成功" andDetailText:nil onCompletion:^{
+//                @strongify(self);
+//                /* 初始密码为8个0的: 强制修改密码 */
+//                if ([self.pwdTextField.text isEqualToString:@"00000000"]) {
+//                    [self switchToChangePinInterface];
+//                } else {
+//                    /* 重置登陆信息的保存 */
+//                    [self resetAndSavingSignInResponse];
+//                    /* 检查是否切换了账号 */
+//                    [self clearDeviceInfoIfSwitchUser];
+//                    /* 跳转到主界面 */
+//                    [self switchToMainInterface];
+//                }
+//            }];
         }];
     }];
     
@@ -164,12 +176,7 @@
 /* 切换到主界面 */
 - (void) switchToMainInterface {
     UITabBarController* mainTabBar = [APPMainDelegate mainTabBarControllerOfApp];
-    
-    if ([ModelDeviceBindedInformation hasBindedDevice]) {
-        [mainTabBar setSelectedIndex:0]; // 切换到金额输入界面
-    } else {
-        [mainTabBar setSelectedIndex:1]; // 切换到商户管理界面
-    }
+    [mainTabBar setSelectedIndex:0]; // 切换到金额输入界面
     [self presentViewController:mainTabBar animated:YES completion:nil];
 }
 
@@ -196,7 +203,7 @@
 
 /* 检查是否切换了账号: 是，则清空设备绑定信息 */
 - (void) clearDeviceInfoIfSwitchUser {
-    if (![[ModelDeviceBindedInformation businessNoBinded] isEqualToString:[MLoginSavedResource sharedLoginResource].businessNumber]) {
+    if (![[MLoginSavedResource sharedLoginResource].businessNumber isEqualToString:[ModelDeviceBindedInformation businessNumber]]) {
         [ModelDeviceBindedInformation cleanDeviceBindedInfo];
     }
 }
@@ -420,8 +427,8 @@
         _signInBtn.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
         [_signInBtn setTitle:@"登录" forState:UIControlStateNormal];
         [_signInBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_signInBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.5] forState:UIControlStateHighlighted];
-        [_signInBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.5] forState:UIControlStateDisabled];
+        [_signInBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [_signInBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateDisabled];
         
         _signInBtn.rac_command = self.signinHttp.signInCommand;
     }

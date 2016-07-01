@@ -78,7 +78,6 @@ HttpUploadT0CardDelegate>
                                          cardHolderName:[self cardNameFromCell]
                                               cardPhoto:[self cardImageFromCell]
                                              onDelegate:self];
-//        [KVNProgress showWithStatus:@"交易卡信息上传中..."];
         
     }
 }
@@ -88,12 +87,8 @@ HttpUploadT0CardDelegate>
     [self.hud showSuccessWithText:@"上传交易卡信息成功" andDetailText:nil onCompletion:^{
         [wself.navigationController popViewControllerAnimated:YES];
     }];
-//    [KVNProgress showSuccessWithStatus:@"上传交易卡信息成功!" completion:^{
-//        [self.navigationController popViewControllerAnimated:YES];
-//    }];
 }
 - (void)didUploadedFail:(NSString *)failMessage {
-//    [KVNProgress showErrorWithStatus:[NSString stringWithFormat:@"上传交易卡信息失败:%@",failMessage]];
     [self.hud showFailWithText:@"上传交易卡信息失败" andDetailText:failMessage onCompletion:^{}];
 }
 
@@ -160,6 +155,7 @@ HttpUploadT0CardDelegate>
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self.view endEditing:YES];
     if (indexPath.section == 1) {
         [self chooseImagePickerType];
     }

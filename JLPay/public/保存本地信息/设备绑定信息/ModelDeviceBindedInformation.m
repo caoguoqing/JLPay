@@ -9,18 +9,14 @@
 #import "ModelDeviceBindedInformation.h"
 
 /* ------------------------------ 信息字典: 商户绑定设备的信息
- *  KeyInfoDictOfBindedDeviceType           - 设备类型
- *  KeyInfoDictOfBindedDeviceIdentifier     - 设备id
- *  KeyInfoDictOfBindedDeviceSNVersion      - 设备SN
+ *  KeyInfoDictOfBindedPeripheral           - 设备
  *  KeyInfoDictOfBindedTerminalNum          - 终端号
- *  KeyInfoDictOfBindedBussinessNum         - 商户号 - 关联登陆账号
  ------------------------------*/
 #define KeyInfoDictOfBinded                     @"KeyInfoDictOfBinded"          // 字典
-#define KeyInfoDictOfBindedDeviceType           @"KeyInfoDictOfBindedDeviceType"
+#define KeyInfoDictOfBindedDeviceName           @"KeyInfoDictOfBindedDeviceName"
 #define KeyInfoDictOfBindedDeviceIdentifier     @"KeyInfoDictOfBindedDeviceIdentifier"
-#define KeyInfoDictOfBindedDeviceSNVersion      @"KeyInfoDictOfBindedDeviceSNVersion"
 #define KeyInfoDictOfBindedTerminalNum          @"KeyInfoDictOfBindedTerminalNum"
-#define KeyInfoDictOfBindedBussinessNum         @"KeyInfoDictOfBindedBussinessNum"
+#define KeyInfoDictOfBindedBusinessNum          @"KeyInfoDictOfBindedBusinessNum"
 
 #define KeyDeviceBinded @"KeyDeviceBinded__"  // 设备绑定标记: YES:已绑定设备；NO:未绑定设备；
 
@@ -39,57 +35,49 @@
 }
 
 /* 保存绑定信息 */
-+ (void) saveBindedDeviceInfoWithDeviceType:(NSString*)deviceType // 设备类型
-                                   deviceID:(NSString*)deviceID // 设备ID
-                                   deviceSN:(NSString*)deviceSN // 设备SN
-                             terminalNumber:(NSString*)terminalNumber // 终端号
-                             businessNumber:(NSString*)businessNumber // 商户号
++ (void)saveBindedDeviceInfoWithIdentifier:(NSString *)identifier
+                                deviceName:(NSString *)deviceName
+                            businessNumber:(NSString *)businessNumber
+                            terminalNumber:(NSString *)terminalNumber
 {
     if ([self hasBindedDevice]) {
         [self cleanDeviceBindedInfo];
     }
     NSMutableDictionary* bindedinfo = [[NSMutableDictionary alloc] init];
-    [bindedinfo setObject:deviceType forKey:KeyInfoDictOfBindedDeviceType];
-    [bindedinfo setObject:deviceID forKey:KeyInfoDictOfBindedDeviceIdentifier];
-    [bindedinfo setObject:deviceSN forKey:KeyInfoDictOfBindedDeviceSNVersion];
+    [bindedinfo setObject:identifier forKey:KeyInfoDictOfBindedDeviceIdentifier];
+    [bindedinfo setObject:deviceName forKey:KeyInfoDictOfBindedDeviceName];
+    [bindedinfo setObject:businessNumber forKey:KeyInfoDictOfBindedBusinessNum];
     [bindedinfo setObject:terminalNumber forKey:KeyInfoDictOfBindedTerminalNum];
-    [bindedinfo setObject:businessNumber forKey:KeyInfoDictOfBindedBussinessNum];
     [self saveBindedInfo:bindedinfo];
     [self updateDeviceBindedFlag:YES];
 }
+
 
 /* 清空绑定信息 */
 + (void) cleanDeviceBindedInfo {
     [self cleanBindedInfo];
     [self updateDeviceBindedFlag:NO];
 }
-/* 绑定的设备类型 */
-+ (NSString*) deviceTypeBinded {
+
+/* 设备Name:绑定的 */
++ (NSString*) deviceName {
     NSDictionary* info = [self bindedInfo];
-    NSString* deviceType = nil;
+    NSString* deviceName = nil;
     if (info) {
-        deviceType = [info objectForKey:KeyInfoDictOfBindedDeviceType];
+        deviceName = [info objectForKey:KeyInfoDictOfBindedDeviceName];
     }
-    return deviceType;
+    return deviceName;
 }
-/* 绑定的设备id*/
-+ (NSString*) deviceIDBinded {
+/* 设备ID:绑定的 */
++ (NSString*) deviceIdentifier {
     NSDictionary* info = [self bindedInfo];
-    NSString* deviceID = nil;
+    NSString* deviceIdentifier = nil;
     if (info) {
-        deviceID = [info objectForKey:KeyInfoDictOfBindedDeviceIdentifier];
+        deviceIdentifier = [info objectForKey:KeyInfoDictOfBindedDeviceIdentifier];
     }
-    return deviceID;
+    return deviceIdentifier;
 }
-/* 绑定的设备SN */
-+ (NSString*) deviceSNBinded {
-    NSDictionary* info = [self bindedInfo];
-    NSString* deviceSN = nil;
-    if (info) {
-        deviceSN = [info objectForKey:KeyInfoDictOfBindedDeviceSNVersion];
-    }
-    return deviceSN;
-}
+
 /* 绑定的终端号 */
 + (NSString*) terminalNoBinded {
     NSDictionary* info = [self bindedInfo];
@@ -99,14 +87,14 @@
     }
     return terminal;
 }
-/* 绑定的商户号 */
-+ (NSString*) businessNoBinded {
+
++ (NSString *)businessNumber {
     NSDictionary* info = [self bindedInfo];
-    NSString* business = nil;
+    NSString* businessNum = nil;
     if (info) {
-        business = [info objectForKey:KeyInfoDictOfBindedBussinessNum];
+        businessNum = [info objectForKey:KeyInfoDictOfBindedBusinessNum];
     }
-    return business;
+    return businessNum;
 }
 
 #pragma mask ---- PRIVATE INTERFACE

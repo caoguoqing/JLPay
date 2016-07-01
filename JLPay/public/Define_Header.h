@@ -66,7 +66,7 @@
  * 3: KFT (KuaiFuTong)
  * 5: ZhongJinMiaoShua(中金秒刷)
  * ---------------------------- */
-#define BranchAppName                   0
+#define BranchAppName                   5
 
 
 /* ----------------------------

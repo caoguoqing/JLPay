@@ -5,6 +5,32 @@
 	<key>SchemeUserState</key>
 	<dict/>
 	<key>SuppressBuildableAutocreation</key>
-	<dict/>
+	<dict>
+		<key>47555A4D3107D9A6484A1F6BB68A33A7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4F12BBFCA7BEB12EE3268EA5AA1FC3D7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>81A311CB0A706632BB274E94C0FC99D2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8F74D9EA91F4C43190670066BAC37D44</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B05F4F8433ABF86AA7F6B2A635AD9431</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
 </dict>
 </plist>

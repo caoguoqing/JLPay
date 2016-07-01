@@ -33,9 +33,9 @@
 #define IC_SCLOSE      0x15   //关闭IC卡
 #define IC_SWRITE      0x16   //发送APUD
 
-#define MAmount  0x00
+#define MAmount        0x00
 //默认超时时间15秒
-#define WAIT_TIMEOUT 15
+#define WAIT_TIMEOUT   15
 
 //磁道加密算法，0表示银联标准的只加密后8字节，1/2表示不包含长度补0/F组成8的倍数据加密，3/4表示包含长度补0/F组成8的倍数据加密，5表示尤银特殊加密）
 #define TRACK_ENCRY_MODEM   0x00
