@@ -7,6 +7,15 @@
 //
 
 #import "TCPKeysVModel.h"
+#import "RSAEncoder.h"
+#import "MPubkeyFormator.h"
+
+@interface TCPKeysVModel()
+
+@property (nonatomic, strong) MPubkeyFormator* pubkeyFormator;
+
+
+@end
 
 @implementation TCPKeysVModel
 
@@ -18,18 +27,26 @@
 - (void) gettingKeysOnFinished:(void (^) (void))finished onError:(void (^) (NSError* error))errorBlock {
     // 下载主密钥
     NameWeakSelf(wself);
-    self.stateMessage = @"正在下载主密钥...";
-    [self getMainKeyOnFinished:^{
-        wself.stateMessage = @"正在下载工作密钥...";
-        [wself getWorkKeyOnFinished:^{
-            wself.stateMessage = @"所有密钥下载完成!";
-            finished();
+    
+    self.stateMessage = @"正在下载公钥...";
+    [self getPubKeyOnFinished:^(NSString *pubkey) {
+        wself.pubkeyFormator = [[MPubkeyFormator alloc] initWithPublicKey:pubkey];
+        wself.stateMessage = @"下载主密钥...";
+        [wself getMainKeyWithPubkey:wself.pubkeyFormator.repackedPubkey onFinished:^{
+            wself.stateMessage = @"下载工作密钥...";
+            [wself getWorkKeyOnFinished:^{
+                wself.stateMessage = @"下载密钥成功!";
+                finished();
+            } onError:^(NSError *error) {
+                wself.stateMessage = @"下载工作密钥失败!";
+                errorBlock(error);
+            }];
         } onError:^(NSError *error) {
-            wself.stateMessage = @"下载工作密钥失败!";
+            wself.stateMessage = @"下载主密钥失败!";
             errorBlock(error);
         }];
     } onError:^(NSError *error) {
-        wself.stateMessage = @"下载主密钥失败!";
+        wself.stateMessage = @"下载公钥失败!";
         errorBlock(error);
     }];
     
@@ -38,11 +55,15 @@
 
 #pragma mask 2 private interface
 
-- (void) getMainKeyOnFinished:(void (^) (void))finished onError:(void (^) (NSError* error))errorBlock {
+- (void) getMainKeyWithPubkey:(NSString*)pubkey onFinished:(void (^) (void))finished onError:(void (^) (NSError* error))errorBlock {
     self.finishedBlock = finished;
     self.errorBlock = errorBlock;
-    [self.tcpHandle downloadMainKeyWithBusinessNum:[MLoginSavedResource sharedLoginResource].businessNumber andTerminalNum:self.terminalNumber];
+    [self.tcpHandle downloadMainKeyWithBusinessNum:[PublicInformation returnBusiness] andTerminalNum:self.terminalNumber andPubkey:pubkey];
 }
+
+
+
+
 
 - (void) getWorkKeyOnFinished:(void (^) (void))finished onError:(void (^) (NSError* error))errorBlock {
     self.finishedBlock = finished;
@@ -50,10 +71,23 @@
     [self.tcpHandle downloadWorkKeyWithBusinessNum:[MLoginSavedResource sharedLoginResource].businessNumber andTerminalNum:self.terminalNumber];
 }
 
+- (void) getPubKeyOnFinished:(void (^) (NSString* pubkey))finished onError:(void (^) (NSError* error))errorBlock {
+    [self.tcpHandle downloadPubkeyWithBusinessNum:[PublicInformation returnBusiness]
+                                   andTerminalNum:self.terminalNumber//[PublicInformation returnTerminal]
+                                   onSuccessBlock:^(NSString *pubkey) {
+                                       JLPrint(@"--downloaded public key = [%@]", pubkey);
+                                       finished(pubkey);
+    } orErrorBlock:^(NSError *error) {
+        errorBlock(error);
+    }];
+}
+
+
 #pragma mask 3 ViewModelTCPHandleWithDeviceDelegate
 /* 回调: 主密钥 */
 - (void) didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString*)mainKey orErrorMessage:(NSString*)errorMessge {
     if (result) {
+        JLPrint(@"--downloaded main key = [%@]", mainKey);
         self.mainKey = [mainKey copy];
         self.finishedBlock();
     } else {
@@ -64,6 +98,7 @@
 /* 回调: 工作密钥 */
 - (void) didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString*)workKey orErrorMessage:(NSString*)errorMessge {
     if (result) {
+        JLPrint(@"--downloaded work key = [%@]", workKey);
         self.workKey = [workKey copy];
         self.finishedBlock();
     } else {

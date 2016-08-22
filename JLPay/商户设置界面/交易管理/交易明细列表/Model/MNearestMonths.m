@@ -22,26 +22,22 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     self.selectedIndex = indexPath.row;
 }
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [cell setSeparatorInset:UIEdgeInsetsZero];
-    [cell setLayoutMargins:UIEdgeInsetsZero];
-}
 
 # pragma mask 1 UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.months.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString* identifier = @"osjdfoj";
-    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"sssssss"];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"sssssss"];
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
         cell.contentView.backgroundColor = [UIColor whiteColor];
+        cell.textLabel.font = [UIFont systemFontOfSize:14];
     }
     NSString* month = [self.months objectAtIndex:indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"%@年%@月", [month substringToIndex:4], [month substringWithRange:NSMakeRange(4, 2)]];
+    cell.textLabel.textColor = (self.selectedIndex == indexPath.row)?([UIColor orangeColor]):([UIColor colorWithHex:HexColorTypeBlackBlue alpha:1]);
     return cell;
 }
 

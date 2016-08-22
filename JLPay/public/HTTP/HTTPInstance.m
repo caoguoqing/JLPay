@@ -130,7 +130,8 @@ static HTTPInstance* pubHttpInstance = nil;
                 }
                 else {
                     // 失败: 后期可能需要枚举部分返回码
-                    [self rebackFailCode:HTTPErrorCodeDefault andMessage:errorMessage];
+                    [self rebackFailCode:errorCode.integerValue andMessage:errorMessage];
+//                    [self rebackFailCode:HTTPErrorCodeDefault andMessage:errorMessage];
                 }
             }
             else {

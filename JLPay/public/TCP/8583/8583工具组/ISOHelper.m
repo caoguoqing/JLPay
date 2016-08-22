@@ -182,4 +182,32 @@
 }
 
 
++ (int)lenOfTwoBytesHexString:(NSString *)hexString {
+    NSString* upperHexString = [hexString uppercaseString];
+    if (upperHexString.length > 2) {
+        return 0;
+    }
+    char ch1 = [upperHexString characterAtIndex:0];
+    char ch2 = [upperHexString characterAtIndex:1];
+    
+    int len = 0;
+    if (ch1 >= '0' && ch1 <= '9') {
+        len += (ch1 - '0');
+    }
+    else if (ch1 >= 'A' && ch1 <= 'F') {
+        len += (ch1 - 'A' + 10);
+    }
+    
+    len *= 16;
+    
+    if (ch2 >= '0' && ch2 <= '9') {
+        len += (ch2 - '0');
+    }
+    else if (ch2 >= 'A' && ch2 <= 'F') {
+        len += (ch2 - 'A' + 10);
+    }
+
+    return len;
+}
+
 @end

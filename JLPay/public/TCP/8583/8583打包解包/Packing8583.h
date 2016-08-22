@@ -14,8 +14,12 @@
 #define TranType_Consume            @"000000"                           // 消费 同8583 bit3域值  // 190000:000000
 #define TranType_ConsumeRepeal      @"280000"                           // 消费撤销
 #define TranType_YuE                @"300000"                           // 余额查询
+#define TranType_DownPubKey         @"TranType_DownPubKey"              // 下载公钥
 #define TranType_DownMainKey        @"TranType_DownMainKey"             // 下载主密钥
 #define TranType_DownWorkKey        @"TranType_DownWorkKey"             // 下载工作密钥
+#define TranType_ElecSignPicUpload  @"TranType_ElecSignPicUpload"       // 上传签名小票
+
+
 #define TranType_TuiHuo             @"200000"                           // 退货交易
 
 #define TranType_Chongzheng         @"TranType_Chongzheng"              // 冲正交易

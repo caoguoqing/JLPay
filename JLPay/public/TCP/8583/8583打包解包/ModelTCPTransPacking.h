@@ -15,16 +15,16 @@
 //  V
 + (instancetype) sharedModel;
 //  |
-//  V
+//  V : 设置域的值
 - (void) packingFieldsInfo:(NSDictionary*)fieldsInfo forTransType:(NSString*)transType;
 //  |
-//  V
+//  V : 获取 mac 原始串
 - (NSString*) getMacStringAfterPacking;
 //  |
-//  V
+//  V : 重新设置 mac 密文
 - (void) repackingWithMacPin:(NSString*)macPin;
 //  |
-//  V
+//  V : 执行打包,并获取报文串
 - (NSString*) packageFinalyPacking;
 
 

@@ -7,6 +7,7 @@
 //
 
 #import "VMHttpSignIn.h"
+#import <AFNetworking.h>
 
 static NSString* const pinTriEncKey = @"123456789012345678901234567890123456789012345678";
 
@@ -97,6 +98,64 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
     }] replayLast] materialize];
 }
 
+- (RACSignal*) newSignInSignalWithAFNetWorking {
+    @weakify(self);
+    
+    return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        @strongify(self);
+        
+        AFHTTPSessionManager* httpManager = [AFHTTPSessionManager manager];
+        httpManager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        httpManager.requestSerializer.timeoutInterval = 10;
+        httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        
+        [subscriber sendNext:nil];
+
+        [httpManager POST:[NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService",
+                           [PublicInformation getServerDomain],
+                           [PublicInformation getHTTPPort]]
+               parameters:@{kFieldNameSignInUpUserID:self.userNameStr,
+                            kFieldNameSignInUpUserPWD:self.userPwdPinStr,
+                            kFieldNameSignInUpVersionNum:[[PublicInformation AppVersionNumber] stringByReplacingOccurrencesOfString:@"." withString:@""],
+                            kFieldNameSignInUpSysFlag:@"0"}
+                 progress:^(NSProgress * _Nonnull uploadProgress) {
+                     
+                 } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                     NSDictionary* resData = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+                     NSInteger code = [[resData objectForKey:kFieldNameSignInDownCode] integerValue];
+                     NSString* message = [resData objectForKey:kFieldNameSignInDownMessage];
+                     BOOL success;
+                     if (code == 0) {            /* 成功 */
+                         success = YES;
+                     }
+                     else if (code == 801 || code == 802) {     /* 审核中/审核拒绝 */
+                         success = YES;
+                     }
+                     else {                      /* 版本低、其他 */
+                         success = NO;
+                     }
+                     
+                     if (success) {
+                         @strongify(self);
+                         self.responseData = [resData copy];
+                         [subscriber sendCompleted];
+                     } else {
+                         [subscriber sendError:[NSError errorWithDomain:@"SignInError" code:code localizedDescription:message]];
+                     }
+                 
+                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                     /* 登录响应失败 */
+                     JLPrint(@"登陆失败:[%@]",[error localizedDescription]);
+                     [subscriber sendError:error];
+                 }
+         ];
+        
+    
+        
+        return nil;
+    }] materialize];
+}
+
 
 /* 加密 */
 - (NSString*) pinEncryptBySource:(NSString*)source {
@@ -118,7 +177,7 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
                                                                                }]
                                                  signalBlock:^RACSignal *(id input) {
                                                      @strongify(self);
-                                                     return [self siginSig];
+                                                     return [self newSignInSignalWithAFNetWorking];
         }];
     }
     return _signInCommand;
@@ -126,9 +185,16 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
 
 - (HTTPInstance *)http {
     if (!_http) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService",
-                               [PublicInformation getServerDomain],
-                               [PublicInformation getHTTPPort]];
+        NSString* urlString;
+        if (TestOrProduce == 11) {
+            urlString = [NSString stringWithFormat:@"http://%@:%@/kftagent/LoginService",
+                         [PublicInformation getServerDomain],
+                         [PublicInformation getHTTPPort]];
+        } else {
+            urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService",
+                         [PublicInformation getServerDomain],
+                         [PublicInformation getHTTPPort]];
+        }
         _http = [[HTTPInstance alloc] initWithURLString:urlString];
     }
     return _http;

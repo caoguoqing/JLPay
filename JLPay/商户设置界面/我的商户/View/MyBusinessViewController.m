@@ -81,6 +81,12 @@
     return NO;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    UIView* footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, tableView.sectionFooterHeight)];
+    footerView.backgroundColor = [UIColor clearColor];
+    return footerView;
+}
+
 # pragma mask 2 IBAction & UIAlertViewDelegate
 
 
@@ -158,11 +164,12 @@
 # pragma mask 4 getter
 - (UITableView *)tableView {
     if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.dataSource = self.dataSource;
         _tableView.delegate = self;
-        _tableView.sectionHeaderHeight = 0;
-        _tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0.00001)];
+        _tableView.sectionFooterHeight = 20;
+        _tableView.tableFooterView = [UIView new];
+        _tableView.backgroundColor = [UIColor colorWithHex:0xefeff4 alpha:1];
     }
     return _tableView;
 }

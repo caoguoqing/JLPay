@@ -56,8 +56,14 @@
 # pragma mask 4 getter
 - (HTTPInstance *)http {
     if (!_http) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/queryMchtInfo",
-                               [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        NSString* urlString;
+        if (TestOrProduce == 11) {
+            urlString = [NSString stringWithFormat:@"http://%@:%@/kftagent/queryMchtInfo",
+                         [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        } else {
+            urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/queryMchtInfo",
+                         [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        }
         _http = [[HTTPInstance alloc] initWithURLString:urlString];
     }
     return _http;

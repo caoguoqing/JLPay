@@ -294,11 +294,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/public/&#x7b2c;&#x4e09;&#x65b9;&#x63a7;&#x4ef6;/ProgressHUD/MBProgressHUD+CustomSate.h"
-            timestampString = "486008228.810792"
+            timestampString = "490672127.515234"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25">
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "-showCircleProgressWithText:andDetailText:"
+            landmarkType = "4">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

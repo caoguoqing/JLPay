@@ -32,8 +32,26 @@
 /* 获取公共入口 */
 + (ViewModelTCPHandleWithDevice*) getInstance;
 
-/* 下载主密钥 */
-- (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum;
+
+/***********************************
+ * 下载公钥
+ *    update by fjl.2016-08-10
+ *    改用block返回获取的结果
+ ***********************************/
+- (void) downloadPubkeyWithBusinessNum:(NSString*)businessNum
+                        andTerminalNum:(NSString*)terminalNum
+                        onSuccessBlock:(void (^) (NSString* pubkey))successBlock
+                          orErrorBlock:(void (^) (NSError* error))errorBlock;
+
+
+/*
+ * 下载主密钥
+ *     update by fjl.2016-08-10
+ *     添加参数: 公钥
+ */
+- (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum andPubkey:(NSString*)pubkey;
+//- (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum;
+
 /* 下载工作密钥 */
 - (void) downloadWorkKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum;
 

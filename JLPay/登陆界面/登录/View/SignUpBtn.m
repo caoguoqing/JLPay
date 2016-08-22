@@ -30,18 +30,19 @@
 
 
 - (void) loadSubviews {
-    [self addSubview:self.directionImg];
+    [self addSubview:self.directionLabel];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     NameWeakSelf(wself);
     
-    [self.directionImg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.titleLabel.mas_right).offset(2);
+    self.directionLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:self.frame.size.height * 0.45 scale:1]];
+    [self.directionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(wself.titleLabel.mas_right).offset(6);
         make.centerY.equalTo(wself.mas_centerY);
         make.height.equalTo(wself.mas_height).multipliedBy(0.5);
-        make.width.equalTo(wself.directionImg.mas_height);
+        make.width.equalTo(wself.directionLabel.mas_height);
     }];
     
 }
@@ -52,17 +53,10 @@
 - (UILabel *)directionLabel {
     if (!_directionLabel) {
         _directionLabel = [UILabel new];
-        _directionLabel.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
+        _directionLabel.text = [NSString fontAwesomeIconStringForEnum:FASignIn];
         _directionLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _directionLabel;
-}
-
-- (UIImageView *)directionImg {
-    if (!_directionImg) {
-        _directionImg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"next"]];
-    }
-    return _directionImg;
 }
 
 

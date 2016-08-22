@@ -39,6 +39,8 @@ UIAlertViewDelegate>
 @property (nonatomic, strong) NSTimer* timeOutForTCPEnquiry;
 @property (nonatomic, strong) UIButton* QRCodeBtn;
 
+@property (nonatomic, strong) UILabel* moneyLabel;
+
 @end
 
 
@@ -77,6 +79,7 @@ UIAlertViewDelegate>
     // 创建背景框视图
     [self.view addSubview:self.maskView];
     [self.view addSubview:self.QRCodeBtn];
+    [self.view addSubview:self.moneyLabel];
     [self.view addSubview:self.progressHUD];
     [self.view.layer insertSublayer:self.videoLayer atIndex:0];
     // 启动摄像头扫描
@@ -93,6 +96,7 @@ UIAlertViewDelegate>
 }
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO];
     self.tabBarController.tabBar.hidden = YES;
     if (!codeScanningDone) {
         [self.codeScanner startScanning];
@@ -195,6 +199,18 @@ UIAlertViewDelegate>
         [_QRCodeBtn addTarget:self action:@selector(clickPushToQRCodeVC:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _QRCodeBtn;
+}
+
+- (UILabel *)moneyLabel {
+    if (!_moneyLabel ) {
+        CGFloat height = 30;
+        _moneyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, (self.view.frame.size.height * 0.5 - 32 - 100) * 0.5 + 64 - height * 0.5, self.view.frame.size.width, height)];
+        _moneyLabel.textColor = [UIColor whiteColor];
+        _moneyLabel.textAlignment = NSTextAlignmentCenter;
+        _moneyLabel.text = [@"￥" stringByAppendingString: [VMOtherPayType sharedInstance].payAmount];
+        _moneyLabel.font = [UIFont boldSystemFontOfSize:24];
+    }
+    return _moneyLabel;
 }
 
 @end

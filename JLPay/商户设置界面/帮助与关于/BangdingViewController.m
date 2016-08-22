@@ -89,7 +89,7 @@
     UILabel* titleLabel = [[UILabel alloc] initWithFrame:innerFrame];
     [titleLabel setText:title];
     [titleLabel setTextAlignment:NSTextAlignmentCenter];
-    titleLabel.font = [UIFont systemFontOfSize:16];
+    titleLabel.font = [UIFont systemFontOfSize:14];
     [view addSubview:titleLabel];
     
     CGFloat inset = 5.0;

@@ -118,9 +118,9 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
         [PublicInformation makeCentreToast:@"请先选择'市'"];
         return;
     }
+        [self.provinceButton turningDirection:NO];
+        [self.cityButton turningDirection:NO];
     [self.rateButton turningDirection:NO];
-    [self.provinceButton turningDirection:NO];
-    [self.cityButton turningDirection:NO];
     NameWeakSelf(wself);
     [sender turningDirection:YES];
     [self.pullSegView hideWithCompletion:^{
@@ -743,8 +743,11 @@ static NSString* const kKVOBusiBusinessNameSelected = @"businessNameSelected";
     // 商户
     [self.businessTitle mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(frame.size.width - maxHorizontalInset*2, labelBigHeight));
-        make.top.equalTo(wself.labelProvinceSavedPre.mas_bottom);
-        make.left.equalTo(wself.labelProvinceSavedPre.mas_left);
+        make.top.equalTo(wself.labelCitySavedPre.mas_bottom);
+        make.left.equalTo(wself.labelRateSavedPre.mas_left);
+
+//        make.top.equalTo(wself.labelRateSavedPre.mas_bottom); // 去掉地区选择后的布局
+//        make.left.equalTo(wself.labelRateSavedPre.mas_left);
     }];
     [self.businessButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(frame.size.width - maxHorizontalInset*2, buttonBigHeight));

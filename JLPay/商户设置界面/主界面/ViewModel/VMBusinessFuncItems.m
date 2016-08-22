@@ -137,7 +137,7 @@
 //        [_viewControllersForTitles setObject:@"DeviceSignInViewController" forKey:FuncItemTitleDeviceBinding];
         [_viewControllersForTitles setObject:@"DeviceBindingViewController" forKey:FuncItemTitleDeviceBinding];
         [_viewControllersForTitles setObject:@"RateChooseViewController" forKey:FuncItemTitleRateSelecting];
-        [_viewControllersForTitles setObject:@"T_0CardListViewController" forKey:FuncItemTitleCardChecking];
+        [_viewControllersForTitles setObject:@"T0CardListViewController" forKey:FuncItemTitleCardChecking];
         [_viewControllersForTitles setObject:@"ChangePinViewController" forKey:FuncItemTitlePinModifying];
         [_viewControllersForTitles setObject:@"HelperAndAboutTableViewController" forKey:FuncItemTitleHelpAndUs];
         [_viewControllersForTitles setObject:@"AccountReceivedViewController" forKey:FuncItemTitleOrderDispatch];

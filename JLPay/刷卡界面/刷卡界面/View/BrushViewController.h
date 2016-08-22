@@ -8,9 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Define_Header.h"
-#import "CustomIOSAlertView.h"
-#import "CustPayViewController.h"
-#import "QianPiViewController.h"
+#import "PosInformationViewController.h"
 #import "DeviceManager.h"
 #import "Packing8583.h"
 #import "ViewModelTCPPosTrans.h"
@@ -24,7 +22,7 @@
 
 @interface BrushViewController : UIViewController
 <
-CustomIOSAlertViewDelegate,
+//CustomIOSAlertViewDelegate,
 ViewModelTCPPosTransDelegate,
 UIAlertViewDelegate
 >
@@ -43,7 +41,6 @@ UIAlertViewDelegate
 @property (nonatomic, strong) ViewModelTCPPosTrans* tcpViewModel;           // TCP交易中转
 @property (nonatomic, strong) VMDeviceHandle* deviceManager;
 
-@property (nonatomic, strong) CustomIOSAlertView* passwordAlertView;        // 自定义alert:密码输入弹窗
 @property (nonatomic, strong) UIActivityIndicatorView* activity;            // 刷卡状态的指示器
 
 

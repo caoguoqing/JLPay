@@ -7,6 +7,7 @@
 //
 
 #import "BrushViewController.h"
+#import "JLPasswordView.h"
 
 @interface BrushViewController()
 
@@ -24,7 +25,6 @@
  
 @implementation BrushViewController
 @synthesize activity = _activity;
-@synthesize passwordAlertView = _passwordAlertView;
 @synthesize waitingLabel = _waitingLabel;
 @synthesize leftInset;
 @synthesize timeOut;
@@ -169,46 +169,36 @@
 #pragma mask ::: 初始化并加载密码输入提示框
 - (void) makePasswordAlertView {
     // innerView 放在 alertView 中创建
-    self.passwordAlertView.delegate = self;
-    [self.passwordAlertView setUseMotionEffects:YES];
-    [self.passwordAlertView setButtonTitles:[NSArray arrayWithObjects:@"取消", @"确定", nil]];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.view addSubview:self.passwordAlertView];
-        [self.passwordAlertView show];
-    });
-}
-
-#pragma mask ::: 密码输入提示框的按钮点击事件
-- (void)customIOS7dialogButtonTouchUpInside:(id)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    CustomIOSAlertView* alertV = (CustomIOSAlertView*)alertView;
-    [alertV close];
-    if (buttonIndex == 0) { // 取消
-        // 弹出刷卡界面,回到上层界面
-        [self.navigationController popToRootViewControllerAnimated:YES];
-    } else {                // 确定-开始设备加密
-        // 进行加密
-        if (self.passwordAlertView.password && self.passwordAlertView.password.length > 0) {
-            [self.deviceManager encryptPinSource:self.passwordAlertView.password onEncryptedPIN:^(NSString *pin) {
+    NameWeakSelf(wself);
+    [JLPasswordView showAfterClickedSure:^(NSString *password) {
+        // 输了密码则加密
+        if (password && password.length > 0) {
+            [wself.deviceManager encryptPinSource:password onEncryptedPIN:^(NSString *pin) {
                 if (pin && pin.length > 0) {
-                    NSMutableString* f22 = [NSMutableString stringWithString:[self.cardInfoOfReading valueForKey:@"22"]];
+                    NSMutableString* f22 = [NSMutableString stringWithString:[wself.cardInfoOfReading valueForKey:@"22"]];
                     [f22 replaceCharactersInRange:NSMakeRange(2, 1) withString:@"1"];
-                    [self.cardInfoOfReading setValue:f22 forKey:@"22"];
-                    [self.cardInfoOfReading setValue:pin forKey:@"52"];
-                    [self.cardInfoOfReading setValue:@"2600000000000000" forKey:@"53"];
+                    [wself.cardInfoOfReading setValue:f22 forKey:@"22"];
+                    [wself.cardInfoOfReading setValue:pin forKey:@"52"];
+                    [wself.cardInfoOfReading setValue:@"2600000000000000" forKey:@"53"];
                 } else {
-                    [self.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
+                    [wself.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
                 }
                 // 发起交易
-                [self startTransPackingOnTransType:self.stringOfTranType];
+                [wself startTransPackingOnTransType:wself.stringOfTranType];
             } onError:^(NSError *error) {
-                [self alertForFailedMessage:[error localizedDescription]];
+                [wself alertForFailedMessage:[error localizedDescription]];
             }];
-        } else {
-            [self.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
-            [self startTransPackingOnTransType:self.stringOfTranType];
         }
-    }
+        // 未输直接交易
+        else {
+            [wself.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
+            [wself startTransPackingOnTransType:wself.stringOfTranType];
+        }
+    } orCancel:^{
+        [wself.navigationController popToRootViewControllerAnimated:YES];
+    }];
 }
+
 
 
 
@@ -217,7 +207,15 @@
 - (void)didTransSuccessWithResponseInfo:(NSDictionary *)responseInfo onTransType:(NSString *)transType {
     [self stopTimer];
     [self stopActivity];
-    self.transResponseInfo = responseInfo;
+    NSMutableDictionary* updateF55dic = [NSMutableDictionary dictionaryWithDictionary:responseInfo];
+    if ([[self.cardInfoOfReading objectForKey:@"22"] hasPrefix:@"05"]) {
+        [updateF55dic setObject:[self.cardInfoOfReading objectForKey:@"55"] forKey:@"55"];
+        [updateF55dic setObject:[self.cardInfoOfReading objectForKey:@"23"] forKey:@"23"];
+        NSString* f14 = [self.cardInfoOfReading objectForKey:@"14"];
+        [updateF55dic setObject:((f14 && f14.length > 0)?(f14):(@"")) forKey:@"14"];
+    }
+    self.transResponseInfo = updateF55dic;
+    
     
     [self handleWithTransSuccessOnTransType:transType]; // 直接成功处理
 
@@ -256,7 +254,6 @@
     self.timeOut = 0;
     [self startTimerWithSelector:@selector(waitingForDeviceCusting)];
     [self startActivity];
-    JLPrint(@"tcp交易【%@】打包中，封装的卡信息:[%@]",transType, self.cardInfoOfReading);
     
     __block ModelTCPTransPacking* tcpHandle = [ModelTCPTransPacking sharedModel];
     [tcpHandle packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
@@ -281,14 +278,12 @@
 
 // 跳转界面: 跳转到签名界面
 - (void) pushToSignVCWithInfo:(NSDictionary*)transInfo {
-    QianPiViewController  *qianpi=[[QianPiViewController alloc] initWithNibName:nil bundle:nil];
-    [qianpi qianpiType:1];
-    [qianpi leftTitle:self.sFloatMoney];
-    [qianpi setTransInformation:transInfo];
-    qianpi.userFor = PosNoteUseForUpload;
+    PosInformationViewController  *posInforVC=[[PosInformationViewController alloc] initWithNibName:nil bundle:nil];
+    [posInforVC setUserFor:PosNoteUseForUpload];
+    [posInforVC setTransInformation:transInfo];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController pushViewController:qianpi animated:YES];
+        [self.navigationController pushViewController:posInforVC animated:YES];
     });
 }
 
@@ -480,12 +475,6 @@
     return _activity;
 }
 
-- (CustomIOSAlertView *)passwordAlertView {
-    if (_passwordAlertView == nil) {
-        _passwordAlertView = [[CustomIOSAlertView alloc] init];
-    }
-    return _passwordAlertView;
-}
 
 - (UILabel *)waitingLabel {
     if (_waitingLabel == nil) {

@@ -32,6 +32,7 @@
 
 #pragma mask : 截取字符串相关
 // 截取指定位字符为*
+- (NSString*) stringCutting4XingInRange:(NSRange)range;
 - (NSString*) stringCuttingXingInRange:(NSRange)range;
 
 

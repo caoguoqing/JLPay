@@ -405,6 +405,33 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     return endtmp;
 }
 
++ (NSString*) NoPreZeroHexStringFromInt:(int)intid {
+    NSString *endtmp=@"";
+    int yushu = 0;
+    int chushu = 0;
+    while (1) {
+        yushu = intid % 16;     // 余数
+        chushu = intid / 16;    // 除数
+        // 追加余数到 endTmp
+        if (yushu < 10) {
+            endtmp = [[NSString stringWithFormat:@"%d",yushu] stringByAppendingString:endtmp];
+        } else {
+            endtmp = [[NSString stringWithFormat:@"%c",yushu - 10 + 'A'] stringByAppendingString:endtmp];
+        }
+        if (chushu == 0) break;
+        intid /= 16;
+    }
+//    int icount = 4 - (int)[endtmp length];
+//    NSMutableString* added0 = [[NSMutableString alloc] init];
+//    if (icount > 0) {
+//        for (int i = 0; i < icount; i++) {
+//            [added0 appendString:@"0"];
+//        }
+//        endtmp = [added0 stringByAppendingString:endtmp];
+//    }
+    return endtmp;
+}
+
 
 //16进制转字符串（ascii）
 +(NSString *)stringFromHexString:(NSString *)hexString { //

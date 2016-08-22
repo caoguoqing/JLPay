@@ -11,6 +11,6 @@
 @interface SignUpBtn : UIButton
 
 @property (nonatomic, strong) UILabel* directionLabel;
-@property (nonatomic, strong) UIImageView* directionImg;
+
 
 @end

@@ -100,7 +100,6 @@
 
 - (NSMutableArray *)cellTitles {
     if (_cellTitles == nil) {
-        JLPrint(@"....app的名称:[%@]",[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]); 
         _cellTitles = [[NSMutableArray alloc] init];
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
@@ -120,10 +119,12 @@
             NSString* key = [self.cellTitles objectAtIndex:i];
             NSMutableArray* imageTitles = [[NSMutableArray alloc] init];
             if (i == 0) {
-                [imageTitles addObject:@"搜索设备"];
                 [imageTitles addObject:@"选择设备"];
+                [imageTitles addObject:@"选择终端号"];
+                [imageTitles addObject:@"绑定设备"];
             } else if (i == 1) {
-                [imageTitles addObject:[PublicInformation imageNameCustPayViewShot]];
+//                [imageTitles addObject:[PublicInformation imageNameCustPayViewShot]];
+                [imageTitles addObject:@"输入金额"];
                 [imageTitles addObject:@"提示刷卡"];
                 [imageTitles addObject:@"输入密码"];
             } else if (i == 2) {
@@ -144,16 +145,18 @@
             NSString* key = [self.cellTitles objectAtIndex:i];
             NSMutableDictionary* datas = [[NSMutableDictionary alloc] init];
             if (i == 0) {
-                [datas setValue:@"1.自动搜索蓝牙POS设备，获取SN号" forKey:@"搜索设备"];
-                [datas setValue:@"2.手动选择设备终端编号和SN号，执行绑定" forKey:@"选择设备"];
+                [datas setValue:@"1.自动或手动刷新扫描蓝牙POS设备，点击选择设备" forKey:@"选择设备"];
+                [datas setValue:@"2.如有多个终端号，可切换终端号" forKey:@"选择终端号"];
+                [datas setValue:@"3.连接设备后，点击'绑定'按钮进行设备签到和绑定" forKey:@"绑定设备"];
             } else if (i == 1) {
-                [datas setValue:@"1.请输入交易金额" forKey:[PublicInformation imageNameCustPayViewShot]];
+//                [datas setValue:@"1.请输入交易金额" forKey:[PublicInformation imageNameCustPayViewShot]];
+                [datas setValue:@"1.请输入交易金额" forKey:@"输入金额"];
                 [datas setValue:@"2.连接设备，提示刷卡" forKey:@"提示刷卡"];
                 [datas setValue:@"3.输入支付密码" forKey:@"输入密码"];
             } else if (i == 2) {
-                [datas setValue:@"1.点击列表，查看单笔交易明细" forKey:@"点击列表"];
-                [datas setValue:@"2.选择交易日期，查询指定日期交易" forKey:@"指定日期"];
-                [datas setValue:@"3.点击查询按钮，输入后4位卡号或交易金额" forKey:@"模糊查询"];
+                [datas setValue:@"1.点击列表，查看单笔交易详情" forKey:@"点击列表"];
+                [datas setValue:@"2.点击月份按钮，查询指定月份交易" forKey:@"指定日期"];
+                [datas setValue:@"3.点击筛选，可进行多选项多条件筛选明细" forKey:@"模糊查询"];
             }
             [_dictTitlesAndDatas setObject:datas forKey:key];
         }

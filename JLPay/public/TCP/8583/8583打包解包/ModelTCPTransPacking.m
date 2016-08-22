@@ -49,7 +49,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     return self;
 }
 //  |
-//  V  : 逐个键入域值
+//  V  : 键入域值
 - (void) packingFieldsInfo:(NSDictionary*)fieldsInfo forTransType:(NSString*)transType {
     transType__ = transType;
     [self packingWithFieldsInfo:fieldsInfo];
@@ -84,11 +84,17 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     else if ([transType__ isEqualToString:TranType_BatchUpload]) {
         [self packingBatchUpFieldsInfo:fieldsInfo];
     }
+    else if ([transType__ isEqualToString:TranType_DownPubKey]) {
+        [self packingPublicKFieldsInfo:fieldsInfo];
+    }
     else if ([transType__ isEqualToString:TranType_DownMainKey]) {
         [self packingDownMainKFieldsInfo:fieldsInfo];
     }
     else if ([transType__ isEqualToString:TranType_DownWorkKey]) {
         [self packingDownWorkKFieldsInfo:fieldsInfo];
+    }
+    else if ([transType__ isEqualToString:TranType_ElecSignPicUpload]) {
+        [self packingElecSignatureWithFieldsInfo:fieldsInfo];
     }
 }
 - (NSString*) msgTypeOnTransType:(NSString*)transType {
@@ -99,11 +105,17 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     else if ([transType isEqualToString:TranType_BatchUpload]) {
         msgType = @"0320";
     }
+    else if ([transType isEqualToString:TranType_DownPubKey]) {
+        msgType = @"0800";
+    }
     else if ([transType isEqualToString:TranType_DownMainKey]) {
         msgType = @"0800";
     }
     else if ([transType isEqualToString:TranType_DownWorkKey]) {
         msgType = @"0800";
+    }
+    else if ([transType isEqualToString:TranType_ElecSignPicUpload]) {
+        msgType = @"0820";
     }
     return msgType;
 }
@@ -159,15 +171,31 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     [packingHolder preparePacking];
 }
 
+// -- 公钥下载
+- (void) packingPublicKFieldsInfo:(NSDictionary*)fieldsInfo {
+    Packing8583* packingHolder = [Packing8583 sharedInstance];
+    [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:fieldsInfo[@"41"]]];
+    [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:fieldsInfo[@"42"]]];
+    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownPubKey]];
+    [packingHolder setFieldAtIndex:62 withValue:[fieldsInfo valueForKey:@"62"]];
+    [packingHolder preparePacking];
+}
+
 // -- 主密钥下载
 - (void) packingDownMainKFieldsInfo:(NSDictionary*)fieldsInfo {
     Packing8583* packingHolder = [Packing8583 sharedInstance];
-
     [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
     [packingHolder setFieldAtIndex:41 withValue:[EncodeString encodeASC:fieldsInfo[@"41"]]];
     [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:fieldsInfo[@"42"]]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownMainKey]];
-    [packingHolder setFieldAtIndex:62 withValue:[packingHolder MAINKEY]];
+    /***
+     * 主密钥下载修改:
+     * old: 直接用固定的key去获取
+     * new: 首先去下载公钥，然后用公钥加密一串固定数据后再做key上送获取
+     ***/
+//    [packingHolder setFieldAtIndex:62 withValue:[packingHolder MAINKEY]];
+    [packingHolder setFieldAtIndex:62 withValue:fieldsInfo[@"62"]];
+
     [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
     [packingHolder preparePacking];
 
@@ -181,6 +209,23 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     [packingHolder setFieldAtIndex:42 withValue:[EncodeString encodeASC:fieldsInfo[@"42"]]];
     [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:TranType_DownWorkKey]];
     [packingHolder setFieldAtIndex:63 withValue:[EncodeString encodeASC:@"001"]];
+    [packingHolder preparePacking];
+}
+
+// --- 签名图片上传
+- (void) packingElecSignatureWithFieldsInfo:(NSDictionary*)fieldsInfo {
+    JLPrint(@"正在打包签名图片上传报文:[%@]", fieldsInfo);
+    Packing8583* packingHolder = [Packing8583 sharedInstance];
+    [packingHolder setFieldAtIndex:2 withValue:fieldsInfo[@"2"]];
+    [packingHolder setFieldAtIndex:4 withValue:fieldsInfo[@"4"]];
+    [packingHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
+    [packingHolder setFieldAtIndex:15 withValue:fieldsInfo[@"15"]];
+    [packingHolder setFieldAtIndex:37 withValue:fieldsInfo[@"37"]];
+    [packingHolder setFieldAtIndex:41 withValue:fieldsInfo[@"41"]];
+    [packingHolder setFieldAtIndex:42 withValue:fieldsInfo[@"42"]];
+    [packingHolder setFieldAtIndex:55 withValue:fieldsInfo[@"55"]];
+    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:transType__]];
+    [packingHolder setFieldAtIndex:62 withValue:fieldsInfo[@"62"]];
     [packingHolder preparePacking];
 }
 

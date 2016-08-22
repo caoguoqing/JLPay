@@ -14,10 +14,10 @@
 
 
 typedef enum {
-    MyBusiAlertTagLogout,
-    MyBusiAlertTagUpdateBusiness,
-    MyBusiAlertTagReaplyBusinessInfo,
-    MyBusiAlertTagUploadBusinessInfo
+    MyBusiAlertTagLogout,                       /* 签退 */
+    MyBusiAlertTagUpdateBusiness,               /* 更新商户信息 */
+    MyBusiAlertTagReaplyBusinessInfo,           /* 重填商户信息 */
+    MyBusiAlertTagUploadBusinessInfo            /* 上传商户信息 */
 }MyBusiAlertTag;
 
 @interface MyBusinessViewController : UIViewController

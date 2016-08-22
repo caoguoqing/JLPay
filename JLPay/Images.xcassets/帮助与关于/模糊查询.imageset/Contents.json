@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "模糊查询.PNG"
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "模糊查询@2x.PNG",
       "scale" : "2x"
     },
     {

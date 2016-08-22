@@ -85,6 +85,7 @@
 {
     self.stateMessage = @"正在写主密钥...";
     NameWeakSelf(wself);
+    JLPrint(@"------正在写的主密钥:[%@]", mainKey);
     [self.deviceManager writeMainKey:mainKey onFinished:^{
         wself.stateMessage = @"写主密钥成功!";
         if (finishedBlock) finishedBlock();

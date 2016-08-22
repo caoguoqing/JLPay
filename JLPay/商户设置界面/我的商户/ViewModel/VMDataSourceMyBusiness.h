@@ -23,7 +23,6 @@ static NSString* const VMMyBusinessTitleName = @"商户名:";
 static NSString* const VMMyBusinessTitleNumber = @"商户编号:";
 static NSString* const VMMyBusinessTitleIdNo = @"身份证号:";
 static NSString* const VMMyBusinessTitleTelNo = @"手机号码:";
-static NSString* const VMMyBusinessTitleEmail = @"邮箱:";
 static NSString* const VMMyBusinessTitleBankName = @"结算账户开户行:";
 static NSString* const VMMyBusinessTitleSettleAccount = @"结算账号:";
 static NSString* const VMMyBusinessTitleAddress = @"商户所在地:";

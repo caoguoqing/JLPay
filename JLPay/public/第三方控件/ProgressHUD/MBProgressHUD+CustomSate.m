@@ -18,6 +18,86 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 @implementation MBProgressHUD (CustomSate)
 
++ (instancetype) showNormalWithText:(NSString*)text andDetailText:(NSString*)detailText {
+    UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
+    progressHud.labelText = text;
+    progressHud.detailsLabelText = detailText;
+    progressHud.removeFromSuperViewOnHide = YES;
+    return progressHud;
+}
+
++ (void)showSuccessWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {
+    UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
+    progressHud.labelText = text;
+    progressHud.detailsLabelText = detailText;
+    progressHud.mode = MBProgressHUDModeCustomView;
+    CustomCheckView* customStateView = [progressHud stateViewOnStyle:CustomCheckViewStyleRight];
+    progressHud.customView = customStateView;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [customStateView showAnimation];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fMBProgressHUDSucDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self hideHUDForView:mainWindow animated:YES];
+            if (completion) {
+                completion();
+            }
+        });
+    });
+}
+
++ (void) showFailWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {
+    UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
+    progressHud.labelText = text;
+    progressHud.detailsLabelText = detailText;
+    progressHud.mode = MBProgressHUDModeCustomView;
+    CustomCheckView* customStateView = [progressHud stateViewOnStyle:CustomCheckViewStyleWrong];
+    progressHud.customView = customStateView;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [customStateView showAnimation];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fMBProgressHUDFailDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self hideHUDForView:mainWindow animated:YES];
+            if (completion) {
+                completion();
+            }
+        });
+    });
+}
+
++ (void)showWarnWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {
+    UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
+    progressHud.labelText = text;
+    progressHud.detailsLabelText = detailText;
+    progressHud.mode = MBProgressHUDModeCustomView;
+    CustomCheckView* customStateView = [progressHud stateViewOnStyle:CustomCheckViewStyleWarn];
+    progressHud.customView = customStateView;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [customStateView showAnimation];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fMBProgressHUDFailDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self hideHUDForView:mainWindow animated:YES];
+            if (completion) {
+                completion();
+            }
+        });
+    });
+}
+
+
++ (instancetype) showHorizontalProgressWithText:(NSString *)text andDetailText:(NSString *)detailText {
+    UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
+    progressHud.labelText = text;
+    progressHud.detailsLabelText = detailText;
+    progressHud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+    progressHud.removeFromSuperViewOnHide = YES;
+    return progressHud;
+}
+
+
+
+
 
 - (void) showNormalWithText:(NSString*)text andDetailText:(NSString*)detailText {
     self.mode = MBProgressHUDModeIndeterminate;

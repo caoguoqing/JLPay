@@ -331,8 +331,14 @@ typedef enum : NSUInteger {
 }
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
-        NSString* urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ForgetPassword",
-                               [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        NSString* urlString;
+        if (TestOrProduce == 11) {
+            urlString = [NSString stringWithFormat:@"http://%@:%@/kftagent/ForgetPassword",
+                         [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        } else {
+            urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/ForgetPassword",
+                         [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        }
         NSURL* url = [NSURL URLWithString:urlString];
         _httpRequest = [ASIFormDataRequest requestWithURL:url];
         [_httpRequest setDelegate:self];

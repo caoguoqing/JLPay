@@ -263,7 +263,7 @@ typedef enum AsyncSocketError AsyncSocketError;
 
 /**
  * This method is the same as connectToHost:onPort:error: with an additional timeout option.
- * To not time out use a negative time interval, or simply use the connectToHost:onPort:error: method.
+ * To not time out use a negative time intezrval, or simply use the connectToHost:onPort:error: method.
 **/
 - (BOOL)connectToHost:(NSString *)hostname
                onPort:(UInt16)port

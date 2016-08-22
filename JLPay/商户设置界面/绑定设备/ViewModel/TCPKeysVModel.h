@@ -32,6 +32,7 @@
 
 @property (nonatomic, strong) ViewModelTCPHandleWithDevice* tcpHandle;
 
+
 @property (nonatomic, copy) void (^ finishedBlock) (void);
 @property (nonatomic, copy) void (^ errorBlock) (NSError* error);
 

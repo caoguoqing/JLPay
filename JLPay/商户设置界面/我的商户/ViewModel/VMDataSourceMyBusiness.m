@@ -87,6 +87,9 @@
             cell.backgroundColor = [UIColor whiteColor];
         }
         cell.textLabel.text = valueKey;
+        cell.textLabel.font = [UIFont systemFontOfSize:15];
+        cell.detailTextLabel.font = [UIFont systemFontOfSize:14];
+
         if (valueForTitle.integerValue == 1) {
             cell.stateLabel.text = @"审核中";
         }
@@ -106,10 +109,10 @@
             cell.backgroundColor = [UIColor whiteColor];
         }
         if ([valueKey isEqualToString:VMMyBusinessTitleIdNo]) {
-            valueForTitle = [valueForTitle stringCuttingXingInRange:NSMakeRange(4, valueForTitle.length - 4 - 4)];
+            valueForTitle = [valueForTitle stringCutting4XingInRange:NSMakeRange(4, valueForTitle.length - 4 - 4)];
         }
         else if ([valueKey isEqualToString:VMMyBusinessTitleTelNo]) {
-            valueForTitle = [valueForTitle stringCuttingXingInRange:NSMakeRange(3, valueForTitle.length - 3 - 4)];
+            valueForTitle = [valueForTitle stringCutting4XingInRange:NSMakeRange(3, valueForTitle.length - 3 - 4)];
         }
         else if ([valueKey isEqualToString:VMMyBusinessTitleSettleAccount]) {
             valueForTitle = [valueForTitle stringCuttingXingInRange:NSMakeRange(4, valueForTitle.length - 4 - 4)];
@@ -123,7 +126,10 @@
                              [PublicInformation clearSpaceCharAtLastOfString:city[kFieldNameValue]]];
         }
         cell.textLabel.text = valueKey;
+        cell.textLabel.font = [UIFont systemFontOfSize:15];
         cell.detailTextLabel.text = valueForTitle;
+        cell.detailTextLabel.font = [UIFont systemFontOfSize:14];
+        cell.detailTextLabel.numberOfLines = 0;
         return cell;
     }
 }
@@ -176,7 +182,7 @@
         }
         
         [self.displayTitles addObject:@[VMMyBusinessTitleSettleAccount,VMMyBusinessTitleBankName]];
-        [self.displayTitles addObject:@[VMMyBusinessTitleAddress,VMMyBusinessTitleTelNo,VMMyBusinessTitleEmail]];
+        [self.displayTitles addObject:@[VMMyBusinessTitleAddress,VMMyBusinessTitleTelNo]];
     } else {
         [self.displayTitles removeAllObjects];
     }
@@ -197,7 +203,6 @@
         [_titleAndDataKeys setObject:MHttpBusinessKeyMchntNm forKey:VMMyBusinessTitleUser];
         [_titleAndDataKeys setObject:MHttpBusinessKeyMchntNm forKey:VMMyBusinessTitleName];
         [_titleAndDataKeys setObject:MHttpBusinessKeyTelNo forKey:VMMyBusinessTitleTelNo];
-        [_titleAndDataKeys setObject:MHttpBusinessKeyMail forKey:VMMyBusinessTitleEmail];
         [_titleAndDataKeys setObject:MHttpBusinessKeySpeSettleDs forKey:VMMyBusinessTitleBankName];
         [_titleAndDataKeys setObject:MHttpBusinessKeySettleAcct forKey:VMMyBusinessTitleSettleAccount];
         [_titleAndDataKeys setObject:MHttpBusinessKeyAreaNo forKey:VMMyBusinessTitleAddress];

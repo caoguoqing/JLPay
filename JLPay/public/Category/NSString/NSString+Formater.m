@@ -103,7 +103,7 @@
 #pragma mask : 截取字符串相关
 
 // 截取指定位字符为*
-- (NSString*) stringCuttingXingInRange:(NSRange)range {
+- (NSString*) stringCutting4XingInRange:(NSRange)range {
     NSMutableString* newString = [[NSMutableString alloc] init];
     if (range.location >= self.length) {
         newString = nil;
@@ -111,6 +111,20 @@
         [newString appendString:[self substringToIndex:range.location]];
         NSInteger xingCount = (range.location + range.length >= self.length)?(self.length - range.location):(range.length);
         for (NSInteger i = 0; i < 4; i++) {
+            [newString appendString:@"*"];
+        }
+        [newString appendString:[self substringFromIndex:range.location + xingCount]];
+    }
+    return newString;
+}
+- (NSString*) stringCuttingXingInRange:(NSRange)range {
+    NSMutableString* newString = [[NSMutableString alloc] init];
+    if (range.location >= self.length) {
+        newString = nil;
+    } else {
+        [newString appendString:[self substringToIndex:range.location]];
+        NSInteger xingCount = (range.location + range.length >= self.length)?(self.length - range.location):(range.length);
+        for (NSInteger i = 0; i < range.length; i++) {
             [newString appendString:@"*"];
         }
         [newString appendString:[self substringFromIndex:range.location + xingCount]];

@@ -15,7 +15,7 @@
 #import "Define_Header.h"
 
 
-@interface ViewModelTCPPosTrans() <wallDelegate,Unpacking8583Delegate>
+@interface ViewModelTCPPosTrans() <wallDelegate>
 {
     NSString* curTransType; // 当前交易类型
 }
@@ -58,7 +58,18 @@
     [self.tcpHolder clearDelegateAndClose];
     // 1.拆包
     if (data.length > 0) {
-        [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
+        NameWeakSelf(wself);
+        [Unpacking8583 unpacking8583Response:data onUnpacked:^(NSDictionary *unpackedInfo) {
+            NSString* code = [unpackedInfo objectForKey:@"39"];
+            if ([code isEqualToString:@"00"]) {
+                [wself delegateRebackResult:YES message:nil responseInfo:unpackedInfo];
+            } else {
+                [wself delegateRebackResult:NO message:[NSString stringWithFormat:@"[%@]%@", code, [ErrorType errInfo:code]] responseInfo:nil];
+            }
+        } onError:^(NSError *error) {
+            [wself delegateRebackResult:NO message:[error localizedDescription] responseInfo:nil];
+        }];
+        
     } else {
         [self delegateRebackResult:NO message:@"网络异常，请检查网络" responseInfo:nil];
     }
@@ -71,16 +82,7 @@
     [self delegateRebackResult:NO message:@"网络异常，请检查网络" responseInfo:nil];
 }
 
-#pragma mask ---- Unpacking8583Delegate
-- (void)didUnpackDatas:(NSDictionary *)dataDict onState:(BOOL)state withErrorMsg:(NSString *)message
-{
-    if (state) { // 成功
-        [self delegateRebackResult:YES message:nil responseInfo:dataDict];
-    } else { // 失败
-        [self delegateRebackResult:NO message:message responseInfo:nil];
-    }
-    
-}
+
 
 #pragma mask ---- PRIVATE INTERFACE
 /* 回调 */
@@ -95,7 +97,6 @@
         }
     }
 }
-
 
 
 

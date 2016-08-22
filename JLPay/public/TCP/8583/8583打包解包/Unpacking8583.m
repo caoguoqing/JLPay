@@ -12,23 +12,13 @@
 
 
 #import "DesUtil.h"
-#import "ErrorType.h"
 #import "Define_Header.h"
 #import "AppDelegate.h"
 
 static Unpacking8583 *sharedObj2 = nil;
 
 @implementation Unpacking8583
-//@synthesize delegate;
 
-+(Unpacking8583 *)getInstance{
-    @synchronized([Unpacking8583 class]){
-        if(sharedObj2 ==nil){
-            sharedObj2 = [[self alloc] init];
-        }
-    }
-    return sharedObj2;
-}
 
 
 #pragma mask ---- 重写8583报文解包函数 -----------------------------------------------------------
@@ -37,79 +27,78 @@ static Unpacking8583 *sharedObj2 = nil;
  * 2. (10 位 TPDU)
  * 3. (12 位报文头)
  * 4. (4  位交易类型)
- * 5. (16 位 BITMAP 位图串)
- * 6. (实际交易数据)
+ * 5. (16 位 BITMAP 位图串) ;
+ * 6. (实际交易数据;起始位:46)
  */
 
--(void)unpacking8583:(NSString *)responseString withDelegate:(id<Unpacking8583Delegate>)sdelegate {
-    self.stateDelegate = sdelegate;
-    NSString* rebackStr = nil;
-    BOOL rebackState = YES;
-    @try {
-        // 交易类型
-        NSString* msgType = [responseString substringWithRange:NSMakeRange(26, 4)];
++ (void)unpacking8583Response:(NSString *)responseString
+                   onUnpacked:(void (^)(NSDictionary *))unpackedBlock
+                      onError:(void (^)(NSError *))errorBlock
+{
+    if (!responseString || responseString.length <= 46) {
+        NSString* message = [NSString stringWithFormat:@"响应报文数据为空或长度过短[%d]", ((responseString) ? (responseString.length) : (0))];
+        errorBlock([NSError errorWithDomain:@"" code:99 localizedDescription:message]);
+        return;
+    }
+    
+    NSInteger location = 0;
+    /* [4]包长 */
+//    NSString* packageLen = [responseString substringToIndex:4];
+    location += 4;
+    /* [10]TPDU */
+//    NSString* tpdu = [responseString substringWithRange:NSMakeRange(location, 10)];
+    location += 10;
+    /* [12]报文头 */
+//    NSString* packageHeader = [responseString substringWithRange:NSMakeRange(location, 12)];
+    location += 12;
 
-        // map数组: bitmap串(16进制) -> 二进制串 -> 取串中'1'的位置
-        NSArray *bitmapArr = [self bitmapArr:[PublicInformation getBinaryByhex:[responseString substringWithRange:NSMakeRange(30, 16)]]];
+    /* [4]交易类型 */
+    NSString* msgType = [responseString substringWithRange:NSMakeRange(location, 4)];
+    location += 4;
+    
+    /* [16]BITMAP */
+    NSString* bitmap = [responseString substringWithRange:NSMakeRange(location, 16)];
+    location += 16;
 
+    /* [..]交易数据 */
+    NSMutableString* responseDataStr = [NSMutableString stringWithString:[responseString substringFromIndex:location]];
+
+    
+    /* -- 解析出每个字段值 -- */
+    NSArray *bitmapArr = [self bitmapArr:[PublicInformation getBinaryByhex:bitmap]];
+    NSMutableDictionary* dictFields = [NSMutableDictionary dictionaryWithCapacity:bitmapArr.count];
+    for (NSString* bitIndex in bitmapArr) {
+        NSString* content = [[ISOFieldFormation sharedInstance] unformatStringWithFormation:responseDataStr atIndex:bitIndex.intValue];
         
-        // 截取纯域值串
-        NSMutableString* dataString = [[NSMutableString alloc] initWithString:[responseString substringFromIndex:46]];
-        
-        // 根据位图信息循环拆包
-        NSMutableDictionary* dictFields = [NSMutableDictionary dictionaryWithCapacity:bitmapArr.count];
-        for (NSString* bitIndex in bitmapArr) {
-            // 并将拆包数据打包到字典
-            NSString* content = [[ISOFieldFormation sharedInstance] unformatStringWithFormation:dataString atIndex:bitIndex.intValue];
+        if ([bitIndex isEqualToString:@"39"]) {
+            [dictFields setValue:[PublicInformation stringFromHexString:content] forKey:bitIndex];
+        } else {
             [dictFields setValue:content forKey:bitIndex];
         }
-        // 追加交易类型
-        [dictFields setValue:msgType forKey:@"msgType"];
-        
-        // 组合响应信息
-        NSString* responseCode = [dictFields valueForKey:@"39"];
-        responseCode = [PublicInformation stringFromHexString:responseCode];
-        if (![responseCode isEqualToString:@"00"]) {
-            rebackState = NO;
-        }
-        rebackStr = [ErrorType errInfo:responseCode];
-        rebackStr = [NSString stringWithFormat:@"[%@]%@",responseCode, rebackStr];
-        
-        // 根据39域值,解析错误类型消息;
-        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {
-            [self.stateDelegate didUnpackDatas:dictFields onState:rebackState withErrorMsg:rebackStr];
-        }
-
     }
-    @catch (NSException *exception) {
-        if (self.stateDelegate && [self.stateDelegate respondsToSelector:@selector(didUnpackDatas:onState:withErrorMsg:)]) {
-            [self.stateDelegate didUnpackDatas:nil onState:NO withErrorMsg:exception.reason];
-        }
-    }
-    @finally {}
+    
+    [dictFields setValue:msgType forKey:@"msgType"];
+    
+    /* 将拆包后的域的集合回调出去 */
+    unpackedBlock(dictFields);
 }
-
-
-
-
-
 
 
 
 #pragma mark ----------3des加密
 
--(NSString *)threeDesEncrypt:(NSString *)decryptDtr keyValue:(NSString *)key{
-/*
-加密:    双倍长密钥加密算法为：
-    str = DES(str ,k21)
-    str = UDES(str ,k22)
-    str = DES(str ,k21)
-    其对应的解密过程就不详解了。
-*/
-//3des加密8个0
++(NSString *)threeDesEncrypt:(NSString *)decryptDtr keyValue:(NSString *)key{
+    /*
+     加密:    双倍长密钥加密算法为：
+     str = DES(str ,k21)
+     str = UDES(str ,k22)
+     str = DES(str ,k21)
+     其对应的解密过程就不详解了。
+     */
+    //3des加密8个0
     NSString *key21=[key substringWithRange:NSMakeRange(0, [key length]/2)];
     NSString *key22=[key substringWithRange:NSMakeRange([key length]/2, [key length]/2)];
-     NSString *descryptStr1=[DesUtil encryptUseDES:decryptDtr key:key21];
+    NSString *descryptStr1=[DesUtil encryptUseDES:decryptDtr key:key21];
     NSString *descryptStr2=[DesUtil decryptUseDES:descryptStr1 key:key22];
     NSString *descryptStr3=[DesUtil encryptUseDES:descryptStr2 key:key21];
     return descryptStr3;
@@ -117,7 +106,7 @@ static Unpacking8583 *sharedObj2 = nil;
 
 
 #pragma mark ----------3des解密
--(NSString *)threeDESdecrypt:(NSString *)decryptStr keyValue:(NSString *)key{
++(NSString *)threeDESdecrypt:(NSString *)decryptStr keyValue:(NSString *)key{
     /*
      解密:    双倍长密钥解密算法为：
      str = UDES(str ,k21)
@@ -133,8 +122,11 @@ static Unpacking8583 *sharedObj2 = nil;
     return descryptStr3;
 }
 
+
+
+
 #pragma mark ::: 位图计算
--(NSArray *)bitmapArr:(NSString *)bitmapStr{
++(NSArray *)bitmapArr:(NSString *)bitmapStr{
     //0000000000111000000000000000000000001010110000000000000100100110
     NSMutableArray *bitmapMuArr=[[NSMutableArray alloc] init];
     for (int i=0; i<([bitmapStr length]+0); i++) {

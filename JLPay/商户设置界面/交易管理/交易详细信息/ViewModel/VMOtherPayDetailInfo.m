@@ -83,7 +83,7 @@
         }
     }
     else if ([title isEqualToString:kOtherPayInfoNameOrderNo]) {
-        value = [value stringCuttingXingInRange:NSMakeRange(6, value.length - 6 - 4)];
+        value = [value stringCutting4XingInRange:NSMakeRange(6, value.length - 6 - 4)];
     }
     else if ([title isEqualToString:kOtherPayInfoNameTime]) {
         if (!value || value.length < 8 + 6) {

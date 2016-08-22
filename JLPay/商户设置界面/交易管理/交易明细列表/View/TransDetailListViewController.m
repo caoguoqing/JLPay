@@ -37,7 +37,7 @@
 
 - (void) layoutSubviews {
     NameWeakSelf(wself);
-    CGFloat heightNearestTBV = self.view.frame.size.height - 64;
+//    CGFloat heightNearestTBV = self.view.frame.size.height - 64;
     
     /*
      微信支付功能暂不上线,先屏蔽掉微信明细的查询
@@ -49,12 +49,12 @@
 //        make.height.mas_equalTo(44);
 //    }];
     
-    [self.nearestMonthsTBV mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(wself.view.mas_top).offset(64);
-        make.left.equalTo(wself.view.mas_left);
-        make.right.equalTo(wself.view.mas_right);
-        make.height.mas_equalTo(heightNearestTBV);
-    }];
+//    [self.nearestMonthsTBV mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.bottom.equalTo(wself.view.mas_top).offset(64);
+//        make.left.equalTo(wself.view.mas_left);
+//        make.right.equalTo(wself.view.mas_right);
+//        make.height.mas_equalTo(heightNearestTBV);
+//    }];
 
     [self.detailsTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(wself.view.mas_top).offset(64);
@@ -80,18 +80,22 @@
     }];
     
     /* observing: month list pull up or down  */
-    [[RACObserve(self.downPullBtn, downDirection) replayLast] subscribeNext:^(NSNumber* down) {
+    [[[RACObserve(self.downPullBtn, downDirection) replayLast] skip:1] subscribeNext:^(NSNumber* down) {
         @strongify(self);
         [self.nearestMonthsTBV reloadData];
         if (down.boolValue) {
             [UIView animateWithDuration:0.2 animations:^{
                 @strongify(self);
-                self.nearestMonthsTBV.transform = CGAffineTransformMakeTranslation(0, 0);
+//                self.nearestMonthsTBV.transform = CGAffineTransformMakeTranslation(0, 0);
+                self.nearestMonthsTBV.frame = CGRectMake(0, 64, self.view.frame.size.width, 0);
+                self.nearestMonthsTBV.backgroundColor = [UIColor clearColor];
             }];
         } else {
             [UIView animateWithDuration:0.2 animations:^{
                 @strongify(self);
-                self.nearestMonthsTBV.transform = CGAffineTransformMakeTranslation(0, self.nearestMonthsTBV.frame.size.height);
+//                self.nearestMonthsTBV.transform = CGAffineTransformMakeTranslation(0, self.nearestMonthsTBV.frame.size.height);
+                self.nearestMonthsTBV.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
+                self.nearestMonthsTBV.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
             }];
         }
     }];
@@ -324,11 +328,10 @@
         _nearestMonthsTBV = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _nearestMonthsTBV.delegate = self.nearestMonths;
         _nearestMonthsTBV.dataSource = self.nearestMonths;
-        _nearestMonthsTBV.backgroundColor = [UIColor colorWithWhite:0.25 alpha:0.5];
+        _nearestMonthsTBV.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
         _nearestMonthsTBV.scrollEnabled = NO;
         [_nearestMonthsTBV setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-        _nearestMonthsTBV.separatorInset = UIEdgeInsetsZero;
-        _nearestMonthsTBV.layoutMargins = UIEdgeInsetsZero;
+        _nearestMonthsTBV.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
     return _nearestMonthsTBV;
 }

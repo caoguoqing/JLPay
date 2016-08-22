@@ -7,12 +7,12 @@
 //
 
 #import "AppDelegate.h"
-#import "CustPayViewController.h"
 #import "JLSignInViewController.h"
 
 #import "BrushViewController.h"
 #import "BusinessManageViewController.h"
 #import "CustomNavigationController.h"
+#import "MoneyInputViewController.h"
 #import "Toast+UIView.h"
 #import "Define_Header.h"
 
@@ -46,7 +46,7 @@ static NSUInteger const iTagAlertAppStoreInfoRequested = 198;
     return tabBarController;
 }
 
-void uncaughtExceptionHandler(NSException*exception){
+void uncaughtExceptionHandler(NSException* exception){
     NSLog(@"CRASH: %@", exception);
     NSLog(@"Stack Trace: %@",[exception callStackSymbols]);
     // Internal error reporting
@@ -54,6 +54,7 @@ void uncaughtExceptionHandler(NSException*exception){
 
 #pragma mask ::: app 完成加载;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
     
     /* 定义导航栏的样式 */
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
@@ -108,15 +109,14 @@ void uncaughtExceptionHandler(NSException*exception){
 
 /* 创建导航器: 刷卡系列 */
 - (UINavigationController*) newNavigationOfCustPayVC {
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    CustPayViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"custPayVC"];
+    MoneyInputViewController* viewController = [[MoneyInputViewController alloc] initWithNibName:nil bundle:nil];
     BrushViewController* brushVC = [[BrushViewController alloc] init];
     
     CustomNavigationController* navigation = [[CustomNavigationController alloc] initWithRootViewController:viewController viewControllersShouldPopToRoot:@[brushVC]];
     
     navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户收款"
-                                                          image:[UIImage imageNamed:@"iconaG"]
-                                                  selectedImage:[UIImage imageNamed:@"icona"]];
+                                                          image:[UIImage imageNamed:@"rmbBagBlackBlue"]
+                                                  selectedImage:[UIImage imageNamed:@"rmbBagRed"]];
     return navigation;
 }
 /* 创建导航器: 商户设置系列 */
@@ -125,8 +125,8 @@ void uncaughtExceptionHandler(NSException*exception){
 
     UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:businessManageVC];
     navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户管理"
-                                                          image:[UIImage imageNamed:@"iconbG"]
-                                                  selectedImage:[UIImage imageNamed:@"iconb"]];
+                                                          image:[UIImage imageNamed:@"userBlackBlue"]
+                                                  selectedImage:[UIImage imageNamed:@"userRed"]];
     
     
     return navigation;

@@ -12,7 +12,6 @@
 #import "Masonry.h"
 #import "VMImgPicker.h"
 #import <ReactiveCocoa.h>
-#import "QianPiViewController.h"
 
 
 @implementation DispatchMaterialUploadViewCtr

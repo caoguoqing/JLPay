@@ -57,6 +57,7 @@
 + (int)sistenToTen:(NSString*)tmpid;
 // 十进制 -> 16进制
 + (NSString *)ToBHex:(int)tmpid;
++ (NSString*) NoPreZeroHexStringFromInt:(int)intid ;
 // 16进制 -> 字符串（ascii）
 + (NSString *)stringFromHexString:(NSString *)hexString;
 // data -> nsstring

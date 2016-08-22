@@ -154,7 +154,7 @@
     NSDictionary* node = [dateArray objectAtIndex:innerIndex];
 
     NSString* orderNo = [node objectForKey:kMOtherPayNodeOrderNo];
-    return [orderNo stringCuttingXingInRange:NSMakeRange(6, orderNo.length - 6 - 4)];
+    return [orderNo stringCutting4XingInRange:NSMakeRange(6, orderNo.length - 6 - 4)];
 }
 
 - (NSString*) payTypeWithCode:(NSString*)code {

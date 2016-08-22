@@ -137,13 +137,18 @@
         f60_1type = @"22";
     } else if ([transType isEqualToString:TranType_ConsumeRepeal]) {
         f60_1type = @"23";
+    } else if ([transType isEqualToString:TranType_DownPubKey]) {
+        f60_1type = @"00";
     } else if ([transType isEqualToString:TranType_DownMainKey]) {
         f60_1type = @"99";
     } else if ([transType isEqualToString:TranType_DownWorkKey]) {
         f60_1type = @"00";
     } else if ([transType isEqualToString:TranType_YuE]) {
         f60_1type = @"01";
+    } else if ([transType isEqualToString:TranType_ElecSignPicUpload]) {
+        f60_1type = @"07";
     }
+
     return f60_1type;
 }
 // 60.2 N6 批次号
@@ -158,8 +163,14 @@
     {
         f60_3 = @"003";
     }
+    else if ([transType isEqualToString:TranType_DownPubKey]) {
+        f60_3 = @"400";
+    }
     else if ([transType isEqualToString:TranType_BatchUpload]) {
         f60_3 = @"201";
+    }
+    else if ([transType isEqualToString:TranType_ElecSignPicUpload]) {
+        f60_3 = @"";
     }
     else {
         f60_3 = @"000";
@@ -175,6 +186,12 @@
             return @"1";
         }
     }
+    else if ([transType isEqualToString:TranType_BatchUpload]) {
+        return @"0";
+    }
+    else if ([transType isEqualToString:TranType_ElecSignPicUpload]) {
+        return  @"";
+    }
     else {
         return @"1";
     }
@@ -185,6 +202,9 @@
     
     if (![transType isEqualToString:TranType_Consume]) {
         [f60_5Fee appendString:@"0"];
+    }
+    else if ([transType isEqualToString:TranType_ElecSignPicUpload] || [transType isEqualToString:TranType_BatchUpload]) {
+        [f60_5Fee appendString:@""];
     }
     else {
         // T+0

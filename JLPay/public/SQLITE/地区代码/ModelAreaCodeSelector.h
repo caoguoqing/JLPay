@@ -10,9 +10,9 @@
 
 
 static NSString* const kFieldNameOwner =    @"OWNER";
-static NSString* const kFieldNameKey =      @"KEY";
-static NSString* const kFieldNameValue =    @"VALUE";
-static NSString* const kFieldNameDescr =    @"DESCR";
+static NSString* const kFieldNameKey =      @"KEY";             /* 当前code */
+static NSString* const kFieldNameValue =    @"VALUE";           /* 地名 */
+static NSString* const kFieldNameDescr =    @"DESCR";           /* 上一级code */
 static NSString* const kFieldNameType =     @"TYPE";
 static NSString* const kFieldNameReserve =  @"RESERVE";
 

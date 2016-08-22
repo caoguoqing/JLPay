@@ -7,33 +7,30 @@
 //
 
 #import <Foundation/Foundation.h>
-
-
-
-@class Unpacking8583;
-
-#pragma mask ---- 拆包协议
-@protocol Unpacking8583Delegate <NSObject>
-@required
-// 解包结果:成功或失败;如果失败,带回错误信息
-- (void) didUnpackDatas:(NSDictionary*)dataDict onState:(BOOL)state withErrorMsg:(NSString*)message;
-@end
-
+#import "ErrorType.h"
 
 
 @interface Unpacking8583 : NSObject
-@property (nonatomic, assign) id<Unpacking8583Delegate> stateDelegate;
 
-// 单例:入口
-+(Unpacking8583 *)getInstance;
+/*
+ * 8583响应数据拆包 接口:
+ *         只需要类方法;block做回调;拆出来的每个子域都以 2-64 数字做域名;
+ *
+ *  @param responseString: 交易响应报文串  (IN)
+ *  @param  unpackedBlock: 拆包成功的回调  (BLOCK)
+ *  @param     errorBlock: 拆包失败的回调  (BLOCK)
+ */
++ (void) unpacking8583Response:(NSString*)responseString
+                    onUnpacked:(void (^) (NSDictionary* unpackedInfo))unpackedBlock
+                       onError:(void (^) (NSError* error))errorBlock;
 
-// 拆包 -- 新接口:字段已拆出,但未保存
--(void)unpacking8583:(NSString *)responseString withDelegate:(id<Unpacking8583Delegate>)delegate ;
+
 
 // 3DES加密
--(NSString *)threeDesEncrypt:(NSString *)decryptDtr keyValue:(NSString *)key;
++(NSString *)threeDesEncrypt:(NSString *)decryptDtr keyValue:(NSString *)key;
 
 // 3DES解密
--(NSString *)threeDESdecrypt:(NSString *)decryptStr keyValue:(NSString *)key;
++(NSString *)threeDESdecrypt:(NSString *)decryptStr keyValue:(NSString *)key;
+
 
 @end

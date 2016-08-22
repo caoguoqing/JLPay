@@ -7,6 +7,7 @@
 //
 
 #import "JLSignInViewController.h"
+#import "JLSignUpViewController.h"
 
 @implementation JLSignInViewController
 
@@ -108,20 +109,6 @@
                     [self switchToMainInterface];
                 }
             }];
-//            [self.progressHud showSuccessWithText:@"登录成功" andDetailText:nil onCompletion:^{
-//                @strongify(self);
-//                /* 初始密码为8个0的: 强制修改密码 */
-//                if ([self.pwdTextField.text isEqualToString:@"00000000"]) {
-//                    [self switchToChangePinInterface];
-//                } else {
-//                    /* 重置登陆信息的保存 */
-//                    [self resetAndSavingSignInResponse];
-//                    /* 检查是否切换了账号 */
-//                    [self clearDeviceInfoIfSwitchUser];
-//                    /* 跳转到主界面 */
-//                    [self switchToMainInterface];
-//                }
-//            }];
         }];
     }];
     
@@ -153,9 +140,15 @@
 }
 
 - (IBAction) clickedSignUpBtn:(id)sender {
-    UserRegisterViewController* userRegisterVC = [[UserRegisterViewController alloc] initWithNibName:nil bundle:nil];
-    userRegisterVC.registerType = RegisterTypeNew;
-    [self.navigationController pushViewController:userRegisterVC animated:YES];
+//    UserRegisterViewController* userRegisterVC = [[UserRegisterViewController alloc] initWithNibName:nil bundle:nil];
+//    userRegisterVC.registerType = RegisterTypeNew;
+//    [self.navigationController pushViewController:userRegisterVC animated:YES];
+
+    
+    JLSignUpViewController* userSignUpVC = [[JLSignUpViewController alloc] initWithNibName:nil bundle:nil];
+    [userSignUpVC setFirstStep];
+    userSignUpVC.seperatedIndex = 0;
+    [self.navigationController pushViewController:userSignUpVC animated:YES];
 }
 
 /* 点击空白隐藏键盘 */
@@ -303,12 +296,12 @@
         make.width.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate * 1.5);
     }];
 
-    [self.visiblePwdSeenBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(wself.pwdTextField.mas_right).offset(- heightTxtField * 0.5);
-        make.centerY.equalTo(wself.pwdTextField.mas_centerY);
-        make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
-        make.width.equalTo(wself.visiblePwdSeenBtn.mas_height);
-    }];
+//    [self.visiblePwdSeenBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.right.equalTo(wself.pwdTextField.mas_right).offset(- heightTxtField * 0.5);
+//        make.centerY.equalTo(wself.pwdTextField.mas_centerY);
+//        make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
+//        make.width.equalTo(wself.visiblePwdSeenBtn.mas_height);
+//    }];
 
     [self.pwdSavingBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(wself.pwdTextField.mas_bottom).offset(0);
@@ -375,8 +368,6 @@
     if (!_headLabel) {
         _headLabel = [UILabel new];
         _headLabel.text = [NSString stringWithIconFontType:IconFontType_user];
-
-        JLPrint(@"headLabel.text = [%@]", _headLabel.text);
         _headLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
         _headLabel.textAlignment = NSTextAlignmentCenter;
     }

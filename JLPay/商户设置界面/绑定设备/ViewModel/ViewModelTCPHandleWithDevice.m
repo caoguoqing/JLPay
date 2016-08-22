@@ -14,12 +14,19 @@
 #import "Unpacking8583.h"
 #import "EncodeString.h"
 #import "Define_Header.h"
+#import "RSAEncoder.h"
+#import "ThreeDesUtil.h"
 
-@interface ViewModelTCPHandleWithDevice()
-<wallDelegate, Unpacking8583Delegate>
+@interface ViewModelTCPHandleWithDevice()  <wallDelegate>
 {
     NSString* sTranType; // 交易类型
 }
+
+
+/* 下载公钥的回调: 成功 or 失败 */
+@property (nonatomic, copy) void (^ downloadPubkeySucBlock) (NSString* pubkey);
+@property (nonatomic, copy) void (^ downloadPubkeyErrBlock) (NSError* error);
+
 
 @end
 
@@ -38,21 +45,46 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 }
 
 /* 下载主密钥 */
-- (void) downloadMainKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum {
-    NSDictionary* fieldInfos = [NSDictionary dictionaryWithObjects:@[terminalNum,businessNum] forKeys:@[@"41",@"42"]];
+- (void)downloadMainKeyWithBusinessNum:(NSString *)businessNum andTerminalNum:(NSString *)terminalNum andPubkey:(NSString *)pubkey
+{
+    NSDictionary* fieldInfos = [NSDictionary dictionaryWithObjects:@[terminalNum,businessNum,pubkey] forKeys:@[@"41",@"42",@"62"]];
     [[ModelTCPTransPacking sharedModel] packingFieldsInfo:fieldInfos forTransType:TranType_DownMainKey];
     [self sendTransPackage:[[ModelTCPTransPacking sharedModel] packageFinalyPacking] withTransType:TranType_DownMainKey];
 }
+
 /* 下载工作密钥 */
 - (void) downloadWorkKeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum {
     NSDictionary* fieldInfos = [NSDictionary dictionaryWithObjects:@[terminalNum,businessNum] forKeys:@[@"41",@"42"]];
     [[ModelTCPTransPacking sharedModel] packingFieldsInfo:fieldInfos forTransType:TranType_DownWorkKey];
     [self sendTransPackage:[[ModelTCPTransPacking sharedModel] packageFinalyPacking] withTransType:TranType_DownWorkKey];
 }
+
 /* 终止下载 */
 - (void) stopDownloading {
     self.delegate = nil;
     [[TcpClientService getInstance] clearDelegateAndClose];
+}
+
+
+/***********************************
+ * 下载公钥
+ *    update by fjl.2016-08-10
+ *    改用block返回获取的结果
+ ***********************************/
+- (void) downloadPubkeyWithBusinessNum:(NSString*)businessNum andTerminalNum:(NSString*)terminalNum
+                        onSuccessBlock:(void (^) (NSString* pubkey))successBlock
+                          orErrorBlock:(void (^) (NSError* error))errorBlock
+{
+    self.downloadPubkeySucBlock = successBlock;
+    self.downloadPubkeyErrBlock = errorBlock;
+    JLPrint(@"---正在下载公钥，终端号为[%@]", terminalNum);
+    NSMutableDictionary* fieldInfos = [NSMutableDictionary dictionary];
+    [fieldInfos setObject:businessNum forKey:@"42"];
+    [fieldInfos setObject:terminalNum forKey:@"41"];
+    /* 62域取固定值 */
+    [fieldInfos setObject:@"9F0605DF000000019F220101" forKey:@"62"];
+    [[ModelTCPTransPacking sharedModel] packingFieldsInfo:fieldInfos forTransType:TranType_DownPubKey];
+    [self sendTransPackage:[[ModelTCPTransPacking sharedModel] packageFinalyPacking] withTransType:TranType_DownPubKey];
 }
 
 
@@ -75,9 +107,15 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDownloadedMainKeyResult:withMainKey:orErrorMessage:)]) {
             [self.delegate didDownloadedMainKeyResult:NO withMainKey:nil orErrorMessage:errorMessage];
         }
-    } else {
+    }
+    else if ([sTranType isEqualToString:TranType_DownWorkKey]) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDownloadedWorkKeyResult:withWorkKey:orErrorMessage:)]) {
             [self.delegate didDownloadedWorkKeyResult:NO withWorkKey:nil orErrorMessage:errorMessage];
+        }
+    }
+    else if ([sTranType isEqualToString:TranType_DownPubKey]) {
+        if (self.downloadPubkeyErrBlock) {
+            self.downloadPubkeyErrBlock ([NSError errorWithDomain:@"" code:99 localizedDescription:errorMessage]);
         }
     }
 }
@@ -87,9 +125,15 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDownloadedMainKeyResult:withMainKey:orErrorMessage:)]) {
             [self.delegate didDownloadedMainKeyResult:YES withMainKey:key orErrorMessage:nil];
         }
-    } else {
+    }
+    else if ([sTranType isEqualToString:TranType_DownWorkKey]) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(didDownloadedWorkKeyResult:withWorkKey:orErrorMessage:)]) {
             [self.delegate didDownloadedWorkKeyResult:YES withWorkKey:key orErrorMessage:nil];
+        }
+    }
+    else if ([sTranType isEqualToString:TranType_DownPubKey]) {
+        if (self.downloadPubkeySucBlock) {
+            self.downloadPubkeySucBlock(key);
         }
     }
 }
@@ -98,8 +142,42 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 /* TCP响应结果 */
 - (void)receiveGetData:(NSString *)data method:(NSString *)str {
     [[TcpClientService getInstance] clearDelegateAndClose];
+    NameWeakSelf(wself);
     if (data && data.length > 0) {
-        [[Unpacking8583 getInstance] unpacking8583:data withDelegate:self];
+        [Unpacking8583 unpacking8583Response:data onUnpacked:^(NSDictionary *unpackedInfo) {
+            NSString* code = [unpackedInfo objectForKey:@"39"];
+            if ([code isEqualToString:@"00"]) {
+                // 区分主密钥跟工作密钥
+                if ([sTranType isEqualToString:TranType_DownMainKey]) {
+                    NSString* mainKey = [wself mainKeyAnalysedByF62:[unpackedInfo valueForKey:@"62"]];
+                    if (mainKey && mainKey.length > 0) {
+                        [wself rebackWithAnalysedKey:mainKey];
+                    } else {
+                        [wself rebackWithErrorMessage:@"主密钥解析失败"];
+                    }
+                }
+                else if ([sTranType isEqualToString:TranType_DownWorkKey]) {
+                    NSString* workKey = [wself workKeyAnalysedByF62:[unpackedInfo valueForKey:@"62"]];
+                    if (workKey && workKey.length > 0) {
+                        [wself rebackWithAnalysedKey:workKey];
+                    } else {
+                        [wself rebackWithErrorMessage:@"工作密钥解析失败"];
+                    }
+                }
+                else if ([sTranType isEqualToString:TranType_DownPubKey]) {
+                    NSString* pubkey = [unpackedInfo objectForKey:@"62"];
+                    if (pubkey && pubkey.length > 0) {
+                        [wself rebackWithAnalysedKey:pubkey];
+                    } else {
+                        [wself rebackWithErrorMessage:@"公钥解析失败"];
+                    }
+                }
+            } else {
+                [wself rebackWithErrorMessage:[NSString stringWithFormat:@"[%@]%@",code, [ErrorType errInfo:code] ]];
+            }
+        } onError:^(NSError *error) {
+            [wself rebackWithErrorMessage:[error localizedDescription]];
+        }];
     } else {
         [self rebackWithErrorMessage:@"网络异常，请检查网络"];
     }
@@ -111,32 +189,6 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
 }
 
 
-#pragma mask ---- Unpacking8583Delegate
-/* 拆包结果;并回调 */
-- (void)didUnpackDatas:(NSDictionary *)dataDict onState:(BOOL)state withErrorMsg:(NSString *)message
-{
-    if (state) {
-        // 区分主密钥跟工作密钥
-        if ([sTranType isEqualToString:TranType_DownMainKey]) {
-            NSString* mainKey = [self mainKeyAnalysedByF62:[dataDict valueForKey:@"62"]];
-            if (mainKey && mainKey.length > 0) {
-                [self rebackWithAnalysedKey:mainKey];
-            } else {
-                [self rebackWithErrorMessage:@"主密钥解析失败"];
-            }
-        }
-        else if ([sTranType isEqualToString:TranType_DownWorkKey]) {
-            NSString* workKey = [self workKeyAnalysedByF62:[dataDict valueForKey:@"62"]];
-            if (workKey && workKey.length > 0) {
-                [self rebackWithAnalysedKey:workKey];
-            } else {
-                [self rebackWithErrorMessage:@"工作密钥解析失败"];
-            }
-        }
-    } else {
-        [self rebackWithErrorMessage:message];
-    }
-}
 
 // 解析62域: 主密钥
 - (NSString*) mainKeyAnalysedByF62:(NSString*)f62 {
@@ -152,7 +204,7 @@ static ViewModelTCPHandleWithDevice* tcpHandleWithDevice;
             if (location + length <= f62.length) {
                 NSString* mainKeyPin = [f62 substringWithRange:NSMakeRange(location, length)];
                 // 解密出明文
-                mainKey = [[Unpacking8583 getInstance] threeDESdecrypt:mainKeyPin keyValue:@"EF2AE9F834BFCDD5260B974A70AD1A4A"];
+                mainKey = [Unpacking8583 threeDESdecrypt:mainKeyPin keyValue:[RSAEncoder pinSourceOfPubdata]];
             }
         }
     }

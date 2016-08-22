@@ -87,8 +87,14 @@
 }
 - (HTTPInstance *)http {
     if (!_http) {
-        NSString* url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo",
-                         [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        NSString* url;
+        if (TestOrProduce == 11) {
+            url = [NSString stringWithFormat:@"http://%@:%@/kftagent/getMchntInfo",
+                   [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        } else {
+            url = [NSString stringWithFormat:@"http://%@:%@/jlagent/getMchntInfo",
+                   [PublicInformation getServerDomain],[PublicInformation getHTTPPort]];
+        }
         _http = [[HTTPInstance alloc] initWithURLString:url];
     }
     return _http;

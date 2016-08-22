@@ -100,7 +100,8 @@
 }
 - (HTTPInstance *)http {
     if (!_http) {
-        NSString* url = [NSString stringWithFormat:@"http://%@:%@/onlinepay/queryTradeDetails",
+        NSString* url;
+        url = [NSString stringWithFormat:@"http://%@:%@/onlinepay/queryTradeDetails",
                          [PublicInformation getOnlinePayIp],[PublicInformation getOnlinePayPort]];
         _http = [[HTTPInstance alloc] initWithURLString:url];
     }

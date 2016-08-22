@@ -12,8 +12,8 @@
 #import "Define_Header.h"
 #import <ReactiveCocoa.h>
 #import "MD5Util.h"
-#import "QianPiViewController.h"
 #import "RepeatSignCell.h"
+#import "PosInformationViewController.h"
 
 @implementation VMDispatchUpload
 
@@ -140,9 +140,9 @@
 
 # pragma mask 3 push to QianPiViewC
 - (void) doPushVCToQianPi {
-    QianPiViewController  *qianpi=[[QianPiViewController alloc] initWithNibName:nil bundle:nil];
-    [qianpi qianpiType:1];
-    [qianpi leftTitle:self.originDispatchDetail.transMoney];
+    PosInformationViewController* posInforPaper=[[PosInformationViewController alloc] initWithNibName:nil bundle:nil];
+    posInforPaper.userFor = PosNoteUseForDispatch;
+    
     NSMutableDictionary* transInformation = [NSMutableDictionary dictionary];
     [transInformation setObject:self.originDispatchDetail.businessName forKey:@"businessName"];
     [transInformation setObject:self.originDispatchDetail.businessNo forKey:@"businessNum"];
@@ -155,10 +155,9 @@
     [transInformation setObject:[self.originDispatchDetail.originDateAndTime substringFromIndex:8] forKey:@"12"];
     [transInformation setObject:self.originDispatchDetail.referenceNo forKey:@"37"];
 
-    [qianpi setTransInformation:transInformation];
-    qianpi.userFor = PosNoteUseForDispatch;
+    [posInforPaper setTransInformation:transInformation];
     if (self.pushQianPiVCBlock) {
-        self.pushQianPiVCBlock(qianpi);
+        self.pushQianPiVCBlock(posInforPaper);
     }
 }
 

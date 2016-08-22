@@ -12,6 +12,8 @@
 #import "AppDelegate.h"
 #import "PublicInformation.h"
 
+#import "UIAlertController+JLShow.h"
+
 #import "UIColor+HexColor.h"
 #import "NSString+Formater.h"
 #import "NSError+Custom.h"
@@ -45,6 +47,7 @@
  *     4         76(2809)            202.104.101.126    7690              28090
  *     5         75(2809)            202.104.101.126    60702             60780
  *     11        KFT                 unitepay.com.cn    10090             10088
+ *     12        KFT_new
  * --------------------------------------------------------------------------------------- */
 #define TestOrProduce                   2
 
