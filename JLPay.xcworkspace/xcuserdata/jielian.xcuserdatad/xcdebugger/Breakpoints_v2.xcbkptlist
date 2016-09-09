@@ -1119,5 +1119,37 @@
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/&#x5546;&#x6237;&#x8bbe;&#x7f6e;&#x754c;&#x9762;/&#x591a;&#x5546;&#x6237;&#x591a;&#x8d39;&#x7387;/&#x591a;&#x5546;&#x6237;&#x591a;&#x8d39;&#x7387;&#x663e;&#x793a;/Model/MBusiAndRateInfoReading.h"
+            timestampString = "493797596.405185"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "@interface MBusiAndRateInfoReading"
+            landmarkType = "2">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/&#x5546;&#x6237;&#x8bbe;&#x7f6e;&#x754c;&#x9762;/&#x591a;&#x5546;&#x6237;&#x591a;&#x8d39;&#x7387;/&#x591a;&#x5546;&#x6237;&#x591a;&#x8d39;&#x7387;&#x8bbe;&#x7f6e;/&#x7701;&#x5e02;/ViewModel/VMBR_chooseProvinceAndCity.m"
+            timestampString = "494326703.485452"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "-updateCitiesWithProvinceCode:onFinished:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

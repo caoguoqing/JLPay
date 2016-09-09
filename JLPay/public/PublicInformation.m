@@ -850,7 +850,8 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 + (NSString*) telephoneOfCompany {
     NSString* telephone = nil;
     if (BranchAppName == 0) {
-        telephone = @"0755-86532999";
+//        telephone = @"0755-86532999";
+        telephone = @"400-860-5233";
     }
     else if (BranchAppName == 1) {
         telephone = @"待定...";
@@ -862,7 +863,8 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         telephone = @"待定...";
     }
     else {
-        telephone = @"0755-86532999";
+//        telephone = @"0755-86532999";
+        telephone = @"400-860-5233";
     }
     return telephone;
 }

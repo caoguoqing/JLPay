@@ -257,7 +257,7 @@
     NameWeakSelf(wself);
     if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_1) {
         if ([MLoginSavedResource sharedLoginResource].N_business_enable && [ModelBusinessInfoSaved beenSaved]) {
-            NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@][%@]\n是否继续刷卡?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
+            NSString* alert = [NSString stringWithFormat:@"已设置指定商户:\n[%@]\n[%@]\n是否继续消费?", [ModelBusinessInfoSaved businessName],[ModelBusinessInfoSaved rateTypeSelected]];
             [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
             } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
                 [wself pushSwipeOrOtherDisplayVC];
@@ -265,7 +265,7 @@
             return NO;
         }
         else if ([MLoginSavedResource sharedLoginResource].N_fee_enable && [ModelRateInfoSaved beenSaved]) {
-            NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@][%@]\n是否继续刷卡?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
+            NSString* alert = [NSString stringWithFormat:@"已设置指定费率:\n[%@]\n[%@]\n是否继续消费?", [ModelRateInfoSaved rateTypeSelected],[ModelRateInfoSaved cityName]];
             [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:alert ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
             } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
                 [wself pushSwipeOrOtherDisplayVC];

@@ -25,5 +25,10 @@ typedef void (^ clickedIndex) (UIAlertAction* action);
                        buttons:(NSDictionary*)buttons,...;
 
 
++ (void) showAlertWithTitle:(NSString*)title
+                    message:(NSString*)message
+                     target:(id)target
+              clickedHandle:(clickedIndex)clickedHandle
+                    buttons:(NSDictionary*)buttons,...;
 
 @end

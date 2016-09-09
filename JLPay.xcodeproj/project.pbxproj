@@ -183,6 +183,22 @@
 		5EB220CE1D63F543008591E5 /* JLPasswordView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220C91D63F543008591E5 /* JLPasswordView.m */; };
 		5EB220CF1D63F543008591E5 /* JLPWDInputsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220CB1D63F543008591E5 /* JLPWDInputsView.m */; };
 		5EB220D01D63F543008591E5 /* JLPWDKeyBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220CD1D63F543008591E5 /* JLPWDKeyBoardView.m */; };
+		5EB221331D6D7F84008591E5 /* MoreBusinessOrRateVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221321D6D7F84008591E5 /* MoreBusinessOrRateVC.m */; };
+		5EB221371D6D8381008591E5 /* NaviTitleViewPullDownChoose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221361D6D8381008591E5 /* NaviTitleViewPullDownChoose.m */; };
+		5EB2213B1D6D8F41008591E5 /* LaydownNaviTableViewChoose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2213A1D6D8F41008591E5 /* LaydownNaviTableViewChoose.m */; };
+		5EB2213E1D6EA2F9008591E5 /* MBusiAndRateInfoReading.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2213D1D6EA2F9008591E5 /* MBusiAndRateInfoReading.m */; };
+		5EB221411D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221401D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.m */; };
+		5EB221591D73CAF7008591E5 /* StepSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221581D73CAF7008591E5 /* StepSegmentView.m */; };
+		5EB221631D73E965008591E5 /* ChooseBusinessOrRateVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221621D73E965008591E5 /* ChooseBusinessOrRateVC.m */; };
+		5EB221661D740763008591E5 /* VMMoreBusinessOrRateSaving.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221651D740763008591E5 /* VMMoreBusinessOrRateSaving.m */; };
+		5EB221691D740BA4008591E5 /* BR_chooseRateVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221681D740BA4008591E5 /* BR_chooseRateVC.m */; };
+		5EB2216C1D740BEB008591E5 /* BR_chooseBusinessVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2216B1D740BEB008591E5 /* BR_chooseBusinessVC.m */; };
+		5EB2216F1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2216E1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.m */; };
+		5EB221721D743180008591E5 /* VMBR_chooseRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221711D743180008591E5 /* VMBR_chooseRate.m */; };
+		5EB221751D752B77008591E5 /* VMBR_chooseProvinceAndCity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221741D752B77008591E5 /* VMBR_chooseProvinceAndCity.m */; };
+		5EB221781D752F43008591E5 /* BRPC_chooseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB221771D752F43008591E5 /* BRPC_chooseCell.m */; };
+		5EB2217B1D75347D008591E5 /* MSqlAreaCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2217A1D75347D008591E5 /* MSqlAreaCode.m */; };
+		5EB2217E1D75348A008591E5 /* MHttpAreaCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2217D1D75348A008591E5 /* MHttpAreaCode.m */; };
 		5EB2D74D1D2DEDE100912145 /* BankNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D71F1D2DEDE100912145 /* BankNumberViewController.m */; };
 		5EB2D74E1D2DEDE100912145 /* DetailAreaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D7211D2DEDE100912145 /* DetailAreaViewController.m */; };
 		5EB2D74F1D2DEDE100912145 /* ImageViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D7231D2DEDE100912145 /* ImageViewCell.m */; };
@@ -307,6 +323,8 @@
 		5ED344371AD8EF910005C890 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344361AD8EF910005C890 /* AVFoundation.framework */; };
 		5ED344391AD8EF9D0005C890 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */; };
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
+		5EDA73371D757096000606A6 /* VMBR_chooseBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA73361D757096000606A6 /* VMBR_chooseBusiness.m */; };
+		5EDA733A1D75717A000606A6 /* MBR_HTTP_getBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA73391D75717A000606A6 /* MBR_HTTP_getBusiness.m */; };
 		5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */; };
 		5EDC46901CA1219300B2F872 /* VMT_0InfoRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDC468F1CA1219300B2F872 /* VMT_0InfoRequester.m */; };
 		5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EFD09811C1139B40062AD34 /* Default-568h@2x.png */; };
@@ -681,6 +699,38 @@
 		5EB220CB1D63F543008591E5 /* JLPWDInputsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLPWDInputsView.m; sourceTree = "<group>"; };
 		5EB220CC1D63F543008591E5 /* JLPWDKeyBoardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLPWDKeyBoardView.h; sourceTree = "<group>"; };
 		5EB220CD1D63F543008591E5 /* JLPWDKeyBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLPWDKeyBoardView.m; sourceTree = "<group>"; };
+		5EB221311D6D7F84008591E5 /* MoreBusinessOrRateVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreBusinessOrRateVC.h; sourceTree = "<group>"; };
+		5EB221321D6D7F84008591E5 /* MoreBusinessOrRateVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreBusinessOrRateVC.m; sourceTree = "<group>"; };
+		5EB221351D6D8381008591E5 /* NaviTitleViewPullDownChoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NaviTitleViewPullDownChoose.h; sourceTree = "<group>"; };
+		5EB221361D6D8381008591E5 /* NaviTitleViewPullDownChoose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NaviTitleViewPullDownChoose.m; sourceTree = "<group>"; };
+		5EB221391D6D8F41008591E5 /* LaydownNaviTableViewChoose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaydownNaviTableViewChoose.h; sourceTree = "<group>"; };
+		5EB2213A1D6D8F41008591E5 /* LaydownNaviTableViewChoose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaydownNaviTableViewChoose.m; sourceTree = "<group>"; };
+		5EB2213C1D6EA2F9008591E5 /* MBusiAndRateInfoReading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBusiAndRateInfoReading.h; sourceTree = "<group>"; };
+		5EB2213D1D6EA2F9008591E5 /* MBusiAndRateInfoReading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBusiAndRateInfoReading.m; sourceTree = "<group>"; };
+		5EB2213F1D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMDataSourceForMoreBusiOrRateVC.h; sourceTree = "<group>"; };
+		5EB221401D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMDataSourceForMoreBusiOrRateVC.m; sourceTree = "<group>"; };
+		5EB221571D73CAF7008591E5 /* StepSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepSegmentView.h; sourceTree = "<group>"; };
+		5EB221581D73CAF7008591E5 /* StepSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StepSegmentView.m; sourceTree = "<group>"; };
+		5EB221611D73E965008591E5 /* ChooseBusinessOrRateVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChooseBusinessOrRateVC.h; sourceTree = "<group>"; };
+		5EB221621D73E965008591E5 /* ChooseBusinessOrRateVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChooseBusinessOrRateVC.m; sourceTree = "<group>"; };
+		5EB221641D740763008591E5 /* VMMoreBusinessOrRateSaving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMMoreBusinessOrRateSaving.h; sourceTree = "<group>"; };
+		5EB221651D740763008591E5 /* VMMoreBusinessOrRateSaving.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMMoreBusinessOrRateSaving.m; sourceTree = "<group>"; };
+		5EB221671D740BA4008591E5 /* BR_chooseRateVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BR_chooseRateVC.h; sourceTree = "<group>"; };
+		5EB221681D740BA4008591E5 /* BR_chooseRateVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BR_chooseRateVC.m; sourceTree = "<group>"; };
+		5EB2216A1D740BEB008591E5 /* BR_chooseBusinessVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BR_chooseBusinessVC.h; sourceTree = "<group>"; };
+		5EB2216B1D740BEB008591E5 /* BR_chooseBusinessVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BR_chooseBusinessVC.m; sourceTree = "<group>"; };
+		5EB2216D1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BR_chooseProvinceAndCityVC.h; sourceTree = "<group>"; };
+		5EB2216E1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BR_chooseProvinceAndCityVC.m; sourceTree = "<group>"; };
+		5EB221701D743180008591E5 /* VMBR_chooseRate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMBR_chooseRate.h; sourceTree = "<group>"; };
+		5EB221711D743180008591E5 /* VMBR_chooseRate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMBR_chooseRate.m; sourceTree = "<group>"; };
+		5EB221731D752B77008591E5 /* VMBR_chooseProvinceAndCity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMBR_chooseProvinceAndCity.h; sourceTree = "<group>"; };
+		5EB221741D752B77008591E5 /* VMBR_chooseProvinceAndCity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMBR_chooseProvinceAndCity.m; sourceTree = "<group>"; };
+		5EB221761D752F43008591E5 /* BRPC_chooseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRPC_chooseCell.h; sourceTree = "<group>"; };
+		5EB221771D752F43008591E5 /* BRPC_chooseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRPC_chooseCell.m; sourceTree = "<group>"; };
+		5EB221791D75347D008591E5 /* MSqlAreaCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSqlAreaCode.h; sourceTree = "<group>"; };
+		5EB2217A1D75347D008591E5 /* MSqlAreaCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSqlAreaCode.m; sourceTree = "<group>"; };
+		5EB2217C1D75348A008591E5 /* MHttpAreaCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHttpAreaCode.h; sourceTree = "<group>"; };
+		5EB2217D1D75348A008591E5 /* MHttpAreaCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHttpAreaCode.m; sourceTree = "<group>"; };
 		5EB2D71E1D2DEDE100912145 /* BankNumberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BankNumberViewController.h; sourceTree = "<group>"; };
 		5EB2D71F1D2DEDE100912145 /* BankNumberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BankNumberViewController.m; sourceTree = "<group>"; };
 		5EB2D7201D2DEDE100912145 /* DetailAreaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailAreaViewController.h; sourceTree = "<group>"; };
@@ -914,6 +964,10 @@
 		5ED344361AD8EF910005C890 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5ED344381AD8EF9D0005C890 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		5EDA73351D757096000606A6 /* VMBR_chooseBusiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMBR_chooseBusiness.h; sourceTree = "<group>"; };
+		5EDA73361D757096000606A6 /* VMBR_chooseBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMBR_chooseBusiness.m; sourceTree = "<group>"; };
+		5EDA73381D75717A000606A6 /* MBR_HTTP_getBusiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBR_HTTP_getBusiness.h; sourceTree = "<group>"; };
+		5EDA73391D75717A000606A6 /* MBR_HTTP_getBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBR_HTTP_getBusiness.m; sourceTree = "<group>"; };
 		5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JLPayDevice_TY01.h; path = JLPayDevice_TY/JLPayDevice_TY01.h; sourceTree = "<group>"; };
 		5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLPayDevice_TY01.m; path = JLPayDevice_TY/JLPayDevice_TY01.m; sourceTree = "<group>"; };
 		5EDA84451B9ED3670096391B /* JieLianService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JieLianService.h; path = JLPayDevice_TY/JieLianService.h; sourceTree = "<group>"; };
@@ -997,6 +1051,7 @@
 				5E51A8E71D1B746000C6FB91 /* 交易管理 */,
 				5EB7B2101CEEAA0C00DCE4FC /* 立即到账 */,
 				5E51A9E71D20D6EF00C6FB91 /* 绑定设备 */,
+				5EB221281D6D7F51008591E5 /* 多商户多费率 */,
 				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E0EBA961C3227A600DCAC59 /* T_0卡验证 */,
 				5E9448171BFD5AF500128452 /* 余额查询 */,
@@ -1419,6 +1474,9 @@
 		5E51A9351D1B74FE00C6FB91 /* 自定义控件 */ = {
 			isa = PBXGroup;
 			children = (
+				5EB221561D73CAE2008591E5 /* StepSegmentView */,
+				5EB221381D6D8F2F008591E5 /* LaydownNaviTableViewChoose */,
+				5EB221341D6D82F8008591E5 /* NaviTitleViewPullDownChoose */,
 				5E51A9361D1B74FE00C6FB91 /* ConcentricCirclesCheckView */,
 				5E51A93B1D1B74FE00C6FB91 /* CustomCheckView */,
 				5E51A93E1D1B74FE00C6FB91 /* CustomKeyboard */,
@@ -1528,10 +1586,10 @@
 		5E51A95C1D1B74FE00C6FB91 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				5E51A95D1D1B74FE00C6FB91 /* SiftTBVMainCell.h */,
-				5E51A95E1D1B74FE00C6FB91 /* SiftTBVMainCell.m */,
 				5E51A95F1D1B74FE00C6FB91 /* SiftViewController.h */,
 				5E51A9601D1B74FE00C6FB91 /* SiftViewController.m */,
+				5E51A95D1D1B74FE00C6FB91 /* SiftTBVMainCell.h */,
+				5E51A95E1D1B74FE00C6FB91 /* SiftTBVMainCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2081,6 +2139,238 @@
 				5EB220CD1D63F543008591E5 /* JLPWDKeyBoardView.m */,
 			);
 			path = JLPasswordView;
+			sourceTree = "<group>";
+		};
+		5EB221281D6D7F51008591E5 /* 多商户多费率 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221291D6D7F51008591E5 /* 多商户多费率显示 */,
+				5EB2212D1D6D7F51008591E5 /* 多商户多费率设置 */,
+			);
+			path = "多商户多费率";
+			sourceTree = "<group>";
+		};
+		5EB221291D6D7F51008591E5 /* 多商户多费率显示 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2212A1D6D7F51008591E5 /* Model */,
+				5EB2212B1D6D7F51008591E5 /* View */,
+				5EB2212C1D6D7F51008591E5 /* ViewModel */,
+			);
+			path = "多商户多费率显示";
+			sourceTree = "<group>";
+		};
+		5EB2212A1D6D7F51008591E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2213C1D6EA2F9008591E5 /* MBusiAndRateInfoReading.h */,
+				5EB2213D1D6EA2F9008591E5 /* MBusiAndRateInfoReading.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5EB2212B1D6D7F51008591E5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221311D6D7F84008591E5 /* MoreBusinessOrRateVC.h */,
+				5EB221321D6D7F84008591E5 /* MoreBusinessOrRateVC.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5EB2212C1D6D7F51008591E5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2213F1D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.h */,
+				5EB221401D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5EB2212D1D6D7F51008591E5 /* 多商户多费率设置 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221521D73C950008591E5 /* 主界面 */,
+				5EB221461D73C950008591E5 /* 费率 */,
+				5EB2214E1D73C950008591E5 /* 省市 */,
+				5EB2214A1D73C950008591E5 /* 商户 */,
+			);
+			path = "多商户多费率设置";
+			sourceTree = "<group>";
+		};
+		5EB221341D6D82F8008591E5 /* NaviTitleViewPullDownChoose */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221351D6D8381008591E5 /* NaviTitleViewPullDownChoose.h */,
+				5EB221361D6D8381008591E5 /* NaviTitleViewPullDownChoose.m */,
+			);
+			path = NaviTitleViewPullDownChoose;
+			sourceTree = "<group>";
+		};
+		5EB221381D6D8F2F008591E5 /* LaydownNaviTableViewChoose */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221391D6D8F41008591E5 /* LaydownNaviTableViewChoose.h */,
+				5EB2213A1D6D8F41008591E5 /* LaydownNaviTableViewChoose.m */,
+			);
+			path = LaydownNaviTableViewChoose;
+			sourceTree = "<group>";
+		};
+		5EB221461D73C950008591E5 /* 费率 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221471D73C950008591E5 /* Model */,
+				5EB221481D73C950008591E5 /* View */,
+				5EB221491D73C950008591E5 /* ViewModel */,
+			);
+			path = "费率";
+			sourceTree = "<group>";
+		};
+		5EB221471D73C950008591E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5EB221481D73C950008591E5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221671D740BA4008591E5 /* BR_chooseRateVC.h */,
+				5EB221681D740BA4008591E5 /* BR_chooseRateVC.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5EB221491D73C950008591E5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221701D743180008591E5 /* VMBR_chooseRate.h */,
+				5EB221711D743180008591E5 /* VMBR_chooseRate.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5EB2214A1D73C950008591E5 /* 商户 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2214B1D73C950008591E5 /* Model */,
+				5EB2214C1D73C950008591E5 /* View */,
+				5EB2214D1D73C950008591E5 /* ViewModel */,
+			);
+			path = "商户";
+			sourceTree = "<group>";
+		};
+		5EB2214B1D73C950008591E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5EDA73381D75717A000606A6 /* MBR_HTTP_getBusiness.h */,
+				5EDA73391D75717A000606A6 /* MBR_HTTP_getBusiness.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5EB2214C1D73C950008591E5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2216A1D740BEB008591E5 /* BR_chooseBusinessVC.h */,
+				5EB2216B1D740BEB008591E5 /* BR_chooseBusinessVC.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5EB2214D1D73C950008591E5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5EDA73351D757096000606A6 /* VMBR_chooseBusiness.h */,
+				5EDA73361D757096000606A6 /* VMBR_chooseBusiness.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5EB2214E1D73C950008591E5 /* 省市 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2214F1D73C950008591E5 /* Model */,
+				5EB221501D73C950008591E5 /* View */,
+				5EB221511D73C950008591E5 /* ViewModel */,
+			);
+			path = "省市";
+			sourceTree = "<group>";
+		};
+		5EB2214F1D73C950008591E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221791D75347D008591E5 /* MSqlAreaCode.h */,
+				5EB2217A1D75347D008591E5 /* MSqlAreaCode.m */,
+				5EB2217C1D75348A008591E5 /* MHttpAreaCode.h */,
+				5EB2217D1D75348A008591E5 /* MHttpAreaCode.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5EB221501D73C950008591E5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5EB2216D1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.h */,
+				5EB2216E1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.m */,
+				5EB221761D752F43008591E5 /* BRPC_chooseCell.h */,
+				5EB221771D752F43008591E5 /* BRPC_chooseCell.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5EB221511D73C950008591E5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221731D752B77008591E5 /* VMBR_chooseProvinceAndCity.h */,
+				5EB221741D752B77008591E5 /* VMBR_chooseProvinceAndCity.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5EB221521D73C950008591E5 /* 主界面 */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221531D73C950008591E5 /* Model */,
+				5EB221541D73C950008591E5 /* View */,
+				5EB221551D73C950008591E5 /* ViewModel */,
+			);
+			path = "主界面";
+			sourceTree = "<group>";
+		};
+		5EB221531D73C950008591E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5EB221541D73C950008591E5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221611D73E965008591E5 /* ChooseBusinessOrRateVC.h */,
+				5EB221621D73E965008591E5 /* ChooseBusinessOrRateVC.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5EB221551D73C950008591E5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221641D740763008591E5 /* VMMoreBusinessOrRateSaving.h */,
+				5EB221651D740763008591E5 /* VMMoreBusinessOrRateSaving.m */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5EB221561D73CAE2008591E5 /* StepSegmentView */ = {
+			isa = PBXGroup;
+			children = (
+				5EB221571D73CAF7008591E5 /* StepSegmentView.h */,
+				5EB221581D73CAF7008591E5 /* StepSegmentView.m */,
+			);
+			path = StepSegmentView;
 			sourceTree = "<group>";
 		};
 		5EB2D71C1D2DEDE100912145 /* 注册系列 */ = {
@@ -3171,6 +3461,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */,
+				5EB2216C1D740BEB008591E5 /* BR_chooseBusinessVC.m in Sources */,
+				5EB221691D740BA4008591E5 /* BR_chooseRateVC.m in Sources */,
 				5EBAA9111ACD3F1B00E2ABDD /* SBJsonBase.m in Sources */,
 				5EB2D8601D420EBB00912145 /* MPosTransData.m in Sources */,
 				5E51A9BC1D1B7AF600C6FB91 /* ViewModelQRImageMaker.m in Sources */,
@@ -3184,12 +3476,15 @@
 				5E33AB011C5222AD0032D8E1 /* ModelAppInformation.m in Sources */,
 				5E51A9791D1B74FE00C6FB91 /* Photo.m in Sources */,
 				5E51A9DA1D20D39900C6FB91 /* DeviceManager_JLpay.m in Sources */,
+				5EB221661D740763008591E5 /* VMMoreBusinessOrRateSaving.m in Sources */,
 				5EA2DFA01C9FCAB700770353 /* JCAlertView.m in Sources */,
 				5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */,
 				5E51A9C21D1B7AF600C6FB91 /* VMHttpAlipay.m in Sources */,
+				5EDA73371D757096000606A6 /* VMBR_chooseBusiness.m in Sources */,
 				5EBAA8EB1ACD2FA800E2ABDD /* ErrorType.m in Sources */,
 				5E51A9131D1B746000C6FB91 /* TotalMoneyLabView.m in Sources */,
 				5E397B3D1AD36429004F206F /* Reachability.m in Sources */,
+				5EB221411D6ECB4B008591E5 /* VMDataSourceForMoreBusiOrRateVC.m in Sources */,
 				5E5E35DD1B80746500560C0A /* GuanyuViewController.m in Sources */,
 				5E7852CA1C1AB35D00A58865 /* ModelSettlementInformation.m in Sources */,
 				9E58E0181D3E6B99000AA32B /* VMBankBranchListRequester.m in Sources */,
@@ -3205,16 +3500,20 @@
 				5E6C4B4E1C8FB564000294BB /* SQLRequestAreas.m in Sources */,
 				5EB2D8121D363A1D00912145 /* T0CardListViewController.m in Sources */,
 				5EB2D87E1D4882A200912145 /* JLJBIGEnCoder.c in Sources */,
+				5EB2216F1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.m in Sources */,
 				5E51A9FC1D20D7BD00C6FB91 /* CentreCircleCheckView.m in Sources */,
 				5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */,
 				5EB2D8431D3E049900912145 /* MBankItem.m in Sources */,
+				5EB221331D6D7F84008591E5 /* MoreBusinessOrRateVC.m in Sources */,
 				5E51A9D41D20D33E00C6FB91 /* DeviceManager_M18.m in Sources */,
 				5EB2D7F11D34C0BF00912145 /* CardCheckListCell.m in Sources */,
 				5ED3442D1AD8E10D0005C890 /* MBProgressHUD.m in Sources */,
+				5EB2217B1D75347D008591E5 /* MSqlAreaCode.m in Sources */,
 				5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */,
 				5E51A9F51D20D6EF00C6FB91 /* BTDeviceChooseCell.m in Sources */,
 				5EB2D79E1D2F9FFB00912145 /* AJPhotoListCellTapView.m in Sources */,
 				5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */,
+				5EB221721D743180008591E5 /* VMBR_chooseRate.m in Sources */,
 				5E397B2B1AD36429004F206F /* ASICloudFilesContainerXMLParserDelegate.m in Sources */,
 				5E51A9761D1B74FE00C6FB91 /* CustomSegmentView.m in Sources */,
 				5EDC46901CA1219300B2F872 /* VMT_0InfoRequester.m in Sources */,
@@ -3226,11 +3525,13 @@
 				5EB7B24C1CF437AB00DCE4FC /* VMImgPicker.m in Sources */,
 				5EB7B24F1CF5821100DCE4FC /* RepeatSignCell.m in Sources */,
 				5E51A8431D1A43B800C6FB91 /* BusinessTBVHeadView.m in Sources */,
+				5EB221591D73CAF7008591E5 /* StepSegmentView.m in Sources */,
 				5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */,
 				5E51A9181D1B746000C6FB91 /* VMHttpMposDetails.m in Sources */,
 				5E51A9F91D20D6EF00C6FB91 /* TerminalSelectorVModel.m in Sources */,
 				5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */,
 				5EB2D7511D2DEDE100912145 /* TextLabelCell.m in Sources */,
+				5EB221781D752F43008591E5 /* BRPC_chooseCell.m in Sources */,
 				5E6C4B6D1C8FB710000294BB /* MASLayoutConstraint.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
 				5E51AA051D2368BF00C6FB91 /* ReconnectDeviceBtn.m in Sources */,
@@ -3299,6 +3600,7 @@
 				5EB2D79A1D2F9FFB00912145 /* AJGradientView.m in Sources */,
 				5EB2D83A1D3CB8A000912145 /* LeftImgRightTitleBtn.m in Sources */,
 				5E51A91C1D1B746000C6FB91 /* VMOtherPayDetailInfo.m in Sources */,
+				5EB2217E1D75348A008591E5 /* MHttpAreaCode.m in Sources */,
 				5EB2D8EA1D5B1FC400912145 /* MPubkeyFormator.m in Sources */,
 				5E51A9721D1B74FE00C6FB91 /* UIView+Extension.m in Sources */,
 				5E51A9801D1B74FE00C6FB91 /* TriangleLeftTurnView.m in Sources */,
@@ -3308,6 +3610,7 @@
 				5EB7B2491CF42F8300DCE4FC /* DottedBorderButton.m in Sources */,
 				5EB2D7F71D34C0BF00912145 /* VMT0CardUploadHttp.m in Sources */,
 				5EB2D75A1D2DEDE100912145 /* VMSignUpManager.m in Sources */,
+				5EB221751D752B77008591E5 /* VMBR_chooseProvinceAndCity.m in Sources */,
 				5EB2D8151D38907700912145 /* VMBusinessInfoRequester.m in Sources */,
 				5EB2D7551D2DEDE100912145 /* JLSignUpViewController.m in Sources */,
 				5EB2D8591D41F16B00912145 /* ElecSignView.m in Sources */,
@@ -3332,7 +3635,9 @@
 				5EB2D74D1D2DEDE100912145 /* BankNumberViewController.m in Sources */,
 				5E51A9161D1B746000C6FB91 /* TransDetailTBVHeader.m in Sources */,
 				5E6C4B4B1C8FB564000294BB /* SegBusiRateViewController.m in Sources */,
+				5EB2213B1D6D8F41008591E5 /* LaydownNaviTableViewChoose.m in Sources */,
 				5EB2D8811D49B9E100912145 /* VMElecSignPicUploader.m in Sources */,
+				5EB2213E1D6EA2F9008591E5 /* MBusiAndRateInfoReading.m in Sources */,
 				5EB2D8631D45E70500912145 /* ElecSignFrameView.m in Sources */,
 				5E6C4B6B1C8FB710000294BB /* MASConstraint.m in Sources */,
 				5E51A9171D1B746000C6FB91 /* VMDelegateForTableView.m in Sources */,
@@ -3354,6 +3659,7 @@
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
 				5E51A9C71D1B7AF600C6FB91 /* ViewModelCodeScanner.m in Sources */,
+				5EB221631D73E965008591E5 /* ChooseBusinessOrRateVC.m in Sources */,
 				5EB2D84C1D3F25F900912145 /* VMPhoneChecking.m in Sources */,
 				5E51A92F1D1B749300C6FB91 /* Calculator.m in Sources */,
 				5EB2D8401D3DB93300912145 /* VMSettlementInfoRequestor.m in Sources */,
@@ -3374,6 +3680,7 @@
 				5E6C4B4C1C8FB564000294BB /* SegRateVCTypes.m in Sources */,
 				5EB2D79B1D2F9FFB00912145 /* AJPhotoGroupCell.m in Sources */,
 				5EB7B2251CF28B1900DCE4FC /* OrderDispatchListViewController.m in Sources */,
+				5EDA733A1D75717A000606A6 /* MBR_HTTP_getBusiness.m in Sources */,
 				5EB2D7A51D2F9FFB00912145 /* AJTapDetectingView.m in Sources */,
 				5E51A90E1D1B746000C6FB91 /* MMposDetails.m in Sources */,
 				5E51A9781D1B74FE00C6FB91 /* NewVersionView.m in Sources */,
@@ -3416,6 +3723,7 @@
 				5E397B2A1AD36429004F206F /* ASICloudFilesContainerRequest.m in Sources */,
 				5E397B2C1AD36429004F206F /* ASICloudFilesObject.m in Sources */,
 				5EB2D86F1D45EE7800912145 /* jbig85.c in Sources */,
+				5EB221371D6D8381008591E5 /* NaviTitleViewPullDownChoose.m in Sources */,
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5EB2D7B11D2FA31200912145 /* VMSignUpPhotoBrowser.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
@@ -3570,7 +3878,7 @@
 			baseConfigurationReference = 86F117F53CDE6931F23F72C3 /* Pods-JLPay.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -3586,7 +3894,7 @@
 					"${SDK_DIR}/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = JLPay/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				"LD_MAP_FILE_PATH[arch=*]" = "$(TARGET_TEMP_DIR)/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -3604,7 +3912,7 @@
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9ba98015-3ecb-4436-b4eb-78332987e3f6";
+				PROVISIONING_PROFILE = "bfecc30e-5d1a-43d8-97bf-8bac99536c6a";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -3615,7 +3923,7 @@
 			baseConfigurationReference = C31F63A30F82750E73C9B4E9 /* Pods-JLPay.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
@@ -3631,7 +3939,7 @@
 					"${SDK_DIR}/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = JLPay/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3641,14 +3949,14 @@
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
 					"$(PROJECT_DIR)/JLPay/设备管理/JHL_M60",
 				);
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-all_load",
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9ba98015-3ecb-4436-b4eb-78332987e3f6";
+				PROVISIONING_PROFILE = "bfecc30e-5d1a-43d8-97bf-8bac99536c6a";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};

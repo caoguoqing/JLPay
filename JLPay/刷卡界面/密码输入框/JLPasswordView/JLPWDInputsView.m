@@ -18,7 +18,6 @@
     self = [super init];
     if (self) {
         [self loadSubviews];
-        [self setMasonries];
         [self addKVOs];
     }
     return self;
@@ -28,7 +27,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self loadSubviews];
-        [self setMasonries];
         [self addKVOs];
     }
     return self;
@@ -38,8 +36,6 @@
     [super layoutSubviews];
     self.backgroundColor = [UIColor colorWithHex:0xeeeeee alpha:1];
     
-    [self updateMasonries];
-
 }
 
 - (void) loadSubviews {
@@ -55,83 +51,76 @@
     [self addSubview:self.seperatedLine2];
 }
 
-- (void) updateMasonries {
-    __weak JLPWDInputsView* wself = self;
-    CGFloat widthLabel = self.frame.size.width * 0.68 * 1.f/(CGFloat)self.pinLabels.count;//44;
 
-    for (int i = 0; i < self.pinLabels.count; i++) {
-        UILabel* label = [self.pinLabels objectAtIndex:i];
-        [label mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(wself.mas_centerX).offset((i - 3) * widthLabel + widthLabel * 0.5);
-            make.width.mas_equalTo(widthLabel);
-        }];
-        
-    }
 
-}
 
-- (void) setMasonries {
+- (void)updateConstraints {
+    
     CGFloat inset = 15;
     CGFloat widthLabel = self.frame.size.width * 0.618 * 1.f/(CGFloat)self.pinLabels.count;//44;
     
     __weak JLPWDInputsView* wself = self;
     
-    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.mas_left);
-        make.right.equalTo(wself.mas_right);
-        make.top.equalTo(wself.mas_top);
-        make.height.equalTo(wself.mas_height).multipliedBy(1/4.f);
-
+    [self.titleLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.mas_left);
+        make.right.mas_equalTo(wself.mas_right);
+        make.top.mas_equalTo(wself.mas_top);
+        make.height.mas_equalTo(wself.mas_height).multipliedBy(1/4.f);
+        
     }];
     
-    [self.seperatedLine1 mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.mas_left).offset(inset);
-        make.right.equalTo(wself.mas_right).offset(-inset);
-        make.top.equalTo(wself.titleLabel.mas_bottom);
+    [self.seperatedLine1 mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.mas_left).offset(inset);
+        make.right.mas_equalTo(wself.mas_right).offset(-inset);
+        make.top.mas_equalTo(wself.titleLabel.mas_bottom);
         make.height.mas_equalTo(0.5);
     }];
     
-    [self.cancelBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.mas_left);
-        make.right.equalTo(wself.mas_centerX);
-        make.bottom.equalTo(wself.mas_bottom);
-        make.height.equalTo(wself.mas_height).multipliedBy(1/3.5f);
+    [self.cancelBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.mas_left);
+        make.right.mas_equalTo(wself.mas_centerX);
+        make.bottom.mas_equalTo(wself.mas_bottom);
+        make.height.mas_equalTo(wself.mas_height).multipliedBy(1/3.5f);
     }];
     
-    [self.sureBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.cancelBtn.mas_right);
-        make.right.equalTo(wself.mas_right);
-        make.bottom.equalTo(wself.cancelBtn.mas_bottom);
-        make.top.equalTo(wself.cancelBtn.mas_top);
+    [self.sureBtn mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.cancelBtn.mas_right);
+        make.right.mas_equalTo(wself.mas_right);
+        make.bottom.mas_equalTo(wself.cancelBtn.mas_bottom);
+        make.top.mas_equalTo(wself.cancelBtn.mas_top);
     }];
-
-    [self.seperatedLine2 mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.mas_left);
-        make.right.equalTo(wself.mas_right);
-        make.top.equalTo(wself.cancelBtn.mas_top);
+    
+    [self.seperatedLine2 mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.mas_left);
+        make.right.mas_equalTo(wself.mas_right);
+        make.top.mas_equalTo(wself.cancelBtn.mas_top);
         make.height.mas_equalTo(0.5);
     }];
     
-    [self.seperatedLine3 mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(wself.cancelBtn.mas_top);
-        make.bottom.equalTo(wself.mas_bottom);
-        make.centerX.equalTo(wself.mas_centerX);
+    [self.seperatedLine3 mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(wself.cancelBtn.mas_top);
+        make.bottom.mas_equalTo(wself.mas_bottom);
+        make.centerX.mas_equalTo(wself.mas_centerX);
         make.width.mas_equalTo(0.5);
     }];
     
     for (int i = 0; i < self.pinLabels.count; i++) {
         UILabel* label = [self.pinLabels objectAtIndex:i];
-        [label mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(wself.seperatedLine1.mas_bottom).offset(inset);
-            make.bottom.equalTo(wself.cancelBtn.mas_top).offset(-inset);
-            make.centerX.equalTo(wself.mas_centerX).offset((i - 3) * widthLabel + widthLabel * 0.5);
+        [label mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(wself.seperatedLine1.mas_bottom).offset(inset);
+            make.bottom.mas_equalTo(wself.cancelBtn.mas_top).offset(-inset);
+            make.centerX.mas_equalTo(wself.mas_centerX).offset((i - 3) * widthLabel + widthLabel * 0.5);
             make.width.mas_equalTo(widthLabel);
         }];
-        
     }
     
     
+    [super updateConstraints];
 }
+
+
+
+
 
 # pragma mask 2 KVO
 

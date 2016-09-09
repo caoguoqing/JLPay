@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JLPasswordView : UIViewController
+@interface JLPasswordView : UIView
 
 
-+ (void) showAfterClickedSure:(void (^) (NSString* password))sureBlock
-                     orCancel:(void (^) (void))cancelBlock;
++ (void) showWithDoneClicked:(void (^) (NSString* password))doneBlock
+             orCancelClicked:(void (^) (void))cancelBlock;
 
 
 @end

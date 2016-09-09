@@ -38,9 +38,9 @@
     }
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    self.backgroundColor = [UIColor colorWithHex:0xeeeeee alpha:1];
+
+- (void)updateConstraints {
+    
     __weak JLPWDKeyBoardView* wself = self;
     
     CGFloat inset = 7;
@@ -52,13 +52,22 @@
         if (numbtn.tag == 12) {
             numbtn.titleLabel.font = [UIFont iconFontWithSize:[NSString resizeFontAtHeight:heightBtn scale:0.45]];
         }
-        [numbtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        [numbtn mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(wself.mas_left).offset((i%3) * (widthBtn + inset) + inset);
             make.top.equalTo(wself.mas_top).offset((i/3) * (heightBtn + inset) + inset);
             make.width.mas_equalTo(widthBtn);
             make.height.mas_equalTo(heightBtn);
         }];
     }
+    
+    
+    [super updateConstraints];
+}
+
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.backgroundColor = [UIColor colorWithHex:0xeeeeee alpha:1];
 
 }
 

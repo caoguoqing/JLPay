@@ -17,11 +17,9 @@
 
 @property (nonatomic, strong) JLPWDInputsView* inputsView;
 
-@property (nonatomic, strong) UIWindow* superWindow;
-
-@property (nonatomic, weak) UIWindow* lastKeyWindow;
-
 @property (nonatomic, strong) JLPWDKeyBoardView* keyboardView;
+
+@property (nonatomic, strong) UIView* bgView;
 
 @property (nonatomic, copy) void (^ sureBlock) (NSString* password);
 
@@ -31,40 +29,61 @@
 
 @implementation JLPasswordView
 
-
-
-+ (void)showAfterClickedSure:(void (^)(NSString *))sureBlock orCancel:(void (^)(void))cancelBlock {
++ (void)showWithDoneClicked:(void (^)(NSString *))doneBlock orCancelClicked:(void (^)(void))cancelBlock {
     JLPasswordView* pwdView = [JLPasswordView sharedPWDView];
-    pwdView.sureBlock = sureBlock;
+    pwdView.sureBlock = doneBlock;
     pwdView.cancelBlock = cancelBlock;
-    
-    pwdView.lastKeyWindow = [[[UIApplication sharedApplication] delegate] window];
-    pwdView.superWindow.rootViewController = pwdView;
-    
-    [pwdView.superWindow makeKeyAndVisible];
-    pwdView.superWindow.frame = [UIScreen mainScreen].bounds;
-    
     pwdView.keyboardView.numbersInputed = nil;
     
-    pwdView.view.transform = CGAffineTransformMakeScale(0, 0);
-    [UIView animateWithDuration:0.2 animations:^{
-        pwdView.view.transform = CGAffineTransformMakeScale(1, 1);
+    UIWindow* curKeyWindow = [UIApplication sharedApplication].keyWindow;
+    [curKeyWindow addSubview:pwdView];
+    [curKeyWindow bringSubviewToFront:pwdView];
+    
+    [pwdView setNeedsUpdateConstraints];
+    [pwdView updateConstraintsIfNeeded];
+    [pwdView layoutIfNeeded];
+    
+    [pwdView.keyboardView setNeedsUpdateConstraints];
+    [pwdView.keyboardView updateConstraintsIfNeeded];
+    [pwdView.keyboardView layoutIfNeeded];
+    
+    [pwdView.inputsView setNeedsUpdateConstraints];
+    [pwdView.inputsView updateConstraintsIfNeeded];
+    [pwdView.inputsView layoutIfNeeded];
+    
+
+    
+    [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        pwdView.bgView.alpha = 0.3;
+        
+        CGRect frame = pwdView.keyboardView.frame;
+        frame.origin.y -= frame.size.height;
+        pwdView.keyboardView.frame = frame;
+        
+        pwdView.inputsView.center = CGPointMake(pwdView.center.x, pwdView.center.y - pwdView.inputsView.frame.size.height * 0.5);
+        
+    } completion:^(BOOL finished) {
     }];
+
 }
+
 
 + (void)hidden {
     JLPasswordView* pwdView = [JLPasswordView sharedPWDView];
     
-    pwdView.view.transform = CGAffineTransformMakeScale(1, 1);
+    [UIView animateWithDuration:0.2 delay:0.1 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        pwdView.inputsView.center = CGPointMake(pwdView.center.x, 0 - pwdView.inputsView.frame.size.height * 0.5);
 
-    [UIView animateWithDuration:0.2 animations:^{
-        pwdView.view.transform = CGAffineTransformMakeScale(0, 0);
-        pwdView.superWindow.alpha = 0;
+        CGRect frame = pwdView.keyboardView.frame;
+        frame.origin.y += frame.size.height;
+        pwdView.keyboardView.frame = frame;
+
+        pwdView.bgView.alpha = 0.0;
     } completion:^(BOOL finished) {
-        pwdView.superWindow.rootViewController = nil;
-        pwdView.superWindow = nil;
-        pwdView.view.transform = CGAffineTransformMakeScale(1, 1);
+        [pwdView removeFromSuperview];
     }];
+    
 }
 
 
@@ -74,7 +93,7 @@
     static JLPasswordView* shared;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        shared = [[JLPasswordView alloc] init];
+        shared = [[JLPasswordView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     });
     return shared;
 }
@@ -103,38 +122,50 @@
 }
 
 # pragma mask 3 界面布局
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor clearColor];
-    [self loadSubviews];
-    [self layoutSubviews];
-    [self addKVOs];
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self loadSubviews];
+        [self addKVOs];
+        
+    }
+    return self;
 }
+
 
 - (void) loadSubviews {
-    [self.view addSubview:self.inputsView];
-    [self.view addSubview:self.keyboardView];
+    [self addSubview:self.bgView];
+    [self addSubview:self.inputsView];
+    [self addSubview:self.keyboardView];
 }
 
-- (void) layoutSubviews {
+
+- (void)updateConstraints {
+    
     CGFloat inset = 30;
     CGFloat heightKeyboard = 216;
+    CGFloat heightInputsView = [UIScreen mainScreen].bounds.size.height * 180.f/667.f;
+
+    __weak typeof(self) wself = self;
     
-    __weak JLPasswordView* wself = self;
-    [self.inputsView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(wself.view.mas_centerY);
-        make.left.equalTo(wself.view.mas_left).offset(inset);
-        make.right.equalTo(wself.view.mas_right).offset(- inset);
-        make.height.equalTo(wself.view.mas_height).multipliedBy(180.f/667.f);
+    [self.bgView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsZero);
     }];
     
-    [self.keyboardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(wself.view.mas_bottom);
-        make.left.equalTo(wself.view.mas_left);
-        make.right.equalTo(wself.view.mas_right);
+    [self.inputsView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.mas_left).offset(inset);
+        make.right.mas_equalTo(wself.mas_right).offset(-inset);
+        make.bottom.mas_equalTo(wself.mas_top).offset(- heightInputsView);
+        make.height.mas_equalTo(heightInputsView);
+    }];
+    
+    [self.keyboardView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(0);
+        make.top.mas_equalTo(wself.mas_bottom);
         make.height.mas_equalTo(heightKeyboard);
     }];
     
+    [super updateConstraints];
 }
 
 
@@ -148,7 +179,8 @@
         _inputsView.layer.cornerRadius = 10;
         [_inputsView.sureBtn addTarget:self action:@selector(clickedSureBtn:) forControlEvents:UIControlEventTouchUpInside];
         [_inputsView.cancelBtn addTarget:self action:@selector(clickedCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
-        _inputsView.titleLabel.text = @"请输入消费密码";
+        _inputsView.titleLabel.text = @"请输入支付密码";
+        
     }
     return _inputsView;
 }
@@ -160,13 +192,14 @@
     return _keyboardView;
 }
 
-- (UIWindow *)superWindow {
-    if (!_superWindow) {
-        _superWindow = [[UIWindow alloc] init];
-        _superWindow.windowLevel = UIWindowLevelAlert;
-        _superWindow.backgroundColor = [UIColor colorWithWhite:0.1 alpha:0.3];
+- (UIView *)bgView {
+    if (!_bgView) {
+        _bgView = [[UIView alloc] init];
+        _bgView.backgroundColor = [UIColor blackColor];
+        _bgView.alpha = 0;
     }
-    return _superWindow;
+    return _bgView;
 }
+
 
 @end

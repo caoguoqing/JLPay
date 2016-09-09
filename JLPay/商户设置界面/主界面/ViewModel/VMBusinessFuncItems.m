@@ -96,8 +96,8 @@
         _funcItemTitles = [NSMutableArray array];
         [_funcItemTitles addObject:FuncItemTitleTransList];
         [_funcItemTitles addObject:FuncItemTitleDeviceBinding];
-//        [_funcItemTitles addObject:FuncItemTitleOrderDispatch];  /* 先屏蔽掉调单功能 */
-        [_funcItemTitles addObject:FuncItemTitleCodeScanning];
+//        [_funcItemTitles addObject:FuncItemTitleOrderDispatch];   /* 先屏蔽掉调单功能 */
+//        [_funcItemTitles addObject:FuncItemTitleCodeScanning];    /* V1.3.2_屏蔽掉扫码支付选项(无用的) */
 
         if ([MLoginSavedResource sharedLoginResource].N_business_enable || [MLoginSavedResource sharedLoginResource].N_fee_enable) {
             [_funcItemTitles addObject:FuncItemTitleRateSelecting];
@@ -134,9 +134,9 @@
         _viewControllersForTitles = [NSMutableDictionary dictionary];
         [_viewControllersForTitles setObject:@"MyBusinessViewController" forKey:FuncItemTitleBusinessInfo];
         [_viewControllersForTitles setObject:@"TransDetailListViewController" forKey:FuncItemTitleTransList];
-//        [_viewControllersForTitles setObject:@"DeviceSignInViewController" forKey:FuncItemTitleDeviceBinding];
         [_viewControllersForTitles setObject:@"DeviceBindingViewController" forKey:FuncItemTitleDeviceBinding];
-        [_viewControllersForTitles setObject:@"RateChooseViewController" forKey:FuncItemTitleRateSelecting];
+        // MoreBusinessOrRateVC RateChooseViewController
+        [_viewControllersForTitles setObject:@"MoreBusinessOrRateVC" forKey:FuncItemTitleRateSelecting];
         [_viewControllersForTitles setObject:@"T0CardListViewController" forKey:FuncItemTitleCardChecking];
         [_viewControllersForTitles setObject:@"ChangePinViewController" forKey:FuncItemTitlePinModifying];
         [_viewControllersForTitles setObject:@"HelperAndAboutTableViewController" forKey:FuncItemTitleHelpAndUs];

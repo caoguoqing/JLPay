@@ -59,6 +59,8 @@ CGFloat cellHeight = 40.0;
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:16];
+        cell.detailTextLabel.font = [UIFont systemFontOfSize:15];
     }
     cell.backgroundColor = [UIColor whiteColor];
     NSString* text = [self.cellTextArray objectAtIndex:indexPath.row];

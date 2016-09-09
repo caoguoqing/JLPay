@@ -170,7 +170,7 @@
 - (void) makePasswordAlertView {
     // innerView 放在 alertView 中创建
     NameWeakSelf(wself);
-    [JLPasswordView showAfterClickedSure:^(NSString *password) {
+    [JLPasswordView showWithDoneClicked:^(NSString *password) {
         // 输了密码则加密
         if (password && password.length > 0) {
             [wself.deviceManager encryptPinSource:password onEncryptedPIN:^(NSString *pin) {
@@ -194,7 +194,7 @@
             [wself.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
             [wself startTransPackingOnTransType:wself.stringOfTranType];
         }
-    } orCancel:^{
+    } orCancelClicked:^{
         [wself.navigationController popToRootViewControllerAnimated:YES];
     }];
 }

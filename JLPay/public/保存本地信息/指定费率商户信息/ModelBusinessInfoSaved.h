@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+static NSString* const MBusinessInfoRateType_38 = @"0.38民生类"; //0
+static NSString* const MBusinessInfoRateType_78_normal = @"0.78一般类";//1
+static NSString* const MBusinessInfoRateType_78_whole = @"0.78批发类";//2
+static NSString* const MBusinessInfoRateType_125_food = @"1.25餐饮类";//3
+
+
+
 @interface ModelBusinessInfoSaved : NSObject
 
 #pragma mask : WRITE FUNC
@@ -30,14 +37,8 @@
 // -- 是否保存了商户信息
 + (BOOL) beenSaved;
 
-// -- 所有的索引类型
-+ (NSArray*) allRateTypes;
-
 // -- 已选择的费率
 + (NSString*) rateTypeSelected;
-
-// -- 费率值:指定费率类型
-+ (NSString*) rateValueOnRateType:(NSString*)rateType;
 
 // -- 省名
 + (NSString*) provinceName;
@@ -53,5 +54,14 @@
 + (NSString*) businessCode;
 // -- 终端号
 + (NSString*) terminalCode;
+
+
+
+
+// -- 费率值:指定费率类型
++ (NSString*) rateValueOnRateType:(NSString*)rateType;
+
+// -- 所有的费率类型
++ (NSArray*) allRateTypes;
 
 @end

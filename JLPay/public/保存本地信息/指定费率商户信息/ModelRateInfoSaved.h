@@ -29,14 +29,9 @@
 // -- 是否保存了费率信息
 + (BOOL) beenSaved;
 
-// -- 所有的索引类型
-+ (NSArray*) allRateTypes;
 
 // -- 已选择的费率
 + (NSString*) rateTypeSelected;
-
-// -- 费率值:指定费率类型
-+ (NSString*) rateValueOnRateType:(NSString*)rateType;
 
 // -- 省名
 + (NSString*) provinceName;
@@ -47,5 +42,14 @@
 // -- 城市代码
 + (NSString*) cityCode;
 
+
+
+
+
+// -- 费率值:指定费率类型
++ (NSString*) rateValueOnRateType:(NSString*)rateType;
+
+// -- 所有的费率类型
++ (NSArray*) allRateTypes;
 
 @end
