@@ -32,15 +32,10 @@ typedef enum {
 
 # pragma mask -> 属性定义区
 
-@property (nonatomic, strong) NSArray* deviceNamePreListSupported;                  // 列表:设备名前缀(所有厂商)
-@property (nonatomic, strong) id device;                                            // 设备入口
 @property (nonatomic, assign) BOOL connected;                                       // 连接状态
-@property (nonatomic, strong) CBCentralManager* blueManager;                        // 蓝牙管理器:用来扫描设备
 @property (nonatomic, assign) BOOL hasNumbersButton;                                // 设备是否有数字按键
 
 
-// -- block
-@property (nonatomic, copy) void (^ discoveredBlock) (CBPeripheral* peripheral);    // 发现蓝牙设备
 
 
 # pragma mask -> 方法定义区
@@ -84,5 +79,16 @@ typedef enum {
 - (void) encryptMacSource:(NSString*)macSource
               onEncrypted:(void (^) (NSString* mac))macEncrypted
                   onError:(void (^) (NSError* error))errorBlock;
+
+
+
+# pragma mask : private properties
+
+@property (nonatomic, strong) CBCentralManager* blueManager;                        // 蓝牙管理器:用来扫描设备
+@property (nonatomic, strong) NSArray* deviceNamePreListSupported;                  // 列表:设备名前缀(所有厂商)
+@property (nonatomic, strong) id device;                                            // 设备入口
+// -- block
+@property (nonatomic, copy) void (^ discoveredBlock) (CBPeripheral* peripheral);    // 发现蓝牙设备
+
 
 @end

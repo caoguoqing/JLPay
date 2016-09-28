@@ -305,6 +305,12 @@
         make.height.mas_equalTo(heightBtn);
     }];
     
+    [self.stepSegView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.right.mas_equalTo(0);
+        make.top.mas_equalTo(wself.view.mas_top).offset(64 + 10);
+        make.height.mas_equalTo(54);
+    }];
+    
     CGFloat heightDispLab = 14;
     CGFloat widthDispLab = [UIScreen mainScreen].bounds.size.width * (1.f/(CGFloat)self.selectedDisplayLabs.count);
     for (int i = 0; i < self.selectedDisplayLabs.count; i++) {
@@ -325,7 +331,6 @@
             make.left.right.mas_equalTo(wself.view);
         }];
     }
-
     
     [super updateViewConstraints];
 }
@@ -375,7 +380,6 @@
         _stepSegView.tintColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
         _stepSegView.normalColor = [UIColor whiteColor];
         _stepSegView.itemSelected = 0;
-        _stepSegView.frame = CGRectMake(0, 64 + 10, self.view.frame.size.width, 54);
     }
     return _stepSegView;
 }

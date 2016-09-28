@@ -15,7 +15,7 @@
 #import "MLoginSavedResource.h"
 #import "ModelDeviceBindedInformation.h"
 #import "JCAlertView.h"
-#import "DeviceBindingViewController.h"
+#import "DeviceConnectViewController.h"
 #import "ModelSettlementInformation.h"
 #import "BrushViewController.h"
 #import "ModelRateInfoSaved.h"
@@ -246,7 +246,7 @@
         NameWeakSelf(wself);
         [JCAlertView showTwoButtonsWithTitle:@"未绑定设备" Message:@"是否跳转'绑定设备'界面去绑定设备?" ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:nil
                                   ButtonType:JCAlertViewButtonTypeWarn ButtonTitle:@"去绑定" Click:^{
-                                      [wself.navigationController pushViewController:[[DeviceBindingViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
+                                      [wself.navigationController pushViewController:[[DeviceConnectViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
                                   }];
     }
     return binded;

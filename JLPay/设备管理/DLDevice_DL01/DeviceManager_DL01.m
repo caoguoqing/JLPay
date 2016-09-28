@@ -21,6 +21,7 @@
 }
 - (void)dealloc {
     JLPrint(@"-=-=-=-=-=-= dealloc:: DeviceManager_DL01 =-=-=-=-=-=-");
+    self.deviceManager.delegate = nil;
     [self.deviceManager stopScanBlueDevice];
     if ([self.deviceManager isConnectBlue]) {
         [self.deviceManager disConnect];

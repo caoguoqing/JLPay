@@ -51,8 +51,6 @@
     [pwdView.inputsView updateConstraintsIfNeeded];
     [pwdView.inputsView layoutIfNeeded];
     
-
-    
     [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         pwdView.bgView.alpha = 0.3;
         

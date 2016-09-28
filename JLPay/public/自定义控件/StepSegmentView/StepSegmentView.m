@@ -53,6 +53,14 @@
     }
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    [self setNeedsUpdateConstraints];
+    [self updateConstraintsIfNeeded];
+    [self layoutIfNeeded];
+}
+
 - (void) addKVOs {
     @weakify(self);
     [RACObserve(self, itemSelected) subscribeNext:^(NSNumber* item) {
@@ -85,22 +93,13 @@
                 titleLab.alpha = 0.5;
             }
         }
-        
-        [self setNeedsUpdateConstraints];
-        [self updateConstraintsIfNeeded];
-        [UIView animateWithDuration:0.2 animations:^{
-            @strongify(self);
-            [self layoutIfNeeded];
-        }];
     }];
 }
 
 - (void)updateConstraints {
+    
     CGFloat inset = 6;
-    if (self.frame.size.height == 0) {
-        [super updateConstraints];
-        return;
-    }
+
     
     CGFloat heightLab = (self.frame.size.height - inset) * 0.5;
     CGFloat heightBackLineView = 6;

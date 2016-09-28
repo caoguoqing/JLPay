@@ -61,10 +61,6 @@
     [self.tcpHandle downloadMainKeyWithBusinessNum:[PublicInformation returnBusiness] andTerminalNum:self.terminalNumber andPubkey:pubkey];
 }
 
-
-
-
-
 - (void) getWorkKeyOnFinished:(void (^) (void))finished onError:(void (^) (NSError* error))errorBlock {
     self.finishedBlock = finished;
     self.errorBlock = errorBlock;
@@ -73,9 +69,8 @@
 
 - (void) getPubKeyOnFinished:(void (^) (NSString* pubkey))finished onError:(void (^) (NSError* error))errorBlock {
     [self.tcpHandle downloadPubkeyWithBusinessNum:[PublicInformation returnBusiness]
-                                   andTerminalNum:self.terminalNumber//[PublicInformation returnTerminal]
+                                   andTerminalNum:self.terminalNumber
                                    onSuccessBlock:^(NSString *pubkey) {
-                                       JLPrint(@"--downloaded public key = [%@]", pubkey);
                                        finished(pubkey);
     } orErrorBlock:^(NSError *error) {
         errorBlock(error);
@@ -87,7 +82,6 @@
 /* 回调: 主密钥 */
 - (void) didDownloadedMainKeyResult:(BOOL)result withMainKey:(NSString*)mainKey orErrorMessage:(NSString*)errorMessge {
     if (result) {
-        JLPrint(@"--downloaded main key = [%@]", mainKey);
         self.mainKey = [mainKey copy];
         self.finishedBlock();
     } else {
@@ -98,7 +92,6 @@
 /* 回调: 工作密钥 */
 - (void) didDownloadedWorkKeyResult:(BOOL)result withWorkKey:(NSString*)workKey orErrorMessage:(NSString*)errorMessge {
     if (result) {
-        JLPrint(@"--downloaded work key = [%@]", workKey);
         self.workKey = [workKey copy];
         self.finishedBlock();
     } else {

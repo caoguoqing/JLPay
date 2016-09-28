@@ -18,17 +18,23 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 @implementation MBProgressHUD (CustomSate)
 
+
+
 + (instancetype) showNormalWithText:(NSString*)text andDetailText:(NSString*)detailText {
     UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    [MBProgressHUD hideHUDForView:mainWindow animated:YES];
+    
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;
-    progressHud.removeFromSuperViewOnHide = YES;
+//    progressHud.removeFromSuperViewOnHide = YES;
     return progressHud;
 }
 
 + (void)showSuccessWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {
     UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    [MBProgressHUD hideHUDForView:mainWindow animated:YES];
+    
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;
@@ -48,6 +54,8 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 + (void) showFailWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {
     UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    [MBProgressHUD hideHUDForView:mainWindow animated:YES];
+
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;
@@ -67,6 +75,8 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 + (void)showWarnWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {
     UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    [MBProgressHUD hideHUDForView:mainWindow animated:YES];
+
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;
@@ -87,6 +97,7 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 + (instancetype) showHorizontalProgressWithText:(NSString *)text andDetailText:(NSString *)detailText {
     UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    [MBProgressHUD hideHUDForView:mainWindow animated:YES];
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;

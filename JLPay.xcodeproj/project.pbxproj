@@ -9,12 +9,10 @@
 /* Begin PBXBuildFile section */
 		5E08AE6F1B0989B100B8C198 /* AdditionalServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */; };
 		5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E08AE721B09949200B8C198 /* DynamicScrollView.m */; };
-		5E0EBA8B1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */; };
 		5E0EBA8F1C2A79C000DCAC59 /* ModelAreaCodeSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */; };
 		5E0EBAC81C34C30100DCAC59 /* KVNProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E0EBAC71C34C30100DCAC59 /* KVNProgressView.xib */; };
 		5E33AB011C5222AD0032D8E1 /* ModelAppInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E33AB001C5222AD0032D8E1 /* ModelAppInformation.m */; };
 		5E33AB031C5222F50032D8E1 /* DCSwiperAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E33AB021C5222F50032D8E1 /* DCSwiperAPI.framework */; };
-		5E33AB071C5223140032D8E1 /* DLDevice_DL01.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E33AB061C5223140032D8E1 /* DLDevice_DL01.m */; };
 		5E33AB0A1C5616B20032D8E1 /* ModelTCPTransPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E33AB091C5616B20032D8E1 /* ModelTCPTransPacking.m */; };
 		5E35C8481CBF3D28009480F9 /* MD5Util.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E35C8471CBF3D28009480F9 /* MD5Util.m */; };
 		5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E397AF51AD36429004F206F /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -47,6 +45,17 @@
 		5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B4B1AD3677E004F206F /* libxml2.dylib */; };
 		5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B531AD36D22004F206F /* libz.1.2.5.dylib */; };
 		5E397B561AD37B4B004F206F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E397B551AD37B4B004F206F /* CFNetwork.framework */; };
+		5E3CB4371D9B648A0036C1FB /* MPubkeyFormator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4241D9B648A0036C1FB /* MPubkeyFormator.m */; };
+		5E3CB4381D9B648A0036C1FB /* DC_deviceSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4271D9B648A0036C1FB /* DC_deviceSelectCell.m */; };
+		5E3CB4391D9B648A0036C1FB /* DC_mposView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4291D9B648A0036C1FB /* DC_mposView.m */; };
+		5E3CB43A1D9B648A0036C1FB /* DC_titleViewChooseTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB42B1D9B648A0036C1FB /* DC_titleViewChooseTerminal.m */; };
+		5E3CB43B1D9B648A0036C1FB /* DeviceConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB42D1D9B648A0036C1FB /* DeviceConnectViewController.m */; };
+		5E3CB43C1D9B648A0036C1FB /* DC_VMDeviceDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4301D9B648A0036C1FB /* DC_VMDeviceDataSource.m */; };
+		5E3CB43D1D9B648A0036C1FB /* TCPKeysVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4321D9B648A0036C1FB /* TCPKeysVModel.m */; };
+		5E3CB43E1D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4341D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m */; };
+		5E3CB43F1D9B648A0036C1FB /* VMTerminalsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4361D9B648A0036C1FB /* VMTerminalsDataSource.m */; };
+		5E3CB4401D9B64CA0036C1FB /* DC_deviceSelectCell.h in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4261D9B648A0036C1FB /* DC_deviceSelectCell.h */; };
+		5E3CB4411D9B656C0036C1FB /* DC_VMDeviceDataSource.h in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB42F1D9B648A0036C1FB /* DC_VMDeviceDataSource.h */; };
 		5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */; };
 		5E51A7DA1D0FA51400C6FB91 /* JLSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A7D81D0FA51400C6FB91 /* JLSignInViewController.m */; };
 		5E51A7DD1D0FB52900C6FB91 /* DelegateForTextFieldControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A7DC1D0FB52900C6FB91 /* DelegateForTextFieldControl.m */; };
@@ -121,14 +130,7 @@
 		5E51A9E41D20D3ED00C6FB91 /* BrushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9DE1D20D3ED00C6FB91 /* BrushViewController.m */; };
 		5E51A9E51D20D3ED00C6FB91 /* ViewModelTCPPosTrans.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9E11D20D3ED00C6FB91 /* ViewModelTCPPosTrans.m */; };
 		5E51A9E61D20D3ED00C6FB91 /* VMDeviceHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9E31D20D3ED00C6FB91 /* VMDeviceHandle.m */; };
-		5E51A9F51D20D6EF00C6FB91 /* BTDeviceChooseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9EB1D20D6EF00C6FB91 /* BTDeviceChooseCell.m */; };
-		5E51A9F61D20D6EF00C6FB91 /* DeviceBindingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9ED1D20D6EF00C6FB91 /* DeviceBindingViewController.m */; };
-		5E51A9F71D20D6EF00C6FB91 /* DeviceVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9F01D20D6EF00C6FB91 /* DeviceVModel.m */; };
-		5E51A9F81D20D6EF00C6FB91 /* TCPKeysVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9F21D20D6EF00C6FB91 /* TCPKeysVModel.m */; };
-		5E51A9F91D20D6EF00C6FB91 /* TerminalSelectorVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9F41D20D6EF00C6FB91 /* TerminalSelectorVModel.m */; };
 		5E51A9FC1D20D7BD00C6FB91 /* CentreCircleCheckView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9FB1D20D7BD00C6FB91 /* CentreCircleCheckView.m */; };
-		5E51A9FF1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51A9FE1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.m */; };
-		5E51AA051D2368BF00C6FB91 /* ReconnectDeviceBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E51AA041D2368BF00C6FB91 /* ReconnectDeviceBtn.m */; };
 		5E5354EA1C802FCD00A8E521 /* libLandiReader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5354E91C802FCD00A8E521 /* libLandiReader.a */; };
 		5E5354EC1C802FF700A8E521 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5354EB1C802FF700A8E521 /* CoreMedia.framework */; };
 		5E5354EE1C8033F700A8E521 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5354ED1C8033F700A8E521 /* SystemConfiguration.framework */; };
@@ -146,14 +148,6 @@
 		5E66B1E11CDB18DC00728547 /* MHttpBusinessInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1E01CDB18DC00728547 /* MHttpBusinessInfo.m */; };
 		5E66B1E41CDB1A2300728547 /* VMDataSourceMyBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1E31CDB1A2300728547 /* VMDataSourceMyBusiness.m */; };
 		5E66B1E71CDB2AD300728547 /* BusinessVCRefreshButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E66B1E61CDB2AD300728547 /* BusinessVCRefreshButton.m */; };
-		5E6C4B421C8FB564000294BB /* ChooseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B291C8FB564000294BB /* ChooseButton.m */; };
-		5E6C4B431C8FB564000294BB /* DirectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B2B1C8FB564000294BB /* DirectionView.m */; };
-		5E6C4B451C8FB564000294BB /* HttpRequestAreas.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B2F1C8FB564000294BB /* HttpRequestAreas.m */; };
-		5E6C4B491C8FB564000294BB /* RateChooseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B371C8FB564000294BB /* RateChooseViewController.m */; };
-		5E6C4B4B1C8FB564000294BB /* SegBusiRateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B3B1C8FB564000294BB /* SegBusiRateViewController.m */; };
-		5E6C4B4C1C8FB564000294BB /* SegRateVCTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B3D1C8FB564000294BB /* SegRateVCTypes.m */; };
-		5E6C4B4D1C8FB564000294BB /* SegRateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B3F1C8FB564000294BB /* SegRateViewController.m */; };
-		5E6C4B4E1C8FB564000294BB /* SQLRequestAreas.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B411C8FB564000294BB /* SQLRequestAreas.m */; };
 		5E6C4B6A1C8FB710000294BB /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B521C8FB710000294BB /* MASCompositeConstraint.m */; };
 		5E6C4B6B1C8FB710000294BB /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B551C8FB710000294BB /* MASConstraint.m */; };
 		5E6C4B6C1C8FB710000294BB /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B571C8FB710000294BB /* MASConstraintMaker.m */; };
@@ -176,7 +170,6 @@
 		5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E94486C1C03F3F600128452 /* AdditionalCollectionLayout.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
-		5EA2DF581C914E5700770353 /* VMRateTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA2DF571C914E5700770353 /* VMRateTypes.m */; };
 		5EA2DF9F1C9FCAB700770353 /* JCAlertView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5EA2DF9C1C9FCAB700770353 /* JCAlertView.bundle */; };
 		5EA2DFA01C9FCAB700770353 /* JCAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA2DF9E1C9FCAB700770353 /* JCAlertView.m */; };
 		5EB220521D5DB119008591E5 /* BigInt.c in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220501D5DB119008591E5 /* BigInt.c */; };
@@ -265,7 +258,6 @@
 		5EB2D8841D4F36BD00912145 /* VMCheckNumTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D8831D4F36BD00912145 /* VMCheckNumTimer.m */; };
 		5EB2D8891D5466B000912145 /* F55Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D8881D5466B000912145 /* F55Reader.m */; };
 		5EB2D8E41D5AC86600912145 /* RSAEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D8E31D5AC86600912145 /* RSAEncoder.m */; };
-		5EB2D8EA1D5B1FC400912145 /* MPubkeyFormator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB2D8E91D5B1FC400912145 /* MPubkeyFormator.m */; };
 		5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9811AC8DD1C00E47AB5 /* main.m */; };
 		5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB6F9841AC8DD1C00E47AB5 /* AppDelegate.m */; };
 		5EB6F98B1AC8DD1C00E47AB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EB6F9891AC8DD1C00E47AB5 /* Main.storyboard */; };
@@ -325,7 +317,6 @@
 		5ED3443B1AD8EFAA0005C890 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ED3443A1AD8EFAA0005C890 /* MediaPlayer.framework */; };
 		5EDA73371D757096000606A6 /* VMBR_chooseBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA73361D757096000606A6 /* VMBR_chooseBusiness.m */; };
 		5EDA733A1D75717A000606A6 /* MBR_HTTP_getBusiness.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA73391D75717A000606A6 /* MBR_HTTP_getBusiness.m */; };
-		5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */; };
 		5EDC46901CA1219300B2F872 /* VMT_0InfoRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EDC468F1CA1219300B2F872 /* VMT_0InfoRequester.m */; };
 		5EFD09821C1139B40062AD34 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EFD09811C1139B40062AD34 /* Default-568h@2x.png */; };
 		9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4D90AB1BD0FB330096F84E /* iMagPay.framework */; };
@@ -351,16 +342,12 @@
 		5E08AE6E1B0989B100B8C198 /* AdditionalServicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdditionalServicesViewController.m; sourceTree = "<group>"; };
 		5E08AE711B09949200B8C198 /* DynamicScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicScrollView.h; sourceTree = "<group>"; };
 		5E08AE721B09949200B8C198 /* DynamicScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicScrollView.m; sourceTree = "<group>"; };
-		5E0EBA891C2A526100DCAC59 /* HTTPRequestFeeBusiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequestFeeBusiness.h; sourceTree = "<group>"; };
-		5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequestFeeBusiness.m; sourceTree = "<group>"; };
 		5E0EBA8D1C2A79C000DCAC59 /* ModelAreaCodeSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelAreaCodeSelector.h; sourceTree = "<group>"; };
 		5E0EBA8E1C2A79C000DCAC59 /* ModelAreaCodeSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelAreaCodeSelector.m; sourceTree = "<group>"; };
 		5E0EBAC71C34C30100DCAC59 /* KVNProgressView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KVNProgressView.xib; sourceTree = "<group>"; };
 		5E33AAFF1C5222AD0032D8E1 /* ModelAppInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelAppInformation.h; sourceTree = "<group>"; };
 		5E33AB001C5222AD0032D8E1 /* ModelAppInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelAppInformation.m; sourceTree = "<group>"; };
 		5E33AB021C5222F50032D8E1 /* DCSwiperAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DCSwiperAPI.framework; path = Frameworks/DCSwiperAPI.framework; sourceTree = "<group>"; };
-		5E33AB051C5223140032D8E1 /* DLDevice_DL01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDevice_DL01.h; sourceTree = "<group>"; };
-		5E33AB061C5223140032D8E1 /* DLDevice_DL01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDevice_DL01.m; sourceTree = "<group>"; };
 		5E33AB081C5616B20032D8E1 /* ModelTCPTransPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelTCPTransPacking.h; sourceTree = "<group>"; };
 		5E33AB091C5616B20032D8E1 /* ModelTCPTransPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelTCPTransPacking.m; sourceTree = "<group>"; };
 		5E35C8461CBF3D28009480F9 /* MD5Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5Util.h; sourceTree = "<group>"; };
@@ -427,6 +414,24 @@
 		5E397B4B1AD3677E004F206F /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		5E397B531AD36D22004F206F /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		5E397B551AD37B4B004F206F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		5E3CB4231D9B648A0036C1FB /* MPubkeyFormator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPubkeyFormator.h; sourceTree = "<group>"; };
+		5E3CB4241D9B648A0036C1FB /* MPubkeyFormator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPubkeyFormator.m; sourceTree = "<group>"; };
+		5E3CB4261D9B648A0036C1FB /* DC_deviceSelectCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DC_deviceSelectCell.h; sourceTree = "<group>"; };
+		5E3CB4271D9B648A0036C1FB /* DC_deviceSelectCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DC_deviceSelectCell.m; sourceTree = "<group>"; };
+		5E3CB4281D9B648A0036C1FB /* DC_mposView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DC_mposView.h; sourceTree = "<group>"; };
+		5E3CB4291D9B648A0036C1FB /* DC_mposView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DC_mposView.m; sourceTree = "<group>"; };
+		5E3CB42A1D9B648A0036C1FB /* DC_titleViewChooseTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DC_titleViewChooseTerminal.h; sourceTree = "<group>"; };
+		5E3CB42B1D9B648A0036C1FB /* DC_titleViewChooseTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DC_titleViewChooseTerminal.m; sourceTree = "<group>"; };
+		5E3CB42C1D9B648A0036C1FB /* DeviceConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceConnectViewController.h; sourceTree = "<group>"; };
+		5E3CB42D1D9B648A0036C1FB /* DeviceConnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceConnectViewController.m; sourceTree = "<group>"; };
+		5E3CB42F1D9B648A0036C1FB /* DC_VMDeviceDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DC_VMDeviceDataSource.h; sourceTree = "<group>"; };
+		5E3CB4301D9B648A0036C1FB /* DC_VMDeviceDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DC_VMDeviceDataSource.m; sourceTree = "<group>"; };
+		5E3CB4311D9B648A0036C1FB /* TCPKeysVModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPKeysVModel.h; sourceTree = "<group>"; };
+		5E3CB4321D9B648A0036C1FB /* TCPKeysVModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCPKeysVModel.m; sourceTree = "<group>"; };
+		5E3CB4331D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPHandleWithDevice.h; sourceTree = "<group>"; };
+		5E3CB4341D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPHandleWithDevice.m; sourceTree = "<group>"; };
+		5E3CB4351D9B648A0036C1FB /* VMTerminalsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTerminalsDataSource.h; sourceTree = "<group>"; };
+		5E3CB4361D9B648A0036C1FB /* VMTerminalsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMTerminalsDataSource.m; sourceTree = "<group>"; };
 		5E4A1FF41C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelDeviceBindedInformation.h; sourceTree = "<group>"; };
 		5E4A1FF51C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelDeviceBindedInformation.m; sourceTree = "<group>"; };
 		5E51A7D71D0FA51400C6FB91 /* JLSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLSignInViewController.h; sourceTree = "<group>"; };
@@ -574,22 +579,8 @@
 		5E51A9E11D20D3ED00C6FB91 /* ViewModelTCPPosTrans.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPPosTrans.m; sourceTree = "<group>"; };
 		5E51A9E21D20D3ED00C6FB91 /* VMDeviceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMDeviceHandle.h; sourceTree = "<group>"; };
 		5E51A9E31D20D3ED00C6FB91 /* VMDeviceHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMDeviceHandle.m; sourceTree = "<group>"; };
-		5E51A9EA1D20D6EF00C6FB91 /* BTDeviceChooseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTDeviceChooseCell.h; sourceTree = "<group>"; };
-		5E51A9EB1D20D6EF00C6FB91 /* BTDeviceChooseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTDeviceChooseCell.m; sourceTree = "<group>"; };
-		5E51A9EC1D20D6EF00C6FB91 /* DeviceBindingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceBindingViewController.h; sourceTree = "<group>"; };
-		5E51A9ED1D20D6EF00C6FB91 /* DeviceBindingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceBindingViewController.m; sourceTree = "<group>"; };
-		5E51A9EF1D20D6EF00C6FB91 /* DeviceVModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceVModel.h; sourceTree = "<group>"; };
-		5E51A9F01D20D6EF00C6FB91 /* DeviceVModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceVModel.m; sourceTree = "<group>"; };
-		5E51A9F11D20D6EF00C6FB91 /* TCPKeysVModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPKeysVModel.h; sourceTree = "<group>"; };
-		5E51A9F21D20D6EF00C6FB91 /* TCPKeysVModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCPKeysVModel.m; sourceTree = "<group>"; };
-		5E51A9F31D20D6EF00C6FB91 /* TerminalSelectorVModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TerminalSelectorVModel.h; sourceTree = "<group>"; };
-		5E51A9F41D20D6EF00C6FB91 /* TerminalSelectorVModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TerminalSelectorVModel.m; sourceTree = "<group>"; };
 		5E51A9FA1D20D7BD00C6FB91 /* CentreCircleCheckView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CentreCircleCheckView.h; sourceTree = "<group>"; };
 		5E51A9FB1D20D7BD00C6FB91 /* CentreCircleCheckView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CentreCircleCheckView.m; sourceTree = "<group>"; };
-		5E51A9FD1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewModelTCPHandleWithDevice.h; sourceTree = "<group>"; };
-		5E51A9FE1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewModelTCPHandleWithDevice.m; sourceTree = "<group>"; };
-		5E51AA031D2368BF00C6FB91 /* ReconnectDeviceBtn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReconnectDeviceBtn.h; sourceTree = "<group>"; };
-		5E51AA041D2368BF00C6FB91 /* ReconnectDeviceBtn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReconnectDeviceBtn.m; sourceTree = "<group>"; };
 		5E5354E91C802FCD00A8E521 /* libLandiReader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libLandiReader.a; sourceTree = "<group>"; };
 		5E5354EB1C802FF700A8E521 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		5E5354ED1C8033F700A8E521 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -621,22 +612,6 @@
 		5E66B1E31CDB1A2300728547 /* VMDataSourceMyBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMDataSourceMyBusiness.m; sourceTree = "<group>"; };
 		5E66B1E51CDB2AD300728547 /* BusinessVCRefreshButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessVCRefreshButton.h; sourceTree = "<group>"; };
 		5E66B1E61CDB2AD300728547 /* BusinessVCRefreshButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessVCRefreshButton.m; sourceTree = "<group>"; };
-		5E6C4B281C8FB564000294BB /* ChooseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChooseButton.h; sourceTree = "<group>"; };
-		5E6C4B291C8FB564000294BB /* ChooseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChooseButton.m; sourceTree = "<group>"; };
-		5E6C4B2A1C8FB564000294BB /* DirectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionView.h; sourceTree = "<group>"; };
-		5E6C4B2B1C8FB564000294BB /* DirectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectionView.m; sourceTree = "<group>"; };
-		5E6C4B2E1C8FB564000294BB /* HttpRequestAreas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpRequestAreas.h; sourceTree = "<group>"; };
-		5E6C4B2F1C8FB564000294BB /* HttpRequestAreas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpRequestAreas.m; sourceTree = "<group>"; };
-		5E6C4B361C8FB564000294BB /* RateChooseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChooseViewController.h; sourceTree = "<group>"; };
-		5E6C4B371C8FB564000294BB /* RateChooseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RateChooseViewController.m; sourceTree = "<group>"; };
-		5E6C4B3A1C8FB564000294BB /* SegBusiRateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegBusiRateViewController.h; sourceTree = "<group>"; };
-		5E6C4B3B1C8FB564000294BB /* SegBusiRateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SegBusiRateViewController.m; sourceTree = "<group>"; };
-		5E6C4B3C1C8FB564000294BB /* SegRateVCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegRateVCTypes.h; sourceTree = "<group>"; };
-		5E6C4B3D1C8FB564000294BB /* SegRateVCTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SegRateVCTypes.m; sourceTree = "<group>"; };
-		5E6C4B3E1C8FB564000294BB /* SegRateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegRateViewController.h; sourceTree = "<group>"; };
-		5E6C4B3F1C8FB564000294BB /* SegRateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SegRateViewController.m; sourceTree = "<group>"; };
-		5E6C4B401C8FB564000294BB /* SQLRequestAreas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLRequestAreas.h; sourceTree = "<group>"; };
-		5E6C4B411C8FB564000294BB /* SQLRequestAreas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLRequestAreas.m; sourceTree = "<group>"; };
 		5E6C4B511C8FB710000294BB /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
 		5E6C4B521C8FB710000294BB /* MASCompositeConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASCompositeConstraint.m; sourceTree = "<group>"; };
 		5E6C4B531C8FB710000294BB /* MASConstraint+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MASConstraint+Private.h"; sourceTree = "<group>"; };
@@ -686,8 +661,6 @@
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOFieldFormation.h; sourceTree = "<group>"; };
 		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISOFieldFormation.m; sourceTree = "<group>"; };
-		5EA2DF561C914E5700770353 /* VMRateTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMRateTypes.h; sourceTree = "<group>"; };
-		5EA2DF571C914E5700770353 /* VMRateTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMRateTypes.m; sourceTree = "<group>"; };
 		5EA2DF9C1C9FCAB700770353 /* JCAlertView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JCAlertView.bundle; sourceTree = "<group>"; };
 		5EA2DF9D1C9FCAB700770353 /* JCAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCAlertView.h; sourceTree = "<group>"; };
 		5EA2DF9E1C9FCAB700770353 /* JCAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCAlertView.m; sourceTree = "<group>"; };
@@ -862,8 +835,6 @@
 		5EB2D8881D5466B000912145 /* F55Reader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F55Reader.m; sourceTree = "<group>"; };
 		5EB2D8E21D5AC86600912145 /* RSAEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSAEncoder.h; sourceTree = "<group>"; };
 		5EB2D8E31D5AC86600912145 /* RSAEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSAEncoder.m; sourceTree = "<group>"; };
-		5EB2D8E81D5B1FC400912145 /* MPubkeyFormator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPubkeyFormator.h; sourceTree = "<group>"; };
-		5EB2D8E91D5B1FC400912145 /* MPubkeyFormator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPubkeyFormator.m; sourceTree = "<group>"; };
 		5EB6F97C1AC8DD1C00E47AB5 /* JLPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JLPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EB6F9801AC8DD1C00E47AB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5EB6F9811AC8DD1C00E47AB5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -968,8 +939,6 @@
 		5EDA73361D757096000606A6 /* VMBR_chooseBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMBR_chooseBusiness.m; sourceTree = "<group>"; };
 		5EDA73381D75717A000606A6 /* MBR_HTTP_getBusiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBR_HTTP_getBusiness.h; sourceTree = "<group>"; };
 		5EDA73391D75717A000606A6 /* MBR_HTTP_getBusiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBR_HTTP_getBusiness.m; sourceTree = "<group>"; };
-		5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JLPayDevice_TY01.h; path = JLPayDevice_TY/JLPayDevice_TY01.h; sourceTree = "<group>"; };
-		5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLPayDevice_TY01.m; path = JLPayDevice_TY/JLPayDevice_TY01.m; sourceTree = "<group>"; };
 		5EDA84451B9ED3670096391B /* JieLianService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JieLianService.h; path = JLPayDevice_TY/JieLianService.h; sourceTree = "<group>"; };
 		5EDC468E1CA1219300B2F872 /* VMT_0InfoRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMT_0InfoRequester.h; sourceTree = "<group>"; };
 		5EDC468F1CA1219300B2F872 /* VMT_0InfoRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VMT_0InfoRequester.m; sourceTree = "<group>"; };
@@ -1049,10 +1018,9 @@
 				5E94481B1BFDA15F00128452 /* 主界面 */,
 				5E66B1C21CDA025600728547 /* 我的商户 */,
 				5E51A8E71D1B746000C6FB91 /* 交易管理 */,
+				5E3CB4211D9B648A0036C1FB /* 连接设备 */,
 				5EB7B2101CEEAA0C00DCE4FC /* 立即到账 */,
-				5E51A9E71D20D6EF00C6FB91 /* 绑定设备 */,
 				5EB221281D6D7F51008591E5 /* 多商户多费率 */,
-				5EF3BAA41B69BFF600DCD764 /* 费率选择 */,
 				5E0EBA961C3227A600DCAC59 /* T_0卡验证 */,
 				5E9448171BFD5AF500128452 /* 余额查询 */,
 				5E5E35441B71E90400560C0A /* 修改密码 */,
@@ -1147,8 +1115,6 @@
 			children = (
 				5E51A9D51D20D35600C6FB91 /* DeviceManager_DL01.h */,
 				5E51A9D61D20D35600C6FB91 /* DeviceManager_DL01.m */,
-				5E33AB051C5223140032D8E1 /* DLDevice_DL01.h */,
-				5E33AB061C5223140032D8E1 /* DLDevice_DL01.m */,
 			);
 			path = DLDevice_DL01;
 			sourceTree = "<group>";
@@ -1227,6 +1193,55 @@
 				5EBAA8F21ACD2FDC00E2ABDD /* 8583 */,
 			);
 			path = TCP;
+			sourceTree = "<group>";
+		};
+		5E3CB4211D9B648A0036C1FB /* 连接设备 */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CB4221D9B648A0036C1FB /* Model */,
+				5E3CB4251D9B648A0036C1FB /* View */,
+				5E3CB42E1D9B648A0036C1FB /* ViewModel */,
+			);
+			path = "连接设备";
+			sourceTree = "<group>";
+		};
+		5E3CB4221D9B648A0036C1FB /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CB4231D9B648A0036C1FB /* MPubkeyFormator.h */,
+				5E3CB4241D9B648A0036C1FB /* MPubkeyFormator.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5E3CB4251D9B648A0036C1FB /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CB4261D9B648A0036C1FB /* DC_deviceSelectCell.h */,
+				5E3CB4271D9B648A0036C1FB /* DC_deviceSelectCell.m */,
+				5E3CB4281D9B648A0036C1FB /* DC_mposView.h */,
+				5E3CB4291D9B648A0036C1FB /* DC_mposView.m */,
+				5E3CB42A1D9B648A0036C1FB /* DC_titleViewChooseTerminal.h */,
+				5E3CB42B1D9B648A0036C1FB /* DC_titleViewChooseTerminal.m */,
+				5E3CB42C1D9B648A0036C1FB /* DeviceConnectViewController.h */,
+				5E3CB42D1D9B648A0036C1FB /* DeviceConnectViewController.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5E3CB42E1D9B648A0036C1FB /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5E3CB42F1D9B648A0036C1FB /* DC_VMDeviceDataSource.h */,
+				5E3CB4301D9B648A0036C1FB /* DC_VMDeviceDataSource.m */,
+				5E3CB4311D9B648A0036C1FB /* TCPKeysVModel.h */,
+				5E3CB4321D9B648A0036C1FB /* TCPKeysVModel.m */,
+				5E3CB4331D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.h */,
+				5E3CB4341D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m */,
+				5E3CB4351D9B648A0036C1FB /* VMTerminalsDataSource.h */,
+				5E3CB4361D9B648A0036C1FB /* VMTerminalsDataSource.m */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		5E4A1FEF1C055BF000E7DFD5 /* 用户登陆信息 */ = {
@@ -1805,53 +1820,6 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		5E51A9E71D20D6EF00C6FB91 /* 绑定设备 */ = {
-			isa = PBXGroup;
-			children = (
-				5E51A9E81D20D6EF00C6FB91 /* Model */,
-				5E51A9E91D20D6EF00C6FB91 /* View */,
-				5E51A9EE1D20D6EF00C6FB91 /* ViewModel */,
-			);
-			path = "绑定设备";
-			sourceTree = "<group>";
-		};
-		5E51A9E81D20D6EF00C6FB91 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				5EB2D8E81D5B1FC400912145 /* MPubkeyFormator.h */,
-				5EB2D8E91D5B1FC400912145 /* MPubkeyFormator.m */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		5E51A9E91D20D6EF00C6FB91 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				5E51A9EC1D20D6EF00C6FB91 /* DeviceBindingViewController.h */,
-				5E51A9ED1D20D6EF00C6FB91 /* DeviceBindingViewController.m */,
-				5E51A9EA1D20D6EF00C6FB91 /* BTDeviceChooseCell.h */,
-				5E51A9EB1D20D6EF00C6FB91 /* BTDeviceChooseCell.m */,
-				5E51AA031D2368BF00C6FB91 /* ReconnectDeviceBtn.h */,
-				5E51AA041D2368BF00C6FB91 /* ReconnectDeviceBtn.m */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		5E51A9EE1D20D6EF00C6FB91 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				5E51A9EF1D20D6EF00C6FB91 /* DeviceVModel.h */,
-				5E51A9F01D20D6EF00C6FB91 /* DeviceVModel.m */,
-				5E51A9F11D20D6EF00C6FB91 /* TCPKeysVModel.h */,
-				5E51A9F21D20D6EF00C6FB91 /* TCPKeysVModel.m */,
-				5E51A9FD1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.h */,
-				5E51A9FE1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.m */,
-				5E51A9F31D20D6EF00C6FB91 /* TerminalSelectorVModel.h */,
-				5E51A9F41D20D6EF00C6FB91 /* TerminalSelectorVModel.m */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
 		5E5E35441B71E90400560C0A /* 修改密码 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1946,21 +1914,6 @@
 				5E66B1E31CDB1A2300728547 /* VMDataSourceMyBusiness.m */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		5E6C4B271C8FB52C000294BB /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				5EA2DF561C914E5700770353 /* VMRateTypes.h */,
-				5EA2DF571C914E5700770353 /* VMRateTypes.m */,
-				5E6C4B2E1C8FB564000294BB /* HttpRequestAreas.h */,
-				5E6C4B2F1C8FB564000294BB /* HttpRequestAreas.m */,
-				5E6C4B401C8FB564000294BB /* SQLRequestAreas.h */,
-				5E6C4B411C8FB564000294BB /* SQLRequestAreas.m */,
-				5E0EBA891C2A526100DCAC59 /* HTTPRequestFeeBusiness.h */,
-				5E0EBA8A1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m */,
-			);
-			name = ViewModel;
 			sourceTree = "<group>";
 		};
 		5E6C4B501C8FB710000294BB /* Masonry */ = {
@@ -3118,8 +3071,6 @@
 			children = (
 				5E51A9D81D20D39900C6FB91 /* DeviceManager_JLpay.h */,
 				5E51A9D91D20D39900C6FB91 /* DeviceManager_JLpay.m */,
-				5EDA84421B9EC9080096391B /* JLPayDevice_TY01.h */,
-				5EDA84431B9EC9080096391B /* JLPayDevice_TY01.m */,
 				5EDA84451B9ED3670096391B /* JieLianService.h */,
 				5E8B0D101BB0E61800FD461A /* libJieLianService.a */,
 			);
@@ -3136,17 +3087,6 @@
 			path = SQLITE;
 			sourceTree = "<group>";
 		};
-		5EF3BAA41B69BFF600DCD764 /* 费率选择 */ = {
-			isa = PBXGroup;
-			children = (
-				5E6C4B271C8FB52C000294BB /* ViewModel */,
-				5EFD098E1C1680E40062AD34 /* controller */,
-				5EFD098D1C1680DF0062AD34 /* view */,
-				5EFD098C1C1680CE0062AD34 /* model */,
-			);
-			path = "费率选择";
-			sourceTree = "<group>";
-		};
 		5EF4C0DD1B1706A300CE3E3F /* 登陆界面 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3155,39 +3095,6 @@
 				5E5E35481B735A6300560C0A /* 忘记密码 */,
 			);
 			path = "登陆界面";
-			sourceTree = "<group>";
-		};
-		5EFD098C1C1680CE0062AD34 /* model */ = {
-			isa = PBXGroup;
-			children = (
-				5E6C4B3C1C8FB564000294BB /* SegRateVCTypes.h */,
-				5E6C4B3D1C8FB564000294BB /* SegRateVCTypes.m */,
-			);
-			name = model;
-			sourceTree = "<group>";
-		};
-		5EFD098D1C1680DF0062AD34 /* view */ = {
-			isa = PBXGroup;
-			children = (
-				5E6C4B281C8FB564000294BB /* ChooseButton.h */,
-				5E6C4B291C8FB564000294BB /* ChooseButton.m */,
-				5E6C4B2A1C8FB564000294BB /* DirectionView.h */,
-				5E6C4B2B1C8FB564000294BB /* DirectionView.m */,
-			);
-			name = view;
-			sourceTree = "<group>";
-		};
-		5EFD098E1C1680E40062AD34 /* controller */ = {
-			isa = PBXGroup;
-			children = (
-				5E6C4B361C8FB564000294BB /* RateChooseViewController.h */,
-				5E6C4B371C8FB564000294BB /* RateChooseViewController.m */,
-				5E6C4B3A1C8FB564000294BB /* SegBusiRateViewController.h */,
-				5E6C4B3B1C8FB564000294BB /* SegBusiRateViewController.m */,
-				5E6C4B3E1C8FB564000294BB /* SegRateViewController.h */,
-				5E6C4B3F1C8FB564000294BB /* SegRateViewController.m */,
-			);
-			name = controller;
 			sourceTree = "<group>";
 		};
 		9E4D90A61BD0DFA60096F84E /* 8583工具组 */ = {
@@ -3460,6 +3367,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E3CB4411D9B656C0036C1FB /* DC_VMDeviceDataSource.h in Sources */,
+				5E3CB4401D9B64CA0036C1FB /* DC_deviceSelectCell.h in Sources */,
 				5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */,
 				5EB2216C1D740BEB008591E5 /* BR_chooseBusinessVC.m in Sources */,
 				5EB221691D740BA4008591E5 /* BR_chooseRateVC.m in Sources */,
@@ -3495,9 +3404,7 @@
 				5E51A9151D1B746000C6FB91 /* TransDetailTBVCell.m in Sources */,
 				5EBAA8E61ACD2FA800E2ABDD /* ISOHelper.m in Sources */,
 				5E51A97C1D1B74FE00C6FB91 /* SiftTBVMainCell.m in Sources */,
-				5E0EBA8B1C2A526100DCAC59 /* HTTPRequestFeeBusiness.m in Sources */,
 				5E51A9711D1B74FE00C6FB91 /* LVKeyboardView.m in Sources */,
-				5E6C4B4E1C8FB564000294BB /* SQLRequestAreas.m in Sources */,
 				5EB2D8121D363A1D00912145 /* T0CardListViewController.m in Sources */,
 				5EB2D87E1D4882A200912145 /* JLJBIGEnCoder.c in Sources */,
 				5EB2216F1D740CB4008591E5 /* BR_chooseProvinceAndCityVC.m in Sources */,
@@ -3510,7 +3417,6 @@
 				5ED3442D1AD8E10D0005C890 /* MBProgressHUD.m in Sources */,
 				5EB2217B1D75347D008591E5 /* MSqlAreaCode.m in Sources */,
 				5E397B291AD36429004F206F /* ASICloudFilesContainer.m in Sources */,
-				5E51A9F51D20D6EF00C6FB91 /* BTDeviceChooseCell.m in Sources */,
 				5EB2D79E1D2F9FFB00912145 /* AJPhotoListCellTapView.m in Sources */,
 				5E397B271AD36429004F206F /* ASIAuthenticationDialog.m in Sources */,
 				5EB221721D743180008591E5 /* VMBR_chooseRate.m in Sources */,
@@ -3528,25 +3434,20 @@
 				5EB221591D73CAF7008591E5 /* StepSegmentView.m in Sources */,
 				5E82B78D1B1BEF6D00A58751 /* DeviceManager.m in Sources */,
 				5E51A9181D1B746000C6FB91 /* VMHttpMposDetails.m in Sources */,
-				5E51A9F91D20D6EF00C6FB91 /* TerminalSelectorVModel.m in Sources */,
 				5E4A1FF61C06F2EC00E7DFD5 /* ModelDeviceBindedInformation.m in Sources */,
 				5EB2D7511D2DEDE100912145 /* TextLabelCell.m in Sources */,
 				5EB221781D752F43008591E5 /* BRPC_chooseCell.m in Sources */,
 				5E6C4B6D1C8FB710000294BB /* MASLayoutConstraint.m in Sources */,
 				5EBAA9131ACD3F1B00E2ABDD /* SBJsonStreamWriter.m in Sources */,
-				5E51AA051D2368BF00C6FB91 /* ReconnectDeviceBtn.m in Sources */,
 				5EB7B2521CF6AB8900DCE4FC /* DownPullButton.m in Sources */,
 				5E51A9D11D1BE28100C6FB91 /* SignUpBtn.m in Sources */,
 				5EB6F9851AC8DD1C00E47AB5 /* AppDelegate.m in Sources */,
-				5E6C4B4D1C8FB564000294BB /* SegRateViewController.m in Sources */,
 				5E5E35A21B7C79E200560C0A /* MySQLiteManager.m in Sources */,
-				5E51A9F81D20D6EF00C6FB91 /* TCPKeysVModel.m in Sources */,
 				5EB7B23D1CF3006E00DCE4FC /* DispatchMaterialUploadViewCtr.m in Sources */,
 				5E51A97A1D1B74FE00C6FB91 /* PullListSegView.m in Sources */,
 				5EB2D7FA1D34C28700912145 /* MT0CardList.m in Sources */,
 				5EB2D79D1D2F9FFB00912145 /* AJPhotoListCell.m in Sources */,
 				5EB2D79F1D2F9FFB00912145 /* AJPhotoListView.m in Sources */,
-				5E6C4B451C8FB564000294BB /* HttpRequestAreas.m in Sources */,
 				5E33AB0A1C5616B20032D8E1 /* ModelTCPTransPacking.m in Sources */,
 				5E397B311AD36429004F206F /* ASIDownloadCache.m in Sources */,
 				5E51A9BA1D1B7AF600C6FB91 /* VMOtherPayType.m in Sources */,
@@ -3568,6 +3469,7 @@
 				5E5E35401B70BC4300560C0A /* myCollectionCell.m in Sources */,
 				5E397B301AD36429004F206F /* ASIDataDecompressor.m in Sources */,
 				5E51A97E1D1B74FE00C6FB91 /* VMSiftDataSourcesAndSifter.m in Sources */,
+				5E3CB43B1D9B648A0036C1FB /* DeviceConnectViewController.m in Sources */,
 				5E51A91A1D1B746000C6FB91 /* TransDetailInfoViewController.m in Sources */,
 				5EB7B2401CF3009800DCE4FC /* ImageMaterialCapCell.m in Sources */,
 				5EB2D8061D35D04600912145 /* MT0UploadItem.m in Sources */,
@@ -3575,18 +3477,18 @@
 				5E51A9341D1B749300C6FB91 /* UIFont+IconFont.m in Sources */,
 				5E51A9741D1B74FE00C6FB91 /* CustomPickerView.m in Sources */,
 				5E51A9C11D1B7AF600C6FB91 /* WatingPayViewController.m in Sources */,
+				5E3CB43D1D9B648A0036C1FB /* TCPKeysVModel.m in Sources */,
 				5E51A91B1D1B746000C6FB91 /* VMMposDetailInfo.m in Sources */,
 				5E51A9C41D1B7AF600C6FB91 /* CodeScannerViewController.m in Sources */,
 				5EB2D80F1D35F23D00912145 /* T0CardUploadViewController.m in Sources */,
 				5EB2D74F1D2DEDE100912145 /* ImageViewCell.m in Sources */,
 				5E51A8061D17869600C6FB91 /* BusinessManageViewController.m in Sources */,
 				5E6C4B7D1C8FB738000294BB /* ModelRateInfoSaved.m in Sources */,
-				5EDA84441B9EC9080096391B /* JLPayDevice_TY01.m in Sources */,
 				5E66B1E41CDB1A2300728547 /* VMDataSourceMyBusiness.m in Sources */,
 				5E51A9751D1B74FE00C6FB91 /* DynamicPickerView.m in Sources */,
 				5E51A9BD1D1B7AF600C6FB91 /* VMWechatQRCodePay.m in Sources */,
-				5EA2DF581C914E5700770353 /* VMRateTypes.m in Sources */,
 				5EB2D7571D2DEDE100912145 /* SU_MobileNumberCell.m in Sources */,
+				5E3CB4381D9B648A0036C1FB /* DC_deviceSelectCell.m in Sources */,
 				5E51A97D1D1B74FE00C6FB91 /* SiftViewController.m in Sources */,
 				5E5E354C1B735B1100560C0A /* ForgetPinViewConroller.m in Sources */,
 				5EB2D7601D2DEE9E00912145 /* VMProvinceAndCityChoose.m in Sources */,
@@ -3601,11 +3503,9 @@
 				5EB2D83A1D3CB8A000912145 /* LeftImgRightTitleBtn.m in Sources */,
 				5E51A91C1D1B746000C6FB91 /* VMOtherPayDetailInfo.m in Sources */,
 				5EB2217E1D75348A008591E5 /* MHttpAreaCode.m in Sources */,
-				5EB2D8EA1D5B1FC400912145 /* MPubkeyFormator.m in Sources */,
 				5E51A9721D1B74FE00C6FB91 /* UIView+Extension.m in Sources */,
 				5E51A9801D1B74FE00C6FB91 /* TriangleLeftTurnView.m in Sources */,
 				5EB2D8371D3C7F0000912145 /* VMNumberBtns.m in Sources */,
-				5E6C4B431C8FB564000294BB /* DirectionView.m in Sources */,
 				5E51A9311D1B749300C6FB91 /* NSString+Formater.m in Sources */,
 				5EB7B2491CF42F8300DCE4FC /* DottedBorderButton.m in Sources */,
 				5EB2D7F71D34C0BF00912145 /* VMT0CardUploadHttp.m in Sources */,
@@ -3633,17 +3533,18 @@
 				5E397B361AD36429004F206F /* ASIS3Bucket.m in Sources */,
 				5EB6F9821AC8DD1C00E47AB5 /* main.m in Sources */,
 				5EB2D74D1D2DEDE100912145 /* BankNumberViewController.m in Sources */,
+				5E3CB43C1D9B648A0036C1FB /* DC_VMDeviceDataSource.m in Sources */,
+				5E3CB43A1D9B648A0036C1FB /* DC_titleViewChooseTerminal.m in Sources */,
 				5E51A9161D1B746000C6FB91 /* TransDetailTBVHeader.m in Sources */,
-				5E6C4B4B1C8FB564000294BB /* SegBusiRateViewController.m in Sources */,
 				5EB2213B1D6D8F41008591E5 /* LaydownNaviTableViewChoose.m in Sources */,
 				5EB2D8811D49B9E100912145 /* VMElecSignPicUploader.m in Sources */,
 				5EB2213E1D6EA2F9008591E5 /* MBusiAndRateInfoReading.m in Sources */,
 				5EB2D8631D45E70500912145 /* ElecSignFrameView.m in Sources */,
+				5E3CB4391D9B648A0036C1FB /* DC_mposView.m in Sources */,
 				5E6C4B6B1C8FB710000294BB /* MASConstraint.m in Sources */,
 				5E51A9171D1B746000C6FB91 /* VMDelegateForTableView.m in Sources */,
 				5EB2D7631D2E514200912145 /* VMSignUpPhotoPicker.m in Sources */,
 				5E51A7E01D0FD48E00C6FB91 /* VMHttpSignIn.m in Sources */,
-				5E33AB071C5223140032D8E1 /* DLDevice_DL01.m in Sources */,
 				5E51A96F1D1B74FE00C6FB91 /* CustomCheckView.m in Sources */,
 				5E397B2E1AD36429004F206F /* ASICloudFilesRequest.m in Sources */,
 				5E51A9331D1B749300C6FB91 /* UIColor+HexColor.m in Sources */,
@@ -3655,6 +3556,7 @@
 				5E51A7DA1D0FA51400C6FB91 /* JLSignInViewController.m in Sources */,
 				5E6C4B6F1C8FB710000294BB /* MASViewConstraint.m in Sources */,
 				5E6C4B711C8FB710000294BB /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				5E3CB43E1D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m in Sources */,
 				5EB7B23A1CF2FE6100DCE4FC /* VMDispatchUpload.m in Sources */,
 				5EBAA8F81ACD389D00E2ABDD /* PublicInformation.m in Sources */,
 				5E397B471AD364A9004F206F /* AsyncSocket.m in Sources */,
@@ -3673,11 +3575,8 @@
 				5EB220D01D63F543008591E5 /* JLPWDKeyBoardView.m in Sources */,
 				5EB7B2221CEEB8C600DCE4FC /* VMAccountReceived.m in Sources */,
 				5E51A9B81D1B7AF600C6FB91 /* OtherPayCollectViewController.m in Sources */,
-				5E51A9FF1D20F69600C6FB91 /* ViewModelTCPHandleWithDevice.m in Sources */,
 				5E51A9CA1D1B7D7D00C6FB91 /* DownPullListBtn.m in Sources */,
-				5E6C4B491C8FB564000294BB /* RateChooseViewController.m in Sources */,
 				5E6C4B7C1C8FB738000294BB /* ModelBusinessInfoSaved.m in Sources */,
-				5E6C4B4C1C8FB564000294BB /* SegRateVCTypes.m in Sources */,
 				5EB2D79B1D2F9FFB00912145 /* AJPhotoGroupCell.m in Sources */,
 				5EB7B2251CF28B1900DCE4FC /* OrderDispatchListViewController.m in Sources */,
 				5EDA733A1D75717A000606A6 /* MBR_HTTP_getBusiness.m in Sources */,
@@ -3690,11 +3589,11 @@
 				5E66B1C81CDA026E00728547 /* MyBusinessViewController.m in Sources */,
 				5E397B3A1AD36429004F206F /* ASIS3Request.m in Sources */,
 				5EBAA90F1ACD3F1B00E2ABDD /* NSObject+SBJSON.m in Sources */,
+				5E3CB4371D9B648A0036C1FB /* MPubkeyFormator.m in Sources */,
 				5EB2D7FD1D34C3D400912145 /* VMT0CardListRequest.m in Sources */,
 				5E94486D1C03F3F600128452 /* AdditionalCollectionLayout.m in Sources */,
 				5E51A9191D1B746000C6FB91 /* VMHttpOtherPayDetails.m in Sources */,
 				5EB220521D5DB119008591E5 /* BigInt.c in Sources */,
-				5E51A9F71D20D6EF00C6FB91 /* DeviceVModel.m in Sources */,
 				5E51A7DD1D0FB52900C6FB91 /* DelegateForTextFieldControl.m in Sources */,
 				5E51A9D71D20D35600C6FB91 /* DeviceManager_DL01.m in Sources */,
 				5E397B2D1AD36429004F206F /* ASICloudFilesObjectRequest.m in Sources */,
@@ -3711,6 +3610,7 @@
 				5EB2D8701D45EE7800912145 /* jbig_ar.c in Sources */,
 				5EB2D7591D2DEDE100912145 /* SU_TextInputTBVCell.m in Sources */,
 				5EB2D8181D38911100912145 /* MBusinessInfo.m in Sources */,
+				5E3CB43F1D9B648A0036C1FB /* VMTerminalsDataSource.m in Sources */,
 				5E51A9C61D1B7AF600C6FB91 /* ScannerImageView.m in Sources */,
 				5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */,
 				5EBAA8FF1ACD3AFB00E2ABDD /* ConverUtil.m in Sources */,
@@ -3727,7 +3627,6 @@
 				5E08AE731B09949200B8C198 /* DynamicScrollView.m in Sources */,
 				5EB2D7B11D2FA31200912145 /* VMSignUpPhotoBrowser.m in Sources */,
 				5E397B351AD36429004F206F /* ASINetworkQueue.m in Sources */,
-				5E6C4B421C8FB564000294BB /* ChooseButton.m in Sources */,
 				5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */,
 				5E66B1CB1CDA035000728547 /* UserHeadImageTBVCell.m in Sources */,
 				5E6C4B6A1C8FB710000294BB /* MASCompositeConstraint.m in Sources */,
@@ -3742,7 +3641,6 @@
 				5E397B481AD364A9004F206F /* TcpClientService.m in Sources */,
 				5E51A9C01D1B7AF600C6FB91 /* PayStatusDisplayView.m in Sources */,
 				5E397B3B1AD36429004F206F /* ASIS3ServiceRequest.m in Sources */,
-				5E51A9F61D20D6EF00C6FB91 /* DeviceBindingViewController.m in Sources */,
 				5E51A9E41D20D3ED00C6FB91 /* BrushViewController.m in Sources */,
 				5E51A7E31D0FDDCE00C6FB91 /* MLoginSavedResource.m in Sources */,
 				5EB2D8461D3E04DC00912145 /* AvilableBankListViewController.m in Sources */,
@@ -3877,9 +3775,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 86F117F53CDE6931F23F72C3 /* Pods-JLPay.debug.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3902,8 +3804,6 @@
 					"$(PROJECT_DIR)/",
 					"$(PROJECT_DIR)/JLPay/设备管理/LDDevice_M18",
 					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY",
-					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
-					"$(PROJECT_DIR)/JLPay/设备管理/JHL_M60",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -3924,7 +3824,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Zhang Luo (RSZ786K7Q7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3946,8 +3846,6 @@
 					"$(PROJECT_DIR)/",
 					"$(PROJECT_DIR)/JLPay/设备管理/LDDevice_M18",
 					"$(PROJECT_DIR)/JLPay/设备管理/JLPayDevice_TY",
-					"$(PROJECT_DIR)/JLPay/设备管理/JHL",
-					"$(PROJECT_DIR)/JLPay/设备管理/JHL_M60",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (

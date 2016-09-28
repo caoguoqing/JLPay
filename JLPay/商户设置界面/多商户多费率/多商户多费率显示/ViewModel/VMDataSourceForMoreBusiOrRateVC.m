@@ -55,7 +55,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"celll"];
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.font = [UIFont systemFontOfSize:16];
+        cell.textLabel.font = [UIFont systemFontOfSize:15];
         cell.separatorInset = UIEdgeInsetsZero;
         cell.layoutMargins = UIEdgeInsetsZero;
     }

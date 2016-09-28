@@ -11,10 +11,16 @@
 @interface MBProgressHUD (CustomSate)
 
 
+
 + (instancetype) showNormalWithText:(NSString*)text
                       andDetailText:(NSString*)detailText;
+
+
 + (instancetype) showHorizontalProgressWithText:(NSString *)text
                                   andDetailText:(NSString *)detailText;
+
+
+
 
 + (void) showSuccessWithText:(NSString*)text
                andDetailText:(NSString*)detailText
@@ -25,6 +31,9 @@
 + (void) showWarnWithText:(NSString*)text
             andDetailText:(NSString*)detailText
              onCompletion:(void (^) (void))completion;
+
+
+
 
 
 

@@ -124,7 +124,6 @@
         [_iconsForTitles setObject:@(IconFontType_creditcard) forKey:FuncItemTitleCardChecking];
         [_iconsForTitles setObject:@(IconFontType_unlock) forKey:FuncItemTitlePinModifying];
         [_iconsForTitles setObject:@(IconFontType_setting_fill) forKey:FuncItemTitleHelpAndUs];
-
     }
     return _iconsForTitles;
 }
@@ -134,7 +133,8 @@
         _viewControllersForTitles = [NSMutableDictionary dictionary];
         [_viewControllersForTitles setObject:@"MyBusinessViewController" forKey:FuncItemTitleBusinessInfo];
         [_viewControllersForTitles setObject:@"TransDetailListViewController" forKey:FuncItemTitleTransList];
-        [_viewControllersForTitles setObject:@"DeviceBindingViewController" forKey:FuncItemTitleDeviceBinding];
+        // DeviceConnectViewController DeviceBindingViewController
+        [_viewControllersForTitles setObject:@"DeviceConnectViewController" forKey:FuncItemTitleDeviceBinding];
         // MoreBusinessOrRateVC RateChooseViewController
         [_viewControllersForTitles setObject:@"MoreBusinessOrRateVC" forKey:FuncItemTitleRateSelecting];
         [_viewControllersForTitles setObject:@"T0CardListViewController" forKey:FuncItemTitleCardChecking];
