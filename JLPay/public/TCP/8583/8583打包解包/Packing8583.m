@@ -13,7 +13,7 @@
 #import "Define_Header.h"
 #import "EncodeString.h"
 
-#import "ModelSettlementInformation.h"
+#import "MCacheT0Info.h"
 #import "ModelBusinessInfoSaved.h"
 #import "ModelRateInfoSaved.h"
 
@@ -180,7 +180,7 @@
 // 60.4 N1 手机: T+1:1, T+0:2
 + (NSString*) f60_4feeTypeWithTransType:(NSString*)transType {
     if ([transType isEqualToString:TranType_Consume]) {
-        if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
+        if ([MCacheT0Info cache].T_0Enable) {
             return @"2";
         } else {
             return @"1";
@@ -204,11 +204,11 @@
         [f60_5Fee appendString:@"0"];
     }
     else if ([transType isEqualToString:TranType_ElecSignPicUpload] || [transType isEqualToString:TranType_BatchUpload]) {
-        [f60_5Fee appendString:@""];
+        [f60_5Fee appendString:@"0"];
     }
     else {
         // T+0
-        if ([[ModelSettlementInformation sharedInstance] curSettlementType] == SETTLEMENTTYPE_T_0) {
+        if ([MCacheT0Info cache].T_0Enable) {
             [f60_5Fee appendString:@"0"];
         }
         // 非 T+0
@@ -240,7 +240,7 @@
 // 63.2 费率类型
 + (NSString*) f63_2RateType {
     // 选择了非T+1的结算方式，要屏蔽费率
-    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1) {
+    if (![MCacheT0Info cache].T_0Enable) {
         if ([ModelRateInfoSaved beenSaved]) {
             return [[ModelRateInfoSaved rateValueOnRateType:[ModelRateInfoSaved rateTypeSelected]] substringWithRange:NSMakeRange(1, 1)];
         }
@@ -257,6 +257,12 @@
 // 63.3 结算方式
 + (NSString*) f63_3SettlementType {
     NSString* settlementType = nil;
+    if ([MCacheT0Info cache].T_0Enable) {
+        settlementType = @"22";
+    } else {
+        settlementType = @"00";
+    }
+    /*
     switch ([[ModelSettlementInformation sharedInstance] curSettlementType]) {
         case SETTLEMENTTYPE_T_1:
             settlementType = @"00";
@@ -277,13 +283,16 @@
             settlementType = @"00";
             break;
     }
+     */
     return settlementType;
 }
 // 63.4 地区码
 + (NSString*) f63_4AreaCode {
-    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1 && [ModelRateInfoSaved beenSaved]) {
+    if ((![MCacheT0Info cache].T_0Enable) && [ModelRateInfoSaved beenSaved]) {
         return [ModelRateInfoSaved cityCode];
-    } else {
+
+    }
+    else {
         return @"0000";
     }
 }
@@ -297,7 +306,7 @@
 }
 // 63.7 固定商户号
 + (NSString*) f63_7ChoosedBusiness {
-    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1 && [ModelBusinessInfoSaved beenSaved]) {
+    if ((![MCacheT0Info cache].T_0Enable) && [ModelBusinessInfoSaved beenSaved]) {
         return [ModelBusinessInfoSaved businessCode];
     } else {
         return @"000000000000000";
@@ -305,7 +314,7 @@
 }
 // 63.8 固定终端号
 + (NSString*) f63_8ChoosedTerminal {
-    if ([ModelSettlementInformation sharedInstance].curSettlementType == SETTLEMENTTYPE_T_1 && [ModelBusinessInfoSaved beenSaved]) {
+    if ((![MCacheT0Info cache].T_0Enable) && [ModelBusinessInfoSaved beenSaved]) {
         return [ModelBusinessInfoSaved terminalCode];
     } else {
         return @"00000000";

@@ -14,7 +14,7 @@
 #import "ViewModelTCPPosTrans.h"
 #import "BalanceEnquiryViewController.h"
 #import "ModelDeviceBindedInformation.h"
-#import "ModelSettlementInformation.h"
+#import "MCacheT0Info.h"
 #import "ModelTCPTransPacking.h"
 #import "Masonry.h"
 #import "VMDeviceHandle.h"

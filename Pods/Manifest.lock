@@ -24,6 +24,7 @@ PODS:
   - ReactiveCocoa/no-arc (2.5)
   - ReactiveCocoa/UI (2.5):
     - ReactiveCocoa/Core
+  - RESideMenu (4.0.7)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.1.0)
@@ -31,6 +32,7 @@ DEPENDENCIES:
   - LTNavigationBar (~> 2.1.6)
   - MJRefresh (~> 3.0.4)
   - ReactiveCocoa (~> 2.5)
+  - RESideMenu (~> 4.0.7)
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -38,5 +40,6 @@ SPEC CHECKSUMS:
   LTNavigationBar: 9ef51488bf289b1f65dbcb17ac92888c4ae23e30
   MJRefresh: fafde8f18f4afd66b434331a9beb67a6c0264056
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
+  RESideMenu: f24c508404b49c667344c54aba7e590883533958
 
 COCOAPODS: 0.39.0

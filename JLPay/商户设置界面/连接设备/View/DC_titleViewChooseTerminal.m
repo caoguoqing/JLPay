@@ -40,6 +40,13 @@
             }];
         }
     }];
+    
+    [RACObserve(self.contentLabel, text) subscribeNext:^(id x) {
+        @strongify(self);
+        [self setNeedsUpdateConstraints];
+        [self updateConstraintsIfNeeded];
+        [self layoutIfNeeded];
+    }];
 }
 
 
@@ -49,14 +56,20 @@
     [self addSubview:self.switchBtn];
 }
 
-
-- (void)willMoveToSuperview:(UIView *)newSuperview {
-    [super willMoveToSuperview:newSuperview];
+- (void)layoutSubviews {
+    [super layoutSubviews];
     
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:self.titleLabel.frame.size.height scale:0.9]];
-    self.contentLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:self.contentLabel.frame.size.height scale:0.7]];
-    self.switchBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:self.switchBtn.frame.size.height scale:1]];
+    CGFloat heightTitleLab = self.frame.size.height * 0.33;
+    CGFloat heightContentLab = self.frame.size.height - heightTitleLab;
+
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:heightTitleLab scale:0.9]];
+    self.contentLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:heightContentLab scale:0.7]];
+    self.switchBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:heightContentLab scale:1]];
+    
+    
+
 }
+
 
 - (void)updateConstraints {
     
@@ -77,6 +90,7 @@
         make.top.bottom.mas_equalTo(wself.contentLabel);
         make.width.mas_equalTo(wself.switchBtn.mas_height);
     }];
+
     
     [super updateConstraints];
 }

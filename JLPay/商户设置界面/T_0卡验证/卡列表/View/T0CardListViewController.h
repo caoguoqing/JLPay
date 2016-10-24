@@ -13,12 +13,5 @@
 
 @interface T0CardListViewController : UIViewController
 
-@property (nonatomic, strong) UITableView* tableView;
-
-@property (nonatomic, strong) UIBarButtonItem* additionBarBtnItem;
-
-@property (nonatomic, strong) VMT0CardListRequest* cardListRequester;
-
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @end

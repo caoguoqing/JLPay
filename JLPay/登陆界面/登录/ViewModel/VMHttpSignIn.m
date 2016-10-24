@@ -8,8 +8,20 @@
 
 #import "VMHttpSignIn.h"
 #import <AFNetworking.h>
+#import "MCacheSavedLogin.h"
 
-static NSString* const pinTriEncKey = @"123456789012345678901234567890123456789012345678";
+@interface VMHttpSignIn()
+
+/* app版本号(整数) */
+@property (nonatomic, copy) NSString* appVersionInteger;
+
+/* 平台标志: 0(ios), 1(android) */
+@property (nonatomic, copy) NSString* systemFlag;
+
+
+
+@end
+
 
 @implementation VMHttpSignIn
 
@@ -17,19 +29,10 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
     self = [super init];
     if (self) {
         
-        RAC(self, userPwdPinStr) = [[RACObserve(self, userPwdStr) filter:^BOOL(NSString* source) {
-            if (source && source.length > 0) {
-                return YES;
-            } else {
-                return NO;
-            }
-        }] map:^NSString* (NSString* source) {
-            return [self pinEncryptBySource:source];
-        }];
-        
     }
     return self;
 }
+
 
 
 # pragma mask 3 private interface
@@ -54,49 +57,6 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
     }];
 }
 
-- (RACSignal*) siginSig {
-    return [[[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        
-        @weakify(self);
-        [self.http requestingOnPackingBlock:^(ASIFormDataRequest *http) {
-            [subscriber sendNext:nil];
-            /* 打包 */
-            @strongify(self);
-            [http addPostValue:self.userNameStr forKey:kFieldNameSignInUpUserID];
-            [http addPostValue:self.userPwdPinStr forKey:kFieldNameSignInUpUserPWD];
-            [http addPostValue:[[PublicInformation AppVersionNumber] stringByReplacingOccurrencesOfString:@"." withString:@""]
-                        forKey:kFieldNameSignInUpVersionNum];
-            [http addPostValue:@"0" forKey:kFieldNameSignInUpSysFlag];
-        } onFinishedBlock:^(NSDictionary *info) {
-            /* 登录响应成功,解析响应码 */
-            NSInteger code = [[info objectForKey:kFieldNameSignInDownCode] integerValue];
-            NSString* message = [info objectForKey:kFieldNameSignInDownMessage];
-            
-            BOOL success;
-            if (code == 0) {            /* 成功 */
-                success = YES;
-            }
-            else if (code == 801 || code == 802) {     /* 审核中/审核拒绝 */
-                success = YES;
-            }
-            else {                      /* 版本低、其他 */
-                success = NO;
-            }
-            
-            if (success) {
-                @strongify(self);
-                self.responseData = [info copy];
-                [subscriber sendCompleted];
-            } else {
-                [subscriber sendError:[NSError errorWithDomain:@"SignInError" code:code localizedDescription:message]];
-            }
-        } onErrorBlock:^(NSError *error) {
-            /* 登录响应失败 */
-            [subscriber sendError:error];
-        }];
-        return nil;
-    }] replayLast] materialize];
-}
 
 - (RACSignal*) newSignInSignalWithAFNetWorking {
     @weakify(self);
@@ -115,9 +75,9 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
                            [PublicInformation getServerDomain],
                            [PublicInformation getHTTPPort]]
                parameters:@{kFieldNameSignInUpUserID:self.userNameStr,
-                            kFieldNameSignInUpUserPWD:self.userPwdPinStr,
-                            kFieldNameSignInUpVersionNum:[[PublicInformation AppVersionNumber] stringByReplacingOccurrencesOfString:@"." withString:@""],
-                            kFieldNameSignInUpSysFlag:@"0"}
+                            kFieldNameSignInUpUserPWD:self.userPwdStr,
+                            kFieldNameSignInUpVersionNum:self.appVersionInteger,
+                            kFieldNameSignInUpSysFlag:self.systemFlag}
                  progress:^(NSProgress * _Nonnull uploadProgress) {
                      
                  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -138,6 +98,9 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
                      if (success) {
                          @strongify(self);
                          self.responseData = [resData copy];
+                         /* 登录成功要保存缓存信息 */
+                         [self savingLoginInfoIntoCacheAfterSuccess];
+                         /* 并回调 */
                          [subscriber sendCompleted];
                      } else {
                          [subscriber sendError:[NSError errorWithDomain:@"SignInError" code:code localizedDescription:message]];
@@ -145,26 +108,67 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
                  
                  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                      /* 登录响应失败 */
-                     JLPrint(@"登陆失败:[%@]",[error localizedDescription]);
                      [subscriber sendError:error];
                  }
          ];
-        
-    
         
         return nil;
     }] materialize];
 }
 
 
-/* 加密 */
-- (NSString*) pinEncryptBySource:(NSString*)source {
-    return [ThreeDesUtil encryptUse3DES:[EncodeString encodeASC:source] key:pinTriEncKey];
+
+/* 保存登陆信息到缓存 */
+- (void) savingLoginInfoIntoCacheAfterSuccess {
+    MCacheSavedLogin* loginCache = [MCacheSavedLogin cache];
+    loginCache.userName = self.userNameStr;
+    loginCache.userPassword = self.userPwdStr;
+    loginCache.appVersion = self.appVersionInteger;
+    loginCache.systemType = self.systemFlag;
+    
+    loginCache.logined = YES;
+    loginCache.businessCode = [self.responseData objectForKey:kFieldNameSignInDownBusinessNum];
+    loginCache.businessName = [self.responseData objectForKey:kFieldNameSignInDownBusinessName];
+    loginCache.email = [self.responseData objectForKey:kFieldNameSignInDownBusinessEmail];
+
+    /* 终端号组 */
+    loginCache.terminalCount = [[self.responseData objectForKey:kFieldNameSignInDownTerminalCount] integerValue];
+    if (loginCache.terminalCount > 0) {
+        NSString* terminalList = [self.responseData objectForKey:kFieldNameSignInDownTerminalList];
+        if (terminalList && terminalList.length > 0) {
+            NSArray* terminals = [NSMutableArray arrayWithArray:[terminalList componentsSeparatedByString:@","]];
+            NSMutableArray* visibleTerminals = [NSMutableArray array];
+            for (NSString* terminal in terminals) {
+                [visibleTerminals addObject:[terminal stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+            }
+            loginCache.terminalList = [NSArray arrayWithArray:visibleTerminals];
+        }
+    }
+    
+    
+    /* 允许标志位 */
+    NSString* allowTypes = [self.responseData objectForKey:kFieldNameSignInDownAllowTypes];
+    loginCache.T_N_enable = [allowTypes substringWithRange:NSMakeRange(0, 1)].integerValue == 1 ? YES:NO;
+    loginCache.N_fee_enable = [allowTypes substringWithRange:NSMakeRange(1, 1)].integerValue == 1 ? YES:NO;
+    loginCache.N_business_enable = [allowTypes substringWithRange:NSMakeRange(2, 1)].integerValue == 1 ? YES:NO;
+    loginCache.T_0_enable = [allowTypes substringWithRange:NSMakeRange(3, 1)].integerValue == 1 ? YES:NO;
+    
+    /* 审核状态 */
+    NSInteger code = [[self.responseData objectForKey:kFieldNameSignInDownCode] integerValue];
+    if (code == VMSigninSpecialErrorTypeCheckStill) {
+        loginCache.checkedState = MCacheSignUpCheckStateChecking;
+    }
+    else if (code == VMSigninSpecialErrorTypeCheckRefuse) {
+        loginCache.checkedState = MCacheSignUpCheckStateCheckRefused;
+        loginCache.checkRefuseReason = [self.responseData objectForKey:kFieldNameSignInDownMessage];
+    }
+    else {
+        loginCache.checkedState = MCacheSignUpCheckStateChecked;
+    }
+    
 }
-/* 解密 */
-- (NSString*) sourceByUnEncryptPin:(NSString*)pin {
-    return [PublicInformation stringFromHexString:[ThreeDesUtil decryptUse3DES:pin key:pinTriEncKey]];
-}
+
+
 
 # pragma mask 4 getter
 
@@ -183,21 +187,19 @@ static NSString* const pinTriEncKey = @"1234567890123456789012345678901234567890
     return _signInCommand;
 }
 
-- (HTTPInstance *)http {
-    if (!_http) {
-        NSString* urlString;
-        if (TestOrProduce == 11) {
-            urlString = [NSString stringWithFormat:@"http://%@:%@/kftagent/LoginService",
-                         [PublicInformation getServerDomain],
-                         [PublicInformation getHTTPPort]];
-        } else {
-            urlString = [NSString stringWithFormat:@"http://%@:%@/jlagent/LoginService",
-                         [PublicInformation getServerDomain],
-                         [PublicInformation getHTTPPort]];
-        }
-        _http = [[HTTPInstance alloc] initWithURLString:urlString];
+
+- (NSString *)appVersionInteger {
+    if (!_appVersionInteger) {
+        _appVersionInteger = [[PublicInformation AppVersionNumber] stringByReplacingOccurrencesOfString:@"." withString:@""];
     }
-    return _http;
+    return _appVersionInteger;
+}
+
+- (NSString *)systemFlag {
+    if (!_systemFlag) {
+        _systemFlag = @"0";
+    }
+    return _systemFlag;
 }
 
 @end

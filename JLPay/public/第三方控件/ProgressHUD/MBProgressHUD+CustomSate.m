@@ -27,8 +27,12 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;
-//    progressHud.removeFromSuperViewOnHide = YES;
     return progressHud;
+}
+
++ (void)hideCurNormalHud {
+    UIWindow* mainWindow = [UIApplication sharedApplication].keyWindow;
+    [MBProgressHUD hideAllHUDsForView:mainWindow animated:YES];
 }
 
 + (void)showSuccessWithText:(NSString *)text andDetailText:(NSString *)detailText onCompletion:(void (^)(void))completion {

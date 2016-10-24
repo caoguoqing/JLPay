@@ -133,6 +133,24 @@
 }
 
 
+// 截取掉头和尾的多余空格
+- (NSString*) stringByTrimmingWhiteSpaceAtFontOrSuffWithString:(NSString*)originString {
+    NSMutableString* trimmedString = [NSMutableString string];
+    if (originString == nil) {
+        return trimmedString;
+    }
+    
+    
+    
+    for (int i = 0; i < originString.length; i++) {
+    }
+    
+    return trimmedString;
+}
+
+
+
+
 #pragma mask : font 和 text size 相关
 // -- 重新计算字体大小:指定高度
 + (CGFloat) resizeFontAtHeight:(CGFloat)height scale:(CGFloat)scale {

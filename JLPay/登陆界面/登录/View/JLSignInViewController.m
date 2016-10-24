@@ -8,130 +8,169 @@
 
 #import "JLSignInViewController.h"
 #import "JLSignUpViewController.h"
+#import <ReactiveCocoa.h>
+#import "Masonry.h"
+#import "Define_Header.h"
+#import "DelegateForTextFieldControl.h"
+#import "VMHttpSignIn.h"
+#import "MBProgressHUD+CustomSate.h"
+#import "ChangePinViewController.h"
+#import "ForgetPinViewConroller.h"
+#import "ModelAppInformation.h"
+#import "SignUpBtn.h"
+#import "VMSignInInfoCache.h"
+#import "MPasswordEncrytor.h"
+#import "JLSigninInputView.h"
+
+
+@interface JLSignInViewController()
+
+@property (nonatomic, strong) UIImageView* logoImgView;         // logo
+
+
+@property (nonatomic, strong) JLSigninInputView* userNameInputView;
+@property (nonatomic, strong) JLSigninInputView* userPasswordInputView;
+
+
+@property (nonatomic, strong) UIButton* pwdForgottenBtn;        // 忘记密码
+@property (nonatomic, strong) UIButton* pwdSavingBtn;           // 保存密码-按钮
+@property (nonatomic, strong) UILabel* pwdSavingLabel;          // 保存密码-标签
+
+@property (nonatomic, strong) UIButton* signInBtn;              // 登录
+@property (nonatomic, strong) SignUpBtn* signUpBtn;             // 注册
+
+@property (nonatomic, strong) VMHttpSignIn* signinHttp;         // 登录http请求
+
+@property (nonatomic, strong) VMSignInInfoCache* moreCaches;    // 各种本地缓存(登录数据、设备、多商户)
+
+/* 控制密码输入和键盘遮挡处理 */
+@property (nonatomic, strong) DelegateForTextFieldControl* delegateForTfield;
+
+/* 登陆成功回调 */
+@property (nonatomic, copy) void (^ loginFinished) (void);
+
+/* 登陆取消回调 */
+@property (nonatomic, copy) void (^ loginCanceled) (void);
+
+/* 取消按钮 */
+@property (nonatomic, strong) UIButton* loginCancelBtn;
+
+/* 背景图层 */
+@property (nonatomic, strong) CAGradientLayer* backGradientLayer;
+
+@end
+
 
 @implementation JLSignInViewController
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+
+- (instancetype) initWithLoginFinished:(void (^) (void))finishedBlock onCanceled:(void (^) (void))cancelBlock {
+    self = [super init];
     if (self) {
-        
+        self.loginFinished = finishedBlock;
+        self.loginCanceled = cancelBlock;
     }
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
-    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
-    
-    self.seenVisible = NO;
-    
-    [self loadSubviews];
-    [self layoutSubviews];
-    [self manageOnKVOs];
-}
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear: animated];
-    [self.navigationController setNavigationBarHidden:YES];
-    
-    /* 加载历史登陆信息 */
-    [self loadSignInInfoLastSaved];
-}
 
 
 - (void) manageOnKVOs {
     
     @weakify(self);
-    [[RACObserve(self, savedEnable) deliverOnMainThread] subscribeNext:^(NSNumber* enable) {
+    /* 监控: 保存密码的标志颜色 */
+    [[RACObserve(self.moreCaches, needPasswordSaving) deliverOnMainThread] subscribeNext:^(NSNumber* enable) {
         @strongify(self);
         if (enable.boolValue) {
-            [self.pwdSavingBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [self.pwdSavingBtn setTitleColor:[UIColor colorWithWhite:1 alpha:1] forState:UIControlStateNormal];
         } else {
-            [self.pwdSavingBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+            [self.pwdSavingBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.3] forState:UIControlStateNormal];
         }
     }];
     
-    [[RACObserve(self, seenVisible) deliverOnMainThread] subscribeNext:^(NSNumber* visible) {
+    [[RACObserve(self.moreCaches, seenPasswordAvilable) deliverOnMainThread] subscribeNext:^(NSNumber* visible) {
         @strongify(self);
         if (visible.boolValue) {
-            [self.visiblePwdSeenBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            [self.visiblePwdSeenBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAEye] forState:UIControlStateNormal];
+            [self.userPasswordInputView.rightBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [self.userPasswordInputView.rightBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAEye] forState:UIControlStateNormal];
         } else {
-            [self.visiblePwdSeenBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-            [self.visiblePwdSeenBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAEyeSlash] forState:UIControlStateNormal];
+            [self.userPasswordInputView.rightBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.3] forState:UIControlStateNormal];
+            [self.userPasswordInputView.rightBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAEyeSlash] forState:UIControlStateNormal];
         }
     }];
     
+    
     /* binding: secureTextEntry to seenVisible */
-    RAC(self.pwdTextField, secureTextEntry) = [[RACObserve(self, seenVisible) deliverOnMainThread] map:^NSNumber*(NSNumber* visible) {
+    RAC(self.userPasswordInputView.textField, secureTextEntry) = [[RACObserve(self.moreCaches, seenPasswordAvilable) deliverOnMainThread] map:^NSNumber*(NSNumber* visible) {
         return @(!visible.boolValue);
     }];
     
-    /* binding: sign in inputed info to VMSigninCache */
-    RAC(self.signInCache.loginSavedResource, userName) = [self.userTextField.rac_textSignal skip:1];
-    RAC(self.signInCache.loginSavedResource, userPwdPan) = [RACObserve(self.signinHttp, userPwdPinStr) skip:1]; /* 保存密文 */
-    RAC(self.signInCache.loginSavedResource, needSaving) = [RACObserve(self, savedEnable) skip:1];
 
-    /* binding: inputs value to http */
-    RAC(self.signinHttp, userNameStr) = RACObserve(self.userTextField, text);
-    RAC(self.signinHttp, userPwdStr) = RACObserve(self.pwdTextField, text);
+    /* binding: 用户名+密码 */
+    RAC(self.moreCaches, userName) = [[RACObserve(self.userNameInputView.textField, text) skip:1] map:^id(NSString* userName) {
+        return [userName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    }];
+    RAC(self.moreCaches, userPasswordPin) = [[[RACObserve(self.userPasswordInputView.textField, text) skip:1] filter:^BOOL(NSString* password) {
+        return password && password.length > 0;
+    }] map:^id(NSString* password) {
+        return [MPasswordEncrytor pinEncryptedBySource:password];
+    }];
+    
+    RAC(self.signinHttp, userNameStr) = RACObserve(self.moreCaches, userName);
+    RAC(self.signinHttp, userPwdStr) = RACObserve(self.moreCaches, userPasswordPin);
 
     
     /* observing: 跟踪登录过程 */
     [self.signinHttp.signInCommand.executionSignals subscribeNext:^(RACSignal* sig) {
         [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
-            @strongify(self);
-            [self.progressHud showNormalWithText:@"正在登录..." andDetailText:nil];
+            [MBProgressHUD showNormalWithText:@"正在登录..." andDetailText:nil];
         } error:^(NSError *error) {
             NSInteger errorCode = [error code];
-            @strongify(self);
             if (errorCode == VMSigninSpecialErrorTypeLowVersion) {
-                [self.progressHud hide:YES];
-                [PublicInformation alertCancleAndOther:@"去下载" title:@"App版本过低,请下载更新版本" message:nil tag:SignInVCAlertTagLowAppVersion delegate:self];
+                [MBProgressHUD hideCurNormalHud];
+                [UIAlertController showAlertWithTitle:@"App版本过低,请下载更新版本" message:nil target:nil clickedHandle:^(UIAlertAction *action) {
+                    if ([action.title isEqualToString:@"去下载"]) {
+                        NSURL* url = [NSURL URLWithString:[ModelAppInformation URLStringInAppStore]];
+                        [[UIApplication sharedApplication] openURL:url];
+                    }
+                } buttons:@{@(UIAlertActionStyleDefault):@"取消"}, @{@(UIAlertActionStyleCancel):@"去下载"}, nil];
             }
             else {
-                [self.progressHud showFailWithText:@"登录失败" andDetailText:[error localizedDescription] onCompletion:^{}];
+                [MBProgressHUD showFailWithText:@"登录失败" andDetailText:[error localizedDescription] onCompletion:nil];
             }
         } completed:^{
             @strongify(self);
-            [self.progressHud hideOnCompletion:^{
-                @strongify(self);
-                /* 初始密码为8个0的: 强制修改密码 */
-                if ([self.pwdTextField.text isEqualToString:@"00000000"]) {
-                    [self switchToChangePinInterface];
-                } else {
-                    /* 重置登陆信息的保存 */
-                    [self resetAndSavingSignInResponse];
-                    /* 检查是否切换了账号 */
-                    [self clearDeviceInfoIfSwitchUser];
-                    /* 跳转到主界面 */
-                    [self switchToMainInterface];
-                }
-            }];
+            [MBProgressHUD hideCurNormalHud];
+            /* 先缓存 */
+            [self.moreCaches reWriteLocalConfig];
+            /* 初始密码为8个0的: 强制修改密码 */
+            if ([self.userPasswordInputView.textField.text isEqualToString:@"00000000"]) {
+                [self switchToChangePinInterface];
+            } else {
+                /* 退出登录界面 */
+                [self.navigationController dismissViewControllerAnimated:YES completion:^{
+                    @strongify(self);
+                    if (self.loginFinished) {
+                        self.loginFinished();
+                    }
+                }];
+            }
         }];
     }];
     
 }
 
-# pragma mask 2 UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == SignInVCAlertTagLowAppVersion) {
-        if (buttonIndex == 1) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ModelAppInformation URLStringInAppStore]]];
-        }
-    }
-}
 
 
 # pragma mask 2 IBAction
 
 - (IBAction) clickedSavingPwdBtn:(id)sender {
-    self.savedEnable = !self.savedEnable;
+    self.moreCaches.needPasswordSaving = !self.moreCaches.needPasswordSaving;
 }
 
 - (IBAction) clickedPwdSeenBtn:(id)sender {
-    self.seenVisible = !self.seenVisible;
+    self.moreCaches.seenPasswordAvilable = !self.moreCaches.seenPasswordAvilable;
 }
 
 - (IBAction) clickedForgotPwdBtn:(id)sender {
@@ -140,11 +179,6 @@
 }
 
 - (IBAction) clickedSignUpBtn:(id)sender {
-//    UserRegisterViewController* userRegisterVC = [[UserRegisterViewController alloc] initWithNibName:nil bundle:nil];
-//    userRegisterVC.registerType = RegisterTypeNew;
-//    [self.navigationController pushViewController:userRegisterVC animated:YES];
-
-    
     JLSignUpViewController* userSignUpVC = [[JLSignUpViewController alloc] initWithNibName:nil bundle:nil];
     [userSignUpVC setFirstStep];
     userSignUpVC.seperatedIndex = 0;
@@ -160,18 +194,18 @@
     }];
 
     for (UIView* subView in self.view.subviews) {
-        if ([subView class] == [UITextField class]) {
-            [subView resignFirstResponder];
+        if ([subView class] == [JLSigninInputView class]) {
+            JLSigninInputView* inputView = (JLSigninInputView*)subView;
+            [inputView.textField resignFirstResponder];
         }
     }
 }
 
-/* 切换到主界面 */
-- (void) switchToMainInterface {
-    UITabBarController* mainTabBar = [APPMainDelegate mainTabBarControllerOfApp];
-    [mainTabBar setSelectedIndex:0]; // 切换到金额输入界面
-    [self presentViewController:mainTabBar animated:YES completion:nil];
+/* 点击了取消登录按钮 */
+- (IBAction) clickedLoginCancelBtn:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
+
 
 /* 切换到修改密码界面 */
 - (void) switchToChangePinInterface {
@@ -179,43 +213,48 @@
     [self.navigationController pushViewController:changePinVC animated:YES];
 }
 
-/* 重置并保存登陆信息 */
-- (void) resetAndSavingSignInResponse {
-    [self.signInCache resetPropertiesBySignInResponseData:self.signinHttp.responseData];
-    [self.signInCache doLoginResourceSaving];
-}
 
-/* 加载已保存的登陆信息 */
-- (void) loadSignInInfoLastSaved {
-    self.savedEnable = self.signInCache.loginSavedResource.needSaving;
-    self.userTextField.text = self.signInCache.loginSavedResource.userName;
-    self.pwdTextField.text = (self.savedEnable && self.signInCache.loginSavedResource.userPwdPan && self.signInCache.loginSavedResource.userPwdPan.length > 0) ?
-    ([self.signinHttp sourceByUnEncryptPin:self.signInCache.loginSavedResource.userPwdPan]):
-    (nil);
-}
 
-/* 检查是否切换了账号: 是，则清空设备绑定信息 */
-- (void) clearDeviceInfoIfSwitchUser {
-    if (![[MLoginSavedResource sharedLoginResource].businessNumber isEqualToString:[ModelDeviceBindedInformation businessNumber]]) {
-        [ModelDeviceBindedInformation cleanDeviceBindedInfo];
-    }
-}
 
 
 # pragma mask 4 布局
 
-- (void) loadSubviews {
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     
-    [self.view addSubview:self.backgroundImgView];
+    [self loadSubviews];
+    [self layoutSubviews];
+    [self manageOnKVOs];
+    [self initialDatas];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear: animated];
+    [self.navigationController setNavigationBarHidden:YES];
+    
+}
+
+- (void) initialDatas {
+    [self.moreCaches reReadLocalConfig];
+    if (self.moreCaches.userName && self.moreCaches.userName.length > 0) {
+        self.userNameInputView.textField.text = self.moreCaches.userName;
+    }
+    if (self.moreCaches.userPasswordPin && self.moreCaches.userPasswordPin.length > 0) {
+        self.userPasswordInputView.textField.text = [MPasswordEncrytor pinSourceDecryptedOnPin:self.moreCaches.userPasswordPin];
+    }
+}
+
+
+- (void) loadSubviews {
+    [self.view.layer addSublayer:self.backGradientLayer];
     
     [self.view addSubview:self.logoImgView];
     
-    [self.view addSubview:self.userTextField];
-    [self.view addSubview:self.pwdTextField];
-    [self.view addSubview:self.headLabel];
-    [self.view addSubview:self.lockLabel];
+    [self.view addSubview:self.userNameInputView];
+    [self.view addSubview:self.userPasswordInputView];
     
-    [self.view addSubview:self.visiblePwdSeenBtn];
     [self.view addSubview:self.pwdSavingBtn];
     [self.view addSubview:self.pwdSavingLabel];
     [self.view addSubview:self.pwdForgottenBtn];
@@ -223,8 +262,7 @@
     [self.view addSubview:self.signUpBtn];
     [self.view addSubview:self.signInBtn];
     
-    [self.view addSubview:self.progressHud];
-    
+    [self.view addSubview:self.loginCancelBtn];
 }
 
 - (void) layoutSubviews {
@@ -235,84 +273,55 @@
     CGFloat btnHRate = 1/13.f;
     CGFloat heightTxtField = self.view.frame.size.height * txtFieldHRate;
     CGFloat heightBtn = self.view.frame.size.height * btnHRate;
-    CGFloat widthPwdForgotBtn = 100;
+    CGFloat widthPwdForgotBtn =  [UIScreen mainScreen].bounds.size.width * 100/320.f;
+    CGFloat widthLoginCancelBtn = [UIScreen mainScreen].bounds.size.width * 33/320.f;
     
-    self.userTextField.layer.cornerRadius = heightTxtField * 0.5;
-    self.pwdTextField.layer.cornerRadius = heightTxtField * 0.5;
+    self.userNameInputView.layer.cornerRadius = heightTxtField * 0.5;
+    self.userPasswordInputView.layer.cornerRadius = heightTxtField * 0.5;
     self.signInBtn.layer.cornerRadius = heightBtn * 0.5;
     
-    self.userTextField.font = [UIFont systemFontOfSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.4]];
-    self.pwdTextField.font = [UIFont systemFontOfSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.4]];
+    
     self.signInBtn.titleLabel.font = [UIFont systemFontOfSize:[@"xx" resizeFontAtHeight:heightBtn scale:0.38]];
     self.signUpBtn.titleLabel.font = [UIFont systemFontOfSize:[@"xx" resizeFontAtHeight:heightBtn scale:0.38]];
     self.pwdSavingLabel.font = [UIFont systemFontOfSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.38]];
     self.pwdForgottenBtn.titleLabel.font = [UIFont systemFontOfSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.38]];
     self.pwdSavingBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.5]];
-    self.headLabel.font = [UIFont iconFontWithSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.5]];
-    self.lockLabel.font = [UIFont iconFontWithSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.45]];
-    self.visiblePwdSeenBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[@"xx" resizeFontAtHeight:heightTxtField scale:0.5]];
+    self.loginCancelBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:widthLoginCancelBtn scale:1]];
     
-    [self.backgroundImgView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.view.mas_left);
-        make.right.equalTo(wself.view.mas_right);
-        make.top.equalTo(wself.view.mas_top);
-        make.bottom.equalTo(wself.view.mas_bottom);
-    }];
+    self.backGradientLayer.frame = self.view.bounds;
     
     [self.logoImgView mas_makeConstraints:^(MASConstraintMaker *make) {
-
         make.centerX.equalTo(wself.view.mas_centerX);
         make.bottom.equalTo(wself.view.mas_top).offset(wself.view.frame.size.height * 0.25);
         make.width.equalTo(wself.view.mas_width).multipliedBy(0.5);
         make.height.equalTo(wself.logoImgView.mas_width).multipliedBy(wself.logoImgView.image.size.height / wself.logoImgView.image.size.width);
     }];
     
-    [self.userTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.userNameInputView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(wself.view.mas_centerY).offset(- 3);
         make.left.equalTo(wself.view.mas_left).offset(inset);
         make.right.equalTo(wself.view.mas_right).offset(-inset);
         make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
     }];
 
-    [self.pwdTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(wself.userTextField.mas_bottom).offset(6);
+    [self.userPasswordInputView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(wself.userNameInputView.mas_bottom).offset(6);
         make.left.equalTo(wself.view.mas_left).offset(inset);
         make.right.equalTo(wself.view.mas_right).offset(-inset);
         make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
     }];
-
-    [self.headLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.userTextField.mas_left).offset(heightTxtField * 0);
-        make.top.equalTo(wself.userTextField.mas_top);
-        make.bottom.equalTo(wself.userTextField.mas_bottom);
-        make.width.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate * 1.5);
-
-    }];
-
-    [self.lockLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(wself.pwdTextField.mas_left).offset(heightTxtField * 0);
-        make.top.equalTo(wself.pwdTextField.mas_top);
-        make.bottom.equalTo(wself.pwdTextField.mas_bottom);
-        make.width.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate * 1.5);
-    }];
-
-//    [self.visiblePwdSeenBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.right.equalTo(wself.pwdTextField.mas_right).offset(- heightTxtField * 0.5);
-//        make.centerY.equalTo(wself.pwdTextField.mas_centerY);
-//        make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
-//        make.width.equalTo(wself.visiblePwdSeenBtn.mas_height);
-//    }];
+    
 
     [self.pwdSavingBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(wself.pwdTextField.mas_bottom).offset(0);
-        make.left.equalTo(wself.pwdTextField.mas_left).offset(0);
+        make.top.equalTo(wself.userPasswordInputView.mas_bottom).offset(0);
+        make.left.equalTo(wself.userPasswordInputView.mas_left).offset(0);
         make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
         make.width.equalTo(wself.pwdSavingBtn.mas_height);
 
     }];
 
     [self.pwdSavingLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(wself.pwdTextField.mas_bottom).offset(0);
+        make.top.equalTo(wself.userPasswordInputView.mas_bottom).offset(0);
         make.left.equalTo(wself.pwdSavingBtn.mas_right).offset(0);
         make.right.equalTo(wself.view.mas_centerX);
         make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
@@ -320,7 +329,7 @@
 
     [self.pwdForgottenBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(wself.pwdSavingLabel.mas_top);
-        make.right.equalTo(wself.pwdTextField.mas_right);
+        make.right.equalTo(wself.userPasswordInputView.mas_right);
         make.width.mas_equalTo(widthPwdForgotBtn);
         make.height.equalTo(wself.view.mas_height).multipliedBy(txtFieldHRate);
 
@@ -339,9 +348,14 @@
         make.left.equalTo(wself.view.mas_left).offset(inset);
         make.right.equalTo(wself.view.mas_right).offset(-inset);
         make.height.equalTo(wself.view.mas_height).multipliedBy(btnHRate);
-
     }];
 
+    [self.loginCancelBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(20 + inset);
+        make.right.mas_equalTo(- inset);
+        make.width.height.mas_equalTo(widthLoginCancelBtn);
+    }];
+    
 }
 
 
@@ -351,12 +365,6 @@
 
 # pragma mask 5 getter
 
-- (UIImageView *)backgroundImgView {
-    if (!_backgroundImgView) {
-        _backgroundImgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg"]];
-    }
-    return _backgroundImgView;
-}
 - (UIImageView *)logoImgView {
     if (!_logoImgView) {
         _logoImgView = [[UIImageView alloc] initWithImage:[PublicInformation logoImageOfApp]];
@@ -364,53 +372,6 @@
     return _logoImgView;
 }
 
-- (UILabel *)headLabel {
-    if (!_headLabel) {
-        _headLabel = [UILabel new];
-        _headLabel.text = [NSString stringWithIconFontType:IconFontType_user];
-        _headLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
-        _headLabel.textAlignment = NSTextAlignmentCenter;
-    }
-    return _headLabel;
-}
-- (UILabel *)lockLabel {
-    if (!_lockLabel) {
-        _lockLabel = [UILabel new];
-        _lockLabel.text = [NSString stringWithIconFontType:IconFontType_lock];
-        _lockLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
-        _lockLabel.textAlignment = NSTextAlignmentCenter;
-    }
-    return _lockLabel;
-}
-
-- (UITextField *)userTextField {
-    if (!_userTextField) {
-        _userTextField = [UITextField new];
-        _userTextField.placeholder = @"请输入用户名";
-        _userTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        _userTextField.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:0.7].CGColor;
-        _userTextField.layer.borderWidth = 1.f;
-        _userTextField.textAlignment = NSTextAlignmentCenter;
-        _userTextField.textColor = [UIColor whiteColor];
-        _userTextField.delegate = self.delegateForTfield;
-    }
-    return _userTextField;
-}
-- (UITextField *)pwdTextField {
-    if (!_pwdTextField) {
-        _pwdTextField = [UITextField new];
-        _pwdTextField.placeholder = @"请输入8位密码";
-        _pwdTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
-        _pwdTextField.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:0.7].CGColor;
-        _pwdTextField.layer.borderWidth = 1.f;
-        _pwdTextField.textAlignment = NSTextAlignmentCenter;
-        _pwdTextField.textColor = [UIColor whiteColor];
-        _pwdTextField.keyboardType = UIKeyboardTypeAlphabet;
-        _pwdTextField.delegate = self.delegateForTfield;
-        _pwdTextField.tag = SignInTxtTaguserPwd;
-    }
-    return _pwdTextField;
-}
 
 - (UIButton *)signInBtn {
     if (!_signInBtn) {
@@ -472,17 +433,6 @@
     return _pwdSavingLabel;
 }
 
-- (UIButton *)visiblePwdSeenBtn {
-    if (!_visiblePwdSeenBtn) {
-        _visiblePwdSeenBtn = [UIButton new];
-        [_visiblePwdSeenBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAEye] forState:UIControlStateNormal];
-        [_visiblePwdSeenBtn setTitleColor:[UIColor colorWithWhite:0.9 alpha:1] forState:UIControlStateNormal];
-        [_visiblePwdSeenBtn setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.5] forState:UIControlStateHighlighted];
-        [_visiblePwdSeenBtn addTarget:self action:@selector(clickedPwdSeenBtn:) forControlEvents:UIControlEventTouchUpInside];
-
-    }
-    return _visiblePwdSeenBtn;
-}
 
 - (DelegateForTextFieldControl *)delegateForTfield {
     if (!_delegateForTfield) {
@@ -497,12 +447,6 @@
     return _delegateForTfield;
 }
 
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
-}
 
 - (VMHttpSignIn *)signinHttp {
     if (!_signinHttp) {
@@ -511,11 +455,69 @@
     return _signinHttp;
 }
 
-- (VMSignInInfoCache *)signInCache {
-    if (!_signInCache) {
-        _signInCache = [[VMSignInInfoCache alloc] init];
+- (VMSignInInfoCache *)moreCaches {
+    if (!_moreCaches) {
+        _moreCaches = [[VMSignInInfoCache alloc] init];
     }
-    return _signInCache;
+    return _moreCaches;
 }
+
+- (UIButton *)loginCancelBtn {
+    if (!_loginCancelBtn) {
+        _loginCancelBtn = [UIButton new];
+        [_loginCancelBtn setTitle:[NSString fontAwesomeIconStringForEnum:FATimesCircle] forState:UIControlStateNormal];
+        [_loginCancelBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.618] forState:UIControlStateNormal];
+        [_loginCancelBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [_loginCancelBtn addTarget:self action:@selector(clickedLoginCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _loginCancelBtn;
+}
+
+- (CAGradientLayer *)backGradientLayer {
+    if (!_backGradientLayer) {
+        _backGradientLayer = [CAGradientLayer layer];
+        _backGradientLayer.colors = @[(__bridge id)[UIColor colorWithHex:0x99cccc alpha:1].CGColor,
+                                      (__bridge id)[UIColor colorWithHex:0x27384b alpha:0.618].CGColor,
+                                      (__bridge id)[UIColor colorWithHex:0x99cccc alpha:1].CGColor];
+        _backGradientLayer.locations = @[@0, @0.7, @1];
+        _backGradientLayer.startPoint = CGPointMake(0.5, 0);
+        _backGradientLayer.endPoint = CGPointMake(0.5, 1);
+    }
+    return _backGradientLayer;
+}
+
+- (JLSigninInputView *)userNameInputView {
+    if (!_userNameInputView) {
+        _userNameInputView = [[JLSigninInputView alloc] init];
+        _userNameInputView.iconLabel.text = [NSString fontAwesomeIconStringForEnum:FAUser];
+        _userNameInputView.iconLabel.textColor = [UIColor whiteColor];
+        _userNameInputView.textField.placeholder = @"请输入用户名";
+        _userNameInputView.textField.textColor = [UIColor whiteColor];
+        _userNameInputView.textField.delegate = self.delegateForTfield;
+        _userNameInputView.rightBtn.hidden = YES;
+        _userNameInputView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.9].CGColor;
+        _userNameInputView.layer.borderWidth = 1;
+    }
+    return _userNameInputView;
+}
+
+- (JLSigninInputView *)userPasswordInputView {
+    if (!_userPasswordInputView) {
+        _userPasswordInputView = [[JLSigninInputView alloc] init];
+        _userPasswordInputView.iconLabel.text = [NSString fontAwesomeIconStringForEnum:FALock];
+        _userPasswordInputView.iconLabel.textColor = [UIColor whiteColor];
+        _userPasswordInputView.textField.placeholder = @"请输入密码";
+        _userPasswordInputView.textField.textColor = [UIColor whiteColor];
+        _userPasswordInputView.textField.delegate = self.delegateForTfield;
+        _userPasswordInputView.textField.tag = SignInTxtTaguserPwd;
+        _userPasswordInputView.textField.keyboardType = UIKeyboardTypeAlphabet;
+        [_userPasswordInputView.rightBtn addTarget:self action:@selector(clickedPwdSeenBtn:) forControlEvents:UIControlEventTouchUpInside];
+        _userPasswordInputView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.9].CGColor;
+        _userPasswordInputView.layer.borderWidth = 1;
+    }
+    return _userPasswordInputView;
+}
+
+
 
 @end

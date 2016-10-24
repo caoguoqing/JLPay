@@ -56,6 +56,9 @@
 @property (nonatomic, strong) VMDataSourceForMoreBusiOrRateVC* dataSourceForB_R;
 
 
+@property (nonatomic, copy) void (^ finishedBlock) (void);
+@property (nonatomic, copy) void (^ canceledBlock) (void);
+
 @end
 
 
@@ -202,6 +205,16 @@
 }
 
 
+/* 退出界面 */
+- (IBAction) clickedCancelBtn:(id)sender {
+    NameWeakSelf(wself);
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        if (wself.canceledBlock) {
+            wself.canceledBlock();
+        }
+    }];
+}
+
 # pragma mask 3 UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if ([touch.view class] != [UITableView class]) {
@@ -213,6 +226,16 @@
 
 
 # pragma mask 4 生命周期 & 布局
+
+- (instancetype)initWithSelectFinished:(void (^)(void))finishedBlock orCanceled:(void (^)(void))canceledBlock {
+    self = [super init];
+    if (self) {
+        self.finishedBlock = finishedBlock;
+        self.canceledBlock = canceledBlock;
+    }
+    return self;
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -232,6 +255,7 @@
 }
 
 - (void) loadSubviews {
+    [self.navigationItem setLeftBarButtonItem:[self newCancelBarBtn]];
     [self.view addSubview:self.noteLabSavedOrNot];
     [self.view addSubview:self.iconSaved];
     [self.view addSubview:self.iconNotSaved];
@@ -458,6 +482,16 @@
         _noteLabEffective.textColor = [UIColor grayColor];
     }
     return _noteLabEffective;
+}
+
+- (UIBarButtonItem*) newCancelBarBtn {
+    UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    [cancelBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAHome] forState:UIControlStateNormal];
+    cancelBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+    [cancelBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [cancelBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+    [cancelBtn addTarget:self action:@selector(clickedCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
+    return [[UIBarButtonItem alloc] initWithCustomView:cancelBtn];
 }
 
 @end

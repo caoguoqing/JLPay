@@ -88,7 +88,8 @@
 }
 
 - (IBAction) clickedCancelBtn:(id)sender {
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+    }];
 }
 
 # pragma mask 4 getter

@@ -8,6 +8,7 @@
 
 #import "BrushViewController.h"
 #import "JLPasswordView.h"
+#import "MTransMoneyCache.h"
 
 @interface BrushViewController()
 
@@ -33,6 +34,7 @@
 @synthesize moneyLabel = _moneyLabel;
 @synthesize cardInfoOfReading = _cardInfoOfReading;
 
+
 /*************************************
  * 功  能 : 界面的初始化;
  *          - 金额标签              UILabel + UIImageView
@@ -44,7 +46,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
-
+    [[MTransMoneyCache sharedMoney] resetMoneyToZero];
+    
     // 加载子视图
     [self setTitle:@"刷卡"];
     [self addSubViews];
@@ -75,7 +78,6 @@
                 break;
         }
     }];
-    
 }
 
 
@@ -86,7 +88,6 @@
     [super viewWillAppear:animated];
     [self.activity startAnimating];
     self.navigationController.navigationBarHidden = NO;
-    
 }
 
 

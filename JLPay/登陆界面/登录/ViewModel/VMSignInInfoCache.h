@@ -7,16 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MLoginSavedResource.h"
-#import "VMHttpSignIn.h"
 
 @interface VMSignInInfoCache : NSObject
 
+@property (nonatomic, copy) NSString* userName;
 
-@property (nonatomic, retain) MLoginSavedResource* loginSavedResource;
+@property (nonatomic, copy) NSString* userPasswordPin;
 
-- (void) resetPropertiesBySignInResponseData:(NSDictionary*)signInResponseData;
+@property (nonatomic, assign) BOOL seenPasswordAvilable;
 
-- (void) doLoginResourceSaving;
+@property (nonatomic, assign) BOOL needPasswordSaving;
+
+
+- (void) reReadLocalConfig;
+
+- (void) reWriteLocalConfig;
 
 @end

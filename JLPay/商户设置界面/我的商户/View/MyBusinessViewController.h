@@ -23,6 +23,10 @@ typedef enum {
 @interface MyBusinessViewController : UIViewController
 <UIAlertViewDelegate, UITableViewDelegate>
 
+- (instancetype) initWithFinished:(void (^) (void))finishedBlock
+                       orCanceled:(void (^) (void))canceledBlock;
+
+
 @property (nonatomic, strong) UITableView* tableView;
 @property (nonatomic, strong) UIButton* uploadBtn;
 @property (nonatomic, strong) UIButton* reaplyBtn;

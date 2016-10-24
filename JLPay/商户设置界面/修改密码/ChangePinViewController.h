@@ -10,4 +10,7 @@
 
 @interface ChangePinViewController : UIViewController
 
+- (instancetype) initWithChangeFinished:(void (^) (void))finishedBlock
+                             orCanceled:(void (^) (void))canceledBlock;
+
 @end

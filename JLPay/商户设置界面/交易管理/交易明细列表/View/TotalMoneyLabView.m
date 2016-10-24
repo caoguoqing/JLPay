@@ -26,7 +26,7 @@
 }
 
 - (void) addSubviews {
-    self.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
+    self.backgroundColor = [UIColor colorWithHex:HexColorTypeBlackBlue alpha:1];
     [self addSubview:self.titleLabel];
     [self addSubview:self.totalMoneyLabel];
 }

@@ -35,6 +35,9 @@
 - (NSString*) stringCutting4XingInRange:(NSRange)range;
 - (NSString*) stringCuttingXingInRange:(NSRange)range;
 
+// 截取掉头和尾的多余空格
+- (NSString*) stringByTrimmingWhiteSpaceAtFontOrSuffWithString:(NSString*)originString;
+
 
 #pragma mask : font 和 text size 相关
 // -- 重新计算字体大小:指定高度

@@ -64,7 +64,7 @@
 - (void) getWorkKeyOnFinished:(void (^) (void))finished onError:(void (^) (NSError* error))errorBlock {
     self.finishedBlock = finished;
     self.errorBlock = errorBlock;
-    [self.tcpHandle downloadWorkKeyWithBusinessNum:[MLoginSavedResource sharedLoginResource].businessNumber andTerminalNum:self.terminalNumber];
+    [self.tcpHandle downloadWorkKeyWithBusinessNum:[PublicInformation returnBusiness] andTerminalNum:self.terminalNumber];
 }
 
 - (void) getPubKeyOnFinished:(void (^) (NSString* pubkey))finished onError:(void (^) (NSError* error))errorBlock {

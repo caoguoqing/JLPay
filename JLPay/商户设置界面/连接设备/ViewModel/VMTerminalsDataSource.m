@@ -8,7 +8,7 @@
 
 #import "VMTerminalsDataSource.h"
 #import "Define_Header.h"
-#import "MLoginSavedResource.h"
+#import "MCacheSavedLogin.h"
 
 @interface VMTerminalsDataSource()
 
@@ -69,9 +69,9 @@
 
 - (NSArray *)terminalList {
     if (!_terminalList) {
-        MLoginSavedResource* loginInfo = [MLoginSavedResource sharedLoginResource];
-        if ([loginInfo terminalCount] > 0) {
-            _terminalList = [NSArray arrayWithArray:loginInfo.terminalList];
+        MCacheSavedLogin* logincache = [MCacheSavedLogin cache];
+        if ([logincache terminalCount] > 0) {
+            _terminalList = [NSArray arrayWithArray:logincache.terminalList];
         } else {
             _terminalList = [NSArray array];
         }

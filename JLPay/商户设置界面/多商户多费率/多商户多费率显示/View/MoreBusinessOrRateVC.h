@@ -10,7 +10,8 @@
 
 @interface MoreBusinessOrRateVC : UIViewController
 
-
+- (instancetype) initWithSelectFinished:(void (^) (void))finishedBlock
+                             orCanceled:(void (^) (void))canceledBlock;
 
 
 @end

@@ -10,4 +10,7 @@
 
 @interface DeviceConnectViewController : UIViewController
 
+- (instancetype) initWithConnected:(void (^) (void))connectedBlock
+                        orCanceled:(void (^) (void))canceledBlock;
+
 @end

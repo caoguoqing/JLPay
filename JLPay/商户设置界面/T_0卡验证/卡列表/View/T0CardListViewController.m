@@ -12,12 +12,27 @@
 #import "Masonry.h"
 #import "Define_Header.h"
 
+
+@interface T0CardListViewController()
+
+@property (nonatomic, strong) UITableView* tableView;
+
+@property (nonatomic, strong) UIBarButtonItem* additionBarBtnItem;
+
+@property (nonatomic, strong) UIBarButtonItem* homeBarBtnItem;
+
+@property (nonatomic, strong) VMT0CardListRequest* cardListRequester;
+
+@property (nonatomic, strong) MBProgressHUD* progressHud;
+
+
+@end
+
 @implementation T0CardListViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"卡列表";
-    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     [self loadSubviews];
     [self layoutSubviews];
     [self addKVOs];
@@ -30,9 +45,11 @@
 }
 
 - (void) loadSubviews {
+    [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
     self.automaticallyAdjustsScrollViewInsets = NO;
     [self.view addSubview:self.tableView];
     [self.navigationItem setRightBarButtonItem:self.additionBarBtnItem];
+    [self.navigationItem setLeftBarButtonItem:self.homeBarBtnItem];
     [self.view addSubview:self.progressHud];
 }
 
@@ -73,6 +90,10 @@
     [self.navigationController pushViewController:cardUploadVC animated:YES];
 }
 
+- (IBAction) clickedHomeBtn:(id)sender {
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
 # pragma mask 4 getter
 
 - (UITableView *)tableView {
@@ -91,9 +112,22 @@
 
 - (UIBarButtonItem *)additionBarBtnItem {
     if (!_additionBarBtnItem) {
-        _additionBarBtnItem = [[UIBarButtonItem alloc] initWithTitle:@"添加银行卡" style:UIBarButtonItemStylePlain target:self action:@selector(clickAddition:)];
+        _additionBarBtnItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(clickAddition:)];
     }
     return _additionBarBtnItem;
+}
+
+- (UIBarButtonItem *)homeBarBtnItem {
+    if (!_homeBarBtnItem) {
+        UIButton* homeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [homeButton setTitle:[NSString fontAwesomeIconStringForEnum:FAHome] forState:UIControlStateNormal];
+        [homeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [homeButton setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        homeButton.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:23 scale:1]];
+        [homeButton addTarget:self action:@selector(clickedHomeBtn:) forControlEvents:UIControlEventTouchUpInside];
+        _homeBarBtnItem = [[UIBarButtonItem alloc] initWithCustomView:homeButton];
+    }
+    return _homeBarBtnItem;
 }
 
 - (VMT0CardListRequest *)cardListRequester {

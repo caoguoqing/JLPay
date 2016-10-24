@@ -87,7 +87,7 @@
             UILabel* titleLab = [self.titleLabs objectAtIndex:i];
             if (i <= item.integerValue) {
                 titleLab.alpha = 1;
-                titleLab.font = [UIFont boldSystemFontOfSize:15.5];
+                titleLab.font = [UIFont boldSystemFontOfSize:14];
             } else {
                 titleLab.font = [UIFont boldSystemFontOfSize:13];
                 titleLab.alpha = 0.5;

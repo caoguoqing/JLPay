@@ -21,6 +21,7 @@
 #import "DC_VMDeviceDataSource.h"
 #import "TCPKeysVModel.h"
 #import "ModelDeviceBindedInformation.h"
+#import "UIAlertController+JLShow.h"
 
 
 
@@ -50,16 +51,32 @@
 /* 完成按钮 */
 @property (nonatomic, strong) UIBarButtonItem* doneBarBtn;
 
+/* 取消按钮 */
+@property (nonatomic, strong) UIBarButtonItem* cancelBarBtn;
+
+/* 绑定完成的回调 */
+@property (nonatomic, copy) void (^ connectedBlock) (void);
+
+/* 取消绑定的回调 */
+@property (nonatomic, copy) void (^ canceledBlock) (void);
+
 @end
 
 
 @implementation DeviceConnectViewController
 
+- (instancetype)initWithConnected:(void (^)(void))connectedBlock orCanceled:(void (^)(void))canceledBlock {
+    self = [super init];
+    if (self) {
+        self.connectedBlock = connectedBlock;
+        self.canceledBlock = canceledBlock;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithHex:0xeeeeee alpha:1];
-    self.tabBarController.tabBar.hidden = YES;
     [self loadSubviews];
     [self addKVOs];
 }
@@ -67,11 +84,11 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    
+
     [self.view setNeedsUpdateConstraints];
     [self.view updateConstraintsIfNeeded];
     [self.view layoutIfNeeded];
-    
+        
     [self.stepSegView setNeedsUpdateConstraints];
     [self.stepSegView updateConstraintsIfNeeded];
     [self.stepSegView layoutIfNeeded];
@@ -84,6 +101,15 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    /* 检查如果商户未配置终端号就退出界面 */
+    if (self.termsDataSource.terminalSelected == nil || self.termsDataSource.terminalSelected.length == 0) {
+        NameWeakSelf(wself);
+        [UIAlertController showAlertWithTitle:@"您的商户未配置终端号" message:@"请联系代理商或客服配置终端号后再绑定设备" target:self clickedHandle:^(UIAlertAction *action) {
+            [wself clickedCancelBtn:nil];
+        } buttons:@{@(UIAlertActionStyleDefault):@"知道了"}, nil];
+    }
+    
     [self.deviceDataSource startDeviceScanning];
 }
 
@@ -100,7 +126,7 @@
     [self.view addSubview:self.stepSegView];
     [self.view addSubview:self.mposView];
     [self.navigationItem setRightBarButtonItem:self.doneBarBtn];
-    
+    [self.navigationItem setLeftBarButtonItem:self.cancelBarBtn];
     
     [self.titleViewChooseTerminal setNeedsUpdateConstraints];
     [self.titleViewChooseTerminal updateConstraintsIfNeeded];
@@ -150,6 +176,7 @@
     /* bind: 终端号 */
     RAC(self.titleViewChooseTerminal.contentLabel, text) = RACObserve(self.termsDataSource, terminalSelected);
     RAC(self.tcpKeysDataSource, terminalNumber) = RACObserve(self.termsDataSource, terminalSelected);
+    
     
     /* 监控: 选择终端号,关闭展开;重扫设备 */
     [[RACObserve(self.termsDataSource, terminalSelected) skip:1] subscribeNext:^(id x) {
@@ -268,10 +295,25 @@
     
     [MBProgressHUD showSuccessWithText:@"保存绑定信息成功!" andDetailText:nil onCompletion:^{
         @strongify(self);
-        [self.navigationController popViewControllerAnimated:YES];
+        //[self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController dismissViewControllerAnimated:YES completion:^{
+            @strongify(self);
+            if (self.connectedBlock) {
+                self.connectedBlock();
+            }
+        }];
     }];
 }
 
+/* 取消并退出 */
+- (IBAction) clickedCancelBtn:(id)sender {
+    NameWeakSelf(wself);
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        if (wself.canceledBlock) {
+            wself.canceledBlock();
+        }
+    }];
+}
 
 # pragma mask 3 UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
@@ -358,6 +400,20 @@
         _doneBarBtn = [[UIBarButtonItem alloc] initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(clickedDoneBtn:)];
     }
     return _doneBarBtn;
+}
+
+- (UIBarButtonItem *)cancelBarBtn {
+    if (!_cancelBarBtn) {
+        UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [cancelBtn setTitle:[NSString fontAwesomeIconStringForEnum:FATimesCircle] forState:UIControlStateNormal];
+        cancelBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+        [cancelBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [cancelBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [cancelBtn addTarget:self action:@selector(clickedCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
+        
+        _cancelBarBtn = [[UIBarButtonItem alloc] initWithCustomView:cancelBtn];
+    }
+    return _cancelBarBtn;
 }
 
 @end

@@ -7,11 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HTTPInstance.h"
 #import "Define_Header.h"
 #import <ReactiveCocoa.h>
-#import "EncodeString.h"
-#import "ThreeDesUtil.h"
 
 /* ----- 登陆上送字段名 ----- */
 static NSString* const kFieldNameSignInUpUserID = @"userName";                  // 登陆名
@@ -39,21 +36,20 @@ typedef  enum {
 } VMSigninSpecialErrorType;
 
 
+
 @interface VMHttpSignIn : NSObject
 
-@property (nonatomic, copy) NSString* userNameStr;
-@property (nonatomic, copy) NSString* userPwdStr;
-
-@property (nonatomic, copy) NSString* userPwdPinStr;
-
-@property (nonatomic, copy) NSDictionary* responseData;
-
+/* 执行登录操作的命令 */
 @property (nonatomic, strong) RACCommand* signInCommand;
 
-@property (nonatomic, strong) HTTPInstance* http;
+/* 用户名 */
+@property (nonatomic, copy) NSString* userNameStr;
 
-/* 解密 */
-- (NSString*) sourceByUnEncryptPin:(NSString*)pin;
+/* 明文密码 */
+@property (nonatomic, copy) NSString* userPwdStr;
+
+/* 登录响应信息 */
+@property (nonatomic, copy) NSDictionary* responseData;
 
 
 @end

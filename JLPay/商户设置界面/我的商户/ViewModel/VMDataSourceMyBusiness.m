@@ -7,7 +7,7 @@
 //
 
 #import "VMDataSourceMyBusiness.h"
-
+#import "MCacheSavedLogin.h"
 
 
 
@@ -137,7 +137,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if (section == 1) {
         if ([self valueForTitleName:VMMyBusinessTitleState].integerValue == 2) {
-            return [[MLoginSavedResource sharedLoginResource] checkedRefuseReason];
+            return [[MCacheSavedLogin cache] checkRefuseReason];
         } else {
             return @"";
         }

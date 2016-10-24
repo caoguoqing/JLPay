@@ -7,62 +7,62 @@
 //
 
 #import "VMSignInInfoCache.h"
+#import "MLocalConfigLogin.h"
+#import "ModelDeviceBindedInformation.h"
+#import "ModelBusinessInfoSaved.h"
+#import "ModelRateInfoSaved.h"
+
+
 
 @implementation VMSignInInfoCache
 
-- (void)resetPropertiesBySignInResponseData:(NSDictionary *)signInResponseData {
-
-    self.loginSavedResource.businessName = [signInResponseData objectForKey:kFieldNameSignInDownBusinessName];
-    self.loginSavedResource.businessNumber = [signInResponseData objectForKey:kFieldNameSignInDownBusinessNum];
-    self.loginSavedResource.email = [signInResponseData objectForKey:kFieldNameSignInDownBusinessEmail];
-    self.loginSavedResource.terminalCount = [[signInResponseData objectForKey:kFieldNameSignInDownTerminalCount] integerValue];
-    
-    /* 解析终端号组 */
-    NSString* terminalList = [signInResponseData objectForKey:kFieldNameSignInDownTerminalList];
-    if (terminalList && terminalList.length > 0) {
-        NSArray* terminals = [NSMutableArray arrayWithArray:[terminalList componentsSeparatedByString:@","]];
-        NSMutableArray* visibleTerminals = [NSMutableArray array];
-        for (NSString* terminal in terminals) {
-            [visibleTerminals addObject:[terminal stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-        }
-        self.loginSavedResource.terminalList = [visibleTerminals copy];
-    } else {
-        self.loginSavedResource.terminalList = nil;
+- (void)reReadLocalConfig {
+    MLocalConfigLogin* localConfig = [MLocalConfigLogin sharedConfig];
+    [localConfig reReadConfig];
+    if ([localConfig hasBeenSaved]) {
+        self.userName = localConfig.userName;
+        self.userPasswordPin = localConfig.userPassword;
     }
-    
-    /* 审核标志 */
-    NSInteger code = [[signInResponseData objectForKey:kFieldNameSignInDownCode] integerValue];
-    if (code == 801) {
-        self.loginSavedResource.checkedState = BusinessCheckedStateChecking;
-    }
-    else if (code == 802) {
-        self.loginSavedResource.checkedState = BusinessCheckedStateCheckRefused;
-        self.loginSavedResource.checkedRefuseReason = [signInResponseData objectForKey:kFieldNameSignInDownMessage];
-    }
-    else {
-        self.loginSavedResource.checkedState = BusinessCheckedStateChecked;
-    }
-    
-    /* 允许标志 */
-    NSString* allowFlags = [signInResponseData objectForKey:kFieldNameSignInDownAllowTypes];
-    self.loginSavedResource.T_0_enable = (allowFlags && allowFlags.length >= 4 && [allowFlags substringWithRange:NSMakeRange(3, 1)].integerValue == 1)?(YES):(NO);
-    self.loginSavedResource.T_N_enable = (allowFlags && allowFlags.length >= 1 && [allowFlags substringWithRange:NSMakeRange(0, 1)].integerValue == 1)?(YES):(NO);
-    self.loginSavedResource.N_fee_enable = (allowFlags && allowFlags.length >= 2 && [allowFlags substringWithRange:NSMakeRange(1, 1)].integerValue == 1)?(YES):(NO);
-    self.loginSavedResource.N_business_enable = (allowFlags && allowFlags.length >= 3 && [allowFlags substringWithRange:NSMakeRange(2, 1)].integerValue == 1)?(YES):(NO);
-
-
+    self.needPasswordSaving = localConfig.pwdNeedSaved;
+    self.seenPasswordAvilable = localConfig.pwdNeedSeen;
 }
 
-- (void)doLoginResourceSaving {
-    [self.loginSavedResource doSavingOnFinished:nil onError:nil];
+- (void)reWriteLocalConfig {
+    MLocalConfigLogin* localConfig = [MLocalConfigLogin sharedConfig];
+    [localConfig reReadConfig];
+    if (![self.userName isEqualToString:localConfig.userName]) {
+        [self clearMoreConfigIfExchagedUserID];
+    }
+    
+    [localConfig clearConfig];
+    if (self.needPasswordSaving) {
+        localConfig.userName = self.userName;
+        localConfig.userPassword = self.userPasswordPin;
+    }
+    localConfig.pwdNeedSeen = self.seenPasswordAvilable;
+    localConfig.pwdNeedSaved = self.needPasswordSaving;
+    [localConfig reWriteConfig];
 }
 
-# pragma mask 3 getter
-- (MLoginSavedResource *)loginSavedResource {
-    if (!_loginSavedResource) {
-        _loginSavedResource = [MLoginSavedResource sharedLoginResource];
-    }
-    return _loginSavedResource;
+
+/* 清空更多的配置: 当切换了ID */
+- (void) clearMoreConfigIfExchagedUserID {
+    /* 绑定设备信息 */
+    [ModelDeviceBindedInformation cleanDeviceBindedInfo];
+    /* 多商户 */
+    [ModelBusinessInfoSaved clearSaved];
+    /* 多费率 */
+    [ModelRateInfoSaved clearSaved];
 }
+
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self reReadLocalConfig];
+    }
+    return self;
+}
+
 
 @end

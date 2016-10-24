@@ -12,8 +12,8 @@
 #import "EncodeString.h"
 #import "ThreeDesUtil.h"
 #import "Define_Header.h"
-#import "MLoginSavedResource.h"
 #import "MBProgressHUD+CustomSate.h"
+#import "MCacheSavedLogin.h"
 
 @interface ChangePinViewController()<ASIHTTPRequestDelegate, UITextFieldDelegate> {
     CGFloat textFontSize;
@@ -23,9 +23,15 @@
 @property (nonatomic, strong) UITextField* userResureNewPwdField;
 
 @property (nonatomic, strong) UIButton* sureButton;
+@property (nonatomic, strong) UIBarButtonItem* cancelBarBtn;
+
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
 
 @property (nonatomic, strong) MBProgressHUD* hud;
+
+@property (nonatomic, copy) void (^ finishedBlock) (void);
+@property (nonatomic, copy) void (^ canceledBlock) (void);
+
 @end
 
 
@@ -43,7 +49,7 @@
  * 返  回:
  ******************************/
 - (void) requestForChangingPin {
-    [self.httpRequest addPostValue:[MLoginSavedResource sharedLoginResource].userName forKey:@"userName"];
+    [self.httpRequest addPostValue:[MCacheSavedLogin cache].userName forKey:@"userName"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userOldPwdField.text] forKey:@"oldPassword"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -67,7 +73,11 @@
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     if ([[dataDict valueForKey:@"code"] intValue] == 0) {
         [self.hud showSuccessWithText:@"修改密码成功!" andDetailText:nil onCompletion:^{
-            [wself.navigationController popViewControllerAnimated:YES];
+            [wself.navigationController dismissViewControllerAnimated:YES completion:^{
+                if (wself.finishedBlock) {
+                    wself.finishedBlock();
+                }
+            }];
         }];
     } else {
         [self.hud showFailWithText:@"修改失败" andDetailText:[dataDict objectForKey:@"message"] onCompletion:nil];
@@ -120,17 +130,32 @@
     }
 }
 
+- (IBAction) clickedCancelBtn:(id)sender {
+    NameWeakSelf(wself);
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        if (wself.canceledBlock) {
+            wself.canceledBlock();
+        }
+    }];
+}
+
+
 #pragma mask ---- 界面声明周期
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+
+- (instancetype)initWithChangeFinished:(void (^)(void))finishedBlock orCanceled:(void (^)(void))canceledBlock {
+    self = [super init];
     if (self) {
-        self.view.backgroundColor = [UIColor whiteColor];
+        self.finishedBlock = finishedBlock;
+        self.canceledBlock = canceledBlock;
     }
     return self;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     self.title = @"修改密码";
+    [self.navigationItem setLeftBarButtonItem:self.cancelBarBtn];
     // 背景图
     [self.view addSubview:self.userOldPwdField];
     [self.view addSubview:self.userNewPwdField];
@@ -355,4 +380,18 @@
     }
     return _httpRequest;
 }
+
+- (UIBarButtonItem *)cancelBarBtn {
+    if (!_cancelBarBtn) {
+        UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [cancelBtn setTitle:[NSString fontAwesomeIconStringForEnum:FATimesCircle] forState:UIControlStateNormal];
+        cancelBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+        [cancelBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [cancelBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [cancelBtn addTarget:self action:@selector(clickedCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
+        _cancelBarBtn = [[UIBarButtonItem alloc] initWithCustomView:cancelBtn];
+    }
+    return _cancelBarBtn;
+}
+
 @end

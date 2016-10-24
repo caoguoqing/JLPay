@@ -31,6 +31,7 @@ static NSString* const TransPlatformTypeOtherPay = @"微信消费明细";
 
 @interface TransDetailListViewController : UIViewController
 
+
 @property (nonatomic, strong) NewCustomSegmentView* platSegmentView;
 @property (nonatomic, strong) DownPullListBtn* downPullBtn;
 
@@ -48,5 +49,7 @@ static NSString* const TransPlatformTypeOtherPay = @"微信消费明细";
 @property (nonatomic, strong) UIWindow* siftWindow;
 @property (nonatomic, strong) SiftViewController* siftViewCtr;
 
+@property (nonatomic, strong) UIButton* backHomeBtn;
+@property (nonatomic, strong) UIButton* filterBtn;
 
 @end

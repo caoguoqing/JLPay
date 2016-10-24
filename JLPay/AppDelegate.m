@@ -7,176 +7,101 @@
 //
 
 #import "AppDelegate.h"
-#import "JLSignInViewController.h"
-
-#import "BrushViewController.h"
-#import "BusinessManageViewController.h"
-#import "CustomNavigationController.h"
-#import "MoneyInputViewController.h"
-#import "Toast+UIView.h"
-#import "Define_Header.h"
-
-#import "ModelDeviceBindedInformation.h"
-#import "ModelAppInformation.h"
-
 #import <UINavigationBar+Awesome.h>
+#import "ModelAppInformation.h"
+#import <RESideMenu.h>
+#import "LeftMenuViewController.h"
+#import "MainTransViewController.h"
 
 
-#define NotiName_DeviceState         @"NotiName_DeviceState"      // 设备插拔通知的名字
-static NSUInteger const iTagAlertAppStoreInfoRequested = 198;
-
-@interface AppDelegate ()
-<UIAlertViewDelegate>
-@end
 
 
 @implementation AppDelegate
 
-
-#pragma mask ::: 初始化主界面:分页控制器
-- (UITabBarController*) mainTabBarControllerOfApp {
-    UITabBarController* tabBarController = [[UITabBarController alloc] initWithNibName:nil bundle:nil];
-    [tabBarController.tabBar setTintColor:[PublicInformation returnCommonAppColor:@"red"]];
-    
-    NSMutableArray* navigationControllers = [[NSMutableArray alloc] init];
-    [navigationControllers addObject:[self newNavigationOfCustPayVC]];
-    [navigationControllers addObject:[self newNavigationOfBusinessVC]];
-    
-    [tabBarController setViewControllers:navigationControllers];
-    return tabBarController;
-}
-
-void uncaughtExceptionHandler(NSException* exception){
-    NSLog(@"CRASH: %@", exception);
-    NSLog(@"Stack Trace: %@",[exception callStackSymbols]);
-    // Internal error reporting
-}
-
 #pragma mask ::: app 完成加载;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    /* 检查更新 */
+    [ModelAppInformation checkAppUpdated];
     
     /* 定义导航栏的样式 */
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjects:@[[UIColor whiteColor]]
-                                                                                     forKeys:@[NSForegroundColorAttributeName]]];
-    [[UINavigationBar appearance] setBarStyle:UIBarStyleBlack];
-    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
-    [[UINavigationBar appearance] lt_setBackgroundColor:[UIColor colorWithHex:HexColorTypeThemeRed alpha:1]];
-
+    [self resetAwesomNavigationBarStyle];
     
+    /* 捕获异常错误日志 */
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
-    self.window.rootViewController = [self newNavigationOfLoginVC];
+    /* 加载主页面 */
+    self.window.rootViewController = [self mainViewController];
+    
+    /* 主要用来监控蓝牙开启状态 */
     self.CBManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
-    
-    // 检查app版本
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(checkAppVersionAndAlert)
-                                                 name:kNotiKeyAppStoreInfoRequested
-                                               object:nil];
-    [self requestAppStoreInfoIfBranchMaster];
     return YES;
 }
+
+
+/* app主界面控制器 */
+- (UIViewController*) mainViewController {
+    LeftMenuViewController* leftVC = [[LeftMenuViewController alloc] init];
+    MainTransViewController* mainVC = [[MainTransViewController alloc] init];
+    RESideMenu* sideMenuVC = [[RESideMenu alloc] initWithContentViewController:[[UINavigationController alloc] initWithRootViewController:mainVC] leftMenuViewController:leftVC rightMenuViewController:nil];
+    sideMenuVC.scaleMenuView = NO;
+    sideMenuVC.contentViewShadowEnabled = YES;
+    sideMenuVC.parallaxEnabled = NO;
+    
+    return sideMenuVC;
+}
+
+
+/* 定义导航栏的样式 */
+- (void) resetAwesomNavigationBarStyle {
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    [[UINavigationBar appearance] setBarStyle:UIBarStyleBlack];
+    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
+    [[UINavigationBar appearance] lt_setBackgroundColor:[UIColor colorWithHex:0x27384b alpha:1]];
+}
+
 
 #pragma mask ::: 禁止横屏
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
     return UIInterfaceOrientationMaskPortrait;
 }
 
-
-#pragma mask ---- UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == iTagAlertAppStoreInfoRequested) {
-        if (buttonIndex == 1) {
-            [self gotoAppStore];
-        }
-    }
+# pragma mask ::: 捕获详细的内存崩溃日志
+void uncaughtExceptionHandler(NSException* exception){
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@",[exception callStackSymbols]);
 }
+
+
+
 #pragma mask ---- CBCentralManagerDelegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-}
+    switch (central.state) {
+        case CBManagerStateUnknown:
+            JLPrint(@"--- blueTooth state changed [CBManagerStateUnknown]");
+            break;
+        case CBManagerStateResetting:
+            JLPrint(@"--- blueTooth state changed [CBManagerStateResetting]");
+            break;
+        case CBManagerStateUnsupported:
+            JLPrint(@"--- blueTooth state changed [CBManagerStateUnsupported]");
+            break;
+        case CBManagerStateUnauthorized:
+            JLPrint(@"--- blueTooth state changed [CBManagerStateUnauthorized]");
+            break;
+        case CBManagerStatePoweredOff:
+            JLPrint(@"--- blueTooth state changed [CBManagerStatePoweredOff]");
+            break;
+        case CBManagerStatePoweredOn:
+            JLPrint(@"--- blueTooth state changed [CBManagerStatePoweredOn]");
+            break;
 
-
-#pragma mask ---- PRIVATE INTERFACE
-/* 创建导航器: 登陆系列 */
-- (UINavigationController*) newNavigationOfLoginVC {
-    JLSignInViewController* signInVC = [[JLSignInViewController alloc] initWithNibName:nil bundle:nil];
-    UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:signInVC];
-    return navigation;
-}
-
-/* 创建导航器: 刷卡系列 */
-- (UINavigationController*) newNavigationOfCustPayVC {
-    MoneyInputViewController* viewController = [[MoneyInputViewController alloc] initWithNibName:nil bundle:nil];
-    BrushViewController* brushVC = [[BrushViewController alloc] init];
-    
-    CustomNavigationController* navigation = [[CustomNavigationController alloc] initWithRootViewController:viewController viewControllersShouldPopToRoot:@[brushVC]];
-    
-    navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户收款"
-                                                          image:[UIImage imageNamed:@"rmbBagBlackBlue"]
-                                                  selectedImage:[UIImage imageNamed:@"rmbBagRed"]];
-    return navigation;
-}
-/* 创建导航器: 商户设置系列 */
-- (UINavigationController*) newNavigationOfBusinessVC {
-    BusinessManageViewController* businessManageVC = [[BusinessManageViewController alloc] initWithNibName:nil bundle:nil];
-
-    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:businessManageVC];
-    navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"商户管理"
-                                                          image:[UIImage imageNamed:@"userBlackBlue"]
-                                                  selectedImage:[UIImage imageNamed:@"userRed"]];
-    
-    
-    return navigation;
-}
-/* 创建导航器: 增值服务系列 */
-- (UINavigationController*) newNavigationOfAdditionalVC {
-    BusinessManageViewController* businessManageVC = [[BusinessManageViewController alloc] initWithNibName:nil bundle:nil];
-    UINavigationController*  navigation = [[UINavigationController alloc] initWithRootViewController:businessManageVC];
-    
-    navigation.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"增值服务"
-                                                          image:[UIImage imageNamed:@"iconcG"]
-                                                  selectedImage:[UIImage imageNamed:@"iconc"]];
-    
-    
-    return navigation;
-}
-
-
-// -- 获取 AppStore 版信息: 如果是master分支
-- (void) requestAppStoreInfoIfBranchMaster {
-    if (TAG_OF_BRANCH_EDITION == 0) { // master分支
-        [[ModelAppInformation sharedInstance] requestAppStoreInfo];
+        default:
+            break;
     }
 }
-
-// -- 检查 AppStore 版本分支,提示更新
-- (void) checkAppVersionAndAlert {
-    NSString* curAppStoreVersion = [[ModelAppInformation sharedInstance] appStoreVersion];
-    if (!curAppStoreVersion) {
-        return;
-    }
-    NSString* curAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-    curAppStoreVersion = [curAppStoreVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
-    curAppVersion = [curAppVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
-    if (curAppStoreVersion.integerValue > curAppVersion.integerValue) { // 比较当前版本
-        [PublicInformation alertCancle:@"暂不升级"
-                                 other:@"马上升级"
-                                 title:@"发现新版本,是否升级?"
-                               message:[[ModelAppInformation sharedInstance] appUpdatedDescription]
-                                   tag:iTagAlertAppStoreInfoRequested
-                              delegate:self];
-    }
-    
-}
-// -- 跳转appstore升级界面
-- (void) gotoAppStore {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[ModelAppInformation URLStringInAppStore]]];
-}
-
-
 
 
 

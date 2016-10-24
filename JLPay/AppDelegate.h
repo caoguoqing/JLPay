@@ -16,13 +16,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-
 @property (nonatomic, strong) CBCentralManager* CBManager;
-
-
-
-#pragma mask ::: 初始化主界面:分页控制器
-- (UITabBarController*) mainTabBarControllerOfApp ;
 
 
 @end

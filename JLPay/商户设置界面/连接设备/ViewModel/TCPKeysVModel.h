@@ -13,7 +13,6 @@
 #import "Packing8583.h"
 #import "Unpacking8583.h"
 #import "EncodeString.h"
-#import "MLoginSavedResource.h"
 #import "NSError+Custom.h"
 
 /* ***** 等后面重写了socket后再换block的VM ****** */

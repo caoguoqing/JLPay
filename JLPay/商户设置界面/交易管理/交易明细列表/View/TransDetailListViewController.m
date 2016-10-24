@@ -29,7 +29,9 @@
     [self.view addSubview:self.nearestMonthsTBV];
     [self.view addSubview:self.progressHud];
     
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"筛选" style:UIBarButtonItemStylePlain target:self action:@selector(doDisplaySiftWindow:)]];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.filterBtn]];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithCustomView:self.backHomeBtn]];
+    
 }
 - (void)dealloc {
     JLPrint(@"*********** TransDetailListViewController dealloc *************");
@@ -86,14 +88,12 @@
         if (down.boolValue) {
             [UIView animateWithDuration:0.2 animations:^{
                 @strongify(self);
-//                self.nearestMonthsTBV.transform = CGAffineTransformMakeTranslation(0, 0);
                 self.nearestMonthsTBV.frame = CGRectMake(0, 64, self.view.frame.size.width, 0);
                 self.nearestMonthsTBV.backgroundColor = [UIColor clearColor];
             }];
         } else {
             [UIView animateWithDuration:0.2 animations:^{
                 @strongify(self);
-//                self.nearestMonthsTBV.transform = CGAffineTransformMakeTranslation(0, self.nearestMonthsTBV.frame.size.height);
                 self.nearestMonthsTBV.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
                 self.nearestMonthsTBV.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
             }];
@@ -245,6 +245,12 @@
 
 }
 
+/* home按钮 */
+- (IBAction) clickedHomeBtn:(id)sender {
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+    }];
+}
+
 
 # pragma mask 4 getter
 
@@ -380,6 +386,30 @@
         _downPullBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15];
     }
     return _downPullBtn;
+}
+
+- (UIButton *)backHomeBtn {
+    if (!_backHomeBtn) {
+        _backHomeBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [_backHomeBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAHome] forState:UIControlStateNormal];
+        _backHomeBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+        [_backHomeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_backHomeBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [_backHomeBtn addTarget:self action:@selector(clickedHomeBtn:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _backHomeBtn;
+}
+
+- (UIButton *)filterBtn {
+    if (!_filterBtn) {
+        _filterBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [_filterBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAFilter] forState:UIControlStateNormal];
+        _filterBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+        [_filterBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_filterBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [_filterBtn addTarget:self action:@selector(doDisplaySiftWindow:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _filterBtn;
 }
 
 @end

@@ -15,7 +15,7 @@
     if (self) {
         [self.contentView addSubview:self.headImageView];
         [self.contentView addSubview:self.titleLabel];
-        self.contentView.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
+        self.contentView.backgroundColor = [UIColor colorWithHex:0x27384b alpha:1];
     }
     return self;
 }

@@ -7,10 +7,10 @@
 //
 
 #import "MBusiAndRateInfoReading.h"
-#import "MLoginSavedResource.h"
 #import "ModelBusinessInfoSaved.h"
 #import "ModelRateInfoSaved.h"
 #import <ReactiveCocoa.h>
+#import "MCacheSavedLogin.h"
 
 
 @implementation MBusiAndRateInfoReading
@@ -96,10 +96,10 @@
 - (NSArray *)types {
     if (!_types) {
         NSMutableArray* dynaTypes = [NSMutableArray array];
-        if ([MLoginSavedResource sharedLoginResource].N_business_enable) {
+        if ([MCacheSavedLogin cache].N_business_enable) {
             [dynaTypes addObject:MB_R_Type_moreBusinesses];
         }
-        if ([MLoginSavedResource sharedLoginResource].N_fee_enable) {
+        if ([MCacheSavedLogin cache].N_fee_enable) {
             [dynaTypes addObject:MB_R_Type_moreRates];
         }
         _types = [NSArray arrayWithArray:dynaTypes];

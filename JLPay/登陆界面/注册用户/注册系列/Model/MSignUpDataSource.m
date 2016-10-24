@@ -165,9 +165,9 @@
         MSignUpItem* bindingSN = [[MSignUpItem alloc] init];
         bindingSN.cellType = SU_CellTypeTextInput;
         bindingSN.title = kSUCellTitleDeviceSN;
-        bindingSN.placeHolder = @"(代理商客户选填)";
+        bindingSN.placeHolder = @"请填写MPOS设备SN号";
         bindingSN.inputed = NO;
-        bindingSN.mustInput = NO;
+        bindingSN.mustInput = YES;
         [subItems3 addObject:bindingSN];
     
     [items addObject:subItems3];

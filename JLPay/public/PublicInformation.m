@@ -10,9 +10,9 @@
 #import "Define_Header.h"
 #import "Packing8583.h"
 #import "Unpacking8583.h"
-#import "MLoginSavedResource.h"
 #import "ModelDeviceBindedInformation.h"
 #import "Toast+UIView.h"
+#import "MCacheSavedLogin.h"
 
 
 
@@ -93,16 +93,13 @@ static NSString* SignBatchNo = @"SignBatchNo__";
     }
 }
 +(NSString *)returnBusiness{
-//    return [ModelUserLoginInformation businessNumber];
-    JLPrint(@"访问商户编号:[%@]", [MLoginSavedResource sharedLoginResource].businessNumber);
-    return [MLoginSavedResource sharedLoginResource].businessNumber;
+    return [MCacheSavedLogin cache].businessCode;
 }
 +(NSString *)returnBusinessName{
-//    return [ModelUserLoginInformation businessName];
-    return [MLoginSavedResource sharedLoginResource].businessName;
+    return [MCacheSavedLogin cache].businessName;
 }
 + (NSString*) returnUserName {
-    return [MLoginSavedResource sharedLoginResource].userName;
+    return [MCacheSavedLogin cache].userName;
 }
 
 /* 获取服务器域名 */

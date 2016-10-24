@@ -84,19 +84,22 @@
                              andImage:(UIImage*)image
 {
     UIView* view = [[UIView alloc] initWithFrame:frame];
-    
-    CGRect innerFrame = CGRectMake(0, 0, frame.size.width, 25);
+    CGFloat inset = 5.0;
+
+    /* 描述 */
+    CGRect innerFrame = CGRectMake(inset, 0, frame.size.width - inset * 2, 40);
     UILabel* titleLabel = [[UILabel alloc] initWithFrame:innerFrame];
     [titleLabel setText:title];
     [titleLabel setTextAlignment:NSTextAlignmentCenter];
     titleLabel.font = [UIFont systemFontOfSize:14];
+    titleLabel.numberOfLines = 0;
     [view addSubview:titleLabel];
     
-    CGFloat inset = 5.0;
+    /* 图片 */
     CGFloat imageHeight = frame.size.height - innerFrame.origin.y - innerFrame.size.height - inset*2;
     CGFloat imageWidth = imageHeight * image.size.width/image.size.height;
-    if (imageWidth > frame.size.width) {
-        imageWidth = frame.size.width;
+    if (imageWidth > frame.size.width - inset * 2) {
+        imageWidth = frame.size.width - inset * 2;
         imageHeight = imageWidth * image.size.height/image.size.width;
     }
     innerFrame.origin.x = (frame.size.width - imageWidth)/2.0;

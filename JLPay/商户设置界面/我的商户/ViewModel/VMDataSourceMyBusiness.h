@@ -14,7 +14,6 @@
 #import "UserRegisterViewController.h"
 #import "Define_Header.h"
 #import "ModelAreaCodeSelector.h"
-#import "MLoginSavedResource.h"
 
 
 static NSString* const VMMyBusinessTitleUser = @"user";

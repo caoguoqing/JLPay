@@ -13,8 +13,9 @@
 
 # pragma mask 3 UITextFieldDelegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    UIView* superView = [textField superview];
     // 处理遮挡
-    CGFloat textFieldBottom = textField.frame.origin.y + textField.frame.size.height;
+    CGFloat textFieldBottom = superView.frame.origin.y + superView.frame.size.height;
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     CGFloat offset = ((screenHeight - textFieldBottom) < (216 + 35 + 20))?(216 + 35 + 20 - screenHeight + textFieldBottom):(0);
     

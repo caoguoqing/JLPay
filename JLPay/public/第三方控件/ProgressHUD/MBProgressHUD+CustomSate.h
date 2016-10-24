@@ -33,6 +33,9 @@
              onCompletion:(void (^) (void))completion;
 
 
++ (void) hideCurNormalHud;
+
+
 
 
 

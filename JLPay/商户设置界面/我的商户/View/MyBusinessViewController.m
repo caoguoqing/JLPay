@@ -8,7 +8,23 @@
 
 #import "MyBusinessViewController.h"
 
+@interface MyBusinessViewController()
+
+@property (nonatomic, copy) void (^ finishedBlock) (void);
+@property (nonatomic, copy) void (^ canceledBlock) (void);
+
+@end
+
 @implementation MyBusinessViewController
+
+- (instancetype)initWithFinished:(void (^)(void))finishedBlock orCanceled:(void (^)(void))canceledBlock {
+    self = [super init];
+    if (self) {
+        self.finishedBlock = finishedBlock;
+        self.canceledBlock = canceledBlock;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -22,6 +38,7 @@
 }
 
 - (void) addSubviews {
+    [self.navigationItem setLeftBarButtonItem:[self newCancelBarBtn]];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.uploadBtn];
     [self.view addSubview:self.reaplyBtn];
@@ -66,6 +83,17 @@
     [super viewWillAppear:animated];
     [self.tabBarController.tabBar setHidden:YES];
     [self doMyBusinessInfoRequesting];
+}
+
+# pragma mask 1 IBAction
+
+- (IBAction) clickedHomeBarBtn:(id)sender {
+    NameWeakSelf(wself);
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        if (wself.canceledBlock) {
+            wself.canceledBlock();
+        }
+    }];
 }
 
 # pragma mask 2 UITableViewDelegate
@@ -224,6 +252,16 @@
         _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
     }
     return _progressHud;
+}
+
+- (UIBarButtonItem*) newCancelBarBtn {
+    UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    [cancelBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAHome] forState:UIControlStateNormal];
+    cancelBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+    [cancelBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [cancelBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+    [cancelBtn addTarget:self action:@selector(clickedHomeBarBtn:) forControlEvents:UIControlEventTouchUpInside];
+    return [[UIBarButtonItem alloc] initWithCustomView:cancelBtn];
 }
 
 @end

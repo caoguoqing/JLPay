@@ -65,7 +65,7 @@ CGFloat cellHeight = 40.0;
     cell.backgroundColor = [UIColor whiteColor];
     NSString* text = [self.cellTextArray objectAtIndex:indexPath.row];
     cell.textLabel.text = text;
-    if ([text isEqualToString:@"联系方式"] || [text isEqualToString:@"官方网址"]) {
+    if ([text isEqualToString:@"联系方式:"] || [text isEqualToString:@"官方网址:"]) {
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     cell.detailTextLabel.text = [self.dataSourceDict valueForKey:cell.textLabel.text];
@@ -104,7 +104,6 @@ CGFloat cellHeight = 40.0;
     [self.view setBackgroundColor:[UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1]];
     [self.view addSubview:self.tableView];
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
-//    [[ModelAppInformation sharedInstance] requestAppStoreInfo];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -154,16 +153,17 @@ CGFloat cellHeight = 40.0;
 - (NSMutableArray *)cellTextArray {
     if (_cellTextArray == nil) {
         _cellTextArray = [[NSMutableArray alloc] init];
-        [_cellTextArray addObject:@"版本信息"];
-        [_cellTextArray addObject:@"联系方式"];
-        [_cellTextArray addObject:@"官方网址"];
+        [_cellTextArray addObject:@"版本信息:"];
+        [_cellTextArray addObject:@"联系方式:"];
+        [_cellTextArray addObject:@"官方网址:"];
     }
     return _cellTextArray;
 }
 - (NSDictionary *)dataSourceDict {
     if (_dataSourceDict == nil) {
         NSMutableArray* values = [[NSMutableArray alloc] init];
-        [values addObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
+        NSString* version = [@"V" stringByAppendingString:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]];
+        [values addObject:version];
         [values addObject:[PublicInformation telephoneOfCompany]];
         [values addObject:[PublicInformation urlOfCompany]];
         _dataSourceDict = [NSDictionary dictionaryWithObjects:values forKeys:self.cellTextArray];

@@ -14,6 +14,11 @@
 #import "MyBusinessViewController.h"
 #import "ModelAppInformation.h"
 
+@interface HelperAndAboutTableViewController()
+
+@property (nonatomic, strong) UIBarButtonItem* homeBarBtn;
+
+@end
 
 @implementation HelperAndAboutTableViewController
 
@@ -23,6 +28,7 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.backgroundColor = [UIColor whiteColor];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
+    [self.navigationItem setLeftBarButtonItem:self.homeBarBtn];
     
     NameWeakSelf(wself);
     [self.view addSubview:self.tableView];
@@ -37,6 +43,12 @@
     [super viewWillAppear:animated];
 }
 
+
+# pragma mask 1 IBAction
+
+- (IBAction) clickedDownBtn:(id)sender {
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
 
 #pragma mark - Table view data source
 
@@ -76,7 +88,8 @@
         
     }
     else if (indexPath.row == 3) {
-        viewController = [[MyBusinessViewController alloc] initWithNibName:nil bundle:nil];
+        //viewController = [[MyBusinessViewController alloc] initWithNibName:nil bundle:nil];
+        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"关于我们"];
     }
     else if (indexPath.row == 4) {
         viewController = [storyBoard instantiateViewControllerWithIdentifier:@"关于我们"];
@@ -104,10 +117,8 @@
         [_cellTitles addObject:@"1.绑定设备"];
         [_cellTitles addObject:@"2.刷卡指引"];
         [_cellTitles addObject:@"3.交易明细"];
-        NSString* appName = [@"4.我的" stringByAppendingString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]];
-        [_cellTitles addObject:appName];
         if (BranchAppName != 1) {
-            [_cellTitles addObject:@"5.关于我们"];
+            [_cellTitles addObject:@"4.关于我们"];
         }
     }
     return _cellTitles;
@@ -123,7 +134,6 @@
                 [imageTitles addObject:@"选择终端号"];
                 [imageTitles addObject:@"绑定设备"];
             } else if (i == 1) {
-//                [imageTitles addObject:[PublicInformation imageNameCustPayViewShot]];
                 [imageTitles addObject:@"输入金额"];
                 [imageTitles addObject:@"提示刷卡"];
                 [imageTitles addObject:@"输入密码"];
@@ -149,7 +159,6 @@
                 [datas setValue:@"2.如有多个终端号，可切换终端号" forKey:@"选择终端号"];
                 [datas setValue:@"3.连接设备后，点击'绑定'按钮进行设备签到和绑定" forKey:@"绑定设备"];
             } else if (i == 1) {
-//                [datas setValue:@"1.请输入交易金额" forKey:[PublicInformation imageNameCustPayViewShot]];
                 [datas setValue:@"1.请输入交易金额" forKey:@"输入金额"];
                 [datas setValue:@"2.连接设备，提示刷卡" forKey:@"提示刷卡"];
                 [datas setValue:@"3.输入支付密码" forKey:@"输入密码"];
@@ -162,6 +171,19 @@
         }
     }
     return _dictTitlesAndDatas;
+}
+
+- (UIBarButtonItem *)homeBarBtn {
+    if (!_homeBarBtn) {
+        UIButton* homeBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [homeBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAHome] forState:UIControlStateNormal];
+        homeBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+        [homeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [homeBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        [homeBtn addTarget:self action:@selector(clickedDownBtn:) forControlEvents:UIControlEventTouchUpInside];
+        _homeBarBtn = [[UIBarButtonItem alloc] initWithCustomView:homeBtn];
+    }
+    return _homeBarBtn;
 }
 
 

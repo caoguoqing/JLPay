@@ -41,7 +41,9 @@
         NSInteger style = [btn.allKeys.firstObject integerValue];
         NSString* btnTitle = btn.allValues.firstObject;
         UIAlertAction* btnAction = [UIAlertAction actionWithTitle:btnTitle style:style handler:^(UIAlertAction * _Nonnull action) {
-            clickedHandle(action);
+            if (clickedHandle) {
+                clickedHandle(action);
+            }
             [actionSheet dismissViewControllerAnimated:YES completion:^{
             }];
         }];
@@ -81,7 +83,9 @@
         NSInteger style = [btn.allKeys.firstObject integerValue];
         NSString* btnTitle = btn.allValues.firstObject;
         UIAlertAction* btnAction = [UIAlertAction actionWithTitle:btnTitle style:style handler:^(UIAlertAction * _Nonnull action) {
-            clickedHandle(action);
+            if (clickedHandle) {
+                clickedHandle(action);
+            }
             [alertView dismissViewControllerAnimated:YES completion:^{
             }];
         }];
@@ -93,5 +97,9 @@
         
     }];
 }
+
+
+
+
 
 @end

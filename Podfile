@@ -10,6 +10,7 @@ pod 'MJRefresh', '~> 3.0.4'
 pod 'FontAwesome', '~> 4.3.0'
 pod 'LTNavigationBar', '~> 2.1.6'
 pod 'AFNetworking', '~> 3.1.0'
+pod 'RESideMenu', '~> 4.0.7'
 
 
 end

@@ -515,14 +515,9 @@
             return @(en1.boolValue && en2.boolValue && en3.boolValue && en4.boolValue && en5.boolValue);
         }];
     }
-    else if ([key isEqualToString:kSignUpItemsTitleCerUpload] || [key isEqualToString:kSignUpItemsTitleStlInfo]) {
+    else if ([key isEqualToString:kSignUpItemsTitleCerUpload] || [key isEqualToString:kSignUpItemsTitleStlInfo] || [key isEqualToString:kSignUpItemsTitleBusinessInfo]) {
         return [RACSignal combineLatest:enableSigs reduce:^id(NSNumber* en1, NSNumber* en2, NSNumber* en3, NSNumber* en4){
             return @(en1.boolValue && en2.boolValue && en3.boolValue && en4.boolValue);
-        }];
-    }
-    else if ([key isEqualToString:kSignUpItemsTitleBusinessInfo]) {
-        return [RACSignal combineLatest:enableSigs reduce:^id(NSNumber* en1, NSNumber* en2, NSNumber* en3){
-            return @(en1.boolValue && en2.boolValue && en3.boolValue);
         }];
     }
     else {
