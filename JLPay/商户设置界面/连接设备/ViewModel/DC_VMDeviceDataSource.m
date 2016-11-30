@@ -107,9 +107,11 @@
 - (void)writeKeyPinsOnFinished:(void (^)(void))finishedBlock onError:(void (^)(NSError *))errorBlock {
     @weakify(self);
     self.deviceStatus = @"正在写主密钥...";
+    JLPrint(@"---写主密钥:[%@]", self.mainKeyPin);
     [self.deviceManager writeMainKey:self.mainKeyPin onFinished:^{
         @strongify(self);
         self.deviceStatus = @"正在写工作密钥...";
+        JLPrint(@"---写g工作密钥:[%@]", self.workKeyPin);
         [self.deviceManager writeWorkKey:self.workKeyPin onFinished:^{
             @strongify(self);
             self.deviceStatus = @"绑定设备成功!请'保存'.";

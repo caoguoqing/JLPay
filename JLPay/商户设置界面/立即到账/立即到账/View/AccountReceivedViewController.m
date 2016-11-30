@@ -50,6 +50,7 @@
     [self.view addSubview:self.downPullBtn];
 
     [self.view addSubview:self.progressHud];
+    [self.navigationItem setLeftBarButtonItem:self.cancelBarBtn];
 }
 - (void) layoutSubviews {
     NameWeakSelf(wself);
@@ -229,13 +230,16 @@
     sender.down = !sender.down;
 }
 
+- (IBAction) clickedCancelBtn:(id)sender {
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
 
 # pragma mask 4 getter
 
 - (UIView *)backView {
     if (!_backView) {
         _backView = [UIView new];
-        _backView.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
+        _backView.backgroundColor = [UIColor colorWithHex:HexColorTypeBlackBlue alpha:1];
     }
     return _backView;
 }
@@ -282,7 +286,7 @@
 - (UIButton *)buttonDispatchOrder {
     if (!_buttonDispatchOrder) {
         _buttonDispatchOrder = [UIButton new];
-        [_buttonDispatchOrder setBackgroundColor:[UIColor colorWithHex:HexColorTypeThemeRed alpha:1]];
+        [_buttonDispatchOrder setBackgroundColor:[UIColor colorWithHex:HexColorTypeBlackBlue alpha:1]];
         [_buttonDispatchOrder setTitle:@"调单资料上传" forState:UIControlStateNormal];
         [_buttonDispatchOrder setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_buttonDispatchOrder setTitleColor:[UIColor colorWithWhite:0.5 alpha:0.5] forState:UIControlStateHighlighted];
@@ -333,5 +337,16 @@
     return _settledListTBV;
 }
 
+- (UIBarButtonItem *)cancelBarBtn {
+    if (!_cancelBarBtn) {
+        UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+        [cancelBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAHome] forState:UIControlStateNormal];
+        cancelBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:25 scale:1]];
+        [cancelBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [cancelBtn addTarget:self action:@selector(clickedCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
+        _cancelBarBtn = [[UIBarButtonItem alloc] initWithCustomView:cancelBtn];
+    }
+    return _cancelBarBtn;
+}
 
 @end

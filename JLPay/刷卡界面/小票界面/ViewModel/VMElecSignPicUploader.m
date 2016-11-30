@@ -68,7 +68,7 @@
                 
                 @strongify(self);
                 
-                ModelTCPTransPacking* mTCPPacking = [ModelTCPTransPacking sharedModel];
+                ModelTCPTransPacking* mTCPPacking = [[ModelTCPTransPacking alloc] init];//sharedModel];
                 [mTCPPacking packingFieldsInfo:self.pakingInfo forTransType:TranType_ElecSignPicUpload];
                 NSString* tcpSendMsg = [mTCPPacking packageFinalyPacking];
                 

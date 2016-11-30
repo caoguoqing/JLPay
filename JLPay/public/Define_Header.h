@@ -25,12 +25,16 @@
 #import <UIFont+FontAwesome.h>
 #import "NSString+IconFont.h"
 #import "UIFont+IconFont.h"
-
+#import "NSAttributedString+FontAwesomeString.h"
 
 #define NameWeakSelf(weakSelf)          __weak typeof(self) weakSelf = self;
 
 // 自定义键盘的高度
 #define CustomKeyboardHeight            216.0
+
+#define ScreenWidth                 [UIScreen mainScreen].bounds.size.width
+#define ScreenHeight                [UIScreen mainScreen].bounds.size.height
+
 
 // 日志打印选项: 打印(1);不打印(0);
 #define NeedPrintLog                    0

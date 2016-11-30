@@ -158,8 +158,7 @@
 }
 
 - (void) doVCPushToUserRegister {
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UserRegisterViewController* viewController = [storyBoard instantiateViewControllerWithIdentifier:@"userRegisterVC"];
+    UserRegisterViewController* viewController = [[UserRegisterViewController alloc] init];
     [viewController setRegisterType:RegisterTypeRefused];
     [viewController loadLastRegisterInfo:[MHttpBusinessInfo sharedVM].businessInfo];
     [self.navigationController pushViewController:viewController animated:YES];

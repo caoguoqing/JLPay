@@ -43,7 +43,7 @@
 
 - (UILabel *)keyElementLabel {
     if (!_keyElementLabel) {
-        _keyElementLabel = [UILabel new];
+        _keyElementLabel = [[UILabel alloc] init];
         _keyElementLabel.textAlignment = NSTextAlignmentCenter;
         _keyElementLabel.textColor = [UIColor blackColor];
         _keyElementLabel.font = [UIFont boldSystemFontOfSize:16];

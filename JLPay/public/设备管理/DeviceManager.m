@@ -247,6 +247,7 @@
     NSString* deviceNamePre = [self deviceNamePreOnName:deviceName];
     Class deviceClass = NSClassFromString([NSString stringWithFormat:@"DeviceManager_%@",deviceNamePre]);
     self.device = [[deviceClass alloc] init];
+    self.hasNumbersButton = NO;
     if ([deviceNamePre isEqualToString:MPOSDeviceNamePreTY]) {
         self.hasNumbersButton = YES;
     }

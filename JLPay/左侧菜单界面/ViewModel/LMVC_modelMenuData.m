@@ -18,8 +18,9 @@
 
 
 static NSString* const kLMVC_MenuTitleDeviceBinding     = @"绑定设备";
-static NSString* const kLMVC_MenuTitleBusinessSwitch    = @"商户切换";
+static NSString* const kLMVC_MenuTitleBusinessSwitch    = @"费率选择";
 static NSString* const kLMVC_MenuTitleMyCardCheck       = @"我的卡包";
+static NSString* const kLMVC_MenuTitleResignTicket      = @"立即到账";
 static NSString* const kLMVC_MenuTitlePinExchange       = @"修改密码";
 static NSString* const kLMVC_MenuTitleAssistance        = @"帮助与关于";
 
@@ -78,6 +79,12 @@ static NSString* const kLMVC_MenuTitleAssistance        = @"帮助与关于";
 - (void) gotoExchangePassword {
     [self hideSideMenuViewController];
     [[MViewSwitchManager manager] gotoPasswordExchanging];
+}
+
+/* 跳转: 立即到账 */
+- (void) gotoResignTicket {
+    [self hideSideMenuViewController];
+    [[MViewSwitchManager manager] gotoResignTicket];
 }
 
 /* 跳转: 帮助与关于 */
@@ -141,7 +148,7 @@ static NSString* const kLMVC_MenuTitleAssistance        = @"帮助与关于";
         [self.titleList addObject:kLMVC_MenuTitleMyCardCheck];
 
     }
-    
+        
     // 修改密码
     [self.iconTypeList addObject:@(FAUnlockAlt)];
     [self.titleList addObject:kLMVC_MenuTitlePinExchange];

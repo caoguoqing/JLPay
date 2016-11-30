@@ -20,7 +20,7 @@ unsigned char* pbmJbigEncoded = NULL;
 
 
 
-unsigned char* pbmTransferFromBmp(unsigned char* bitmapStr, size_t width, size_t height, size_t totalSize);
+unsigned char* pbmTransferFromBmp(unsigned char* bitmapStr, size_t width, size_t height);
 void jbigEncode(unsigned char* pbmStr, size_t width, size_t height);
 
 
@@ -42,25 +42,25 @@ static void data_out(unsigned char *start, size_t len, void *file)
  1. bmp 转为 pbm
  2. 对 pbm 进行编码
  */
-unsigned char* JLJBIGEncode(unsigned char* bitmapStr, size_t width, size_t height, size_t totalSize, size_t* encodedLen) {
+unsigned char* JLJBIGEncode(unsigned char* bitmapStr, size_t width, size_t height, size_t* encodedLen) {
 
-    printf(" <<<<<<<<<<<<<strlen(bitmapStr)=[%ld],width[%ld],height[%ld],totalSize[%ld]", strlen(bitmapStr),width, height, totalSize );
     total_length = 0;
     pbmJbigEncoded = NULL;
-    unsigned char* pbmStr = pbmTransferFromBmp(bitmapStr, width, height, totalSize);
+    unsigned char* pbmStr = pbmTransferFromBmp(bitmapStr, width, height);
     
     jbigEncode(pbmStr, width, height);
     *encodedLen = total_length;
+    free(pbmStr);
     return pbmJbigEncoded;
 }
 
 
 /* bmp 转为 pbm */
-unsigned char* pbmTransferFromBmp(unsigned char* bitmapStr, size_t width, size_t height, size_t totalSize) {
+unsigned char* pbmTransferFromBmp(unsigned char* bitmapStr, size_t width, size_t height) {
     
     /* 保存转换后的 pbm 串 */
-    unsigned char* pbmStr = (unsigned char*)malloc(totalSize / 4 / 8);
-    memset(pbmStr, 0x00, totalSize / 4 / 8);
+    unsigned char* pbmStr = (unsigned char*)malloc(width * height / 8);
+    memset(pbmStr, 0x00, width * height / 8);
     
     /* 已转换的字节数 */
     size_t countTransed = 0;
@@ -83,21 +83,6 @@ unsigned char* pbmTransferFromBmp(unsigned char* bitmapStr, size_t width, size_t
             countTransed ++;
         }
     }
-    
-    /* 输出 */
-//    printf("/ --------begin-打印pbm--------- /");
-//    printf("01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f \n");
-//    int len = totalSize / 4 / 8;
-//    int tSize = 0;
-//    while (tSize < len) {
-//        int minLen = (len - tSize >= 16) ? (16) : (len - tSize);
-//        for (int i = 0; i < minLen; i ++) {
-//            printf("%02x ", *(pbmStr + tSize + i));
-//        }
-//        printf("\n");
-//        tSize += 16;
-//    }
-//    printf("/ --------end-打印pbm--------- /");
 
     return pbmStr;
 }
@@ -119,7 +104,6 @@ void jbigEncode(unsigned char* pbmStr, size_t width, size_t height) {
     jbg_enc_out(&s);
     
     jbg_enc_free(&s);
-    free(pbmStr);
 
     return;
 }

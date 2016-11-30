@@ -14,5 +14,8 @@
 + (void) showWithDoneClicked:(void (^) (NSString* password))doneBlock
              orCancelClicked:(void (^) (void))cancelBlock;
 
++ (void)hidden;
 
+    
+    
 @end

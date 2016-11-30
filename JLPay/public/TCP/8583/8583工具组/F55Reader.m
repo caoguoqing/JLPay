@@ -20,28 +20,21 @@
     NSString* len;
     NSString* value;
     
-//    for (NSInteger step = 0; step < f55.length; ) {
     NSInteger step = 0;
     while (step < f55.length) {
         name1 = nil; name2 = nil; len = nil; value = nil;
-        NSLog(@"----原始55域[%@]", f55);
-        NSLog(@"---------------------------------------------------------");
         // name
         name1 = [f55 substringWithRange:NSMakeRange(step, 2)];
-        NSLog(@"====name1 = [%@]", name1);
         step += 2;
         if ([name1 isEqualToString:@"9F"] || [name1 isEqualToString:@"5F"]) {
             name2 = [f55 substringWithRange:NSMakeRange(step, 2)];
-            NSLog(@"====name2 = [%@]", name2);
             step += 2;
         }
         // len
         len = [f55 substringWithRange:NSMakeRange(step, 2)];
-        NSLog(@"====len = [%@], int len = [%d]", len, [ISOHelper lenOfTwoBytesHexString:len] * 2);
         step += 2;
         // value
         value = [f55 substringWithRange:NSMakeRange(step, [ISOHelper lenOfTwoBytesHexString:len] * 2)];
-        NSLog(@"====value = [%@]", value);
         step += [ISOHelper lenOfTwoBytesHexString:len] * 2;
         [subFields addObject:@{F55SubFieldKeyName:((name2)?([name1 stringByAppendingString:name2]):(name1)),
                                F55SubFieldKeyLen:len,

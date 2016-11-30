@@ -28,7 +28,7 @@
 - (void) addSubviews {
     self.clipsToBounds = NO;
     self.tbvPulledDown = NO;
-    self.backgroundColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:0.9];
+    self.backgroundColor = [UIColor colorWithHex:HexColorTypeBlackBlue alpha:0.9];
     [self addSubview:self.curMonthBtn];
     [self addSubview:self.preSwitchBtn];
     [self addSubview:self.sufSwitchBtn];
@@ -43,6 +43,9 @@
     CGFloat heightImageBtn = self.frame.size.height;
     CGFloat widthCurBtn = self.frame.size.width * 0.5;
     
+    self.preSwitchBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:heightImageBtn scale:0.6]];
+    self.sufSwitchBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:heightImageBtn scale:0.6]];
+
     NameWeakSelf(wself);
     [self.curMonthBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(wself.mas_centerX);
@@ -113,15 +116,8 @@
     if (!_preSwitchBtn) {
         _preSwitchBtn = [UIButton new];
         [_preSwitchBtn addTarget:self action:@selector(clickToExchangePreDate:) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIImageView* directionImgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"directionLeft_white"]];
-        [_preSwitchBtn addSubview:directionImgView];
-        [directionImgView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(_preSwitchBtn.mas_centerX);
-            make.centerY.equalTo(_preSwitchBtn.mas_centerY);
-            make.size.mas_equalTo(CGSizeMake(20, 20));
-        }];
-        
+        [_preSwitchBtn setTitle:[NSString fontAwesomeIconStringForEnum:FACaretLeft] forState:UIControlStateNormal];
+        [_preSwitchBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     return _preSwitchBtn;
 }
@@ -130,15 +126,8 @@
     if (!_sufSwitchBtn) {
         _sufSwitchBtn = [UIButton new];
         [_sufSwitchBtn addTarget:self action:@selector(clickToExchangeSufDate:) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIImageView* directionImgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"directionRight_white"]];
-        [_sufSwitchBtn addSubview:directionImgView];
-        [directionImgView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(_sufSwitchBtn.mas_centerX);
-            make.centerY.equalTo(_sufSwitchBtn.mas_centerY);
-            make.size.mas_equalTo(CGSizeMake(20, 20));
-        }];
-
+        [_sufSwitchBtn setTitle:[NSString fontAwesomeIconStringForEnum:FACaretRight] forState:UIControlStateNormal];
+        [_sufSwitchBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     return _sufSwitchBtn;
 }

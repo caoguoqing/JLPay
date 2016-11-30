@@ -22,7 +22,6 @@
 #import "MTVC_vmLoginAtBack.h"
 
 
-
 @interface MainTransViewController ()
 
 @property (nonatomic, strong) MTVC_screenView*  screenView;
@@ -81,15 +80,29 @@
     [[MViewSwitchManager manager] gotoDeviceBinding];
 }
 
+/* 点击了结算方式切换按钮 */
+- (IBAction) clickedSettleSwitchBtn:(id)sender {
+    NameWeakSelf(wself);
+    [[VMMainVCDataSource dataSource] doswitchSettlementTypeWithVC:self onFinished:^{
+        [wself reloadDatas];
+    }];
+}
 
 
 # pragma mask 3 界面布局
 
 - (void) addKVOs {
-    //@weakify(self);
+    @weakify(self);
     RAC(self.screenView.moneyLabel, text) = [RACObserve([MTransMoneyCache sharedMoney], curMoneyUniteYuan) map:^id(id value) {
         return [NSString stringWithFormat:@"￥%.02lf", [value floatValue]];
     }];
+    
+    [RACObserve([VMMainVCDataSource dataSource], settleType) subscribeNext:^(id x) {
+        @strongify(self);
+        [self.screenView.settlementSwitchBtn setTitle:x forState:UIControlStateNormal];
+    }];
+    
+    RAC(self.screenView.settlementSwitchBtn, enabled) = RACObserve([VMMainVCDataSource dataSource], canSwitchSettlementType);
 }
 
 - (void)viewDidLoad {
@@ -98,6 +111,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.backBarButtonItem = [PublicInformation newBarItemWithNullTitle];
     [self loadSubviews];
+    [self layoutSubviews];
     [self addKVOs];
 }
 
@@ -132,15 +146,33 @@
 - (void) reloadDatas {
     VMMainVCDataSource* datasource = [VMMainVCDataSource dataSource];
     [datasource refrashData];
-    self.screenView.settleTypeLabel.text = datasource.settleType;
-    self.screenView.businessLabel.text = datasource.businessName;
-    self.screenView.deviceLinkedStateLabel.hidden = !datasource.needBindDevice;
     self.screenView.deviceConnectBtn.hidden = !datasource.needBindDevice;
+    
+    
+    CGFloat textFontSize = [NSString resizeFontAtHeight:self.screenView.businessLabel.bounds.size.height scale:0.7];
+    self.screenView.businessLabel.attributedText = [NSAttributedString stringWithAwesomeText:[NSString stringWithIconType:IFTypeShop]
+                                                                                 awesomeFont:[UIFont iconFontWithSize:textFontSize]
+                                                                                awesomeColor:[UIColor colorWithHex:0x99cccc alpha:1]
+                                                                                        text:datasource.businessName
+                                                                                    textFont:[UIFont boldSystemFontOfSize:textFontSize]
+                                                                                   textColor:[UIColor whiteColor]
+                                                                             awesomeLocation:FAwesomeLocation_left];
+    
+    textFontSize = [NSString resizeFontAtHeight:self.screenView.settlementSwitchBtn.bounds.size.height scale:0.6];
+    self.screenView.deviceBtnAttriTitle = [NSAttributedString stringWithLeftAwesomeText:[NSString fontAwesomeIconStringForEnum:FAChainBroken]
+                                                                    leftAwesomeFont:[UIFont fontAwesomeFontOfSize:textFontSize - 1]
+                                                                   leftAwesomeColor:[UIColor colorWithHex:0xffcc00 alpha:1]
+                                                                   rightAwesomeText:[NSString stringWithIconType:IFTypeRightTri]
+                                                                   rightAwesomeFont:[UIFont iconFontWithSize:textFontSize - 1]
+                                                                  rightAwesomeColor:[UIColor colorWithHex:0xffcc00 alpha:1]
+                                                                               text:@"去绑定设备"
+                                                                           textFont:[UIFont boldSystemFontOfSize:textFontSize]
+                                                                          textColor:[UIColor colorWithHex:0xffcc00 alpha:1]];
+
+
 }
 
-
-- (void)updateViewConstraints {
-    
+- (void) layoutSubviews {
     CGFloat triSwitchVHeight = self.view.frame.size.height * 1/6.5;
     CGFloat inset = [UIScreen mainScreen].bounds.size.width * 15/320.f;
     CGFloat noteLabelHeight = [UIScreen mainScreen].bounds.size.height * 20/568.f;
@@ -174,11 +206,7 @@
         make.left.mas_equalTo(wself.view.mas_left).offset(inset);
         make.right.mas_equalTo(wself.view.mas_right).offset(- inset);
     }];
-    
-    [super updateViewConstraints];
 }
-
-
 
 
 
@@ -189,15 +217,17 @@
         _screenView = [[MTVC_screenView alloc] init];
         _screenView.moneyLabel.textColor = [UIColor whiteColor];
         _screenView.backgroundColor = [UIColor colorWithHex:HexColorTypeBlackBlue alpha:1];
-        _screenView.settleTypeLabel.backgroundColor = [UIColor colorWithHex:0xef454b alpha:1];
-        _screenView.settleTypeLabel.textColor = [UIColor whiteColor];
+        [_screenView.settlementSwitchBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_screenView.settlementSwitchBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
+        _screenView.settlementSwitchBtn.switchLabel.text = [NSString stringWithIconType:IFTypeExchange];
+        _screenView.settlementSwitchBtn.switchLabel.textColor = [UIColor colorWithHex:0x99cccc alpha:1];
         _screenView.businessLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
-        _screenView.deviceLinkedStateLabel.text = [NSString fontAwesomeIconStringForEnum:FAChainBroken];
-        _screenView.deviceLinkedStateLabel.textColor = [UIColor colorWithHex:0xffd300 alpha:1];
-        _screenView.deviceCBtnTitle = @"请点我,您还未绑定设备!";
+        
         [_screenView.deviceConnectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_screenView.deviceConnectBtn setTitleColor:[UIColor colorWithWhite:1 alpha:0.5] forState:UIControlStateHighlighted];
         [_screenView.deviceConnectBtn addTarget:self action:@selector(clickedDeviceBindedBtn:) forControlEvents:UIControlEventTouchUpInside];
+        [_screenView.settlementSwitchBtn addTarget:self action:@selector(clickedSettleSwitchBtn:) forControlEvents:UIControlEventTouchUpInside];
+
     }
     return _screenView;
 }
@@ -238,7 +268,7 @@
 }
 
 - (TriScrollSegmentView *)triSwitchView {
-    if (!_triSwitchView) {        
+    if (!_triSwitchView) {
         _triSwitchView = [[TriScrollSegmentView alloc] initWithSegInfos:[MTVC_modelTransTypeKeys model].transTypeList
                                                      andMidItemCliecked:^{
                                                          if (![[VMMainVCDataSource dataSource] logined]) {
@@ -246,6 +276,7 @@
                                                          } else {
                                                              NSDictionary* midNode = [[MTVC_modelTransTypeKeys model].transTypeList objectAtIndex:_triSwitchView.curSegIndex];
                                                              NSString* midTitle = [midNode objectForKey:kTransTypeTitleKey];
+                                                             
                                                              if ([midTitle isEqualToString:(NSString*)kTransTypeNameJLPay]) {
                                                                  [VMTransChecking mposTransCheckingAndHandling];
                                                              }

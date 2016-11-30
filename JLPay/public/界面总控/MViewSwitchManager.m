@@ -19,6 +19,7 @@
 #import "HelperAndAboutTableViewController.h"
 #import "ChangePinViewController.h"
 #import "MyBusinessViewController.h"
+#import "AccountReceivedViewController.h"
 
 @interface MViewSwitchManager()
 
@@ -126,6 +127,13 @@
 - (void) gotoAssistance {
     HelperAndAboutTableViewController* assistaceVC = [[HelperAndAboutTableViewController alloc] init];
     [[MViewSwitchManager mainViewController] presentViewController:[[UINavigationController alloc] initWithRootViewController:assistaceVC]
+                                                          animated:YES completion:nil];
+}
+
+/* 跳转: 立即到账 */
+- (void) gotoResignTicket {
+    AccountReceivedViewController* resignTicketVC = [[AccountReceivedViewController alloc] init];
+    [[MViewSwitchManager mainViewController] presentViewController:[[UINavigationController alloc] initWithRootViewController:resignTicketVC]
                                                           animated:YES completion:nil];
 }
 

@@ -7,10 +7,8 @@
 //
 
 #import "LMVC_logoutButton.h"
-#import <NSString+FontAwesome.h>
-#import <UIFont+FontAwesome.h>
-#import "NSString+Formater.h"
 #import <ReactiveCocoa.h>
+#import "Define_Header.h"
 
 
 @implementation LMVC_logoutButton
@@ -45,10 +43,10 @@
     [[RACObserve(self, logined) deliverOnMainThread] subscribeNext:^(id x) {
         @strongify(self);
         if ([x boolValue]) {
-            self.iconLabel.transform = CGAffineTransformMakeRotation(M_PI);
+            self.iconLabel.textColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
             self.logoutLabel.text = @"退出登录";
         } else {
-            self.iconLabel.transform = CGAffineTransformMakeRotation(0);
+            self.iconLabel.textColor = [UIColor colorWithHex:HexColorTypeGreen alpha:1];
             self.logoutLabel.text = @"请登录";
         }
     }];
@@ -73,8 +71,8 @@
         _iconLabel = [UILabel new];
         _iconLabel.textColor = [UIColor whiteColor];
         _iconLabel.textAlignment = NSTextAlignmentCenter;
-        _iconLabel.text = [NSString fontAwesomeIconStringForEnum:FASignOut];
-        _iconLabel.font = [UIFont fontAwesomeFontOfSize:18];
+        _iconLabel.text = [NSString fontAwesomeIconStringForEnum:FAPowerOff];
+        _iconLabel.font = [UIFont fontAwesomeFontOfSize:15];
     }
     return _iconLabel;
 }

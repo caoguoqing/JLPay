@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /*
  * 为主界面提供数据: 从各个数据源和缓存提取数据
@@ -23,8 +24,16 @@
 /* 用户名 */
 @property (nonatomic, copy) NSString* userName;
 
+
+
+
+/* 是否允许切换 */
+@property (nonatomic, assign) BOOL canSwitchSettlementType;
+
 /* 结算方式 */
 @property (nonatomic, copy) NSString* settleType;
+
+
 
 /* 商户名 */
 @property (nonatomic, copy) NSString* businessName;
@@ -41,9 +50,12 @@
 
 
 
-
+/* 切换结算方式 */
+- (void) doswitchSettlementTypeWithVC:(UIViewController*)vc onFinished:(void (^) (void))finishedBlock;
 
 /* 刷新数据 */
 - (void) refrashData;
+
+
 
 @end

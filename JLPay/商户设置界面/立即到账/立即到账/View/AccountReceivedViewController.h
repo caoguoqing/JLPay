@@ -35,4 +35,6 @@
 
 @property (nonatomic, strong) NSTimer* timeCircle;
 
+@property (nonatomic, strong) UIBarButtonItem* cancelBarBtn;
+
 @end

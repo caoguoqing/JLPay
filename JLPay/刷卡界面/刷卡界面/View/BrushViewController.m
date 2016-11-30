@@ -9,11 +9,66 @@
 #import "BrushViewController.h"
 #import "JLPasswordView.h"
 #import "MTransMoneyCache.h"
+#import "JLElecSignController.h"
+
+#import "MBProgressHUD+CustomSate.h"
+#import "BVC_vmTransController.h"
+#import "BVC_vmDeviceController.h"
+#import "BVC_vmPackageTransformer.h"
+#import "BVC_vmPasswordController.h"
+#import "ImageHelper.h"
+
+#import "Define_Header.h"
+#import "PosInformationViewController.h"
+#import "DeviceManager.h"
+#import "Packing8583.h"
+#import "Masonry.h"
+#import <ReactiveCocoa.h>
+
+#import "BVC_vmTimer.h"
 
 @interface BrushViewController()
 
+/* 控制定时器 */
+//@property (nonatomic, strong) NSTimer* waitingTimer;
+
+@property (nonatomic, strong) BVC_vmTimer* timerCtrl;
+
+/* 设备管理器 */
+@property (nonatomic, strong) BVC_vmDeviceController* deviceCtrl;
+
+/* 交易管理器 */
+@property (nonatomic, strong) BVC_vmTransController* transCtrl;
+
+/* 打包管理器 */
+@property (nonatomic, strong) BVC_vmPackageTransformer* packageCtrl;
+
+/* 密码输入管理器 */
+@property (nonatomic, strong) BVC_vmPasswordController* passwordCtrl;
+
+
+
+/* 状态文本框 */
+@property (nonatomic, strong) UILabel* stateLabel;
+
+/* 读秒文本框 */
+@property (nonatomic, strong) UILabel* secondsLabel;
+
+/* 金额标签 */
+@property (nonatomic, strong) UILabel* moneyIconImg;
+
+/* 金额显示框 */
+@property (nonatomic, strong) UILabel* moneyLabel;
+
+/* 刷卡演示图片 */
+@property (nonatomic, strong) UIImageView* swipeDemoImg;
 
 @end
+
+
+
+
+
 
 /*************************************
  * ---- 功能
@@ -25,14 +80,6 @@
 
  
 @implementation BrushViewController
-@synthesize activity = _activity;
-@synthesize waitingLabel = _waitingLabel;
-@synthesize leftInset;
-@synthesize timeOut;
-@synthesize waitingTimer = _waitingTimer;
-@synthesize stringOfTranType = _stringOfTranType;
-@synthesize moneyLabel = _moneyLabel;
-@synthesize cardInfoOfReading = _cardInfoOfReading;
 
 
 /*************************************
@@ -45,39 +92,15 @@
  *************************************/
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemWithNullTitle]];
-    [[MTransMoneyCache sharedMoney] resetMoneyToZero];
     
     // 加载子视图
     [self setTitle:@"刷卡"];
-    [self addSubViews];
-    // 交易超时时间为60秒,后面可以重置
-    [self setTimeOut:60];
-    
-    [RACObserve(self.deviceManager, deviceState) subscribeNext:^(NSNumber* state) {
-        switch (state.integerValue) {
-            case VMDeviceStateDisconnected:
-                JLPrint(@"-->当前设备状态:[已断开连接]");
-                break;
-            case VMDeviceStateDisconnecting:
-                JLPrint(@"-->当前设备状态:[正在断开连接...]");
-                break;
-            case VMDeviceStateConnected:
-                JLPrint(@"-->当前设备状态:[已连接设备]");
-                break;
-            case VMDeviceStateConnecting:
-                JLPrint(@"-->当前设备状态:[正在连接设备...]");
-                break;
-            case VMDeviceStateScanning:
-                JLPrint(@"-->当前设备状态:[正在扫描设备...]");
-                break;
-            case VMDeviceStateScanned:
-                JLPrint(@"-->当前设备状态:[已扫描到设备]");
-                break;
-            default:
-                break;
-        }
-    }];
+    [self loadSubviews];
+    [self layoutSubviews];
+    [self newControl];
+
 }
 
 
@@ -86,7 +109,6 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.activity startAnimating];
     self.navigationController.navigationBarHidden = NO;
 }
 
@@ -105,457 +127,433 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    // 1.先检查是否绑定设备
-    if (![ModelDeviceBindedInformation hasBindedDevice]) {
-        [self alertForFailedMessage:@"未绑定设备,请先绑定设备!"];
-        return;
-    }
-
-    // 2.检查蓝牙是否开启
-    AppDelegate* appDelegate = APPMainDelegate;
-    if (appDelegate.CBManager.state != CBCentralManagerStatePoweredOn) {
-        [self alertForFailedMessage:@"手机蓝牙未打开,请打开蓝牙"];
-        return;
-    }
-
-    // 3.先在主线程打开activitor 和 提示信息
-    self.timeOut = 20;
-    [self startActivity];
-    [self startTimerWithSelector:@selector(waitingForDeviceOpenning)];
-    
-    // 4.开始 连接设备-刷卡-加密
-    NameWeakSelf(wself);
-    [self.deviceManager connectDeviceOnFinished:^{
-        wself.timeOut = 0;
-        [wself stopTimer];
-        [wself startActivity];
-        [wself startTimerWithSelector:@selector(waitingForDeviceSwiping)];
-        // 刷卡
-        [wself.deviceManager swipeCardWithMoney:wself.sIntMoney onCardInfoReaded:^(NSDictionary *cardInfo) {
-            [wself stopTimer];
-            [wself stopActivity];
-            [wself.cardInfoOfReading addEntriesFromDictionary:cardInfo];
-            [wself.cardInfoOfReading setValue:wself.sIntMoney forKey:@"4"];
-            if ([wself.deviceManager hasNumbersButton]) {
-                [wself startTransPackingOnTransType:self.stringOfTranType];
-            } else {
-                [wself makePasswordAlertView];
-            }
-        } onError:^(NSError *error) {
-            [wself stopTimer];
-            [wself stopActivity];
-            [wself alertForFailedMessage:[NSString stringWithFormat:@"刷卡失败:%@",[error localizedDescription]]];
-        }];
-    } onError:^(NSError *error) {
-        [wself stopTimer];
-        [wself stopActivity];
-        [wself alertForFailedMessage:[NSString stringWithFormat:@"连接设备失败:%@",[error localizedDescription]]];
-    }];
-
+    // 连接设备
+    [self.deviceCtrl.cmd_deviceConnecting execute:nil];
+    // 启动定时器
+    [self makeTimeoutForDeviceConnecting];
 }
+
+
+
 #pragma mask ::: 释放资源
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    // 移除定时器
+    // 断开设备、清空金额缓存、停止定时器、取消密码输入、取消签名
+    [[MTransMoneyCache sharedMoney] resetMoneyToZero];
+    [self.deviceCtrl.cmd_deviceDisconnecting execute:nil];
     [self stopTimer];
-    // 取消 TCP 响应的协议
-    [self.tcpViewModel terminateTransWithTransType:self.stringOfTranType];
-    
-    [self.deviceManager disconnectOnFinished:nil];
-    self.deviceManager = nil;
+    [JLPasswordView hidden];
+    [[JLElecSignController sharedElecSign] hiddenAnimationOnFinished:nil];
 }
 
 
 
-#pragma mask ::: 初始化并加载密码输入提示框
-- (void) makePasswordAlertView {
-    // innerView 放在 alertView 中创建
-    NameWeakSelf(wself);
-    [JLPasswordView showWithDoneClicked:^(NSString *password) {
-        // 输了密码则加密
-        if (password && password.length > 0) {
-            [wself.deviceManager encryptPinSource:password onEncryptedPIN:^(NSString *pin) {
-                if (pin && pin.length > 0) {
-                    NSMutableString* f22 = [NSMutableString stringWithString:[wself.cardInfoOfReading valueForKey:@"22"]];
-                    [f22 replaceCharactersInRange:NSMakeRange(2, 1) withString:@"1"];
-                    [wself.cardInfoOfReading setValue:f22 forKey:@"22"];
-                    [wself.cardInfoOfReading setValue:pin forKey:@"52"];
-                    [wself.cardInfoOfReading setValue:@"2600000000000000" forKey:@"53"];
-                } else {
-                    [wself.cardInfoOfReading setValue:@"0600000000000000" forKey:@"53"];
-                }
-                // 发起交易
-                [wself startTransPackingOnTransType:wself.stringOfTranType];
-            } onError:^(NSError *error) {
-                [wself alertForFailedMessage:[error localizedDescription]];
+- (void) newControl {
+    @weakify(self);
+    // 状态
+    RAC(self.stateLabel, text) = [RACSignal merge:@[RACObserve(self.deviceCtrl, stateMessage),
+                                                    RACObserve(self.transCtrl, stateMessage)]];
+    
+    // 签名特征码
+    RAC([JLElecSignController sharedElecSign], characteristicCode) = RACObserve(self.packageCtrl, characteristicCode);
+    
+    // 读秒
+    RAC(self.secondsLabel, text) = [RACObserve(self.timerCtrl, timeCount) map:^id(id value) {
+        return [NSString stringWithFormat:@"%02ds", [value integerValue]];
+    }];
+    
+    // 连接设备
+    [self.deviceCtrl.cmd_deviceConnecting.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
+            [MBProgressHUD showNormalWithText:@"正在连接设备..." andDetailText:nil];
+        } error:^(NSError *error) {
+            [MBProgressHUD showFailWithText:@"连接设备失败!" andDetailText:[error localizedDescription] onCompletion:^{
+                @strongify(self);
+                [self.navigationController popViewControllerAnimated:YES];
             }];
-        }
-        // 未输直接交易
-        else {
-            [wself.cardInfoOfReading setObject:@"0600000000000000" forKey:@"53"];
-            [wself startTransPackingOnTransType:wself.stringOfTranType];
-        }
-    } orCancelClicked:^{
-        [wself.navigationController popToRootViewControllerAnimated:YES];
+        } completed:^{
+            // 读卡
+            [MBProgressHUD hideCurNormalHud];
+            @strongify(self);
+            [self makeTimeoutForDeviceSwiping];
+            [self.deviceCtrl.cmd_cardReading execute:nil];
+        }];
+    }];
+    
+    // 读卡
+    [self.deviceCtrl.cmd_cardReading.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
+            [MBProgressHUD showNormalWithText:@"正在读取卡数据..." andDetailText:nil];
+        } error:^(NSError *error) {
+            [MBProgressHUD showFailWithText:@"读取卡数据失败!" andDetailText:[error localizedDescription] onCompletion:^{
+                @strongify(self);
+                [self.navigationController popViewControllerAnimated:YES];
+            }];
+        } completed:^{
+            [MBProgressHUD hideCurNormalHud];
+            @strongify(self);
+            self.packageCtrl.cardInfo = self.deviceCtrl.cardInfo;
+            if (self.deviceCtrl.mposHasKeyboard) {
+                // 签名
+                [self doElecSigning];
+            } else {
+                // 输入密码
+                [self makeTimeoutForPinEncrypt];
+                [self.passwordCtrl.cmd_passwordInputting execute:nil];
+            }
+        }];
+    }];
+    
+    // 密码输入
+    [self.passwordCtrl.cmd_passwordInputting.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeError:^(NSError *error) {
+            @strongify(self);
+            [self.navigationController popViewControllerAnimated:YES];
+        } completed:^{
+            @strongify(self);
+            if (self.passwordCtrl.passwordPin && self.passwordCtrl.passwordPin.length > 0) {
+                // 加密密码
+                self.deviceCtrl.pinSource = self.passwordCtrl.passwordPin;
+                [self.deviceCtrl.cmd_pinEncrypting execute:nil];
+            } else {
+                // 签名
+                [self doElecSigning];
+            }
+        }];
+    }];
+    
+    // 密码加密
+    [self.deviceCtrl.cmd_pinEncrypting.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
+            [MBProgressHUD showNormalWithText:@"设备正在加密密码..." andDetailText:nil];
+        } error:^(NSError *error) {
+            [MBProgressHUD showFailWithText:@"加密密码失败!" andDetailText:[error localizedDescription] onCompletion:^{
+                @strongify(self);
+                [self.navigationController popViewControllerAnimated:YES];
+            }];
+        } completed:^{
+            [MBProgressHUD hideCurNormalHud];
+            @strongify(self);
+            self.packageCtrl.pinEncrypted = self.deviceCtrl.pinEncrypted;
+            // 签名
+            [self doElecSigning];
+        }];
+    }];
+    
+    
+    // mac计算
+    [self.deviceCtrl.cmd_macCalculating.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
+            [MBProgressHUD showNormalWithText:@"正在计算MAC..." andDetailText:nil];
+        } error:^(NSError *error) {
+            [MBProgressHUD showFailWithText:@"计算MAC失败!" andDetailText:[error localizedDescription] onCompletion:^{
+                @strongify(self);
+                [self.navigationController popViewControllerAnimated:YES];
+            }];
+        } completed:^{
+            @strongify(self);
+            [MBProgressHUD hideCurNormalHud];
+            // 执行消费上送
+            self.packageCtrl.macCalculated = self.deviceCtrl.macCalculated;
+            self.transCtrl.transMessage = [self.packageCtrl consumeMessageMaking];
+            self.transCtrl.transType = TranType_Consume;
+            [self.transCtrl.cmd_transSending execute:nil];
+        }];
+    }];
+    
+    // 消费解析
+    [self.transCtrl.cmd_transSending.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
+            [MBProgressHUD showNormalWithText:@"正在发送交易请求..." andDetailText:nil];
+        } error:^(NSError *error) {
+            [MBProgressHUD showFailWithText:@"消费失败!" andDetailText:[error localizedDescription] onCompletion:^{
+                @strongify(self);
+                // #: 回退界面
+                [self.navigationController popViewControllerAnimated:YES];
+            }];
+        } completed:^{
+            @strongify(self);
+            [MBProgressHUD hideCurNormalHud];
+            // 上送签名
+            [self makeTimeoutForElecSignUploading];
+            self.packageCtrl.consumeResponseInfo = self.transCtrl.responseInfo;
+            self.transCtrl.transType = TranType_ElecSignPicUpload;
+            self.transCtrl.transMessage = [self.packageCtrl elecSignMessageMaking];
+            [self.transCtrl.cmd_elecSignSending execute:nil];
+        }];
+    }];
+    
+    // 上送签名解析
+    [self.transCtrl.cmd_elecSignSending.executionSignals subscribeNext:^(RACSignal* sig) {
+        [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
+            [MBProgressHUD showNormalWithText:@"正在上送签名..." andDetailText:nil];
+        } error:^(NSError *error) {
+            [MBProgressHUD showFailWithText:@"上送签名失败!" andDetailText:[error localizedDescription] onCompletion:^{
+                @strongify(self);
+                [self.navigationController popViewControllerAnimated:YES];
+            }];
+        } completed:^{
+            @strongify(self);
+            [MBProgressHUD hideCurNormalHud];
+            [self stopTimer];
+            // 跳转小票
+            [MBProgressHUD showSuccessWithText:@"交易成功!" andDetailText:nil onCompletion:^{
+                @strongify(self);
+                PosInformationViewController  *posInforVC=[[PosInformationViewController alloc] initWithNibName:nil bundle:nil];
+                [posInforVC setTransInformation:self.packageCtrl.consumeResponseInfo];
+                posInforVC.elecSignImage = [ImageHelper elecSignImgWithView:[JLElecSignController sharedElecSign].elecSignView];
+                [self.navigationController pushViewController:posInforVC animated:YES];
+            }];
+        }];
+    }];
+
+}
+
+
+// 执行签名
+- (void) doElecSigning {
+    [self makeTimeoutForElecSign];
+    @weakify(self);
+    [[JLElecSignController sharedElecSign] signWithCompletion:^{
+        @strongify(self);
+        /* mac加密 */
+        [self makeTimeoutForTransConsume];
+        self.deviceCtrl.macSource = [self.packageCtrl macSourceMaking];
+        [self.deviceCtrl.cmd_macCalculating execute:nil];
+    } orCancel:^{
+        @strongify(self);
+        [self.navigationController popViewControllerAnimated:YES];
     }];
 }
 
 
 
 
+# pragma mask 2 定时器任务
 
-#pragma mask ---- ViewModelTCPPosTransDelegate 
-- (void)didTransSuccessWithResponseInfo:(NSDictionary *)responseInfo onTransType:(NSString *)transType {
-    [self stopTimer];
-    [self stopActivity];
-    NSMutableDictionary* updateF55dic = [NSMutableDictionary dictionaryWithDictionary:responseInfo];
-    if ([[self.cardInfoOfReading objectForKey:@"22"] hasPrefix:@"05"]) {
-        [updateF55dic setObject:[self.cardInfoOfReading objectForKey:@"55"] forKey:@"55"];
-        [updateF55dic setObject:[self.cardInfoOfReading objectForKey:@"23"] forKey:@"23"];
-        NSString* f14 = [self.cardInfoOfReading objectForKey:@"14"];
-        [updateF55dic setObject:((f14 && f14.length > 0)?(f14):(@"")) forKey:@"14"];
-    }
-    self.transResponseInfo = updateF55dic;
-    
-    
-    [self handleWithTransSuccessOnTransType:transType]; // 直接成功处理
-
-}
-- (void)didTransFailWithErrMsg:(NSString *)errMsg onTransType:(NSString *)transType {
-    [self stopTimer];
-    [self stopActivity];
-    if (![transType isEqualToString:TranType_BatchUpload]) {
-        [self alertForFailedMessage:[NSString stringWithFormat:@"交易失败:%@",errMsg]];
-    } else {
-        [self handleWithTransSuccessOnTransType:self.stringOfTranType];
-    }
-}
-- (void) handleWithTransSuccessOnTransType:(NSString*)transType {
-    self.waitingLabel.text = @"交易成功";
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if ([self.stringOfTranType isEqualToString:TranType_YuE]) {
-            [self pushToYuEVCWithInfo:self.transResponseInfo];
-        } else {
-            [self pushToSignVCWithInfo:self.transResponseInfo];
-        }
-    });
-}
-- (void) repackingCardInfoWithTransResponseInfo {
-    for (NSString* key in self.transResponseInfo.allKeys) {
-        NSString* cardFieldValue = [self.cardInfoOfReading objectForKey:key];
-        if (!cardFieldValue || cardFieldValue.length == 0) {
-            [self.cardInfoOfReading setObject:[self.transResponseInfo objectForKey:key] forKey:key];
-        }
-    }
-}
-
-
-#pragma mask ---- PACKING & TCP
-- (void) startTransPackingOnTransType:(NSString*)transType {
-    self.timeOut = 0;
-    [self startTimerWithSelector:@selector(waitingForDeviceCusting)];
-    [self startActivity];
-    
-    __block ModelTCPTransPacking* tcpHandle = [ModelTCPTransPacking sharedModel];
-    [tcpHandle packingFieldsInfo:self.cardInfoOfReading forTransType:transType];
-    
-    [self.deviceManager encryptMacSource:[tcpHandle getMacStringAfterPacking] onEncryptedMac:^(NSString *macPin) {
-        [tcpHandle repackingWithMacPin:macPin];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tcpViewModel startTransWithTransType:curTransType
-                                      andPackingString:[tcpHandle packageFinalyPacking]
-                                            onDelegate:self];
-        });
-    } onError:^(NSError *error) {
-        [self alertForFailedMessage:[error localizedDescription]];
+/* 定时器: 连接设备 */
+- (void) makeTimeoutForDeviceConnecting {
+    NameWeakSelf(wself);
+    [self.timerCtrl startCircleTimerWithTimecount:20];
+    [self.timerCtrl timerWaitingForInterval:20 handleWhenTimeOut:^{
+        [MBProgressHUD showFailWithText:@"设备连接超时" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
     }];
-    
 }
 
-
-
-
-#pragma mask ---- PRIVATE INTERFACE
-
-// 跳转界面: 跳转到签名界面
-- (void) pushToSignVCWithInfo:(NSDictionary*)transInfo {
-    PosInformationViewController  *posInforVC=[[PosInformationViewController alloc] initWithNibName:nil bundle:nil];
-    [posInforVC setUserFor:PosNoteUseForUpload];
-    [posInforVC setTransInformation:transInfo];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController pushViewController:posInforVC animated:YES];
-    });
+/* 定时器: 刷卡 */
+- (void) makeTimeoutForDeviceSwiping {
+    NameWeakSelf(wself);
+    [self.timerCtrl startCircleTimerWithTimecount:60];
+    [self.timerCtrl timerWaitingForInterval:60 handleWhenTimeOut:^{
+        [MBProgressHUD showFailWithText:@"刷卡超时" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
+    }];
 }
 
-// 跳转界面: 跳转余额显示界面
-- (void) pushToYuEVCWithInfo:(NSDictionary*)transInfo {
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    BalanceEnquiryViewController* balanceEnquiryVC = [storyBoard instantiateViewControllerWithIdentifier:@"balanceEquiryVC"];
-    balanceEnquiryVC.transInfo = [transInfo copy];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController pushViewController:balanceEnquiryVC animated:YES];
-    });
+/* 定时器: 加密 */
+- (void) makeTimeoutForPinEncrypt {
+    NameWeakSelf(wself);
+    [self.timerCtrl startCircleTimerWithTimecount:30];
+    [self.timerCtrl timerWaitingForInterval:30 handleWhenTimeOut:^{
+        [MBProgressHUD showFailWithText:@"输入密码超时" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
+    }];
 }
 
-
-/*************************************
- * 功  能 : 本模块注册在定时器中,1s扫描一次;
- *          - 检测设备是否连接
- *          - 如果已经连接了，就注销定时器，并继续刷卡
- *          - 如果到了超时时间还未连接，注销定时器，报错退出
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) waitingForDeviceOpenning {
-    if (self.timeOut < 0) { // 超时了
-        [self stopTimer];
-        [self stopActivity];
-        [self alertForFailedMessage:@"连接设备超时!"]; // 点击确定就会退出场景
-        return;
-    }
-    [self.waitingLabel setText:[NSString stringWithFormat:@"设备识别中... %02d秒",self.timeOut--]];
+/* 定时器: 签名 */
+- (void) makeTimeoutForElecSign {
+    NameWeakSelf(wself);
+    [self.timerCtrl startCircleTimerWithTimecount:60];
+    [self.timerCtrl timerWaitingForInterval:60 handleWhenTimeOut:^{
+        [MBProgressHUD showFailWithText:@"签名超时" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
+    }];
 }
 
-/*************************************
- * 功  能 : 等待刷卡计时器;
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) waitingForDeviceSwiping {
-    if (self.timeOut > 30) {
-        [self stopTimer];
-        [self alertForFailedMessage:@"设备刷卡超时"]; // 点击确定就会退出场景
-    } else {
-        [self.waitingLabel setText:[NSString stringWithFormat:@"刷卡中,IC卡请勿拔卡...%02d秒",self.timeOut++]];
-
-    }
-}
-/*************************************
- * 功  能 : 等待交易返回的计数器;
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) waitingForDeviceCusting {
-    [self.waitingLabel setText:[NSString stringWithFormat:@"交易处理中,请收好卡片...%02d秒",self.timeOut++]];
+/* 定时器: 消费超时 */
+- (void) makeTimeoutForTransConsume {
+    NameWeakSelf(wself);
+    [self.timerCtrl startCircleTimerWithTimecount:60];
+    [self.timerCtrl timerWaitingForInterval:60 handleWhenTimeOut:^{
+        [wself.transCtrl.cmd_stopSending execute:nil];
+        [MBProgressHUD showFailWithText:@"交易超时" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
+    }];
 }
 
-
-// -- 启动定时器:指定selector
-- (void) startTimerWithSelector:(SEL)aselector {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.waitingTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:aselector userInfo:nil repeats:YES];
-    });
+/* 定时器: 电签上送 */
+- (void) makeTimeoutForElecSignUploading {
+    NameWeakSelf(wself);
+    [self.timerCtrl startCircleTimerWithTimecount:60];
+    [self.timerCtrl timerWaitingForInterval:60 handleWhenTimeOut:^{
+        [wself.transCtrl.cmd_stopSending execute:nil];
+        [MBProgressHUD showFailWithText:@"交易超时" andDetailText:nil onCompletion:^{
+            [wself.navigationController popViewControllerAnimated:YES];
+        }];
+    }];
 }
-// -- 停止定时器
+
+/* 销毁定时器 */
 - (void) stopTimer {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.waitingTimer isValid]) {
-            [self.waitingTimer invalidate];
-            self.waitingTimer = nil;
-        }
-    });
-}
-// -- 启动指示器
-- (void) startActivity {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activity startAnimating];
-    });
-}
-// -- 停止指示器
-- (void) stopActivity {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.activity isAnimating]) {
-            [self.activity stopAnimating];
-        }
-    });
-}
-
-// -- alert and alertDelegate
-- (void) alertForFailedMessage: (NSString*) messageStr {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"交易失败" message:messageStr delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [alert show];
-    });
-}
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    // 要么是交易失败，要么设备未连接，都要弹出界面
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.timerCtrl stopWaitingTimer];
+    [self.timerCtrl stopCircleTimer];
 }
 
 
 
+# pragma mask 3 界面布局
 
-/*************************************
- * 功  能 : 界面的subviews的加载;
- *          - 金额标签              UILabel + UIImageView
- *          - 刷卡动态提示           UILabel + UIActiveView
- *          - 刷卡说明图片           UIImageView
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) addSubViews {
-    CGFloat topInset            = 15;                // 子视图公用变量: 上边界
-    CGFloat fleftInset          = 15;                // 左边界
-    CGFloat inset               = 30;                // 上部分视图跟下部分视图的间隔
-    CGFloat uifont              = 20.0;              // 字体大小
-    CGSize fontSize             = [@"刷卡" sizeWithAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:uifont] forKey:NSFontAttributeName]];
-    
-    // 背景
-    UIImageView* backImage      = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    backImage.image             = [UIImage imageNamed:@"bg"];
-    [self.view addSubview:backImage];
-    
-    CGFloat xFrame              = 0 + fleftInset;
-    CGFloat navigationHeight    = self.navigationController.navigationBar.frame.size.height;
-    CGFloat yFrame              = [PublicInformation returnStatusHeight] + navigationHeight + topInset;
-    CGFloat width               = fontSize.height;
-    CGFloat height              = fontSize.height;
-    CGRect  frame               = CGRectMake(xFrame, yFrame, width, height);
-    
-    // 金额图片
-    UIImageView* imageView = [[UIImageView alloc] initWithFrame:frame];
-    imageView.image = [UIImage imageNamed:@"jine"];
-    if (![self.stringOfTranType isEqualToString:TranType_YuE]) {
-        [self.view addSubview:imageView];
-    }
-    // 刷卡金额: 0.00 元
-    frame.origin.x += frame.size.width + 4;
-    frame.size.width =  self.view.frame.size.width - fleftInset*2 - frame.size.width - 4;
-    self.moneyLabel.frame = frame;
-    self.moneyLabel.font = [UIFont boldSystemFontOfSize:uifont];
-    if (![self.stringOfTranType isEqualToString:TranType_YuE]) {
-        [self.view addSubview:self.moneyLabel];
-    }
-    
-    // 动态滚轮
-    frame.origin.x = fleftInset;
-    frame.origin.y += frame.size.height + 4;
-    frame.size.width = frame.size.height;
-    self.activity.frame         = frame;
-    [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
-    [self.view addSubview:self.activity];
 
-    // 提示信息标签 Label
-    frame.origin.x += frame.size.width + 4;
-    frame.size.width = self.view.frame.size.width - leftInset*2 - frame.size.width - 4;
-    self.waitingLabel.frame = frame;
-    self.waitingLabel.textAlignment = NSTextAlignmentLeft;
-    self.waitingLabel.font = [UIFont boldSystemFontOfSize:uifont];
-    self.waitingLabel.text = @"请刷卡...";
-    [self.view addSubview:self.waitingLabel];
+- (void) loadSubviews {
+    [self.view addSubview:self.moneyIconImg];
+    [self.view addSubview:self.moneyLabel];
+    [self.view addSubview:self.stateLabel];
+    [self.view addSubview:self.secondsLabel];
+    [self.view addSubview:self.swipeDemoImg];
+}
+
+- (void) layoutSubviews {
+    NameWeakSelf(wself);
     
-    // 刷卡背景图
-    UIImage* image = [UIImage imageNamed:@"swipeBlack"];
-    CGSize imageSize = [image size];
-    frame.origin.y              += frame.size.height + inset;
-    frame.size.height           = self.view.frame.size.height - frame.origin.y - inset*2;
-    frame.size.width            = frame.size.height * imageSize.width/imageSize.height;
-    frame.origin.x = (self.view.bounds.size.width - frame.size.width)/2.0;
+    CGFloat insetMax = ScreenWidth * 15 / 320.f;
+    CGFloat insetMin = ScreenWidth * 5 / 320.f;
     
+    CGFloat heightLabelMin = ScreenWidth * 20 / 320.f;
     
+    CGFloat widthImg = ScreenWidth * 0.70;
+    CGFloat heightImg = widthImg * self.swipeDemoImg.image.size.height / self.swipeDemoImg.image.size.width;
     
-    UIImageView* shuakaImage    = [[UIImageView alloc] initWithFrame:frame];
-    shuakaImage.image           = image;
-    [self.view addSubview:shuakaImage];
+    self.moneyIconImg.layer.cornerRadius = heightLabelMin * 0.5;
+    [self.moneyIconImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(insetMax);
+        make.top.mas_equalTo(64 + insetMax);
+        make.height.width.mas_equalTo(heightLabelMin);
+    }];
+    [self.moneyLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(wself.moneyIconImg.mas_right).offset(insetMin);
+        make.right.mas_equalTo(- insetMax);
+        make.top.bottom.mas_equalTo(wself.moneyIconImg);
+    }];
+    
+    [self.swipeDemoImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(- insetMax * 3);
+        make.centerX.mas_equalTo(wself.view.mas_centerX);
+        make.width.mas_equalTo(widthImg);
+        make.height.mas_equalTo(heightImg);
+    }];
+    
+    [self.stateLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(wself.swipeDemoImg.mas_top).offset(- insetMax);
+        make.left.mas_equalTo(insetMax);
+        make.right.mas_equalTo(- insetMax);
+        make.top.mas_equalTo(wself.secondsLabel.mas_bottom).offset(0);
+        make.height.mas_equalTo(wself.secondsLabel.mas_height).multipliedBy(2.f);
+    }];
+    
+    [self.secondsLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(wself.stateLabel.mas_top).offset(- 0);
+        make.left.mas_equalTo(insetMax);
+        make.right.mas_equalTo(- insetMax);
+        make.top.mas_equalTo(wself.moneyLabel.mas_bottom).offset(insetMax);
+        make.height.mas_equalTo(wself.stateLabel.mas_height).multipliedBy(0.5f);
+    }];
+    
 }
 
 
 
 #pragma mask ------------------------ getter
-- (ViewModelTCPPosTrans *)tcpViewModel {
-    if (_tcpViewModel == nil) {
-        _tcpViewModel = [[ViewModelTCPPosTrans alloc] init];
-    }
-    return _tcpViewModel;
-}
-- (UIActivityIndicatorView *)activity {
-    if (_activity == nil) {
-        _activity                   = [[UIActivityIndicatorView alloc] init];
-    }
-    return _activity;
-}
 
 
-- (UILabel *)waitingLabel {
-    if (_waitingLabel == nil) {
-        _waitingLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+- (BVC_vmTransController *)transCtrl {
+    if (!_transCtrl) {
+        _transCtrl = [[BVC_vmTransController alloc] init];
     }
-    return _waitingLabel;
+    return _transCtrl;
 }
+
+- (BVC_vmDeviceController *)deviceCtrl {
+    if (!_deviceCtrl) {
+        _deviceCtrl = [[BVC_vmDeviceController alloc] init];
+    }
+    return _deviceCtrl;
+}
+
+- (BVC_vmPackageTransformer *)packageCtrl {
+    if (!_packageCtrl) {
+        _packageCtrl = [[BVC_vmPackageTransformer alloc] init];
+    }
+    return _packageCtrl;
+}
+
+- (BVC_vmPasswordController *)passwordCtrl {
+    if (!_passwordCtrl) {
+        _passwordCtrl = [[BVC_vmPasswordController alloc] init];
+    }
+    return _passwordCtrl;
+}
+
+- (BVC_vmTimer *)timerCtrl {
+    if (!_timerCtrl) {
+        _timerCtrl = [[BVC_vmTimer alloc] init];
+    }
+    return _timerCtrl;
+}
+
+- (UILabel *)stateLabel {
+    if (_stateLabel == nil) {
+        _stateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _stateLabel.font = [UIFont boldSystemFontOfSize:16];
+        _stateLabel.textColor = [UIColor colorWithHex:0x27384b alpha:1];
+        _stateLabel.textAlignment = NSTextAlignmentCenter;
+        _stateLabel.numberOfLines = 0;
+    }
+    return _stateLabel;
+}
+
+- (UILabel *)secondsLabel {
+    if (!_secondsLabel) {
+        _secondsLabel = [UILabel new];
+        _secondsLabel.textAlignment = NSTextAlignmentCenter;
+        _secondsLabel.textColor = [UIColor colorWithHex:0x27384b alpha:1];
+        _secondsLabel.font = [UIFont boldSystemFontOfSize:18];
+    }
+    return _secondsLabel;
+}
+
+- (UILabel *)moneyIconImg {
+    if (!_moneyIconImg) {
+        _moneyIconImg = [UILabel new];
+        _moneyIconImg.backgroundColor = [UIColor colorWithHex:0x00bb9c alpha:1];
+        _moneyIconImg.textColor = [UIColor whiteColor];
+        _moneyIconImg.text = @"￥";
+        _moneyIconImg.textAlignment = NSTextAlignmentCenter;
+        _moneyIconImg.font = [UIFont boldSystemFontOfSize:15];
+        _moneyIconImg.layer.masksToBounds = YES;
+    }
+    return _moneyIconImg;
+}
+
 - (UILabel *)moneyLabel {
     if (_moneyLabel == nil) {
-        _moneyLabel = [[UILabel alloc] initWithFrame:CGRectZero];        
-        _moneyLabel.text = [NSString stringWithFormat:@"金额: %@ 元",self.sFloatMoney];
+        _moneyLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _moneyLabel.text = [NSString stringWithFormat:@"金额: %.02lf",[MTransMoneyCache sharedMoney].curMoneyUniteYuan];
+        _moneyLabel.font = [UIFont boldSystemFontOfSize:18];
+        _moneyLabel.textColor = [UIColor colorWithHex:0x27384b alpha:1];
     }
     return _moneyLabel;
 }
-// 刷卡超时定时器
-- (NSTimer *)waitingTimer {
-    return _waitingTimer;
-}
-// 交易类型
-- (NSString *)stringOfTranType {
-    if (_stringOfTranType == nil) {
-//        _stringOfTranType = [[NSUserDefaults standardUserDefaults] valueForKey:TranType];
-        _stringOfTranType = TranType_Consume;
-    }
-    return _stringOfTranType;
-}
-// 读卡数据字典
-- (NSMutableDictionary *)cardInfoOfReading {
-    if (_cardInfoOfReading == nil) {
-        _cardInfoOfReading = [NSMutableDictionary dictionary];
-    }
-    return _cardInfoOfReading;
-}
-- (NSString *)sIntMoney {
-    if (_sIntMoney == nil) {
-        _sIntMoney = [NSString stringWithFormat:@"%012d",0];
-    }
-    return _sIntMoney;
-}
-- (NSString *)sFloatMoney {
-    if (_sFloatMoney == nil) {
-        _sFloatMoney = [NSString stringWithFormat:@"%.02lf",0.0];
-    }
-    return _sFloatMoney ;
-}
-- (VMDeviceHandle *)deviceManager {
-    if (!_deviceManager) {
-        _deviceManager = [[VMDeviceHandle alloc] init];
-    }
-    return _deviceManager;
-}
 
-
-
-#pragma mask ----------------------------- setter
-/*************************************
- * 功  能 : 设置 self.waitingLabel的文本;
- *          该label的frame要根据文本的长度进行适配;
- *          左边界的值是在装填金额等ui的时候计算出来的;
- *          要考虑预留一个activity的宽度;
- * 参  数 : 无
- * 返  回 : 无
- *************************************/
-- (void) setWaitingLabelText : (NSString*)text {
-    NSDictionary* oldAttri = [NSDictionary dictionaryWithObject:self.waitingLabel.font forKey:NSFontAttributeName];
-    CGSize oldTextSize = [self.waitingLabel.text sizeWithAttributes:oldAttri];
-    self.waitingLabel.text = text;
-    NSDictionary* newAttri = [NSDictionary dictionaryWithObject:self.waitingLabel.font forKey:NSFontAttributeName];
-    CGSize newTextSize = [self.waitingLabel.text sizeWithAttributes:newAttri];
-    // 新的文本长度如果长于旧的文本长度时就改变label的frame
-    CGFloat addLength = newTextSize.width - oldTextSize.width;
-    CGRect frame = self.waitingLabel.frame;
-    frame.origin.x -= addLength;
-    frame.size.width += addLength;
-    self.waitingLabel.frame = frame;
-    
-    // 同时改变 activity 的frame;
-    frame = self.activity.frame;
-    frame.origin.x -= addLength;
-    self.activity.frame = frame;
+- (UIImageView *)swipeDemoImg {
+    if (!_swipeDemoImg) {
+        _swipeDemoImg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swipeBlack"]];
+    }
+    return _swipeDemoImg;
 }
-
 @end

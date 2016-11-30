@@ -24,6 +24,7 @@
 #import "BrushViewController.h"
 #import "CodeScannerViewController.h"
 #import "VMOtherPayType.h"
+#import "MSettlementTypeLocalConfig.h"
 
 @implementation VMTransChecking
 
@@ -52,21 +53,33 @@
     
     
     if (checked) {
-        /* 5. t+0信息提示,并跳转 */
-        if ([MCacheT0Info cache].T_0Enable) {
-            [self T_0InfosAlertChecked];
-        }
-        /* 6. 多商户提示,并跳转 */
-        else if ([ModelBusinessInfoSaved beenSaved]) {
-            [self moreBusinessChecked];
-        }
-        /* 7. 多费率提示,并跳转 */
-        else if ([ModelRateInfoSaved beenSaved]) {
-            [self moreRateChecked];
-        }
-        else {
-            // 直接跳转
-            [self gotoMposTransVC];
+        MSettlementTypeLocalConfig* settleLocalCon = [MSettlementTypeLocalConfig localConfig];
+        if (settleLocalCon.curSettlementType == SettlementType_T0) {
+            /* 提示: T+0 和 多商户 */
+            if ([ModelBusinessInfoSaved beenSaved]) {
+                [self alertCheckingFor_T0_moreBusi];
+            }
+            /* 提示: T+0 和 多费率 */
+            else if ([ModelRateInfoSaved beenSaved]) {
+                [self alertCheckingFor_T0_moreRate];
+            }
+            /* 提示: T+0 */
+            else {
+                [self T_0InfosAlertChecked];
+            }
+        } else {
+            /* 提示: 多商户 */
+            if ([ModelBusinessInfoSaved beenSaved]) {
+                [self moreBusinessChecked];
+            }
+            /* 提示: 多费率 */
+            else if ([ModelRateInfoSaved beenSaved]) {
+                [self moreRateChecked];
+            }
+            /* 直接跳转 */
+            else {
+                [self gotoMposTransVC];
+            }
         }
     }
 }
@@ -173,7 +186,7 @@
     }
     else {
         /* T+0 */
-        if ([MCacheT0Info cache].T_0Enable ) {
+        if ([MSettlementTypeLocalConfig localConfig].curSettlementType == SettlementType_T0){//[MCacheT0Info cache].T_0Enable ) {
             /* 输入金额超上限 */
             if (curMoneyYuan > [MCacheT0Info cache].amountAvilable) {
                 NSString* message = [NSString stringWithFormat:@"当日可刷剩余额度:￥[%.02lf]", [MCacheT0Info cache].amountAvilable];
@@ -207,21 +220,66 @@
     return avilable;
 }
 
+
+
+
+
+/* 5. T+0 & 多商户 & 多费率: 组合 */
++ (void) alertCheckingFor_T0_moreBusi {
+    MCacheT0Info* t0Info = [MCacheT0Info cache];
+    
+    NSMutableString* message = [NSMutableString string];
+    [message appendString:@"【T+0信息】\n"];
+    [message appendFormat:@"  * 单日限额:￥%.02lf\n", t0Info.amountLimit];
+    [message appendFormat:@"  * 单笔最小限额:￥%.02lf\n", t0Info.amountMinCust];
+    [message appendFormat:@"  * 单日可刷额度:￥%.02lf\n", t0Info.amountAvilable];
+    [message appendFormat:@"  * 转账手续费:￥%.02lf\n\n", t0Info.T_0ExtraFee];
+    [message appendString:@"【已选择商户】\n"];
+    [message appendFormat:@"  * %@", [ModelBusinessInfoSaved businessName]];
+    
+    NameWeakSelf(wself);
+    [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+    } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+        [wself gotoMposTransVC];
+    }];
+}
+
++ (void) alertCheckingFor_T0_moreRate {
+    MCacheT0Info* t0Info = [MCacheT0Info cache];
+    
+    NSMutableString* message = [NSMutableString string];
+    [message appendString:@"【T+0信息】\n"];
+    [message appendFormat:@"  * 单日限额:￥%.02lf\n", t0Info.amountLimit];
+    [message appendFormat:@"  * 单笔最小限额:￥%.02lf\n", t0Info.amountMinCust];
+    [message appendFormat:@"  * 单日可刷额度:￥%.02lf\n", t0Info.amountAvilable];
+    [message appendFormat:@"  * 转账手续费:￥%.02lf\n\n", t0Info.T_0ExtraFee];
+    [message appendString:@"【已选择费率】\n"];
+    [message appendFormat:@"  * %@", [ModelRateInfoSaved rateTypeSelected]];
+    
+    NameWeakSelf(wself);
+    [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+    } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+        [wself gotoMposTransVC];
+    }];
+}
+
+
+
+
 /* 5. t+0信息提示 */
 + (void) T_0InfosAlertChecked {
     MCacheT0Info* t0Cache = [MCacheT0Info cache];
     if (t0Cache.T_0Enable) {
         NSMutableString* message = [NSMutableString string];
-        [message appendFormat:@"单日限额:￥%.02lf\n", t0Cache.amountLimit];
-        [message appendFormat:@"单笔最小限额:￥%.02lf\n", t0Cache.amountMinCust];
-        [message appendFormat:@"单日可刷额度:￥%.02lf\n", t0Cache.amountAvilable];
-        [message appendFormat:@"转账手续费:￥%.02lf", t0Cache.T_0ExtraFee];
+        [message appendString:@"【T+0信息】\n"];
+        [message appendFormat:@"  * 单日限额:￥%.02lf\n", t0Cache.amountLimit];
+        [message appendFormat:@"  * 单笔最小限额:￥%.02lf\n", t0Cache.amountMinCust];
+        [message appendFormat:@"  * 单日可刷额度:￥%.02lf\n", t0Cache.amountAvilable];
+        [message appendFormat:@"  * 转账手续费:￥%.02lf", t0Cache.T_0ExtraFee];
         NameWeakSelf(wself);
-        [JCAlertView showTwoButtonsWithTitle:@"T+0温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+        [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
         } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
             [wself gotoMposTransVC];
-            dispatch_async(dispatch_get_main_queue(), ^{
-            });
         }];
     }
 }
@@ -230,45 +288,38 @@
 + (void) moreBusinessChecked {
     NameWeakSelf(wself);
     if ([ModelBusinessInfoSaved beenSaved]) {
-        [UIAlertController showAlertWithTitle:@"您选择了指定商户,是否继续交易"
-                                      message:[NSString stringWithFormat:@"[%@]", [ModelBusinessInfoSaved businessName]]
-                                       target:[self mainVC]
-                                clickedHandle:^(UIAlertAction *action) {
-                                    if ([action.title isEqualToString:@"继续"]) {
-                                        //
-                                        [wself gotoMposTransVC];
-                                    }
-                                } buttons:@{@(UIAlertActionStyleCancel):@"取消"}, @{@(UIAlertActionStyleDefault):@"继续"},nil];
+        NSMutableString* message = [NSMutableString string];
+        [message appendString:@"【已选择商户】\n"];
+        [message appendFormat:@"%@", [ModelBusinessInfoSaved businessName]];
+        
+        [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+        } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+            [wself gotoMposTransVC];
+        }];
     }
 }
 
 /* 7. 多费率提示 */
 + (void) moreRateChecked {
     NameWeakSelf(wself);
-    if ([ModelRateInfoSaved beenSaved]) {
-        [UIAlertController showAlertWithTitle:@"您选择了指定费率,是否继续交易"
-                                      message:[NSString stringWithFormat:@"[%@]", [ModelRateInfoSaved rateTypeSelected]]
-                                       target:[self mainVC]
-                                clickedHandle:^(UIAlertAction *action) {
-                                    if ([action.title isEqualToString:@"继续"]) {
-                                        //
-                                        [wself gotoMposTransVC];
-                                    }
-                                } buttons:@{@(UIAlertActionStyleCancel):@"取消"}, @{@(UIAlertActionStyleDefault):@"继续"},nil];
+    if ([ModelBusinessInfoSaved beenSaved]) {
+        NSMutableString* message = [NSMutableString string];
+        [message appendString:@"【已选择费率】\n"];
+        [message appendFormat:@"%@", [ModelRateInfoSaved rateTypeSelected]];
+        
+        [JCAlertView showTwoButtonsWithTitle:@"温馨提示" Message:message ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:^{
+        } ButtonType:JCAlertViewButtonTypeDefault ButtonTitle:@"继续" Click:^{
+            [wself gotoMposTransVC];
+        }];
     }
 }
 
 
+# pragma mask 4 ------ tools
 
 /* 跳转刷卡界面 */
-+ (void) gotoMposTransVC {
-    UIStoryboard* mainStoryBoard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    
-    BrushViewController* brushVC = [mainStoryBoard instantiateViewControllerWithIdentifier:@"brush"];
-    [brushVC setStringOfTranType:TranType_Consume];
-    [brushVC setSFloatMoney:[NSString stringWithFormat:@"%.02lf",[MTransMoneyCache sharedMoney].curMoneyUniteYuan]];
-    [brushVC setSIntMoney:[NSString stringWithFormat:@"%012ld", [MTransMoneyCache sharedMoney].curMoneyUniteMinute]];
-
++ (void) gotoMposTransVC {    
+    BrushViewController* brushVC = [[BrushViewController alloc] init];
     [[self mainVC].navigationController pushViewController:brushVC animated:YES];
 }
 

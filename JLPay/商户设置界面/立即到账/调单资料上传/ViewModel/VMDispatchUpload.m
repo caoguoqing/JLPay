@@ -141,7 +141,6 @@
 # pragma mask 3 push to QianPiViewC
 - (void) doPushVCToQianPi {
     PosInformationViewController* posInforPaper=[[PosInformationViewController alloc] initWithNibName:nil bundle:nil];
-    posInforPaper.userFor = PosNoteUseForDispatch;
     
     NSMutableDictionary* transInformation = [NSMutableDictionary dictionary];
     [transInformation setObject:self.originDispatchDetail.businessName forKey:@"businessName"];

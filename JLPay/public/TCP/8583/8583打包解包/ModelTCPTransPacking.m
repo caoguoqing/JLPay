@@ -21,9 +21,11 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
 
 
 @interface ModelTCPTransPacking()
-{
-    NSString* transType__;
-}
+//{
+//    NSString* transType__;
+//}
+
+@property (nonatomic, copy) NSString* curTransType;
 
 
 @end
@@ -51,13 +53,13 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
 //  |
 //  V  : 键入域值
 - (void) packingFieldsInfo:(NSDictionary*)fieldsInfo forTransType:(NSString*)transType {
-    transType__ = transType;
+    self.curTransType = transType;
     [self packingWithFieldsInfo:fieldsInfo];
 }
 //  |
 //  V  : 获取MAC原始串
 - (NSString*) getMacStringAfterPacking {
-    return [[Packing8583 sharedInstance] macSourcePackintByType:[self msgTypeOnTransType:transType__]];
+    return [[Packing8583 sharedInstance] macSourcePackintByType:[self msgTypeOnTransType:self.curTransType]];
 }
 //  |
 //  V  : 键入MAC密文串
@@ -67,7 +69,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
 //  |
 //  V  : 获取最终打包串
 - (NSString*) packageFinalyPacking {
-    NSString* packing = [[Packing8583 sharedInstance] stringPackingWithType:[self msgTypeOnTransType:transType__]];
+    NSString* packing = [[Packing8583 sharedInstance] stringPackingWithType:[self msgTypeOnTransType:self.curTransType]];
     [[Packing8583 sharedInstance] cleanAllFields];
     return packing;
 }
@@ -78,22 +80,22 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
 
 - (void) packingWithFieldsInfo:(NSDictionary*)fieldsInfo {
     // 当前交易类型:
-    if ([transType__ isEqualToString:TranType_Consume]) {
+    if ([self.curTransType isEqualToString:TranType_Consume]) {
         [self packingConsumeFieldsInfo:fieldsInfo];
     }
-    else if ([transType__ isEqualToString:TranType_BatchUpload]) {
+    else if ([self.curTransType isEqualToString:TranType_BatchUpload]) {
         [self packingBatchUpFieldsInfo:fieldsInfo];
     }
-    else if ([transType__ isEqualToString:TranType_DownPubKey]) {
+    else if ([self.curTransType isEqualToString:TranType_DownPubKey]) {
         [self packingPublicKFieldsInfo:fieldsInfo];
     }
-    else if ([transType__ isEqualToString:TranType_DownMainKey]) {
+    else if ([self.curTransType isEqualToString:TranType_DownMainKey]) {
         [self packingDownMainKFieldsInfo:fieldsInfo];
     }
-    else if ([transType__ isEqualToString:TranType_DownWorkKey]) {
+    else if ([self.curTransType isEqualToString:TranType_DownWorkKey]) {
         [self packingDownWorkKFieldsInfo:fieldsInfo];
     }
-    else if ([transType__ isEqualToString:TranType_ElecSignPicUpload]) {
+    else if ([self.curTransType isEqualToString:TranType_ElecSignPicUpload]) {
         [self packingElecSignatureWithFieldsInfo:fieldsInfo];
     }
 }
@@ -125,7 +127,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     JLPrint(@"正在打包消费报文，原始域信息[%@]",fieldsInfo);
     Packing8583* packHolder = [Packing8583 sharedInstance];
     [packHolder setFieldAtIndex:2 withValue:fieldsInfo[@"2"]];
-    [packHolder setFieldAtIndex:3 withValue:transType__];
+    [packHolder setFieldAtIndex:3 withValue:self.curTransType];
     [packHolder setFieldAtIndex:4 withValue:fieldsInfo[@"4"]];
     [packHolder setFieldAtIndex:11 withValue:[PublicInformation exchangeNumber]];
     [packHolder setFieldAtIndex:14 withValue:fieldsInfo[@"14"]];
@@ -145,8 +147,8 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
         [packHolder setFieldAtIndex:53 withValue:k8583FieldValue53_NOPIN];
     }
     [packHolder setFieldAtIndex:55 withValue:fieldsInfo[@"55"]];
-    [packHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:transType__]];
-    [packHolder setFieldAtIndex:63 withValue:[Packing8583 makeF63OnTranType:transType__]];
+    [packHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:self.curTransType]];
+    [packHolder setFieldAtIndex:63 withValue:[Packing8583 makeF63OnTranType:self.curTransType]];
     [packHolder setFieldAtIndex:64 withValue:@"0000000000000000"];
     [packHolder preparePacking];
 }
@@ -224,7 +226,7 @@ static NSString* const k8583FieldValue53_NOPIN = @"0600000000000000";
     [packingHolder setFieldAtIndex:41 withValue:fieldsInfo[@"41"]];
     [packingHolder setFieldAtIndex:42 withValue:fieldsInfo[@"42"]];
     [packingHolder setFieldAtIndex:55 withValue:fieldsInfo[@"55"]];
-    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:transType__]];
+    [packingHolder setFieldAtIndex:60 withValue:[Packing8583 makeF60OnTrantype:self.curTransType]];
     [packingHolder setFieldAtIndex:62 withValue:fieldsInfo[@"62"]];
     [packingHolder preparePacking];
 }

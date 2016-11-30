@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "MTVC_settlementSwitchBtn.h"
 
 static NSString* const kSettleTypeT_0 = @"T+0";
 static NSString* const kSettleTypeT_1 = @"T+1";
@@ -19,15 +19,11 @@ static NSString* const kSettleTypeT_1 = @"T+1";
 
 @property (nonatomic, strong) UILabel* moneyLabel;
 
-@property (nonatomic, strong) UILabel* settleTypeLabel;
+@property (nonatomic, strong) MTVC_settlementSwitchBtn* settlementSwitchBtn;
 
 @property (nonatomic, strong) UILabel* businessLabel;
 
-@property (nonatomic, strong) UIButton* businessSwitchBtn;
-
-@property (nonatomic, strong) UILabel* deviceLinkedStateLabel;
-
-@property (nonatomic, copy) NSString* deviceCBtnTitle;
+@property (nonatomic, copy) NSAttributedString* deviceBtnAttriTitle;
 @property (nonatomic, strong) UIButton* deviceConnectBtn;
 
 @end

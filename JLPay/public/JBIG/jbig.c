@@ -1918,59 +1918,57 @@ void jbg_enc_out(struct jbg_enc_state *s)
   for (ii[0] = is[0]; ii[0] <= ie[0]; ii[0]++)
     for (ii[1] = is[1]; ii[1] <= ie[1]; ii[1]++)
       for (ii[2] = is[2]; ii[2] <= ie[2]; ii[2]++) {
-	
-	stripe = ii[iindex[order][STRIPE]];
-	if (s->order & JBG_HITOLO)
-	  layer = s->dh - (ii[iindex[order][LAYER]] - s->dl);
-	else
-	  layer = ii[iindex[order][LAYER]];
-	plane = ii[iindex[order][PLANE]];
-
-	/* output comment marker segment if there is any pending */
-	if (s->comment) {
-	  buf[0] = MARKER_ESC;
-	  buf[1] = MARKER_COMMENT;
-	  buf[2] = s->comment_len >> 24;
-	  buf[3] = (s->comment_len >> 16) & 0xff;
-	  buf[4] = (s->comment_len >> 8) & 0xff;
-	  buf[5] = s->comment_len & 0xff;
-	  s->data_out(buf, 6, s->file);
-	  s->data_out(s->comment, s->comment_len, s->file);
-	  s->comment = NULL;
-	}
-
-	output_sde(s, stripe, layer, plane);
-
-	/*
-	 * When we generate a NEWLEN test case (s->yd1 > s->yd), output
-	 * NEWLEN after last stripe if we have only a single
-	 * resolution layer or plane (see ITU-T T.85 profile), otherwise
-	 * output NEWLEN before last stripe.
-	 */
-	if (s->yd1 > s->yd &&
-	    (stripe == s->stripes - 1 ||
-	     (stripe == s->stripes - 2 && 
-	      (s->dl != s->dh || s->planes > 1)))) {
-	  s->yd1 = s->yd;
-	  yd = jbg_ceil_half(s->yd, s->d - s->dh);
-	  buf[0] = MARKER_ESC;
-	  buf[1] = MARKER_NEWLEN;
-	  buf[2] = yd >> 24;
-	  buf[3] = (yd >> 16) & 0xff;
-	  buf[4] = (yd >> 8) & 0xff;
-	  buf[5] = yd & 0xff;
-	  s->data_out(buf, 6, s->file);
+          stripe = ii[iindex[order][STRIPE]];
+          if (s->order & JBG_HITOLO)
+              layer = s->dh - (ii[iindex[order][LAYER]] - s->dl);
+          else
+              layer = ii[iindex[order][LAYER]];
+          plane = ii[iindex[order][PLANE]];
+          
+          /* output comment marker segment if there is any pending */
+          if (s->comment) {
+              buf[0] = MARKER_ESC;
+              buf[1] = MARKER_COMMENT;
+              buf[2] = s->comment_len >> 24;
+              buf[3] = (s->comment_len >> 16) & 0xff;
+              buf[4] = (s->comment_len >> 8) & 0xff;
+              buf[5] = s->comment_len & 0xff;
+              s->data_out(buf, 6, s->file);
+              s->data_out(s->comment, s->comment_len, s->file);
+              s->comment = NULL;
+          }
+          
+          output_sde(s, stripe, layer, plane);
+          
+          /*
+           * When we generate a NEWLEN test case (s->yd1 > s->yd), output
+           * NEWLEN after last stripe if we have only a single
+           * resolution layer or plane (see ITU-T T.85 profile), otherwise
+           * output NEWLEN before last stripe.
+           */
+          if (s->yd1 > s->yd &&
+              (stripe == s->stripes - 1 ||
+               (stripe == s->stripes - 2 &&
+                (s->dl != s->dh || s->planes > 1)))) {
+                   s->yd1 = s->yd;
+                   yd = jbg_ceil_half(s->yd, s->d - s->dh);
+                   buf[0] = MARKER_ESC;
+                   buf[1] = MARKER_NEWLEN;
+                   buf[2] = yd >> 24;
+                   buf[3] = (yd >> 16) & 0xff;
+                   buf[4] = (yd >> 8) & 0xff;
+                   buf[5] = yd & 0xff;
+                   s->data_out(buf, 6, s->file);
 #ifdef DEBUG
-	  fprintf(stderr, "NEWLEN: yd=%lu\n", yd);
+                   fprintf(stderr, "NEWLEN: yd=%lu\n", yd);
 #endif
-	  if (stripe == s->stripes - 1) {
-	    buf[1] = MARKER_SDNORM;
-	    s->data_out(buf, 2, s->file);
-	  }
-	}
-
+                   if (stripe == s->stripes - 1) {
+                       buf[1] = MARKER_SDNORM;
+                       s->data_out(buf, 2, s->file);
+                   }
+               }
       }
-
+    
   return;
 }
 

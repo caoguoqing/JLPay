@@ -9,6 +9,8 @@
 #import "VMHttpSignIn.h"
 #import <AFNetworking.h>
 #import "MCacheSavedLogin.h"
+#import "MSettlementTypeLocalConfig.h"
+
 
 @interface VMHttpSignIn()
 
@@ -98,8 +100,13 @@
                      if (success) {
                          @strongify(self);
                          self.responseData = [resData copy];
+                         
                          /* 登录成功要保存缓存信息 */
                          [self savingLoginInfoIntoCacheAfterSuccess];
+                         
+                         /* 缓存结算方式到本地 */
+                         [self updateSettlementTypeLocalConfig];
+                         
                          /* 并回调 */
                          [subscriber sendCompleted];
                      } else {
@@ -167,6 +174,21 @@
     }
     
 }
+
+/* 缓存结算方式到本地 */
+- (void) updateSettlementTypeLocalConfig {
+    MSettlementTypeLocalConfig* settlementConfig = [MSettlementTypeLocalConfig localConfig];
+    MCacheSavedLogin* loginInfo = [MCacheSavedLogin cache];
+    if (!loginInfo.T_0_enable) {
+        if (!loginInfo.T_N_enable) {
+            [settlementConfig updateLocalConfitWithSettlementType:SettlementType_T1];
+        } else {
+            [settlementConfig updateLocalConfitWithSettlementType:SettlementType_TN];
+        }
+    }
+}
+
+
 
 
 

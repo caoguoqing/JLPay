@@ -118,7 +118,7 @@
                 title = @"0";
             }
             else if (i == 12) {
-                title = [NSString stringWithIconFontType:IconFontType_backspace];
+                title = [NSString stringWithIconType:IFTypeBackSpace];
             }
             btn.tag = i;
             btn.backgroundColor = [UIColor whiteColor];

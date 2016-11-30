@@ -13,6 +13,7 @@
 #import "Masonry.h"
 #import "MyBusinessViewController.h"
 #import "ModelAppInformation.h"
+#import "GuanyuViewController.h"
 
 @interface HelperAndAboutTableViewController()
 
@@ -71,28 +72,26 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController* viewController;
 
     if (indexPath.row < 3) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"帮助界面"];
-        BangdingViewController* tongyong = (BangdingViewController*)viewController;
+        viewController = [[BangdingViewController alloc] init];
         NSString* viewTitle = [[self.cellTitles objectAtIndex:indexPath.row] substringFromIndex:2];
-        [tongyong setTitle:viewTitle];
+        [viewController setTitle:viewTitle];
         
         NSString* key = [self.cellTitles objectAtIndex:indexPath.row];
         NSArray* imageTitles = [self.dictTitlesAndImages objectForKey:key];
         NSDictionary* imagesAndDescs = [self.dictTitlesAndDatas objectForKey:key];
-        [tongyong setArrayTitles:imageTitles];
-        [tongyong setDictTitlesAndDesc:imagesAndDescs];
+        [(BangdingViewController*)viewController setArrayTitles:imageTitles];
+        [(BangdingViewController*)viewController setDictTitlesAndDesc:imagesAndDescs];
         
     }
     else if (indexPath.row == 3) {
-        //viewController = [[MyBusinessViewController alloc] initWithNibName:nil bundle:nil];
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"关于我们"];
+        viewController = [[GuanyuViewController alloc] initWithNibName:nil bundle:nil];
     }
     else if (indexPath.row == 4) {
-        viewController = [storyBoard instantiateViewControllerWithIdentifier:@"关于我们"];
+        viewController = [[GuanyuViewController alloc] initWithNibName:nil bundle:nil];
     }
     
     [self.navigationController pushViewController:viewController animated:YES];

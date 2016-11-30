@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+
+/******************
+ * 缓存: 商户的T+0信息
+ * 更新: 在每笔T+0交易完成时更新;
+ ******************/
+
+
 @interface MCacheT0Info : NSObject
 
 + (instancetype) cache;

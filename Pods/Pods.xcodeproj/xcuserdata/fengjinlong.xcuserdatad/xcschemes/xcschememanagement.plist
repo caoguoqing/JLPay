@@ -34,6 +34,11 @@
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
+		<key>RESideMenu.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
 		<key>ReactiveCocoa.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -77,7 +82,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>C2B960907D2B54348CA1B4C1040D279E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DA08189DC53B52F549ADAE62CD4F9216</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>DB26BA11C8BB9963D3D0B271C3FE4D2A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E2C2EFDC3F67127A8A454CBDB3BC92FB</key>
 		<dict>
 			<key>primary</key>
 			<true/>

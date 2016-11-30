@@ -39,50 +39,39 @@
 
 - (void) loadSubviews {
     [self addSubview:self.moneyLabel];
-    [self addSubview:self.settleTypeLabel];
+    [self addSubview:self.settlementSwitchBtn];
     [self addSubview:self.businessLabel];
-    [self addSubview:self.deviceLinkedStateLabel];
     [self addSubview:self.deviceConnectBtn];
 }
 
 - (void) addKVOs {
     @weakify(self);
-    [RACObserve(self.businessLabel, text) subscribeNext:^(id x) {
+    
+    [RACObserve(self, deviceBtnAttriTitle) subscribeNext:^(id x) {
         @strongify(self);
-        [self setNeedsUpdateConstraints];
-        [self updateConstraintsIfNeeded];
-        [self layoutIfNeeded];
+        [self.deviceConnectBtn setAttributedTitle:x forState:UIControlStateNormal];
     }];
     
-    [RACObserve(self, deviceCBtnTitle) subscribeNext:^(id x) {
-        @strongify(self);
-        [self.deviceConnectBtn setTitle:x forState:UIControlStateNormal];
-        [self setNeedsUpdateConstraints];
-        [self updateConstraintsIfNeeded];
-        [self layoutIfNeeded];
-    }];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.moneyLabel.font = [UIFont boldSystemFontOfSize:[@"test" resizeFontAtHeight:self.moneyLabel.bounds.size.height scale:1]];
+    
+    CGFloat height = self.settlementSwitchBtn.frame.size.height;
+    self.settlementSwitchBtn.layer.cornerRadius = height * 0.5;
+    self.settlementSwitchBtn.titleLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:height scale:0.6]];
+    self.settlementSwitchBtn.switchLabel.font = [UIFont iconFontWithSize:[NSString resizeFontAtHeight:height scale:0.5]];
 }
 
 
 - (void)updateConstraints {
-    
     CGFloat littleLabelHeight = [UIScreen mainScreen].bounds.size.height * 20/568.f;
     CGFloat moneyLabHeight = [UIScreen mainScreen].bounds.size.height * 35/568.f;
     CGFloat settleTypeLabWidth = [UIScreen mainScreen].bounds.size.width * 52/320.f;
     CGFloat inset = [UIScreen mainScreen].bounds.size.height * 15/568.f;
     
     
-    self.moneyLabel.font = [UIFont boldSystemFontOfSize:[@"test" resizeFontAtHeight:moneyLabHeight scale:1]];
-
-    self.settleTypeLabel.layer.masksToBounds = YES;
-    self.settleTypeLabel.layer.cornerRadius = littleLabelHeight * 0.5;
-    self.settleTypeLabel.font = [UIFont boldSystemFontOfSize:[@"test" resizeFontAtHeight:littleLabelHeight scale:0.7]];
-
-    self.businessLabel.font = [UIFont boldSystemFontOfSize:[@"test" resizeFontAtHeight:littleLabelHeight scale:0.7]];
-    UIFont* maxTextFont = [UIFont boldSystemFontOfSize:[@"test" resizeFontAtHeight:littleLabelHeight scale:1]];
-
-    self.deviceLinkedStateLabel.font = [UIFont fontAwesomeFontOfSize:[@"tet" resizeFontAtHeight:littleLabelHeight scale:1]];
-    self.deviceConnectBtn.titleLabel.font = [UIFont boldSystemFontOfSize:[@"test" resizeFontAtHeight:littleLabelHeight scale:0.7]];
     __weak typeof(self) wself = self;
     
     
@@ -92,34 +81,26 @@
         make.height.mas_equalTo(moneyLabHeight);
     }];
     
-    [self.settleTypeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+    [self.settlementSwitchBtn mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.top.mas_equalTo(inset);
         make.height.mas_equalTo(littleLabelHeight);
         make.width.mas_equalTo(settleTypeLabWidth);
     }];
+
     
     [self.businessLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(wself.settleTypeLabel.mas_right).offset(inset * 0.5);
-        make.top.bottom.mas_equalTo(wself.settleTypeLabel);
-        make.width.mas_equalTo([wself.businessLabel.text sizeWithAttributes:@{NSFontAttributeName:maxTextFont}].width);
-    }];
-    
-    [self.businessSwitchBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(wself.businessLabel.mas_right).offset(0);
-        make.top.bottom.mas_equalTo(wself.businessLabel);
-        make.width.mas_equalTo(wself.businessSwitchBtn.mas_height);
-    }];
-    
-    [self.deviceLinkedStateLabel mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(inset);
-        make.width.height.mas_equalTo(littleLabelHeight);
         make.bottom.mas_equalTo(- inset);
+        make.height.mas_equalTo(littleLabelHeight);
+        make.right.mas_equalTo(0);
     }];
+    
     
     [self.deviceConnectBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(wself.deviceLinkedStateLabel.mas_right).offset(0);
-        make.top.bottom.mas_equalTo(wself.deviceLinkedStateLabel);
-        make.width.mas_equalTo([wself.deviceCBtnTitle resizeAtHeight:littleLabelHeight scale:0.8].width);
+        make.right.mas_equalTo(- inset);
+        make.left.mas_equalTo(wself.mas_centerX).offset(inset);
+        make.top.mas_equalTo(wself.settlementSwitchBtn.mas_top);
+        make.bottom.mas_equalTo(wself.settlementSwitchBtn.mas_bottom);
     }];
     
     [super updateConstraints];
@@ -139,12 +120,14 @@
     return _moneyLabel;
 }
 
-- (UILabel *)settleTypeLabel {
-    if (!_settleTypeLabel) {
-        _settleTypeLabel = [UILabel new];
-        _settleTypeLabel.textAlignment = NSTextAlignmentCenter;
+
+- (MTVC_settlementSwitchBtn *)settlementSwitchBtn {
+    if (!_settlementSwitchBtn) {
+        _settlementSwitchBtn = [[MTVC_settlementSwitchBtn alloc] init];
+        _settlementSwitchBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+        _settlementSwitchBtn.layer.borderWidth = 1.f;
     }
-    return _settleTypeLabel;
+    return _settlementSwitchBtn;
 }
 
 - (UILabel *)businessLabel {
@@ -154,13 +137,6 @@
     return _businessLabel;
 }
 
-- (UILabel *)deviceLinkedStateLabel {
-    if (!_deviceLinkedStateLabel) {
-        _deviceLinkedStateLabel = [UILabel new];
-        _deviceLinkedStateLabel.textAlignment = NSTextAlignmentCenter;
-    }
-    return _deviceLinkedStateLabel;
-}
 
 - (UIButton *)deviceConnectBtn {
     if (!_deviceConnectBtn) {

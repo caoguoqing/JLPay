@@ -35,7 +35,7 @@ static CGPoint midPoint(CGPoint p1, CGPoint p2) {
 }
 
 - (void) reSign {
-    self.signPath = nil;
+    [self.signPath removeAllPoints];
     [self setNeedsDisplay];
 }
 

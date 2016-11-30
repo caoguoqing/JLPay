@@ -24,7 +24,7 @@
  @注意: 在使用完编码后的字符串后,要 free 掉
  */
 
-unsigned char* JLJBIGEncode(unsigned char* bitmapStr, size_t width, size_t height, size_t totalSize, size_t* encodedLen);
+unsigned char* JLJBIGEncode(unsigned char* bitmapStr, size_t width, size_t height, size_t* encodedLen);
 
 
 

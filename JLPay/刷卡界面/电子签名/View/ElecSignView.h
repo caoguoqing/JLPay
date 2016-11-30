@@ -19,4 +19,5 @@
 
 @property (nonatomic, assign) CGPoint prePoint;                         /* 保存上一个移动点 */
 
+
 @end

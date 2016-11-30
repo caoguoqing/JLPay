@@ -400,7 +400,7 @@
             startingLineNumber = "35"
             endingLineNumber = "35"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
+            landmarkType = "7">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -448,7 +448,7 @@
             startingLineNumber = "37"
             endingLineNumber = "37"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -473,38 +473,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/View/BrushViewController.m"
-            timestampString = "498464731.999851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
-            landmarkName = "-viewWillDisappear:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/View/BrushViewController.m"
-            timestampString = "498464731.999851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/ViewModel/VMDeviceHandle.m"
             timestampString = "483326728.100747"
             startingColumnNumber = "9223372036854775807"
@@ -512,7 +480,7 @@
             startingLineNumber = "34"
             endingLineNumber = "34"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -528,71 +496,7 @@
             startingLineNumber = "36"
             endingLineNumber = "36"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/View/BrushViewController.m"
-            timestampString = "498464731.999851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
-            landmarkName = "-viewDidAppear:"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/View/BrushViewController.m"
-            timestampString = "498464731.999851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "-viewDidAppear:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[BrushViewController viewDidAppear:]"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.588973"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "127"
-                  endingLineNumber = "127"
-                  offsetFromSymbolStart = "672">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__37-[BrushViewController viewDidAppear:]_block_invoke"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.58909"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "127"
-                  endingLineNumber = "127"
-                  offsetFromSymbolStart = "30">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -608,7 +512,7 @@
             startingLineNumber = "31"
             endingLineNumber = "31"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -624,7 +528,7 @@
             startingLineNumber = "32"
             endingLineNumber = "32"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -640,118 +544,7 @@
             startingLineNumber = "33"
             endingLineNumber = "33"
             landmarkName = "-connectDeviceOnFinished:onError:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/View/BrushViewController.m"
-            timestampString = "498464731.999851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
-            landmarkName = "-viewDidLoad"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[BrushViewController viewDidLoad]"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.591386"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "54"
-                  endingLineNumber = "54"
-                  offsetFromSymbolStart = "232">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[BrushViewController viewDidLoad]"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.591492"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "54"
-                  endingLineNumber = "54"
-                  offsetFromSymbolStart = "498">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__34-[BrushViewController viewDidLoad]_block_invoke"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.591574"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "55"
-                  endingLineNumber = "55"
-                  offsetFromSymbolStart = "26">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5237;&#x5361;&#x754c;&#x9762;/View/BrushViewController.m"
-            timestampString = "498464731.999851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[BrushViewController viewDidLoad]"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.592719"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "79"
-                  endingLineNumber = "79"
-                  offsetFromSymbolStart = "588">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[BrushViewController viewDidLoad]"
-                  moduleName = "JLPay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jielian/group/JLPay/JLPay/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/%E5%88%B7%E5%8D%A1%E7%95%8C%E9%9D%A2/View/BrushViewController.m"
-                  timestampString = "483333914.592836"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "79"
-                  endingLineNumber = "79"
-                  offsetFromSymbolStart = "612">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1084,7 +877,7 @@
             startingLineNumber = "56"
             endingLineNumber = "56"
             landmarkName = "-gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1100,22 +893,6 @@
             startingLineNumber = "49"
             endingLineNumber = "49"
             landmarkName = "-layoutSubviews"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x5237;&#x5361;&#x754c;&#x9762;/&#x5c0f;&#x7968;&#x754c;&#x9762;/View/PosInformationViewController.m"
-            timestampString = "492422052.28106"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
-            landmarkName = "-f55MadeByResponseInfo:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1158,92 +935,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/&#x767b;&#x9646;&#x754c;&#x9762;/&#x767b;&#x5f55;/ViewModel/VMHttpSignIn.m"
-            timestampString = "498042835.858496"
+            timestampString = "499597675.139838"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
             landmarkName = "-savingLoginInfoIntoCacheAfterSuccess"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/ViewModel/VMTransChecking.m"
-            timestampString = "498534233.618131"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
-            landmarkName = "+mposTransCheckingAndHandling"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/ViewModel/VMTransChecking.m"
-            timestampString = "498534233.618131"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "+mposTransCheckingAndHandling"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/ViewModel/VMTransChecking.m"
-            timestampString = "498534233.618131"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
-            landmarkName = "+mposTransCheckingAndHandling"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/ViewModel/VMTransChecking.m"
-            timestampString = "498534233.618131"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "+mposTransCheckingAndHandling"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/ViewModel/VMTransChecking.m"
-            timestampString = "498534233.618131"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
-            landmarkName = "+mposTransCheckingAndHandling"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1270,11 +967,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/View/MainTransViewController.m"
-            timestampString = "498556990.831557"
+            timestampString = "502098874.531719"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "-reloadDatas"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/ViewModel/VMMainVCDataSource.m"
+            timestampString = "499679905.698337"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "-foundSettleTypeFromLocalOrCache"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JLPay/&#x91d1;&#x989d;&#x8f93;&#x5165;&#x754c;&#x9762;_1.4.0/View/MainTransViewController.m"
+            timestampString = "502098874.531719"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
             landmarkName = "-reloadDatas"
             landmarkType = "7">
          </BreakpointContent>

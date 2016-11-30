@@ -11,6 +11,7 @@
 #import "JLPWDKeyBoardView.h"
 #import "Masonry.h"
 #import <ReactiveCocoa.h>
+#import "Define_Header.h"
 
 
 @interface JLPasswordView ()
@@ -83,6 +84,23 @@
     }];
     
 }
++ (void) hiddenOnFinished:(void (^) (void))finishedBlock {
+    JLPasswordView* pwdView = [JLPasswordView sharedPWDView];
+    
+    [UIView animateWithDuration:0.2 delay:0.1 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        pwdView.inputsView.center = CGPointMake(pwdView.center.x, 0 - pwdView.inputsView.frame.size.height * 0.5);
+        
+        CGRect frame = pwdView.keyboardView.frame;
+        frame.origin.y += frame.size.height;
+        pwdView.keyboardView.frame = frame;
+        
+        pwdView.bgView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [pwdView removeFromSuperview];
+        finishedBlock();
+    }];
+}
 
 
 
@@ -106,17 +124,24 @@
 # pragma mask 2 IBAction
 
 - (IBAction) clickedSureBtn:(id)sender {
-    [JLPasswordView hidden];
-    if (self.sureBlock) {
-        self.sureBlock(self.keyboardView.numbersInputed);
-    }
+//    [JLPasswordView hidden];
+    NameWeakSelf(wself);
+    [JLPasswordView hiddenOnFinished:^{
+        if (wself.sureBlock) {
+            wself.sureBlock(wself.keyboardView.numbersInputed);
+        }
+    }];
 }
 
 - (IBAction) clickedCancelBtn:(id)sender {
-    [JLPasswordView hidden];
-    if (self.cancelBlock) {
-        self.cancelBlock();
-    }
+//    [JLPasswordView hidden];
+    NameWeakSelf(wself);
+
+    [JLPasswordView hiddenOnFinished:^{
+        if (wself.cancelBlock) {
+            wself.cancelBlock();
+        }
+    }];
 }
 
 # pragma mask 3 界面布局
@@ -178,7 +203,6 @@
         [_inputsView.sureBtn addTarget:self action:@selector(clickedSureBtn:) forControlEvents:UIControlEventTouchUpInside];
         [_inputsView.cancelBtn addTarget:self action:@selector(clickedCancelBtn:) forControlEvents:UIControlEventTouchUpInside];
         _inputsView.titleLabel.text = @"请输入支付密码";
-        
     }
     return _inputsView;
 }
