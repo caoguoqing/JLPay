@@ -38,7 +38,7 @@
 
 
 
-
+# pragma mask : 以下接口旧接口，可以不用了
 
 - (void) showNormalWithText:(NSString*)text andDetailText:(NSString*)detailText;
 

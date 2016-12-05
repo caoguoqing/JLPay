@@ -18,6 +18,7 @@
 		5E2A58C31DDD9AC500AAF7FA /* BVC_vmPasswordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2A58C21DDD9AC500AAF7FA /* BVC_vmPasswordController.m */; };
 		5E2A62591DE82B5000AAF7FA /* ImageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2A62581DE82B5000AAF7FA /* ImageHelper.m */; };
 		5E2A625C1DED2B3400AAF7FA /* BVC_vmTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2A625B1DED2B3400AAF7FA /* BVC_vmTimer.m */; };
+		5E2A62D61DEEC56F00AAF7FA /* MLActivitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E2A62D51DEEC56F00AAF7FA /* MLActivitor.m */; };
 		5E33AB031C5222F50032D8E1 /* DCSwiperAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E33AB021C5222F50032D8E1 /* DCSwiperAPI.framework */; };
 		5E33AB0A1C5616B20032D8E1 /* ModelTCPTransPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E33AB091C5616B20032D8E1 /* ModelTCPTransPacking.m */; };
 		5E35C8481CBF3D28009480F9 /* MD5Util.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E35C8471CBF3D28009480F9 /* MD5Util.m */; };
@@ -60,8 +61,6 @@
 		5E3CB43D1D9B648A0036C1FB /* TCPKeysVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4321D9B648A0036C1FB /* TCPKeysVModel.m */; };
 		5E3CB43E1D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4341D9B648A0036C1FB /* ViewModelTCPHandleWithDevice.m */; };
 		5E3CB43F1D9B648A0036C1FB /* VMTerminalsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4361D9B648A0036C1FB /* VMTerminalsDataSource.m */; };
-		5E3CB4401D9B64CA0036C1FB /* DC_deviceSelectCell.h in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4261D9B648A0036C1FB /* DC_deviceSelectCell.h */; };
-		5E3CB4411D9B656C0036C1FB /* DC_VMDeviceDataSource.h in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB42F1D9B648A0036C1FB /* DC_VMDeviceDataSource.h */; };
 		5E3CB4E31DAB7FC40036C1FB /* LeftMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4D91DAB7FC40036C1FB /* LeftMenuViewController.m */; };
 		5E3CB4E41DAB7FC40036C1FB /* LMVC_logoutButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4DB1DAB7FC40036C1FB /* LMVC_logoutButton.m */; };
 		5E3CB4E51DAB7FC40036C1FB /* LMVC_menuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4DD1DAB7FC40036C1FB /* LMVC_menuCell.m */; };
@@ -182,6 +181,8 @@
 		5E6C4B721C8FB710000294BB /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B661C8FB710000294BB /* View+MASAdditions.m */; };
 		5E6C4B731C8FB710000294BB /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E6C4B691C8FB710000294BB /* ViewController+MASAdditions.m */; };
 		5E7852D11C1FBCEF00A58865 /* HTTPInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7852D01C1FBCEF00A58865 /* HTTPInstance.m */; };
+		5E7A16AC1DF5049900CB9E97 /* DC_VMDeviceDataSource.h in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB42F1D9B648A0036C1FB /* DC_VMDeviceDataSource.h */; };
+		5E7A16AD1DF504AE00CB9E97 /* DC_deviceSelectCell.h in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CB4261D9B648A0036C1FB /* DC_deviceSelectCell.h */; };
 		5E82B82B1B2ED59800A58751 /* ThreeDesUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E82B82A1B2ED59800A58751 /* ThreeDesUtil.m */; };
 		5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E8B0D001BB0051400FD461A /* libsqlite3.tbd */; };
 		5E94481A1BFD5FBE00128452 /* BalanceEnquiryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9448191BFD5FBE00128452 /* BalanceEnquiryViewController.m */; };
@@ -373,6 +374,8 @@
 		5E2A62581DE82B5000AAF7FA /* ImageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageHelper.m; sourceTree = "<group>"; };
 		5E2A625A1DED2B3400AAF7FA /* BVC_vmTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BVC_vmTimer.h; sourceTree = "<group>"; };
 		5E2A625B1DED2B3400AAF7FA /* BVC_vmTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BVC_vmTimer.m; sourceTree = "<group>"; };
+		5E2A62D41DEEC56F00AAF7FA /* MLActivitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLActivitor.h; sourceTree = "<group>"; };
+		5E2A62D51DEEC56F00AAF7FA /* MLActivitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLActivitor.m; sourceTree = "<group>"; };
 		5E33AB021C5222F50032D8E1 /* DCSwiperAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DCSwiperAPI.framework; path = Frameworks/DCSwiperAPI.framework; sourceTree = "<group>"; };
 		5E33AB081C5616B20032D8E1 /* ModelTCPTransPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelTCPTransPacking.h; sourceTree = "<group>"; };
 		5E33AB091C5616B20032D8E1 /* ModelTCPTransPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelTCPTransPacking.m; sourceTree = "<group>"; };
@@ -1118,6 +1121,15 @@
 			path = ../Resources;
 			sourceTree = "<group>";
 		};
+		5E2A62D31DEEC56F00AAF7FA /* MLActivity */ = {
+			isa = PBXGroup;
+			children = (
+				5E2A62D41DEEC56F00AAF7FA /* MLActivitor.h */,
+				5E2A62D51DEEC56F00AAF7FA /* MLActivitor.m */,
+			);
+			path = MLActivity;
+			sourceTree = "<group>";
+		};
 		5E35C8451CBF3CEE009480F9 /* MD5 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1661,6 +1673,7 @@
 		5E51A9351D1B74FE00C6FB91 /* 自定义控件 */ = {
 			isa = PBXGroup;
 			children = (
+				5E2A62D31DEEC56F00AAF7FA /* MLActivity */,
 				5EB221561D73CAE2008591E5 /* StepSegmentView */,
 				5EB221381D6D8F2F008591E5 /* LaydownNaviTableViewChoose */,
 				5EB221341D6D82F8008591E5 /* NaviTitleViewPullDownChoose */,
@@ -3461,8 +3474,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E3CB4411D9B656C0036C1FB /* DC_VMDeviceDataSource.h in Sources */,
-				5E3CB4401D9B64CA0036C1FB /* DC_deviceSelectCell.h in Sources */,
+				5E7A16AD1DF504AE00CB9E97 /* DC_deviceSelectCell.h in Sources */,
+				5E7A16AC1DF5049900CB9E97 /* DC_VMDeviceDataSource.h in Sources */,
 				5E5E35D01B7DD7E400560C0A /* BangdingViewController.m in Sources */,
 				5EB2216C1D740BEB008591E5 /* BR_chooseBusinessVC.m in Sources */,
 				5E3CB4E51DAB7FC40036C1FB /* LMVC_menuCell.m in Sources */,
@@ -3651,6 +3664,7 @@
 				5E51A9331D1B749300C6FB91 /* UIColor+HexColor.m in Sources */,
 				5E51A9C51D1B7AF600C6FB91 /* MaskView.m in Sources */,
 				5E397B391AD36429004F206F /* ASIS3ObjectRequest.m in Sources */,
+				5E2A62D61DEEC56F00AAF7FA /* MLActivitor.m in Sources */,
 				5E2A625C1DED2B3400AAF7FA /* BVC_vmTimer.m in Sources */,
 				5EB7B2311CF2A7DC00DCE4FC /* VMDispatchList.m in Sources */,
 				5EB2D86E1D45EE7800912145 /* jbig.c in Sources */,

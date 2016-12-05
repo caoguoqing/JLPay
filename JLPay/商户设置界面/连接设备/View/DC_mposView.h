@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "MLActivitor.h"
 
 /* 状态值定义 */
 typedef NS_ENUM(NSInteger, DC_VIEW_STATE) {
@@ -33,8 +33,8 @@ typedef NS_ENUM(NSInteger, DC_VIEW_STATE) {
 /* 状态文本标签 */
 @property (nonatomic, strong) UILabel* stateTextLab;
 
-/* 状态icon标签 */
-@property (nonatomic, strong) UILabel* stateIconLab;
+/* 状态icon */
+@property (nonatomic, strong) MLActivitor* activitor;
 
 /* 状态值: 控制icon */
 @property (nonatomic, assign) DC_VIEW_STATE state;

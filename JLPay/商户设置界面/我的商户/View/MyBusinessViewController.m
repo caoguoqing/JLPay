@@ -177,7 +177,11 @@
             make.bottom.equalTo(wself.view.mas_bottom).offset(-inset*3 - heightBtn*2);
         }];
         
-    } else {
+    } else if (self.dataSource.businessState == VMDataSourceMyBusiCodeChecked) {
+        self.uploadBtn.hidden = YES;
+        self.reaplyBtn.hidden = YES;
+    }
+    else {
         self.reaplyBtn.hidden = YES;
         [self.uploadBtn mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(wself.view.mas_bottom).offset(-(inset + heightBtn));

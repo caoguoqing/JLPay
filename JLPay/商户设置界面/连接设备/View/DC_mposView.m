@@ -55,7 +55,7 @@
     [self addSubview:self.screenView];
     [self addSubview:self.terminalTitleLab];
     [self addSubview:self.stateTextLab];
-    [self addSubview:self.stateIconLab];
+    [self addSubview:self.activitor];
     [self addSubview:self.devicesTBV];
     [self addSubview:self.reScanBtn];
     [self addSubview:self.bindBtn];
@@ -66,44 +66,23 @@
 
 - (void) addKVOs {
     @weakify(self);
-    
-    /* 状态icon */
-    RAC(self.stateIconLab, text) = [RACObserve(self, state) map:^NSString* (NSNumber* state) {
-        if (state.integerValue == DC_VIEW_STATE_WAITTING) {
-            return [NSString fontAwesomeIconStringForEnum:FASpinner];
-        }
-        else if (state.integerValue == DC_VIEW_STATE_DONE) {
-            return [NSString fontAwesomeIconStringForEnum:FACheck];
-        }
-        else /* DC_VIEW_STATE_WRONG */ {
-            return [NSString fontAwesomeIconStringForEnum:FATimes];
-        }
-    }];
-    
-    /* 旋转 */
-    RAC(self, spinning) = [RACObserve(self, state) map:^NSNumber* (NSNumber* state) {
-        if (state.integerValue == DC_VIEW_STATE_WAITTING) {
-            return @(YES);
-        }
-        else {
-            return @(NO);
-        }
-    }];
-    
-    /* 监控状态,并旋转or停止 */
-    [RACObserve(self, spinning) subscribeNext:^(NSNumber* spinning) {
+        
+    [RACObserve(self, state) subscribeNext:^(NSNumber* state) {
         @strongify(self);
-        if (spinning.boolValue) {
-            CABasicAnimation* basiAni = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-            basiAni.fromValue = [NSNumber numberWithFloat:0.f];
-            basiAni.toValue = [NSNumber numberWithFloat:2.f * M_PI];
-            basiAni.duration = 0.8;
-            basiAni.repeatCount = MAXFLOAT;
-            [self.stateIconLab.layer addAnimation:basiAni forKey:@"labRotationAnimation"];
-        } else {
-            [self.stateIconLab.layer removeAnimationForKey:@"labRotationAnimation"];
+        switch (state.integerValue) {
+            case DC_VIEW_STATE_WAITTING:
+            {
+                [self.activitor show];
+            }
+                break;
+            default:
+            {
+                [self.activitor hide];
+            }
+                break;
         }
     }];
+    
     
 }
 
@@ -210,8 +189,7 @@
         make.top.mas_equalTo(wself.reScanBtn);
     }];
     
-    self.stateIconLab.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:inset * 2 scale:1]];
-    [self.stateIconLab mas_updateConstraints:^(MASConstraintMaker *make) {
+    [self.activitor mas_updateConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(wself.screenView);
         make.width.height.mas_equalTo(inset * 2);
         make.top.mas_equalTo(wself.screenView.mas_top).offset(inset);
@@ -221,7 +199,7 @@
     [self.stateTextLab mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(wself.screenView);
         make.height.mas_equalTo(inset * 2);
-        make.top.mas_equalTo(wself.stateIconLab.mas_bottom).offset(inset * 0.5);
+        make.top.mas_equalTo(wself.activitor.mas_bottom).offset(inset * 0.5);
     }];
     
     [self.terminalTitleLab mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -287,17 +265,13 @@
     return _stateTextLab;
 }
 
-- (UILabel *)stateIconLab {
-    if (!_stateIconLab) {
-        _stateIconLab = [UILabel new];
-        _stateIconLab.textColor = [UIColor whiteColor];
-        _stateIconLab.textAlignment = NSTextAlignmentCenter;
-        _stateIconLab.font = [UIFont fontAwesomeFontOfSize:20];
-        _stateIconLab.text = [NSString fontAwesomeIconStringForEnum:FASpinner];
+- (MLActivitor *)activitor {
+    if (!_activitor) {
+        _activitor = [[MLActivitor alloc] init];
+        _activitor.tintColor = [UIColor whiteColor];
     }
-    return _stateIconLab;
+    return _activitor;
 }
-
 - (UIButton *)reScanBtn {
     if (!_reScanBtn) {
         _reScanBtn = [UIButton new];

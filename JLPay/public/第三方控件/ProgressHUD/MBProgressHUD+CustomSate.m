@@ -10,6 +10,7 @@
 
 #import "CustomCheckView.h"
 #import <ReactiveCocoa.h>
+#import "MLActivitor.h"
 
 
 static CGFloat const fMBProgressHUDSucDuration = 0.8;   // 成功时的显示持续时间
@@ -27,6 +28,12 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
     MBProgressHUD* progressHud = [MBProgressHUD showHUDAddedTo:mainWindow animated:YES];
     progressHud.labelText = text;
     progressHud.detailsLabelText = detailText;
+    progressHud.mode = MBProgressHUDModeCustomView;
+    MLActivitor* activitor = [[MLActivitor alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
+    activitor.tintColor = [UIColor whiteColor];
+    [activitor show];
+    progressHud.customView = activitor;
+    
     return progressHud;
 }
 
@@ -115,7 +122,10 @@ static CGFloat const fMBProgressHUDFailDuration = 2.5;  // 失败时的显示持
 
 
 - (void) showNormalWithText:(NSString*)text andDetailText:(NSString*)detailText {
-    self.mode = MBProgressHUDModeIndeterminate;
+    self.mode = MBProgressHUDModeCustomView;
+    MLActivitor* activitor = [[MLActivitor alloc] initWithFrame:CGRectMake(0, 0, 37, 37)];
+    [activitor show];
+    self.customView = activitor;
     self.labelText = text;
     self.detailsLabelText = detailText;
     [self show:YES];

@@ -22,7 +22,6 @@
 @implementation BVC_vmTimer
 
 - (void)dealloc {
-    NSLog(@"-------- BVC_vmTimer dealloc");
     [self stopCircleTimer];
     [self stopWaitingTimer];
 }
@@ -33,10 +32,7 @@
     self.timeOutBlock = timeOutBlock;
     [self stopWaitingTimer];
     
-    NameWeakSelf(wself);
-    self.timerWaiting = [NSTimer timerWithTimeInterval:interval repeats:NO block:^(NSTimer * _Nonnull timer) {
-        if (wself.timeOutBlock) wself.timeOutBlock();
-    }];
+    self.timerWaiting = [NSTimer timerWithTimeInterval:interval target:self selector:@selector(timeOutForWaiting:) userInfo:nil repeats:NO];
     
     [[NSRunLoop mainRunLoop] addTimer:self.timerWaiting forMode:NSRunLoopCommonModes];
     
@@ -54,14 +50,7 @@
     self.timeCount = interval;
     [self stopCircleTimer];
     
-    NameWeakSelf(wself);
-    self.timerCircle = [NSTimer timerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        if (wself.timeCount == 0) {
-            [wself stopCircleTimer];
-            return ;
-        }
-        wself.timeCount--;
-    }];
+    self.timerCircle = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(circleCountingWithTimer:) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:self.timerCircle forMode:NSRunLoopCommonModes];
 }
 
@@ -71,5 +60,26 @@
         self.timerCircle = nil;
     }
 }
+
+# pragma mask 2 tools 
+
+/* 等待超时的处理 */
+- (void) timeOutForWaiting:(id) timer {
+    if (self.timeOutBlock) {
+        self.timeOutBlock();
+    }
+}
+
+/* 计时器轮询定时器处理 */
+- (void) circleCountingWithTimer:(id) timer {
+    if (self.timeCount == 0) {
+        [self stopCircleTimer];
+        return ;
+    }
+    self.timeCount--;
+}
+
+
+
 
 @end
