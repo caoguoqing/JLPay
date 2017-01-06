@@ -787,7 +787,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
 + (UIImage*) logoImageOfApp {
     UIImage* logoImage = nil;
     if (BranchAppName == 0) {
-        logoImage = [UIImage imageNamed:@"AppLogoImageJLPay"];
+        logoImage = [UIImage imageNamed:@"AppIconImageJLPay"]; // AppIconImageJLPay AppLogoImageJLPay
     }
     else if (BranchAppName == 1) {
         logoImage = [UIImage imageNamed:@"AppLogoImageWLS"];
@@ -799,7 +799,7 @@ static NSString* SignBatchNo = @"SignBatchNo__";
         logoImage = [UIImage imageNamed:@"AppLogoImageKFT"];
     }
     else if (BranchAppName == 5) {
-        logoImage = [UIImage imageNamed:@"AppLogoImageZJMS"];
+        logoImage = [UIImage imageNamed:@"AppIconImageJLPay"]; //AppLogoImageZJMS AppIconImageJLPay
     }
     return logoImage;
 }

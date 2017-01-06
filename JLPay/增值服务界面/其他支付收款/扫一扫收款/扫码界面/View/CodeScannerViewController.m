@@ -34,7 +34,6 @@ UIAlertViewDelegate>
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer* videoLayer;   // 视频显示层
 @property (nonatomic, strong) MaskView* maskView; // 遮罩视图: 带扫描框
 
-@property (nonatomic, strong) MBProgressHUD* progressHUD;
 
 @property (nonatomic, strong) NSTimer* timeOutForTCPEnquiry;
 @property (nonatomic, strong) UIButton* QRCodeBtn;
@@ -59,7 +58,7 @@ UIAlertViewDelegate>
         [[VMOtherPayType sharedInstance] setPayCode:code];
         codeScanningDone = YES;
         NameWeakSelf(wself);
-        [self.progressHUD showSuccessWithText:@"扫码成功" andDetailText:nil onCompletion:^{
+        [MBProgressHUD showSuccessWithText:@"扫码成功" andDetailText:nil onCompletion:^{
             [wself.navigationController pushViewController:[[WatingPayViewController alloc] initWithNibName:nil bundle:nil] animated:YES];
         }];
     } else {
@@ -80,7 +79,6 @@ UIAlertViewDelegate>
     [self.view addSubview:self.maskView];
     [self.view addSubview:self.QRCodeBtn];
     [self.view addSubview:self.moneyLabel];
-    [self.view addSubview:self.progressHUD];
     [self.view.layer insertSublayer:self.videoLayer atIndex:0];
     // 启动摄像头扫描
     [self.codeScanner startScanning];
@@ -175,12 +173,6 @@ UIAlertViewDelegate>
         [_videoLayer setFrame:self.view.bounds];
     }
     return _videoLayer;
-}
-- (MBProgressHUD *)progressHUD {
-    if (_progressHUD == nil) {
-        _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHUD;
 }
 - (ViewModelCodeScanner *)codeScanner {
     if (_codeScanner == nil) {

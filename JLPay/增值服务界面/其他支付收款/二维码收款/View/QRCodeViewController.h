@@ -22,7 +22,6 @@
 @property (nonatomic, strong) UIImageView* imageViewQRCode;
 @property (nonatomic, strong) UIImageView* imageViewPlatform;
 @property (nonatomic, strong) UIActivityIndicatorView* activitor;
-@property (nonatomic, strong) MBProgressHUD* progressHUD;
 
 @property (nonatomic, strong) VMWechatQRCodePay* wechatQRCodePayer;
 

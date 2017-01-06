@@ -33,7 +33,6 @@
 
 @property (nonatomic, strong) NSMutableDictionary* imageNamesDict;
 @property (nonatomic, strong) NSMutableArray* titlesArray;
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 @end
 
 
@@ -111,7 +110,7 @@ NSString* headerIdentifier = @"headerIdentifier";
     }
     else if ([cell.title isEqualToString:@"明细查询"]){
         // -- 先屏蔽
-        [self.progressHud showWarnWithText:@"新功能开发中,敬请期待!" andDetailText:nil onCompletion:^{}];
+        [MBProgressHUD showWarnWithText:@"新功能开发中,敬请期待!" andDetailText:nil onCompletion:^{}];
         return;
 //      [self.navigationController pushViewController:[self transDetailsViewControllerWithPlatform:NameTradePlatformOtherPay] animated:YES];
     }
@@ -147,7 +146,6 @@ NSString* headerIdentifier = @"headerIdentifier";
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self.view addSubview:self.collectionView];
-    [self.view addSubview:self.progressHud];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -197,12 +195,6 @@ NSString* headerIdentifier = @"headerIdentifier";
         [_imageNamesDict setValue:@"details180" forKey:@"明细查询"];
     }
     return _imageNamesDict;
-}
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 
 @end

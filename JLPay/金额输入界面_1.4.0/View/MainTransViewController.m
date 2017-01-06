@@ -158,6 +158,8 @@
                                                                                    textColor:[UIColor whiteColor]
                                                                              awesomeLocation:FAwesomeLocation_left];
     
+    NSLog(@"==-=-=--=- MainTransViewController reloadDatas businessLabel[%@]", self.screenView.businessLabel.attributedText);
+    
     textFontSize = [NSString resizeFontAtHeight:self.screenView.settlementSwitchBtn.bounds.size.height scale:0.6];
     self.screenView.deviceBtnAttriTitle = [NSAttributedString stringWithLeftAwesomeText:[NSString fontAwesomeIconStringForEnum:FAChainBroken]
                                                                     leftAwesomeFont:[UIFont fontAwesomeFontOfSize:textFontSize - 1]
@@ -177,7 +179,8 @@
     CGFloat inset = [UIScreen mainScreen].bounds.size.width * 15/320.f;
     CGFloat noteLabelHeight = [UIScreen mainScreen].bounds.size.height * 20/568.f;
     self.screenView.layer.cornerRadius = inset;
-    
+    NSLog(@"------------ MainTransViewController layoutSubviews");
+
     CGFloat keyBordVHeight = (self.view.frame.size.height - triSwitchVHeight - 64) * 0.5;
     
     __weak typeof(self) wself = self;

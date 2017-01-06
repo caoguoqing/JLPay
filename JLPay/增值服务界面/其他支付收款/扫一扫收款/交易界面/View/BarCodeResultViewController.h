@@ -39,7 +39,6 @@
 
 @property (nonatomic, strong) UIButton* buttonDone;
 @property (nonatomic, strong) UIButton* buttonRevoke;
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @property (nonatomic, strong) id httpTransaction;
 

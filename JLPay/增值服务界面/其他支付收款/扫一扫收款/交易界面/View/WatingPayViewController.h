@@ -24,7 +24,6 @@
 @property (nonatomic, strong) PayStatusDisplayView* payStatusHeaderView;
 @property (nonatomic, strong) UIButton* doneButton;
 @property (nonatomic, strong) UIButton* revokeButton;
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @property (nonatomic, strong) VMHttpAlipay* httpAlipay;
 @property (nonatomic, strong) VMHttpWechatPay* httpWechat;

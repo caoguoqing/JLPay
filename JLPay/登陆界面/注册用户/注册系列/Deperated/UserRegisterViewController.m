@@ -32,7 +32,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, ASIHTTPRequestD
 @property (nonatomic, strong) NSArray* arrayImageInfo;
 
 @property (nonatomic, retain) ASIFormDataRequest* httpRequestRegister;
-@property (nonatomic, strong) MBProgressHUD* hud;
 
 @end
 
@@ -344,7 +343,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 成功
     if ([retCode intValue] == 0) {
         NSString* msg = [NSString stringWithFormat:@"%@成功!", [self titleForRegisterType:self.registerType]];
-        [self.hud showSuccessWithText:msg andDetailText:nil onCompletion:^{
+        [MBProgressHUD showSuccessWithText:msg andDetailText:nil onCompletion:^{
             
             // 清空绑定信息
             [ModelDeviceBindedInformation cleanDeviceBindedInfo];
@@ -359,12 +358,12 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     // 失败
     else {
         NSString* retMsg = [NSString stringWithFormat:@"%@失败:%@", [self titleForRegisterType:self.registerType],[dataDict valueForKey:@"message"]];
-        [self.hud hideOnCompletion:nil];
+        [MBProgressHUD hideCurNormalHud];
         [self alertShowWithMessage:retMsg];
     }
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
-    [self.hud showFailWithText:[NSString stringWithFormat:@"%@失败",[self titleForRegisterType:self.registerType]] andDetailText:[[request error] localizedDescription] onCompletion:nil];
+    [MBProgressHUD showFailWithText:[NSString stringWithFormat:@"%@失败",[self titleForRegisterType:self.registerType]] andDetailText:[[request error] localizedDescription] onCompletion:nil];
     [request clearDelegatesAndCancel];
     self.httpRequestRegister = nil;
 }
@@ -452,7 +451,7 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         
         [self.httpRequestRegister startAsynchronous];
     });
-    [self.hud showNormalWithText:@"数据上送中..." andDetailText:nil];
+    [MBProgressHUD showNormalWithText:@"数据上送中..." andDetailText:nil];
 }
 /* 检查输入是否满足 */
 - (BOOL) enableToRequest {
@@ -860,7 +859,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
     [self.registerButton setTitle:[self buttonTitleForRegisterType:self.registerType] forState:UIControlStateNormal]; // 设置按钮标题
     [self.view addSubview:self.registerButton];
     [self.view addSubview:self.tableView];
-    [self.view addSubview:self.hud];
     
     [self.navigationItem setBackBarButtonItem:[PublicInformation newBarItemNullTitleInViewController:self]];
 }
@@ -1104,12 +1102,6 @@ NSString* IdentifierCellImageView = @"IdentifierCellImageView__"; // 图片
         [_httpRequestRegister setTimeOutSeconds:60];
     }
     return _httpRequestRegister;
-}
-- (MBProgressHUD *)hud {
-    if (!_hud) {
-        _hud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _hud;
 }
 
 @end

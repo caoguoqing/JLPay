@@ -191,8 +191,12 @@
 		5E9A8E9D1DC72E5700820F97 /* MTVC_settlementSwitchBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9A8E9C1DC72E5700820F97 /* MTVC_settlementSwitchBtn.m */; };
 		5E9D9BA41BA9050D00A7E8CC /* Packing8583.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */; };
 		5E9D9BE21BADAA0100A7E8CC /* ISOFieldFormation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */; };
+		5EA092731DCAD3CA00BB8DDB /* sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA092721DCAD3CA00BB8DDB /* sdk.framework */; };
 		5EA2DF9F1C9FCAB700770353 /* JCAlertView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5EA2DF9C1C9FCAB700770353 /* JCAlertView.bundle */; };
 		5EA2DFA01C9FCAB700770353 /* JCAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA2DF9E1C9FCAB700770353 /* JCAlertView.m */; };
+		5EA4BFE21E1F6F3700707191 /* sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA4BFE11E1F6F3700707191 /* sdk.framework */; };
+		5EA4BFE31E1F6F4100707191 /* sdk.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA4BFE11E1F6F3700707191 /* sdk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5EAC8F551DFFDD980035110B /* DeviceManager_SMIT.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EAC8F541DFFDD980035110B /* DeviceManager_SMIT.m */; };
 		5EB220521D5DB119008591E5 /* BigInt.c in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220501D5DB119008591E5 /* BigInt.c */; };
 		5EB220CE1D63F543008591E5 /* JLPasswordView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220C91D63F543008591E5 /* JLPasswordView.m */; };
 		5EB220CF1D63F543008591E5 /* JLPWDInputsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB220CB1D63F543008591E5 /* JLPWDInputsView.m */; };
@@ -351,6 +355,20 @@
 			remoteInfo = JLPay;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5EA092711DCAD36700BB8DDB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5EA4BFE31E1F6F4100707191 /* sdk.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5E08AE6D1B0989B100B8C198 /* AdditionalServicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdditionalServicesViewController.h; sourceTree = "<group>"; };
@@ -720,9 +738,13 @@
 		5E9D9BA31BA9050D00A7E8CC /* Packing8583.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Packing8583.m; sourceTree = "<group>"; };
 		5E9D9BE01BADAA0100A7E8CC /* ISOFieldFormation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOFieldFormation.h; sourceTree = "<group>"; };
 		5E9D9BE11BADAA0100A7E8CC /* ISOFieldFormation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISOFieldFormation.m; sourceTree = "<group>"; };
+		5EA092721DCAD3CA00BB8DDB /* sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sdk.framework; path = /Users/jielian/group/JLPay/Frameworks/sdk.framework; sourceTree = "<absolute>"; };
 		5EA2DF9C1C9FCAB700770353 /* JCAlertView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JCAlertView.bundle; sourceTree = "<group>"; };
 		5EA2DF9D1C9FCAB700770353 /* JCAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCAlertView.h; sourceTree = "<group>"; };
 		5EA2DF9E1C9FCAB700770353 /* JCAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCAlertView.m; sourceTree = "<group>"; };
+		5EA4BFE11E1F6F3700707191 /* sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sdk.framework; path = Frameworks/sdk.framework; sourceTree = "<group>"; };
+		5EAC8F531DFFDD980035110B /* DeviceManager_SMIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceManager_SMIT.h; sourceTree = "<group>"; };
+		5EAC8F541DFFDD980035110B /* DeviceManager_SMIT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceManager_SMIT.m; sourceTree = "<group>"; };
 		5EB220501D5DB119008591E5 /* BigInt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BigInt.c; sourceTree = "<group>"; };
 		5EB220511D5DB119008591E5 /* BigInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigInt.h; sourceTree = "<group>"; };
 		5EB220C81D63F543008591E5 /* JLPasswordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLPasswordView.h; sourceTree = "<group>"; };
@@ -1007,12 +1029,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EA092731DCAD3CA00BB8DDB /* sdk.framework in Frameworks */,
 				5E3CB5261DAB83BB0036C1FB /* libJieLianService.a in Frameworks */,
 				5E3CB5281DAB83BB0036C1FB /* libLandiReader.a in Frameworks */,
 				5E5354EE1C8033F700A8E521 /* SystemConfiguration.framework in Frameworks */,
 				5E5354EC1C802FF700A8E521 /* CoreMedia.framework in Frameworks */,
 				5E8B0D011BB0051400FD461A /* libsqlite3.tbd in Frameworks */,
 				5E397B541AD36D22004F206F /* libz.1.2.5.dylib in Frameworks */,
+				5EA4BFE21E1F6F3700707191 /* sdk.framework in Frameworks */,
 				9E4D90AC1BD0FB330096F84E /* iMagPay.framework in Frameworks */,
 				5EB9B1401AD79F7600A73190 /* libstdc++.dylib in Frameworks */,
 				5E397B4C1AD3677E004F206F /* libxml2.dylib in Frameworks */,
@@ -1344,6 +1368,7 @@
 			children = (
 				5E3CB5131DAB83BB0036C1FB /* DeviceManager.h */,
 				5E3CB5141DAB83BB0036C1FB /* DeviceManager.m */,
+				5EAC8F521DFFDD980035110B /* SMITDevice_SMIT */,
 				5E3CB5151DAB83BB0036C1FB /* DLDevice_DL01 */,
 				5E3CB5181DAB83BB0036C1FB /* JLPayDevice_TY */,
 				5E3CB51D1DAB83BB0036C1FB /* LDDevice_M18 */,
@@ -2226,6 +2251,15 @@
 				5EA2DF9E1C9FCAB700770353 /* JCAlertView.m */,
 			);
 			path = JCAlertView;
+			sourceTree = "<group>";
+		};
+		5EAC8F521DFFDD980035110B /* SMITDevice_SMIT */ = {
+			isa = PBXGroup;
+			children = (
+				5EAC8F531DFFDD980035110B /* DeviceManager_SMIT.h */,
+				5EAC8F541DFFDD980035110B /* DeviceManager_SMIT.m */,
+			);
+			path = SMITDevice_SMIT;
 			sourceTree = "<group>";
 		};
 		5EB220C71D63F543008591E5 /* JLPasswordView */ = {
@@ -3230,6 +3264,7 @@
 		9E4D90AD1BD1E5850096F84E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5EA4BFE11E1F6F3700707191 /* sdk.framework */,
 				5E5354ED1C8033F700A8E521 /* SystemConfiguration.framework */,
 				5E397B531AD36D22004F206F /* libz.1.2.5.dylib */,
 				5EB9B13F1AD79F7600A73190 /* libstdc++.dylib */,
@@ -3319,6 +3354,7 @@
 				5EB6F97A1AC8DD1C00E47AB5 /* Resources */,
 				BE0A7B5D8487F1F127DA982F /* Embed Pods Frameworks */,
 				3FC81B39FFC6894B39687FAC /* Copy Pods Resources */,
+				5EA092711DCAD36700BB8DDB /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3358,6 +3394,7 @@
 				TargetAttributes = {
 					5EB6F97B1AC8DD1C00E47AB5 = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = Q4WWR9BUQ4;
 					};
 					5EB6F9941AC8DD1C00E47AB5 = {
 						CreatedOnToolsVersion = 6.2;
@@ -3555,6 +3592,7 @@
 				5E3CB5411DAB83E80036C1FB /* ModelRateInfoSaved.m in Sources */,
 				5EB2D79F1D2F9FFB00912145 /* AJPhotoListView.m in Sources */,
 				5E33AB0A1C5616B20032D8E1 /* ModelTCPTransPacking.m in Sources */,
+				5EAC8F551DFFDD980035110B /* DeviceManager_SMIT.m in Sources */,
 				5E397B311AD36429004F206F /* ASIDownloadCache.m in Sources */,
 				5E51A9BA1D1B7AF600C6FB91 /* VMOtherPayType.m in Sources */,
 				5E397B381AD36429004F206F /* ASIS3BucketRequest.m in Sources */,
@@ -3897,13 +3935,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 86F117F53CDE6931F23F72C3 /* Pods-JLPay.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					"$(ARCHS_STANDARD_32_BIT)",
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				DEVELOPMENT_TEAM = Q4WWR9BUQ4;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3935,8 +3971,9 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "bfecc30e-5d1a-43d8-97bf-8bac99536c6a";
+				PROVISIONING_PROFILE_SPECIFIER = JLPay_unite_distribution;
 				TARGETED_DEVICE_FAMILY = 1;
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = "armv7 armv7s arm64 armv6";
 			};
 			name = Debug;
 		};
@@ -3945,8 +3982,9 @@
 			baseConfigurationReference = C31F63A30F82750E73C9B4E9 /* Pods-JLPay.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_JLPay;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Qianhai Jielian Financial Services Co., Ltd. (Q4WWR9BUQ4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				DEVELOPMENT_TEAM = Q4WWR9BUQ4;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3977,6 +4015,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "bfecc30e-5d1a-43d8-97bf-8bac99536c6a";
+				PROVISIONING_PROFILE_SPECIFIER = JLPay_unite_distribution;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};

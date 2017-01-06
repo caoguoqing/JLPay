@@ -43,7 +43,6 @@
     [self.view addSubview:self.uploadBtn];
     [self.view addSubview:self.reaplyBtn];
     [self.view addSubview:self.refreshBtn];
-    [self.view addSubview:self.progressHud];
 }
 
 - (void) layoutSubviews {
@@ -140,17 +139,16 @@
 
 - (void) doMyBusinessInfoRequesting {
     NameWeakSelf(wself);
-    [self.progressHud showNormalWithText:@"正在加载商户数据..." andDetailText:nil];
+    [MBProgressHUD showNormalWithText:@"正在加载商户数据..." andDetailText:nil];
     [self.dataSource requestMyBusinessInfoOnFinished:^{
-        [wself.progressHud hideOnCompletion:^{
-            wself.refreshBtn.hidden = YES;
-            wself.tableView.hidden = NO;
-            [wself.tableView reloadData];
-            // 根据审核状态更新按钮的布局.....
-            [wself updateButtonsLayout];
-        }];
+        [MBProgressHUD hideCurNormalHud];
+        wself.refreshBtn.hidden = YES;
+        wself.tableView.hidden = NO;
+        [wself.tableView reloadData];
+        // 根据审核状态更新按钮的布局.....
+        [wself updateButtonsLayout];
     } onErrorBlock:^(NSError *error) {
-        [wself.progressHud showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
+        [MBProgressHUD showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
             wself.refreshBtn.hidden = NO;
             wself.tableView.hidden = YES;
         }];
@@ -250,12 +248,6 @@
     return _refreshBtn;
 }
 
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
-}
 
 - (UIBarButtonItem*) newCancelBarBtn {
     UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];

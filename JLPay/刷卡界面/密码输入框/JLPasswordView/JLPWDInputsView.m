@@ -35,7 +35,9 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.backgroundColor = [UIColor colorWithHex:0xeeeeee alpha:1];
-    
+    [self setNeedsUpdateConstraints];
+    [self updateConstraintsIfNeeded];
+    [self setNeedsLayout];
 }
 
 - (void) loadSubviews {
@@ -55,7 +57,6 @@
 
 
 - (void)updateConstraints {
-    
     CGFloat inset = 15;
     CGFloat widthLabel = self.frame.size.width * 0.618 * 1.f/(CGFloat)self.pinLabels.count;//44;
     

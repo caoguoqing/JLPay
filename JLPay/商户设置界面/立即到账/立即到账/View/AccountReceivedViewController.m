@@ -48,9 +48,6 @@
     [self.view addSubview:self.labelTitleMoney];
     
     [self.view addSubview:self.downPullBtn];
-
-    [self.view addSubview:self.progressHud];
-    [self.navigationItem setLeftBarButtonItem:self.cancelBarBtn];
 }
 - (void) layoutSubviews {
     NameWeakSelf(wself);
@@ -153,19 +150,19 @@
         switch (state.integerValue) {
             case VMAccountReceivedStateRequesting:
             {
-                [self.progressHud showNormalWithText:@"" andDetailText:nil];
+                [MBProgressHUD showNormalWithText:@"" andDetailText:nil];
             }
                 break;
             case VMAccountReceivedStateRequestSuc:
             {
                 [self.settledListTBV reloadData];
-                [self.progressHud showSuccessWithText:@"" andDetailText:nil onCompletion:nil];
+                [MBProgressHUD showSuccessWithText:@"" andDetailText:nil onCompletion:nil];
             }
                 break;
             case VMAccountReceivedStateRequestFail:
             {
                 [self.settledListTBV reloadData];
-                [self.progressHud showFailWithText:[self.vmAccountReceived.errorRequested localizedDescription] andDetailText:nil onCompletion:nil];
+                [MBProgressHUD showFailWithText:[self.vmAccountReceived.errorRequested localizedDescription] andDetailText:nil onCompletion:nil];
             }
                 break;
 
@@ -293,13 +290,6 @@
         [_buttonDispatchOrder addTarget:self action:@selector(toPushToDispatchListVC:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonDispatchOrder;
-}
-
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 
 - (VMAccountReceived *)vmAccountReceived {

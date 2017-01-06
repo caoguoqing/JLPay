@@ -26,7 +26,6 @@
 
 @property (nonatomic, strong) UIImagePickerController* imgPickerVC;
 
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @property (nonatomic, copy) void (^ pickedImage) (UIImage* image);
 

@@ -71,7 +71,7 @@
     CGFloat settleTypeLabWidth = [UIScreen mainScreen].bounds.size.width * 52/320.f;
     CGFloat inset = [UIScreen mainScreen].bounds.size.height * 15/568.f;
     
-    
+    NSLog(@"------------ MTVC_screenView updateConstraints");
     __weak typeof(self) wself = self;
     
     

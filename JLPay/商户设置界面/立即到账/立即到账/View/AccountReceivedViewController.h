@@ -29,7 +29,6 @@
 @property (nonatomic, strong) DownPullButton* downPullBtn;
 @property (nonatomic, strong) UITableView* settledListTBV;
 
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @property (nonatomic, strong) VMAccountReceived* vmAccountReceived;
 

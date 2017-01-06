@@ -32,18 +32,18 @@
     NameWeakSelf(wself);
     // 分支: alipay | wecaht
     if (self.payType == OtherPayTypeAlipay) {
-        [self.progressHud showNormalWithText:self.httpAlipay.stateMessage andDetailText:nil];
+        [MBProgressHUD showNormalWithText:self.httpAlipay.stateMessage andDetailText:nil];
         [self.httpAlipay startPayingOnFinished:^{
-            [wself.progressHud showSuccessWithText:wself.httpAlipay.stateMessage andDetailText:nil onCompletion:nil];
+            [MBProgressHUD showSuccessWithText:wself.httpAlipay.stateMessage andDetailText:nil onCompletion:nil];
             [wself.tableView reloadData];
             wself.revokeButton.hidden = NO;
         } onError:^(NSError *error) {
             JLPrint(@"---支付失败[%@]",[error localizedDescription]);
-            [wself.progressHud showFailWithText:wself.httpAlipay.stateMessage andDetailText:[error localizedDescription] onCompletion:nil];
+            [MBProgressHUD showFailWithText:wself.httpAlipay.stateMessage andDetailText:[error localizedDescription] onCompletion:nil];
             [wself.tableView reloadData];
         }];
     } else {
-        [self.progressHud showNormalWithText:self.httpWechat.stateMessage andDetailText:nil];
+        [MBProgressHUD showNormalWithText:self.httpWechat.stateMessage andDetailText:nil];
         self.httpWechat.state = VMHttpWechatPayStatePaying;
     }
     
@@ -59,7 +59,6 @@
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.doneButton];
     [self.view addSubview:self.revokeButton];
-    [self.view addSubview:self.progressHud];
 }
 - (void) layoutSubviews {
     CGFloat heightButton = 50;
@@ -176,19 +175,19 @@
         @strongify(self);
         if (state.integerValue == VMHttpWechatPayStatePaySuc) {
             if (self.httpWechat.payType == VMHttpWechatPayTypePay) {
-                [self.progressHud showSuccessWithText:@"微信收款成功" andDetailText:nil onCompletion:nil];
+                [MBProgressHUD showSuccessWithText:@"微信收款成功" andDetailText:nil onCompletion:nil];
                 [self.tableView reloadData];
             } else {
-                [self.progressHud showSuccessWithText:@"撤销成功" andDetailText:nil onCompletion:nil];
+                [MBProgressHUD showSuccessWithText:@"撤销成功" andDetailText:nil onCompletion:nil];
                 [self.tableView reloadData];
             }
         }
         else if (state.integerValue == VMHttpWechatPayStatePayFail) {
             if (self.httpWechat.payType == VMHttpWechatPayTypePay) {
                 JLPrint(@"---支付失败[%@]",[self.httpWechat.payError localizedDescription]);
-                [self.progressHud showFailWithText:@"微信收款失败" andDetailText:[self.httpWechat.payError localizedDescription] onCompletion:nil];
+                [MBProgressHUD showFailWithText:@"微信收款失败" andDetailText:[self.httpWechat.payError localizedDescription] onCompletion:nil];
             } else {
-                [self.progressHud showFailWithText:@"撤销失败" andDetailText:[self.httpWechat.payError localizedDescription] onCompletion:nil];
+                [MBProgressHUD showFailWithText:@"撤销失败" andDetailText:[self.httpWechat.payError localizedDescription] onCompletion:nil];
             }
         }
     }];
@@ -246,12 +245,6 @@
         [_revokeButton addTarget:self action:@selector(revokePay:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _revokeButton;
-}
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 
 - (VMHttpAlipay *)httpAlipay {

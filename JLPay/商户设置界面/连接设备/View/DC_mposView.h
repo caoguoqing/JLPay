@@ -18,7 +18,6 @@ typedef NS_ENUM(NSInteger, DC_VIEW_STATE) {
 
 
 
-
 @interface DC_mposView : UIView
 
 /* 重新扫描 */

@@ -25,7 +25,6 @@
 
 @property (nonatomic, strong) QRCodeButtonView* btnViewRQCodeDisplay;
 @property (nonatomic, strong) QRCodeButtonView* btnViewRQCodeScan;
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @end
 
@@ -48,13 +47,13 @@
 - (void)didSelectedView:(QRCodeButtonView *)QRCodeView {
     // 检查输入
     if (!self.goodsTextField.text || self.goodsTextField.text.length == 0) {
-        [self.progressHud showWarnWithText:@"请输入商品名称!" andDetailText:nil onCompletion:nil];
+        [MBProgressHUD showWarnWithText:@"请输入商品名称!" andDetailText:nil onCompletion:nil];
         return;
     }
     
     if ([QRCodeView.title isEqualToString:@"二维码"]) {
         // --- 先屏蔽掉二维码
-        [self.progressHud showWarnWithText:@"新功能开发中,敬请期待!" andDetailText:nil onCompletion:^{}];
+        [MBProgressHUD showWarnWithText:@"新功能开发中,敬请期待!" andDetailText:nil onCompletion:nil];
         return;
         // 跳转到二维码生成界面去生成二维码
     }
@@ -92,7 +91,6 @@
     
     [self.view addSubview:self.btnViewRQCodeDisplay];
     [self.view addSubview:self.btnViewRQCodeScan];
-    [self.view addSubview:self.progressHud];
 }
 - (void) relayoutSubviews {
     
@@ -210,12 +208,5 @@
     }
     return _btnViewRQCodeScan;
 }
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
-}
-
 
 @end

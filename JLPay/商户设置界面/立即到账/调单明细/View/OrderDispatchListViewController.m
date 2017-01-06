@@ -45,7 +45,6 @@
     [self.view addSubview:self.refreshBtn];
     [self.view addSubview:self.monthsTBV];
     [self.view addSubview:self.chooseMonthBtn];
-    [self.view addSubview:self.progressHud];
 }
 - (void) layoutSubviews {
     NameWeakSelf(wself);
@@ -126,7 +125,7 @@
     NSString* beginDate = [NSString stringWithFormat:@"%@%@01", [curDate substringToIndex:4], [curDate substringWithRange:NSMakeRange(4+1, 2)]];
     NSString* endDate = [beginDate lastDayOfCurMonth];
     
-    [self.progressHud showNormalWithText:@"查询数据..." andDetailText:nil];
+    [MBProgressHUD showNormalWithText:@"查询数据..." andDetailText:nil];
     NameWeakSelf(wself);
     [self.dispatchListVM requestingWithBeginDate:beginDate andEndDate:endDate onFinished:^{
         if ([wself.tableView.mj_header isRefreshing]) {
@@ -134,14 +133,14 @@
         }
         wself.refreshBtn.hidden = YES;
         [wself.tableView reloadData];
-        [wself.progressHud showSuccessWithText:@"查询成功" andDetailText:nil onCompletion:^{}];
+        [MBProgressHUD showSuccessWithText:@"查询成功" andDetailText:nil onCompletion:^{}];
     } onError:^(NSError *error) {
         if ([wself.tableView.mj_header isRefreshing]) {
             [wself.tableView.mj_header endRefreshing];
         }
         [wself.tableView reloadData];
         wself.refreshBtn.hidden = NO;
-        [wself.progressHud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:nil];
+        [MBProgressHUD showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:nil];
     }];
 }
 
@@ -180,12 +179,6 @@
         [_refreshBtn addTarget:self action:@selector(doDispatchListRequesting) forControlEvents:UIControlEventTouchUpInside];
     }
     return _refreshBtn;
-}
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 - (UITableView *)monthsTBV {
     if (!_monthsTBV) {

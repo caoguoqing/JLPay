@@ -111,8 +111,8 @@
 
 
 - (void) initialDatas {
-    self.maxScaleRate = 2.f;
-    self.uniteDuration = 0.618f;
+    self.maxScaleRate = 1.8;
+    self.uniteDuration = 0.5;
     self.perCircleDuration = 1.f;
     self.canAnimating = YES;
     self.index = 0;

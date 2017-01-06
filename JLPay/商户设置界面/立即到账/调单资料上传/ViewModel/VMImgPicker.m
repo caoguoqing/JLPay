@@ -75,10 +75,9 @@
 
 # pragma mask 3 action
 - (void) showImgPicker {
-    [self.handleViewCtr.progressHud showNormalWithText:@"" andDetailText:@""];
-    NameWeakSelf(wself);
+    [MBProgressHUD showNormalWithText:@"" andDetailText:@""];
     [self.handleViewCtr presentViewController:self.imgPickerVCtr animated:YES completion:^{
-        [wself.handleViewCtr.progressHud hide:YES];
+        [MBProgressHUD hideCurNormalHud];
     }];
 }
 - (void) dismissImgPickerAfterPicked {

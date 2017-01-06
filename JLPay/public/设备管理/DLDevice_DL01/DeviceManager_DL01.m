@@ -36,9 +36,8 @@
     self.connectedDeviceSN = connectedBlock;
     self.errorBlock = errorBlock;
     self.connectedIdentifier = identifier;
-    NameWeakSelf(wself);
     self.deviceManager.delegate = self;
-    [wself.deviceManager scanBlueDevice];
+    [self.deviceManager scanBlueDevice];
 }
 
 // -- 2. 断开连接
@@ -67,6 +66,7 @@
            onFinished:(void (^) (void))finished
               onError:(void (^) (NSError* error))errorBlock
 {
+    NSLog(@"---------- 写主密钥:[%@]", mainKey);
     self.finishedMainKeyWriting = finished;
     self.errorBlock = errorBlock;
     [self.deviceManager updateMasterKey:mainKey];
@@ -77,6 +77,7 @@
            onFinished:(void (^) (void))finished
               onError:(void (^) (NSError* error))errorBlock
 {
+    NSLog(@"---------- 写工作密钥钥:[%@]", workKey);
     self.finishedWorkKeyWriting = finished;
     self.errorBlock = errorBlock;
     NSString* pinKey = [workKey substringToIndex:40];
@@ -100,6 +101,7 @@
               onEncrypted:(void (^) (NSString* pin))pinEncrypted
                   onError:(void (^) (NSError* error))errorBlock
 {
+    NSLog(@"---------- pin加密原始串:[%@]", pinSource);
     self.encryptedPin = pinEncrypted;
     self.errorBlock = errorBlock;
     int curLen = pinSource.length;
@@ -115,6 +117,7 @@
               onEncrypted:(void (^) (NSString* mac))macEncrypted
                   onError:(void (^) (NSError* error))errorBlock
 {
+    NSLog(@"---------- mac加密:[%@]", macSource);
     self.encryptedMac = macEncrypted;
     self.errorBlock = errorBlock;
     [self.deviceManager getMacValue:macSource];
@@ -224,11 +227,13 @@
 
 //加密Pin结果
 -(void)onEncryptPinBlock:(NSString *)encPINblock {
+    NSLog(@"---------- pin加密结果:[%@]", encPINblock);
     if (self.encryptedPin) self.encryptedPin(encPINblock);
 }
 
 //mac计算结果
 -(void)onDidGetMac:(NSString *)strmac {
+    NSLog(@"---------- mac加密结果:[%@]", strmac);
     if (self.encryptedMac) self.encryptedMac(strmac);
 }
 

@@ -65,19 +65,19 @@
     @weakify(self);
     [self.uploadBarBtnItem.rac_command.executionSignals  subscribeNext:^(RACSignal* uploadSig) {
         [[uploadSig dematerialize] subscribeNext:^(NSProgress* progress) {
-            @strongify(self);
+            MBProgressHUD* hud ;
             if (progress == nil) {
-                [self.progressHud showCircleProgressWithText:@"正在上传..." andDetailText:nil];
+                hud = [MBProgressHUD showHorizontalProgressWithText:@"正在上传..." andDetailText:nil];
+//                [MBProgressHUD showCircleProgressWithText:@"正在上传..." andDetailText:nil];
             }
-            self.progressHud.progress = (CGFloat)progress.completedUnitCount/progress.totalUnitCount;
+            hud.progress = (CGFloat)progress.completedUnitCount/progress.totalUnitCount;
         } error:^(NSError *error) {
-            @strongify(self);
-            [self.progressHud showFailWithText:@"上传失败" andDetailText:[error localizedDescription] onCompletion:^{
+            [MBProgressHUD showFailWithText:@"上传失败" andDetailText:[error localizedDescription] onCompletion:^{
                 
             }];
         } completed:^{
             @strongify(self);
-            [self.progressHud showSuccessWithText:@"上传成功" andDetailText:nil onCompletion:^{
+            [MBProgressHUD showSuccessWithText:@"上传成功" andDetailText:nil onCompletion:^{
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     @strongify(self);
                     [self.navigationController popViewControllerAnimated:YES];

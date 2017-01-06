@@ -34,7 +34,6 @@
 
 - (void) loadSubviews {
     [self.view addSubview:self.tableView];
-    [self.view addSubview:self.progressHud];
     [self.navigationItem setRightBarButtonItem:self.doneBarBtn];
     [self.navigationItem setLeftBarButtonItem:self.cancleBarBtn];
 }
@@ -54,17 +53,16 @@
     @weakify(self);
     [self.bankListRequester.cmdAviBankListRequesting.executionSignals subscribeNext:^(RACSignal* sig) {
         [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
-            @strongify(self);
-            [self.progressHud showNormalWithText:nil andDetailText:nil];
+            [MBProgressHUD showNormalWithText:nil andDetailText:nil];
         } error:^(NSError *error) {
             @strongify(self);
-            [self.progressHud showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
+            [MBProgressHUD showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
                 @strongify(self);
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
             }];
         } completed:^{
             @strongify(self);
-            [self.progressHud hide:YES];
+            [MBProgressHUD hideCurNormalHud];
             [self.tableView reloadData];
         }];
     }];
@@ -108,13 +106,6 @@
         };
     }
     return _bankListRequester;
-}
-
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 
 - (UIBarButtonItem *)doneBarBtn {

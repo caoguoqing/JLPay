@@ -50,7 +50,7 @@ static NSString* const kLocalConfigLogin = @"kLocalConfigLogin";
     self.userName = nil;
     self.userPassword = nil;
     self.pwdNeedSeen = NO;
-    self.pwdNeedSaved = NO;
+    self.pwdNeedSaved = YES;
 }
 
 
@@ -66,18 +66,21 @@ static NSString* const kLocalConfigLogin = @"kLocalConfigLogin";
 }
 
 - (void)reWriteConfig {
-    if (!self.userName || self.userName.length <= 0 ||
-        !self.userPassword || self.userPassword.length <= 0) {
+    if (!self.userName || self.userName.length <= 0 ) {
         return;
     }
     
     NSMutableDictionary* config = [NSMutableDictionary dictionary];
     [config setObject:self.userName forKey:@"userName"];
-    [config setObject:self.userPassword forKey:@"userPassword"];
+    if (self.pwdNeedSaved && self.userPassword && self.userPassword.length > 0) {
+        [config setObject:self.userPassword forKey:@"userPassword"];
+    }
     [config setObject:[NSNumber numberWithBool:self.pwdNeedSaved] forKey:@"pwdNeedSaved"];
     [config setObject:[NSNumber numberWithBool:self.pwdNeedSeen] forKey:@"pwdNeedSeen"];
     
     NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults removeObjectForKey:kLocalConfigLogin];
+    [userDefaults synchronize];
     [userDefaults setObject:config forKey:kLocalConfigLogin];
     [userDefaults synchronize];
 }
@@ -87,7 +90,7 @@ static NSString* const kLocalConfigLogin = @"kLocalConfigLogin";
     self = [super init];
     if (self) {
         self.pwdNeedSeen = NO;
-        self.pwdNeedSaved = NO;
+        self.pwdNeedSaved = YES;
         [self reReadConfig];
     }
     return self;

@@ -22,7 +22,6 @@
 
 @property (nonatomic, strong) MonthChooseBtnView* chooseMonthBtn;
 @property (nonatomic, strong) BusinessVCRefreshButton* refreshBtn;
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @property (nonatomic, strong) VMDispatchList* dispatchListVM;
 

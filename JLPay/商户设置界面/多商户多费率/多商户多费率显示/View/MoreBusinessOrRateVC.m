@@ -105,10 +105,12 @@
         }
     }];
     
-    /* effective text */
-    RAC(self.noteLabEffective, text) = [RACObserve(self.dataSourceForB_R, typeSelected) map:^NSString* (NSString* typeSelected) {
-        return [NSString stringWithFormat:@"温馨提示: 仅结算类型为T+1时,设置的%@有效!", [typeSelected substringToIndex:2]];
-    }];
+    /* effective text: 
+        -- updated by 2017/01/06 : 多商户设置在T+0和T+1都有效,所以去掉提示
+     */
+//    RAC(self.noteLabEffective, text) = [RACObserve(self.dataSourceForB_R, typeSelected) map:^NSString* (NSString* typeSelected) {
+//        return [NSString stringWithFormat:@"温馨提示: 仅结算类型为T+1时,设置的%@有效!", [typeSelected substringToIndex:2]];
+//    }];
     
     RAC(self.btnClear, hidden) = [RACObserve(self.dataSourceForB_R, hasSavedBusiOrRate) map:^id(id value) {
         return @(![value boolValue]);

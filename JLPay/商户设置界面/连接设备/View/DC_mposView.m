@@ -25,9 +25,6 @@
 /* 标题 */
 @property (nonatomic, strong) UILabel* terminalTitleLab;
 
-/* 旋转: 状态icon标签 */
-@property (nonatomic, assign) BOOL spinning;
-
 
 @end
 
@@ -42,8 +39,6 @@
     if (self) {
         [self loadSubviews];
         [self addKVOs];
-        
-        self.spinning = NO;
         self.state = DC_VIEW_STATE_WAITTING;
         self.backgroundColor = [UIColor colorWithHex:0x4b9993 alpha:1];
         self.layer.cornerRadius = 20;
@@ -66,7 +61,7 @@
 
 - (void) addKVOs {
     @weakify(self);
-        
+    
     [RACObserve(self, state) subscribeNext:^(NSNumber* state) {
         @strongify(self);
         switch (state.integerValue) {
@@ -82,8 +77,6 @@
                 break;
         }
     }];
-    
-    
 }
 
 

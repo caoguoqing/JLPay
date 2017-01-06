@@ -257,6 +257,9 @@
     else if ([deviceNamePre isEqualToString:MPOSDeviceNamePreDongLian]) {
         self.hasNumbersButton = NO;
     }
+    else if ([deviceNamePre isEqualToString:MPOSDeviceNamePreSMIT]) {
+        self.hasNumbersButton = NO;
+    }
 }
 
 // -- 指定的设备名是否在厂商列表中
@@ -298,7 +301,8 @@
     if (!_deviceNamePreListSupported) {
         _deviceNamePreListSupported = @[MPOSDeviceNamePreTY,
                                         MPOSDeviceNamePreLDM18,
-                                        MPOSDeviceNamePreDongLian];
+                                        MPOSDeviceNamePreDongLian,
+                                        MPOSDeviceNamePreSMIT];
     }
     return _deviceNamePreListSupported;
 }

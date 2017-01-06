@@ -31,7 +31,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) UITextField* userNewPwdField;
 @property (nonatomic, strong) UIButton* sureButton;
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
-@property (nonatomic, strong) MBProgressHUD* hud;
 @end
 
 @implementation ForgetPinViewConroller
@@ -52,7 +51,7 @@ typedef enum : NSUInteger {
     [self.httpRequest addPostValue:self.userIDField.text forKey:@"identityNo"];
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     [self.httpRequest startAsynchronous];
-    [self.hud showNormalWithText:@"正在修改..." andDetailText:nil];
+    [MBProgressHUD showNormalWithText:@"正在修改..." andDetailText:nil];
 }
 
 - (NSString*) encryptBy3DESForPin:(NSString*)pin {
@@ -69,17 +68,17 @@ typedef enum : NSUInteger {
     [self.httpRequest clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     if ([[dataDict valueForKey:@"code"] intValue] == 0) {
-        [self.hud showSuccessWithText:@"修改成功!" andDetailText:nil onCompletion:^{
+        [MBProgressHUD showSuccessWithText:@"修改成功!" andDetailText:nil onCompletion:^{
             [wself.navigationController popViewControllerAnimated:YES];
         }];
     } else {
-        [self.hud showFailWithText:@"修改失败" andDetailText:[dataDict valueForKey:@"message"] onCompletion:nil];
+        [MBProgressHUD showFailWithText:@"修改失败" andDetailText:[dataDict valueForKey:@"message"] onCompletion:nil];
     }
     self.httpRequest = nil;
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequest clearDelegatesAndCancel];
-    [self.hud showFailWithText:@"网络异常,请检查网络" andDetailText:nil onCompletion:nil];
+    [MBProgressHUD showFailWithText:@"网络异常,请检查网络" andDetailText:nil onCompletion:nil];
     self.httpRequest = nil;
 }
 
@@ -132,7 +131,6 @@ typedef enum : NSUInteger {
     [self.view addSubview:self.userIDField];
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.sureButton];
-    [self.view addSubview:self.hud];
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -344,12 +342,6 @@ typedef enum : NSUInteger {
         [_httpRequest setDelegate:self];
     }
     return _httpRequest;
-}
-- (MBProgressHUD *)hud {
-    if (!_hud) {
-        _hud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _hud;
 }
 
 @end

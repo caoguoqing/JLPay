@@ -40,7 +40,6 @@
 
 
 - (void)updateConstraints {
-    
     __weak JLPWDKeyBoardView* wself = self;
     
     CGFloat inset = 7;
@@ -68,6 +67,10 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.backgroundColor = [UIColor colorWithHex:0xeeeeee alpha:1];
+    [self setNeedsUpdateConstraints];
+    [self updateConstraintsIfNeeded];
+    [self setNeedsLayout];
+
 
 }
 

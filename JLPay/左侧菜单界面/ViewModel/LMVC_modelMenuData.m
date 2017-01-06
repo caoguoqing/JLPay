@@ -19,7 +19,7 @@
 
 static NSString* const kLMVC_MenuTitleDeviceBinding     = @"绑定设备";
 static NSString* const kLMVC_MenuTitleBusinessSwitch    = @"费率选择";
-static NSString* const kLMVC_MenuTitleMyCardCheck       = @"我的卡包";
+static NSString* const kLMVC_MenuTitleMyCardCheck       = @"卡验证";
 static NSString* const kLMVC_MenuTitleResignTicket      = @"立即到账";
 static NSString* const kLMVC_MenuTitlePinExchange       = @"修改密码";
 static NSString* const kLMVC_MenuTitleAssistance        = @"帮助与关于";

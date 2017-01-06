@@ -28,15 +28,17 @@
 }
 
 - (void)reWriteLocalConfig {
+    // 清空设备绑定、多商户、多费率信息: 当切换了用户时
     MLocalConfigLogin* localConfig = [MLocalConfigLogin sharedConfig];
     [localConfig reReadConfig];
     if (![self.userName isEqualToString:localConfig.userName]) {
         [self clearMoreConfigIfExchagedUserID];
     }
-    
     [localConfig clearConfig];
+    
+    // 执行保存
+    localConfig.userName = self.userName;
     if (self.needPasswordSaving) {
-        localConfig.userName = self.userName;
         localConfig.userPassword = self.userPasswordPin;
     }
     localConfig.pwdNeedSeen = self.seenPasswordAvilable;

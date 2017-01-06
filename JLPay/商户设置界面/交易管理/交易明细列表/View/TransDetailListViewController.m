@@ -189,7 +189,7 @@
                    [curBtnDate substringWithRange:NSMakeRange(4+1, 2)]] stringByAppendingString:@"01"];
     NSString* endDate = [curBtnDate lastDayOfCurMonth];
     NameWeakSelf(wself);
-    [self.progressHud showNormalWithText:@"正在查询..." andDetailText:nil];
+    [MBProgressHUD showNormalWithText:@"正在查询..." andDetailText:nil];
     id dataSource ;
     if ([[self.platSegmentView.items objectAtIndex:self.platSegmentView.selectedItem] isEqualToString:TransPlatformTypeSwipe]) {
         self.detailsTableView.dataSource = self.mposDataSource;
@@ -204,14 +204,13 @@
         if ([wself.detailsTableView.mj_header isRefreshing]) {
             [wself.detailsTableView.mj_header endRefreshing];
         }
-        [wself.progressHud hideOnCompletion:^{
-        }];
+        [MBProgressHUD hideCurNormalHud];
     } onError:^(NSError *error) {
         [wself.detailsTableView reloadData];
         if ([wself.detailsTableView.mj_header isRefreshing]) {
             [wself.detailsTableView.mj_header endRefreshing];
         }
-        [wself.progressHud showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:^{
+        [MBProgressHUD showFailWithText:@"查询失败" andDetailText:[error localizedDescription] onCompletion:^{
         }];
     }];
 }

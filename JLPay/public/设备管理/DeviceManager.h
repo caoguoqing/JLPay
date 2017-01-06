@@ -15,6 +15,7 @@
 #import "DeviceManager_M18.h"
 #import "DeviceManager_JLpay.h"
 #import "DeviceManager_DL01.h"
+#import "DeviceManager_SMIT.h"
 
 
 typedef enum {

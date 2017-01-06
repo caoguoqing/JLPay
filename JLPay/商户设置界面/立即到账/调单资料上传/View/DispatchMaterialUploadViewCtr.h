@@ -21,7 +21,6 @@
 
 @property (nonatomic, strong) VMImgPicker* imgPicker;
 
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 
 @end

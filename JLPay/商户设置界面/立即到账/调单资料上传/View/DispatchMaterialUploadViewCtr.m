@@ -31,7 +31,6 @@
 - (void) loadSubviews {
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.uploadBtn];
-    [self.view addSubview:self.progressHud];
 }
 - (void) layoutSubviews {
     NameWeakSelf(wself);
@@ -60,16 +59,15 @@
     @weakify(self);
     [self.dispatchUploader.commandDispatchUpload.executionSignals subscribeNext:^(RACSignal* sig) {
         [[[sig dematerialize] deliverOnMainThread] subscribeNext:^(id x) {
-            @strongify(self);
-            [self.dispatchUploader.httpUpload.httpRequester setUploadProgressDelegate:self.progressHud];
-            [self.progressHud showCircleProgressWithText:@"正在上传图片资料..." andDetailText:nil];
+//            @strongify(self);
+//            [self.dispatchUploader.httpUpload.httpRequester setUploadProgressDelegate:self.progressHud];
+            [MBProgressHUD showHorizontalProgressWithText:@"正在上传图片资料..." andDetailText:nil];
         } error:^(NSError *error) {
-            @strongify(self);
-            [self.progressHud showFailWithText:@"上传失败" andDetailText:[error localizedDescription] onCompletion:^{
+            [MBProgressHUD showFailWithText:@"上传失败" andDetailText:[error localizedDescription] onCompletion:^{
             }];
         } completed:^{
             @strongify(self);
-            [self.progressHud showSuccessWithText:@"上传成功" andDetailText:nil onCompletion:^{
+            [MBProgressHUD showSuccessWithText:@"上传成功" andDetailText:nil onCompletion:^{
                 [self.navigationController popViewControllerAnimated:YES];
             }];
         }];
@@ -132,12 +130,6 @@
         _imgPicker = [[VMImgPicker alloc] init];
     }
     return _imgPicker;
-}
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 
 @end

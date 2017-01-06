@@ -33,6 +33,5 @@ typedef enum {
 
 @property (nonatomic, strong) BusinessVCRefreshButton* refreshBtn;
 @property (nonatomic, strong) VMDataSourceMyBusiness* dataSource;
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 @end

@@ -23,7 +23,6 @@
 
 @property (nonatomic, strong) VMT0CardListRequest* cardListRequester;
 
-@property (nonatomic, strong) MBProgressHUD* progressHud;
 
 
 @end
@@ -50,7 +49,6 @@
     [self.view addSubview:self.tableView];
     [self.navigationItem setRightBarButtonItem:self.additionBarBtnItem];
     [self.navigationItem setLeftBarButtonItem:self.homeBarBtnItem];
-    [self.view addSubview:self.progressHud];
 }
 
 - (void) layoutSubviews {
@@ -67,17 +65,16 @@
     @weakify(self);
     [self.cardListRequester.cmdRequesting.executionSignals subscribeNext:^(RACSignal* sigRequest) {
         [[sigRequest dematerialize] subscribeNext:^(id x) {
-            @strongify(self);
-            [self.progressHud showNormalWithText:@"正在加载数据..." andDetailText:nil];
+            [MBProgressHUD showNormalWithText:@"正在加载数据..." andDetailText:nil];
         } error:^(NSError *error) {
             @strongify(self);
             if ([self.tableView.mj_header isRefreshing]) [self.tableView.mj_header endRefreshing];
-            [self.progressHud showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:nil];
+            [MBProgressHUD showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:nil];
         } completed:^{
             @strongify(self);
             [self.tableView reloadData];
             if ([self.tableView.mj_header isRefreshing]) [self.tableView.mj_header endRefreshing];
-            [self.progressHud showSuccessWithText:@"加载成功" andDetailText:nil onCompletion:nil];
+            [MBProgressHUD showSuccessWithText:@"加载成功" andDetailText:nil onCompletion:nil];
         }];
     }];
 }
@@ -137,11 +134,5 @@
     return _cardListRequester;
 }
 
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
-}
 
 @end

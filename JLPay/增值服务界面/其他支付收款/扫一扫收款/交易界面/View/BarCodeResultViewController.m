@@ -20,11 +20,11 @@
     NameWeakSelf(wself);
     [JCAlertView showTwoButtonsWithTitle:@"是否确认撤销?" Message:[NSString stringWithFormat:@"撤销金额: ￥%.02lf",[[VMOtherPayType sharedInstance] payAmount].floatValue] ButtonType:JCAlertViewButtonTypeCancel ButtonTitle:@"取消" Click:nil ButtonType:JCAlertViewButtonTypeWarn ButtonTitle:@"撤销" Click:^{
         // 执行撤销 ...
-        [wself.progressHud showNormalWithText:@"正在撤销交易..." andDetailText:nil];
+        [MBProgressHUD showNormalWithText:@"正在撤销交易..." andDetailText:nil];
         [wself.httpTransaction startRevokeOnFinished:^{
-            [wself.progressHud showSuccessWithText:@"撤销成功" andDetailText:nil onCompletion:nil];
+            [MBProgressHUD showSuccessWithText:@"撤销成功" andDetailText:nil onCompletion:nil];
         } onError:^(NSError *error) {
-            [wself.progressHud showFailWithText:@"撤销失败" andDetailText:[error localizedDescription] onCompletion:nil];
+            [MBProgressHUD showFailWithText:@"撤销失败" andDetailText:[error localizedDescription] onCompletion:nil];
         }];
     }];
 }
@@ -53,12 +53,11 @@
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    NameWeakSelf(wself);
-    [self.progressHud showNormalWithText:@"交易处理中..." andDetailText:nil];
+    [MBProgressHUD showNormalWithText:@"交易处理中..." andDetailText:nil];
     [self.httpTransaction startPayingOnFinished:^{
-        [wself.progressHud showSuccessWithText:@"交易成功" andDetailText:nil onCompletion:nil];
+        [MBProgressHUD showSuccessWithText:@"交易成功" andDetailText:nil onCompletion:nil];
     } onError:^(NSError *error) {
-        [wself.progressHud showFailWithText:@"交易失败" andDetailText:[error localizedDescription] onCompletion:nil];
+        [MBProgressHUD showFailWithText:@"交易失败" andDetailText:[error localizedDescription] onCompletion:nil];
     }];
 }
 - (void)viewWillDisappear:(BOOL)animated {
@@ -161,7 +160,6 @@
 
     [self.view addSubview:self.buttonDone];
     [self.view addSubview:self.buttonRevoke];
-    [self.view addSubview:self.progressHud];
 }
 
 - (void) layoutSubviewsAll {
@@ -419,12 +417,6 @@
         [_buttonRevoke addTarget:self action:@selector(clickToRevoke:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonRevoke;
-}
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHud;
 }
 - (id)httpTransaction {
     if (!_httpTransaction) {

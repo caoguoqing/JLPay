@@ -21,12 +21,15 @@
 @property (nonatomic, strong) JLPWDKeyBoardView* keyboardView;
 
 @property (nonatomic, strong) UIView* bgView;
+@property (nonatomic, strong) UIView* bearView;
 
 @property (nonatomic, copy) void (^ sureBlock) (NSString* password);
 
 @property (nonatomic, copy) void (^ cancelBlock) (void);
 
 @end
+
+
 
 @implementation JLPasswordView
 
@@ -36,53 +39,73 @@
     pwdView.cancelBlock = cancelBlock;
     pwdView.keyboardView.numbersInputed = nil;
     
-    UIWindow* curKeyWindow = [UIApplication sharedApplication].keyWindow;
-    [curKeyWindow addSubview:pwdView];
-    [curKeyWindow bringSubviewToFront:pwdView];
-    
-    [pwdView setNeedsUpdateConstraints];
-    [pwdView updateConstraintsIfNeeded];
-    [pwdView layoutIfNeeded];
-    
-    [pwdView.keyboardView setNeedsUpdateConstraints];
-    [pwdView.keyboardView updateConstraintsIfNeeded];
-    [pwdView.keyboardView layoutIfNeeded];
-    
-    [pwdView.inputsView setNeedsUpdateConstraints];
-    [pwdView.inputsView updateConstraintsIfNeeded];
-    [pwdView.inputsView layoutIfNeeded];
-    
-    [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        pwdView.bgView.alpha = 0.3;
-        
-        CGRect frame = pwdView.keyboardView.frame;
-        frame.origin.y -= frame.size.height;
-        pwdView.keyboardView.frame = frame;
-        
-        pwdView.inputsView.center = CGPointMake(pwdView.center.x, pwdView.center.y - pwdView.inputsView.frame.size.height * 0.5);
-        
-    } completion:^(BOOL finished) {
-    }];
+    [pwdView showAnimation];
 
 }
 
 
 + (void)hidden {
-    JLPasswordView* pwdView = [JLPasswordView sharedPWDView];
     
-    [UIView animateWithDuration:0.2 delay:0.1 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    [[JLPasswordView sharedPWDView] hideAnimation];
+    
+}
+
+
+- (void) loadAllViews {
+    UIWindow* curKeyWindow = [UIApplication sharedApplication].keyWindow;
+    [curKeyWindow addSubview:self.bgView];
+    [curKeyWindow addSubview:self.bearView];
+    [self.bearView addSubview:self.inputsView];
+    [self.bearView addSubview:self.keyboardView];
+}
+
+- (void) removeAllViews {
+    [self.keyboardView removeFromSuperview];
+    [self.inputsView removeFromSuperview];
+    [self.bearView removeFromSuperview];
+    [self.bgView removeFromSuperview];
+}
+
+- (void) showAnimation {
+    NameWeakSelf(wself);
+    [self loadAllViews];
+    [self initialFrames];
+    
+    
+    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        wself.bgView.alpha = 0.3;
         
-        pwdView.inputsView.center = CGPointMake(pwdView.center.x, 0 - pwdView.inputsView.frame.size.height * 0.5);
-
-        CGRect frame = pwdView.keyboardView.frame;
-        frame.origin.y += frame.size.height;
-        pwdView.keyboardView.frame = frame;
-
-        pwdView.bgView.alpha = 0.0;
+        CGRect frame = wself.keyboardView.frame;
+        CGFloat height = wself.frame.size.height;
+        CGFloat heightKeyboard = frame.size.height;
+        CGFloat heightInputsView = wself.inputsView.frame.size.height;
+        
+        frame.origin.y = height - frame.size.height;
+        wself.keyboardView.frame = frame;
+        
+        frame = wself.inputsView.frame;
+        frame.origin.y = (height - heightKeyboard - heightInputsView)/2.f;
+        wself.inputsView.frame = frame;
     } completion:^(BOOL finished) {
-        [pwdView removeFromSuperview];
+        
     }];
-    
+}
+
+- (void) hideAnimation {
+    NameWeakSelf(wself);
+    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        wself.bgView.alpha = 0;
+        
+        CGRect frame = wself.keyboardView.frame;
+        frame.origin.y = wself.frame.size.height;
+        wself.keyboardView.frame = frame;
+        
+        frame = wself.inputsView.frame;
+        frame.origin.y = - frame.size.height;
+        wself.inputsView.frame = frame;
+    } completion:^(BOOL finished) {
+        [wself removeAllViews];
+    }];
 }
 + (void) hiddenOnFinished:(void (^) (void))finishedBlock {
     JLPasswordView* pwdView = [JLPasswordView sharedPWDView];
@@ -102,6 +125,28 @@
     }];
 }
 
+
+
+- (void) initialFrames {
+    CGFloat inset = 30;
+    CGFloat heightKeyboard = 216;
+    CGFloat heightInputsView = [UIScreen mainScreen].bounds.size.height * 180.f/667.f;
+    
+    CGRect frame = [UIScreen mainScreen].bounds;
+    
+    self.bgView.frame = frame;
+    self.bearView.frame = frame;
+    
+    frame.origin.y = frame.size.height;
+    frame.size.height = heightKeyboard;
+    self.keyboardView.frame = frame;
+    
+    frame.origin.x = inset;
+    frame.size.width -= inset * 2;
+    frame.origin.y = - heightInputsView;
+    frame.size.height = heightInputsView;
+    self.inputsView.frame = frame;
+}
 
 
 
@@ -148,50 +193,11 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        [self loadSubviews];
         [self addKVOs];
         
     }
     return self;
 }
-
-
-- (void) loadSubviews {
-    [self addSubview:self.bgView];
-    [self addSubview:self.inputsView];
-    [self addSubview:self.keyboardView];
-}
-
-
-- (void)updateConstraints {
-    
-    CGFloat inset = 30;
-    CGFloat heightKeyboard = 216;
-    CGFloat heightInputsView = [UIScreen mainScreen].bounds.size.height * 180.f/667.f;
-
-    __weak typeof(self) wself = self;
-    
-    [self.bgView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(UIEdgeInsetsZero);
-    }];
-    
-    [self.inputsView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(wself.mas_left).offset(inset);
-        make.right.mas_equalTo(wself.mas_right).offset(-inset);
-        make.bottom.mas_equalTo(wself.mas_top).offset(- heightInputsView);
-        make.height.mas_equalTo(heightInputsView);
-    }];
-    
-    [self.keyboardView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(0);
-        make.top.mas_equalTo(wself.mas_bottom);
-        make.height.mas_equalTo(heightKeyboard);
-    }];
-    
-    [super updateConstraints];
-}
-
-
 
 
 # pragma mask 4 getter
@@ -221,6 +227,12 @@
         _bgView.alpha = 0;
     }
     return _bgView;
+}
+- (UIView *)bearView {
+    if (!_bearView) {
+        _bearView = [[UIView alloc] init];
+    }
+    return _bearView;
 }
 
 

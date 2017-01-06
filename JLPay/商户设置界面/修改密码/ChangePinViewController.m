@@ -27,7 +27,6 @@
 
 @property (nonatomic, strong) ASIFormDataRequest* httpRequest;
 
-@property (nonatomic, strong) MBProgressHUD* hud;
 
 @property (nonatomic, copy) void (^ finishedBlock) (void);
 @property (nonatomic, copy) void (^ canceledBlock) (void);
@@ -54,7 +53,7 @@
     [self.httpRequest addPostValue:[self encryptBy3DESForPin:self.userNewPwdField.text] forKey:@"newPassword"];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.httpRequest startAsynchronous];
-        [self.hud showNormalWithText:@"正在修改..." andDetailText:nil];
+        [MBProgressHUD showNormalWithText:@"正在修改..." andDetailText:nil];
     });
 }
 
@@ -72,7 +71,7 @@
     [self.httpRequest clearDelegatesAndCancel];
     NSDictionary* dataDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
     if ([[dataDict valueForKey:@"code"] intValue] == 0) {
-        [self.hud showSuccessWithText:@"修改密码成功!" andDetailText:nil onCompletion:^{
+        [MBProgressHUD showSuccessWithText:@"修改密码成功!" andDetailText:nil onCompletion:^{
             [wself.navigationController dismissViewControllerAnimated:YES completion:^{
                 if (wself.finishedBlock) {
                     wself.finishedBlock();
@@ -80,13 +79,13 @@
             }];
         }];
     } else {
-        [self.hud showFailWithText:@"修改失败" andDetailText:[dataDict objectForKey:@"message"] onCompletion:nil];
+        [MBProgressHUD showFailWithText:@"修改失败" andDetailText:[dataDict objectForKey:@"message"] onCompletion:nil];
     }
     self.httpRequest = nil;
 }
 - (void)requestFailed:(ASIHTTPRequest *)request {
     [self.httpRequest clearDelegatesAndCancel];
-    [self.hud showFailWithText:@"网络异常,请检查网络" andDetailText:nil onCompletion:nil];
+    [MBProgressHUD showFailWithText:@"网络异常,请检查网络" andDetailText:nil onCompletion:nil];
     self.httpRequest = nil;
 }
 
@@ -161,7 +160,6 @@
     [self.view addSubview:self.userNewPwdField];
     [self.view addSubview:self.userResureNewPwdField];
     [self.view addSubview:self.sureButton];
-    [self.view addSubview:self.hud];
     textFontSize = 15;
 }
 - (void)viewWillAppear:(BOOL)animated {
@@ -358,12 +356,6 @@
     return _sureButton;
 }
 
-- (MBProgressHUD *)hud {
-    if (!_hud) {
-        _hud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _hud;
-}
 - (ASIFormDataRequest *)httpRequest {
     if (_httpRequest == nil) {
         NSString* urlString;

@@ -40,7 +40,6 @@
     [self.view addSubview:self.imageViewPlatform];
     [self.view addSubview:self.activitor];
     [self.view addSubview:self.doneButton];
-    [self.view addSubview:self.progressHUD];
 }
 
 - (void) layoutSubviews {
@@ -131,10 +130,10 @@
         @strongify(self);
         switch (state.integerValue) {
             case VMWechatQRCodeRequesting:          // 发起请求
-                [self.progressHUD showNormalWithText:self.wechatQRCodePayer.stateMessage andDetailText:nil];
+                [MBProgressHUD showNormalWithText:self.wechatQRCodePayer.stateMessage andDetailText:nil];
                 break;
             case VMWechatQRCodeRequestedSuc: {      // 请求二维码成功
-                [self.progressHUD hide:YES];
+                [MBProgressHUD hideCurNormalHud];
             }
                 break;
             case VMWechatPayStateEnquiring:         // 正在轮询交易结果
@@ -144,13 +143,13 @@
             {
                 self.labelLog.textColor = [UIColor colorWithHex:HexColorTypeGreen alpha:1];
                 [self.activitor stopAnimating];
-                [self.progressHUD showSuccessWithText:@"微信收款成功" andDetailText:nil onCompletion:^{
+                [MBProgressHUD showSuccessWithText:@"微信收款成功" andDetailText:nil onCompletion:^{
                 }];
             }
                 break;
             case VMWechatQRCodeRequestedFail: {     // 请求二维码失败
                 self.labelLog.textColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
-                [self.progressHUD showFailWithText:@"生成二维码失败"
+                [MBProgressHUD showFailWithText:@"生成二维码失败"
                                      andDetailText:[self.wechatQRCodePayer.error localizedDescription]
                                       onCompletion:^{
                                       }];
@@ -160,7 +159,7 @@
             {
                 self.labelLog.textColor = [UIColor colorWithHex:HexColorTypeThemeRed alpha:1];
                 [self.activitor stopAnimating];
-                [self.progressHUD showFailWithText:@"微信收款失败"
+                [MBProgressHUD showFailWithText:@"微信收款失败"
                                      andDetailText:[self.wechatQRCodePayer.error localizedDescription]
                                       onCompletion:^{
                                       }];
@@ -247,12 +246,6 @@
     return _doneButton;
 }
 
-- (MBProgressHUD *)progressHUD {
-    if (_progressHUD == nil) {
-        _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    return _progressHUD;
-}
 
 - (VMWechatQRCodePay *)wechatQRCodePayer {
     if (!_wechatQRCodePayer) {

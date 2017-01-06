@@ -24,29 +24,25 @@
     self.pickedImage = finishedPicking;
     
     NameWeakSelf(wself);
-    [self.superVC.view addSubview:self.progressHud];
     
     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear] ||
         [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront])
     {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [wself.progressHud showNormalWithText:nil andDetailText:nil];
+            [MBProgressHUD showNormalWithText:nil andDetailText:nil];
         });
         [self.superVC presentViewController:wself.imgPickerVC animated:YES completion:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [wself.progressHud hideOnCompletion:^{
-                    [wself.progressHud removeFromSuperview];
-                }];
+                [MBProgressHUD hideCurNormalHud];
             });
 
         }];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [wself.progressHud showWarnWithText:@"相机无法拍照,请排查故障!" andDetailText:nil onCompletion:^{
+            [MBProgressHUD showWarnWithText:@"相机无法拍照,请排查故障!" andDetailText:nil onCompletion:^{
                 if (wself.pickedImage) {
                     wself.pickedImage(nil);
                 }
-                [wself.progressHud removeFromSuperview];
             }];
         });
     }
@@ -98,13 +94,6 @@
     return _imgPickerVC;
 }
 
-- (MBProgressHUD *)progressHud {
-    if (!_progressHud) {
-        _progressHud = [[MBProgressHUD alloc] initWithView:self.superVC.view];
-        
-    }
-    return _progressHud;
-}
 
 
 

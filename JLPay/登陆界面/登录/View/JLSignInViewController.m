@@ -26,6 +26,7 @@
 @interface JLSignInViewController()
 
 @property (nonatomic, strong) UIImageView* logoImgView;         // logo
+@property (nonatomic, strong) UIImageView* logoTitleImgView;    // logo名
 
 
 @property (nonatomic, strong) JLSigninInputView* userNameInputView;
@@ -102,7 +103,7 @@
     
     
     /* binding: secureTextEntry to seenVisible */
-    RAC(self.userPasswordInputView.textField, secureTextEntry) = [[RACObserve(self.moreCaches, seenPasswordAvilable) deliverOnMainThread] map:^NSNumber*(NSNumber* visible) {
+    RAC(self.userPasswordInputView.textField, secureTextEntry) = [RACObserve(self.moreCaches, seenPasswordAvilable) map:^NSNumber*(NSNumber* visible) {
         return @(!visible.boolValue);
     }];
     
@@ -251,6 +252,7 @@
     [self.view.layer addSublayer:self.backGradientLayer];
     
     [self.view addSubview:self.logoImgView];
+    [self.view addSubview:self.logoTitleImgView];
     
     [self.view addSubview:self.userNameInputView];
     [self.view addSubview:self.userPasswordInputView];
@@ -276,6 +278,9 @@
     CGFloat widthPwdForgotBtn =  [UIScreen mainScreen].bounds.size.width * 100/320.f;
     CGFloat widthLoginCancelBtn = [UIScreen mainScreen].bounds.size.width * 33/320.f;
     
+    CGFloat heightLogoTitleImg = ScreenWidth * 18/320.f;
+    CGFloat widthLogoTitleImg = self.logoTitleImgView.image.size.width / self.logoTitleImgView.image.size.height * heightLogoTitleImg;
+    
     self.userNameInputView.layer.cornerRadius = heightTxtField * 0.5;
     self.userPasswordInputView.layer.cornerRadius = heightTxtField * 0.5;
     self.signInBtn.layer.cornerRadius = heightBtn * 0.5;
@@ -293,8 +298,13 @@
     [self.logoImgView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(wself.view.mas_centerX);
         make.bottom.equalTo(wself.view.mas_top).offset(wself.view.frame.size.height * 0.25);
-        make.width.equalTo(wself.view.mas_width).multipliedBy(0.5);
-        make.height.equalTo(wself.logoImgView.mas_width).multipliedBy(wself.logoImgView.image.size.height / wself.logoImgView.image.size.width);
+        make.width.height.equalTo(wself.view.mas_width).multipliedBy(0.18);
+    }];
+    [self.logoTitleImgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(wself.view.mas_centerX);
+        make.top.mas_equalTo(wself.logoImgView.mas_bottom).offset(inset);
+        make.width.mas_equalTo(widthLogoTitleImg);
+        make.height.mas_equalTo(heightLogoTitleImg);
     }];
     
     [self.userNameInputView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -370,6 +380,12 @@
         _logoImgView = [[UIImageView alloc] initWithImage:[PublicInformation logoImageOfApp]];
     }
     return _logoImgView;
+}
+- (UIImageView *)logoTitleImgView {
+    if (!_logoTitleImgView) {
+        _logoTitleImgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo_title_gray"]];
+    }
+    return _logoTitleImgView;
 }
 
 
@@ -495,8 +511,7 @@
         _userNameInputView.textField.textColor = [UIColor whiteColor];
         _userNameInputView.textField.delegate = self.delegateForTfield;
         _userNameInputView.rightBtn.hidden = YES;
-        _userNameInputView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.9].CGColor;
-        _userNameInputView.layer.borderWidth = 1;
+        _userNameInputView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.1];
     }
     return _userNameInputView;
 }
@@ -512,8 +527,7 @@
         _userPasswordInputView.textField.tag = SignInTxtTaguserPwd;
         _userPasswordInputView.textField.keyboardType = UIKeyboardTypeAlphabet;
         [_userPasswordInputView.rightBtn addTarget:self action:@selector(clickedPwdSeenBtn:) forControlEvents:UIControlEventTouchUpInside];
-        _userPasswordInputView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.9].CGColor;
-        _userPasswordInputView.layer.borderWidth = 1;
+        _userPasswordInputView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.1];
     }
     return _userPasswordInputView;
 }

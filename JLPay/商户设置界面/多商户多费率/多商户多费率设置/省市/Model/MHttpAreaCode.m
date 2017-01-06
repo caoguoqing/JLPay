@@ -23,7 +23,7 @@
                      [PublicInformation getServerDomain],
                      [PublicInformation getHTTPPort]];
     
-    MBProgressHUD* hud = [MBProgressHUD showNormalWithText:nil andDetailText:nil];
+    [MBProgressHUD showNormalWithText:nil andDetailText:nil];
     
     [sessionManager POST:url parameters:@{@"descr":@"156"} progress:^(NSProgress * _Nonnull uploadProgress) {
         
@@ -32,7 +32,7 @@
         NSString* code = [responseData objectForKey:@"code"];
         NSString* message = [responseData objectForKey:@"message"];
         if (code.integerValue == 0) {
-            [hud hide:YES];
+            [MBProgressHUD hideCurNormalHud];
             NSMutableArray* areaArray = [NSMutableArray array];
             for (NSDictionary* node in [responseData objectForKey:@"areaList"]) {
                 NSMutableDictionary* areaNode = [NSMutableDictionary dictionary];
@@ -42,13 +42,13 @@
             }
             finishedBlock(areaArray);
         } else {
-            [hud showFailWithText:@"加载失败" andDetailText:message onCompletion:^{
+            [MBProgressHUD showFailWithText:@"加载失败" andDetailText:message onCompletion:^{
                 errorBlock([NSError errorWithDomain:@"" code:99 localizedDescription:message]);
             }];
         }
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [hud showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
+        [MBProgressHUD showFailWithText:@"加载失败" andDetailText:[error localizedDescription] onCompletion:^{
             errorBlock(error);
         }];
     }];

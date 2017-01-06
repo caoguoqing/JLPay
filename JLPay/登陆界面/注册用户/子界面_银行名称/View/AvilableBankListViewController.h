@@ -29,8 +29,6 @@ typedef void (^ doneWithSeleced) (NSDictionary* selectedNode);
 
 @property (nonatomic, strong) UIBarButtonItem* cancleBarBtn;
 
-@property (nonatomic, strong) MBProgressHUD* progressHud;
-
 @property (nonatomic, strong) VMAvilableBankListRequester* bankListRequester;
 
 @end
