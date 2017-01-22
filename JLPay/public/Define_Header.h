@@ -17,6 +17,7 @@
 #import "UIColor+HexColor.h"
 #import "NSString+Formater.h"
 #import "NSError+Custom.h"
+#import "UIBarButtonItem+ML.h"
 
 #import <UINavigationBar+Awesome.h>
 
@@ -37,7 +38,7 @@
 
 
 // 日志打印选项: 打印(1);不打印(0);
-#define NeedPrintLog                    1
+#define NeedPrintLog                    0
 #define JLPrint(fmt,...)                if (NeedPrintLog == 1) { NSLog(fmt,##__VA_ARGS__); }
 
 

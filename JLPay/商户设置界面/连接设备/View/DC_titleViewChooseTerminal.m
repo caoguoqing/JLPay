@@ -64,7 +64,7 @@
 
     self.titleLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:heightTitleLab scale:0.9]];
     self.contentLabel.font = [UIFont boldSystemFontOfSize:[NSString resizeFontAtHeight:heightContentLab scale:0.7]];
-    self.switchBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:heightContentLab scale:1]];
+    self.switchBtn.titleLabel.font = [UIFont fontAwesomeFontOfSize:[NSString resizeFontAtHeight:heightContentLab scale:0.8]];
     
     
 
@@ -86,7 +86,7 @@
     }];
     
     [self.switchBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.centerX.mas_equalTo(wself.contentLabel.mas_centerX).offset([wself.contentLabel.text sizeWithAttributes:@{NSFontAttributeName:wself.switchBtn.titleLabel.font}].width * 0.5 + 5);
+        make.centerX.mas_equalTo(wself.contentLabel.mas_centerX).offset([wself.contentLabel.text sizeWithAttributes:@{NSFontAttributeName:wself.contentLabel.font}].width * 0.5 + 10);
         make.top.bottom.mas_equalTo(wself.contentLabel);
         make.width.mas_equalTo(wself.switchBtn.mas_height);
     }];
@@ -125,7 +125,7 @@
 - (UIButton *)switchBtn {
     if (!_switchBtn) {
         _switchBtn = [UIButton new];
-        [_switchBtn setTitle:[NSString fontAwesomeIconStringForEnum:FAAngleDown] forState:UIControlStateNormal];
+        [_switchBtn setTitle:[NSString fontAwesomeIconStringForEnum:FACaretDown] forState:UIControlStateNormal];
         [_switchBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_switchBtn setTitleColor:[UIColor colorWithWhite:0.7 alpha:0.5] forState:UIControlStateHighlighted];
         [_switchBtn addTarget:self action:@selector(clickedSwitchBtn:) forControlEvents:UIControlEventTouchUpInside];

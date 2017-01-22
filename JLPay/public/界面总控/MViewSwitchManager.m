@@ -13,13 +13,13 @@
 
 #import "JLSignInViewController.h"
 #import "DeviceConnectViewController.h"
-#import "TransDetailListViewController.h"
 #import "MoreBusinessOrRateVC.h"
 #import "T0CardListViewController.h"
 #import "HelperAndAboutTableViewController.h"
 #import "ChangePinViewController.h"
 #import "MyBusinessViewController.h"
-#import "AccountReceivedViewController.h"
+
+#import "JLTransDetailListVC.h"
 
 @interface MViewSwitchManager()
 
@@ -61,7 +61,7 @@
 
 /* 跳转: 交易明细 */
 - (void) gotoBillList {
-    TransDetailListViewController* billListVC = [[TransDetailListViewController alloc] init];
+    JLTransDetailListVC* billListVC = [[JLTransDetailListVC alloc] init];
     [[MViewSwitchManager mainViewController] presentViewController:[[UINavigationController alloc] initWithRootViewController:billListVC] animated:YES completion:nil];
 }
 
@@ -130,12 +130,6 @@
                                                           animated:YES completion:nil];
 }
 
-/* 跳转: 立即到账 */
-- (void) gotoResignTicket {
-    AccountReceivedViewController* resignTicketVC = [[AccountReceivedViewController alloc] init];
-    [[MViewSwitchManager mainViewController] presentViewController:[[UINavigationController alloc] initWithRootViewController:resignTicketVC]
-                                                          animated:YES completion:nil];
-}
 
 
 /* 重新刷新主界面+菜单界面的数据 */

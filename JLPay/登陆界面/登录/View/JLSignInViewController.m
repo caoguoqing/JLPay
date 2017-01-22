@@ -271,8 +271,8 @@
     NameWeakSelf(wself);
     CGFloat inset = 15;
     
-    CGFloat txtFieldHRate = 1/13.f;
-    CGFloat btnHRate = 1/13.f;
+    CGFloat txtFieldHRate = 1/12.5f;
+    CGFloat btnHRate = 1/12.5f;
     CGFloat heightTxtField = self.view.frame.size.height * txtFieldHRate;
     CGFloat heightBtn = self.view.frame.size.height * btnHRate;
     CGFloat widthPwdForgotBtn =  [UIScreen mainScreen].bounds.size.width * 100/320.f;

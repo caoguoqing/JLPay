@@ -11,7 +11,7 @@
 #import "MBProgressHUD+CustomSate.h"
 #import <ReactiveCocoa.h>
 #import "Masonry.h"
-#import "StepSegmentView.h"
+#import "MLStepSegmentView.h"
 #import "DC_mposView.h"
 #import "DeviceManager.h"
 #import "DC_titleViewChooseTerminal.h"
@@ -31,7 +31,7 @@
 @property (nonatomic, strong) DC_mposView* mposView;
 
 /* 进度显示视图 */
-@property (nonatomic, strong) StepSegmentView* stepSegView;
+@property (nonatomic, strong) MLStepSegmentView* stepSegView;
 
 /* 终端号显示、切换视图 */
 @property (nonatomic, strong) DC_titleViewChooseTerminal* titleViewChooseTerminal;
@@ -136,16 +136,17 @@
 
 - (void)updateViewConstraints {
     NameWeakSelf(wself);
-    
+    CGFloat inset = ScreenWidth * 20/320.f;
     [self.stepSegView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(wself.view.mas_top).offset(64 + 10);
+        make.top.mas_equalTo(wself.view.mas_top).offset(64 + 0);
         make.height.mas_equalTo(40);
-        make.left.right.mas_equalTo(0);
+        make.left.mas_equalTo(inset);
+        make.right.mas_equalTo(- inset);
     }];
     
     [self.mposView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(wself.stepSegView.mas_bottom).offset(20);
-        make.bottom.mas_equalTo(wself.view.mas_bottom).offset(- 30);
+        make.top.mas_equalTo(wself.stepSegView.mas_bottom).offset(inset);
+        make.bottom.mas_equalTo(wself.view.mas_bottom).offset(- inset);
         make.centerX.mas_equalTo(wself.view.mas_centerX);
         make.width.mas_equalTo(wself.mposView.mas_height).multipliedBy(535.4/955.f);
     }];
@@ -250,7 +251,14 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 @strongify(self);
                 self.mposView.state = DC_VIEW_STATE_DONE;
-                [MBProgressHUD showSuccessWithText:@"绑定设备成功!" andDetailText:nil onCompletion:nil];
+                [MBProgressHUD showSuccessWithText:@"绑定设备成功!" andDetailText:nil onCompletion:^{
+                    @strongify(self);
+                    [ModelDeviceBindedInformation saveBindedDeviceInfoWithIdentifier:self.deviceDataSource.deviceSelected.identifier.UUIDString
+                                                                          deviceName:self.deviceDataSource.deviceSelected.name
+                                                                      businessNumber:[PublicInformation returnBusiness]
+                                                                      terminalNumber:self.termsDataSource.terminalSelected];
+                    
+                }];
             });
         } onError:^(NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -286,22 +294,11 @@
 
 /* 完成并退出 */
 - (IBAction) clickedDoneBtn:(id)sender {
-    @weakify(self);
-    self.stepSegView.itemSelected = 3;
-    [ModelDeviceBindedInformation saveBindedDeviceInfoWithIdentifier:self.deviceDataSource.deviceSelected.identifier.UUIDString
-                                                          deviceName:self.deviceDataSource.deviceSelected.name
-                                                      businessNumber:[PublicInformation returnBusiness]
-                                                      terminalNumber:self.termsDataSource.terminalSelected];
-    
-    [MBProgressHUD showSuccessWithText:@"保存绑定信息成功!" andDetailText:nil onCompletion:^{
-        @strongify(self);
-        //[self.navigationController popViewControllerAnimated:YES];
-        [self.navigationController dismissViewControllerAnimated:YES completion:^{
-            @strongify(self);
-            if (self.connectedBlock) {
-                self.connectedBlock();
-            }
-        }];
+    NameWeakSelf(wself);
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        if (wself.canceledBlock) {
+            wself.canceledBlock();
+        }
     }];
 }
 
@@ -342,11 +339,13 @@
     return _mposView;
 }
 
-- (StepSegmentView *)stepSegView {
+- (MLStepSegmentView *)stepSegView {
     if (!_stepSegView) {
-        _stepSegView = [[StepSegmentView alloc] initWithTitles:@[@"扫描设备", @"连接设备", @"绑定设备", @"保存"]];
+        _stepSegView = [[MLStepSegmentView alloc] initWithTitles:@[@"扫描设备", @"连接设备", @"绑定设备"]];
         _stepSegView.tintColor = [UIColor colorWithHex:0x4b9993 alpha:1];
-        _stepSegView.normalColor = [UIColor whiteColor];
+        _stepSegView.normalColor = [UIColor colorWithHex:0x999999 alpha:1];
+        _stepSegView.stepIsSingle = NO;
+        _stepSegView.userInteractionEnabled = NO;
         _stepSegView.itemSelected = 0;
     }
     return _stepSegView;
@@ -397,7 +396,7 @@
 
 - (UIBarButtonItem *)doneBarBtn {
     if (!_doneBarBtn) {
-        _doneBarBtn = [[UIBarButtonItem alloc] initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(clickedDoneBtn:)];
+        _doneBarBtn = [[UIBarButtonItem alloc] initWithTitle:@"完成" style:UIBarButtonItemStylePlain target:self action:@selector(clickedDoneBtn:)];
     }
     return _doneBarBtn;
 }

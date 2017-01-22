@@ -81,11 +81,6 @@ static NSString* const kLMVC_MenuTitleAssistance        = @"帮助与关于";
     [[MViewSwitchManager manager] gotoPasswordExchanging];
 }
 
-/* 跳转: 立即到账 */
-- (void) gotoResignTicket {
-    [self hideSideMenuViewController];
-    [[MViewSwitchManager manager] gotoResignTicket];
-}
 
 /* 跳转: 帮助与关于 */
 - (void) gotoAssistance {

@@ -46,8 +46,6 @@
 /* 跳转: 帮助与关于 */
 - (void) gotoAssistance;
 
-/* 跳转: 立即到账 */
-- (void) gotoResignTicket;
 
 
 @end
